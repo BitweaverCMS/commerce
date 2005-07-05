@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: split_page_results.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: split_page_results.php,v 1.2 2005/07/05 18:40:22 spiderr Exp $
 //
 
   class splitPageResults {
@@ -84,7 +84,7 @@ if ($debug) {
 // fix offset error on some versions
       if ($offset < 0) { $offset = 0; }
 
-      $this->sql_query .= " limit " . $offset . ", " . $this->number_of_rows_per_page;
+      return $offset;
     }
 
 /* class functions */

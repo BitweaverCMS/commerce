@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: database.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
+//  $Id: database.php,v 1.3 2005/07/05 18:40:22 spiderr Exp $
 //
 
 
@@ -80,7 +80,6 @@
 
   function zen_db_prepare_input($string) {
   	if( empty( $string ) ) {
-vd( $string );
 		return NULL;
     } elseif (is_string($string)) {
       return trim(stripslashes($string));

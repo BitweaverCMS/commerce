@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: specials.php,v 1.2 2005/07/05 18:40:21 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -241,7 +241,7 @@
 // never include Gift Vouchers for specials
       $gift_vouchers = $db->Execute("select distinct p.products_id, p.products_model
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
-                                where p.products_model rlike '" . "GIFT" . "'");
+                                where UPPER( p.products_model ) like '%GIFT%'");
 
       while (!$gift_vouchers->EOF) {
         if(substr($gift_vouchers->fields['products_model'], 0, 4) == 'GIFT') {
