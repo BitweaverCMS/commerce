@@ -19,7 +19,6 @@
 // +----------------------------------------------------------------------+
 //
 
-/*
 
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
@@ -51,8 +50,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_FS_BACKUP', DIR_FS_ADMIN . 'backups/');
   define('DIR_FS_FILE_MANAGER_ROOT', '/a1/viovio/live/commerce'); // path to starting directory of the file manager
 
-*/
-
+/*
 
 // Define the webserver and path parameters
   // Main webserver: eg, http://localhost - should not be empty for productive servers
@@ -104,7 +102,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
 
 // define our database connection
   define('DB_TYPE', 'mysql');
-  define('DB_PREFIX', 'zen_');
   define('DB_SERVER', 'localhost'); // eg, localhost - should not be empty
   define('DB_SERVER_USERNAME', 'cfowler');
   define('DB_SERVER_PASSWORD', 'asdf');
@@ -119,5 +116,5 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   // ie: /path/to/your/webspace/public_html/zen/cache   -- leave no trailing slash
   define('SQL_CACHE_METHOD', 'none');
   define('DIR_FS_SQL_CACHE', TEMP_PKG_PATH.'zencache');
-
+*/
 ?>
