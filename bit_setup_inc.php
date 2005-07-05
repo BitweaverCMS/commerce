@@ -7,7 +7,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 }
 
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
-	define( 'BITCOMMERCE_DB_PREFIX', 'bit_' );
+	define( 'BITCOMMERCE_DB_PREFIX', str_replace( '`', '', BIT_DB_PREFIX.'bit_' ) );
 }
 
 ?>
