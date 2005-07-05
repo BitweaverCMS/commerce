@@ -21,9 +21,9 @@
 
 // Define the webserver and path parameters
   // Main webserver: eg, http://localhost - should not be empty for productive servers
-  define('HTTP_SERVER', 'http://www.dev.viovio.com');
+  define('HTTP_SERVER', 'http://'.$_SERVER['HTTP_HOST']);
   // Secure webserver: eg, https://localhost - should not be empty for productive servers
-  define('HTTPS_SERVER', 'https://www.dev.viovio.com');
+  define('HTTPS_SERVER', 'https://'.$_SERVER['HTTP_HOST']);
   // secure webserver for checkout procedure?
   define('ENABLE_SSL', 'false');
 

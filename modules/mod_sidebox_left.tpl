@@ -1,1 +1,1 @@
-{$zencartLeft}
+{$bitcommerceLeft}

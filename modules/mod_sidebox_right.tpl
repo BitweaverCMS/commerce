@@ -1,1 +1,1 @@
-{$zencartRight}
+{$bitcommerceRight}

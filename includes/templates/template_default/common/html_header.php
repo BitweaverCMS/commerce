@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_header.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: html_header.php,v 1.2 2005/07/05 21:08:15 spiderr Exp $
 //
 // TODO 
 // cvs block
@@ -25,8 +25,6 @@
 
 require(DIR_WS_MODULES . 'meta_tags.php');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" <?php echo HTML_PARAMS; ?>>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>" />
 <title><?php echo META_TAG_TITLE; ?></title>

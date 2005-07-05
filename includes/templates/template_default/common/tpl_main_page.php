@@ -17,13 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: tpl_main_page.php,v 1.2 2005/07/05 21:08:15 spiderr Exp $
 //
 
   $header_template = 'tpl_header.php';
   $footer_template = 'tpl_footer.php';
-  $left_column_file = 'column_left.php';
-  $right_column_file = 'column_right.php';
 ?>
 <body>
 
@@ -42,21 +40,9 @@
 <?php require($body_code); ?>
 			</div> <!-- end main -->
 		</div> <!-- end mainwrap -->  
-
-		<div id="col-a">
-			<div id="nav"> 
-<?php require(DIR_WS_MODULES . $left_column_file); ?>
-			</div> <!-- end nav -->
-		</div> <!-- end navwrap -->  
 		<br class="clear" />
 	</div> <!-- end floatwrap -->
 	
-	<div id="col-b">
-		<div id="optional-info">
-<?php require(DIR_WS_MODULES .  $right_column_file); ?> 
-		</div> <!-- end c2 -->
-	</div> <!-- end c2wrap -->  
-
 <br class="clear" />
 
 </div> <!-- end pagewrap -->
@@ -66,4 +52,3 @@
 <?php require(DIR_WS_MODULES . 'footer.php'); ?>
 </div> <!-- end footer -->
 
-</body>

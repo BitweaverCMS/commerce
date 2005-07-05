@@ -7,7 +7,12 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 }
 
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
-	define( 'BITCOMMERCE_DB_PREFIX', str_replace( '`', '', BIT_DB_PREFIX.'bit_' ) );
+	$lastQuote = strrpos( BIT_DB_PREFIX, '`' );
+	if( $lastQuote != FALSE ) {
+		$lastQuote++;
+	}
+	$prefix = substr( BIT_DB_PREFIX,  $lastQuote );
+	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'bit_' );
 }
 
 ?>

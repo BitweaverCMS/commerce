@@ -13,53 +13,6 @@
    | http://www.zen-cart.com/license/2_0.txt.                             |
    | If you did not receive a copy of the zen-cart license and are unable |
    | to obtain it throu/* General Text Styles */
-body {
-	margin: 0;
-	padding: 0;
-	background-color: #e5e5e5;
-	color: #222;
-	min-width: 46em; /* prevents center column from collapsing */
-	font: normal 76%/150% "Lucida Grande", LucidaGrande, Lucida, Tahoma, Arial, Helvetica, sans-serif; 
-}
-
-h1, h2, h3, h4, h5 {
-	margin: 0 0 1em 0;
-	padding: 0;
-	line-height: 1.1em;
-	font-weight: bold;
-	color: #777;
-}
-h1 { font-size: 1.8em; }
-h2 { font-size: 1.6em; }
-h3 { font-size: 1.4em; }
-h4 { font-size: 1.2em; }
-h5 { font-size: 1.0em; }
-p {
-	font-size: 100%;
-	margin: 0 0 1em;
-	line-height: 1.4em;
-}
-li, td {
-	font-size: 100%;
-	line-height: 1.1em;
-}
-a:link {
-  color: blue;
-  text-decoration: underline;
-}
-a:visited {
-  color: #660066;
-}
-
-a:hover, a:active {
-  color: #003;
-}
-a img {
-  text-decoration: none;
-  display: inline;
-}
-form { display: inline; }
-
 
 /* Page Layout */ 
 #content {
@@ -81,17 +34,6 @@ form { display: inline; }
 #col-main {
 	width: 100%;
 	float: right;
-}
-#col-a {
-	width: 16em;
-	float: left;
-	margin-right: -16em;
-	position: relative;
-}
-#col-b {
-	float: right;
-	width: 16em;
-	position: relative;
 }
 #main {
 	margin: 0 16em 0 16em; /* widths of side columns */
@@ -119,16 +61,6 @@ form { display: inline; }
 }
 
 
-/* Layout "Tricks" */
-#header a#logo img { 
-	top: -12px;
-	left: 7px;	
-	padding: 0;
-	border: none;
-	width: 200px;
-	height: 24px;
-	position: relative;
-}
 .centervert {
 	top: 50%;
 	height: 1px;
