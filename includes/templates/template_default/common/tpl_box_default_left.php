@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_box_default_left.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: tpl_box_default_left.php,v 1.2 2005/07/05 21:57:23 spiderr Exp $
 //
 
 // choose box images based on box position
@@ -27,22 +27,8 @@
 //
 ?>
 <!--// bof: <?php echo $box_id; ?> //-->
-<table width="<?php echo $column_width; ?>" border="0" cellspacing="0" cellpadding="0" class="leftbox" id="<?php echo str_replace('_', '-', $box_id) . '-table'; ?>">
-  <tr class="leftboxheading" id="<?php echo str_replace('_', '-', $box_id) . '-heading-tr'; ?>">
-    <!-- Sidebox Header -->
-    <td colspan="3" width="100%" class="leftboxheading" id="<?php echo str_replace('_', '-', $box_id) . '-heading-td'; ?>"><?php echo $title; ?></td>
-  </tr>
-  <tr>
-    <!-- Sidebox Contents -->
-    <td colspan="3" class="leftboxcontent" id="<?php echo str_replace('_', '-', $box_id . '-content'); ?>">
+<div class="module box <?=str_replace( '_', '-', $box_id)?>"><div class="boxtitle"><?=$title?></div>
 <?php echo $content; ?>
-    </td>
-  </tr>
-  <tr>
-    <!-- Sidebox Footer -->
-    <td colspan="3" height="5px" class="leftboxfooter" id="<?php echo str_replace('_', '-', $box_id) . '-footer'; ?>">
-    </td>
-  </tr>
-</table>
+</div>
 <!--// eof: <?php echo $box_id; ?> //-->
 

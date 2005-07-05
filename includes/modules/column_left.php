@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: column_left.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: column_left.php,v 1.2 2005/07/05 21:57:23 spiderr Exp $
 //
   $column_box_default='tpl_box_default_left.php';
   // Check if there are boxes for the column
@@ -27,8 +27,6 @@
   while (!$column_left_display->EOF and $box_cnt < 100) {
     $box_cnt++;
     if ( file_exists(DIR_WS_MODULES . 'sideboxes/' . $column_left_display->fields['layout_box_name']) or file_exists(DIR_WS_MODULES . 'sideboxes/' . $template_dir . '/' . $column_left_display->fields['layout_box_name']) ) {
-?>
-<?php
     $column_box_spacer = 'column_box_spacer_left';
     $column_width = BOX_WIDTH_LEFT;
     if ( file_exists(DIR_WS_MODULES . 'sideboxes/' . $template_dir . '/' . $column_left_display->fields['layout_box_name']) ) {

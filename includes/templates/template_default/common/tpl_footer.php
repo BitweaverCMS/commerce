@@ -18,13 +18,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_footer.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: tpl_footer.php,v 1.2 2005/07/05 21:57:23 spiderr Exp $
 //
   require(DIR_WS_INCLUDES . 'counter.php');
-?>
-<p><?php echo FOOTER_TEXT_BODY; ?></p>
 
-<?php if ($banner = zen_banner_exists('dynamic', '468x50')) { ?>
+       if ($banner = zen_banner_exists('dynamic', '468x50')) { ?>
 <?php   if ($banner->RecordCount() > 0) { ?>
 	<div id="banner"><?php echo zen_display_banner('static', $banner); ?></div>
 <?php   } ?>

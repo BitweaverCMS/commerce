@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.2 2005/07/05 21:08:14 spiderr Exp $
+// $Id: index.php,v 1.3 2005/07/05 21:57:22 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -115,7 +115,7 @@ if (COLUMN_LEFT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custome
 }
 if (!$flag_disable_left) {
 ob_start();
-//	require(DIR_WS_MODULES . 'column_left.php');
+	require(DIR_WS_MODULES . 'column_left.php');
 	$smarty->assign_by_ref( 'bitcommerceLeft', ob_get_contents() );
 ob_end_clean();
 }
@@ -127,7 +127,7 @@ if (COLUMN_RIGHT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custom
 }
 if (!$flag_disable_right) {
 ob_start();
-//	require(DIR_WS_MODULES . 'column_right.php');
+	require(DIR_WS_MODULES . 'column_right.php');
 	$smarty->assign_by_ref( 'bitcommerceRight', ob_get_contents() );
 ob_end_clean();
 }

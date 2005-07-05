@@ -17,19 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.2 2005/07/05 21:08:15 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.3 2005/07/05 21:57:23 spiderr Exp $
 //
 
   $header_template = 'tpl_header.php';
   $footer_template = 'tpl_footer.php';
 ?>
-<body>
+
 
 <div id="header"> 
 <?php require(DIR_WS_MODULES . 'header_nav.php'); ?><br class="clear" />
 </div>
 <?php require(DIR_WS_MODULES . 'header.php'); ?>
-<div id="subhead">&nbsp;</div>
 
 <div id="content">
 

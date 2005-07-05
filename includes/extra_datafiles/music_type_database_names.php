@@ -17,18 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: music_type_database_names.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: music_type_database_names.php,v 1.2 2005/07/05 21:57:22 spiderr Exp $
 //
 
-define('TABLE_RECORD_ARTISTS', DB_PREFIX . 'record_artists');
-define('TABLE_RECORD_ARTISTS_INFO', DB_PREFIX . 'record_artists_info');
-define('TABLE_RECORD_COMPANY', DB_PREFIX . 'record_company');
-define('TABLE_RECORD_COMPANY_INFO', DB_PREFIX . 'record_company_info');
-define('TABLE_PRODUCT_MUSIC_EXTRA', DB_PREFIX . 'product_music_extra');
-define('TABLE_MUSIC_GENRE', DB_PREFIX . 'music_genre');
-define('TABLE_MUSIC_GENRE_INFO', DB_PREFIX . 'music_genre_info');
-define('TABLE_MEDIA_MANAGER', DB_PREFIX . 'media_manager');
-define('TABLE_MEDIA_TYPES', DB_PREFIX . 'media_types');
-define('TABLE_MEDIA_CLIPS', DB_PREFIX . 'media_clips');
-define('TABLE_MEDIA_TO_PRODUCTS', DB_PREFIX . 'media_to_products');
+define('TABLE_RECORD_ARTISTS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'record_artists`');
+define('TABLE_RECORD_ARTISTS_INFO', '`'.BIT_DB_PREFIX.DB_PREFIX . 'record_artists_info`');
+define('TABLE_RECORD_COMPANY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'record_company`');
+define('TABLE_RECORD_COMPANY_INFO', '`'.BIT_DB_PREFIX.DB_PREFIX . 'record_company_info`');
+define('TABLE_PRODUCT_MUSIC_EXTRA', '`'.BIT_DB_PREFIX.DB_PREFIX . 'product_music_extra`');
+define('TABLE_MUSIC_GENRE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'music_genre`');
+define('TABLE_MUSIC_GENRE_INFO', '`'.BIT_DB_PREFIX.DB_PREFIX . 'music_genre_info`');
+define('TABLE_MEDIA_MANAGER', '`'.BIT_DB_PREFIX.DB_PREFIX . 'media_manager`');
+define('TABLE_MEDIA_TYPES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'media_types`');
+define('TABLE_MEDIA_CLIPS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'media_clips`');
+define('TABLE_MEDIA_TO_PRODUCTS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'media_to_products`');
 ?>

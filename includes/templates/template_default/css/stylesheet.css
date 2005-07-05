@@ -36,10 +36,7 @@
 	float: right;
 }
 #main {
-	margin: 0 16em 0 16em; /* widths of side columns */
-	background: #fff;
 	padding: 10px;
-	border: 1px solid #ccc;
 }
 #nav {
 	width: 100%;
@@ -51,15 +48,6 @@
 	margin: 0;
 	padding: 0;
 }	
-#header {
-	width: 100%;
-	padding: 0;
-	margin: 0;
-	background-color: #fff;
-	height: 3em;
-	line-height: 3em;
-}
-
 
 .centervert {
 	top: 50%;
@@ -138,7 +126,6 @@
 }
 .sidebox a:hover {
 	color: #000;
-	background-color: #ddd;
 }
 
 #languages .boxbody a {
@@ -187,7 +174,6 @@
 	width: 100%;
 	padding: 0;
 	margin: 0 0 1.5em;
-	background-color: #9eadc6;
 	border: 1px solid #8A929F;
 	border-width: 1px 0;
 	height: 31px;
@@ -252,7 +238,6 @@
 	color: #000;
 	text-decoration: none;
 	float: left;
-	border-right: 1px solid #fff;
 }
 
 #navcontainer a:hover {
