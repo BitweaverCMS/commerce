@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: salemaker.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -43,7 +43,7 @@ define('AUTOCHECK', 'False');
 	                                  'sale_date_last_modified' => 'now()',
 	                                  'sale_date_status_change' => 'now()');
 
-        zen_db_perform(TABLE_SALEMAKER_SALES, $salemaker_data_array, 'update', "sale_id = '" . zen_db_prepare_input($_GET['sID']) . "'");
+        $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_data_array, 'update', "sale_id = '" . zen_db_prepare_input($_GET['sID']) . "'");
 
         // update prices for products in sale
         zen_update_salemaker_product_prices($_GET['sID']);
@@ -93,13 +93,13 @@ define('AUTOCHECK', 'False');
           $salemaker_sales_data_array['sale_date_added'] = 'now()';
           $salemaker_sales_data_array['sale_date_last_modified'] = '0001-01-01';
           $salemaker_sales_data_array['sale_date_status_change'] = '0001-01-01';
-          zen_db_perform(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
+          $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
 
           $_POST['sID'] = $db->Insert_ID();
 
         } else {
 	        $salemaker_sales_data_array['sale_date_last_modified'] = 'now()';
-          zen_db_perform(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'update', "sale_id = '" . zen_db_input($_POST['sID']) . "'");
+          $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'update', "sale_id = '" . zen_db_input($_POST['sID']) . "'");
         }
 
         // update prices for products in sale
@@ -119,7 +119,7 @@ define('AUTOCHECK', 'False');
             $salemaker_sales->fields['sale_date_last_modified'] = '0001-01-01';
             $salemaker_sales->fields['sale_date_status_change'] = '0001-01-01';
 
-            zen_db_perform(TABLE_SALEMAKER_SALES, $salemaker_sales, 'insert');
+            $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales, 'insert');
 
             $sale_id = $db->Insert_ID();
             // update prices for products in sale

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_general.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -922,7 +922,8 @@
   }
 
 ////
-  function zen_db_perform($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
+/*
+  function $db->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
     global $db;
     reset($data);
     if ($action == 'insert') {
@@ -966,9 +967,10 @@
 
     return $db->Execute($query);
   }
-
-  function zen_db_insert_id() {
-    return mysql_insert_id();
+*/
+  function zen_db_insert_id( $pTableName, $pIdColumn ) {
+  	global $db;
+  	return( $db->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
   }
 
 ////
@@ -1365,17 +1367,17 @@
 ////
 // call additional function files
 // prices and quantities
-  require(DIR_WS_FUNCTIONS . 'functions_prices.php');
+  require(DIR_FS_FUNCTIONS . 'functions_prices.php');
 // taxes
-  require(DIR_WS_FUNCTIONS . 'functions_taxes.php');
+  require(DIR_FS_FUNCTIONS . 'functions_taxes.php');
 // gv and coupons
-  require(DIR_WS_FUNCTIONS . 'functions_gvcoupons.php');
+  require(DIR_FS_FUNCTIONS . 'functions_gvcoupons.php');
 // categories, paths, pulldowns
-  require(DIR_WS_FUNCTIONS . 'functions_categories.php');
+  require(DIR_FS_FUNCTIONS . 'functions_categories.php');
 // customers and addresses
-  require(DIR_WS_FUNCTIONS . 'functions_customers.php');
+  require(DIR_FS_FUNCTIONS . 'functions_customers.php');
 // lookup information
-  require(DIR_WS_FUNCTIONS . 'functions_lookups.php');
+  require(DIR_FS_FUNCTIONS . 'functions_lookups.php');
 ////
 /////////////////////////////////////////////
 ?>

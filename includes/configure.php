@@ -44,12 +44,14 @@
   define('DIR_WS_BLOCKS', DIR_WS_INCLUDES . 'blocks/');
   define('DIR_WS_TEMPLATES', DIR_WS_INCLUDES . 'templates/');
 
-  define('DIR_WS_PHPBB', '/a1/viovio/live/forums/');
-
 // * DIR_FS_* = Filesystem directories (local/physical)
   //the following path is a COMPLETE path to your Zen Cart files. eg: /var/www/vhost/accountname/public_html/store/
-  define('DIR_FS_CATALOG', '/a1/viovio/live/commerce/');
+  define('DIR_FS_CATALOG', BITCOMMERCE_PKG_PATH);
 
+  define('DIR_FS_INCLUDES', DIR_FS_CATALOG . 'includes/');
+  define('DIR_FS_CLASSES', DIR_FS_INCLUDES . 'classes/');
+  define('DIR_FS_FUNCTIONS', DIR_FS_INCLUDES . 'functions/');
+  define('DIR_FS_MODULES', DIR_FS_INCLUDES . 'modules/');
   define('DIR_FS_DOWNLOAD', DIR_FS_CATALOG . 'download/');
   define('DIR_FS_DOWNLOAD_PUBLIC', DIR_FS_CATALOG . 'pub/');
   define('DIR_WS_UPLOADS', DIR_WS_IMAGES . 'uploads/');
@@ -73,6 +75,6 @@
   // or webserver user has write privileges (chmod 666 or 777). We recommend using the "cache" folder inside the Zen Cart folder
   // ie: /path/to/your/webspace/public_html/zen/cache   -- leave no trailing slash
   define('SQL_CACHE_METHOD', 'none');
-  define('DIR_FS_SQL_CACHE', '/a1/viovio/live/temp/zencache');
+  define('DIR_FS_SQL_CACHE', TEMP_PKG_PATH.'zencache');
 
 ?>

@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sniffer.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: sniffer.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
 //
 /**
  * Sniffer Class.
@@ -43,7 +43,7 @@
       $this->phpBB['installed']=false;
 
       if (PHPBB_LINKS_ENABLED !='true') {  // if disabled in Zen Cart admin, don't do any checks for phpBB
-        if ($debug1==true) echo "phpBB connection disabled in Admin<br>";
+        if ( !empty( $debug1) ) echo "phpBB connection disabled in Admin<br>";
         return false;
       }
 

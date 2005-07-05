@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: collect_info.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -59,7 +59,7 @@
                                       p.products_id, p.products_quantity, p.products_model,
                                       p.products_image, p.products_price, p.products_virtual, p.products_weight,
                                       p.products_date_added, p.products_last_modified,
-                                      date_format(p.products_date_available, '%Y-%m-%d') as
+                                      ".$db->mDb->SQLDate('Y-m-d','p.products_date_available')." as
                                       products_date_available, p.products_status, p.products_tax_class_id,
                                       p.manufacturers_id,
                                       p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,

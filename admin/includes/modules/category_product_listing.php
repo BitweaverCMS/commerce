@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: category_product_listing.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -244,8 +244,8 @@ if ($_GET['page'] == '' and $_GET['pID'] != '') {
     $_GET['page'] = 1;
   }
 }
-    $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_RESULTS_CATEGORIES, $products_query_raw, $products_query_numrows);
-    $products = $db->Execute($products_query_raw);
+    $offset = new splitPageResults($_GET['page'], MAX_DISPLAY_RESULTS_CATEGORIES, $products_query_raw, $products_query_numrows);
+    $products = $db->query($products_query_raw, NULL, MAX_DISPLAY_RESULTS_CATEGORIES, $offset);
 // Split Page
 
     while (!$products->EOF) {

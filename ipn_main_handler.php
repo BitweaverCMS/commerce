@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: ipn_main_handler.php,v 1.1 2005/07/05 05:58:55 bitweaver Exp $
+//  $Id: ipn_main_handler.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 DEFINE('MODULE_PAYMENT_PAYPAL_DOMAIN', 'www.paypal.com');
 DEFINE('MODULE_PAYMENT_PAYPAL_HANDLER', '/cgi-bin/webscr');
@@ -148,7 +148,7 @@ if(eregi("VERIFIED",$info) && $_POST['txn_type'] == 'web_accept' && $_POST['busi
                         
   if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes')  mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '10. Created Order Array' );
 
-  zen_db_perform(TABLE_PAYPAL, $paypal_order);
+  $db->associateInsert(TABLE_PAYPAL, $paypal_order);
 
   if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '11. Got past Create DB Array');
 

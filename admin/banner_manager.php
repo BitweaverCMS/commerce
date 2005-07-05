@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: banner_manager.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -121,13 +121,13 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            zen_db_perform(TABLE_BANNERS, $sql_data_array);
+            $db->associateInsert(TABLE_BANNERS, $sql_data_array);
 
-            $banners_id = zen_db_insert_id();
+            $banners_id = zen_db_insert_id( TABLE_BANNERS, 'banners_id' );
 
             $messageStack->add_session(SUCCESS_BANNER_INSERTED, 'success');
           } elseif ($action == 'update') {
-            zen_db_perform(TABLE_BANNERS, $sql_data_array, 'update', "banners_id = '" . (int)$banners_id . "'");
+            $db->associateInsert(TABLE_BANNERS, $sql_data_array, 'update', "banners_id = '" . (int)$banners_id . "'");
 
             $messageStack->add_session(SUCCESS_BANNER_UPDATED, 'success');
           }

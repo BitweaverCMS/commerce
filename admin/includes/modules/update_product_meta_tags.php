@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product_meta_tags.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: update_product_meta_tags.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
 
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
@@ -41,13 +41,13 @@
             $insert_sql_data = array( 'products_date_added' =>  'now()');
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-            zen_db_perform(TABLE_PRODUCTS, $sql_data_array);
+            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array);
           } elseif ($action == 'update_product_meta_tags') {
             $update_sql_data = array( 'products_last_modified' => 'now()');
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 //die('UPDATE PRODUCTS ID:' . (int)$products_id . ' - ' . sizeof($sql_data_array));
-            zen_db_perform(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
           }
 
 // check if new meta tags or existing
@@ -69,9 +69,9 @@
 
               $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-              zen_db_perform(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product_meta_tags') {
-              zen_db_perform(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
             }
           }
           zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));

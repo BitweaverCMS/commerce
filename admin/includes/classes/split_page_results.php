@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: split_page_results.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: split_page_results.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
 
   class splitPageResults {
@@ -51,7 +51,7 @@
 // fix offset error on some versions
       if ($offset < 0) { $offset = 0; }
 
-      $sql_query .= " limit " . $offset . ", " . $max_rows_per_page;
+	  return $offset;
     }
 
     function display_links($query_numrows, $max_rows_per_page, $max_page_links, $current_page_number, $parameters = '', $page_name = 'page') {

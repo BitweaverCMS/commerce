@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/05 16:44:23 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the login page
   if (!$_SESSION['customer_id']) {
@@ -162,7 +162,7 @@
 //        $insertSQL = $db->GetInsertSQL($rs, $sql_data_array);
 //        $rs = $db->Execute($insertSQL);
 
-        zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
         $_SESSION['billto'] = $db->Insert_ID();
 

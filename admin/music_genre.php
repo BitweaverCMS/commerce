@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: music_genre.php,v 1.1 2005/07/05 05:59:54 bitweaver Exp $
+//  $Id: music_genre.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,14 +38,14 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          zen_db_perform(TABLE_MUSIC_GENRE, $sql_data_array);
-          $music_genre_id = zen_db_insert_id();
+          $db->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array);
+          $music_genre_id = zen_db_insert_id( TABLE_MUSIC_GENRE, 'music_genre_id' );
         } elseif ($action == 'save') {
           $update_sql_data = array('last_modified' => 'now()');
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          zen_db_perform(TABLE_MUSIC_GENRE, $sql_data_array, 'update', "music_genre_id = '" . (int)$music_genre_id . "'");
+          $db->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array, 'update', "music_genre_id = '" . (int)$music_genre_id . "'");
         }
 
         zen_redirect(zen_href_link(FILENAME_MUSIC_GENRE, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'mID=' . $music_genre_id));

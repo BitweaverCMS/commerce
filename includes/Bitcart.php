@@ -25,13 +25,13 @@ class Bitcart
 		if( !empty( $pParamHash['manufacturers_id'] ) && $this->manufacturerExists( $pParamHash['manufacturers_id'] ) ) {
 			$sql_data_array['last_modified'] = 'now()';
 			$manufacturers_id = zen_db_prepare_input($pParamHash['manufacturers_id']);
-			zen_db_perform(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
+			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
 		} else {
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];
 			}
 			$sql_data_array['date_added'] = 'now()';
-			zen_db_perform(TABLE_MANUFACTURERS, $sql_data_array);
+			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];
 			}
@@ -47,9 +47,9 @@ vd( $languages );
 			if ($action == 'insert') {
 				$insert_sql_data = array('manufacturers_id' => $manufacturers_id, 'languages_id' => $language_id);
 				$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-				zen_db_perform(TABLE_MANUFACTURERS_INFO, $sql_data_array);
+				$db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
 			} elseif ($action == 'save') {
-				zen_db_perform(TABLE_MANUFACTURERS_INFO, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "' and languages_id = '" . (int)$language_id . "'");
+				$db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "' and languages_id = '" . (int)$language_id . "'");
 			}
 		}
 	}

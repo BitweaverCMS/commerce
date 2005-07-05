@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/05 16:44:23 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -162,7 +162,7 @@
 
       if ($_POST['action'] == 'update') {
 
-      zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "address_book_id = '" . (int)$_GET['edit'] . "' and customers_id ='" . (int)$_SESSION['customer_id'] . "'");
+      $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "address_book_id = '" . (int)$_GET['edit'] . "' and customers_id ='" . (int)$_SESSION['customer_id'] . "'");
 
 // reregister session variables
         if ( (isset($_POST['primary']) && ($_POST['primary'] == 'on')) || ($_GET['edit'] == $_SESSION['customer_default_address_id']) ) {
@@ -176,12 +176,12 @@
                                   'customers_default_address_id' => (int)$_GET['edit']);
 
           if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $gender;
-          zen_db_perform(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
+          $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
         }
       } else {
 
         $sql_data_array['customers_id'] = (int)$_SESSION['customer_id'];
-        zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
         $new_address_book_id = $db->Insert_ID();
 
@@ -198,7 +198,7 @@
           if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $gender;
           if (isset($_POST['primary']) && ($_POST['primary'] == 'on')) $sql_data_array['customers_default_address_id'] = $new_address_book_id;
 
-          zen_db_perform(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
+          $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
         }
       }
 

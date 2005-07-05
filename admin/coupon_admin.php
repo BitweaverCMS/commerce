@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: coupon_admin.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -187,7 +187,7 @@
                                  );
         }
         if ($_GET['oldaction']=='voucheredit') {
-          zen_db_perform(TABLE_COUPONS, $sql_data_array, 'update', "coupon_id='" . $_GET['cid']."'");
+          $db->associateInsert(TABLE_COUPONS, $sql_data_array, 'update', "coupon_id='" . $_GET['cid']."'");
           for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
             $language_id = $languages[$i]['id'];
             $db->Execute("update " . TABLE_COUPONS_DESCRIPTION . "
@@ -197,7 +197,7 @@
                           and language_id = '" . $language_id . "'");
           }
         } else {
-          zen_db_perform(TABLE_COUPONS, $sql_data_array);
+          $db->associateInsert(TABLE_COUPONS, $sql_data_array);
           $insert_id = $db->Insert_ID();
           $cid = $insert_id;
           $_GET['cid'] = $cid;
@@ -206,7 +206,7 @@
             $language_id = $languages[$i]['id'];
             $sql_data_marray[$i]['coupon_id'] = $insert_id;
             $sql_data_marray[$i]['language_id'] = $language_id;
-            zen_db_perform(TABLE_COUPONS_DESCRIPTION, $sql_data_marray[$i]);
+            $db->associateInsert(TABLE_COUPONS_DESCRIPTION, $sql_data_marray[$i]);
           }
         }
       }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: orders_status.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -50,9 +50,9 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            zen_db_perform(TABLE_ORDERS_STATUS, $sql_data_array);
+            $db->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array);
           } elseif ($action == 'save') {
-            zen_db_perform(TABLE_ORDERS_STATUS, $sql_data_array, 'update', "orders_status_id = '" . (int)$orders_status_id . "' and language_id = '" . (int)$language_id . "'");
+            $db->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array, 'update', "orders_status_id = '" . (int)$orders_status_id . "' and language_id = '" . (int)$language_id . "'");
           }
         }
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: group_pricing.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -37,12 +37,12 @@
           if ($action == 'insert') {
             $insert_sql_data = array('date_added' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-            zen_db_perform(TABLE_GROUP_PRICING, $sql_data_array);
+            $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array);
             $group_id = $db->insert_ID();
           } elseif ($action == 'save') {
             $update_sql_data = array('last_modified' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-            zen_db_perform(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
+            $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
           }
         }
         zen_redirect(zen_href_link(FILENAME_GROUP_PRICING, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'gID=' . $group_id));

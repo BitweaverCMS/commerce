@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: product_types.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -70,7 +70,7 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          zen_db_perform(TABLE_PRODUCT_TYPES, $sql_data_array);
+          $db->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array);
           $type_id = $db->Insert_ID();
         } elseif ($action == 'save') {
           $master_type = zen_db_prepare_input($_POST['master_type']);
@@ -81,7 +81,7 @@
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          zen_db_perform(TABLE_PRODUCT_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
+          $db->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
         }
 
         $type_image = new upload('default_image');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/05 16:44:23 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -180,7 +180,7 @@
 //        $insertSQL = $db->GetInsertSQL($rs, $sql_data_array);
 //        $rs = $db->Execute($insertSQL);
 
-        zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
         $_SESSION['sendto'] = $db->Insert_ID($rs);
 

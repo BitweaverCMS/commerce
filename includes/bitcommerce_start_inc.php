@@ -4,7 +4,7 @@
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
-  error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE);
 
   @ini_set("arg_separator.output","&");
 
@@ -33,44 +33,39 @@ print "DIE DIE DIE ";
     header('location: zc_install/index.php');
     exit;
   }
-global $gBitDb;
-  require_once( BITCOMMERCE_PKG_PATH.'includes/classes/db/' .DB_TYPE . '/query_factory.php' );
-  $db = $gBitDb; //new queryFactory();
-/*  if ( (!$db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false)) && (file_exists('zc_install/index.php')) ) {
-    header('location: zc_install/index.php');
-    exit;
-  };
-*/
+  global $gBitDb;
+  $db = $gBitDb;
+
 // Define the project version  (must come after DB class is loaded)
-  require(DIR_WS_INCLUDES . 'version.php');
+  require(DIR_FS_INCLUDES . 'version.php');
 
 // set the type of request (secure or not)
-  $request_type = ($_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
+  $request_type = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
 
 // set php_self in the local scope
   if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 
 // include the list of project filenames
-  require(DIR_WS_INCLUDES . 'filenames.php');
+  require(DIR_FS_INCLUDES . 'filenames.php');
 
 // include the list of project database tables
-  require(DIR_WS_INCLUDES . 'database_tables.php');
+  require(DIR_FS_INCLUDES . 'database_tables.php');
 
 // include the list of compatibility issues
-  require(DIR_WS_FUNCTIONS . 'compatibility.php');
+  require(DIR_FS_INCLUDES . 'functions/compatibility.php');
 
 // include the list of extra database tables and filenames
 //  include(DIR_WS_MODULES . 'extra_datafiles.php');
-  if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_datafiles')) {
+  if ($za_dir = @dir(DIR_FS_INCLUDES . 'extra_datafiles')) {
     while ($zv_file = $za_dir->read()) {
       if (strstr($zv_file, '.php')) {
-        require(DIR_WS_INCLUDES . 'extra_datafiles/' . $zv_file);
+        require(DIR_FS_INCLUDES . 'extra_datafiles/' . $zv_file);
       }
     }
   }
 
 // include the cache class
-  require(DIR_WS_CLASSES . 'cache.php');
+  require(DIR_FS_CLASSES . 'cache.php');
   $zc_cache = new cache;
 
   $configuration = $db->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
@@ -90,13 +85,8 @@ global $gBitDb;
     $configuration->movenext();
   }
 
-// Load the database dependant query defines
-  if (file_exists(DIR_WS_CLASSES . 'db/' . DB_TYPE . '/define_queries.php')) {
-    include(DIR_WS_CLASSES . 'db/' . DB_TYPE . '/define_queries.php');
-  }
-
 // sniffer class
-  require(DIR_WS_CLASSES . 'sniffer.php');
+  require(DIR_FS_CLASSES . 'sniffer.php');
   $sniffer = new sniffer;
 
 // if gzip_compression is enabled, start to buffer the output
@@ -138,12 +128,12 @@ global $gBitDb;
   }
 
 // define general functions used application-wide
-  require(DIR_WS_FUNCTIONS . 'functions_general.php');
-  require(DIR_WS_FUNCTIONS . 'html_output.php');
-  require(DIR_WS_FUNCTIONS . 'functions_email.php');
+  require(DIR_FS_FUNCTIONS . 'functions_general.php');
+  require(DIR_FS_FUNCTIONS . 'html_output.php');
+  require(DIR_FS_FUNCTIONS . 'functions_email.php');
 
 // load extra functions
-  include(DIR_WS_MODULES . 'extra_functions.php');
+  include(DIR_FS_MODULES . 'extra_functions.php');
 
 
 

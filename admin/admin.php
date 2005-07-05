@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to |
 // | license@zen-cart.com so we can mail you a copy immediately.|
 // +----------------------------------------------------------------------+
-//$Id: admin.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//$Id: admin.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -73,19 +73,19 @@ if ($error == false) {
 
 		$insert_sql_data = array('admin_pass' => zen_encrypt_password($password_new));
 		$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-		zen_db_perform(TABLE_ADMIN, $sql_data_array);
+		$db->associateInsert(TABLE_ADMIN, $sql_data_array);
 		$admin_id = zen_db_insert_id();
 
 	} elseif ($action == 'save') {
 
-		zen_db_perform(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
+		$db->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
     $db->Execute("Update " . TABLE_CONFIGURATION . " set configuration_value='" . $_POST['demo_status'] . "' where configuration_key='ADMIN_DEMO'");
 
 	} elseif ($action == 'reset') {
 
 		$update_sql_data = array('admin_pass' => zen_encrypt_password($password_new));
 		$sql_data_array = array_merge($sql_data_array, $update_sql_data);
-		zen_db_perform(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
+		$db->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
 
 	} // end action check
 

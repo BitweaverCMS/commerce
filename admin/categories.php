@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: categories.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -146,7 +146,7 @@
             $insert_sql_data = array('category_id' => zen_db_prepare_input($_POST['categories_id']),
                                      'product_type_id' => zen_db_prepare_input($_POST['restrict_type']));
 
-            zen_db_perform(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
+            $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
 /*
 // moved below so evaluated separately from current category
             if (isset($_POST['add_type_all'])) {
@@ -164,7 +164,7 @@
         if (isset($_POST['categories_id'])) $categories_id = zen_db_prepare_input($_POST['categories_id']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
 
-        $sql_data_array = array('sort_order' => $sort_order);
+        $sql_data_array = array('sort_order' => (int)$sort_order);
 
         if ($action == 'insert_category') {
           $insert_sql_data = array('parent_id' => $current_category_id,
@@ -172,9 +172,9 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          zen_db_perform(TABLE_CATEGORIES, $sql_data_array);
+          $db->associateInsert(TABLE_CATEGORIES, $sql_data_array);
 
-          $categories_id = zen_db_insert_id();
+          $categories_id = zen_db_insert_id( TABLE_CATEGORIES, 'categories_id' );
 // check if [arent is restricted
           $sql = "select parent_id from " . TABLE_CATEGORIES . "
                   where categories_id = '" . $categories_id . "'";
@@ -195,7 +195,7 @@
                 $insert_sql_data = array('category_id' => $categories_id,
                                          'product_type_id' => $parent_product_type->fields['product_type_id']);
 
-                zen_db_perform(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
+                $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
 
               }
 	    }
@@ -205,7 +205,7 @@
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          zen_db_perform(TABLE_CATEGORIES, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "'");
+          $db->associateInsert(TABLE_CATEGORIES, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "'");
         }
 
         $languages = zen_get_languages();
@@ -224,9 +224,9 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            zen_db_perform(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
+            $db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
           } elseif ($action == 'update_category') {
-            zen_db_perform(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
+            $db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
           }
         }
 
@@ -458,9 +458,9 @@
         $pieces = explode('_',$_GET['cPath']);
         $cat_id = $pieces[sizeof($pieces)-1];
 //	echo $cat_id;
-        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . $cat_id . "'";
+        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . (int)$cat_id . "'";
         $product_type_list = $db->Execute($sql);
-        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . $cat_id . "' and product_type_id = '" . $_GET['product_type'] . "'";
+        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . (int)$cat_id . "' and product_type_id = '" . $_GET['product_type'] . "'";
         $product_type_good = $db->Execute($sql);
         if ($product_type_list->RecordCount() < 1 || $product_type_good->RecordCount() > 0) {
           $url = zen_get_all_get_params();

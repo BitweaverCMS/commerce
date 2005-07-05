@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.1 2005/07/05 05:59:54 bitweaver Exp $
+//  $Id: geo_zones.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -89,7 +89,7 @@
                             '" . zen_db_input($geo_zone_description) . "',
                             now())");
 
-        $new_zone_id = $db->Insert_ID();
+        $new_zone_id = zen_db_insert_id( TABLE_GEO_ZONES, 'geo_zone_id' );
 
         zen_redirect(zen_href_link(FILENAME_GEO_ZONES, 'zpage=' . $_GET['zpage'] . '&zID=' . $new_zone_id));
         break;

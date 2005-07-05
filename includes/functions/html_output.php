@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: html_output.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -265,8 +265,9 @@
 // Output a function button in the selected language
   function zen_image_button($image, $alt = '', $parameters = '') {
     global $template, $current_page_base;
-
-    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $_SESSION['language'] . '/') . $image, $alt, '', '', $parameters);
+	if( $template ) {
+	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $_SESSION['language'] . '/') . $image, $alt, '', '', $parameters);
+	}
   }
 
 ////

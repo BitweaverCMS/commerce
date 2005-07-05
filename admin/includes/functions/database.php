@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: database.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: database.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
 
 
-  function zen_db_perform($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
+  function $db->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
     global $db;
     reset($data);
     if ($action == 'insert') {
@@ -79,7 +79,10 @@
   }
 
   function zen_db_prepare_input($string) {
-    if (is_string($string)) {
+  	if( empty( $string ) ) {
+vd( $string );
+		return NULL;
+    } elseif (is_string($string)) {
       return trim(stripslashes($string));
     } elseif (is_array($string)) {
       reset($string);

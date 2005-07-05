@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: newsletters.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -76,10 +76,10 @@
             $sql_data_array['status'] = '0';
             $sql_data_array['locked'] = '0';
 
-            zen_db_perform(TABLE_NEWSLETTERS, $sql_data_array);
-            $newsletter_id = zen_db_insert_id();
+            $db->associateInsert(TABLE_NEWSLETTERS, $sql_data_array);
+            $newsletter_id = zen_db_insert_id( TABLE_NEWSLETTERS, 'newsletter_id' );
           } elseif ($action == 'update') {
-            zen_db_perform(TABLE_NEWSLETTERS, $sql_data_array, 'update', "newsletters_id = '" . (int)$newsletter_id . "'");
+            $db->associateInsert(TABLE_NEWSLETTERS, $sql_data_array, 'update', "newsletters_id = '" . (int)$newsletter_id . "'");
           }
 
           zen_redirect(zen_href_link(FILENAME_NEWSLETTERS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'nID=' . $newsletter_id));

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.1 2005/07/05 06:00:02 bitweaver Exp $
+//  $Id: general.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
 
 ////
@@ -1137,10 +1137,9 @@
                                     from " . TABLE_CATEGORIES . "
                                     where categories_id = '" . (int)$category_id . "'");
 
-    $duplicate_image = $db->Execute("select count(*) as total
+    $duplicate_image = $db->query("select count(*) as total
                                      from " . TABLE_CATEGORIES . "
-                                     where categories_image = '" .
-                                           zen_db_input($category_image->fields['categories_image']) . "'");
+                                     where categories_image = ?", array( $category_image->fields['categories_image'] ) );
     if ($duplicate_image->fields['total'] < 2) {
       if (file_exists(DIR_FS_CATALOG_IMAGES . $category_image->fields['categories_image'])) {
         @unlink(DIR_FS_CATALOG_IMAGES . $category_image->fields['categories_image']);
@@ -2579,7 +2578,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Get the status of a category
   function zen_get_categories_status($categories_id) {
     global $db;
-    $sql = "select categories_status from " . TABLE_CATEGORIES . " where categories_id='" . $categories_id . "'";
+    $sql = "select categories_status from " . TABLE_CATEGORIES . " where categories_id='" . (int)$categories_id . "'";
     $check_status = $db->Execute($sql);
     return $check_status->fields['categories_status'];
   }
@@ -2588,7 +2587,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Get the status of a product
   function zen_get_products_status($product_id) {
     global $db;
-    $sql = "select products_status from " . TABLE_PRODUCTS . " where products_id='" . $product_id . "'";
+    $sql = "select products_status from " . TABLE_PRODUCTS . " where products_id='" . (int)$product_id . "'";
     $check_status = $db->Execute($sql);
     return $check_status->fields['products_status'];
   }
@@ -2598,7 +2597,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_get_product_is_linked($product_id, $show_count = 'false') {
     global $db;
 
-    $sql = "select * from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id='" . $product_id . "'";
+    $sql = "select * from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id='" . (int)$product_id . "'";
     $check_linked = $db->Execute($sql);
     if ($check_linked->RecordCount() > 1) {
       if ($show_count == 'true') {
@@ -2889,7 +2888,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       if ($zq_type_to_cat->RecordCount() < 1) {
         $za_insert_sql_data = array('category_id' => $zq_sub_cats->fields['categories_id'],
                                     'product_type_id' => $zf_type);
-        zen_db_perform(TABLE_PRODUCT_TYPES_TO_CATEGORY, $za_insert_sql_data);
+        $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $za_insert_sql_data);
       }
       zen_restrict_sub_categories($zq_sub_cats->fields['categories_id'], $zf_type);
       $zq_sub_cats->MoveNext();
@@ -3107,5 +3106,32 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     return $parent_id;
   }
+
+  function zen_db_prepare_input($string) {
+  	if( empty( $string ) ) {
+		return NULL;
+    } elseif (is_string($string)) {
+      return trim(stripslashes($string));
+    } elseif (is_array($string)) {
+      reset($string);
+      while (list($key, $value) = each($string)) {
+        $string[$key] = zen_db_prepare_input($value);
+      }
+      return $string;
+    } else {
+      return $string;
+    }
+  }
+
+  function zen_db_insert_id( $pTableName, $pIdColumn ) {
+  	global $db;
+  	return( $db->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
+  }
+
+  ////
+  function zen_db_input($string) {
+    return addslashes($string);
+  }
+
 
 ?>

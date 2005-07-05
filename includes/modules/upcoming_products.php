@@ -17,17 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: upcoming_products.php,v 1.2 2005/07/05 16:44:22 spiderr Exp $
 //
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
     $expected_query = "select p.products_id, pd.products_name, products_date_available as date_expected
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                       where to_days(products_date_available) >= to_days(now())
+                       where products_date_available >= now()
                        and p.products_id = pd.products_id
                        and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
                        order by " . EXPECTED_PRODUCTS_FIELD . " " . EXPECTED_PRODUCTS_SORT . "
                        limit " . MAX_DISPLAY_UPCOMING_PRODUCTS;
+//                       where to_days(products_date_available) >= to_days(now())
   } else {
     $expected_query = "select p.products_id, pd.products_name, products_date_available as date_expected
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " .

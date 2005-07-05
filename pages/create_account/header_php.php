@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/05 16:44:24 spiderr Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $process = false;
@@ -271,7 +271,7 @@
       if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $gender;
       if (ACCOUNT_DOB == 'true') $sql_data_array['customers_dob'] = zen_date_raw($dob);
 
-      zen_db_perform(TABLE_CUSTOMERS, $sql_data_array);
+      $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array);
 
       $_SESSION['customer_id'] = $db->Insert_ID();
 
@@ -296,7 +296,7 @@
         }
       }
 
-      zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+      $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
       $address_id = $db->Insert_ID();
 

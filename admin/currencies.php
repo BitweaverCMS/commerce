@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: currencies.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -51,10 +51,10 @@
                                 'value' => $value);
 
         if ($action == 'insert') {
-          zen_db_perform(TABLE_CURRENCIES, $sql_data_array);
-          $currency_id = zen_db_insert_id();
+          $db->associateInsert(TABLE_CURRENCIES, $sql_data_array);
+          $currency_id = zen_db_insert_id( TABLE_CURRENCIES, 'currency_id' );
         } elseif ($action == 'save') {
-          zen_db_perform(TABLE_CURRENCIES, $sql_data_array, 'update', "currencies_id = '" . (int)$currency_id . "'");
+          $db->associateInsert(TABLE_CURRENCIES, $sql_data_array, 'update', "currencies_id = '" . (int)$currency_id . "'");
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {

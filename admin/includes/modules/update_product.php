@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: update_product.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -25,9 +25,9 @@
           if (isset($_GET['pID'])) $products_id = zen_db_prepare_input($_GET['pID']);
           $products_date_available = zen_db_prepare_input($_POST['products_date_available']);
 
-          $products_date_available = (date('Y-m-d') < $products_date_available) ? $products_date_available : 'null';
+          $products_date_available = (date('Y-m-d') < $products_date_available) ? $products_date_available : 'now()';
 
-          $sql_data_array = array('products_quantity' => zen_db_prepare_input($_POST['products_quantity']),
+          $sql_data_array = array('products_quantity' => (int)zen_db_prepare_input($_POST['products_quantity']),
                                   'products_type' => zen_db_prepare_input($_GET['product_type']),
                                   'products_model' => zen_db_prepare_input($_POST['products_model']),
                                   'products_price' => zen_db_prepare_input($_POST['products_price']),
@@ -45,7 +45,7 @@
                                   'products_quantity_mixed' => zen_db_prepare_input($_POST['products_quantity_mixed']),
                                   'product_is_always_free_shipping' => zen_db_prepare_input($_POST['product_is_always_free_shipping']),
                                   'products_qty_box_status' => zen_db_prepare_input($_POST['products_qty_box_status']),
-                                  'products_quantity_order_max' => zen_db_prepare_input($_POST['products_quantity_order_max']),
+                                  'products_quantity_order_max' => (int)zen_db_prepare_input($_POST['products_quantity_order_max']),
                                   'products_sort_order' => zen_db_prepare_input($_POST['products_sort_order']),
                                   'products_discount_type' => zen_db_prepare_input($_POST['products_discount_type']),
                                   'products_discount_type_from' => zen_db_prepare_input($_POST['products_discount_type_from']),
@@ -68,8 +68,8 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            zen_db_perform(TABLE_PRODUCTS, $sql_data_array);
-            $products_id = zen_db_insert_id();
+            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array);
+            $products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
             // reset products_price_sorter for searches etc.
             zen_update_products_price_sorter($products_id);
@@ -83,7 +83,7 @@
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-            zen_db_perform(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
 
             // reset products_price_sorter for searches etc.
             zen_update_products_price_sorter((int)$products_id);
@@ -104,9 +104,9 @@
 
               $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-              zen_db_perform(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array);
+              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product') {
-              zen_db_perform(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
             }
           }
 
@@ -126,9 +126,9 @@
 
               $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-              zen_db_perform(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product_meta_tags') {
-              zen_db_perform(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
             }
           }
 

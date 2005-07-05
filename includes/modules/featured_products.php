@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: featured_products.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
 //
 
 
@@ -42,7 +42,8 @@
                            and p.products_id = f.products_id and p.products_id = pd.products_id and p.products_status = '1' and f.status = '1' and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
   }
-  $featured_products = $db->ExecuteRandomMulti($featured_products_query, MAX_DISPLAY_SEARCH_RESULTS_FEATURED);
+  //$featured_products = $db->ExecuteRandomMulti($featured_products_query, MAX_DISPLAY_SEARCH_RESULTS_FEATURED);
+  $featured_products = $db->query( $featured_products_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SEARCH_RESULTS_FEATURED);
   $row = 0;
   $col = 0;
   $list_box_contents = '';

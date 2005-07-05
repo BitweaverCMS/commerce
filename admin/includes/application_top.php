@@ -17,14 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: application_top.php,v 1.2 2005/07/05 16:44:03 spiderr Exp $
 //
+
+require_once( '../../bit_setup_inc.php' );
+//require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+error_reporting(E_ALL & ~E_NOTICE);
 
 // Start the clock for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 
 // Set the level of error reporting
-  error_reporting(E_ALL & ~E_NOTICE);
+//  error_reporting(E_ALL & ~E_NOTICE);
 
 // set php_self in the local scope
   if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -87,7 +91,7 @@
   }
 
 // set the type of request (secure or not)
-  $request_type = ($_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
+  $request_type = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
 
 // Used in the "Backup Manager" to compress backups
   define('LOCAL_EXE_GZIP', '/usr/bin/gzip');
@@ -112,9 +116,6 @@
   define('CURRENCY_SERVER_PRIMARY', 'oanda');
   define('CURRENCY_SERVER_BACKUP', 'xe');
 
-// include the database functions
-  require_once(DIR_WS_FUNCTIONS . 'database.php');
-
 // include the list of extra database tables and filenames
 //  include(DIR_WS_MODULES . 'extra_datafiles.php');
   if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_datafiles')) {
@@ -129,19 +130,16 @@
   require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'cache.php');
   $zc_cache = new cache;
 // Load db classes
+  global $gBitDb;
+  $db = $gBitDb;
 
 // Load queryFactory db classes
-  require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'db/' .DB_TYPE . '/query_factory.php');
-  $db = new queryFactory();
-  $db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE);
-
-  $zc_cache->sql_cache_flush_cache();
 
 // Define the project version  (must come after db class is loaded)
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
 
 // Determine the DATABASE patch level
-  $project_db_info= $db->Execute('select * from ' . TABLE_PROJECT_VERSION . ' WHERE project_version_key = "Zen-Cart Database" ');
+  $project_db_info= $db->Execute('select * from ' . TABLE_PROJECT_VERSION . " WHERE project_version_key = 'Zen-Cart Database' ");
   define('PROJECT_DB_VERSION_MAJOR',$project_db_info->fields['project_version_major']);
   define('PROJECT_DB_VERSION_MINOR',$project_db_info->fields['project_version_minor']);
   define('PROJECT_DB_VERSION_PATCH1',$project_db_info->fields['project_version_patch1']);
@@ -150,19 +148,20 @@
   define('PROJECT_DB_VERSION_PATCH2_SOURCE',$project_db_info->fields['project_version_patch2_source']);
 
 // set application wide parameters
-  $configuration = $db->Execute('select configuration_key as cfgKey, configuration_value as cfgValue
+  $configuration = $db->Execute('select configuration_key as cfg_key, configuration_value as cfg_value
                                  from ' . TABLE_CONFIGURATION);
+
   while (!$configuration->EOF) {
-    define($configuration->fields['cfgKey'], $configuration->fields['cfgValue']);
+    define($configuration->fields['cfg_key'], $configuration->fields['cfg_value']);
     $configuration->MoveNext();
   }
 
 // set product type layout paramaters
-  $configuration = $db->Execute('select configuration_key as cfgKey, configuration_value as cfgValue
+  $configuration = $db->Execute('select configuration_key as cfg_key, configuration_value as cfg_value
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT);
 
   while (!$configuration->EOF) {
-    define($configuration->fields['cfgKey'], $configuration->fields['cfgValue']);
+    define($configuration->fields['cfg_key'], $configuration->fields['cfg_value']);
     $configuration->movenext();
   }
 
@@ -262,7 +261,6 @@
   define('DIR_WS_TEMPLATE_ICONS', DIR_WS_TEMPLATE_IMAGES . 'icons/');
 
   require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'template_func.php');
-  $template = new template_func(DIR_WS_TEMPLATE);
 
 
 // include the language translations
@@ -398,13 +396,8 @@
 // include the password crypto functions
   require_once(DIR_WS_FUNCTIONS . 'password_funcs.php');
 
-  if (!(basename($PHP_SELF) == FILENAME_LOGIN . '.php')) {
-    if (!isset($_SESSION['admin_id'])) {
-      if (!(basename($PHP_SELF) == FILENAME_PASSWORD_FORGOTTEN . '.php')) {
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-      }
-    }
-  }
+  global $gBitSystem, $gBitUser;
+  $gBitSystem->verifyPermission( 'bit_p_cart_admin' );
 
   if ((basename($PHP_SELF) == FILENAME_LOGIN . '.php') and (substr_count(dirname($PHP_SELF),'//') > 0 or substr_count(dirname($PHP_SELF),'.php') > 0)) {
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
@@ -416,12 +409,12 @@
   // log page visit into admin activity history
   if (basename($PHP_SELF) != FILENAME_LOGIN . '.php' && basename($PHP_SELF) != FILENAME_DEFAULT . '.php' && isset($_SESSION['admin_id'])) {
     $sql_data_array = array( 'access_date' => 'now()',
-                             'admin_id' => $_SESSION['admin_id'],
+                             'admin_id' => $gBitUser->mUserId,
                              'page_accessed' =>  basename($PHP_SELF),
                              'page_parameters' => zen_get_all_get_params(),
                              'ip_address' => $_SERVER['REMOTE_ADDR']
                              );
-    zen_db_perform(TABLE_ADMIN_ACTIVITY_LOG, $sql_data_array);
+    $db->associateInsert(TABLE_ADMIN_ACTIVITY_LOG, $sql_data_array);
   }
   if (!isset($_SESSION['html_editor_preference_status'])) {
     $_SESSION['html_editor_preference_status'] = HTML_EDITOR_PREFERENCE;

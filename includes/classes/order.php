@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: order.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
 //
 
   class order {
@@ -563,7 +563,7 @@
                           );
 
 
-      zen_db_perform(TABLE_ORDERS, $sql_data_array);
+      $db->associateInsert(TABLE_ORDERS, $sql_data_array);
 
       $insert_id = $db->Insert_ID();
 
@@ -575,7 +575,7 @@
                                 'class' => $zf_ot_modules[$i]['code'],
                                 'sort_order' => $zf_ot_modules[$i]['sort_order']);
 
-        zen_db_perform(TABLE_ORDERS_TOTAL, $sql_data_array);
+        $db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
       }
 
       $customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
@@ -585,7 +585,7 @@
                           'customer_notified' => $customer_notification,
                           'comments' => $this->info['comments']);
 
-      zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+      $db->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
       return($insert_id);
 
@@ -674,7 +674,7 @@
                             'product_is_free' => $this->products[$i]['product_is_free'],
                             'products_discount_type' => $this->products[$i]['products_discount_type'],
                             'products_discount_type_from' => $this->products[$i]['products_discount_type_from']);
-        zen_db_perform(TABLE_ORDERS_PRODUCTS, $sql_data_array);
+        $db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 
         $order_products_id = $db->Insert_ID();
 
@@ -752,7 +752,7 @@
                                    );
 
 
-           zen_db_perform(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+           $db->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 
            if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
              $sql_data_array = array('orders_id' => $zf_insert_id,
@@ -761,7 +761,7 @@
                                      'download_maxdays' => $attributes_values->fields['products_attributes_maxdays'],
                                      'download_count' => $attributes_values->fields['products_attributes_maxcount']);
 
-             zen_db_perform(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
+             $db->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
            }
 //clr 030714 changing to use values from $orders->products and adding call to zen_decode_specialchars()
 //        $this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . $attributes_values->fields['products_options_values_name'];

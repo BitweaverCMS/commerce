@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_types.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: media_types.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,14 +38,14 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_data_array);
 
-          zen_db_perform(TABLE_MEDIA_TYPES, $sql_data_array);
-          $type_id = zen_db_insert_id();
+          $db->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array);
+          $type_id = zen_db_insert_id( TABLE_MEDIA_TYPES, 'type_id' );
 
         } elseif ($action == 'save') {
           $insert_data_array = array('type_name' => $type_name);
           $sql_data_array = array_merge($sql_data_array, $insert_data_array);
 
-          zen_db_perform(TABLE_MEDIA_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
+          $db->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
         }
 
         zen_redirect(zen_href_link(FILENAME_MEDIA_TYPES, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'mID=' . $type_id));

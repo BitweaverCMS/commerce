@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: new_products.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
@@ -43,6 +43,8 @@
       $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 120';
       break;
   }
+  // nuke MYSQL specific stuff for now - spiderr
+  $display_limit = '';
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
     $new_products_query = "select p.products_id, p.products_image, p.products_tax_class_id, p.products_price, p.products_date_added
@@ -60,7 +62,8 @@
                            and c.parent_id = '" . (int)$new_products_category_id . "'
                            and p.products_status = '1' " . $display_limit;
   }
-  $new_products = $db->ExecuteRandomMulti($new_products_query, MAX_DISPLAY_NEW_PRODUCTS);
+  //$new_products = $db->ExecuteRandomMulti($new_products_query, MAX_DISPLAY_NEW_PRODUCTS);
+  $new_products = $db->query( $new_products_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_NEW_PRODUCTS);
   $row = 0;
   $col = 0;
   $list_box_contents = '';
