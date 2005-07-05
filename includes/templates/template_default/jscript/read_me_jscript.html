@@ -1,0 +1,40 @@
+<!--
+// +----------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce                                       |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004 The zen-cart developers                           |
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
+// | Portions may be Copyright (c) 2003 osCommerce                        |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | If you did not receive a copy of the zen-cart license and are unable |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | license@zen-cart.com so we can mail you a copy immediately.          |
+// +----------------------------------------------------------------------+
+// $Id: read_me_jscript.html,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+//-->
+<html>
+<style type="text/css">
+<!--
+.style1 {color: #CC0000}
+.style2 {color: #0033FF}
+-->
+</style>
+<title>JScript Overrides in Zen Cart</title>
+<h2><strong>JavaScript Override How-To</strong> </h2>
+<p>Any file in this directory with the following filename format will be loaded globally on every page of your shop: <br />
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>jscript_<span class="style1">{unique_name}</span>.js</strong></code><br />
+<em>(where <span class="style1">{unique_name}</span> can be anything you want) </em><br />
+<br />
+<br />
+Effectively, the file will be loaded as if you had inserted the following into an HTML page:<br />
+
+<br />
+<code>&lt;script language=&quot;javascript&quot; src=&quot;includes/templates/<span class="style2">{template_directory}</span>/jscript/jscript_<span class="style1">{unique_name}</span>.js&quot;&gt;&lt;/script&gt;</code><br />
+<br />
+</p>

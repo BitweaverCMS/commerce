@@ -1,0 +1,364 @@
+<!--
+// +----------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce                                       |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004 The zen-cart developers                           |
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
+// | Portions may be Copyright (c) 2003 osCommerce                        |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | If you did not receive a copy of the zen-cart license and are unable |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | license@zen-cart.com so we can mail you a copy immediately.          |
+// +----------------------------------------------------------------------+
+// $Id: changelog-v1-2-5.html,v 1.1 2005/07/05 05:58:56 bitweaver Exp $
+//-->
+<html>
+<style type="text/css">
+<!--
+body, table{ font-family:Verdana, Arial, Helvetica, sans-serif; font-size:14px; }
+table.intro {border-color:C96E29; }
+td.intro{background-color:#EEEEEE ; border-color:5778ce; font-size:14px; }
+td.plainbox, div.callout {border: 1px dashed; border-color: C96E29; margin:5 40 5 40;}
+.heading {background-color:5778CE; font-weight:bold; font-size:14px;	width: 100%; }
+
+.title1 {color:C96E29; font-weight:bold; font-size:22px; }
+.title2 {color:C96E29; font-weight:bold; font-size:13px; }
+.small {font-size:10px ;}
+.error {color:FF0000; }
+.filename {font-family: mono, "Courier New", Courier ; font-size:14px; color: c96e29;}
+.pseudolink {text-decoration:underline; color:5778CE;}
+h1.intro { color: #ffffff; border:1px solid #aca893; background-color: #c96e29;  font-size: 22px;   padding: 4px;}
+h1 { color: #ffffff;    border:1px solid #aca893;   background-color: #5778ce;   font-size: 20px;   padding: 4px;}
+h2 { color: #c96e29; 	font-size: 18px;}
+h3 { color: #5778ce;	font-size: 16px; margin-bottom:0px;}
+h4 { color: #c96e29;	font-size: 14px;}
+
+
+-->
+</style>
+<title>Zen Cart(tm) Changelog</title><body>
+
+<table class="intro" cellspacing="4" cellpadding="6" border="3" width="748px" align="center">
+<tr><td class="intro">
+<center><h1 class="intro">Welcome to Zen Cart&trade; ...</h1></center>
+<br />
+The Zen Cart&trade; software is made available to you for use, additions, changes, modifications, etc. without charge, under the GNU General Public License.
+<br />
+<br />
+While we do not charge for this software, donations are greatly appreciated each time you download a new version, to help cover the expenses of maintenance, upgrades, updates, the free support forum and the continued development of this software for your online e-commerce store.
+<br />
+<br />
+Donations can be made at:
+<a href="http://www.zen-cart.com/modules/freecontent/index.php?id=6" target="_blank">The Zen Cart&trade; Team Page</a>
+<br /><br />
+We appreciate your support.<br />
+<em>The Zen Cart&trade; Team</em><br />
+<br />
+
+<center>
+<span class="small">
+Zen Cart&trade; is derived from: Copyright  2003 osCommerce<br />
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br />
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE<br />
+and is redistributable under the GNU General Public License<br /><br />
+</span>
+</center>
+</td></tr></table>
+
+<br />
+<table border="3" width="748px" align="center" cellpadding="6">
+  <tr>
+<td align="center"><img src="osi-certified-120x100.png" /><br />
+This software is OSI Certified Open Source Software.<br />
+OSI Certified is a certification mark of the Open Source Initiative.
+</td></tr></table>
+<br />
+
+<table border="3" width="748px" align="center" cellpadding="6">
+<tr><td>
+<h1 align="center" class="intro">Version 1.2.5</h1>
+<h1>Changed Files (since v1.2.4)</h1>
+<ul>
+<li>/admin/admin.php</li>
+<li>/admin/attributes_controller.php</li>
+<li>/admin/banner_manager.php</li>
+<li>/admin/categories.php</li>
+<li>/admin/coupon_admin.php</li>
+<li>/admin/currencies.php</li>
+<li>/admin/customers.php</li>
+<li>/admin/define_pages_editor.php</li>
+<li>/admin/developers_tool_kit.php</li>
+<li>/admin/document_general.php</li>
+<li>/admin/document_product.php</li>
+<li>/admin/email_welcome.php</li>
+<li>/admin/gv_mail.php</li>
+<li>/admin/includes/application_top.php</li>
+<li>/admin/includes/classes/order.php</li>
+<li>/admin/includes/classes/shoping_cart.php</li>
+<li>/admin/includes/functions/audience.php</li>
+<li>/admin/includes/functions/general.php
+<li>/admin/includes/functions/functions_prices.php</li>
+<li>/admin/includes/header.php</li>
+<li>/admin/includes/htmlarea.php</li>
+<li>/admin/includes/index.css</li>
+<li>/admin/includes/languages/english.php</li>
+<li>/admin/includes/languages/english/banner_manager.php</li>
+<li>/admin/includes/languages/english/categories.php</li>
+<li>/admin/includes/languages/english/customers.php</li>
+<li>/admin/includes/languages/english/document_general.php</li>
+<li>/admin/includes/languages/english/document_product.php</li>
+<li>/admin/includes/languages/english/email_welcome.php</li>
+<li>/admin/includes/languages/english/index.php</li>
+<li>/admin/includes/languages/english/options_values_manager.php</li>
+<li>/admin/includes/languages/english/orders.php</li>
+<li>/admin/includes/languages/english/product.php</li>
+<li>/admin/includes/languages/english/product_free_shipping.php</li>
+<li>/admin/includes/languages/english/product_music.php</li>
+<li>/admin/includes/languages/english/product_types.php</li>
+<li>/admin/includes/languages/english/reviews.php</li>
+<li>/admin/includes/languages/english/sqlpatch.php</li>
+<li>/admin/includes/local/skip_version_check.ini</li>
+<li>/admin/includes/menu.css</li>
+<li>/admin/includes/modules/category_product_listing.php</li>
+<li>/admin/includes/modules/document_general/collect_info.php</li>
+<li>/admin/includes/modules/document_product/collect_info.php</li>
+<li>/admin/includes/modules/orders_download.php</li>
+<li>/admin/includes/modules/product/collect_info.php</li>
+<li>/admin/includes/modules/product_free_shipping/collect_info.php</li>
+<li>/admin/includes/modules/product_music/collect_info.php</li>
+<li>/admin/includes/modules/product_music/update_product.php</li>
+<li>/admin/includes/modules/update_product.php</li>
+<li>/admin/includes/modules/newsletters.php</li>
+<li>/admin/includes/modules/product_notification.php</li>
+<li>/admin/includes/stylesheet.css</li>
+<li>/admin/index.php</li>
+<li>/admin/invoice.php</li>
+<li>/admin/mail.php</li>
+<li>/admin/modules.php</li>
+<li>/admin/music_genre.php</li>
+<li>/admin/newsletters.php</li>
+<li>/admin/options_name_manager.php</li>
+<li>/admin/options_values_manager.php</li>
+<li>/admin/orders.php</li>
+<li>/admin/product.php</li>
+<li>/admin/product_free_shipping.php</li>
+<li>/admin/product_music.php</li>
+<li>/admin/product_types.php</li>
+<li>/admin/products_price_manager.php</li>
+<li>/admin/reviews.php</li>
+<li>/admin/salemaker_popup.php
+<li>/admin/sqlpatch.php</li>
+<li>/admin/stats_products_purchased.php</li>
+<li>/admin/whos_online.php</li>
+<li>/email/email_template_gv_mail.html</li>
+<li>/includes/application_top.php</li>
+<li>/includes/blocks/blk_advanced_search_result.php</li>
+<li>/includes/classes/db/mysql/query_factory.php</li>
+<li>/includes/classes/email.php
+<li>/includes/classes/http_client.php</li>
+<li>/includes/classes/order.php</li>
+<li>/includes/classes/shopping_cart.php</li>
+<li>/includes/classes/upload.php</li>
+<li>/includes/database_tables.php</li>
+<li>/includes/filenames.php</li>
+<li>/includes/functions/functions_categories.php</li>
+<li>/includes/functions/functions_email.php</li>
+<li>/includes/functions/functions_general.php</li>
+<li>/includes/functions/functions_lookups.php</li>
+<li>/includes/functions/functions_prices.php</li>
+<li>/includes/functions/html_output.php
+<li>/includes/functions/sessions.php</li>
+<li>/includes/functions/whos_online.php</li>
+<li>/includes/index_filters/default_filter.php</li>
+<li>/includes/index_filters/music_genre_filter.php</li>
+<li>/includes/index_filters/record_company_filter.php</li>
+<li>/includes/languages/english.php</li>
+<li>/includes/languages/english/create_account.php</li>
+<li>/includes/languages/english/email_extras.php</li>
+<li>/includes/languages/english/icon_names.php</li>
+<li>/includes/languages/english/account_notifications.php</li>
+<li>/includes/languages/english/product_reviews_write.php</li>
+<li>/includes/modules/also_purchased_products.php</li>
+<li>/includes/modules/checkout_process.php</li>
+<li>/includes/modules/downloads.php</li>
+<li>/includes/modules/featured_products_listing.php
+<li>/includes/modules/header.php</li>
+<li>/includes/modules/listing_display_order.php</li>
+<li>/includes/modules/meta_tags.php</li>
+<li>/includes/modules/order_total/ot_gv.php</li>
+<li>/includes/modules/order_total/ot_tax.php</li>
+<li>/includes/modules/pages/checkout_success/header_php.php</li>
+<li>/includes/modules/pages/contact_us/on_load_main.js</li>
+<li>/includes/modules/pages/document_general_info/main_template_vars_attributes.php</li>
+<li>/includes/modules/pages/document_general_info/main_template_vars_images.php</li>
+<li>/includes/modules/pages/document_general_info/main_template_vars_images_additional.php</li>
+<li>/includes/modules/pages/document_product_info/main_template_vars_attributes.php</li>
+<li>/includes/modules/pages/document_product_info/main_template_vars_images.php</li>
+<li>/includes/modules/pages/document_product_info/main_template_vars_images_additional.php</li>
+<li>/includes/modules/pages/download/header_php.php</li>
+<li>/includes/modules/pages/gv_send/header_php.php</li>
+<li>/includes/modules/pages/login/on_load_main.js</li>
+<li>/includes/modules/pages/product_free_shipping_info/main_template_vars_images.php</li>
+<li>/includes/modules/pages/product_free_shipping_info/main_template_vars_images_additional.php</li>
+<li>/includes/modules/pages/product_info/main_template_vars_attributes.php</li>
+<li>/includes/modules/pages/product_info/main_template_vars_images_additional.php</li>
+<li>/includes/modules/pages/product_info/main_template_vars_images.php</li>
+<li>/includes/modules/pages/product_music_info/main_template_vars_attributes.php</li>
+<li>/includes/modules/pages/product_music_info/main_template_vars_images.php</li>
+<li>/includes/modules/pages/product_music_info/main_template_vars_images_additional.php</li>
+<li>/includes/modules/pages/product_reviews_write/header_php.php</li>
+<li>/includes/modules/payment/paypal.php
+<li>/includes/modules/payment/paypal/ipn_application_top.php</li>
+<li>/includes/modules/product_listing.php</li>
+<li>/includes/modules/products_all_listing.php</li>
+<li>/includes/modules/products_discount_prices.php</li>
+<li>/includes/modules/products_new_listing.php</li>
+<li>/includes/modules/shipping_estimator.php
+<li>/includes/modules/shipping/table.php</li>
+<li>/includes/modules/shipping/ups.php</li>
+<li>/includes/modules/shipping/usps.php</li>
+<li>/includes/modules/shipping/zones.php</li>
+<li>/includes/modules/sideboxes/information.php</li>
+<li>/includes/modules/sideboxes/manufacturer_info.php</li>
+<li>/includes/modules/sideboxes/manufacturers.php</li>
+<li>/includes/modules/sideboxes/more_information.php</li>
+<li>/includes/modules/sideboxes/order_history.php</li>
+<li>/includes/modules/sideboxes/reviews.php</li>
+<li>/includes/modules/sideboxes/specials.php</li>
+<li>/includes/modules/sideboxes/whats_new.php</li>
+<li>/includes/modules/sideboxes/whos_online.php</li>
+<li>/includes/spiders.txt</li>
+<li>/includes/templates/blue_strip/css/stylesheet.css</li>
+<li>/includes/templates/classic/css/stylesheet.css</li>
+<li>/includes/templates/template_default/common/tpl_header.php</li>
+<li>/includes/templates/template_default/css/stylesheet.css</li>
+<li>/includes/templates/template_default/jscript/on_load/read_me.txt</li>
+<li>/includes/templates/template_default/jscript/read_me.txt</li>
+<li>/includes/templates/template_default/popup_coupon_help/tpl_main_page.php
+<li>/includes/templates/template_default/sideboxes/tpl_manufacturer_info.php</li>
+<li>/includes/templates/template_default/sideboxes/tpl_manufacturers_select.php</li>
+<li>/includes/templates/template_default/sideboxes/tpl_reviews_random.php</li>
+<li>/includes/templates/template_default/sideboxes/tpl_specials.php</li>
+<li>/includes/templates/template_default/sideboxes/tpl_whats_new.php</li>
+<li>/includes/templates/template_default/templates/tpl_account_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_products_new_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_product_reviews_write_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_products_all_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_checkout_success_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_checkout_shipping_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_featured_products_default.php</li>
+<li>/includes/templates/template_default/templates/tpl_modules_product_listing.php</li>
+<li>/includes/version.php</li>
+<li>/zc_install/demo/mysql_demo.sql </li>
+<li>/zc_install/includes/classes/installer.php</li>
+<li>/zc_install/includes/functions/general.php</li>
+<li>/zc_install/includes/functions/sessions.php</li>
+<li>/zc_install/includes/languages/english.php</li>
+<li>/zc_install/includes/languages/english/database_setup.php</li>
+<li>/zc_install/includes/languages/english/database_upgrade.php</li>
+<li>/zc_install/includes/languages/english/finished.php</li>
+<li>/zc_install/includes/languages/english/inspect.php</li>
+<li>/zc_install/includes/languages/english/system_setup.php</li>
+<li>/zc_install/includes/modules/pages/admin_setup/header_php.php</li>
+<li>/zc_install/includes/modules/pages/database_setup/header_php.php</li>
+<li>/zc_install/includes/modules/pages/database_upgrade/header_php.php</li>
+<li>/zc_install/includes/modules/pages/index/header_php.php</li>
+<li>/zc_install/includes/modules/pages/inspect/header_php.php</li>
+<li>/zc_install/includes/modules/pages/license/header_php.php</li>
+<li>/zc_install/includes/modules/pages/store_setup/header_php.php</li>
+<li>/zc_install/includes/templates/template_default/common/tpl_main_page.php</li>
+<li>/zc_install/includes/templates/template_default/css/stylesheet.css</li>
+<li>/zc_install/includes/templates/template_default/templates/finished_default.php</li>
+<li>/zc_install/includes/templates/template_default/templates/database_setup_default.php</li>
+<li>/zc_install/includes/templates/template_default/templates/database_upgrade_default.php</li>
+<li>/zc_install/includes/templates/template_default/templates/inspect_default.php</li>
+<li>/zc_install/mysql_upgrade_zencart_121_to_122.sql</li>
+<li>/zc_install/mysql_upgrade_zencart_122_to_123.sql</li>
+<li>/zc_install/mysql_zencart.sql</li>
+<li>/zc_install/version.php</li>
+</ul>
+<h1>Deleted Files</h1>
+<ul>
+<li>/admin/includes/classes/email.php</li>
+<li>/includes/languages/english/modules/payment/pm2checkout.php</li>
+<li>/includes/modules/payment/pm2checkout.php</li>
+</ul>
+<h1>New Files</h1>
+<ul>
+<li>/admin/products_to_categories.php</li>
+<li>/admin/images/icon_edit_metatags_off.gif</li>
+<li>/admin/images/icon_edit_metatags_on.gif</li>
+<li>/admin/includes/languages/english/images/buttons/button_reset_pwd.gif</li>
+<li>/admin/includes/languages/english/products_to_categories.php</li>
+<li>/admin/includes/modules/document_general/collect_info_metatags.php</li>
+<li>/admin/includes/modules/document_general/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/document_product/collect_info_metatags.php</li>
+<li>/admin/includes/modules/document_product/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/document_general/collect_info_metatags.php</li>
+<li>/admin/includes/modules/document_general/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/document_product/collect_info_metatags.php</li>
+<li>/admin/includes/modules/document_product/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/new_product_preview_meta_tags.php</li>
+<li>/admin/includes/modules/product/collect_info_metatags.php</li>
+<li>/admin/includes/modules/product/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/product_free_shipping/collect_info_metatags.php</li>
+<li>/admin/includes/modules/product_free_shipping/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/product_music/collect_info_metatags.php</li>
+<li>/admin/includes/modules/product_music/preview_info_meta_tags.php</li>
+<li>/admin/includes/modules/update_product_meta_tags.php</li>
+<li>/docs/index.html
+<li>/docs/changelog-v1-2-5.html
+<li>/docs/WHATSNEW1.2.5d.html</li>
+<li>/docs/1. Readme-INSTALLATION.html</li>
+<li>/docs/2. ReadMe FIRST-UPGRADE.html</li>
+<li>/docs/3. Readme-PayPal_IPN_v1.2.4.html</li>
+<li>/docs/4. Readme-EmailTemplates.html</li>
+<li>/docs/5. DOC-Renaming the Admin directory.txt</li>
+<li>/images/banners/bw_zen_88wide.gif</li>
+<li>/images/banners/sashbox_125x50.jpg</li>
+<li>/images/banners/sashbox_468x60.jpg</li>
+<li>/includes/languages/english/meta_tags.php</li>
+<li>/includes/modules/pages/download_time_out/ (folder) </li>
+<li>/includes/modules/pages/download_time_out/header_php.php
+<li>/includes/modules/sideboxes/banner_box_all.php</li>
+<li>/includes/templates/template_default/jscript/on_load/read_me_onload.html</li>
+<li>/includes/templates/template_default/jscript/read_me_jscript.html</li>
+<li>/includes/templates/template_default/sideboxes/tpl_banner_box_all.php
+<li>/includes/templates/template_default/templates/tpl_download_time_out_default.php</li>
+<li>/zc_install/includes/classes/boxes.php</li>
+<li>/zc_install/includes/classes/message_stack.php</li>
+<li>/zc_install/mysql_upgrade_zencart_124_to_125.sql</li>
+<li>/zc_install/techsupp.php</li>
+</ul>
+<h1>Items NOT Changed</h1>
+There were NO changes to files in any of the following folders:<ul>
+<li>/download</li>
+<li>/email</li>
+<li>/extras</li>
+<li>/htmlarea</li>
+<li>/images &nbsp;&nbsp;(there were 3 new banners ADDED, but are not required for upgrade purposes)</li>
+<li>/media</li>
+<li>/pub</li>
+<li>/admin/backups</li>
+<li>/admin/images</li>
+<li>/admin/includes/boxes</li>
+<li>/admin/includes/extra_configures</li>
+<li>/admin/includes/extra_datafiles</li>
+<li>/admin/includes/graphs</li>
+<li>/admin/includes/javascript</li>
+<li>/admin/includes/local</li>
+<li>/admin/includes/modules/newsletters</li>
+</ul>
+When merging changes to template files, note the list of &quot;changed&quot; files in the top section of this document for the list of changed files. Only 8 template files, and 5 sidebox template files were actually changed in this release.</td>
+</tr>
+</table>
+<p align="center"><em>Zen Cart&trade; Copyright 2005</em></p>
+<br /><br />
+</body>
+</html>

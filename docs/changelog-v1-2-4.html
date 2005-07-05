@@ -1,0 +1,188 @@
+<!--
+// +----------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce                                       |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004 The zen-cart developers                           |
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
+// | Portions may be Copyright (c) 2003 osCommerce                        |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | If you did not receive a copy of the zen-cart license and are unable |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | license@zen-cart.com so we can mail you a copy immediately.          |
+// +----------------------------------------------------------------------+
+// $Id: changelog-v1-2-4.html,v 1.1 2005/07/05 05:58:56 bitweaver Exp $
+//-->
+<html>
+<style type="text/css">
+<!--
+body, table{ font-family:Verdana, Arial, Helvetica, sans-serif; font-size:14px; }
+table.intro {border-color:C96E29; }
+td.intro{background-color:#EEEEEE ; border-color:5778ce; font-size:14px; }
+td.plainbox, div.callout {border: 1px dashed; border-color: C96E29; margin:5 40 5 40;}
+.heading {background-color:5778CE; font-weight:bold; font-size:14px;	width: 100%; }
+
+.title1 {color:C96E29; font-weight:bold; font-size:22px; }
+.title2 {color:C96E29; font-weight:bold; font-size:13px; }
+.small {font-size:10px ;}
+.error {color:FF0000; }
+.filename {font-family: mono, "Courier New", Courier ; font-size:14px; color: c96e29;}
+.pseudolink {text-decoration:underline; color:5778CE;}
+h1.intro { color: #ffffff; border:1px solid #aca893; background-color: #c96e29;  font-size: 22px;   padding: 4px;}
+h1 { color: #ffffff;    border:1px solid #aca893;   background-color: #5778ce;   font-size: 20px;   padding: 4px;}
+h2 { color: #c96e29; 	font-size: 18px;}
+h3 { color: #5778ce;	font-size: 16px; margin-bottom:0px;}
+h4 { color: #c96e29;	font-size: 14px;}
+
+
+-->
+</style>
+<title>Zen Cart(tm) Changelog</title><body>
+
+<table class="intro" cellspacing="4" cellpadding="6" border="3" width="748px" align="center">
+<tr><td class="intro">
+<center><h1 class="intro">Welcome to Zen Cart&trade; ...</h1></center>
+<br />
+The Zen Cart&trade; software is made available to you for use, additions, changes, modifications, etc. without charge, under the GNU General Public License.
+<br />
+<br />
+While we do not charge for this software, donations are greatly appreciated each time you download a new version, to help cover the expenses of maintenance, upgrades, updates, the free support forum and the continued development of this software for your online e-commerce store.
+<br />
+<br />
+Donations can be made at:
+<a href="http://www.zen-cart.com/modules/freecontent/index.php?id=6" target="_blank">The Zen Cart&trade; Team Page</a>
+<br /><br />
+We appreciate your support.<br />
+<em>The Zen Cart&trade; Team</em><br />
+<br />
+
+<center>
+<span class="small">
+Zen Cart&trade; is derived from: Copyright  2003 osCommerce<br />
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br />
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE<br />
+and is redistributable under the GNU General Public License<br /><br />
+</span>
+</center>
+</td></tr></table>
+
+<br />
+<table border="3" width="748px" align="center" cellpadding="6">
+  <tr>
+<td align="center"><img src="osi-certified-120x100.png" /><br />
+This software is OSI Certified Open Source Software.<br />
+OSI Certified is a certification mark of the Open Source Initiative.
+</td></tr></table>
+<br />
+
+<table border="3" width="748px" align="center" cellpadding="6">
+<tr><td>
+<h1 align="center" class="intro">Version 1.2.4</h1>
+<h1>Changed Files</h1>
+<ul>
+<li>/admin/admin.php</li>
+<li>/admin/attributes_controller.php</li>
+<li>/admin/categories.php</li>
+<li>/admin/document_general.php</li>
+<li>/admin/document_product.php</li>
+<li>/admin/includes/application_bottom.php</li>
+<li>/admin/includes/classes/shopping_cart.php</li>
+<li>/admin/includes/functions/general.php</li>
+<li>/admin/includes/languages/english/invoice.php </li>
+<li>/admin/includes/languages/english/media_manager.php </li>
+<li>/admin/includes/languages/english/options_name_manager.php </li>
+<li>/admin/includes/languages/english/options_values_manager.php</li>
+<li>/admin/includes/languages/english/orders.php</li> 
+<li>/admin/includes/languages/english/packingslip.php </li>
+<li>/admin/includes/languages/english.php </li>
+<li>/admin/includes/modules/category_product_listing.php </li>
+<li>/admin/invoice.php </li>
+<li>/admin/languages.php </li>
+<li>/admin/media_manager.php </li>
+<li>/admin/media_types.php</li> 
+<li>/admin/options_name_manager.php </li>
+<li>/admin/options_values_manager.php </li>
+<li>/admin/product_free_shipping.php </li>
+<li>/admin/product_music.php </li>
+<li>/admin/product.php </li>
+<li>/admin/reviews.php </li>
+<li>/admin/whos_online.php </li>
+<li>/email/email_template_checkout.html </li>
+<li>/includes/application_bottom.php </li>
+<li>/includes/classes/db/mysql/query_factory.php</li> 
+<li>/includes/classes/order.php </li>
+<li>/includes/classes/shopping_cart.php </li>
+<li>/includes/filenames.php </li>
+<li>/includes/functions/functions_lookups.php </li>
+<li>/includes/functions/html_output.php </li>
+<li>/includes/languages/english/checkout_process.php</li>
+<li>/includes/languages/english/email_extras.php </li>
+<li>/includes/languages/english/gv_faq.php </li>
+<li>/includes/languages/english/other_images_names.php </li>
+<li>/includes/languages/english/product_reviews_info.php </li>
+<li>/includes/languages/english/whos_online.php </li>
+<li>/includes/languages/english.php</li> 
+<li>/includes/modules/also_purchased_products.php </li>
+<li>/includes/modules/featured_products.php </li>
+<li>/includes/modules/meta_tags.php </li>
+<li>/includes/modules/new_products.php</li> 
+<li>/includes/modules/pages/checkout_payment_address/header_php.php</li> 
+<li>/includes/modules/pages/gv_redeem/header_php.php </li>
+<li>/includes/modules/pages/product_reviews_info/header_php.php </li>
+<li>/includes/modules/payment/authorizenet_aim.php </li>
+<li>/includes/modules/payment/paypal.php </li>
+<li>/includes/modules/payment/paypal/class.paypal.php</li>
+<li>/includes/modules/payment/paypal/ipn_application_top.php</li>
+<li>/includes/modules/payment/paypal/paypal_admin_notification.php</li>
+<li>/includes/modules/shipping/table.php </li>
+<li>/includes/modules/shipping/usps.php </li>
+<li>/includes/modules/shipping/zones.php </li>
+<li>/includes/modules/sideboxes/manufacturers.php </li>
+<li>/includes/modules/sideboxes/whos_online.php </li>
+<li>/includes/modules/specials_index.php </li>
+<li>/includes/spiders.txt </li>
+<li>/includes/templates/template_default/common/tpl_header.php </li>
+<li>/includes/templates/template_default/sideboxes/tpl_categories.php </li>
+<li>/includes/templates/template_default/templates/tpl_account_default.php </li>
+<li>/includes/templates/template_default/templates/tpl_account_history_default.php </li>
+<li>/includes/templates/template_default/templates/tpl_document_product_info_display.php </li>
+<li>/includes/templates/template_default/templates/tpl_login_default.php </li>
+<li>/includes/templates/template_default/templates/tpl_product_free_shipping_info_display.php </li>
+<li>/includes/templates/template_default/templates/tpl_product_info_display.php </li>
+<li>/includes/templates/template_default/templates/tpl_product_music_info_display.php </li>
+<li>/includes/templates/template_default/templates/tpl_product_reviews_default.php </li>
+<li>/includes/templates/template_default/templates/tpl_product_reviews_info_default.php </li>
+<li>/includes/templates/template_default/templates/tpl_products_next_previous.php</li>
+<li>/includes/templates/template_default/templates/tpl_shopping_cart_default.php </li>
+<li>/index.php </li>
+<li>/ipn_main_handler.php</li>
+<li>/zc_install/demo/mysql_demo.sql </li>
+<li>/zc_install/includes/admin_configure.php </li>
+<li>/zc_install/includes/classes/installer.php </li>
+<li>/zc_install/includes/store_configure.php </li>
+<li>/zc_install/includes/templates/template_default/templates/database_setup_default.php </li>
+<li>/zc_install/mysql_zencart.sql</li>
+</ul>
+<h1>Deleted Files</h1>
+<ul>
+<li>/zc_install/demo/postgres_demo.sql </li>
+<li>/zc_install/postgres_zencart.sql </li>
+<li>/zc_install/postgres_zencart_new.sql</li>
+</ul>
+<h1>New Files</h1>
+<ul>
+<li>/admin/backups/index.php</li>
+<li>/includes/modules/categories_tabs.php</li>
+<li>/includes/templates/template_default/images/customer_authorization.gif</li>
+</ul>
+</td></tr>
+</table>
+<p align="center"><em>Zen Cart&trade; Copyright 2005</em></p>
+<br /><br />
+</body>
+</html>

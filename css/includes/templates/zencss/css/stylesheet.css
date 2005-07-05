@@ -1,0 +1,610 @@
+/*
+   +----------------------------------------------------------------------+
+   |zen-cart Open Source E-commerce                                       |
+   +----------------------------------------------------------------------+
+   | Copyright (c) 2003 The zen-cart developers                           |
+   |                                                                      |   
+   | http://www.zen-cart.com/index.php                                    |   
+   |                                                                      |   
+   +----------------------------------------------------------------------+
+   | This source file is subject to version 2.0 of the GPL license,       |
+   | that is bundled with this package in the file LICENSE, and is        |
+   | available through the world-wide-web at the following url:           |
+   | http://www.zen-cart.com/license/2_0.txt.                             |
+   | If you did not receive a copy of the zen-cart license and are unable |
+   | to obtain it throu/* General Text Styles */
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #e5e5e5;
+	color: #222;
+	min-width: 46em; /* prevents center column from collapsing */
+	font: normal 76%/150% "Lucida Grande", LucidaGrande, Lucida, Tahoma, Arial, Helvetica, sans-serif; 
+}
+
+h1, h2, h3, h4, h5 {
+	margin: 0 0 1em 0;
+	padding: 0;
+	line-height: 1.1em;
+	font-weight: bold;
+	color: #777;
+}
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.6em; }
+h3 { font-size: 1.4em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1.0em; }
+p {
+	font-size: 100%;
+	margin: 0 0 1em;
+	line-height: 1.4em;
+}
+li, td {
+	font-size: 100%;
+	line-height: 1.1em;
+}
+a:link {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: #660066;
+}
+
+a:hover, a:active {
+  color: #003;
+}
+a img {
+  text-decoration: none;
+  display: inline;
+}
+form { display: inline; }
+
+
+/* Page Layout */ 
+#content {
+ 	width: 100%; /* add width of sidebox columns to get desired fixed-grow width, or set to 100% for full fluid */
+	margin: 0; /* width of the side-columns */
+} 
+
+* html #content {
+  width: 100%;
+}
+* html*#content {
+  width: auto;
+}
+#floatwrap {
+	width: 100%;
+	float: left;
+	margin-right: -18em; /* width of the col-a */
+}
+#col-main {
+	width: 100%;
+	float: right;
+}
+#col-a {
+	width: 16em;
+	float: left;
+	margin-right: -16em;
+	position: relative;
+}
+#col-b {
+	float: right;
+	width: 16em;
+	position: relative;
+}
+#main {
+	margin: 0 16em 0 16em; /* widths of side columns */
+	background: #fff;
+	padding: 10px;
+	border: 1px solid #ccc;
+}
+#nav {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+#optional-info { 
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}	
+#header {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: #fff;
+	height: 3em;
+	line-height: 3em;
+}
+
+
+/* Layout "Tricks" */
+#header a#logo img { 
+	top: -12px;
+	left: 7px;	
+	padding: 0;
+	border: none;
+	width: 200px;
+	height: 24px;
+	position: relative;
+}
+.centervert {
+	top: 50%;
+	height: 1px;
+	overflow: visible;
+	position: relative;
+	background-color: transparent;
+}	
+
+/* Sideboxes */
+.sidebox {
+	width: 15em;
+	margin: 0 auto;
+	padding: 0;
+	background: url(../images/box-br.gif) no-repeat bottom right;   
+}
+
+  /* Show only to IE PC \*/
+* html .boxhead h4 {height: 1%;} /* For IE 5 PC */
+
+.boxhead {
+	background: url(../images/box-tr.gif) no-repeat top right;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+.boxhead h4 {
+	background: url(../images/box-tl.gif) no-repeat top left;
+	margin: 0;
+	padding: 8px 7px 5px;
+	color: white; 
+	line-height:1em;
+	text-shadow: rgba(0,0,0,.4) 0px 2px 5px; /* Safari-only */
+}
+.boxbody {
+	background: url(../images/box-bl.gif) no-repeat bottom left;
+	margin: 0;
+	padding: 5px 18px 19px;
+}
+.sidebox {
+	text-align: center;
+}
+.sidebox ul, .sidebox ol {
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+.sidebox ul {
+	list-style: none; 
+}
+.sidebox ol {
+	margin-left: 2em;
+}
+.sidebox li {
+	padding: 0;
+	line-height: 1.6em;
+	margin: 0;
+	text-align: left;
+	border-bottom: 1px dotted #bbb;
+}
+.sidebox ol li {
+	margin: 0;
+	padding: 0;
+	line-height: 1.2em;
+	text-align: left;
+	border-bottom: 1px dotted #bbb;
+}
+.sidebox ol li a {
+	padding: .2em 3px;
+}
+.sidebox a {
+	color: #333;
+	text-decoration: none;
+	display: block;
+	padding-left: 3px;
+}
+.sidebox a:hover {
+	color: #000;
+	background-color: #ddd;
+}
+
+#languages .boxbody a {
+	display: inline;
+}
+
+#reviewswrite .boxbody a,
+#reviewsrandom .boxbody a,
+#manufacturers .boxbody a, 
+#mfrinfo .boxbody a,
+#tellafriend .boxbody p,
+#yesnotifications .boxbody a,
+#nonotifications .boxbody a {
+	font-size: 100%;
+	line-height: 1.2em;
+	margin: 5px 0 0;
+	padding: 0;
+}
+#reviewsrandom .boxbody p,
+#specials .boxbody p {
+	margin: 0;
+	padding-top: 5px;
+}
+
+/* Header styles */
+#headernavbar {
+	font-size: 100%;
+	width: 100%;
+	position: absolute;
+	text-align: right;
+	top: 0;
+	right: 22px; 
+	margin: 0 -15px 0 0;
+  /* Hide from IE Mac to get rid of 15px margin bug \*/
+	right: 7px;
+	margin: 0;
+  /* Let Mac back */
+	display: inline;
+}
+
+#headernavbar form {
+	display: inline;
+	line-height: auto;
+}
+#subhead {
+	width: 100%;
+	padding: 0;
+	margin: 0 0 1.5em;
+	background-color: #9eadc6;
+	border: 1px solid #8A929F;
+	border-width: 1px 0;
+	height: 31px;
+	
+}	
+.headererror, .headerinfo {
+	font: bold 85%/1.5em Arial, sans-serif;
+	background: #f00;
+	color: #fff;
+	text-align: center;
+	border:  1px solid #000;
+}
+.headerinfo {
+	background: #0f0;
+	color: #222;
+}
+
+
+/* Footer Styles */
+#footer {
+	color: #999;
+	width: 100%;
+	padding: 0;
+	margin: 1em 0;
+	text-align: center;
+	clear: both;
+}
+#footer p {
+	color: #999;
+	padding: 0 1em;
+	margin: 1em 0;
+	border: 1px solid #ccc;
+	border-width: 1px 0;
+	text-align: left;
+}
+#footer a, #footer a img {
+	color: #999; 
+	font-weight: bold;
+	text-decoration: none;
+}
+#footer a:hover {
+	text-decoration: underline; 
+	color: blue;
+}
+
+
+/* Horizontal Navigation for Product Pages */
+#navcontainer ul {
+	padding-left: 0;
+	margin-left: 0;
+	background-color: #eee;
+	color: #000;
+	float: left;
+	width: 100%;
+}
+
+#navcontainer li { display: inline; }
+
+#navcontainer a {
+	padding: 0.2em 1em;
+	background-color: #eee;
+	color: #000;
+	text-decoration: none;
+	float: left;
+	border-right: 1px solid #fff;
+}
+
+#navcontainer a:hover {
+	background-color: #ccc;
+	color: #000;
+}
+
+
+/* misc formatting DO WE NEED ALL THESE? */
+.infoboxnotice {
+	background: #FF8E90;
+}
+.infoboxnoticecontents {
+	background: #FFE6E6;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+}
+.plainbox {
+	margin: 5px 0;
+	padding: 5px;
+	background: #fff;
+	border: 1px solid gray;
+}
+
+.or { /* odd rows for alternating bg */
+  background: #fff;
+}
+
+.er { /* even rows for alternating bg */
+  background: #eff4f8;
+}
+
+.errorbox { background: #ffb3b5; font-weight: bold; }
+.stockwarning { color: #c03; }
+.productsnotifications { background: #f2fff7; }
+.orderedit { color: #70d250; text-decoration: underline; }
+.productListing-heading { border-bottom: 1px solid #333; }
+
+a.pageresults { color: #00F; }
+
+a.pageresults:hover {
+  color: #00F;
+  background: #FF3;
+}
+
+.smalltext { font-size: .9em; }
+
+.accountcategory {
+  font-size: 1.3em;
+  color: #abd;
+}
+
+.fieldkey, .tableheading {
+  font-weight: bold;
+  font-size:85%;
+}
+
+.fieldvalue { font-size: 85%; }
+
+.newitemincart { color: #f00; }
+
+
+textarea {
+  width: 100%;
+  font-size: 100%;
+}
+
+
+.greetuser {
+  color: #f0a480;
+}
+
+table.formarea {
+	background: #f1f9fe;
+	border: 1px solid #7b9ebd;
+}
+
+.markproductoutofstock {
+	color: #c76170;
+	font-weight: bold;
+	font-size: 85%;
+}
+
+.productbox { border: 1px solid gray; }
+.productimage { 
+	margin: 0;
+	padding: 0;
+	width: 33%;
+	float: left;
+	text-align: center;
+}
+.productfeatures {
+	margin: 0;
+	padding: 0;
+	width: 65%;
+	float: left;
+}
+.productdescription {
+	padding: 2em;
+	margin-bottom: 1.5em;
+	border: 1px solid #e6e6e6;
+}
+.specialprice { 
+	color: #f00; 
+	font-weight: bold;
+	font-size: 1.2em;
+}
+.price { 
+	color: #000; 
+	font-weight: bold;
+	font-size: 1.2em;
+}
+.normalprice { 
+	color: #666;
+	font-weight: normal;
+	text-decoration: line-through;
+}
+.errortext {
+  color: #f00;
+}
+.cartbox {
+	width: 60%;
+	border: 1px solid gray;
+}
+.modulerowover { background-color: #D7E9F7; cursor: hand; }
+.modulerowselected { background-color: #E9F4FC; }
+
+.checkoutbarfrom, .checkoutbarto { color: #8c8c8c; }
+.checkoutbarcurrent { color: #000000; }
+.breadcrumb { font-size: 100%; }
+
+/* message box */
+
+.messagestackerror, .messagestackwarning { background-color: #ffb3b5; line-height; 1em; }
+.messagestacksuccess { background-color: #9f0; line-height; 1em; }
+.inputrequirement { color: #f00; }
+
+
+/* form formatting */
+
+fieldset { 
+	background: #eee; 
+	border: 1px solid #ccc;
+	margin: 0 0 7px;
+	padding: 10px;
+	font-size: 100%;
+}
+.fieldset { 
+	background: #eee; 
+	border: 1px solid #ccc;
+	margin: 0 0 7px;
+	padding: 10px;
+}
+
+legend { 
+	background: #fff;
+	padding: 2px 6px 3px 5px;
+	margin: 0;
+	border: 1px solid #ccc;
+}
+
+.legend {
+	background: #fff;
+	padding: .25em .5em;
+	margin: 0;
+	border: 1px solid #ccc;
+	position: relative; 
+	width: 33%;
+	top: -2em;
+	left: 0;
+	white-space: nowrap;
+}	
+.formrow { 
+	line-height: 2em;
+	clear: both;
+	margin: 0;
+	padding; 0;
+}
+
+label {
+	width: 25%;
+	text-align: right;
+	margin: 0 3px 0 0;
+	float: left;
+}
+
+fieldset input, fieldset select {
+	width: auto;
+	text-align: left;
+	float: left;
+}
+
+
+/* sidebox content formatting */
+#col-a input,
+#col-b input,
+#col-a select,
+#col-b select {
+	width: auto;
+	margin: 1px auto;
+	float: none;
+}
+
+form p.reminder { 
+	margin: 0;
+	padding: 0 0 0 115px; /* label margin + label width + 3 */
+}
+
+form span.button, span.button img {
+	float: right;
+	width: 99%;
+	padding: 0 20px 5px;
+}
+
+
+form span.button input {
+	text-align: right;
+	width: auto;
+}
+
+/* Header search */
+.headersearch { color: gray; }
+
+.row {
+	clear: both;
+	padding-top: 10px;
+}
+.row span.left {
+	float: left;
+	text-align: left;
+	width: 49%;
+}
+
+.row span.right {
+	float: right;
+	text-align: right;
+	width: 49%;
+}
+.float {
+	width: 120px;
+	padding: 10px;
+	float: left;
+}
+.float p {
+	text-align: center;
+}
+.inline input { 
+	display: inline; 
+	float: none;
+}
+#pageresultstop {
+	border-bottom:  1px solid #ccc;
+}
+#pageresultsbottom {
+	border-top:  1px solid #ccc;
+}
+.clear {
+	clear: both;
+	line-height: 1px;
+	margin-top -1px;
+	font: 1px;
+	background-color: transparent;
+}
+.cleargap {
+	clear: both;
+	line-height: 12px;
+	font: 1px;
+	background-color: transparent;
+}
+.center { text-align: center; }
+
+.centerleft { 
+	float: left;
+	width: 160px;
+	text-align: center; 
+}
+.attribute {
+	width: 80px;
+}
+.note {
+	color: #f00; 
+}
+h2.newproduct, h2.upcoming, h2.alsopurchased  {
+	background-color: #eee;
+	color: #000;
+	font-size: 120%;
+	padding: 5px;
+}

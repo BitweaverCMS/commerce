@@ -1,0 +1,1 @@
+<p><strong><font face="verdana,arial,helvetica,sans-serif" color="#ff0000">Contact Us Sample Text ...</font></strong></p><p>This section of text is from the Define Pages Editor located under Tools in the Admin.</p><p>To remove this section of the text, delete it from the Define Pages Editor located under Tools in the Admin.</p>
