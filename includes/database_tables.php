@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.2 2005/07/05 21:08:15 spiderr Exp $
+// $Id: database_tables.php,v 1.3 2005/07/06 02:20:42 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -103,5 +103,21 @@
   define('TABLE_WISHLIST', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers_wishlist`');
   define('TABLE_WHOS_ONLINE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'whos_online`');
   define('TABLE_ZONES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'zones`');
+
+DEFINE('SQL_CC_ENABLED', "select configuration_key from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'CC_ENABLED' and configuration_value= '1'");
+DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'SHOW_PRODUCT_INFO_CATEGORY' and configuration_value > 0 order by configuration_value");
+DEFINE('SQL_SHOW_PRODUCT_INFO_MAIN',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'SHOW_PRODUCT_INFO_MAIN' and configuration_value > 0 order by configuration_value");
+DEFINE('SQL_SHOW_PRODUCT_INFO_MISSING',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION  . " where configuration_key RLIKE 'SHOW_PRODUCT_INFO_MISSING' and configuration_value > 0 order by configuration_value");
+DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'SHOW_PRODUCT_INFO_LISTING_BELOW' and configuration_value > 0 order by configuration_value");
+DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set banners_shown = banners_shown +1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set banners_clicked = banners_clicked + 1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.products_image 
+                     from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, " 
+                            . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p 
+                     where opa.products_id = ?  and opa.orders_id = opb.orders_id and opb.products_id != ?  and opb.products_id = p.products_id and opb.orders_id = o.orders_id and p.products_status = '1' 
+                     order by o.date_purchased desc" 
+                     );
+
 
 ?>

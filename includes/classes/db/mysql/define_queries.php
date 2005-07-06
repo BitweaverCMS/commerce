@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: define_queries.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: define_queries.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
 //
 DEFINE('SQL_CC_ENABLED', "select configuration_key from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'CC_ENABLED' and configuration_value= '1'");
 DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key RLIKE 'SHOW_PRODUCT_INFO_CATEGORY' and configuration_value > 0 order by configuration_value");
@@ -28,13 +28,13 @@ DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " se
 DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.products_image 
                      from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, " 
                             . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p 
-                     where opa.products_id = '%s' 
+                     where opa.products_id = ? 
                      and opa.orders_id = opb.orders_id 
-                     and opb.products_id != '%s' 
+                     and opb.products_id != ? 
                      and opb.products_id = p.products_id 
                      and opb.orders_id = o.orders_id 
                      and p.products_status = '1' 
                      group by p.products_id  
-                     order by o.date_purchased desc 
-                     limit " . MAX_DISPLAY_ALSO_PURCHASED);
+                     order by o.date_purchased desc" 
+                     );
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: main_template_vars.php,v 1.2 2005/07/06 02:20:44 spiderr Exp $
 //
 
   $sql = "select count(*) as total
@@ -142,7 +142,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
             from   " . TABLE_PRODUCTS . " p, "
                      . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                      . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
-            where  p.products_status = '1' and p.products_id = pd.products_id and pd.language_id= '" . $_SESSION['languages_id'] . "' and p.products_id = ptc.products_id and ptc.categories_id = '" . $current_category_id . "'" .
+            where  p.products_status = '1' and p.products_id = pd.products_id and pd.language_id= '" . $_SESSION['languages_id'] . "' and p.products_id = ptc.products_id and ptc.categories_id = '" . (int)$current_category_id . "'" .
             $prev_next_order
             ;
 
@@ -180,7 +180,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
 
     $sql = "select categories_name
             from   " . TABLE_CATEGORIES_DESCRIPTION . "
-            where  categories_id = $current_category_id AND language_id = '" . $_SESSION['languages_id']
+            where  categories_id = ".(int)$current_category_id." AND language_id = '" . $_SESSION['languages_id']
             . "'";
 
     $category_name_row = $db->Execute($sql);

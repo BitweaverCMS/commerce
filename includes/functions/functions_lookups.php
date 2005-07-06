@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_lookups.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
 //
 //
 /**
@@ -542,8 +542,8 @@
   function zen_get_products_image($product_id, $width = SMALL_IMAGE_WIDTH, $height = SMALL_IMAGE_HEIGHT) {
     global $db;
 
-    $sql = "select p.products_image from " . TABLE_PRODUCTS . " p  where products_id='" . $product_id . "'";
-    $look_up = $db->Execute($sql);
+    $sql = "select p.products_image from " . TABLE_PRODUCTS . " p  where products_id=?";
+    $look_up = $db->query( $sql, array($product_id) );
 
     return zen_image(DIR_WS_IMAGES . $look_up->fields['products_image'], zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
   }

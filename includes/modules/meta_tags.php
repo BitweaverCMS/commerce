@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: meta_tags.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -160,9 +160,8 @@
                                       p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status,
                                       p.products_id, p.metatags_price_status, p.metatags_title_tagline_status,
                                       mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description
-                              from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                              from " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'
                               where p.products_id = '" . (int)$_GET['products_id'] . "'
-                              and p.products_id = pd.products_id
                               and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
     $product_info_metatags = $db->Execute($sql);
