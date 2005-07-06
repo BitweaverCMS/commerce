@@ -1015,7 +1015,7 @@ BITCOMMERCE_DB_PREFIX.'query_builder' => "
   query_name VARCHAR( 80 ) NOTNULL ,
   query_description X NOTNULL ,
   query_string X NOTNULL ,
-  query_keys_list X NOTNULL 
+  query_keys_list X NOTNULL
 ",
 //  UNIQUE ( query_name )
 
@@ -1081,8 +1081,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."address_format VALUES (3, '\$firstname \$lastname\$cr\$streets\$cr\$city\$cr\$postcode - \$statecomma\$country','\$state / \$country')",
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."address_format VALUES (4, '\$firstname \$lastname\$cr\$streets\$cr\$city (\$postcode)\$cr\$country', '\$postcode / \$country')",
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."address_format VALUES (5, '\$firstname \$lastname\$cr\$streets\$cr\$postcode \$city\$cr\$country','\$city / \$country')",
-"INSERT INTO ".BITCOMMERCE_DB_PREFIX."admin VALUES (1, 'Admin', 'admin@localhost', '351683ea4e19efe34874b501fdbf9792:9b', 1)",
-"INSERT INTO ".BITCOMMERCE_DB_PREFIX."admin VALUES (2, 'demo', 'demo@localhost', '23ce1aad0e04a3d2334c7aef2f8ade83:58', 2)",
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."banners (banners_id, banners_title, banners_url, banners_image, banners_group, banners_html_text, expires_impressions, expires_date, date_scheduled, date_added, date_status_change, status, banners_open_new_windows, banners_on_ssl, banners_sort_order) VALUES (1, 'Zen Cart', 'http://www.zen-cart.com', 'banners/zencart_468_60_02.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."banners (banners_id, banners_title, banners_url, banners_image, banners_group, banners_html_text, expires_impressions, expires_date, date_scheduled, date_added, date_status_change, status, banners_open_new_windows, banners_on_ssl, banners_sort_order) VALUES (2, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/125zen_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
 "INSERT INTO ".BITCOMMERCE_DB_PREFIX."banners (banners_id, banners_title, banners_url, banners_image, banners_group, banners_html_text, expires_impressions, expires_date, date_scheduled, date_added, date_status_change, status, banners_open_new_windows, banners_on_ssl, banners_sort_order) VALUES (3, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/125x125_zen_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",

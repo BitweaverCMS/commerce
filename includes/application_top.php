@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: application_top.php,v 1.2 2005/07/06 20:27:29 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
@@ -103,9 +103,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 	if( $session_started && $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
 		// Set theme related directories
-		$sql = "select count(*) as total
-								from " . TABLE_CUSTOMERS . "
-								where customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
+		$sql = "SELECT count(*) as total FROM " . TABLE_CUSTOMERS . "
+				WHERE customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
 		$check_user = $db->Execute($sql);
 		if( empty( $check_user['fields']['total'] ) ) {
 			$_POST['action'] = 'process';
@@ -203,17 +202,17 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   }
 
 // Set theme related directories
-  $sql = "select template_dir
-          from " . TABLE_TEMPLATE_SELECT .
-         " where template_language = '0'";
+  $sql = "SELECT template_dir
+          FROM " . TABLE_TEMPLATE_SELECT .
+         " WHERE template_language = '0'";
 
   $template_query = $db->Execute($sql);
 
   $template_dir = $template_query->fields['template_dir'];
 
-  $sql = "select template_dir
-          from " . TABLE_TEMPLATE_SELECT .
-         " where template_language = '" . $_SESSION['languages_id'] . "'";
+  $sql = "SELECT template_dir
+          FROM " . TABLE_TEMPLATE_SELECT .
+         " WHERE template_language = '" . $_SESSION['languages_id'] . "'";
 
   $template_query = $db->Execute($sql);
 
@@ -232,15 +231,15 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // include the language translations
 // include template specific language files
   if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php')) {
-    $template_dir_select = $template_dir . '/';
+    $template_dir_SELECT = $template_dir . '/';
 //die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
   } else {
 //die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
-    $template_dir_select = '';
+    $template_dir_SELECT = '';
   }
 
 
-  require(DIR_WS_LANGUAGES . $template_dir_select . $_SESSION['language'] . '.php');
+  require(DIR_WS_LANGUAGES . $template_dir_SELECT . $_SESSION['language'] . '.php');
 
 // include the extra language translations
   include(DIR_WS_MODULES . 'extra_definitions.php');
@@ -294,9 +293,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 // recheck customer status for authorization
   if (CUSTOMERS_APPROVAL_AUTHORIZATION > 0 && ($_SESSION['customer_id'] != '' and $_SESSION['customers_authorization'] != '0')) {
-    $check_customer_query = "select customers_id, customers_authorization
-                             from " . TABLE_CUSTOMERS . "
-                             where customers_id = '" . $_SESSION['customer_id'] . "'";
+    $check_customer_query = "SELECT customers_id, customers_authorization
+                             FROM " . TABLE_CUSTOMERS . "
+                             WHERE customers_id = '" . $_SESSION['customer_id'] . "'";
     $check_customer = $db->Execute($check_customer_query);
     $_SESSION['customers_authorization'] = $check_customer->fields['customers_authorization'];
   }
@@ -407,7 +406,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     }
     switch ($_GET['action']) {
       // customer wants to update the product quantity in their shopping cart
-      // delete checkbox or 0 quantity removes from cart
+      // delete checkbox or 0 quantity removes FROM cart
       case 'update_product' : for ($i=0, $n=sizeof($_POST['products_id']); $i<$n; $i++) {
                                 $adjust_max= 'false';
 
@@ -440,11 +439,11 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                               zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                               break;
 
-// remove individual products from cart
+// remove individual products FROM cart
       case 'remove_product': if (isset($_GET['product_id']) && zen_not_null($_GET['product_id'])) $_SESSION['cart']->remove($_GET['product_id']);
                              zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                              break;
-      // customer adds a product from the products page
+      // customer adds a product FROM the products page
       case 'add_product' :
                               if (isset($_POST['products_id']) && is_numeric($_POST['products_id'])) {
 // verify attributes and quantity first
@@ -605,9 +604,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                 }
                                 if (!is_array($notify)) $notify = array($notify);
                                 for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
-                                  $check_query = "select count(*) as count
-                                                  from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                  where products_id = '" . $notify[$i] . "'
+                                  $check_query = "SELECT count(*) as count
+                                                  FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
+                                                  WHERE products_id = '" . $notify[$i] . "'
                                                   and customers_id = '" . $_SESSION['customer_id'] . "'";
                                   $check = $db->Execute($check_query);
                                   if ($check->fields['count'] < 1) {
@@ -624,15 +623,15 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                               }
                               break;
       case 'notify_remove' :  if ($_SESSION['customer_id'] && isset($_GET['products_id'])) {
-                                $check_query = "select count(*) as count
-                                                from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                where products_id = '" . $_GET['products_id'] . "'
+                                $check_query = "SELECT count(*) as count
+                                                FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
+                                                WHERE products_id = '" . $_GET['products_id'] . "'
                                                 and customers_id = '" . $_SESSION['customer_id'] . "'";
 
                                 $check = $db->Execute($check_query);
                                 if ($check->fields['count'] > 0) {
-                                  $sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                          where products_id = '" . $_GET['products_id'] . "'
+                                  $sql = "delete FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
+                                          WHERE products_id = '" . $_GET['products_id'] . "'
                                           and customers_id = '" . $_SESSION['customer_id'] . "'";
                                   $db->Execute($sql);
                                 }
@@ -646,7 +645,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                 if (zen_has_product_attributes($_GET['pid'])) {
                                   zen_redirect(zen_href_link(zen_get_info_page($_GET['pid']), 'products_id=' . $_GET['pid']));
                                 } else {
-                                  $db->Execute("delete from " . TABLE_WISHLIST . " where products_id = '" . $_GET['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_GET['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
                                   $_SESSION['cart']->add_cart($_GET['pid'], $_SESSION['cart']->get_quantity($_GET['pid'])+1);
                                 }
                               }
@@ -656,7 +655,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
       case 'add_wishlist' :  if (ereg('^[0-9]+$', $_POST['products_id'])) {
                                if  ($_POST['products_id']) {
-                                 $db->Execute("delete from " . TABLE_WISHLIST . " where products_id = '" . $_GET['products_id'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_GET['products_id'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
                                  $db->Execute("insert into " . TABLE_WISHLIST . " (customers_id, products_id, products_model, products_name, products_price) values ('" . $_SESSION['customer_id'] . "', '" . $_POST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
                                }
                              }
@@ -671,8 +670,8 @@ case 'wishlist_add_cart': reset ($lvnr);
                                        {
                                         (list($key1,$elem1) =each ($lvanz));
                                         $db->Execute("update " . TABLE_WISHLIST . " SET products_quantity=$elem1 WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_id=$elem");
-                                        $db->Execute("delete from " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_quantity='999'");
-                                        $products_in_wishlist = $db->Execute("select * from " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_id = $elem AND products_quantity <> '0'");
+                                        $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_quantity='999'");
+                                        $products_in_wishlist = $db->Execute("SELECT * FROM " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_id = $elem AND products_quantity <> '0'");
 
                                         while (!$products_in_wishlist->EOF)
                                               {
@@ -684,10 +683,10 @@ case 'wishlist_add_cart': reset ($lvnr);
                               break;
 
 
-// remove item from the wishlist
+// remove item FROM the wishlist
 ///// CHANGES TO case 'remove_wishlist' BY DREAMSCAPE /////
       case 'remove_wishlist' :
-                             $db->Execute("delete from " . TABLE_WISHLIST . " where products_id = '" . $HTTP_GET_VARS['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $HTTP_GET_VARS['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
                             zen_redirect(zen_href_link(FILENAME_WISHLIST));
                              break;
     }
@@ -766,9 +765,9 @@ case 'wishlist_add_cart': reset ($lvnr);
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
     for ($i=0, $n=sizeof($cPath_array); $i<$n; $i++) {
-      $categories_query = "select categories_name
-                           from " . TABLE_CATEGORIES_DESCRIPTION . "
-                           where categories_id = '" . (int)$cPath_array[$i] . "'
+      $categories_query = "SELECT categories_name
+                           FROM " . TABLE_CATEGORIES_DESCRIPTION . "
+                           WHERE categories_id = '" . (int)$cPath_array[$i] . "'
                            and language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
       $categories = $db->Execute($categories_query);
@@ -783,9 +782,9 @@ case 'wishlist_add_cart': reset ($lvnr);
 
 // split to add manufacturers_name to the display
   if (isset($_GET['manufacturers_id'])) {
-    $manufacturers_query = "select manufacturers_name
-                            from " . TABLE_MANUFACTURERS . "
-                            where manufacturers_id = '" . (int)$_GET['manufacturers_id'] . "'";
+    $manufacturers_query = "SELECT manufacturers_name
+                            FROM " . TABLE_MANUFACTURERS . "
+                            WHERE manufacturers_id = '" . (int)$_GET['manufacturers_id'] . "'";
 
     $manufacturers = $db->Execute($manufacturers_query);
 
@@ -796,9 +795,9 @@ case 'wishlist_add_cart': reset ($lvnr);
 
 // add the products model to the breadcrumb trail
   if (isset($_GET['products_id'])) {
-    $productname_query = "select products_name
-                   from " . TABLE_PRODUCTS_DESCRIPTION . "
-                   where products_id = '" . (int)$_GET['products_id'] . "'
+    $productname_query = "SELECT products_name
+                   FROM " . TABLE_PRODUCTS_DESCRIPTION . "
+                   WHERE products_id = '" . (int)$_GET['products_id'] . "'
              and language_id = '" . $_SESSION['languages_id'] . "'";
 
     $productname = $db->Execute($productname_query);
