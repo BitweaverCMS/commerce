@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: banner_manager.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -401,7 +401,7 @@ function popupImageWindow(url) {
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_BANNERS_TITLE; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('banners_title', $bInfo->banners_title, zen_set_field_length(TABLE_BANNERS, 'banners_title'), true); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('banners_title', $bInfo->banners_title, zen_set_field_length(TABLE_BANNERS, 'banners_title'), 'text', true, true); ?></td>
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_BANNERS_URL; ?></td>
@@ -409,7 +409,7 @@ function popupImageWindow(url) {
           </tr>
           <tr>
             <td class="main" valign="top"><?php echo TEXT_BANNERS_GROUP; ?></td>
-            <td class="main"><?php echo zen_draw_pull_down_menu('banners_group', $groups_array, $bInfo->banners_group) . TEXT_BANNERS_NEW_GROUP . '<br>' . zen_draw_input_field('new_banners_group', '', '', ((sizeof($groups_array) > 0) ? false : true)); ?></td>
+            <td class="main"><?php echo zen_draw_pull_down_menu('banners_group', $groups_array, $bInfo->banners_group) . TEXT_BANNERS_NEW_GROUP . '<br>' . zen_draw_input_field('new_banners_group', '', '',i 'text', true, ((sizeof($groups_array) > 0) ? false : true)); ?></td>
           </tr>
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>

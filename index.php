@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.3 2005/07/05 21:57:22 spiderr Exp $
+// $Id: index.php,v 1.4 2005/07/08 06:18:38 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -44,7 +44,7 @@ ob_start();
   $code_page_directory = DIR_WS_MODULES . 'pages/' . $current_page_base;
   $page_directory = $code_page_directory;
 
-  $language_page_directory = DIR_WS_LANGUAGES . $_SESSION['language'] . '/';
+  $language_page_directory = DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
 
 // load all files in the page directory starting with 'header_php'
 
@@ -128,10 +128,10 @@ if (COLUMN_RIGHT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custom
 if (!$flag_disable_right) {
 ob_start();
 	require(DIR_WS_MODULES . 'column_right.php');
-	$smarty->assign_by_ref( 'bitcommerceRight', ob_get_contents() );
+	$sideBar = ob_get_contents();
+	$smarty->assign_by_ref( 'bitcommerceRight', $sideBar );
 ob_end_clean();
 }
-
 
 global $gTikiSystem;
 //$gTikiSystem->mPrefs['feature_left_column'] = 'n';

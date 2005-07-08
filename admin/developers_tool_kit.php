@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: developers_tool_kit.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: developers_tool_kit.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -178,17 +178,17 @@
               break;
             case (1): // all english.php files
               $check_directory = array();
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language'] . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language'] . '/' . $template_dir . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/extra_definitions/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/extra_definitions/' . $template_dir . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/modules/payment/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/modules/shipping/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/modules/order_total/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']. '/modules/product_types/';
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $_SESSION['language'] . '/';
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/newsletters/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/extra_definitions/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/extra_definitions/' . $template_dir . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/payment/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/shipping/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/order_total/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/product_types/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/';
               break;
             case (2): // all catalog /language/*.php
               $check_directory = array();
@@ -196,7 +196,7 @@
               break;
             case (3): // all catalog /language/english/*.php
               $check_directory = array();
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $_SESSION['language'] . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/';
               break;
             case (4): // all admin /language/*.php
               $check_directory = array();
@@ -205,7 +205,7 @@
             case (5): // all admin /language/english/*.php
               // set directories and files names
               $check_directory = array();
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $_SESSION['language'] . '/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
               break;
             } // eof: switch
 
@@ -370,7 +370,7 @@
       }
       $found = 'false';
       $zv_files_group = $_POST['zv_files'];
-//echo 'Who am I template ' . $template_dir . ' sess lang ' . $_SESSION['language'];
+//echo 'Who am I template ' . $template_dir . ' sess lang ' . $gBitLanguage->getLanguage();
       switch ($zv_files_group) {
         case (0): // none
           $filename_listing = '';

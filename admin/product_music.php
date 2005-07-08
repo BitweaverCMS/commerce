@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_music.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: product_music.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
-  require(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . FILENAME_CATEGORIES . '.php');
+  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . FILENAME_CATEGORIES . '.php');
   require(DIR_WS_MODULES . 'prod_cat_header_code.php');
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -69,7 +69,6 @@
          }
         break;
       case 'copy_to_confirm':
-//die(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php');
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php')) {
           require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php');
          } else {

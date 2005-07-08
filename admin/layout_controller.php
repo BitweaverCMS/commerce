@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: layout_controller.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
 
@@ -114,7 +114,7 @@
         $layout_box_sort_order_single = zen_db_prepare_input($_POST['layout_box_sort_order_single']);
         $layout_box_status_single = zen_db_prepare_input($_POST['layout_box_status_single']);
 
-        $db->Execute("update " . TABLE_LAYOUT_BOXES . " set layout_box_status = '" . zen_db_input($layout_box_status) . "', layout_box_location = '" . zen_db_input($layout_box_location) . "', layout_box_sort_order = '" . zen_db_input($layout_box_sort_order) . "', layout_box_sort_order_single = '" . zen_db_input($layout_box_sort_order_single) . "', layout_box_status_single = '" . zen_db_input($layout_box_status_single) . "' where layout_id = '" . zen_db_input($box_id) . "'");
+        $db->query( "update " . TABLE_LAYOUT_BOXES . " set layout_box_status = ?, layout_box_location = ?, layout_box_sort_order = ?, layout_box_sort_order_single = ?, layout_box_status_single = ? where layout_id = ?", array( $layout_box_status, $layout_box_location, $layout_box_sort_order, $layout_box_sort_order_single, $layout_box_status_single, $box_id  ) );
 
         $messageStack->add_session(SUCCESS_BOX_UPDATED . $_GET['layout_box_name'], 'success');
         zen_redirect(zen_href_link(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $box_id));

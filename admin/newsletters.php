@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: newsletters.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -290,7 +290,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_NEWSLETTER_TITLE; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('title', $nInfo->title, 'size="50"', true); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('title', $nInfo->title, 'size="50"', 'text', true, true); ?></td>
           </tr>
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
@@ -356,7 +356,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
@@ -374,7 +374,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
@@ -392,7 +392,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html, $_POST['audience_selected']);

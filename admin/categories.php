@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: categories.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -611,19 +611,20 @@
         }
         $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_DESCRIPTION . $category_inputs_string);
         $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_IMAGE . '<br />' . zen_draw_file_field('categories_image'));
-        $dir = @dir(DIR_FS_CATALOG_IMAGES);
-        $dir_info[] = array('id' => '', 'text' => "Main Directory");
-        while ($file = $dir->read()) {
-          if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
-            $dir_info[] = array('id' => $file . '/', 'text' => $file);
-          }
-        }
+        if( $dir = bit_get_images_dir( DIR_FS_CATALOG_IMAGES ) ) {
+			$dir_info[] = array('id' => '', 'text' => "Main Directory");
+			while ($file = $dir->read()) {
+			  if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
+				$dir_info[] = array('id' => $file . '/', 'text' => $file);
+			  }
+			}
 
-        $default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
-        $contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
+			$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
+			$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
 
-        $contents[] = array('text' => '<br />' . TEXT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', '', 'size="6"'));
-        $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+			$contents[] = array('text' => '<br />' . TEXT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', '', 'size="6"'));
+			$contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+		}
         break;
       case 'edit_category':
 // echo 'I SEE ' . $_SESSION['html_editor_preference_status'];

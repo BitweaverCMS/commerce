@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: email_welcome.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: email_welcome.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -25,10 +25,10 @@
   require(DIR_WS_CLASSES . 'currencies.php');
   $currencies = new currencies();
 
-  if (file_exists('../' . DIR_WS_LANGUAGES . $_SESSION['language'] . (($template_dir=='') ? '' : '/'.$template_dir) .'/' . 'create_account.php')) {
-    require('../' . DIR_WS_LANGUAGES . $_SESSION['language'] . (($template_dir=='') ? '' : '/'.$template_dir) . '/' . 'create_account.php');
+  if (file_exists('../' . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . (($template_dir=='') ? '' : '/'.$template_dir) .'/' . 'create_account.php')) {
+    require('../' . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . (($template_dir=='') ? '' : '/'.$template_dir) . '/' . 'create_account.php');
   } else {
-    require('../' . DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . 'create_account.php');
+    require('../' . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . 'create_account.php');
   }
 
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: define_pages_editor.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: define_pages_editor.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -55,7 +55,7 @@
     $page = $_GET['define_it'];
 
     $check_directory = array();
-    $check_directory[] = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/html_includes/';
+    $check_directory[] = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/html_includes/';
     $directory_files = zen_display_files();
 
     $za_lookup = array();
@@ -69,7 +69,7 @@
   }
 
 // define template specific file name defines
-  $file = zen_get_file_directory(DIR_FS_CATALOG_LANGUAGES . $_SESSION['language'] . '/html_includes/', $_GET['filename'], 'false');
+  $file = zen_get_file_directory(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/html_includes/', $_GET['filename'], 'false');
 ?>
 <?php
   switch ($_GET['action']) {
@@ -99,18 +99,18 @@
       break;
   }
 
-  if (!$_SESSION['language']) $_SESSION['language'] = $language;
+  if (!$gBitLanguage->getLanguage()) $gBitLanguage->getLanguage() = $language;
 
   $languages_array = array();
   $languages = zen_get_languages();
   $lng_exists = false;
   for ($i=0; $i<sizeof($languages); $i++) {
-    if ($languages[$i]['directory'] == $_SESSION['language']) $lng_exists = true;
+    if ($languages[$i]['directory'] == $gBitLanguage->getLanguage()) $lng_exists = true;
 
     $languages_array[] = array('id' => $languages[$i]['directory'],
                                'text' => $languages[$i]['name']);
   }
-  if (!$lng_exists) $_SESSION['language'] = $language;
+  if (!$lng_exists) $gBitLanguage->getLanguage() = $language;
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -150,10 +150,10 @@
 <!-- body_text //-->
     <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
       <tr>
-        <td class="pageHeading"><?php echo HEADING_TITLE . '&nbsp;' . $_SESSION['language']; ?> &nbsp;&nbsp;
+        <td class="pageHeading"><?php echo HEADING_TITLE . '&nbsp;' . $gBitLanguage->getLanguage(); ?> &nbsp;&nbsp;
           <?php
             $check_directory = array();
-            $check_directory[] = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/html_includes/';
+            $check_directory[] = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/html_includes/';
             $directory_files = zen_display_files();
 
             $za_lookup = array();
@@ -183,7 +183,7 @@ if (isset($_GET['filename'])) {
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
 <?php
-  if ( ($_SESSION['language']) && ($_GET['filename']) ) {
+  if ( ($gBitLanguage->getLanguage()) && ($_GET['filename']) ) {
     if (file_exists($file)) {
       $file_array = @file($file);
       $file_contents = @implode('', $file_array);
@@ -200,7 +200,7 @@ if (isset($_GET['filename'])) {
               <tr>
             <td class="main"><b><?php echo TEXT_INFO_CAUTION . '<br /><br />' . TEXT_INFO_EDITING . '<br />' . $file . '<br />'; ?></b></td>
               </tr>
-          <tr><?php echo zen_draw_form('language', FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $_SESSION['language'] . '&filename=' . $_GET['filename'] . '&action=save'); ?>
+          <tr><?php echo zen_draw_form('language', FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $_GET['filename'] . '&action=save'); ?>
             <td><table border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main">
@@ -218,7 +218,7 @@ if (isset($_GET['filename'])) {
                 <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
               <tr>
-                <td align="right"><?php if ($file_writeable) { echo zen_image_submit('button_save.gif', IMAGE_SAVE) . '&nbsp;<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'define_it=' .$_GET['define_it'] . '&action=new_page') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>' . '&nbsp;' . '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR . '.php') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; } else { echo '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $_SESSION['language']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; } ?></td>
+                <td align="right"><?php if ($file_writeable) { echo zen_image_submit('button_save.gif', IMAGE_SAVE) . '&nbsp;<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'define_it=' .$_GET['define_it'] . '&action=new_page') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>' . '&nbsp;' . '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR . '.php') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; } else { echo '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; } ?></td>
               </tr>
             </table></td>
           </form></tr>
@@ -232,25 +232,25 @@ if (isset($_GET['filename'])) {
             <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
           <tr>
-            <td><?php echo '<a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $_SESSION['language']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+            <td><?php echo '<a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
           </tr>
 <?php
     }
   } else {
-    $filename = $_SESSION['language'] . '.php';
+    $filename = $gBitLanguage->getLanguage() . '.php';
 ?>
           <tr>
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td class="smallText"><a href="<?php echo zen_href_link($_GET['filename'], 'lngdir=' . $_SESSION['language'] . '&filename=' . $filename); ?>"><b><?php echo $filename; ?></b></a></td>
+                <td class="smallText"><a href="<?php echo zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $filename); ?>"><b><?php echo $filename; ?></b></a></td>
 <?php
-    $dir = dir(DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']);
+    $dir = dir(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage());
     $left = false;
     if ($dir) {
       $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
       while ($file = $dir->read()) {
         if (substr($file, strrpos($file, '.')) == $file_extension) {
-          echo '                <td class="smallText"><a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $_SESSION['language'] . '&filename=' . $file) . '">' . $file . '</a></td>' . "\n";
+          echo '                <td class="smallText"><a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $file) . '">' . $file . '</a></td>' . "\n";
           if (!$left) {
             echo '              </tr>' . "\n" .
                  '              <tr>' . "\n";
@@ -269,7 +269,7 @@ if (isset($_GET['filename'])) {
             <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
           <tr>
-            <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_FILE_MANAGER, 'current_path=' . DIR_FS_CATALOG_LANGUAGES . $_SESSION['language']) . '">' . zen_image_button('button_file_manager.gif', IMAGE_FILE_MANAGER) . '</a>'; ?></td>
+            <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_FILE_MANAGER, 'current_path=' . DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_file_manager.gif', IMAGE_FILE_MANAGER) . '</a>'; ?></td>
           </tr>
 <?php
   }

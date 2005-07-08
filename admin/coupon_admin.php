@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -1008,16 +1008,17 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
       } else {
         $prod_details = NONE;
 //bof 12-6ke
-$product_query = $db->Execute("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $cInfo->coupon_id . "' and product_id != '0'");        if ($product_query->RecordCount() > 0) $prod_details = TEXT_SEE_RESTRICT;
+$product_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = ? and product_id != '0'", array( $cInfo->coupon_id ) );
+		if ($product_query->RecordCount() > 0) $prod_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
         $cat_details = NONE;
 //bof 12-6ke
-$category_query = $db->Execute("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $cInfo->coupon_id . "' and category_id != '0'");        if ($category_query->RecordCount() > 0) $cat_details = TEXT_SEE_RESTRICT;
+$category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = ? and category_id != '0'", array( $cInfo->coupon_id ));
+        if ($category_query->RecordCount() > 0) $cat_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
-        $coupon_name = $db->Execute("select coupon_name
+        $coupon_name = $db->query("select coupon_name
                                      from " . TABLE_COUPONS_DESCRIPTION . "
-                                     where coupon_id = '" . $cInfo->coupon_id . "'
-                                     and language_id = '" . $_SESSION['languages_id'] . "'");
+                                     where coupon_id = ? and language_id = ?", array( $cInfo->coupon_id, $_SESSION['languages_id'] ) );
         $uses_coupon = $cInfo->uses_per_coupon;
         $uses_user = $cInfo->uses_per_user;
         if ($uses_coupon == 0 || $uses_coupon == '') $uses_coupon = TEXT_UNLIMITED;

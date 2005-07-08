@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_popup.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: salemaker_popup.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require("includes/application_top.php");
 
-  require(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . FILENAME_SALEMAKER_POPUP . '.php');
+  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . FILENAME_SALEMAKER_POPUP . '.php');
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>

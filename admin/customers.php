@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: customers.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -516,7 +516,7 @@ function check_form() {
       echo $cInfo->customers_firstname . zen_draw_hidden_field('customers_firstname');
     }
   } else {
-    echo zen_draw_input_field('customers_firstname', $cInfo->customers_firstname, zen_set_field_length(TABLE_CUSTOMERS, 'customers_firstname', 50), true);
+    echo zen_draw_input_field('customers_firstname', $cInfo->customers_firstname, zen_set_field_length(TABLE_CUSTOMERS, 'customers_firstname', 50), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -531,7 +531,7 @@ function check_form() {
       echo $cInfo->customers_lastname . zen_draw_hidden_field('customers_lastname');
     }
   } else {
-    echo zen_draw_input_field('customers_lastname', $cInfo->customers_lastname, zen_set_field_length(TABLE_CUSTOMERS, 'customers_lastname', 50), true);
+    echo zen_draw_input_field('customers_lastname', $cInfo->customers_lastname, zen_set_field_length(TABLE_CUSTOMERS, 'customers_lastname', 50), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -550,7 +550,7 @@ function check_form() {
         echo $cInfo->customers_dob . zen_draw_hidden_field('customers_dob');
       }
     } else {
-      echo zen_draw_input_field('customers_dob', zen_date_short($cInfo->customers_dob), 'maxlength="10"', true);
+      echo zen_draw_input_field('customers_dob', zen_date_short($cInfo->customers_dob), 'maxlength="10"', 'text', true, true);
     }
 ?></td>
           </tr>
@@ -572,7 +572,7 @@ function check_form() {
       echo $customers_email_address . zen_draw_hidden_field('customers_email_address');
     }
   } else {
-    echo zen_draw_input_field('customers_email_address', $cInfo->customers_email_address, zen_set_field_length(TABLE_CUSTOMERS, 'customers_email_address', 50), true);
+    echo zen_draw_input_field('customers_email_address', $cInfo->customers_email_address, zen_set_field_length(TABLE_CUSTOMERS, 'customers_email_address', 50), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -600,7 +600,7 @@ function check_form() {
         echo $cInfo->entry_company . zen_draw_hidden_field('entry_company');
       }
     } else {
-      echo zen_draw_input_field('entry_company', $cInfo->entry_company, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_company', 50));
+      echo zen_draw_input_field('entry_company', $cInfo->entry_company, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_company', 'text', true, 50));
     }
 ?></td>
           </tr>
@@ -628,7 +628,7 @@ function check_form() {
       echo $cInfo->entry_street_address . zen_draw_hidden_field('entry_street_address');
     }
   } else {
-    echo zen_draw_input_field('entry_street_address', $cInfo->entry_street_address, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_street_address', 50), true);
+    echo zen_draw_input_field('entry_street_address', $cInfo->entry_street_address, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_street_address', 50), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -664,7 +664,7 @@ function check_form() {
       echo $cInfo->entry_postcode . zen_draw_hidden_field('entry_postcode');
     }
   } else {
-    echo zen_draw_input_field('entry_postcode', $cInfo->entry_postcode, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_postcode', 10), true);
+    echo zen_draw_input_field('entry_postcode', $cInfo->entry_postcode, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_postcode', 10), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -679,7 +679,7 @@ function check_form() {
       echo $cInfo->entry_city . zen_draw_hidden_field('entry_city');
     }
   } else {
-    echo zen_draw_input_field('entry_city', $cInfo->entry_city, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_city', 50), true);
+    echo zen_draw_input_field('entry_city', $cInfo->entry_city, zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_city', 50), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -756,7 +756,7 @@ function check_form() {
       echo $cInfo->customers_telephone . zen_draw_hidden_field('customers_telephone');
     }
   } else {
-    echo zen_draw_input_field('customers_telephone', $cInfo->customers_telephone, zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', 15), true);
+    echo zen_draw_input_field('customers_telephone', $cInfo->customers_telephone, zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', 15), 'text', true, true);
   }
 ?></td>
           </tr>
@@ -1025,8 +1025,7 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
         $cInfo = new objectInfo($cInfo_array);
       }
 
-        $group_query = $db->Execute("select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where
-                                     group_id = '" . $customers->fields['customers_group_pricing'] . "'");
+        $group_query = $db->query( "select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where group_id = ?", array( $customers->fields['customers_group_pricing'] ) );
 
         if ($group_query->RecordCount() < 1) {
           $group_name_entry = TEXT_NONE;
