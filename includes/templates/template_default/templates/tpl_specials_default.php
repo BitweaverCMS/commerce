@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_specials_default.php,v 1.2 2005/07/05 18:40:23 spiderr Exp $
+// $Id: tpl_specials_default.php,v 1.3 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
 <h1><?php echo $breadcrumb->last();  ?></h1>
@@ -44,7 +44,7 @@
     while (!$specials->EOF) {
       $row++;
 
-      echo '            <td valign="bottom" align="center" width="33%" class="smallText"><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $specials->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $specials->fields['products_image'], $specials->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $specials->fields['products_id']) . '">' . $specials->fields['products_name'] . '</a><br /><span class="normalprice">' . $currencies->display_price($specials->fields['products_price'], zen_get_tax_rate($specials->fields['products_tax_class_id'])) . '</span><br /><span class="specialprice">' . $currencies->display_price($specials->fields['specials_new_products_price'], zen_get_tax_rate($specials->fields['products_tax_class_id'])) . '</span></td>' . "\n";
+      echo '            <td valign="bottom" align="center" width="33%" class="smallText"><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $specials->fields['products_id']) . '">' . zen_image(CommerceProduct::getImageUrl( $specials->fields['products_image'] ), $specials->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $specials->fields['products_id']) . '">' . $specials->fields['products_name'] . '</a><br /><span class="normalprice">' . $currencies->display_price($specials->fields['products_price'], zen_get_tax_rate($specials->fields['products_tax_class_id'])) . '</span><br /><span class="specialprice">' . $currencies->display_price($specials->fields['specials_new_products_price'], zen_get_tax_rate($specials->fields['products_tax_class_id'])) . '</span></td>' . "\n";
 
       if ((($row / 3) == floor($row / 3))) {
 ?>

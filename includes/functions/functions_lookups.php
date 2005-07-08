@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
+// $Id: functions_lookups.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
 //
 //
 /**
@@ -465,7 +465,7 @@
 // look up the product type from product_id and return an info page name
   function zen_get_info_page($zf_product_id) {
     global $db;
-    $sql = "select products_type from " . TABLE_PRODUCTS . " where products_id = '" . $zf_product_id . "'";
+    $sql = "select products_type from " . TABLE_PRODUCTS . " where products_id = '" . (int)$zf_product_id . "'";
     $zp_type = $db->Execute($sql);
     if ($zp_type->RecordCount() == 0) {
       return 'products_general_info';
@@ -545,7 +545,7 @@
     $sql = "select p.products_image from " . TABLE_PRODUCTS . " p  where products_id=?";
     $look_up = $db->query( $sql, array($product_id) );
 
-    return zen_image(DIR_WS_IMAGES . $look_up->fields['products_image'], zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
+    return zen_image(STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images'. $look_up->fields['products_image'], zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
   }
 
 ////

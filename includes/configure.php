@@ -18,6 +18,9 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 //
+require_once( BITCOMMERCE_PKG_PATH.'includes/common_inc.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProduct.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
 
 // Define the webserver and path parameters
   // Main webserver: eg, http://localhost - should not be empty for productive servers
@@ -33,7 +36,7 @@
   define('DIR_WS_CATALOG', '/commerce/');
   define('DIR_WS_HTTPS_CATALOG', '/commerce/');
 
-  define('DIR_WS_IMAGES', 'images/');
+  define('DIR_WS_IMAGES', BITCOMMERCE_PKG_URL.'icons/');
   define('DIR_WS_INCLUDES', 'includes/');
   define('DIR_WS_BOXES', DIR_WS_INCLUDES . 'boxes/');
   define('DIR_WS_FUNCTIONS', DIR_WS_INCLUDES . 'functions/');
@@ -47,6 +50,9 @@
 // * DIR_FS_* = Filesystem directories (local/physical)
   //the following path is a COMPLETE path to your Zen Cart files. eg: /var/www/vhost/accountname/public_html/store/
   define('DIR_FS_CATALOG', BITCOMMERCE_PKG_PATH);
+
+  define('DIR_FS_CATALOG_IMAGES', STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/images/');
+  define('DIR_WS_CATALOG_IMAGES', STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/');
 
   define('DIR_FS_INCLUDES', DIR_FS_CATALOG . 'includes/');
   define('DIR_FS_CLASSES', DIR_FS_INCLUDES . 'classes/');
@@ -76,5 +82,7 @@
   // ie: /path/to/your/webspace/public_html/zen/cache   -- leave no trailing slash
   define('SQL_CACHE_METHOD', 'none');
   define('DIR_FS_SQL_CACHE', TEMP_PKG_PATH.'zencache');
+
+  define('DIR_WS_ICONS', BITCOMMERCE_PKG_URL.'icons/');
 
 ?>

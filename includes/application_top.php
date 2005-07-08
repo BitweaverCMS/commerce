@@ -17,10 +17,122 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.2 2005/07/06 20:27:29 spiderr Exp $
+// $Id: application_top.php,v 1.3 2005/07/08 06:12:26 spiderr Exp $
 //
 
+// start the timer for the page parse time log
+  define('PAGE_PARSE_START_TIME', microtime());
+//  define('DISPLAY_PAGE_PARSE_TIME', 'true');
+// set the level of error reporting
+error_reporting(E_ALL & ~E_NOTICE);
+
+  @ini_set("arg_separator.output","&");
+
+// Set the local configuration parameters - mainly for developers
+  if (file_exists(BITCOMMERCE_PKG_PATH.'includes/local/configure.php')) {
+    include(BITCOMMERCE_PKG_PATH.'includes/local/configure.php');
+  }
+// include server parameters
+  if (file_exists(BITCOMMERCE_PKG_PATH.'includes/configure.php')) {
+    include(BITCOMMERCE_PKG_PATH.'includes/configure.php');
+  }
+
+// include the list of extra configure files
+  if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_configures')) {
+    while ($zv_file = $za_dir->read()) {
+      if (strstr($zv_file, '.php')) {
+        require(DIR_WS_INCLUDES . 'extra_configures/' . $zv_file);
+      }
+    }
+  }
+
+
+// determine install status
+  if (( (!file_exists( BITCOMMERCE_PKG_PATH.'includes/configure.php') && !file_exists( BITCOMMERCE_PKG_PATH.'includes/local/configure.php' )) ) || (DB_TYPE == '') || (!file_exists( BITCOMMERCE_PKG_PATH.'includes/classes/db/' .DB_TYPE . '/query_factory.php'))) {
+print "DIE DIE DIE ";
+    header('location: zc_install/index.php');
+    exit;
+  }
+
+
+
+// Define the project version  (must come after DB class is loaded)
+  require(DIR_FS_INCLUDES . 'version.php');
+
+// set the type of request (secure or not)
+  $request_type = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
+
+// set php_self in the local scope
+  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
+
+// include the list of project filenames
+  require(DIR_FS_INCLUDES . 'filenames.php');
+
+// include the list of project database tables
+  require(DIR_FS_INCLUDES . 'database_tables.php');
+
+// include the list of compatibility issues
+  require(DIR_FS_INCLUDES . 'functions/compatibility.php');
+
+// include the list of extra database tables and filenames
+//  include(DIR_WS_MODULES . 'extra_datafiles.php');
+  if ($za_dir = @dir(DIR_FS_INCLUDES . 'extra_datafiles')) {
+    while ($zv_file = $za_dir->read()) {
+      if (strstr($zv_file, '.php')) {
+        require(DIR_FS_INCLUDES . 'extra_datafiles/' . $zv_file);
+      }
+    }
+  }
+
+// set the HTTP GET parameters manually if search_engine_friendly_urls is enabled
+  if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
+    if (strlen($_SERVER['REQUEST_URI']) > 1) {
+      $GET_array = array();
+      $PHP_SELF = $_SERVER['SCRIPT_NAME'];
+      $vars = explode('/', substr($_SERVER['REQUEST_URI'], 1));
+      for ($i=0, $n=sizeof($vars); $i<$n; $i++) {
+        if (strpos($vars[$i], '[]')) {
+          $GET_array[substr($vars[$i], 0, -2)][] = $vars[$i+1];
+        } else {
+          $_GET[$vars[$i]] = $vars[$i+1];
+        }
+        $i++;
+      }
+
+      if (sizeof($GET_array) > 0) {
+        while (list($key, $value) = each($GET_array)) {
+          $_GET[$key] = $value;
+        }
+      }
+    }
+  }
+
+// define general functions used application-wide
+  require_once(DIR_FS_FUNCTIONS . 'functions_general.php');
+  require_once(DIR_FS_FUNCTIONS . 'html_output.php');
+  require_once(DIR_FS_FUNCTIONS . 'functions_email.php');
+
+// load extra functions
+  require_once(DIR_FS_MODULES . 'extra_functions.php');
+
+
+
+
+
+
+
+
+
+
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+
+
+
+
+
+
+
+
 
 // set the top level domains
   $http_domain = zen_get_top_level_domain(HTTP_SERVER);
@@ -99,6 +211,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 		// we have lost our bitweaver
 		require_once( DIR_WS_MODULES . 'pages/' . 'logoff/header_php.php' );
 		unset( $_SESSION['customer_id'] );
+	} elseif( $gBitUser->isRegistered() ) {
+	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
+	  $_SESSION['customer_id'] = $gBitUser->mUserId;
 	}
 
 	if( $session_started && $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
@@ -182,25 +297,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   require(DIR_WS_CLASSES . 'mime.php');
   require(DIR_WS_CLASSES . 'email.php');
 
-// set the language
-  if (!$_SESSION['language'] || isset($_GET['language'])) {
-
-    require(DIR_WS_CLASSES . 'language.php');
-
-    $lng = new language();
-
-    if (isset($_GET['language']) && zen_not_null($_GET['language'])) {
-      $lng->set_language($_GET['language']);
-    } else {
-      $lng->get_browser_language();
-      $lng->set_language(DEFAULT_LANGUAGE);
-    }
-
-    $_SESSION['language'] = $lng->language['directory'];
-    $_SESSION['languages_id'] = $lng->language['id'];
-
-  }
-
 // Set theme related directories
   $sql = "SELECT template_dir
           FROM " . TABLE_TEMPLATE_SELECT .
@@ -230,16 +326,16 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 // include the language translations
 // include template specific language files
-  if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php')) {
+  if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php')) {
     $template_dir_SELECT = $template_dir . '/';
-//die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
+//die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php');
   } else {
-//die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
+//die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php');
     $template_dir_SELECT = '';
   }
 
 
-  require(DIR_WS_LANGUAGES . $template_dir_SELECT . $_SESSION['language'] . '.php');
+  require(DIR_WS_LANGUAGES . $template_dir_SELECT . $gBitLanguage->getLanguage() . '.php');
 
 // include the extra language translations
   include(DIR_WS_MODULES . 'extra_definitions.php');
@@ -794,16 +890,10 @@ case 'wishlist_add_cart': reset ($lvnr);
   }
 
 // add the products model to the breadcrumb trail
-  if (isset($_GET['products_id'])) {
-    $productname_query = "SELECT products_name
-                   FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-                   WHERE products_id = '" . (int)$_GET['products_id'] . "'
-             and language_id = '" . $_SESSION['languages_id'] . "'";
-
-    $productname = $db->Execute($productname_query);
-
-    if ($productname->RecordCount() > 0) {
-      $breadcrumb->add($productname->fields['products_name'], zen_href_link(zen_get_info_page($_GET['products_id']), 'cPath=' . $cPath . '&products_id=' . $_GET['products_id']));
+  if ( !empty( $_GET['products_id'] ) ) {
+    $gCommerceProduct = new CommerceProduct();
+    if( $gCommerceProduct->load( $_GET['products_id'] ) ) {
+      $breadcrumb->add( $gCommerceProduct->getTitle(), zen_href_link(zen_get_info_page($_GET['products_id']), 'cPath=' . $cPath . '&products_id=' . $_GET['products_id']));
     }
   }
 

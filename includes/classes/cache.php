@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cache.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: cache.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
 //
 
 class cache {
@@ -106,21 +106,21 @@ class cache {
       break;
     }
   }
-  
+
   function sql_cache_store($zf_query, $zf_result_array) {
     global $db;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
-        $OUTPUT = serialize($zf_result_array); 
-        $fp = fopen(DIR_FS_SQL_CACHE . '/' . $zp_cache_name . '.sql',"w"); 
-        fputs($fp, $OUTPUT); 
+        $OUTPUT = serialize($zf_result_array);
+        $fp = fopen(DIR_FS_SQL_CACHE . '/' . $zp_cache_name . '.sql',"w");
+        fputs($fp, $OUTPUT);
         fclose($fp);
         return true;
       break;
       case 'database':
         $result_serialize = $db->prepare_input(serialize($zf_result_array));
-	$sql = "insert into " . TABLE_DB_CACHE . " set cache_entry_name = '" . $zp_cache_name . "', 
+	$sql = "insert into " . TABLE_DB_CACHE . " set cache_entry_name = '" . $zp_cache_name . "',
 	                                               cache_data = '" . $result_serialize . "',
 						       cache_entry_created = '" . time() . "'";
 	$db->Execute($sql);
@@ -134,7 +134,7 @@ class cache {
       break;
     }
   }
-  
+
   function sql_cache_read($zf_query) {
     global $db;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
@@ -147,7 +147,7 @@ class cache {
       case 'database':
 	$sql = "select * from " . TABLE_DB_CACHE . " where cache_entry_name = '" . $zp_cache_name . "'";
 	$zp_cache_result = $db->Execute($sql);
-	$zp_result_array = unserialize($zp_cache_result->fields['cache_data']); 
+	$zp_result_array = unserialize($zp_cache_result->fields['cache_data']);
         return $zp_result_array;
       break;
       case 'memory':
@@ -158,7 +158,7 @@ class cache {
       break;
     }
   }
-  
+
   function sql_cache_flush_cache() {
     global $db;
     switch (SQL_CACHE_METHOD) {
@@ -185,7 +185,7 @@ class cache {
       break;
     }
   }
-  
+
   function cache_generate_cache_name($zf_query) {
     switch (SQL_CACHE_METHOD) {
       case 'file':

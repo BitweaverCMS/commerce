@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_header.php,v 1.2 2005/07/05 21:08:15 spiderr Exp $
+// $Id: html_header.php,v 1.3 2005/07/08 06:13:04 spiderr Exp $
 //
-// TODO 
+// TODO
 // cvs block
-// stylesheets 
+// stylesheets
 
 require(DIR_WS_MODULES . 'meta_tags.php');
 ?>
@@ -53,7 +53,7 @@ require(DIR_WS_MODULES . 'meta_tags.php');
 function clearText(thefield){
 if (thefield.defaultValue==thefield.value)
 thefield.value = ""
-} 
+}
 </script>
 
 </head>

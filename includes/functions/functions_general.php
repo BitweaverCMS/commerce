@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
+// $Id: functions_general.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -48,7 +48,6 @@
   while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
   // header locates should not have the &amp; in the address it breaks things
   while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
-
     header('Location: ' . $url);
 
     zen_exit();
@@ -721,24 +720,6 @@
   }
 
 ////
-  function zen_not_null($value) {
-    if (is_array($value)) {
-      if (sizeof($value) > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      if (($value != '') && (strtolower($value) != 'null') && (strlen(trim($value)) > 0)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-
-
-////
 // Checks to see if the currency code exists as a currency
 // TABLES: currencies
   function zen_currency_exists($code) {
@@ -852,16 +833,13 @@
 ////
   function is_product_valid($product_id, $coupon_id) {
     global $db;
-    $coupons_query = "select * from " . TABLE_COUPON_RESTRICT . "
-                      where coupon_id = '" . $coupon_id . "'
-                      order by coupon_restrict asc";
+    $coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
+                      WHERE `coupon_id` = ?
+                      ORDER BY".$db->convert_sortmode( 'coupon_restrict_asc' );
+    $coupons = $db->query($coupons_query, array( $coupon_id ) );
 
-    $coupons = $db->Execute($coupons_query);
-
-    $product_query = "select products_model from " . TABLE_PRODUCTS . "
-                      where products_id = '" . (int)$product_id . "'";
-
-    $product = $db->Execute($product_query);
+    $product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
+    $product = $db->query($product_query, array( $product_id ) );
 
     if (ereg('^GIFT', $product->fields['products_model'])) {
       return false;
@@ -900,11 +878,6 @@
     return $product_valid;
   }
 
-
-////
-  function zen_db_input($string) {
-    return addslashes($string);
-  }
 
 ////
   function zen_db_prepare_input($string) {
@@ -968,51 +941,9 @@
     return $db->Execute($query);
   }
 */
-  function zen_db_insert_id( $pTableName, $pIdColumn ) {
-  	global $db;
-  	return( $db->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
-  }
-
 ////
   function zen_db_output($string) {
     return htmlspecialchars($string);
-  }
-
-
-// function to return field type
-// uses $tbl = table name, $fld = field name
-
-  function zen_field_type($tbl, $fld) {
-    global $db;
-    $rs = $db->MetaColumns($tbl);
-    $type = $rs[strtoupper($fld)]->type;
-    return $type;
-  }
-
-// function to return field length
-// uses $tbl = table name, $fld = field name
-  function zen_field_length($tbl, $fld) {
-    global $db;
-    $rs = $db->MetaColumns($tbl);
-    $length = $rs[strtoupper($fld)]->max_length;
-    return $length;
-  }
-
-////
-// return the size and maxlength settings in the form size="blah" maxlength="blah" based on maximum size being 70
-// uses $tbl = table name, $fld = field name
-// example: zen_set_field_length(TABLE_CATEGORIES_DESCRIPTION, 'categories_name')
-  function zen_set_field_length($tbl, $fld, $max=70) {
-    $field_length= zen_field_length($tbl, $fld);
-    switch (true) {
-      case ($field_length > $max):
-        $length= 'size = "' . ($max+1) . '" maxlength= "' . $field_length . '"';
-        break;
-      default:
-        $length= 'size = "' . ($field_length+1) . '" maxlength = "' . $field_length . '"';
-        break;
-    }
-    return $length;
   }
 
 
@@ -1111,6 +1042,7 @@
 
 
 ////
+//get specials price or sale price
 // Switch buy now button based on call for price sold out etc.
   function zen_get_buy_now_button($product_id, $link, $additional_link = false) {
     global $db;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
+// $Id: html_output.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -196,8 +196,9 @@
       $image .= ' title=" ' . zen_output_string($alt) . ' "';
     }
 
+	$srcPath = BIT_ROOT_PATH.$src;
     if ( ((CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height))) ) {
-      if ($image_size = @getimagesize($src)) {
+      if ($image_size = @getimagesize($srcPath)) {
         if (empty($width) && zen_not_null($height)) {
           $ratio = $height / $image_size[1];
           $width = $image_size[0] * $ratio;
@@ -214,10 +215,10 @@
     }
 
 
-    if (zen_not_null($width) && zen_not_null($height) and file_exists($src)) {
+    if (zen_not_null($width) && zen_not_null($height) and file_exists($srcPath)) {
 //      $image .= ' width="' . zen_output_string($width) . '" height="' . zen_output_string($height) . '"';
 // proportional images
-      $image_size = @getimagesize($src);
+      $image_size = @getimagesize($srcPath);
       // fix division by zero error
       $ratio = ($image_size[0] != 0 ? $width / $image_size[0] : 1);
       if ($image_size[1]*$ratio > $height) {
@@ -245,32 +246,6 @@
   }
 
 ////
-// The HTML form submit button wrapper function
-// Outputs a button in the selected language
-  function zen_image_submit($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base;
-
-    $image_submit = '<input type="image" src="' . zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $_SESSION['language'] . '/') . $image) . '" alt="' . zen_output_string($alt) . '"';
-
-    if (zen_not_null($alt)) $image_submit .= ' title=" ' . zen_output_string($alt) . ' "';
-
-    if (zen_not_null($parameters)) $image_submit .= ' ' . $parameters;
-
-    $image_submit .= ' />';
-
-    return $image_submit;
-  }
-
-////
-// Output a function button in the selected language
-  function zen_image_button($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base;
-	if( $template ) {
-	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $_SESSION['language'] . '/') . $image, $alt, '', '', $parameters);
-	}
-  }
-
-////
 // Output a separator either through whitespace, or with an image
   function zen_draw_separator($image = 'true', $width = '100%', $height = '1') {
 
@@ -295,30 +270,6 @@
     $form .= '>';
 
     return $form;
-  }
-
-////
-// Output a form input field
-  function zen_draw_input_field($name, $value = '', $parameters = '', $type = 'text', $reinsert_value = true) {
-    $field = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
-
-    if ( (isset($GLOBALS[$name])) && ($reinsert_value == true) ) {
-      $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
-    } elseif (zen_not_null($value)) {
-      $field .= ' value="' . zen_output_string($value) . '"';
-    }
-
-    if (zen_not_null($parameters)) $field .= ' ' . $parameters;
-
-    $field .= ' />';
-
-    return $field;
-  }
-
-////
-// Output a form password field
-  function zen_draw_password_field($name, $value = '', $parameters = 'maxlength="40"') {
-    return zen_draw_input_field($name, $value, $parameters, 'password', true);
   }
 
 ////
@@ -388,15 +339,6 @@
 
     return $field;
   }
-
-////
-// Output a form file-field
-  function zen_draw_file_field($name, $required = false) {
-    $field = zen_draw_input_field($name, '', ' size="50" ', 'file');
-
-    return $field;
-  }
-
 
 ////
 // Hide form elements

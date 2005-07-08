@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_info_display.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_product_info_display.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -46,10 +46,10 @@
 	<div class="productimage">
 		<?php if (zen_not_null($products_image)) { ?>
 			<script language="javascript" type="text/javascript"><!--
-				document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . $products_image, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
+				document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image( CommerceProduct::getImageUrl( $products_image ), addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
 			//--></script>
 			<noscript>
-				<?php echo '<a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $products_image, $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>
+				<?php echo '<a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . zen_image( CommerceProduct::getImageUrl( $products_image ), $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>
 			</noscript>
 		<?php } ?>
 
@@ -99,7 +99,7 @@
 	<?php if ($products_date_available > date('Y-m-d H:i:s')) { ?>
 		<p class="smalltext"><?php echo sprintf(TEXT_DATE_AVAILABLE, zen_date_long($products_date_available)); ?></p>
 	<?php } else { echo '<p class="smalltext">' . sprintf(TEXT_DATE_ADDED, zen_date_long($products_date_added)) . '</p>'; } ?>
-	
+
 	<?php if (zen_not_null($products_url)) { ?>
 		<p><?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?></p>
 	<?php } ?>

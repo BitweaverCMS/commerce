@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whats_new.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: whats_new.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
 //
 
   switch (true) {
@@ -49,6 +49,7 @@
   $random_whats_new_sidebox_product = zen_random_select($random_whats_new_sidebox_product_query);
 
   if ($random_whats_new_sidebox_product->RecordCount() > 0 ) {
+  	$random_product = $random_whats_new_sidebox_product;
     $whats_new_price = zen_get_products_display_price($random_whats_new_sidebox_product->fields['products_id']);
     $random_whats_new_sidebox_product->fields['products_name'] = zen_get_products_name($random_whats_new_sidebox_product->fields['products_id']);
     $random_whats_new_sidebox_product->fields['specials_new_products_price'] = zen_get_products_special_price($random_whats_new_sidebox_product->fields['products_id']);

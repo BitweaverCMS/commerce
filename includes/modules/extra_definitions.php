@@ -17,18 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: extra_definitions.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: extra_definitions.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
 //
 
 // Set current template
   $template_id= $template_dir;
 
 // set directories to check for language files
-  $languages_extra_definitions_directory = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions/';
-  $languages_extra_definitions_directory_template = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions/' . $template_id . '/';
+  $languages_extra_definitions_directory = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/';
+  $languages_extra_definitions_directory_template = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/' . $template_id . '/';
 
-  $ws_languages_extra_definitions_directory = DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions/';
-  $ws_languages_extra_definitions_directory_template = DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions/' . $template_id . '/';
+  $ws_languages_extra_definitions_directory = DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/';
+  $ws_languages_extra_definitions_directory_template = DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/' . $template_id . '/';
 
 // Check for new definitions in template directory
 

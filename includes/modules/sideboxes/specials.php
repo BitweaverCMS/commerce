@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: specials.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
 //
 
 // test if box should display
@@ -45,6 +45,7 @@
     $random_specials_sidebox_product = zen_random_select($random_specials_sidebox_product_query);
 
     if ($random_specials_sidebox_product->RecordCount() > 0)  {
+$random_product = $random_specials_sidebox_product;
       $specials_box_price = zen_get_products_display_price($random_specials_sidebox_product->fields['products_id']);
 
       require($template->get_template_dir('tpl_specials.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_specials.php');

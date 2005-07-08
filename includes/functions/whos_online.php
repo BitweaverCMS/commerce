@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: whos_online.php,v 1.2 2005/07/08 06:12:28 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -67,9 +67,9 @@
                   full_name = '" . zen_db_input($wo_full_name) . "',
                   ip_address = '" . zen_db_input($wo_ip_address) . "',
                   time_last_click = '" . zen_db_input($current_time) . "',
-                  last_page_url = '" . zen_db_input($wo_last_page_url) . "',
+                  last_page_url = '" . zen_db_input(substr($wo_last_page_url, 0, 255)) . "',
                   host_address = '" . zen_db_input($_SESSION['customers_host_address']) . "',
-                  user_agent = '" . zen_db_input($wo_user_agent) . "'
+                  user_agent = '" . zen_db_input(substr($wo_user_agent, 0, 255)) . "'
               where session_id = '" . zen_db_input($wo_session_id) . "'";
 
       $db->Execute($sql);

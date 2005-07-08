@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/08 06:13:01 spiderr Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
 
@@ -88,7 +88,7 @@
   }
 
 // include template specific file name defines
-  $define_contact_us = zen_get_file_directory(DIR_WS_LANGUAGES . $_SESSION['language'] . '/html_includes/', FILENAME_DEFINE_CONTACT_US, 'false');
+  $define_contact_us = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/html_includes/', FILENAME_DEFINE_CONTACT_US, 'false');
 
   $breadcrumb->add(NAVBAR_TITLE);
 ?>

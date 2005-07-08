@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: shopping_cart.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
 //
 
   class shoppingCart {
@@ -485,7 +485,7 @@
             }
           } else {
 // discount qty pricing
-            if ($product->fields['products_discount_type'] != '0') {
+            if( !empty($product->fields['products_discount_type'] ) ) {
               $products_price = zen_get_products_discount_price_qty($product->fields['products_id'], $qty);
             }
           }
@@ -847,20 +847,10 @@ if ((int)$products_id != $products_id) {
       $products_array = array();
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
-        $products_query = "select p.products_id, pd.products_name, p.products_model, p.products_image,
-                                  p.products_price, p.products_weight, p.products_tax_class_id,
-                                  p.products_quantity_order_min, p.products_quantity_order_units,
-                                  p.product_is_free, p.products_priced_by_attribute,
-                                  p.products_discount_type, p.products_discount_type_from
-                           from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                           where p.products_id = '" . (int)$products_id . "'
-                           and pd.products_id = p.products_id
-                           and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+        if( $product = CommerceProduct::getProduct( $products_id ) ) {
 
-        if ($products = $db->Execute($products_query)) {
-
-          $prid = $products->fields['products_id'];
-          $products_price = $products->fields['products_price'];
+          $prid = $product['products_id'];
+          $products_price = $product['products_price'];
 //fix here
 /*
           $special_price = zen_get_products_special_price($prid);
@@ -869,35 +859,35 @@ if ((int)$products_id != $products_id) {
           }
 */
           $special_price = zen_get_products_special_price($prid);
-          if ($special_price and $products->fields['products_priced_by_attribute'] == 0) {
+          if ($special_price and $product['products_priced_by_attribute'] == 0) {
             $products_price = $special_price;
           } else {
             $special_price = 0;
           }
 
-          if (zen_get_products_price_is_free($products->fields['products_id'])) {
+          if (zen_get_products_price_is_free($product['products_id'])) {
             // no charge
             $products_price = 0;
           }
 
 // adjust price for discounts when priced by attribute
-          if ($products->fields['products_priced_by_attribute'] == '1' and zen_has_product_attributes($products->fields['products_id'], 'false')) {
+          if ($product['products_priced_by_attribute'] == '1' and zen_has_product_attributes($product['products_id'], 'false')) {
             // reset for priced by attributes
-//            $products_price = $products->fields['products_price'];
+//            $products_price = $product['products_price'];
             if ($special_price) {
               $products_price = $special_price;
             } else {
-              $products_price = $products->fields['products_price'];
+              $products_price = $product['products_price'];
             }
           } else {
 // discount qty pricing
-            if ($product->fields['products_discount_type'] != '0') {
-              $products_price = zen_get_products_discount_price_qty($products->fields['products_id'], $this->contents[$products_id]['qty']);
+            if ( !empty( $product->fields['products_discount_type'] ) ) {
+              $products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['qty']);
             }
           }
             if ($check_for_valid_cart == true) {
                 $check_quantity = $this->contents[$products_id]['qty'];
-                $check_quantity_min = $products->fields['products_quantity_order_min'];
+                $check_quantity_min = $product['products_quantity_order_min'];
               // Check quantity min
                 if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
                   $check_quantity = $new_check_quantity;
@@ -907,15 +897,15 @@ if ((int)$products_id != $products_id) {
                 if ($check_quantity < $check_quantity_min) {
                   $fix_once ++;
                   $_SESSION['valid_to_checkout'] = false;
-                  $_SESSION['cart_errors'] .= ERROR_PRODUCT . $products->fields['products_name'] . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+                  $_SESSION['cart_errors'] .= ERROR_PRODUCT . $product['products_name'] . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
                 }
 
               // Check Quantity Units if not already an error on Quantity Minimum
                 if ($fix_once == 0) {
-                  $check_units = $products->fields['products_quantity_order_units'];
+                  $check_units = $product['products_quantity_order_units'];
                   if ( fmod($check_quantity,$check_units) != 0 ) {
                     $_SESSION['valid_to_checkout'] = false;
-                    $_SESSION['cart_errors'] .= ERROR_PRODUCT . $products->fields['products_name'] . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+                    $_SESSION['cart_errors'] .= ERROR_PRODUCT . $product['products_name'] . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
                   }
                 }
 
@@ -948,23 +938,24 @@ if ((int)$products_id != $products_id) {
           }
 
           $products_array[] = array('id' => $products_id,
-                                    'name' => $products->fields['products_name'],
-                                    'model' => $products->fields['products_model'],
-                                    'image' => $products->fields['products_image'],
-                                    'price' => ($products->fields['product_is_free'] =='1' ? 0 : $products_price),
+                                    'name' => $product['products_name'],
+                                    'model' => $product['products_model'],
+                                    'image' => $product['products_image'],
+                                    'image_url' => $product['products_image_url'],
+                                    'price' => ($product['product_is_free'] =='1' ? 0 : $products_price),
 //                                    'quantity' => $this->contents[$products_id]['qty'],
                                     'quantity' => $new_qty,
-                                    'weight' => $products->fields['products_weight'] + $this->attributes_weight($products_id),
+                                    'weight' => $product['products_weight'] + $this->attributes_weight($products_id),
 // fix here
                                     'final_price' => ($products_price + $this->attributes_price($products_id)),
                                     'onetime_charges' => ($this->attributes_price_onetime_charges($products_id, $new_qty)),
-                                    'tax_class_id' => $products->fields['products_tax_class_id'],
+                                    'tax_class_id' => $product['products_tax_class_id'],
                                     'attributes' => (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : ''),
                                     'attributes_values' => $this->contents[$products_id]['attributes_values'],
-                                    'products_priced_by_attribute' => $products->fields['products_priced_by_attribute'],
-                                    'product_is_free' => $products->fields['product_is_free'],
-                                    'products_discount_type' => $products->fields['products_discount_type'],
-                                    'products_discount_type_from' => $products->fields['products_discount_type_from']);
+                                    'products_priced_by_attribute' => $product['products_priced_by_attribute'],
+                                    'product_is_free' => $product['product_is_free'],
+                                    'products_discount_type' => $product['products_discount_type'],
+                                    'products_discount_type_from' => $product['products_discount_type_from']);
         }
       }
 
@@ -1123,9 +1114,12 @@ if ((int)$products_id != $products_id) {
       // if nothing is in cart return 0
       if (!is_array($this->contents)) return 0;
 
+		if( is_array( $products_id ) ) {
+			$products_id = current( $products_id );
+		}
       // check if mixed is on
 //      $product = $db->Execute("select products_id, products_quantity_mixed from " . TABLE_PRODUCTS . " where products_id='" . (int)$products_id . "' limit 1");
-      $product = $db->Execute("select products_id, products_quantity_mixed from " . TABLE_PRODUCTS . " where products_id='" . zen_get_prid($products_id) . "' limit 1");
+      $product = $db->Execute("select products_id, products_quantity_mixed from " . TABLE_PRODUCTS . " where products_id='" . $products_id . "' limit 1");
 
       // if mixed attributes is off return qty for current attribute selection
       if ($product->fields['products_quantity_mixed'] == '0') {

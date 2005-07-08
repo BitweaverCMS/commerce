@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_confirmation_default.php,v 1.1 2005/07/05 05:59:03 bitweaver Exp $
+// $Id: tpl_checkout_confirmation_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
 <h1><?php echo HEADING_TITLE; ?></h1>
@@ -26,8 +26,8 @@
 	<legend><?php echo HEADING_BILLING_ADDRESS .' (<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">edit</a>)'; ?></legend>
     <p><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?></p>
 </fieldset>
-	
-	
+
+
 <fieldset style="width:42%;float:right">
     <legend><?php echo HEADING_DELIVERY_ADDRESS .' (<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL') . '">edit</a>)'; ?></legend>
 <?php if ($_SESSION['sendto'] != false) { ?>
@@ -89,11 +89,11 @@
 </table>
 </fieldset>
 
-<?php if ($order->info['shipping_method']) { ?>	
+<?php if ($order->info['shipping_method']) { ?>
 	<fieldset>
 		<legend><?php echo HEADING_SHIPPING_METHOD . ' (<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">edit</a>)'; ?></legend>
 		<p><?php echo $order->info['shipping_method']; ?></p>
-	</fieldset>	
+	</fieldset>
 <?php } ?>
 
 <fieldset>
@@ -112,6 +112,7 @@
     if ($confirmation = $payment_modules->confirmation()) {
 ?>
 
+<fieldset>
 <table border="0"  cellspacing="0" cellpadding="2">
               <tr>
                 <td colspan="3"><?php echo $confirmation['title']; ?></td>
@@ -121,14 +122,15 @@
                 <td class="smallText"><?php echo $confirmation['fields'][$i]['title']; ?></td>
                 <td class="smallText"><?php echo $confirmation['fields'][$i]['field']; ?></td>
               </tr>
-</table>
 <?php } ?>
+</table>
 <?php
     }
   }
 ?>
+</fieldset>
 
-<p><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
+<p><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?>
 
 <?php
   if (isset($$_SESSION['payment']->form_action_url)) {

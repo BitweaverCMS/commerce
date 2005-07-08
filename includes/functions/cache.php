@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cache.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: cache.php,v 1.2 2005/07/08 06:12:28 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -113,12 +113,12 @@
   function zen_cache_categories_box($auto_expire = false, $refresh = false) {
     global $cPath, $foo, $id, $categories_string;
 
-    if (($refresh == true) || !read_cache($cache_output, 'categories_box-' . $_SESSION['language'] . '.cache' . $cPath, $auto_expire)) {
+    if (($refresh == true) || !read_cache($cache_output, 'categories_box-' . $gBitLanguage->getLanguage() . '.cache' . $cPath, $auto_expire)) {
       ob_start();
       include(DIR_WS_BOXES . 'categories.php');
       $cache_output = ob_get_contents();
       ob_end_clean();
-      write_cache($cache_output, 'categories_box-' . $_SESSION['language'] . '.cache' . $cPath);
+      write_cache($cache_output, 'categories_box-' . $gBitLanguage->getLanguage() . '.cache' . $cPath);
     }
 
     return $cache_output;
@@ -129,12 +129,12 @@
 // Cache the manufacturers box
   function zen_cache_manufacturers_box($auto_expire = false, $refresh = false) {
 
-    if (($refresh == true) || !read_cache($cache_output, 'manufacturers_box-' . $_SESSION['language'] . '.cache' . $_GET['manufacturers_id'], $auto_expire)) {
+    if (($refresh == true) || !read_cache($cache_output, 'manufacturers_box-' . $gBitLanguage->getLanguage() . '.cache' . $_GET['manufacturers_id'], $auto_expire)) {
       ob_start();
       include(DIR_WS_BOXES . 'manufacturers.php');
       $cache_output = ob_get_contents();
       ob_end_clean();
-      write_cache($cache_output, 'manufacturers_box-' . $_SESSION['language'] . '.cache' . $_GET['manufacturers_id']);
+      write_cache($cache_output, 'manufacturers_box-' . $gBitLanguage->getLanguage() . '.cache' . $_GET['manufacturers_id']);
     }
 
     return $cache_output;
@@ -145,12 +145,12 @@
 // Cache the also purchased module
   function zen_cache_also_purchased($auto_expire = false, $refresh = false) {
 
-    if (($refresh == true) || !read_cache($cache_output, 'also_purchased-' . $_SESSION['language'] . '.cache' . $_GET['products_id'], $auto_expire)) {
+    if (($refresh == true) || !read_cache($cache_output, 'also_purchased-' . $gBitLanguage->getLanguage() . '.cache' . $_GET['products_id'], $auto_expire)) {
       ob_start();
       include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_ALSO_PURCHASED_PRODUCTS));
       $cache_output = ob_get_contents();
       ob_end_clean();
-      write_cache($cache_output, 'also_purchased-' . $_SESSION['language'] . '.cache' . $_GET['products_id']);
+      write_cache($cache_output, 'also_purchased-' . $gBitLanguage->getLanguage() . '.cache' . $_GET['products_id']);
     }
 
     return $cache_output;

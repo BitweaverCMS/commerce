@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
+// $Id: order.php,v 1.3 2005/07/08 06:12:27 spiderr Exp $
 //
 
   class order {
@@ -565,7 +565,7 @@
 
       $db->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-      $insert_id = $db->Insert_ID();
+      $insert_id = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
 
       for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
         $sql_data_array = array('orders_id' => $insert_id,
@@ -676,8 +676,8 @@
                             'products_discount_type_from' => $this->products[$i]['products_discount_type_from']);
         $db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 
-        $order_products_id = $db->Insert_ID();
-
+		$insert_id = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
+bt();
         $order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
 
 //------insert customer choosen option to order--------

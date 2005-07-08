@@ -17,12 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_prices.php,v 1.2 2005/07/08 06:12:28 spiderr Exp $
 //
 //
 ////
-//get specials price or sale price
-  function zen_get_products_special_price($product_id, $specials_price_only=false) {
+/*  function zen_get_products_special_price($product_id, $specials_price_only=false) {
     global $db;
     $product = $db->Execute("select products_price, products_model, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id = '" . (int)$product_id . "'");
 
@@ -120,7 +119,7 @@
       }
     }
   }
-
+*/
 
 ////
 // computes products_price + option groups lowest attributes price of each group when on

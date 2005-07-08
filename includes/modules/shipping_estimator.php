@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: shipping_estimator.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
 //
 ?>
 <!-- shipping_estimator //-->
@@ -136,7 +136,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
     $free_shipping = false;
     if ( ($pass == true) && ($_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) {
       $free_shipping = true;
-      include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/order_total/ot_shipping.php');
+      include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/order_total/ot_shipping.php');
     }
   } else {
     $free_shipping = false;

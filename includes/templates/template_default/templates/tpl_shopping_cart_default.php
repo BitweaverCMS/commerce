@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_shopping_cart_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?> 
@@ -89,7 +89,7 @@
 
       $products_name = '<table border="0"  cellspacing="2" cellpadding="2">' .
                        '  <tr>' .
-                       '    <td class="productListing-data" align="center"><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $products[$i]['id']) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image(DIR_WS_IMAGES . $products[$i]['image'], $products[$i]['name'], IMAGE_SHOPPING_CART_WIDTH, IMAGE_SHOPPING_CART_HEIGHT) : '') . '</a></td>' .
+                       '    <td class="productListing-data" align="center"><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $products[$i]['id']) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image( $products[$i]['image_url'], $products[$i]['name'], IMAGE_SHOPPING_CART_WIDTH, IMAGE_SHOPPING_CART_HEIGHT) : '') . '</a></td>' .
                        '    <td class="productListing-data" valign="top"><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $products[$i]['id']) . '"><b>' . $products[$i]['name'] . '</b></a>';
 
       if (STOCK_CHECK == 'true') {

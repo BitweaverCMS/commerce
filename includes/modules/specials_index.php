@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: specials_index.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -64,7 +64,7 @@
       $specials_index->fields['products_name'] = zen_get_products_name($specials_index->fields['products_id']);
       $list_box_contents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $specials_index->fields['products_image'], $specials_index->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . $specials_index->fields['products_name'] . '</a><br />' . $products_price);
+                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $specials_index->fields['products_image'] ), $specials_index->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . $specials_index->fields['products_name'] . '</a><br />' . $products_price);
 
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS - 1)) {

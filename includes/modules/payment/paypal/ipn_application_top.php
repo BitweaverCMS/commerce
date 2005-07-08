@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ipn_application_top.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: ipn_application_top.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
 //
 
 // start the timer for the page parse time log
@@ -189,7 +189,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   require(DIR_WS_CLASSES . 'email.php');
 
 // set the language
-  if (!$_SESSION['language'] || isset($_GET['language'])) {
+  if (!$gBitLanguage->getLanguage() || isset($_GET['language'])) {
 
     require(DIR_WS_CLASSES . 'language.php');
 
@@ -202,7 +202,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
       $lng->set_language(DEFAULT_LANGUAGE);
     }
 
-    $_SESSION['language'] = $lng->language['directory'];
+    $gBitLanguage->getLanguage() = $lng->language['directory'];
     $_SESSION['languages_id'] = $lng->language['id'];
 
   }
@@ -236,16 +236,16 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 
 // include the language translations
 // include template specific language files
-  if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php')) {
+  if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php')) {
     $template_dir_select = $template_dir . '/';
-//die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
+//die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php');
   } else {
-//die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $_SESSION['language'] . '.php');
+//die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '.php');
     $template_dir_select = '';
   }
 
 
-  include(DIR_WS_LANGUAGES . $template_dir_select . $_SESSION['language'] . '.php');
+  include(DIR_WS_LANGUAGES . $template_dir_select . $gBitLanguage->getLanguage() . '.php');
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.3. Got past language loads ' . $PHP_SELF);
 
 // include the extra language translations

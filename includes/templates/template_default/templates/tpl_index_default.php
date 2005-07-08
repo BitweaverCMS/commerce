@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_index_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
     <h1><?php echo HEADING_TITLE; ?></h1>

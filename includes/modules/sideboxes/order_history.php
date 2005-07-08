@@ -17,18 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order_history.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: order_history.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
 //
 
   if ($_SESSION['customer_id']) {
 // retreive the last x products purchased
-  $orders_history_query = "select distinct op.products_id
+  $orders_history_query = "select distinct op.products_id, o.date_purchased
                    from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_PRODUCTS . " p
                    where o.customers_id = '" . (int)$_SESSION['customer_id'] . "'
                    and o.orders_id = op.orders_id
                    and op.products_id = p.products_id
                    and p.products_status = '1'
-                   group by products_id
                    order by o.date_purchased desc
                    limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;
 

@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: language.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
 //
 
   class language {
@@ -70,8 +70,8 @@
 
 
       $this->catalog_languages = array();
-      $languages_query = "select languages_id, name, code, image, directory 
-                          from " . TABLE_LANGUAGES . " 
+      $languages_query = "select languages_id, name, code, image, directory
+                          from " . TABLE_LANGUAGES . "
                           order by sort_order";
 
       $languages = $db->Execute($languages_query);
@@ -96,6 +96,14 @@
         $this->language = $this->catalog_languages[DEFAULT_LANGUAGE];
       }
     }
+
+	function load( $pLangCode ) {
+	  global $db;
+	  if( $rs = $db->query( "SELECT * FROM " . TABLE_LANGUAGES . " WHERE `code`=?", array( $pLangCode ) ) ) {
+	  	$this->mInfo  = $rs->fields;
+	  }
+	  return( count( $this->mInfo ) );
+	}
 
     function get_browser_language() {
       $this->browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);

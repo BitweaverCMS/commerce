@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,16 +17,20 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_account_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
 <h1><?php echo HEADING_TITLE; ?></h1>
 <?php if ($messageStack->size('account') >0) { echo $messageStack->output('account'); }
 	  if (zen_count_customer_orders() > 0) { ?>
 
+<fieldset>
 <h2><?php echo OVERVIEW_PREVIOUS_ORDERS; ?></h2>
-<?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL') . '">' . OVERVIEW_SHOW_ALL_ORDERS . '</a>'; ?> 
+<?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL') . '">' . OVERVIEW_SHOW_ALL_ORDERS . '</a>'; ?>
+<table>
 <?php require(DIR_WS_BLOCKS . 'blk_previous_orders.php'); ?>
+</table>
+</fieldset>
 <?php } ?>
 
 <h2><?php echo MY_ACCOUNT_TITLE; ?></h2>

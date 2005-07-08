@@ -17,11 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: product_listing.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
-
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.products_id', 'page');
 
   if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0 and $show_submit == 'true' and $listing_split->number_of_rows > 0) {
@@ -146,9 +145,9 @@
           case 'PRODUCT_LIST_IMAGE':
             $lc_align = 'center';
             if (isset($_GET['manufacturers_id'])) {
-              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $listing->fields['products_image'], $listing->fields['products_name'], IMAGE_PRODUCT_LISTING_WIDTH, IMAGE_PRODUCT_LISTING_HEIGHT) . '</a>';
+              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_image'] ), $listing->fields['products_name'], IMAGE_PRODUCT_LISTING_WIDTH, IMAGE_PRODUCT_LISTING_HEIGHT) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $listing->fields['products_image'], $listing->fields['products_name'], IMAGE_PRODUCT_LISTING_WIDTH, IMAGE_PRODUCT_LISTING_HEIGHT) . '</a>&nbsp;';
+              $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_image'] ), $listing->fields['products_name'], IMAGE_PRODUCT_LISTING_WIDTH, IMAGE_PRODUCT_LISTING_HEIGHT) . '</a>&nbsp;';
             }
             break;
         }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.2 2005/07/05 16:44:06 spiderr Exp $
+// $Id: banner.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -152,9 +152,9 @@
       $banner_string = $banner->fields['banners_html_text'];
     } else {
       if ($banner->fields['banners_open_new_windows'] == '1') {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&goto=' . $banner->fields['banners_id']) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $banner->fields['banners_image'], $banner->fields['banners_title']) . '</a>';
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&goto=' . $banner->fields['banners_id']) . '" target="_blank">' . zen_image( CommerceProduct::getImageUrl($banner->fields['banners_image']), $banner->fields['banners_title']) . '</a>';
       } else {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&goto=' . $banner->fields['banners_id']) . '">' . zen_image(DIR_WS_IMAGES . $banner->fields['banners_image'], $banner->fields['banners_title']) . '</a>';
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&goto=' . $banner->fields['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner->fields['banners_image']), $banner->fields['banners_title']) . '</a>';
       }
     }
     zen_update_banner_display_count($banner->fields['banners_id']);

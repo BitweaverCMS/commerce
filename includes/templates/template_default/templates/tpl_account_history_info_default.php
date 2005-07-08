@@ -17,22 +17,22 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_history_info_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_account_history_info_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
 //
 ?>
->
+
 <h1><?php echo HEADING_TITLE; ?></h1>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
-  <td class="plainBoxHeading" colspan="2" valign="bottom"> <?php echo sprintf(HEADING_ORDER_NUMBER, $_GET['order_id']); ?><br /> 
-    <?php echo HEADING_ORDER_DATE . ' ' . zen_date_long($order->info['date_purchased']); ?> 
+  <td class="plainBoxHeading" colspan="2" valign="bottom"> <?php echo sprintf(HEADING_ORDER_NUMBER, $_GET['order_id']); ?><br />
+    <?php echo HEADING_ORDER_DATE . ' ' . zen_date_long($order->info['date_purchased']); ?>
   </td>
   </tr>
-  <tr> 
+  <tr>
     <td class="plainBox" colspan="2"> <table border="0" width="100%" cellspacing="0" cellpadding="2">
         <?php
   if (sizeof($order->info['tax_groups']) > 1) {
 ?>
-        <tr> 
+        <tr>
           <td colspan="2"><b><?php echo HEADING_PRODUCTS; ?></b></td>
           <td class="smallText" align="right"><b><?php echo HEADING_TAX; ?></b></td>
           <td class="smallText" align="right"><b><?php echo HEADING_TOTAL; ?></b></td>
@@ -40,7 +40,7 @@
         <?php
   } else {
 ?>
-        <tr> 
+        <tr>
           <td colspan="3"><b><?php echo HEADING_PRODUCTS; ?></b></td>
         </tr>
         <?php
@@ -79,18 +79,18 @@
 ?>
       </table></td>
   </tr>
-  <tr> 
-    <td colspan="2" width="100%"> 
+  <tr>
+    <td colspan="2" width="100%">
       <?php
   if (DOWNLOAD_ENABLED == 'true') include(DIR_WS_MODULES . 'downloads.php');
 ?>
     </td>
   </tr>
-  <tr> 
-    <td colspan="2" class="plainBoxHeading"> <?php echo HEADING_ORDER_HISTORY; ?> 
+  <tr>
+    <td colspan="2" class="plainBoxHeading"> <?php echo HEADING_ORDER_HISTORY; ?>
     </td>
   </tr>
-  <tr> 
+  <tr>
     <td class="plainBox" colspan="2"> <table border="0" width="100%" cellspacing="0" cellpadding="2">
         <?php
   $statuses_query = "select os.orders_status_name, osh.date_added, osh.comments
@@ -114,32 +114,32 @@
 ?>
       </table></td>
   </tr>
-  <tr> 
-    <td colspan="2" class="plainBoxHeading"> <?php echo HEADING_ADDRESS_INFORMATION; ?> 
+  <tr>
+    <td colspan="2" class="plainBoxHeading"> <?php echo HEADING_ADDRESS_INFORMATION; ?>
     </td>
   </tr>
   <?php
   if ($order->delivery != false) {
 ?>
-  <tr> 
+  <tr>
     <td valign="top" width="50%" class="plainBox"> <table border="0" width="100%" cellspacing="0" cellpadding="2">
-        <tr> 
+        <tr>
           <td><b><?php echo HEADING_DELIVERY_ADDRESS; ?></b></td>
         </tr>
-        <tr> 
+        <tr>
           <td><?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?></td>
         </tr>
         <?php
     if (zen_not_null($order->info['shipping_method'])) {
 ?>
-        <tr> 
+        <tr>
           <td><b><?php echo HEADING_SHIPPING_METHOD; ?></b></td>
         </tr>
-        <tr> 
+        <tr>
           <td><?php echo $order->info['shipping_method']; ?></td>
         </tr>
         <?php } else { // temporary just remove these 4 lines ?>
-        <tr> 
+        <tr>
           <td><b>WARNING: Missing Shipping Information</b></td>
         </tr>
         <?php
@@ -150,16 +150,16 @@
   }
 ?>
     <td valign="top" width="50%" class="plainBox"> <table border="0" width="100%" cellspacing="0" cellpadding="2">
-        <tr> 
+        <tr>
           <td><b><?php echo HEADING_BILLING_ADDRESS; ?></b></td>
         </tr>
-        <tr> 
+        <tr>
           <td><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?></td>
         </tr>
-        <tr> 
+        <tr>
           <td><b><?php echo HEADING_PAYMENT_METHOD; ?></b></td>
         </tr>
-        <tr> 
+        <tr>
           <td><?php echo $order->info['payment_method']; ?></td>
         </tr>
       </table></td>
