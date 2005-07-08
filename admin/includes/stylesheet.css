@@ -4,7 +4,7 @@ http://www.oscommerce.com
 Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
-$Id: stylesheet.css,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+$Id: stylesheet.css,v 1.2 2005/07/08 05:56:38 spiderr Exp $
 */
 @import url("menu.css");/* including stylesheet for dhtml menu */
 @import url("index.css");/* including stylesheet for index.php */
@@ -124,6 +124,9 @@ text-align:right;
 }
 checkbox,input,radio,select,textarea,file{
 font-size:11px;
+}
+input[type=text]{
+width: 200px;
 }
 form{
 display:inline;

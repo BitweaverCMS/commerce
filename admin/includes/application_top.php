@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.2 2005/07/05 16:44:03 spiderr Exp $
+//  $Id: application_top.php,v 1.3 2005/07/08 05:56:38 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
+
 //require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -48,9 +49,6 @@ error_reporting(E_ALL & ~E_NOTICE);
   }
 // Include application configuration parameters
   require_once('includes/configure.php');
-
-
-
 
   // ignore version-check if INI file setting has been set
   if (file_exists(DIR_FS_ADMIN . 'includes/local/skip_version_check.ini')) {
@@ -127,13 +125,16 @@ error_reporting(E_ALL & ~E_NOTICE);
   }
 
 // include the cache class
-  require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'cache.php');
-  $zc_cache = new cache;
-// Load db classes
-  global $gBitDb;
-  $db = $gBitDb;
 
-// Load queryFactory db classes
+
+
+
+
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+
+
+
+
 
 // Define the project version  (must come after db class is loaded)
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
@@ -200,7 +201,7 @@ error_reporting(E_ALL & ~E_NOTICE);
   require_once(DIR_WS_CLASSES . 'logger.php');
 
 // include shopping cart class
-  require_once(DIR_WS_CLASSES . 'shopping_cart.php');
+  require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php');
 
 
 // define how the session functions will be used
@@ -226,23 +227,6 @@ error_reporting(E_ALL & ~E_NOTICE);
   zen_session_start();
   $session_started = true;
 
-// set the language
-  if (!$_SESSION['language'] || isset($_GET['language'])) {
-
-    include(DIR_WS_CLASSES . 'language.php');
-    $lng = new language();
-
-    if (isset($_GET['language']) && zen_not_null($_GET['language'])) {
-      $lng->set_language($_GET['language']);
-    } else {
-      $lng->get_browser_language();
-      $lng->set_language(DEFAULT_LANGUAGE);
-    }
-
-    $_SESSION['language'] = $lng->language['directory'];
-    $_SESSION['languages_id'] = $lng->language['id'];
-  }
-
 // Set theme related directories
   $template_query = $db->Execute("select template_dir
                                   from " . TABLE_TEMPLATE_SELECT .
@@ -264,16 +248,16 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 
 // include the language translations
-  require_once(DIR_WS_LANGUAGES . $_SESSION['language'] . '.php');
+  require_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '.php');
   $current_page = basename($PHP_SELF);
-  if (file_exists(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . $current_page)) {
-    include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . $current_page);
+  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $current_page)) {
+    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $current_page);
   }
 
-  if ($za_dir = @dir(DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions')) {
+  if ($za_dir = @dir(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions')) {
     while ($zv_file = $za_dir->read()) {
       if (strstr($zv_file, '.php')) {
-        require_once(DIR_WS_LANGUAGES . $_SESSION['language'] . '/extra_definitions/' . $zv_file);
+        require_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/' . $zv_file);
       }
     }
   }

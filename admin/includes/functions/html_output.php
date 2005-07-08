@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: html_output.php,v 1.2 2005/07/08 05:56:39 spiderr Exp $
 //
 
 ////
@@ -114,23 +114,6 @@
   }
 
 ////
-// The HTML form submit button wrapper function
-// Outputs a button in the selected language
-  function zen_image_submit($image, $alt = '', $parameters = '') {
-    global $language;
-
-    $image_submit = '<input type="image" src="' . zen_output_string(DIR_WS_LANGUAGES . $_SESSION['language'] . '/images/buttons/' . $image) . '" border="0" alt="' . zen_output_string($alt) . '"';
-
-    if (zen_not_null($alt)) $image_submit .= ' title=" ' . zen_output_string($alt) . ' "';
-
-    if (zen_not_null($parameters)) $image_submit .= ' ' . $parameters;
-
-    $image_submit .= '>';
-
-    return $image_submit;
-  }
-
-////
 // Draw a 1 pixel black line
   function zen_black_line() {
     return zen_image(DIR_WS_IMAGES . 'pixel_black.gif', '', '100%', '1');
@@ -140,14 +123,6 @@
 // Output a separator either through whitespace, or with an image
   function zen_draw_separator($image = 'pixel_black.gif', $width = '100%', $height = '1') {
     return zen_image(DIR_WS_IMAGES . $image, '', $width, $height);
-  }
-
-////
-// Output a function button in the selected language
-  function zen_image_button($image, $alt = '', $params = '') {
-    global $language;
-
-    return zen_image(DIR_WS_LANGUAGES . $_SESSION['language'] . '/images/buttons/' . $image, $alt, '', '', $params);
   }
 
 ////
@@ -214,42 +189,6 @@
     }
     $form .= '>';
     return $form;
-  }
-
-////
-// Output a form input field
-  function zen_draw_input_field($name, $value = '', $parameters = '', $required = false, $type = 'text', $reinsert_value = true) {
-    $field = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
-
-    if (isset($GLOBALS[$name]) && ($reinsert_value == true) && is_string($GLOBALS[$name])) {
-      $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
-    } elseif (zen_not_null($value)) {
-      $field .= ' value="' . zen_output_string($value) . '"';
-    }
-
-    if (zen_not_null($parameters)) $field .= ' ' . $parameters;
-
-    $field .= '>';
-
-    if ($required == true) $field .= TEXT_FIELD_REQUIRED;
-
-    return $field;
-  }
-
-////
-// Output a form password field
-  function zen_draw_password_field($name, $value = '', $required = false) {
-    $field = zen_draw_input_field($name, $value, 'maxlength="40"', $required, 'password', false);
-
-    return $field;
-  }
-
-////
-// Output a form filefield
-  function zen_draw_file_field($name, $required = false) {
-    $field = zen_draw_input_field($name, '', ' size="50" ', $required, 'file');
-
-    return $field;
   }
 
 ////

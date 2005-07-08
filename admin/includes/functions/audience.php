@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: audience.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: audience.php,v 1.2 2005/07/08 05:56:39 spiderr Exp $
 //
 // This should be turned into a class...
 
@@ -26,7 +26,7 @@
   // ie: mail, gv_main, coupon_admin... and eventually newsletters too.
   // gets info from query_builder table
 
-  include_once(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . 'audience.php');  //$current_page
+  include_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . 'audience.php');  //$current_page
   global $db;
   $count_array = array();
   $count=0;
@@ -126,7 +126,7 @@ function parsed_query_string($read_string) {
 
   function legacy_get_audiences_list($customers_email_address, $query_category='email') {
   // used to display drop-down list of available audiences in emailing modules: mail, gv_main, coupon_admin... and eventually newsletters too.
-    include(DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . 'audience.php');  //$current_page
+    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . 'audience.php');  //$current_page
 
     $customers = array();
     $customers[] = array('id' => '', 'text' => TEXT_SELECT_AN_OPTION);

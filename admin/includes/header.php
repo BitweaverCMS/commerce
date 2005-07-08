@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: header.php,v 1.2 2005/07/08 05:56:38 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -38,7 +38,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
         $languages_array[] = array('id' => $languages[$i]['code'],
                                  'text' => $languages[$i]['name']);
 //        if ($languages[$i]['directory'] == $language) {
-        if ($languages[$i]['directory'] == $_SESSION['language']) {
+        if ($languages[$i]['directory'] == $gBitLanguage->getLanguage()) {
           $languages_selected = $languages[$i]['code'];
         }
       } else {

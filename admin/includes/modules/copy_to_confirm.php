@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: copy_to_confirm.php,v 1.2 2005/07/08 05:56:41 spiderr Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -51,7 +51,6 @@
                                             products_price_sorter, master_categories_id
                                      from " . TABLE_PRODUCTS . "
                                      where products_id = '" . (int)$products_id . "'");
-
             $db->Execute("insert into " . TABLE_PRODUCTS . "
                                       (products_type, products_quantity, products_model,products_image,
                                        products_price, products_virtual, products_date_added, products_date_available,
@@ -70,24 +69,24 @@
                                   '" . zen_db_input($product->fields['products_virtual']) . "',
                                   now(),
                                   '" . zen_db_input($product->fields['products_date_available']) . "',
-                                  '" . zen_db_input($product->fields['products_weight']) . "', '0',
+                                  '" . (int)zen_db_input($product->fields['products_weight']) . "', '0',
                                   '" . (int)$product->fields['products_tax_class_id'] . "',
                                   '" . (int)$product->fields['manufacturers_id'] . "',
-                                  '" . zen_db_input($product->fields['products_quantity_order_min']) . "',
-                                  '" . zen_db_input($product->fields['products_quantity_order_units']) . "',
-                                  '" . zen_db_input($product->fields['products_priced_by_attribute']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_quantity_order_min']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_quantity_order_units']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_priced_by_attribute']) . "',
                                   '" . (int)$product->fields['product_is_free'] . "',
                                   '" . (int)$product->fields['product_is_call'] . "',
                                   '" . (int)$product->fields['products_quantity_mixed'] . "',
-                                  '" . zen_db_input($product->fields['product_is_always_free_shipping']) . "',
-                                  '" . zen_db_input($product->fields['products_qty_box_status']) . "',
-                                  '" . zen_db_input($product->fields['products_quantity_order_max']) . "',
-                                  '" . zen_db_input($product->fields['products_sort_order']) . "',
-                                  '" . zen_db_input($product->fields['products_price_sorter']) . "',
-                                  '" . zen_db_input($categories_id) .
+                                  '" . (int)zen_db_input($product->fields['product_is_always_free_shipping']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_qty_box_status']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_quantity_order_max']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_sort_order']) . "',
+                                  '" . (int)zen_db_input($product->fields['products_price_sorter']) . "',
+                                  '" . (int)zen_db_input($categories_id) .
                                   "')");
 
-            $dup_products_id = $db->Insert_ID();
+            $dup_products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
             $description = $db->Execute("select language_id, products_name, products_description,
                                                              products_url

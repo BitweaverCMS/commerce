@@ -33,8 +33,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_WS_ADMIN', '/commerce/admin/');
   define('DIR_WS_HTTPS_ADMIN', '/commerce/admin/');
 
-  define('DIR_WS_ICONS', DIR_WS_IMAGES . 'icons/');
-  define('DIR_WS_CATALOG_IMAGES', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'images/');
   define('DIR_WS_CATALOG_TEMPLATE', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'includes/templates/');
 
   define('DIR_WS_CATALOG_LANGUAGES', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'includes/languages/');
@@ -42,7 +40,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_FS_ADMIN', '/a1/viovio/live/commerce/admin/');
 
   define('DIR_FS_CATALOG_LANGUAGES', DIR_FS_CATALOG . 'includes/languages/');
-  define('DIR_FS_CATALOG_IMAGES', DIR_FS_CATALOG . 'images/');
   define('DIR_FS_CATALOG_MODULES', DIR_FS_CATALOG . 'includes/modules/');
   define('DIR_FS_CATALOG_TEMPLATES', DIR_FS_CATALOG . 'includes/templates/');
   define('DIR_FS_CATALOG_BLOCKS', DIR_FS_CATALOG . 'includes/blocks/');
