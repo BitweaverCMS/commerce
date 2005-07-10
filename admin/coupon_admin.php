@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.4 2005/07/10 15:56:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -198,7 +198,7 @@
           }
         } else {
           $db->associateInsert(TABLE_COUPONS, $sql_data_array);
-          $insert_id = $db->Insert_ID();
+          $insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
           $cid = $insert_id;
           $_GET['cid'] = $cid;
 

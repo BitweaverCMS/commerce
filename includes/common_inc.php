@@ -121,6 +121,11 @@
   	return( $db->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
   }
 
+  function zen_db_offset_date( $pDays, $pColumn=NULL ) {
+  	global $db;
+  	return( $db->OffsetDate( $pDays, $pColumn ) );
+  }
+
 
 // -=-=-=-=-=-=-=-=-= PRICING FUNCITONS
 //get specials price or sale price

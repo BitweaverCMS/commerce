@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: audience.php,v 1.2 2005/07/08 05:56:39 spiderr Exp $
+//  $Id: audience.php,v 1.3 2005/07/10 15:56:30 spiderr Exp $
 //
 // This should be turned into a class...
 
@@ -26,8 +26,8 @@
   // ie: mail, gv_main, coupon_admin... and eventually newsletters too.
   // gets info from query_builder table
 
+  global $db, $gBitLanguage;
   include_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . 'audience.php');  //$current_page
-  global $db;
   $count_array = array();
   $count=0;
   if ($display_count=="") $display_count=AUDIENCE_SELECT_DISPLAY_COUNTS;
@@ -121,6 +121,13 @@ function parsed_query_string($read_string) {
     }
     $good_string .= $val.' ';
    }
+   $days = array();
+
+   if( preg_match( '/zen_db_offset_date\(\s*(\d*)\s*\)*/', $good_string, $days ) ) {
+     global $db;
+     $offsetSql = $db->OffsetDate( $days[1] );
+   }
+   $good_string = preg_replace( '/zen_db_offset_date\(\s*\d*\s*\)*/', $offsetSql, $good_string );
    return $good_string;
 }
 
