@@ -17,11 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_index_default.php,v 1.3 2005/07/10 17:31:47 spiderr Exp $
 //
 ?>
     <h1><?php echo HEADING_TITLE; ?></h1>
-    <p class="greetUser"><?php echo zen_customer_greeting(); ?></p>
+    <p class="greetUser"><?php
+	global $gBitUser;
+    if( $gBitUser->isRegistered() ) {
+      print( sprintf(TEXT_GREETING_PERSONAL, $gBitUser->getDisplayName(), zen_href_link(FILENAME_PRODUCTS_NEW)) );
+    } else {
+      print( sprintf(TEXT_GREETING_GUEST, USERS_PKG_URL.'login.php', zen_href_link(FILENAME_CREATE_ACCOUNT, '', 'SSL')) );
+    }
+ ?></p>
     <p><?php echo TEXT_MAIN; ?></p>
 <?php
 if (TUTORIAL_STATUS=='1') {

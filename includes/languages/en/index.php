@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: index.php,v 1.2 2005/07/10 17:31:45 spiderr Exp $
 //
 
-define('TEXT_MAIN','This is the main define statement for the page for the template zencss');
+define('TEXT_MAIN',$gBitSystem->getPreference( 'commerce_main_text', '') );
 define('TEXT_GREETING_GUEST', 'Welcome <span class="greetUser">Guest!</span> Would you like to <a href="%s">log yourself in</a>?');
 define('TEXT_GREETING_PERSONAL', 'Hello <span class="greetUser">%s</span>! Would you like to see our <a href="%s">newest additions</a>?');
 
@@ -93,7 +93,7 @@ if ( ($category_depth == 'products') || (isset($_GET['manufacturers_id'])) ) {
   define('TEXT_ALL_CATEGORIES', 'All Categories');
   define('TEXT_ALL_MANUFACTURERS', 'All Manufacturers');
 } elseif ($category_depth == 'top') {
-  define('HEADING_TITLE', 'Congratulations! You have successfully installed your Zen Cart&trade; E-Commerce Solution.'); /*Replace this line with the headline you would like for your shop. For example: Welcome to My SHOP!*/
+  define('HEADING_TITLE', $gBitSystem->getPreference( 'siteTitle' ).' Shopping'); /*Replace this line with the headline you would like for your shop. For example: Welcome to My SHOP!*/
 } elseif ($category_depth == 'nested') {
   define('HEADING_TITLE', 'Categories');
 }

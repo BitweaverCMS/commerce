@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/05 16:44:23 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/07/10 17:31:45 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -183,7 +183,7 @@
         $sql_data_array['customers_id'] = (int)$_SESSION['customer_id'];
         $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
-        $new_address_book_id = $db->Insert_ID();
+        $new_address_book_id = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 
 // reregister session variables
         if (isset($_POST['primary']) && ($_POST['primary'] == 'on')) {

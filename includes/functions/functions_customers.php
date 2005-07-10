@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_customers.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_customers.php,v 1.2 2005/07/10 17:31:44 spiderr Exp $
 //
 //
 ////
@@ -141,19 +141,6 @@
 
     $format_id = zen_get_address_format_id($address->fields['country_id']);
     return zen_address_format($format_id, $address->fields, $html, $boln, $eoln);
-  }
-
-////
-// Return a customer greeting
-  function zen_customer_greeting() {
-
-    if ($_SESSION['customer_first_name'] && $_SESSION['customer_id']) {
-      $greeting_string = sprintf(TEXT_GREETING_PERSONAL, zen_output_string_protected($_SESSION['customer_first_name']), zen_href_link(FILENAME_PRODUCTS_NEW));
-    } else {
-      $greeting_string = sprintf(TEXT_GREETING_GUEST, zen_href_link(FILENAME_LOGIN, '', 'SSL'), zen_href_link(FILENAME_CREATE_ACCOUNT, '', 'SSL'));
-    }
-
-    return $greeting_string;
   }
 
   function zen_count_customer_orders($id = '', $check_session = true) {

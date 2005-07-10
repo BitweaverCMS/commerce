@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: filenames.php,v 1.1 2005/07/05 05:58:59 bitweaver Exp $
+// $Id: filenames.php,v 1.2 2005/07/10 17:31:43 spiderr Exp $
 //
 
 
@@ -91,7 +91,7 @@
   define('FILENAME_INFO_SHOPPING_CART', 'info_shopping_cart');
   define('FILENAME_LANGUAGES', 'languages');
   define('FILENAME_LAYOUT_CONTROLLER','layout_controller');
-  define('FILENAME_LOGIN', 'login');
+  define('FILENAME_LOGIN', USERS_PKG_URL.'login.php');
   define('FILENAME_LOGOFF', 'logoff');
   define('FILENAME_MAIL', 'mail');
   define('FILENAME_MANUFACTURERS', 'manufacturers');

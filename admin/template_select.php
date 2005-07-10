@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: template_select.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: template_select.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
 //
   require('includes/application_top.php');
 // get an array of template info
@@ -44,7 +44,7 @@
         $check_query = $db->Execute("select * from " . TABLE_TEMPLATE_SELECT . " where template_language = '" . $_POST['lang'] . "'");
         if ($check_query->RecordCount() < 1 ) {
           $db->Execute("insert into " . TABLE_TEMPLATE_SELECT . " (template_dir, template_language) values ('" . $_POST['ln'] . "', '" . $_POST['lang'] . "')");
-          $_GET['tID'] = $db->Insert_ID();
+          $_GET['tID'] = zen_db_insert_id( TABLE_TEMPLATE_SELECT, 'template_id' );
         }
         $action="";
         break;

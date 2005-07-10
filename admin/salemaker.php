@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: salemaker.php,v 1.3 2005/07/10 17:31:42 spiderr Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -95,7 +95,7 @@ define('AUTOCHECK', 'False');
           $salemaker_sales_data_array['sale_date_status_change'] = '0001-01-01';
           $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
 
-          $_POST['sID'] = $db->Insert_ID();
+          $_POST['sID'] = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' );
 
         } else {
 	        $salemaker_sales_data_array['sale_date_last_modified'] = 'now()';
@@ -121,13 +121,13 @@ define('AUTOCHECK', 'False');
 
             $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales, 'insert');
 
-            $sale_id = $db->Insert_ID();
+            $sale_id = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' );
             // update prices for products in sale
             zen_update_salemaker_product_prices($sale_id);
           }
         }
 
-        zen_redirect(zen_href_link(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $db->Insert_ID()));
+        zen_redirect(zen_href_link(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' .  $sale_id = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' )));
         break;
       case 'deleteconfirm':
   	    $sale_id = zen_db_prepare_input($_GET['sID']);

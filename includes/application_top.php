@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.3 2005/07/08 06:12:26 spiderr Exp $
+// $Id: application_top.php,v 1.4 2005/07/10 17:31:43 spiderr Exp $
 //
 
 // start the timer for the page parse time log
@@ -596,7 +596,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                   } else {
                     $db->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
                   }
-                  $insert_id = $db->Insert_ID();
+                  $insert_id = zen_db_insert_id( TABLE_FILES_UPLOADED, 'files_uploaded_id' );
                   $real_ids[TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
                   $products_options_file->set_filename("$insert_id" . $products_image_extention);
                   if (!($products_options_file->save())) {

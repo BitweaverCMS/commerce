@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: gv_mail.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -62,7 +62,7 @@
                                   (coupon_code, coupon_type, coupon_amount, date_created)
                                   values ('" . $id1 . "', 'G', '" . $_POST['amount'] . "', now())");
 
-      $insert_id = $db->Insert_ID();
+      $insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
       $db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
                   (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)

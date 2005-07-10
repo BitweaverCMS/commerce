@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: group_pricing.php,v 1.3 2005/07/10 17:31:42 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@
             $insert_sql_data = array('date_added' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
             $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array);
-            $group_id = $db->insert_ID();
+            $group_id = zen_db_insert_id( TABLE_GROUP_PRICING, 'group_id' );
           } elseif ($action == 'save') {
             $update_sql_data = array('last_modified' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: header.php,v 1.2 2005/07/10 17:31:44 spiderr Exp $
 //
 
 // header text in includes/header.php
@@ -26,7 +26,7 @@ define('HEADER_TITLE_MY_ACCOUNT', 'My Account');
 define('HEADER_TITLE_CART_CONTENTS', 'Shopping Cart');
 define('HEADER_TITLE_CHECKOUT', 'Checkout');
 define('HEADER_TITLE_TOP', 'Top');
-define('HEADER_TITLE_CATALOG', 'Home');
+define('HEADER_TITLE_CATALOG', 'Shopping');
 define('HEADER_TITLE_LOGOFF', 'Log Out');
 define('HEADER_TITLE_LOGIN', 'Log In');
 

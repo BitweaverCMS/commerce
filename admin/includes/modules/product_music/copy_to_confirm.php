@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: copy_to_confirm.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -87,7 +87,7 @@
                                   '" . zen_db_input($product->fields['master_categories_id']) .
                                   "')");
 
-            $dup_products_id = $db->Insert_ID();
+            $dup_products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
             if (isset($_POST['copy_media']) && $_POST['copy_media'] == 'on') {
               $product_media = $db->Execute("select media_id from " . TABLE_MEDIA_TO_PRODUCTS . "

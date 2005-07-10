@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: geo_zones.php,v 1.3 2005/07/10 17:31:42 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@
                             '" . (int)$zID . "',
                             now())");
 
-        $new_subzone_id = $db->Insert_ID();
+        $new_subzone_id = zen_db_insert_id( TABLE_ZONES_TO_GEO_ZONES, 'association_id' );
 
         zen_redirect(zen_href_link(FILENAME_GEO_ZONES, 'zpage=' . $_GET['zpage'] . '&zID=' . $_GET['zID'] . '&action=list&spage=' . $_GET['spage'] . '&sID=' . $new_subzone_id));
         break;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/05 16:44:24 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/07/10 17:31:46 spiderr Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $process = false;
@@ -273,7 +273,7 @@
 
       $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array);
 
-      $_SESSION['customer_id'] = $db->Insert_ID();
+      $_SESSION['customer_id'] = zen_db_insert_id( TABLE_CUSTOMERS, 'customers_id' );
 
       $sql_data_array = array('customers_id' => $_SESSION['customer_id'],
                               'entry_firstname' => $firstname,

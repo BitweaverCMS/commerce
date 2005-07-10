@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: languages.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -40,7 +40,7 @@
                                 '" . zen_db_input($image) . "', '" . zen_db_input($directory) . "',
                                 '" . zen_db_input($sort_order) . "')");
 
-          $insert_id = $db->Insert_ID();
+          $insert_id = zen_db_insert_id( TABLE_LANGUAGES, 'languages_id' );
 
 // create additional categories_description records
 

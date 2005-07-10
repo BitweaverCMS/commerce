@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.1 2005/07/05 05:59:59 bitweaver Exp $
+//  $Id: attributes_controller.php,v 1.2 2005/07/10 17:31:41 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -281,7 +281,7 @@
                                   '" . zen_db_input($attributes_required) . "')");
 
             if (DOWNLOAD_ENABLED == 'true') {
-              $products_attributes_id = $db->Insert_ID();
+              $products_attributes_id = zen_db_insert_id( TABLE_PRODUCTS_ATTRIBUTES, 'products_attributes_id' );
 
               $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
               $products_attributes_maxdays = zen_db_prepare_input($_POST['products_attributes_maxdays']);
