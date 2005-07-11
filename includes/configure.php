@@ -33,8 +33,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
 // NOTE: be sure to leave the trailing '/' at the end of these lines if you make changes!
 // * DIR_WS_* = Webserver directories (virtual/URL)
   // these paths are relative to top of your webspace ... (ie: under the public_html or httpdocs folder)
-  define('DIR_WS_CATALOG', '/commerce/');
-  define('DIR_WS_HTTPS_CATALOG', '/commerce/');
+  define('DIR_WS_CATALOG', BITCOMMERCE_PKG_URL);
+  define('DIR_WS_HTTPS_CATALOG', BITCOMMERCE_PKG_URL);
 
   define('DIR_WS_IMAGES', BITCOMMERCE_PKG_URL.'icons/');
   define('DIR_WS_INCLUDES', 'includes/');

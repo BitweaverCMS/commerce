@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: split_page_results.php,v 1.2 2005/07/05 18:40:22 spiderr Exp $
+// $Id: split_page_results.php,v 1.3 2005/07/11 07:11:37 spiderr Exp $
 //
 
   class splitPageResults {
@@ -30,6 +30,8 @@
       $this->sql_query = $query;
       $this->page_name = $page_holder;
 
+	  //lower case query to search for string positions
+	  $searchQuery = strtolower( $query );
 if ($debug) {
   echo 'original_query=' . $query . '<br /><br />';
 }
@@ -47,32 +49,31 @@ if ($debug) {
       $this->number_of_rows_per_page = $max_rows;
 
       $pos_to = strlen($this->sql_query);
-      $pos_from = strpos($this->sql_query, ' from', 0);
+      $pos_from = strpos( $searchQuery, ' from', 0);
 
-      $pos_group_by = strpos($this->sql_query, ' group by', $pos_from);
+      $pos_group_by = strpos( $searchQuery, ' group by', $pos_from);
       if (($pos_group_by < $pos_to) && ($pos_group_by != false)) $pos_to = $pos_group_by;
 
-      $pos_having = strpos($this->sql_query, ' having', $pos_from);
+      $pos_having = strpos($searchQuery, ' having', $pos_from);
       if (($pos_having < $pos_to) && ($pos_having != false)) $pos_to = $pos_having;
 
-      $pos_order_by = strpos($this->sql_query, ' order by', $pos_from);
+      $pos_order_by = strpos($searchQuery, ' order by', $pos_from);
       if (($pos_order_by < $pos_to) && ($pos_order_by != false)) $pos_to = $pos_order_by;
 
-      if (strpos($this->sql_query, 'distinct') || strpos($this->sql_query, 'group by')) {
+      if (strpos($searchQuery, 'distinct') || strpos($searchQuery, 'group by')) {
         $count_string = 'distinct ' . zen_db_input($count_key);
       } else {
         $count_string = zen_db_input($count_key);
       }
 
       $count_query = "select count(" . $count_string . ") as total " .
-                                   substr($this->sql_query, $pos_from, ($pos_to - $pos_from));
+                                   substr($searchQuery, $pos_from, ($pos_to - $pos_from));
 if ($debug) {
   echo 'count_query=' . $count_query . '<br /><br />';
 }
       $count = $db->Execute($count_query);
 
       $this->number_of_rows = $count->fields['total'];
-
       $this->number_of_pages = ceil($this->number_of_rows / $this->number_of_rows_per_page);
 
       if ($this->current_page_number > $this->number_of_pages) {
@@ -84,7 +85,7 @@ if ($debug) {
 // fix offset error on some versions
       if ($offset < 0) { $offset = 0; }
 
-      return $offset;
+	  $this->offset = $offset;
     }
 
 /* class functions */

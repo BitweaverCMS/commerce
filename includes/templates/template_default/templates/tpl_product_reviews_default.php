@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_product_reviews_default.php,v 1.2 2005/07/11 07:11:39 spiderr Exp $
 //
 ?>
 <h1><?php echo $products_name; ?></h1>
@@ -46,16 +46,12 @@ document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_lin
 ?>
 
 <?php
-  $reviews_query_raw = "select r.reviews_id, left(rd.reviews_text, 100) as reviews_text,
-                               r.reviews_rating, r.date_added, r.customers_name
-                        from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
-                        where r.products_id = '" . (int)$_GET['products_id'] . "'
-                        and r.reviews_id = rd.reviews_id
-                        and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'
-                        order by r.reviews_id desc";
+  $reviews_query_raw = "SELECT r.reviews_id, ".$db->mDb->substr."(rd.reviews_text, 0, 100) as reviews_text, r.reviews_rating, r.date_added, r.customers_name
+                        FROM " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
+                        WHERE r.products_id = ". $_GET['products_id']."  and r.reviews_id = rd.reviews_id and rd.languages_id = ".$_SESSION['languages_id']." 
+                        ORDER BY r.reviews_id desc";
 
   $reviews_split = new splitPageResults($reviews_query_raw, MAX_DISPLAY_NEW_REVIEWS);
-
   if ($reviews_split->number_of_rows > 0) {
     if ((PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3')) {
 ?>
@@ -68,7 +64,7 @@ document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_lin
 <?php
     }
 
-    $reviews = $db->Execute($reviews_split->sql_query);
+    $reviews = $db->query($reviews_split->sql_query, array(), MAX_DISPLAY_NEW_REVIEWS, $offset );
 
     while (!$reviews->EOF) {
 ?>

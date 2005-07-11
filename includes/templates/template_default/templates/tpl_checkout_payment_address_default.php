@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_address_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_checkout_payment_address_default.php,v 1.2 2005/07/11 07:11:39 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?> 
@@ -34,7 +34,7 @@
 <?php echo TITLE_PAYMENT_ADDRESS . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . 'arrow_south_east.gif'); ?> 
 <?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?> 
 <?php echo TEXT_SELECTED_PAYMENT_DESTINATION; ?> 
-<?php require(DIR_WS_MODULES . 'checkout_new_address.php'); ?>
+<?php require( BITCOMMERCE_PKG_PATH.'templates/new_address.php'); ?>
 <?php
     if ($addresses_count > 1) {
 ?>
@@ -85,7 +85,7 @@
 <?php
   }
 ?>
-<?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td> 
+<?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?> 
 <?php echo zen_draw_hidden_field('action', 'submit') . zen_image_submit('button_continue.gif', IMAGE_BUTTON_CONTINUE); ?> 
 <?php
   if ($process == true) {

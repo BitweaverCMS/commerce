@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_specials_default.php,v 1.3 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_specials_default.php,v 1.4 2005/07/11 07:11:39 spiderr Exp $
 //
 ?>
 <h1><?php echo $breadcrumb->last();  ?></h1>
 
 <?php
   $specials_query_raw = "select p.products_id, pd.products_name, p.products_price, p.products_tax_class_id, p.products_image, s.specials_new_products_price from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_SPECIALS . " s where p.products_status = '1' and s.products_id = p.products_id and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and s.status = '1' order by s.specials_date_added DESC";
-  $offset = splitPageResults::splitPageResults($specials_query_raw, MAX_DISPLAY_SPECIAL_PRODUCTS);
+  $specials_split = splitPageResults($specials_query_raw, MAX_DISPLAY_SPECIAL_PRODUCTS);
 
   if (($specials_split->number_of_rows > 0) && ((PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3'))) {
 ?>
@@ -40,7 +40,7 @@
 <tr>
 <?php
     $row = 0;
-    $specials = $db->Execute( $specials_query_raw, NULL, $offset );
+    $specials = $db->Execute( $specials_query_raw, NULL, MAX_DISPLAY_SPECIAL_PRODUCTS, $specials_split->offset );
     while (!$specials->EOF) {
       $row++;
 
