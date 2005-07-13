@@ -1,27 +1,5 @@
-<?php
-//
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_address_default.php,v 1.3 2005/07/13 20:24:05 spiderr Exp $
-//
-?>
-<?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
+<?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
+<h1>{tr}Change the Shipping Address{/tr}></h1>
 <?php
   if ($messageStack->size('checkout_address') > 0) {
 ?>
@@ -31,17 +9,14 @@
 
   if ($process == false) {
 ?>
-<?php echo TEXT_SELECTED_PAYMENT_DESTINATION; ?>
-<div style="float:left"><?php echo TITLE_PAYMENT_ADDRESS . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . 'arrow_south_east.gif'); ?></div>
-<div><?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?></div>
-<?php require( BITCOMMERCE_PKG_PATH.'templates/address_new.php'); ?>
+<?php echo TITLE_SHIPPING_ADDRESS . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . 'arrow_south_east.gif'); ?></td>
+<?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], true, ' ', '<br />'); ?></td>
+<?php echo TEXT_CREATE_NEW_SHIPPING_ADDRESS; ?>
+<?php require(DIR_WS_MODULES . 'checkout_new_address.php'); ?>
 <?php
     if ($addresses_count > 1) {
 ?>
-<?php echo TABLE_HEADING_NEW_PAYMENT_ADDRESS; ?> <?php echo TEXT_SELECT_OTHER_PAYMENT_DESTINATION; ?>
-<?= TITLE_PLEASE_SELECT ?> 
-<?= zen_image(DIR_WS_TEMPLATE_IMAGES . 'arrow_east_south.gif', '', '', '', 'style="float:right"'); ?>
-<div style="clear:both"></div>
+<?php echo TABLE_HEADING_ADDRESS_BOOK_ENTRIES; ?> <?php echo TEXT_SELECT_OTHER_SHIPPING_DESTINATION; ?>
 <?php
       $radio_buttons = 0;
 
@@ -92,7 +67,7 @@
 <?php
   if ($process == true) {
 ?>
-<?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?>
+<?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL') . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?>
 <?php
   }
 ?></form>

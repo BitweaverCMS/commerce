@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_taxes.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_taxes.php,v 1.2 2005/07/13 20:24:02 spiderr Exp $
 //
 //
 ////
@@ -101,26 +101,6 @@
   }
 
 ////
-// Add tax to a products price
-  function zen_add_tax($price, $tax) {
-    global $currencies;
-
-    if ( (DISPLAY_PRICE_WITH_TAX == 'true') && ($tax > 0) ) {
-      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']) + zen_calculate_tax($price, $tax);
-    } else {
-      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
-    }
-  }
-
-// Calculates Tax rounding the result
-  function zen_calculate_tax($price, $tax) {
-    global $currencies;
-
-    return zen_round($price * $tax / 100, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
-  }
-
-
-////
 // Output the tax percentage with optional padded decimals
   function zen_display_tax_value($value, $padding = TAX_DECIMAL_PLACES) {
     if (strpos($value, '.')) {
@@ -164,7 +144,7 @@
     foreach ($tax_descriptions as $tax_description) {
       $tax_query = "select tax_rate
                   from " . TABLE_TAX_RATES . "
-                  where tax_description = '" .    
+                  where tax_description = '" .
                   $tax_description . "'";
 
       $tax = $db->Execute($tax_query);

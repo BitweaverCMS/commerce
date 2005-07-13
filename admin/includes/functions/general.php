@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.3 2005/07/08 05:56:39 spiderr Exp $
+//  $Id: general.php,v 1.4 2005/07/13 20:23:43 spiderr Exp $
 //
 
 ////
@@ -40,38 +40,6 @@
 
     exit;
   }
-
-////
-// Parse the data used in the html tags to ensure the tags will not break
-  function zen_parse_input_field_data($data, $parse) {
-    return strtr(trim($data), $parse);
-  }
-
-
-  function zen_output_string($string, $translate = false, $protected = false) {
-    if ($protected == true) {
-      return htmlspecialchars($string);
-    } else {
-      if ($translate == false) {
-        return zen_parse_input_field_data($string, array('"' => '&quot;'));
-      } else {
-        return zen_parse_input_field_data($string, $translate);
-      }
-    }
-  }
-
-
-  function zen_output_string_protected($string) {
-    return zen_output_string($string, false, true);
-  }
-
-
-  function zen_sanitize_string($string) {
-    $string = ereg_replace(' +', ' ', $string);
-
-    return preg_replace("/[<>]/", '_', $string);
-  }
-
 
   function zen_customers_name($customers_id) {
     global $db;
@@ -1448,25 +1416,6 @@
     } else {
       return round($value, $precision);
     }
-  }
-
-////
-// Add tax to a products price
-  function zen_add_tax($price, $tax) {
-    global $currencies;
-
-    if (DISPLAY_PRICE_WITH_TAX_ADMIN == 'true') {
-      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']) + zen_calculate_tax($price, $tax);
-    } else {
-      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
-    }
-  }
-
-// Calculates Tax rounding the result
-  function zen_calculate_tax($price, $tax) {
-    global $currencies;
-
-    return zen_round($price * $tax / 100, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
   }
 
 ////

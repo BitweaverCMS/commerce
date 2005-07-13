@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
+// $Id: functions_general.php,v 1.4 2005/07/13 20:24:02 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -52,60 +52,6 @@
 
     zen_exit();
   }
-
-/**
- * Parse the data used in the html tags to ensure the tags will not break.
- * Basically just an extension to the php strstr function
- * @param string The string to be parsed
- * @param string The needle to find
-*/
-// Parse the data used in the html tags to ensure the tags will not break
-  function zen_parse_input_field_data($data, $parse) {
-    return strtr(trim($data), $parse);
-  }
-
-/**
- * Returns a string with conversions for security.
- * @param string The string to be parsed
- * @param string contains a string to be translated, otherwise just quote is translated
- * @param boolean Do we run htmlspecialchars over the string
-*/
-  function zen_output_string($string, $translate = false, $protected = false) {
-    if ($protected == true) {
-      return htmlspecialchars($string);
-    } else {
-      if ($translate == false) {
-        return zen_parse_input_field_data($string, array('"' => '&quot;'));
-      } else {
-        return zen_parse_input_field_data($string, $translate);
-      }
-    }
-  }
-
-/**
- * Returns a string with conversions for security.
- *
- * Simply calls the zen_ouput_string function
- * with parameters that run htmlspecialchars over the string
- * and converts quotes to html entities
- *
- * @param string The string to be parsed
-*/
-  function zen_output_string_protected($string) {
-    return zen_output_string($string, false, true);
-  }
-
-/**
- * Returns a string with conversions for security.
- *
- * @param string The string to be parsed
-*/
-
-  function zen_sanitize_string($string) {
-    $string = ereg_replace(' +', ' ', $string);
-    return preg_replace("/[<>]/", '_', $string);
-  }
-
 
 /**
  * Break a word in a string if it is longer than a specified length ($len)

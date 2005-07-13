@@ -30,8 +30,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('ENABLE_SSL_CATALOG', 'false');
   define('ENABLE_SSL_ADMIN', 'false');
 
-  define('DIR_WS_ADMIN', '/commerce/admin/');
-  define('DIR_WS_HTTPS_ADMIN', '/commerce/admin/');
+  define('DIR_WS_ADMIN', BITCOMMERCE_PKG_URL.'admin/');
+  define('DIR_WS_HTTPS_ADMIN', BITCOMMERCE_PKG_URL.'admin/');
 
   define('DIR_WS_CATALOG_TEMPLATE', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'includes/templates/');
 

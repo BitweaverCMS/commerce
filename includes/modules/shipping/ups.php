@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: ups.php,v 1.2 2005/07/13 20:24:04 spiderr Exp $
 //
 
   class ups {
@@ -31,7 +31,7 @@
       $this->title = MODULE_SHIPPING_UPS_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_UPS_TEXT_DESCRIPTION;
       $this->sort_order = MODULE_SHIPPING_UPS_SORT_ORDER;
-      $this->icon = $template->get_template_dir('shipping_ups.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_ups.gif';
+      $this->icon = template_func::get_template_dir('shipping_ups.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_ups.gif';
       $this->tax_class = MODULE_SHIPPING_UPS_TAX_CLASS;
       $this->tax_basis = MODULE_SHIPPING_UPS_TAX_BASIS;
 
@@ -115,13 +115,13 @@
               $show_box_weight = '';
               break;
             case (1):
-              $show_box_weight = ' (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+              $show_box_weight = '<br/> (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
               break;
             case (2):
-              $show_box_weight = ' (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+              $show_box_weight = '<br/> (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
               break;
             default:
-              $show_box_weight = ' (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+              $show_box_weight = '<br/> (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
               break;
           }
         $this->quotes = array('id' => $this->code,
@@ -159,7 +159,7 @@
 */
 // BOF: UPS USPS
         $this->quotes = array('module' => $this->title,
-                              'error' => 'We are unable to obtain a rate quote for UPS shipping.<br />Please contact the store if no other alternative is shown.');
+                              'error' => tra( 'We are unable to obtain a rate quote for UPS shipping. Please contact support if no other alternative is shown.'  ).'<br /> ( '.$upsQuote.' )');
 // EOF: UPS USPS
       }
 

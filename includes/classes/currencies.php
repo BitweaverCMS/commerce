@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: currencies.php,v 1.2 2005/07/13 20:24:01 spiderr Exp $
 //
 
 ////
@@ -30,8 +30,8 @@
     function currencies() {
       global $db;
       $this->currencies = array();
-      $currencies_query = "select code, title, symbol_left, symbol_right, decimal_point, 
-                                  thousands_point, decimal_places, value 
+      $currencies_query = "select code, title, symbol_left, symbol_right, decimal_point,
+                                  thousands_point, decimal_places, value
                           from " . TABLE_CURRENCIES;
 
       $currencies = $db->Execute($currencies_query);
@@ -44,10 +44,14 @@
                                                        'thousands_point' => $currencies->fields['thousands_point'],
                                                        'decimal_places' => $currencies->fields['decimal_places'],
                                                        'value' => $currencies->fields['value']);
-  
+
       $currencies->MoveNext();
       }
     }
+
+    function formatAddTax( $pPrice, $pTax ) {
+		$this->format( zen_add_tax( $pPrice, $pTax  ) );
+	}
 
 // class methods
     function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {

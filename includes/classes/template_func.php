@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: template_func.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: template_func.php,v 1.2 2005/07/13 20:24:01 spiderr Exp $
 //
 
   class template_func {
@@ -44,11 +44,11 @@
 
     function get_template_dir($template_code, $current_template, $current_page, $template_dir, $debug=false) {
 //	echo 'template_default/' . $template_dir . '=' . $template_code;
-      if ($this->file_exists($current_template . $current_page, $template_code)) {
+      if (template_func::file_exists($current_template . $current_page, $template_code)) {
         return $current_template . $current_page . '/';
-      } elseif ($this->file_exists(DIR_WS_TEMPLATES . 'template_default/' . $current_page, ereg_replace('/', '', $template_code), $debug)) {
+      } elseif (template_func::file_exists(DIR_WS_TEMPLATES . 'template_default/' . $current_page, ereg_replace('/', '', $template_code), $debug)) {
         return DIR_WS_TEMPLATES . 'template_default/' . $current_page;
-      } elseif ($this->file_exists($current_template . $template_dir, ereg_replace('/', '', $template_code), $debug)) {
+      } elseif (template_func::file_exists($current_template . $template_dir, ereg_replace('/', '', $template_code), $debug)) {
         return $current_template . $template_dir;
       } else {
         return DIR_WS_TEMPLATES . 'template_default/' . $template_dir;

@@ -1,4 +1,60 @@
 <?php
+
+/**
+ * Returns a string with conversions for security.
+ *
+ * Simply calls the zen_ouput_string function
+ * with parameters that run htmlspecialchars over the string
+ * and converts quotes to html entities
+ *
+ * @param string The string to be parsed
+*/
+  function zen_output_string_protected($string) {
+    return zen_output_string($string, false, true);
+  }
+
+
+/**
+ * Returns a string with conversions for security.
+ * @param string The string to be parsed
+ * @param string contains a string to be translated, otherwise just quote is translated
+ * @param boolean Do we run htmlspecialchars over the string
+*/
+  function zen_output_string($string, $translate = false, $protected = false) {
+    if ($protected == true) {
+      return htmlspecialchars($string);
+    } else {
+      if ($translate == false) {
+        return zen_parse_input_field_data($string, array('"' => '&quot;'));
+      } else {
+        return zen_parse_input_field_data($string, $translate);
+      }
+    }
+  }
+
+/**
+ * Returns a string with conversions for security.
+ *
+ * @param string The string to be parsed
+*/
+
+  function zen_sanitize_string($string) {
+    $string = ereg_replace(' +', ' ', $string);
+    return preg_replace("/[<>]/", '_', $string);
+  }
+
+
+/**
+ * Parse the data used in the html tags to ensure the tags will not break.
+ * Basically just an extension to the php strstr function
+ * @param string The string to be parsed
+ * @param string The needle to find
+*/
+// Parse the data used in the html tags to ensure the tags will not break
+  function zen_parse_input_field_data($data, $parse) {
+    return strtr(trim($data), $parse);
+  }
+
 ////
 // Output a form input field
   function zen_draw_input_field($name, $value = '', $parameters = '', $type = 'text', $reinsert_value = true, $required = false) {
@@ -128,6 +184,25 @@
 
 
 // -=-=-=-=-=-=-=-=-= PRICING FUNCITONS
+////
+// Add tax to a products price
+  function zen_add_tax($price, $tax) {
+    global $currencies;
+
+    if (DISPLAY_PRICE_WITH_TAX_ADMIN == 'true') {
+      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']) + zen_calculate_tax($price, $tax);
+    } else {
+      return zen_round($price, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
+    }
+  }
+
+// Calculates Tax rounding the result
+  function zen_calculate_tax($price, $tax) {
+    global $currencies;
+
+    return zen_round($price * $tax / 100, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
+  }
+
 //get specials price or sale price
   function zen_get_products_special_price($product_id, $specials_price_only=false) {
     global $db;

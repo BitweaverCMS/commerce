@@ -17,16 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.1 2005/07/08 06:12:29 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.2 2005/07/13 20:24:02 spiderr Exp $
 //
 
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Shipping Method');
 
-define('HEADING_TITLE', 'Step 1 of 3 - Delivery Information');
 
 define('TABLE_HEADING_SHIPPING_ADDRESS', 'Shipping Address');
-define('TEXT_CHOOSE_SHIPPING_DESTINATION', 'Your order will be shipped to the address at the left or you may change the shipping address by clicking the <em>Change Address</em> button.');
+define('TEXT_CHOOSE_SHIPPING_DESTINATION', 'Your order will be shipped to the following address or you may change the shipping address by clicking the <em>Change Address</em> button.');
 define('TITLE_SHIPPING_ADDRESS', 'Shipping Address:');
 
 define('TABLE_HEADING_SHIPPING_METHOD', 'Shipping Method');
