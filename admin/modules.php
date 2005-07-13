@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: modules.php,v 1.3 2005/07/13 21:28:34 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -229,7 +229,7 @@
                 <td class="dataTableContent" align="right"><?php if (is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
 <?php
   if ($set == 'payment') {
-    $orders_status_name = $db->Execute("select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where orders_status_id='" . $module->order_status . "' and language_id='" . $_SESSION['languages_id'] . "'");
+    $orders_status_name = $db->query("select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where orders_status_id=? and language_id=? ", array( $module->order_status, $_SESSION['languages_id'] ) );
 ?>
                 <td class="dataTableContent" align="left">&nbsp;&nbsp;&nbsp;<?php echo (is_numeric($module->sort_order) ? (($orders_status_name->fields['orders_status_id'] < 1) ? TEXT_DEFAULT : $orders_status_name->fields['orders_status_name']) : ''); ?>&nbsp;&nbsp;&nbsp;</td>
 <?php } ?>
