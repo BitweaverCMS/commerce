@@ -17,75 +17,118 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_default.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_account_default.php,v 1.3 2005/07/14 04:55:15 spiderr Exp $
+//
+// Variables passed to this page from header_php.php
+//
+// $customer_has_gv_balance
+// $customer_gv_balance
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php if ($messageStack->size('account') >0) { echo $messageStack->output('account'); }
-	  if (zen_count_customer_orders() > 0) { ?>
 
-<fieldset>
-<h2><?php echo OVERVIEW_PREVIOUS_ORDERS; ?></h2>
-<?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL') . '">' . OVERVIEW_SHOW_ALL_ORDERS . '</a>'; ?>
-<table>
-<?php require(DIR_WS_BLOCKS . 'blk_previous_orders.php'); ?>
-</table>
-</fieldset>
+<table  width="100%" border="0" cellspacing="2" cellpadding="2" class="centerColumn">
+  <tr>
+    <td class="pageHeading" colspan="2"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <?php
+    if ($messageStack->size('account') >0) {
+  ?>
+  <tr>
+    <td class="main" colspan="2"><?php echo $messageStack->output('account'); ?></td>
+  </tr>
+  <?php
+    }
+
+    if (zen_count_customer_orders() > 0) {
+  ?>
+  <tr>
+    <td class="plainBoxHeading"><?php echo OVERVIEW_PREVIOUS_ORDERS; ?></td>
+    <td class="main" align="right" valign="bottom"><?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL') . '">' . OVERVIEW_SHOW_ALL_ORDERS . '</a>'; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBox" colspan="2">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2">
+	<?php require(DIR_WS_BLOCKS . 'blk_previous_orders.php'); ?>
+      </table>
+    </td>
+  </tr>
+<?php
+  }
+?>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo MY_ACCOUNT_TITLE; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBox" colspan="2">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2">
+        <tr>
+          <td class="main">
+            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_EDIT, '', 'SSL') . '">' . MY_ACCOUNT_INFORMATION . '</a>'; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="main">
+            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL') . '">' . MY_ACCOUNT_ADDRESS_BOOK . '</a>'; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="main">
+            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_PASSWORD, '', 'SSL') . '">' . MY_ACCOUNT_PASSWORD . '</a>'; ?>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+<?php
+  if (SHOW_NEWSLETTER_UNSUBSCRIBE_LINK !='false' or SHOW_NEWSLETTER_UNSUBSCRIBE_LINK !='0') {
+?>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo EMAIL_NOTIFICATIONS_TITLE; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBox" colspan="2">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2">
+<?php
+  if (SHOW_NEWSLETTER_UNSUBSCRIBE_LINK=='true') {
+?>
+        <tr>
+          <td class="main" colspan="2">
+            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_NEWSLETTERS, '', 'SSL') . '">' . EMAIL_NOTIFICATIONS_NEWSLETTERS . '</a>'; ?>
+          </td>
+        </tr>
 <?php } ?>
-
-<h2><?php echo MY_ACCOUNT_TITLE; ?></h2>
-<ul>
-  <li><?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_EDIT, '', 'SSL') . '">' . MY_ACCOUNT_INFORMATION . '</a>'; ?></li>
-  <li><?php echo '<a href="' . zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL') . '">' . MY_ACCOUNT_ADDRESS_BOOK . '</a>'; ?></li>
-  <li><?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT_PASSWORD, '', 'SSL') . '">' . MY_ACCOUNT_PASSWORD . '</a>'; ?></li>
-</ul>
-<h2><?php echo EMAIL_NOTIFICATIONS_TITLE; ?></h2>
-<ul>
-  <li><?php echo ' <a href="' . zen_href_link(FILENAME_ACCOUNT_NEWSLETTERS, '', 'SSL') . '">' . EMAIL_NOTIFICATIONS_NEWSLETTERS . '</a>'; ?></li>
-  <li><?php echo ' <a href="' . zen_href_link(FILENAME_ACCOUNT_NOTIFICATIONS, '', 'SSL') . '">' . EMAIL_NOTIFICATIONS_PRODUCTS . '</a>'; ?></li>
-</ul>
+<?php
+  if (CUSTOMERS_PRODUCTS_NOTIFICATION_STATUS == '1') {
+?>
+        <tr>
+          <td class="main" colspan="2">
+            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_NOTIFICATIONS, '', 'SSL') . '">' . EMAIL_NOTIFICATIONS_PRODUCTS . '</a>'; ?>
+          </td>
+        </tr>
+<?php } ?>
+      </table>
+    </td>
+  </tr>
+<?php } // don't show unsubscribe or notification ?>
 <?php
 // only show when there is a GV balance
-  $gv_query = "select amount
-               from " . TABLE_COUPON_GV_CUSTOMER . "
-               where customer_id = '" . $_SESSION['customer_id'] . "'";
-  $gv_result = $db->Execute($gv_query);
-
-  if ($gv_result->fields['amount'] > 0 ) {
+  if ($customer_has_gv_balance ) {
 ?>
-
-<h2><?php echo BOX_HEADING_GIFT_VOUCHER; ?></h2>
-
-<?php
-// ADDED FOR CREDIT CLASS GV END ADDITION
-  if ($_SESSION['customer_id']) {
-    $gv_query = "select amount
-                 from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
-    $gv_result = $db->Execute($gv_query);
-
-    if ($gv_result->fields['amount'] > 0 ) {
-
-?>
-
-<p><?php echo VOUCHER_BALANCE; ?>:
-<?php echo $currencies->format($gv_result->fields['amount']); ?></p>
-<?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo BOX_HEADING_GIFT_VOUCHER; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBox" colspan="2">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2">
+        <tr>
+          <td class="main"><?php echo VOUCHER_BALANCE; ?></td>
+          <td class="main"><?php echo $customer_gv_balance; ?></td>
+          <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
 <?php
   }
 ?>
-<?php
-    }
-  }
-  if ($_SESSION['gv_id']) {
-    $gv_query = "select coupon_amount
-                 from " . TABLE_COUPONS . "
-                 where coupon_id = '" . $_SESSION['gv_id'] . "'";
-
-    $coupon = $db->Execute($gv_query);
-?>
-<p><?php echo VOUCHER_REDEEMED; ?>:
-<?php echo $currencies->format($coupon->fields['coupon_amount']); ?></p>
-<?php
-  }
-?>
+</table>

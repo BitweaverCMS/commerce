@@ -17,38 +17,55 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews_info_default.php,v 1.1 2005/07/05 05:59:03 bitweaver Exp $
+// $Id: tpl_product_reviews_info_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h1><?php echo $products_name; ?></h1><h2><?php echo $products_price; ?></h2>
-<?php
-  if (zen_not_null($review_info->fields['products_image'])) {
-?>
-<script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $review_info->fields['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . $review_info->fields['products_image'], addslashes($review_info->fields['products_name']), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
-//--></script>
-<noscript>
-<?php echo '<a href="' . zen_href_link(DIR_WS_IMAGES . $review_info->fields['products_image']) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $review_info->fields['products_image'], $review_info->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?> 
-</noscript>
-<?php
-  }
+<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+  </tr>
+  <tr>
+    <td class="pageHeading" valign="top"><h1><?php echo $products_name . $products_model; ?><br /><br /><?php echo $products_price; ?></h1></td>
+    <td align="center" valign="top" class="smallText">
+      <?php
+        if (zen_not_null($products_image)) {
+          require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+        }
 
-// more info in place of buy now
- if (zen_has_product_attributes($review_info->fields['products_id'] )) {
-//   $link = '<p>' . '<a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $review_info->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>' . '</p>';
-    $link = '';
-  } else {
-    $link= '<p><a href="' . zen_href_link($_GET['main_page'], zen_get_all_get_params(array('action')) . 'action=buy_now') . '">' . zen_image_button('button_in_cart.gif', IMAGE_BUTTON_IN_CART) . '</a></p>';
-  }
+        // more info in place of buy now
+        if (zen_has_product_attributes($review_info->fields['products_id'] )) {
+          //   $link = '<p>' . '<a href="' . zen_href_link(zen_get_info_page($review_info->fields['products_id']), 'products_id=' . $review_info->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>' . '</p>';
+          $link = '';
+        } else {
+          $link= '<br /><br />' . '<a href="' . zen_href_link($_GET['main_page'], zen_get_all_get_params(array('action')) . 'action=buy_now') . '">' . zen_image_button(BUTTON_IMAGE_IN_CART, BUTTON_IN_CART_ALT) . '</a>';
+        }
 
-  echo $link;
-?>
-<?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_INFO, zen_get_all_get_params()) . '">' . TEXT_PRODUCT_INFO . '</a>'; ?> 
-<span class="greetUser"><?php echo sprintf(TEXT_REVIEW_BY, zen_output_string_protected($review_info->fields['customers_name'])); ?></span> 
-<p><?php echo sprintf(TEXT_REVIEW_DATE_ADDED, zen_date_short($review_info->fields['date_added'])); ?></p> 
-<p><?php echo zen_break_string(nl2br(zen_output_string_protected($review_info->fields['reviews_text'])), 60, '-<br />') . '</p><p>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $review_info->fields['reviews_rating'] . '.gif', sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])) . '</p>'; ?> 
-<div class="row">
-	<span class="left"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS_WRITE, zen_get_all_get_params(array('reviews_id'))) . '">' . zen_image_button('button_write_review.gif', IMAGE_BUTTON_WRITE_REVIEW) . '</a>'; ?></span> 
-	<span class="right"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params(array('reviews_id'))) . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?></span> 
-</div>
-<br class="clear" />
+        $the_button = $link;
+        $products_link = '<br />';
+        echo zen_get_buy_now_button($review_info->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($review_info->fields['products_id']);
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="left" class="smallText">
+<?php // later make link only show when more than 1 ?>
+      <?php echo '<a href="' . zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params()) . '">' . TEXT_PRODUCT_INFO . '</a>'; ?><?php echo ($reviews_counter > 1 ? '&nbsp;|&nbsp;' . '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params()) . '">' . TEXT_REVIEW_ADDITIONAL . '</a>' : ''); ?>
+    </td>
+  </tr>
+  <tr>
+    <td class="main"><span class="greetUser"><?php echo sprintf(TEXT_REVIEW_BY, zen_output_string_protected($review_info->fields['customers_name'])); ?></span></td>
+    <td class="smallText" align="right"><?php echo sprintf(TEXT_REVIEW_DATE_ADDED, zen_date_short($review_info->fields['date_added'])); ?></td>
+  </tr>
+  <tr>
+    <td valign="top" class="main" colspan="2"><?php echo zen_break_string(nl2br(zen_output_string_protected(stripslashes($review_info->fields['reviews_text']))), 60, '-<br />') . '<br /><br /><i>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $review_info->fields['reviews_rating'] . '.gif', sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])) . '</i>'; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+    <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS_WRITE, zen_get_all_get_params(array('reviews_id'))) . '">' . zen_image_button(BUTTON_IMAGE_WRITE_REVIEW, BUTTON_WRITE_REVIEW_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.4 2005/07/13 20:24:02 spiderr Exp $
+// $Id: functions_general.php,v 1.5 2005/07/14 04:55:13 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -42,7 +42,7 @@
         $url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
       }
     }
-
+bt();
 // clean up URL before executing it
   while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
   while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
@@ -779,48 +779,50 @@
 ////
   function is_product_valid($product_id, $coupon_id) {
     global $db;
-    $coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
-                      WHERE `coupon_id` = ?
-                      ORDER BY".$db->convert_sortmode( 'coupon_restrict_asc' );
-    $coupons = $db->query($coupons_query, array( $coupon_id ) );
+	if( is_numeric( $coupon_id ) ) {
+		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
+						WHERE `coupon_id` = ?
+						ORDER BY".$db->convert_sortmode( 'coupon_restrict_asc' );
+		$coupons = $db->query($coupons_query, array( $coupon_id ) );
 
-    $product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
-    $product = $db->query($product_query, array( $product_id ) );
+		$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
+		$product = $db->query($product_query, array( $product_id ) );
 
-    if (ereg('^GIFT', $product->fields['products_model'])) {
-      return false;
-    }
+		if (ereg('^GIFT', $product->fields['products_model'])) {
+		return false;
+		}
 
-    if ($coupons->RecordCount() == 0) return true;
-    $product_valid = true;
-    while (!$coupons->EOF) {
-      if (($coupons->fields['product_id'] != 0) && ($coupons->fields['product_id'] != $product_id)) {
-        $product_valid = false;
-      }
+		if ($coupons->RecordCount() == 0) return true;
+		$product_valid = true;
+		while (!$coupons->EOF) {
+		if (($coupons->fields['product_id'] != 0) && ($coupons->fields['product_id'] != $product_id)) {
+			$product_valid = false;
+		}
 
-      if (($coupons->fields['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
-         $product_valid = false;
-      }
+		if (($coupons->fields['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+			$product_valid = false;
+		}
 
-      if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='N')) {
-        $product_valid = true;
-      }
+		if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='N')) {
+			$product_valid = true;
+		}
 
-      if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
-        $product_valid = true;
-      }
+		if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+			$product_valid = true;
+		}
 
-      if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='Y')) {
-        $product_valid = false;
-      }
+		if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='Y')) {
+			$product_valid = false;
+		}
 
-      if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='Y')) {
-        $product_valid = false;
-      }
+		if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='Y')) {
+			$product_valid = false;
+		}
 
-      if ($product_valid == true) break;
-    $coupons->MoveNext();
-    }
+		if ($product_valid == true) break;
+		$coupons->MoveNext();
+		}
+	}
     return $product_valid;
   }
 

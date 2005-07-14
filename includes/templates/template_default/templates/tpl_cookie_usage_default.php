@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,17 +17,38 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_cookie_usage_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_cookie_usage_default.php,v 1.2 2005/07/14 04:55:15 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php echo TEXT_INFORMATION; ?>
-<?php echo BOX_INFORMATION; ?>
-<?php echo TEXT_INFORMATION_2; ?> 
-<?php echo TEXT_INFORMATION_3; ?>
-<?php echo TEXT_INFORMATION_4; ?>
-<?php echo TEXT_INFORMATION_5; ?>	
-<div class="row">
-<span class="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">' . zen_image_button('button_continue.gif', IMAGE_BUTTON_CONTINUE) . '</a>'; ?></span>
-</div>
-<br class="clear" />
+<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading" colspan="2"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <tr>
+    <td width="60%" class="main"><?php echo TEXT_INFORMATION; ?></td>
+    <td class="plainBox" rowspan="4" valign="top"><?php echo BOX_INFORMATION_HEADING; ?><br /><br /><?php echo BOX_INFORMATION; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo TEXT_INFORMATION_2; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo TEXT_INFORMATION_3; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo TEXT_INFORMATION_4; ?></td>
+  </tr>
+  <tr>
+    <td class="main"></td>
+    <td class="main"></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo TEXT_INFORMATION_5; ?></td>
+  </tr>
+  <tr>
+    <td class="main"></td>
+    <td class="main"></td>
+  </tr>
+  <tr>
+    <td align="right" colspan="2"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

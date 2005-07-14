@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.1 2005/07/13 20:24:06 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.2 2005/07/14 04:55:17 spiderr Exp $
 //
   require(DIR_WS_CLASSES . 'http_client.php');
 
@@ -89,11 +89,15 @@ $smarty->assign_by_ref( 'order', $order );
 // if the order contains only virtual products, forward the customer to the billing page as
 // a shipping address is not needed
   if ($order->content_type == 'virtual') {
-    $_SESSION['shipping'] = 'free_free';
-    $_SESSION['shipping']['title'] = 'free_free';
-    $_SESSION['sendto'] = false;
-print "YOYOYOYOYOYO";
-    zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+    if( $gBitUser->isRegistered() ) {
+		$_SESSION['shipping'] = 'free_free';
+		$_SESSION['shipping']['title'] = 'free_free';
+		$_SESSION['sendto'] = false;
+	print "YOYOYOYOYOYO";
+		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+	} else {
+print $smarty->fetch( 'bitpackage:bitcommerce/register_customer.tpl' );
+	}
   }
 
   $total_weight = $_SESSION['cart']->show_weight();

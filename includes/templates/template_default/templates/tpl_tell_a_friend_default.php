@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,44 +17,63 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_tell_a_friend_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_tell_a_friend_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<?php echo zen_draw_form('email_friend', zen_href_link(FILENAME_TELL_A_FRIEND, 'action=process&products_id=' . $_GET['products_id'])); ?> 
- 
-<h1><?php echo sprintf(HEADING_TITLE, $product_info->fields['products_name']); ?></h1>
-<?php if ($messageStack->size('friend') > 0) { ?>
-<?php echo $messageStack->output('friend'); ?> 
-<?php } ?>
-<p><?php echo FORM_REQUIRED_INFORMATION; ?></p>
-<fieldset>
-	<legend><?php echo FORM_TITLE_CUSTOMER_DETAILS; ?></legend>
-	<div class="formrow"><label><?php echo FORM_FIELD_CUSTOMER_NAME; ?></label> <?php echo zen_draw_input_field('from_name'); ?> </div>
-	<div class="formrow"><label><?php echo FORM_FIELD_CUSTOMER_EMAIL; ?></label><?php echo zen_draw_input_field('from_email_address'); ?></div>
-	<br class="clear" />
-</fieldset>
-
-<fieldset>
-	<legend><?php echo FORM_TITLE_FRIEND_DETAILS; ?></legend>
-	<div class="formrow">
-		<label><?php echo FORM_FIELD_FRIEND_NAME; ?></label>
-		<?php echo zen_draw_input_field('to_name') . ' <span class="inputrequirement">' . ENTRY_FIRST_NAME_TEXT . '</span>'; ?> 
-	</div>
-	<div class="formrow">
-		<label><?php echo FORM_FIELD_FRIEND_EMAIL; ?></label>
-		<?php echo zen_draw_input_field('to_email_address') . ' <span class="inputrequirement">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>'; ?>
-	</div>
-	<div class="formrow">
-		<label><?php echo FORM_TITLE_FRIEND_MESSAGE; ?></label>
-		<?php echo zen_draw_textarea_field('message', 'soft', 40, 8); ?> 
-	</div>
-	<br class="clear" />
-</fieldset>
-<p><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $_GET['products_id']) . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?> </p>
-
-<div class="formrow"><label>&nbsp</label><input type="submit" value="submit" name="Submit" /></div>
-</form> 
-<div class="cleargap">&nbsp;</div>
-
-
-</form> 
+<?php echo zen_draw_form('email_friend', zen_href_link(FILENAME_TELL_A_FRIEND, 'action=process&products_id=' . $_GET['products_id'])); ?>
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading" colspan="2"><h1><?php echo sprintf(HEADING_TITLE, $product_info->fields['products_name']); ?></h1></td>
+  </tr>
+<?php
+  if ($messageStack->size('friend') > 0) {
+?>
+  <tr>
+    <td class="main" colspan="2"><?php echo $messageStack->output('friend'); ?></td>
+  </tr>
+<?php
+  }
+?>
+  <tr>
+    <td class="main" colspan="2" ><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" width="40%"><?php echo FORM_TITLE_CUSTOMER_DETAILS; ?></td>
+    <td class="inputRequirement" align="right"><?php echo FORM_REQUIRED_INFORMATION; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo FORM_FIELD_CUSTOMER_NAME; ?></td>
+    <td class="main"><?php echo zen_draw_input_field('from_name') . '&nbsp;<span class="inputRequirement">' . ENTRY_FIRST_NAME_TEXT . '</span>'; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo FORM_FIELD_CUSTOMER_EMAIL; ?></td>
+    <td class="main"><?php echo zen_draw_input_field('from_email_address') . '&nbsp;<span class="inputRequirement">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>'; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo FORM_TITLE_FRIEND_DETAILS; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo FORM_FIELD_FRIEND_NAME; ?></td>
+    <td class="main"><?php echo zen_draw_input_field('to_name') . '&nbsp;<span class="inputRequirement">' . ENTRY_FIRST_NAME_TEXT . '</span>'; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo FORM_FIELD_FRIEND_EMAIL; ?></td>
+    <td class="main"><?php echo zen_draw_input_field('to_email_address', $_GET['to_email_address']) . '&nbsp;<span class="inputRequirement">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>'; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo FORM_TITLE_FRIEND_MESSAGE; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo zen_draw_textarea_field('message', 'soft', 40, 8); ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo '<a href="' . zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']) . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_ADD_ADDRESS_ALT) . '</a>'; ?></td>
+    <td align="right"><?php echo zen_image_submit(BUTTON_IMAGE_SEND, BUTTON_SEND_ALT); ?></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="main" height="10px"></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="main"><?php echo EMAIL_ADVISORY_INCLUDED_WARNING . str_replace('-----', '', EMAIL_ADVISORY); ?></td>
+  </tr>
+</table></form>

@@ -17,14 +17,24 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shippinginfo_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_shippinginfo_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php echo TEXT_INFORMATION; ?>
-<?php $back = sizeof($_SESSION['navigation']->path)-2; ?>
-<div class="row">
-<span class="right"><?php echo '<a href="' . zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']) . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?></span>
-</div>
-<br class="clear" />
+<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading" align="center"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+<?php if (TEXT_INFORMATION) { ?>
+  <tr>
+    <td class="plainBox"><?php echo TEXT_INFORMATION; ?></td>
+  </tr>
+<?php } ?>
+<?php if (DEFINE_SHIPPINGINFO_STATUS == '1') { ?>
+  <tr>
+    <td class="plainBox"><?php require($define_shippinginfo); ?></td>
+  </tr>
+<?php } ?>
+  <tr>
+    <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

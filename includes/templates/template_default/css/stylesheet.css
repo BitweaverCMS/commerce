@@ -1,527 +1,413 @@
 /*
-   +----------------------------------------------------------------------+
-   |zen-cart Open Source E-commerce                                       |
-   +----------------------------------------------------------------------+
-   | Copyright (c) 2003 The zen-cart developers                           |
-   |                                                                      |   
-   | http://www.zen-cart.com/index.php                                    |   
-   |                                                                      |   
-   +----------------------------------------------------------------------+
-   | This source file is subject to version 2.0 of the GPL license,       |
-   | that is bundled with this package in the file LICENSE, and is        |
-   | available through the world-wide-web at the following url:           |
-   | http://www.zen-cart.com/license/2_0.txt.                             |
-   | If you did not receive a copy of the zen-cart license and are unable |
-   | to obtain it throu/* General Text Styles */
-
-/* Page Layout */ 
-#content {
- 	width: 100%; /* add width of sidebox columns to get desired fixed-grow width, or set to 100% for full fluid */
-	margin: 0; /* width of the side-columns */
-} 
-
-* html #content {
-  width: 100%;
-}
-* html*#content {
-  width: auto;
-}
-#floatwrap {
-	width: 100%;
-	float: left;
-	margin-right: -18em; /* width of the col-a */
-}
-#col-main {
-	width: 100%;
-	float: right;
-}
-#main {
-	padding: 10px;
-}
-#nav {
-	width: 100%;
-	margin: 0;
-	padding: 0;
-}
-#optional-info { 
-	width: 100%;
-	margin: 0;
-	padding: 0;
-}	
-
-.centervert {
-	top: 50%;
-	height: 1px;
-	overflow: visible;
+//
+// +----------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce                                       |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2003 The zen-cart developers                           |
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
+// | Portions Copyright (c) 2003 osCommerce                               |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | If you did not receive a copy of the zen-cart license and are unable |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | license@zen-cart.com so we can mail you a copy immediately.          |
+// +----------------------------------------------------------------------+
+// $Id: stylesheet.css,v 1.4 2005/07/14 04:55:14 spiderr Exp $
+*/
+.centershop {
+	padding: 0px;
+	margin: 0px auto;
 	position: relative;
-	background-color: transparent;
-}	
-
-/* Sideboxes */
-.sidebox {
-	width: 15em;
-	margin: 0 auto;
-	padding: 0;
-	background: url(../images/box-br.gif) no-repeat bottom right;   
-}
-
-  /* Show only to IE PC \*/
-* html .boxhead h4 {height: 1%;} /* For IE 5 PC */
-
-.boxhead {
-	background: url(../images/box-tr.gif) no-repeat top right;
-	margin: 0;
-	padding: 0;
-	text-align: center;
-}
-.boxhead h4 {
-	background: url(../images/box-tl.gif) no-repeat top left;
-	margin: 0;
-	padding: 8px 7px 5px;
-	color: white; 
-	line-height:1em;
-	text-shadow: rgba(0,0,0,.4) 0px 2px 5px; /* Safari-only */
-}
-.boxbody {
-	background: url(../images/box-bl.gif) no-repeat bottom left;
-	margin: 0;
-	padding: 5px 18px 19px;
-}
-.sidebox {
-	text-align: center;
-}
-.sidebox ul, .sidebox ol {
-	padding: 0;
-	margin: 0;
 	text-align: left;
-}
-.sidebox ul {
-	list-style: none; 
-}
-.sidebox ol {
-	margin-left: 2em;
-}
-.sidebox li {
-	padding: 0;
-	line-height: 1.6em;
-	margin: 0;
-	text-align: left;
-	border-bottom: 1px dotted #bbb;
-}
-.sidebox ol li {
-	margin: 0;
-	padding: 0;
-	line-height: 1.2em;
-	text-align: left;
-	border-bottom: 1px dotted #bbb;
-}
-.sidebox ol li a {
-	padding: .2em 3px;
-}
-.sidebox a {
-	color: #333;
-	text-decoration: none;
-	display: block;
-	padding-left: 3px;
-}
-.sidebox a:hover {
-	color: #000;
+	width: 750px !important;
 }
 
-#languages .boxbody a {
-	display: inline;
+TD.main, P.main {
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-#reviewswrite .boxbody a,
-#reviewsrandom .boxbody a,
-#manufacturers .boxbody a, 
-#mfrinfo .boxbody a,
-#tellafriend .boxbody p,
-#yesnotifications .boxbody a,
-#nonotifications .boxbody a {
-	font-size: 100%;
-	line-height: 1.2em;
-	margin: 5px 0 0;
-	padding: 0;
-}
-#reviewsrandom .boxbody p,
-#specials .boxbody p {
-	margin: 0;
-	padding-top: 5px;
+.banners {
+  padding: 15px;
 }
 
-/* Header styles */
-#headernavbar {
-	font-size: 100%;
-	width: 100%;
-	position: absolute;
-	text-align: right;
-	top: 0;
-	right: 22px; 
-	margin: 0 -15px 0 0;
-  /* Hide from IE Mac to get rid of 15px margin bug \*/
-	right: 7px;
-	margin: 0;
-  /* Let Mac back */
-	display: inline;
+/*HEADER CSS*/
+
+TABLE.header {
+  background-color: #ffffff;
+  border-right: 1px solid #9a9a9a;
+  border-left: 1px solid #9a9a9a;
+  border-bottom: 1px solid #9a9a9a;
 }
 
-#headernavbar form {
-	display: inline;
-	line-height: auto;
-}
-#subhead {
-	width: 100%;
-	padding: 0;
-	margin: 0 0 1.5em;
-	border: 1px solid #8A929F;
-	border-width: 1px 0;
-	height: 31px;
-	
-}	
-.headererror, .headerinfo {
-	font: bold 85%/1.5em Arial, sans-serif;
-	background: #f00;
-	color: #fff;
-	text-align: center;
-	border:  1px solid #000;
-}
-.headerinfo {
-	background: #0f0;
-	color: #222;
+TABLE.headerNavigation {
+  background-color: #abbbd3;
+  border-right: 1px solid #9a9a9a;
+  border-left: 1px solid #9a9a9a;
+  border-bottom: 1px solid #9a9a9a;
+  width: 100% !important;
 }
 
-
-/* Footer Styles */
-#footer {
-	color: #999;
-	width: 100%;
-	padding: 0;
-	margin: 1em 0;
-	text-align: center;
-	clear: both;
-}
-#footer p {
-	color: #999;
-	padding: 0 1em;
-	margin: 1em 0;
-	border: 1px solid #ccc;
-	border-width: 1px 0;
-	text-align: left;
-}
-#footer a, #footer a img {
-	color: #999; 
-	font-weight: bold;
-	text-decoration: none;
-}
-#footer a:hover {
-	text-decoration: underline; 
-	color: blue;
+TD.headerNavigation {
+  position: relative;
+  vertical-align: middle;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  color:#000000;
+  letter-spacing:1px;
+  padding: 5px;
 }
 
-
-/* Horizontal Navigation for Product Pages */
-#navcontainer ul {
-	padding-left: 0;
-	margin-left: 0;
-	background-color: #eee;
-	color: #000;
-	float: left;
-	width: 100%;
+TD.breadCrumb {
+  font-size: 10px;
+  font-weight: bold;
+  color: #9a9a9a;
+  padding: 3px;
 }
 
-#navcontainer li { display: inline; }
-
-#navcontainer a {
-	padding: 0.2em 1em;
-	background-color: #eee;
-	color: #000;
-	text-decoration: none;
-	float: left;
+TD.headerNavigation A, TD.headerNavigation A:visited, td.footertop a  {
+  font-weight: bold;
+  color: #ffffff;
 }
 
-#navcontainer a:hover {
-	background-color: #ccc;
-	color: #000;
+TD.headerNavigation A:hover, td.footertop a:hover  {
+  color: #a8cfff;
 }
 
-
-/* misc formatting DO WE NEED ALL THESE? */
-.infoboxnotice {
-	background: #FF8E90;
-}
-.infoboxnoticecontents {
-	background: #FFE6E6;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
-}
-.plainbox {
-	margin: 5px 0;
-	padding: 5px;
-	background: #fff;
-	border: 1px solid gray;
+TR.headerError {
+  background: #ff0000;
 }
 
-.or { /* odd rows for alternating bg */
-  background: #fff;
+TD.headerError {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  background: #ff0000;
+  color: #ffffff;
+  font-weight : bold;
+  text-align : center;
 }
 
-.er { /* even rows for alternating bg */
+TR.headerInfo {
+  background: #00ff00;
+}
+
+TD.headerInfo {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  background: #00ff00;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+/*SIDEBOX CSS*/
+
+.column_left, .column_right, .column_single {
+  background: #ffffff;
+  padding: 2px;
+}
+
+.boxText {
+  font-size: 11px;
+  line-height: 125%;
+}
+.leftbox, .rightbox, .centerbox, .singlebox {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  background: #ffffff;
+  margin-bottom: 15px;
+}
+
+.leftboxheading, .rightboxheading, .centerboxheading, .singleboxheading {
+  border-bottom: 1px solid #9a9a9a;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px;
+  height: 20px;
+  padding-left: 5px;
+}
+
+td.leftboxheading a, td.rightboxheading a, td.centerboxheading a, td.singleboxheading a {
+  color: #ffffff;
+}
+TR.leftboxheading, TR.rightboxheading, TR.centerboxheading, TR.singleboxheading {
+}
+
+.leftboxcontent, .rightboxcontent, .centerboxcontent, .singleboxcontent {
+  line-height: 125%;
+  padding: 4px;
+}
+
+.leftboxfooter, .rightboxfooter, .centerboxfooter, .singleboxfooter {
+  margin-bottom: 15px;
+}
+
+.plainBox, .plainbox-description {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  background: #ffffff;
+  padding: 5px;
+}
+.plainBoxHeading, TD.tableHeading {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 11px 5px 5px;
+}
+.productListing-heading {
+  background-color: #abbbd3;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  padding: 3px;
+  height: 20px;
+}
+TD.productlisting {
+  border:1px solid #9a9a9a;
+}
+
+TD.productListing-data {
+  font-size: 10px;
+  padding: 5px;
+}
+
+/*center main section
+-----------------------------------*/
+TD.pageHeading, DIV.pageHeading, h1 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #9a9a9a;
+  padding-top: 11px;
+}
+
+.center_column {
+  padding: 8px;
+}
+.main_page{
+  width: 750px !important;
+  background-color: #ffffff;
+  border-right: 1px solid #9a9a9a;
+  border-left: 1px solid #9a9a9a;
+  border-bottom: 1px solid #9a9a9a;
+  padding: 5px;
+}
+
+/* footer
+--------------*/
+
+TABLE.footer {
+  background: #ffffff;
+  text-align: center;
+  font-size: 10px;
+  border-right: 1px solid #9a9a9a;
+  border-left: 1px solid #9a9a9a;
+  border-bottom: 1px solid #9a9a9a;
+}
+
+TR.footertop {
+  background: #abbbd3;
+  font-size: 11px;
+}
+
+TD.footertop, TD.footerbottom {
+  padding: 5px;
+}
+
+/*miscellaneous areas
+-------------------------------------*/
+TD.cartBox {
+   width: 150px;
+   background: #eff4f8;
+   font-size: 10px;
+   padding: 3px;
+   border: 1px dotted #ffb062;
+}
+
+TR.productListing-odd, TR.upcomingProducts-odd {
+  background: #ffffff;
+}
+
+TR.productListing-even, TR.upcomingProducts-even, .productsNotifications {
   background: #eff4f8;
 }
 
-.errorbox { background: #ffb3b5; font-weight: bold; }
-.stockwarning { color: #c03; }
-.productsnotifications { background: #f2fff7; }
-.orderedit { color: #70d250; text-decoration: underline; }
-.productListing-heading { border-bottom: 1px solid #333; }
-
-a.pageresults { color: #00F; }
-
-a.pageresults:hover {
-  color: #00F;
-  background: #FF3;
+TD.productListing-data-description-odd {
+  background: #ffffff;
+  font-size: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #9a9a9a;
 }
 
-.smalltext { font-size: .9em; }
-
-.accountcategory {
-  font-size: 1.3em;
-  color: #abd;
+TD.productListing-data-description-even {
+  background: #eff4f8;
+  font-size: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #9a9a9a;
 }
 
-.fieldkey, .tableheading {
+td.pageresults a {
+  color: #428dff;
+}
+
+td.pageresults a:hover {
+  background: #FFFF33;
+}
+
+SPAN.newItemInCart {
+  color: #ff0000;
   font-weight: bold;
-  font-size:85%;
 }
 
-.fieldvalue { font-size: 85%; }
+TD.smallText, SPAN.smallText, P.smallText, td.pageresults{
+   font-size: 10px;
+}
 
-.newitemincart { color: #f00; }
+TD.fieldKey {
+  font-size: 12px;
+  font-weight: bold;
+}
 
+TD.fieldValue {
+  font-size: 12px;
+}
 
-textarea {
+CHECKBOX, INPUT, RADIO, SELECT {
+  font-size: 11px;
+}
+
+TEXTAREA {
   width: 100%;
-  font-size: 100%;
+  font-size: 11px;
 }
 
-
-.greetuser {
-  color: #f0a480;
+.greetUser {
+   font-weight: bold;
+   font-size: 12px;
+   padding-top: 5px;
+   padding-bottom: 5px;
 }
 
-table.formarea {
-	background: #f1f9fe;
-	border: 1px solid #7b9ebd;
-}
+SPAN.greetUser {}
 
-.markproductoutofstock {
+SPAN.markProductOutOfStock {
 	color: #c76170;
-	font-weight: bold;
-	font-size: 85%;
+	font: bold 12px Verdana, Arial, sans-serif;
 }
 
-.productbox { border: 1px solid gray; }
-.productimage { 
-	margin: 0;
-	padding: 0;
-	width: 33%;
-	float: left;
-	text-align: center;
-}
-.productfeatures {
-	margin: 0;
-	padding: 0;
-	width: 65%;
-	float: left;
-}
-.productdescription {
-	padding: 2em;
-	margin-bottom: 1.5em;
-	border: 1px solid #e6e6e6;
-}
-.specialprice { 
-	color: #f00; 
-	font-weight: bold;
-	font-size: 1.2em;
-}
-.price { 
-	color: #000; 
-	font-weight: bold;
-	font-size: 1.2em;
-}
-.normalprice { 
-	color: #666;
-	font-weight: normal;
+span.normalprice {
 	text-decoration: line-through;
 }
-.errortext {
-  color: #f00;
-}
-.cartbox {
-	width: 60%;
-	border: 1px solid gray;
-}
-.modulerowover { background-color: #D7E9F7; cursor: hand; }
-.modulerowselected { background-color: #E9F4FC; }
 
-.checkoutbarfrom, .checkoutbarto { color: #8c8c8c; }
-.checkoutbarcurrent { color: #000000; }
-.breadcrumb { font-size: 100%; }
+SPAN.productSpecialPrice, SPAN.productSalePrice, .stockWarning, span.coming {
+  color: #ff0000;
+}
+
+span.productSpecialPriceSale {
+  color: #ff0000;
+	text-decoration: line-through;
+}
+
+SPAN.productPriceDiscount, .inputRequirement {
+  font-size: 10px;
+  color: #FF0000;
+}
+.moduleRow { }
+.moduleRowOver { background-color: #D7E9F7; cursor: pointer; }
+.moduleRowSelected { background-color: #E9F4FC; }
 
 /* message box */
 
-.messagestackerror, .messagestackwarning { background-color: #ffb3b5; line-height; 1em; }
-.messagestacksuccess { background-color: #9f0; line-height; 1em; }
-.inputrequirement { color: #f00; }
-
-
-/* form formatting */
-
-fieldset { 
-	background: #eee; 
-	border: 1px solid #ccc;
-	margin: 0 0 7px;
-	padding: 10px;
-	font-size: 100%;
+.messageBox {}
+.messageStackError, .messageStackWarning, errorBox {
+  background-color: #ff0000;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 4px;
+  border: 1px solid #9a9a9a;
 }
-.fieldset { 
-	background: #eee; 
-	border: 1px solid #ccc;
-	margin: 0 0 7px;
-	padding: 10px;
-}
+.messageStackSuccess { background-color: #b3ffa8; padding: 2px; border: 1px solid #9a9a9a; }
+.messageStackCaution { font-family: Verdana, Arial, sans-serif; font-size: 10px; background-color: #ffff00; }
 
-legend { 
-	background: #fff;
-	padding: 2px 6px 3px 5px;
-	margin: 0;
-	border: 1px solid #ccc;
+/* checkout totals */
+TD.ot-subtotal-Text, TD.ot-cod-fee-Text, TD.ot-total-Text, TD.ot-group-pricing-Text, TD.ot-gv-Text, TD.ot-loworderfee-Text, TD.ot-shipping-Text, TD.ot-subtotal-Text, TD.ot-tax-Text, TD.ot-coupon-Text {
+  font-weight: bold;
 }
+TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pricing-Amount, TD.ot-gv-Amount, TD.ot-loworderfee-Amount, TD.ot-shipping-Amount, TD.ot-subtotal-Amount, TD.ot-tax-Amount, TD.ot-coupon-Amount {}
 
-.legend {
-	background: #fff;
-	padding: .25em .5em;
-	margin: 0;
-	border: 1px solid #ccc;
-	position: relative; 
-	width: 33%;
-	top: -2em;
-	left: 0;
-	white-space: nowrap;
-}	
-.formrow { 
-	line-height: 2em;
-	clear: both;
-	margin: 0;
-	padding; 0;
+/* product_info attribute comments */
+
+.ProductInfoComments, TD.ProductInfoComments, SPAN.ProductInfoComments {
+  color: #ff0000;
+  font-size: 10px;
+  text-align : left;
+  font-weight: bold;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-top: 1px solid #9a9a9a;
 }
 
-label {
-	width: 25%;
-	text-align: right;
-	margin: 0 3px 0 0;
-	float: left;
+/* General alert span class */
+TD.alert, SPAN.alert {
+  color: #FF0000;
+  font-weight: bold;
 }
 
-fieldset input, fieldset select {
-	width: auto;
-	text-align: left;
-	float: left;
+/* General alert span class */
+TD.alertBlack, SPAN.alertBlack {
+  color: #000000;
+  font-weight: bold;
 }
 
-
-/* sidebox content formatting */
-#col-a input,
-#col-b input,
-#col-a select,
-#col-b select {
-	width: auto;
-	margin: 1px auto;
-	float: none;
+/* popup tables */
+TABLE.popupattributeqty, TABLE.popupcouponhelp, TABLE.popupcvvhelp, TABLE.popupimage, TABLE.popupimageadditional, TABLE.popupsearchhelp, TABLE.popupshippingestimator, TABLE.popupinfoshoppingcart {
+  background-color: #ffffff;
+	margin: 6px;
+  padding: 6px;
+  font: 11px Verdana, Arial, sans-serif;
 }
 
-form p.reminder { 
-	margin: 0;
-	padding: 0 0 0 115px; /* label margin + label width + 3 */
+/* categories_description */
+TABLE.categoriesdescription {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  background: #D0D0D0;
+  border:1px solid #9a9a9a;
 }
 
-form span.button, span.button img {
-	float: right;
-	width: 99%;
-	padding: 0 20px 5px;
+TD.categoriesdescription {
+  font-size: 11px;
+  line-height: 1.0;
 }
 
-
-form span.button input {
-	text-align: right;
-	width: auto;
+/* categories box parent and child categories and extra links */
+A.category-top, A.category-links {
+  color: #428dff;
+  text-decoration: none;
+}
+A.category-subs, A.category-products {
+  color: #428dff;
+  text-decoration: none;
+}
+SPAN.category-subs-parent {
+  font-weight: bold;
+}
+SPAN.category-subs-selected {
+  font-weight: bold;
 }
 
-/* Header search */
-.headersearch { color: gray; }
-
-.row {
-	clear: both;
-	padding-top: 10px;
-}
-.row span.left {
-	float: left;
-	text-align: left;
-	width: 49%;
-}
-
-.row span.right {
-	float: right;
-	text-align: right;
-	width: 49%;
-}
-.float {
-	width: 120px;
-	padding: 10px;
-	float: left;
-}
-.float p {
-	text-align: center;
-}
-.inline input { 
-	display: inline; 
-	float: none;
-}
-#pageresultstop {
-	border-bottom:  1px solid #ccc;
-}
-#pageresultsbottom {
-	border-top:  1px solid #ccc;
-}
-.clear {
-	clear: both;
-	line-height: 1px;
-	margin-top -1px;
-	font: 1px;
-	background-color: transparent;
-}
-.cleargap {
-	clear: both;
-	line-height: 12px;
-	font: 1px;
-	background-color: transparent;
-}
-.center { text-align: center; }
-
-.centerleft { 
-	float: left;
-	width: 160px;
-	text-align: center; 
-}
-.attribute {
-	width: 80px;
-}
-.note {
-	color: #f00; 
-}
-h2.newproduct, h2.upcoming, h2.alsopurchased  {
-	background-color: #eee;
-	color: #000;
-	font-size: 120%;
-	padding: 5px;
+/* attribute images table */
+TABLE.products-attributes-images {
+/*  width: 100%; */
+/*  border: 1px solid #9a9a9a; */
+  float: left;
+  padding: 2px;
 }

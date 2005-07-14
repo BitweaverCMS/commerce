@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,11 +17,25 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_also_purchased_products.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_modules_also_purchased_products.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h2 class="alsopurchased"><?php echo $title; ?></h2>
-
+<!-- bof: also_purchased -->
+<table  width="100%" border="0" cellspacing="0" cellpadding="0" class="centerbox">
+  <tr class="centerboxheading">
+    <td width="100%" class="centerboxheading"><?php echo $title; ?></td>
+  </tr>
+  <tr>
+    <td class="centerboxcontent" >
 <?php
-  require(DIR_WS_TEMPLATE . 'common/tpl_list_box_content.php');
-?> 
+  require($template->get_template_dir('tpl_list_box_content.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_list_box_content.php');
+?>
+    </td>
+  </tr>
+  <tr>
+    <td class="centerboxfooter" height="5px">
+    </td>
+  </tr>
+</table>
+<br />
+<!-- bof: also_purchased -->

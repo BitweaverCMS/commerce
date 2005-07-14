@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,20 +17,30 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_password_forgotten_default.php,v 1.1 2005/07/05 05:59:03 bitweaver Exp $
+// $Id: tpl_password_forgotten_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<?php echo zen_draw_form('password_forgotten', zen_href_link(FILENAME_PASSWORD_FORGOTTEN, 'action=process', 'SSL')); ?> 
-<h1><?php echo HEADING_TITLE; ?></h1>
+<?php echo zen_draw_form('password_forgotten', zen_href_link(FILENAME_PASSWORD_FORGOTTEN, 'action=process', 'SSL')); ?>
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+  <tr>
+  </tr>
+  <tr>
+    <td class="pageHeading" colspan="2"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
 <?php
   if ($messageStack->size('password_forgotten') > 0) {
 ?>
-<?php echo $messageStack->output('password_forgotten'); ?> 
+  <tr>
+    <td class="main" colspan="2"><?php echo $messageStack->output('password_forgotten'); ?></td>
+  </tr>
 <?php
   }
 ?>
-<p><?php echo TEXT_MAIN; ?></p>
-<div class="formrow"><label><?php echo ENTRY_EMAIL_ADDRESS . '</label>' . zen_draw_input_field('email_address'); ?></div> 
-<?php echo '<a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?> 
-<?php echo zen_image_submit('button_continue.gif', IMAGE_BUTTON_CONTINUE); ?>
-</form> 
+  <tr>
+    <td class="plainBox" align="center" colspan="2"><?php echo TEXT_MAIN; ?><br /><br /><?php echo ENTRY_EMAIL_ADDRESS . zen_draw_input_field('email_address'); ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+    <td align="right"><?php echo zen_image_submit(BUTTON_IMAGE_SUBMIT, BUTTON_SUBMIT_ALT); ?></td>
+  </tr>
+</table></form>

@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,130 +17,211 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_default.php,v 1.2 2005/07/13 20:24:05 spiderr Exp $
+// $Id: tpl_checkout_payment_default.php,v 1.3 2005/07/14 04:55:15 spiderr Exp $
 //
-bt();
 ?>
-<?php echo zen_draw_form('checkout_payment', zen_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'), 'post', 'onsubmit="return check_form();"'); ?> 
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) { ?>
-<p><?php echo zen_output_string_protected($error['title']); ?></p>
-<p class="messageStackError"><?php echo zen_output_string_protected($error['error']); ?></p>
-<?php } ?>
-<fieldset>
-<legend><?php echo TITLE_BILLING_ADDRESS; ?></legend>
-<div class="formrow"> 
-  <div style="float:left;width:30%;"><?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?></div>
-  <div style="float:right;width:65%"><?php echo TEXT_SELECTED_BILLING_DESTINATION; ?></div>
-  <br class="clear" />
-</div>
-<div class="formrow"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button('button_change_address.gif', IMAGE_BUTTON_CHANGE_ADDRESS) . '</a>'; ?></div>
-<br class="clear" />
-</fieldset>
-<fieldset>
-<legend><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></legend>
+<?php echo $payment_modules->javascript_validation(); ?>
+<?php echo zen_draw_form('checkout_payment', zen_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'), 'post', 'onsubmit="return check_form();"'); ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <?php $selection = $payment_modules->selection();
-if (sizeof($selection) > 1) { ?>
-  <tr> 
-    <td valign="top" colspan="3"><?php echo TEXT_SELECT_PAYMENT_METHOD; ?></td>
+  <tr>
+    <td class="pageHeading" colspan="3"><h1><?php echo HEADING_TITLE; ?></h1></td>
   </tr>
-  <?php  } else { ?>
-  <tr> 
-    <td colspan="3"><?php echo TEXT_ENTER_PAYMENT_INFORMATION; ?></td>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
-  <?php }
+<?php
+  if ($messageStack->size('checkout_payment') > 0) {
+?>
+  <tr>
+    <td colspan="3"><?php echo $messageStack->output('checkout_payment'); ?></td>
+  </tr>
+<?php
+  }
+  if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
+?>
+  <tr>
+    <td class="main" align="center" valign="top"><?php echo TABLE_HEADING_CONDITIONS; ?><br /></td>
+    <td colspan="2" class="main" valign="top"><?php echo TEXT_CONDITIONS_DESCRIPTION . '<br /><br />' . zen_draw_checkbox_field('conditions', '1', false, 'id="conditions"') . '<label for="conditions">&nbsp;' . TEXT_CONDITIONS_CONFIRM . '</label>'; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+<?php
+  }
+    $order_total_modules->process();
+?>
+  <tr>
+    <td class="main" align="center" valign="top"><?php echo TITLE_BILLING_ADDRESS; ?><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?></td>
+    <td class="main" valign="top"><?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?><br /><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></td>
+    <td class="main" valign="top"><?php echo TEXT_SELECTED_BILLING_DESTINATION; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="main" align="right" colspan="3">
+      <table border="0"  cellspacing="0" cellpadding="2">
+        <tr>
+          <td align="right" colspan="2"><?php echo $order_total_modules->output(); ?></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" colspan="3"><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+<?php
+  if (SHOW_ACCEPTED_CREDIT_CARDS != '0') {
+?>
+  <tr>
+    <td colspan="3">
+<?php
+    if (SHOW_ACCEPTED_CREDIT_CARDS == '1') {
+      echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
+    }
+    if (SHOW_ACCEPTED_CREDIT_CARDS == '2') {
+      echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled('IMAGE_');
+    }
+?>
+    </td>
+  </tr>
+<?php } ?>
+<?php
+  $selection = $payment_modules->selection();
+
+  if (sizeof($selection) > 1) {
+?>
+  <tr>
+    <td class="main" valign="top" colspan="2"><?php echo TEXT_SELECT_PAYMENT_METHOD; ?></td>
+    <td class="main" valign="top" align="right"><?php echo TITLE_PLEASE_SELECT; ?><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_EAST_SOUTH); ?></td>
+  </tr>
+<?php
+  } else {
+?>
+  <tr>
+    <td class="main" colspan="3"><?php echo TEXT_ENTER_PAYMENT_INFORMATION; ?></td>
+  </tr>
+<?php
+  }
 
   $radio_buttons = 0;
   for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
 ?>
-  <?php if ( ($selection[$i]['id'] == $_SESSION['payment']) || ($n == 1) ) {
-      echo '                  <tr id="defaultSelected" class="moduleRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
+<?php
+    if ( ($selection[$i]['id'] == $_SESSION['payment']) || ($n == 1) ) {
+      echo '  <tr id="defaultSelected" class="moduleRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
     } else {
-      echo '                  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
+      echo '  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
     }
 ?>
-  <td colspan="2"><?php echo $selection[$i]['module']; ?></td>
-  <td align="right"> 
-    <?php
+    <td class="plainBoxHeading" colspan="2"><?php echo $selection[$i]['module']; ?></td>
+    <td class="main" align="right">
+<?php
+    if (MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
+      echo TEXT_INFO_COD_FEES;
+    } else {
+      // echo 'WRONG ' . $selection[$i]['id'];
+    }
     if (sizeof($selection) > 1) {
       echo zen_draw_radio_field('payment', $selection[$i]['id']);
     } else {
       echo zen_draw_hidden_field('payment', $selection[$i]['id']);
     }
 ?>
-  </td>
+    </td>
   </tr>
-  <?php
+<?php
     if (isset($selection[$i]['error'])) {
 ?>
-  <tr> 
-    <td colspan="4"><?php echo $selection[$i]['error']; ?></td>
+  <tr>
+    <td class="main" colspan="4"><?php echo $selection[$i]['error']; ?></td>
   </tr>
-  <?php
+<?php
     } elseif (isset($selection[$i]['fields']) && is_array($selection[$i]['fields'])) {
 ?>
-  <tr> 
-    <td colspan="4"> <table border="0" cellspacing="0" cellpadding="2">
-        <?php
+  <tr>
+    <td colspan="4">
+      <table border="0" cellspacing="0" cellpadding="2">
+<?php
       for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
 ?>
-        <tr> 
-          <td><?php echo $selection[$i]['fields'][$j]['title']; ?></td>
-          <td><?php echo $selection[$i]['fields'][$j]['field']; ?></td>
+        <tr>
+          <td class="main"><?php echo $selection[$i]['fields'][$j]['title']; ?></td>
+          <td class="main"><?php echo $selection[$i]['fields'][$j]['field']; ?></td>
         </tr>
-        <?php
+<?php
       }
 ?>
-      </table></td>
+      </table>
+    </td>
   </tr>
-  <?php
+<?php
     }
     $radio_buttons++;
 ?>
-  <?php
+
+<?php
   }
 ?>
-  <?php
+<?php
   $selection =  $order_total_modules->credit_selection();//
   if (sizeof($selection)>0) {
 ?>
-  <tr> 
-    <td class="plainBoxHeading" colspan="3"><b><?php echo TABLE_HEADING_CREDIT_PAYMENT; ?></b></td>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
-  <?php
-  for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
+  <tr>
+    <td class="plainBoxHeading" colspan="3"><?php echo TABLE_HEADING_CREDIT_PAYMENT; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+<?php
+    for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
 ?>
-  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)"> 
-    <td colspan="2"><b><?php echo $selection[$i]['module']; ?></b></td>
-    <td align="right" colspan="2"><?php echo $selection[$i]['checkbox']; ?></td>
+  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
+    <td class="main" colspan="2"><?php echo $selection[$i]['module']; ?></td>
+    <td class="main" colspan="2"align="right" colspan="2"><?php echo $selection[$i]['checkbox']; ?></td>
   </tr>
-  <?php
+<?php
       if ($_GET['credit_class_error_code'] == $selection[$i]['id']) {
 ?>
-  <tr> 
-    <td><?php echo TEXT_ERROR?></td>
-    <td colspan="2"><?php echo $_GET['credit_class_error']; ?></td>
+  <tr>
+    <td class="messageStackError" width="100%" valign="top" colspan="3"><?php echo zen_output_string_protected($_GET['credit_class_error']); ?></td>
   </tr>
-  <?php
+<?php
       }
       for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
 ?>
-  <tr> 
-    <td><?php echo $selection[$i]['fields'][$j]['title']; ?></td>
-    <td colspan="2"><?php echo $selection[$i]['fields'][$j]['field']; ?></td>
+  <tr>
+    <td class="main"colspan="2"><?php echo $selection[$i]['fields'][$j]['title']; ?></td>
+    <td class="main" colspan="1"><?php echo $selection[$i]['fields'][$j]['field']; ?></td>
   </tr>
-  <?php
+<?php
       }
-
     }
   }
 ?>
-</table>
-</fieldset>
-<fieldset>
-<legend><?php echo TABLE_HEADING_COMMENTS; ?></legend>
-<div class="formrow"><?php echo zen_draw_textarea_field('comments', 'soft', '60', '5'); ?></div>
-</fieldset>
-<h3><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE; ?></h3> 
-<p><?php echo TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?><span class="right"><?php echo zen_image_submit('button_continue.gif', IMAGE_BUTTON_CONTINUE); ?></span></p></form>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" colspan="3"><?php echo TABLE_HEADING_COMMENTS; ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3"><?php echo zen_draw_textarea_field('comments', 'soft', '60', '5'); ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
+    <td class="main" align="right"><?php echo zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT, 'onClick="submitFunction('.zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'].')"'); ?></td>
+  </tr>
+</table></form>

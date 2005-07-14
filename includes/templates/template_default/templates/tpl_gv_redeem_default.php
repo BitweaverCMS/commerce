@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,12 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_gv_redeem_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_gv_redeem_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php echo TEXT_INFORMATION; ?>
-
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <tr>
+    <td class="plainBox"><?php echo TEXT_INFORMATION; ?></td>
+  </tr>
 <?php
 // if we get here then either the url gv_no was not set or it was invalid
 // so output a message.
@@ -31,8 +35,10 @@
     $message = TEXT_INVALID_GV;
   }
 ?>
-   <?php echo $message; ?>
-<div class="row">
-<span class="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">' . zen_image_button('button_continue.gif', IMAGE_BUTTON_CONTINUE) . '</a>'; ?></span>
-</div>
-<br class="clear" />
+  <tr>
+    <td class="plainBox"><?php echo $message; ?></td>
+  </tr>
+  <tr>
+    <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">' . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

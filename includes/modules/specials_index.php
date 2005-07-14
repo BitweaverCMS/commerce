@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
+// $Id: specials_index.php,v 1.3 2005/07/14 04:55:13 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -29,7 +29,7 @@
                            left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on p.products_id = pd.products_id
                            where p.products_id = s.products_id and p.products_id = pd.products_id and p.products_status = '1' and s.status = '1' and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
   } else {
-    $specials_index_query = "select distinct p.products_id, p.products_image, pd.products_name
+    $specials_index_query = "select p.products_id, p.products_image, pd.products_name
                            from " . TABLE_PRODUCTS . " p
                            left join " . TABLE_SPECIALS . " s on p.products_id = s.products_id
                            left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on p.products_id = pd.products_id, " .
@@ -42,7 +42,7 @@
 
   }
 
-  $specials_index = $db->ExecuteRandomMulti($specials_index_query, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);
+  $specials_index = $db->query($specials_index_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);
 
   $row = 0;
   $col = 0;
@@ -71,7 +71,7 @@
         $col = 0;
         $row ++;
       }
-      $specials_index->MoveNextRandom();
+      $specials_index->MoveNext();
     }
 
     if ($specials_index->RecordCount() > 0) {

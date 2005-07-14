@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_block_previous_orders.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_block_previous_orders.php,v 1.2 2005/07/14 04:55:15 spiderr Exp $
 //
 ?>
   <tr class="moduleRow" onmouseOver="rowOverEffect(this)" onmouseOut="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $orders->fields['orders_id'], 'SSL'); ?>'">

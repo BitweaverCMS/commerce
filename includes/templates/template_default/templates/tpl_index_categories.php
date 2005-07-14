@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,14 +17,83 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_categories.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_index_categories.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
- 
- <h1><?php echo $breadcrumb->last();  ?></h1>
-<br class="clear" />
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
 <?php
-  require(DIR_WS_MODULES . 'pages/index/category_row.php'); 
+if ($show_welcome == 'true') {
 ?>
-<br class="clear" />
-<div><?php require(DIR_WS_MODULES . FILENAME_NEW_PRODUCTS); ?></div>
+  <tr>
+    <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <tr>
+    <td class="greetUser"><?php echo zen_customer_greeting(); ?></td>
+  </tr>
+<?php if (TEXT_MAIN) { ?>
+  <tr>
+    <td class="main"><?php echo TEXT_MAIN; ?></td>
+  </tr>
+<?php } ?>
+<?php if (TEXT_INFORMATION) { ?>
+  <tr>
+    <td class="plainBox"><?php echo TEXT_INFORMATION; ?></td>
+  </tr>
+<?php } ?>
+<?php if (DEFINE_MAIN_PAGE_STATUS == '1') { ?>
+  <tr>
+    <td class="plainBox"><?php require($define_main_page); ?><br /></td>
+  </tr>
+<?php } ?>
+
+<?php } else { ?>
+  <tr>
+  </tr>
+  <tr>
+    <td class="pageHeading"><h1><?php echo $breadcrumb->last(); ?></h1></td>
+  </tr>
+<?php } ?>
+</table><br />
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+<?php
+// categories_description
+    if ($current_categories_description != '') {
+?>
+  <tr>
+    <td colspan="4">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2" class="categoriesdescription">
+        <tr class="categoriesdescription">
+          <td class="categoriesdescription"><?php echo $current_categories_description;  ?></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+<?php } // categories_description ?>
+<tr>
+<?php
+  require(DIR_WS_MODULES . 'pages/index/category_row.php');
+?>
+</tr>
+</table>
+
+<?php
+$show_display_category = $db->Execute(SQL_SHOW_PRODUCT_INFO_CATEGORY);
+
+while (!$show_display_category->EOF) {
+  // //  echo 'I found ' . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS);
+
+?>
+
+<?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_FEATURED_PRODUCTS') { ?>
+<?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE)); ?><?php } ?>
+
+<?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_SPECIALS_PRODUCTS') { ?>
+<?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX)); ?><?php } ?>
+<?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_NEW_PRODUCTS') { ?>
+<?php require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS)); ?><?php } ?>
+<?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_UPCOMING') { ?>
+<?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS)); ?><?php } ?>
+<?php
+  $show_display_category->MoveNext();
+} // !EOF
+?>

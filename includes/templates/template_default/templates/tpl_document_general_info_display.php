@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_document_general_info_display.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_document_general_info_display.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -38,10 +38,6 @@
 //   $module_show_categories
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-    <td colspan="2" class="breadCrumb"><?php echo $breadcrumb->trail(BREAD_CRUMBS_SEPARATOR); ?></td>
-  </tr>
-
 <?php
 if ($debug_on == '1') {
   echo '<tr>';

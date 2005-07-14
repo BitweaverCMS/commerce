@@ -17,9 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.4 2005/07/10 17:31:43 spiderr Exp $
+// $Id: application_top.php,v 1.5 2005/07/14 04:55:13 spiderr Exp $
 //
-
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
@@ -94,14 +93,14 @@ print "DIE DIE DIE ";
         if (strpos($vars[$i], '[]')) {
           $GET_array[substr($vars[$i], 0, -2)][] = $vars[$i+1];
         } else {
-          $_GET[$vars[$i]] = $vars[$i+1];
+          $_REQUEST[$vars[$i]] = $vars[$i+1];
         }
         $i++;
       }
 
       if (sizeof($GET_array) > 0) {
         while (list($key, $value) = each($GET_array)) {
-          $_GET[$key] = $value;
+          $_REQUEST[$key] = $value;
         }
       }
     }
@@ -164,10 +163,10 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
 
 // set the session ID if it exists
-   if (isset($_POST[zen_session_name()])) {
-     zen_session_id($_POST[zen_session_name()]);
-   } elseif ( ($request_type == 'SSL') && isset($_GET[zen_session_name()]) ) {
-     zen_session_id($_GET[zen_session_name()]);
+   if (isset($_REQUEST[zen_session_name()])) {
+     zen_session_id($_REQUEST[zen_session_name()]);
+   } elseif ( ($request_type == 'SSL') && isset($_REQUEST[zen_session_name()]) ) {
+     zen_session_id($_REQUEST[zen_session_name()]);
    }
 
 // start the session
@@ -222,7 +221,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 				WHERE customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
 		$check_user = $db->Execute($sql);
 		if( empty( $check_user['fields']['total'] ) ) {
-			$_POST['action'] = 'process';
+			$_REQUEST['action'] = 'process';
 			$email_format = zen_db_prepare_input( $gBitUser->mInfo['email'] );
 			if( $space = strpos( $gBitUser->mInfo['real_name'], ' ' ) ) {
 				$firstname = zen_db_prepare_input( substr( $gBitUser->mInfo['real_name'], 0, $space ) );
@@ -341,31 +340,31 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   include(DIR_WS_MODULES . 'extra_definitions.php');
 
 // currency
-  if (!$_SESSION['currency'] || isset($_GET['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
-    if (isset($_GET['currency'])) {
-      if (!$_SESSION['currency'] = zen_currency_exists($_GET['currency'])) $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
+  if (!$_SESSION['currency'] || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
+    if (isset($_REQUEST['currency'])) {
+      if (!$_SESSION['currency'] = zen_currency_exists($_REQUEST['currency'])) $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
     } else {
       $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
     }
   }
 
 // Sanitize get parameters in the url
-  if (isset($_GET['products_id'])) $_GET['products_id'] = ereg_replace('[^0-9a-f:]', '', $_GET['products_id']);
-  if (isset($_GET['manufacturers_id'])) $_GET['manufacturers_id'] = ereg_replace('[^0-9]', '', $_GET['manufacturers_id']);
-  if (isset($_GET['cPath'])) $_GET['cPath'] = ereg_replace('[^0-9_]', '', $_GET['cPath']);
-  if (isset($_GET['main_page'])) $_GET['main_page'] = ereg_replace('[^0-9a-zA-Z_]', '', $_GET['main_page']);
-  while (list($key, $value) = each($_GET)) {
-    $_GET[$key] = ereg_replace('[<>]', '', $value);
+  if( isset($_GET['products_id']) ) $_GET['products_id'] = ereg_replace('[^0-9a-f:]', '', $_GET['products_id']);
+  if (isset($_REQUEST['manufacturers_id'])) $_REQUEST['manufacturers_id'] = ereg_replace('[^0-9]', '', $_REQUEST['manufacturers_id']);
+  if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = ereg_replace('[^0-9_]', '', $_REQUEST['cPath']);
+  if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = ereg_replace('[^0-9a-zA-Z_]', '', $_REQUEST['main_page']);
+  while (list($key, $value) = each($_REQUEST)) {
+    $_REQUEST[$key] = ereg_replace('[<>]', '', $value);
   }
 
 // validate products_id for search engines and bookmarks, etc.
-  if (isset($_GET['products_id']) and $_SESSION['check_valid'] != 'false') {
+  if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && $_SESSION['check_valid'] != 'false') {
     $check_valid = zen_products_id_valid($_GET['products_id']);
     if (!$check_valid) {
-      $_GET['main_page'] = zen_get_info_page($_GET['products_id']);
+      $_GET['main_page'] = zen_get_info_page( $_GET['products_id'] );
       // do not recheck redirect
       $_SESSION['check_valid'] = 'false';
-      zen_redirect(zen_href_link($_GET['main_page'], 'products_id=' . $_GET['products_id']));
+      zen_redirect(zen_href_link($_REQUEST['main_page'], 'products_id=' . $_GET['products_id']));
     }
   } else {
     $_SESSION['check_valid'] = 'true';
@@ -379,11 +378,11 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // Down for maintenance module
   if (!strstr(EXCLUDE_ADMIN_IP_FOR_MAINTENANCE, $_SERVER['REMOTE_ADDR'])){
 //  if (EXCLUDE_ADMIN_IP_FOR_MAINTENANCE != $_SERVER['REMOTE_ADDR']){
-    if (DOWN_FOR_MAINTENANCE=='true' and $_GET['main_page'] != DOWN_FOR_MAINTENANCE_FILENAME) zen_redirect(zen_href_link(DOWN_FOR_MAINTENANCE_FILENAME));
+    if (DOWN_FOR_MAINTENANCE=='true' and $_REQUEST['main_page'] != DOWN_FOR_MAINTENANCE_FILENAME) zen_redirect(zen_href_link(DOWN_FOR_MAINTENANCE_FILENAME));
   }
 
 // do not let people get to down for maintenance page if not turned on
-  if (DOWN_FOR_MAINTENANCE=='false' and $_GET['main_page'] == DOWN_FOR_MAINTENANCE_FILENAME) {
+  if (DOWN_FOR_MAINTENANCE=='false' and $_REQUEST['main_page'] == DOWN_FOR_MAINTENANCE_FILENAME) {
     zen_redirect(zen_href_link(FILENAME_DEFAULT));
   }
 
@@ -405,14 +404,14 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     case (DOWN_FOR_MAINTENANCE == 'true'):
 // if not down for maintenance check login status
       break;
-    case ($_GET['main_page'] == FILENAME_LOGOFF):
+    case ($_REQUEST['main_page'] == FILENAME_LOGOFF):
       break;
     case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
     // customer must be logged in to browse
-//die('I see ' . $_GET['main_page'] . ' vs ' . FILENAME_LOGIN);
-      if ($_GET['main_page'] != FILENAME_LOGIN and $_GET['main_page'] != FILENAME_CREATE_ACCOUNT ) {
-        if (!isset($_GET['set_session_login'])) {
-          $_GET['set_session_login'] = 'true';
+//die('I see ' . $_REQUEST['main_page'] . ' vs ' . FILENAME_LOGIN);
+      if ($_REQUEST['main_page'] != FILENAME_LOGIN and $_REQUEST['main_page'] != FILENAME_CREATE_ACCOUNT ) {
+        if (!isset($_REQUEST['set_session_login'])) {
+          $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
@@ -436,13 +435,13 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     case (DOWN_FOR_MAINTENANCE == 'true'):
 // if not down for maintenance check login status
       break;
-    case ($_GET['main_page'] == FILENAME_LOGOFF or $_GET['main_page'] == FILENAME_PRIVACY or $_GET['main_page'] == FILENAME_PASSWORD_FORGOTTEN or $_GET['main_page'] == FILENAME_CONTACT_US or $_GET['main_page'] == FILENAME_CONDITIONS or $_GET['main_page'] == FILENAME_SHIPPING or $_GET['main_page'] == FILENAME_UNSUBSCRIBE):
+    case ($_REQUEST['main_page'] == FILENAME_LOGOFF or $_REQUEST['main_page'] == FILENAME_PRIVACY or $_REQUEST['main_page'] == FILENAME_PASSWORD_FORGOTTEN or $_REQUEST['main_page'] == FILENAME_CONTACT_US or $_REQUEST['main_page'] == FILENAME_CONDITIONS or $_REQUEST['main_page'] == FILENAME_SHIPPING or $_REQUEST['main_page'] == FILENAME_UNSUBSCRIBE):
       break;
     case (CUSTOMERS_APPROVAL_AUTHORIZATION == '1' and $_SESSION['customer_id'] == ''):
     // customer must be logged in to browse
-      if ($_GET['main_page'] != FILENAME_LOGIN and $_GET['main_page'] != FILENAME_CREATE_ACCOUNT ) {
-        if (!isset($_GET['set_session_login'])) {
-          $_GET['set_session_login'] = 'true';
+      if ($_REQUEST['main_page'] != FILENAME_LOGIN and $_REQUEST['main_page'] != FILENAME_CREATE_ACCOUNT ) {
+        if (!isset($_REQUEST['set_session_login'])) {
+          $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
@@ -451,9 +450,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     case (CUSTOMERS_APPROVAL_AUTHORIZATION == '2' and $_SESSION['customer_id'] == ''):
     // customer must be logged in to browse
 /*
-      if ($_GET['main_page'] != FILENAME_LOGIN and $_GET['main_page'] != FILENAME_CREATE_ACCOUNT ) {
-        if (!isset($_GET['set_session_login'])) {
-          $_GET['set_session_login'] = 'true';
+      if ($_REQUEST['main_page'] != FILENAME_LOGIN and $_REQUEST['main_page'] != FILENAME_CREATE_ACCOUNT ) {
+        if (!isset($_REQUEST['set_session_login'])) {
+          $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
@@ -463,7 +462,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     case (CUSTOMERS_APPROVAL_AUTHORIZATION == '1' and $_SESSION['customers_authorization'] != '0'):
     // customer is pending approval
     // customer must be logged in to browse
-      if ($_GET['main_page'] != CUSTOMERS_AUTHORIZATION_FILENAME) {
+      if ($_REQUEST['main_page'] != CUSTOMERS_AUTHORIZATION_FILENAME) {
         zen_redirect(zen_href_link(CUSTOMERS_AUTHORIZATION_FILENAME));
       }
       break;
@@ -483,7 +482,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   $messageStack = new messageStack;
 
 // Shopping cart actions
-  if (isset($_GET['action'])) {
+  if (isset($_REQUEST['action'])) {
 // redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled
     if ($session_started == false) {
       zen_redirect(zen_href_link(FILENAME_COOKIE_USAGE));
@@ -493,21 +492,21 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
       $goto =  FILENAME_SHOPPING_CART;
       $parameters = array('action', 'cPath', 'products_id', 'pid', 'main_page');
     } else {
-      $goto = $_GET['main_page'];
-      if ($_GET['action'] == 'buy_now') {
+      $goto = $_REQUEST['main_page'];
+      if ($_REQUEST['action'] == 'buy_now') {
         $parameters = array('action');
       } else {
         $parameters = array('action', 'pid', 'main_page');
       }
     }
-    switch ($_GET['action']) {
+    switch ($_REQUEST['action']) {
       // customer wants to update the product quantity in their shopping cart
       // delete checkbox or 0 quantity removes FROM cart
-      case 'update_product' : for ($i=0, $n=sizeof($_POST['products_id']); $i<$n; $i++) {
+      case 'update_product' : for ($i=0, $n=sizeof($_REQUEST['products_id']); $i<$n; $i++) {
                                 $adjust_max= 'false';
 
-//                                if ( in_array($_POST['products_id'][$i], (is_array($_POST['cart_delete']) ? $_POST['cart_delete'] : array())) or $_POST['cart_quantity'][$i]==0) {
-                                if ( in_array($_POST['products_id'][$i], (is_array($_POST['cart_delete']) ? $_POST['cart_delete'] : array())) or $_POST['cart_quantity'][$i]==0) {
+//                                if ( in_array($_POST['products_id'][$i], (is_array($_REQUEST['cart_delete']) ? $_REQUEST['cart_delete'] : array())) or $_REQUEST['cart_quantity'][$i]==0) {
+                                if ( in_array($_POST['products_id'][$i], (is_array($_REQUEST['cart_delete']) ? $_REQUEST['cart_delete'] : array())) or $_POST['cart_quantity'][$i]==0) {
                                   $_SESSION['cart']->remove($_POST['products_id'][$i]);
                                 } else {
                                   $add_max = zen_get_products_quantity_order_max($_POST['products_id'][$i]);
@@ -522,7 +521,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                       $adjust_max= 'true';
                                       $new_qty = $add_max - $cart_qty;
                                     }
-                                    $attributes = ($_POST['id'][$_POST['products_id'][$i]]) ? $_POST['id'][$_POST['products_id'][$i]] : '';
+                                    $attributes = ($_REQUEST['id'][$_POST['products_id'][$i]]) ? $_REQUEST['id'][$_POST['products_id'][$i]] : '';
                                     $_SESSION['cart']->add_cart($_POST['products_id'][$i], $new_qty, $attributes, false);
                                   }
                                     if ($adjust_max == 'true') {
@@ -536,7 +535,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                               break;
 
 // remove individual products FROM cart
-      case 'remove_product': if (isset($_GET['product_id']) && zen_not_null($_GET['product_id'])) $_SESSION['cart']->remove($_GET['product_id']);
+      case 'remove_product': if (isset($_REQUEST['product_id']) && zen_not_null($_REQUEST['product_id'])) $_SESSION['cart']->remove($_REQUEST['product_id']);
                              zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                              break;
       // customer adds a product FROM the products page
@@ -545,8 +544,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // verify attributes and quantity first
       $the_list = '';
       $adjust_max= 'false';
-    if (isset($_POST['id'])) {
-      while(list($key,$value) = each($_POST['id'])) {
+    if (isset($_REQUEST['id'])) {
+      while(list($key,$value) = each($_REQUEST['id'])) {
         $check = zen_get_attributes_valid($_POST['products_id'], $key, $value);
         if ($check == false) {
           // zen_get_products_name($_POST['products_id']) .
@@ -582,14 +581,14 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
       // process normally
 
 // iii 030813 added: File uploading: save uploaded files with unique file names
-          $real_ids = $_POST['id'];
-          if ($_GET['number_of_uploads'] > 0) {
+          $real_ids = $_REQUEST['id'];
+          if ($_REQUEST['number_of_uploads'] > 0) {
             require(DIR_WS_CLASSES . 'upload.php');
-            for ($i = 1, $n = $_GET['number_of_uploads']; $i <= $n; $i++) {
-              if (zen_not_null($_FILES['id']['tmp_name'][TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i]]) and ($_FILES['id']['tmp_name'][TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i]] != 'none')) {
+            for ($i = 1, $n = $_REQUEST['number_of_uploads']; $i <= $n; $i++) {
+              if (zen_not_null($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]]) and ($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] != 'none')) {
                 $products_options_file = new upload('id');
                 $products_options_file->set_destination(DIR_FS_UPLOADS);
-                if ($products_options_file->parse(TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i])) {
+                if ($products_options_file->parse(TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i])) {
                   $products_image_extention = substr($products_options_file->filename, strrpos($products_options_file->filename, '.'));
                   if ($_SESSION['customer_id']) {
                     $db->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, customers_id, files_uploaded_name) values('" . zen_session_id() . "', '" . $_SESSION['customer_id'] . "', '" . zen_db_input($products_options_file->filename) . "')");
@@ -597,7 +596,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                     $db->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
                   }
                   $insert_id = zen_db_insert_id( TABLE_FILES_UPLOADED, 'files_uploaded_id' );
-                  $real_ids[TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
+                  $real_ids[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
                   $products_options_file->set_filename("$insert_id" . $products_image_extention);
                   if (!($products_options_file->save())) {
                     break 2;
@@ -606,7 +605,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                   break 2;
                 }
               } else { // No file uploaded -- use previous value
-                $real_ids[TEXT_PREFIX . $_POST[UPLOAD_PREFIX . $i]] = $_POST[TEXT_PREFIX . UPLOAD_PREFIX . $i];
+                $real_ids[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $_REQUEST[TEXT_PREFIX . UPLOAD_PREFIX . $i];
               }
             }
           }
@@ -628,14 +627,14 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
       }
                               break;
       // performed by the 'buy now' button in product listings and review page
-      case 'buy_now' :        if (isset($_GET['products_id'])) {
-                                if (zen_has_product_attributes($_GET['products_id'])) {
-                                  zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
+      case 'buy_now' :        if (isset($_REQUEST['products_id'])) {
+                                if (zen_has_product_attributes($_REQUEST['products_id'])) {
+                                  zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'products_id=' . $_REQUEST['products_id']));
                                 } else {
 
-                                  $add_max = zen_get_products_quantity_order_max($_GET['products_id']);
-                                  $cart_qty = $_SESSION['cart']->in_cart_mixed($_GET['products_id']);
-                                  $new_qty = zen_get_buy_now_qty($_GET['products_id']);
+                                  $add_max = zen_get_products_quantity_order_max($_REQUEST['products_id']);
+                                  $cart_qty = $_SESSION['cart']->in_cart_mixed($_REQUEST['products_id']);
+                                  $new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
                                   if (($add_max == 1 and $cart_qty == 1)) {
                                     // do not add
                                     $new_qty = 0;
@@ -646,13 +645,13 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                     }
                                   }
 
-                                  if ((zen_get_products_quantity_order_max($_GET['products_id']) == 1 and $_SESSION['cart']->in_cart_mixed($_GET['products_id']) == 1)) {
+                                  if ((zen_get_products_quantity_order_max($_REQUEST['products_id']) == 1 and $_SESSION['cart']->in_cart_mixed($_REQUEST['products_id']) == 1)) {
                                     // do not add
                                   } else {
                                     // check for min/max and add that value or 1
-                                    // $add_qty = zen_get_buy_now_qty($_GET['products_id']);
-//                                    $_SESSION['cart']->add_cart($_GET['products_id'], $_SESSION['cart']->get_quantity($_GET['products_id'])+$add_qty);
-                                    $_SESSION['cart']->add_cart($_GET['products_id'], $_SESSION['cart']->get_quantity($_GET['products_id'])+$new_qty);
+                                    // $add_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
+//                                    $_SESSION['cart']->add_cart($_REQUEST['products_id'], $_SESSION['cart']->get_quantity($_REQUEST['products_id'])+$add_qty);
+                                    $_SESSION['cart']->add_cart($_REQUEST['products_id'], $_SESSION['cart']->get_quantity($_REQUEST['products_id'])+$new_qty);
                                   }
                                 }
                               }
@@ -661,7 +660,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 // multiple products
       case 'multiple_products_add_product':
-                              while ( list( $key, $val ) = each($_POST['products_id']) ) {
+                              while ( list( $key, $val ) = each($_REQUEST['products_id']) ) {
                                 if ($val > 0) {
                                   $prodId = $key;
                                   $qty = $val;
@@ -689,16 +688,17 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                               break;
 
       case 'notify' :         if ($_SESSION['customer_id']) {
-                                if (isset($_GET['products_id'])) {
-                                  $notify = $_GET['products_id'];
-                                } elseif (isset($_GET['notify'])) {
-                                  $notify = $_GET['notify'];
-                                } elseif (isset($_POST['notify'])) {
-                                  $notify = $_POST['notify'];
+                                if (isset($_REQUEST['products_id'])) {
+                                  $notify = $_REQUEST['products_id'];
+                                } elseif (isset($_REQUEST['notify'])) {
+                                  $notify = $_REQUEST['notify'];
+                                } elseif (isset($_REQUEST['notify'])) {
+                                  $notify = $_REQUEST['notify'];
                                 } else {
-                                  zen_redirect(zen_href_link($_GET['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
+                                  zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
                                 }
                                 if (!is_array($notify)) $notify = array($notify);
+vd( $_REQUEST );
                                 for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
                                   $check_query = "SELECT count(*) as count
                                                   FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
@@ -712,47 +712,47 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                     $db->Execute($sql);
                                   }
                                 }
-                                zen_redirect(zen_href_link($_GET['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
+                                zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
                               } else {
                                 $_SESSION['navigation']->set_snapshot();
                                 zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
                               }
                               break;
-      case 'notify_remove' :  if ($_SESSION['customer_id'] && isset($_GET['products_id'])) {
+      case 'notify_remove' :  if ($_SESSION['customer_id'] && isset($_REQUEST['products_id'])) {
                                 $check_query = "SELECT count(*) as count
                                                 FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                WHERE products_id = '" . $_GET['products_id'] . "'
+                                                WHERE products_id = '" . $_REQUEST['products_id'] . "'
                                                 and customers_id = '" . $_SESSION['customer_id'] . "'";
 
                                 $check = $db->Execute($check_query);
                                 if ($check->fields['count'] > 0) {
                                   $sql = "delete FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                          WHERE products_id = '" . $_GET['products_id'] . "'
+                                          WHERE products_id = '" . $_REQUEST['products_id'] . "'
                                           and customers_id = '" . $_SESSION['customer_id'] . "'";
                                   $db->Execute($sql);
                                 }
-                                zen_redirect(zen_href_link($_GET['main_page'], zen_get_all_get_params(array('action', 'main_page'))));
+                                zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'main_page'))));
                               } else {
                                 $_SESSION['navigation']->set_snapshot();
                                 zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
                               }
                               break;
-      case 'cust_order' :     if ($_SESSION['customer_id'] && isset($_GET['pid'])) {
-                                if (zen_has_product_attributes($_GET['pid'])) {
-                                  zen_redirect(zen_href_link(zen_get_info_page($_GET['pid']), 'products_id=' . $_GET['pid']));
+      case 'cust_order' :     if ($_SESSION['customer_id'] && isset($_REQUEST['pid'])) {
+                                if (zen_has_product_attributes($_REQUEST['pid'])) {
+                                  zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));
                                 } else {
-                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_GET['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
-                                  $_SESSION['cart']->add_cart($_GET['pid'], $_SESSION['cart']->get_quantity($_GET['pid'])+1);
+                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_REQUEST['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                                  $_SESSION['cart']->add_cart($_REQUEST['pid'], $_SESSION['cart']->get_quantity($_REQUEST['pid'])+1);
                                 }
                               }
                               zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                               break;
  // Add product to the wishlist
 
-      case 'add_wishlist' :  if (ereg('^[0-9]+$', $_POST['products_id'])) {
-                               if  ($_POST['products_id']) {
-                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_GET['products_id'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
-                                 $db->Execute("insert into " . TABLE_WISHLIST . " (customers_id, products_id, products_model, products_name, products_price) values ('" . $_SESSION['customer_id'] . "', '" . $_POST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
+      case 'add_wishlist' :  if (ereg('^[0-9]+$', $_REQUEST['products_id'])) {
+                               if  ($_REQUEST['products_id']) {
+                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_REQUEST['products_id'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                                 $db->Execute("insert into " . TABLE_WISHLIST . " (customers_id, products_id, products_model, products_name, products_price) values ('" . $_SESSION['customer_id'] . "', '" . $_REQUEST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
                                }
                              }
 
@@ -828,11 +828,11 @@ case 'wishlist_add_cart': reset ($lvnr);
 }
 
 // calculate category path
-  if (isset($_GET['cPath'])) {
-    $cPath = $_GET['cPath'];
-  } elseif (isset($_GET['products_id']) && !zen_check_url_get_terms()) {
-//  } elseif (isset($_GET['products_id']) && !isset($_GET['manufacturers_id']) && !isset($_GET['music_genres_id'])) {
-    $cPath = zen_get_product_path($_GET['products_id']);
+  if (isset($_REQUEST['cPath'])) {
+    $cPath = $_REQUEST['cPath'];
+  } elseif (isset($_REQUEST['products_id']) && !zen_check_url_get_terms()) {
+//  } elseif (isset($_REQUEST['products_id']) && !isset($_REQUEST['manufacturers_id']) && !isset($_REQUEST['music_genres_id'])) {
+    $cPath = zen_get_product_path($_REQUEST['products_id']);
   } else {
     if (SHOW_CATEGORIES_ALWAYS == '1' && !zen_check_url_get_terms()) {
       $show_welcome = 'true';
@@ -877,23 +877,23 @@ case 'wishlist_add_cart': reset ($lvnr);
   }
 
 // split to add manufacturers_name to the display
-  if (isset($_GET['manufacturers_id'])) {
+  if (isset($_REQUEST['manufacturers_id'])) {
     $manufacturers_query = "SELECT manufacturers_name
                             FROM " . TABLE_MANUFACTURERS . "
-                            WHERE manufacturers_id = '" . (int)$_GET['manufacturers_id'] . "'";
+                            WHERE manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
 
     $manufacturers = $db->Execute($manufacturers_query);
 
     if ($manufacturers->RecordCount() > 0) {
-      $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_GET['manufacturers_id']));
+      $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_REQUEST['manufacturers_id']));
     }
   }
 
 // add the products model to the breadcrumb trail
-  if ( !empty( $_GET['products_id'] ) ) {
+  if ( !empty( $_REQUEST['products_id'] ) ) {
     $gCommerceProduct = new CommerceProduct();
-    if( $gCommerceProduct->load( $_GET['products_id'] ) ) {
-      $breadcrumb->add( $gCommerceProduct->getTitle(), zen_href_link(zen_get_info_page($_GET['products_id']), 'cPath=' . $cPath . '&products_id=' . $_GET['products_id']));
+    if( $gCommerceProduct->load( $_REQUEST['products_id'] ) ) {
+      $breadcrumb->add( $gCommerceProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
     }
   }
 

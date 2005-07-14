@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
+// $Id: functions_lookups.php,v 1.4 2005/07/14 04:55:13 spiderr Exp $
 //
 //
 /**
@@ -127,15 +127,17 @@
 ////
 // validate products_id
   function zen_products_id_valid($valid_id) {
-    global $db;
-    $check_valid = $db->Execute("select p.products_id
-                                 from " . TABLE_PRODUCTS . " p
-                                 where products_id='" . $valid_id . "' limit 1");
-    if ($check_valid->EOF) {
-      return false;
-    } else {
-      return true;
-    }
+	$ret = FALSE;
+	if( is_numeric( $valid_id ) ) {
+	    global $db;
+    	$check_valid = $db->Execute("select p.products_id
+        	                         from " . TABLE_PRODUCTS . " p
+            	                     where products_id='" . $valid_id . "' limit 1");
+	    if( !$check_valid->EOF ) {
+    	  $ret = true;
+	    }
+	}
+    return $ret;
   }
 
 /**
@@ -464,17 +466,17 @@
 ////
 // look up the product type from product_id and return an info page name
   function zen_get_info_page($zf_product_id) {
-    global $db;
-    $sql = "select products_type from " . TABLE_PRODUCTS . " where products_id = '" . (int)$zf_product_id . "'";
-    $zp_type = $db->Execute($sql);
-    if ($zp_type->RecordCount() == 0) {
-      return 'products_general_info';
-    } else {
-      $zp_product_type = $zp_type->fields['products_type'];
-      $sql = "select type_handler from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $zp_product_type . "'";
-      $zp_handler = $db->Execute($sql);
-      return $zp_handler->fields['type_handler'] . '_info';
-    }
+		global $db;
+		$sql = "select products_type from " . TABLE_PRODUCTS . " where products_id = '" . (int)$zf_product_id . "'";
+		$zp_type = $db->Execute($sql);
+		if ($zp_type->RecordCount() == 0) {
+		  return 'products_general_info';
+		} else {
+		  $zp_product_type = $zp_type->fields['products_type'];
+		  $sql = "select type_handler from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $zp_product_type . "'";
+		  $zp_handler = $db->Execute($sql);
+		  return $zp_handler->fields['type_handler'] . '_info';
+		}
   }
 
 ////

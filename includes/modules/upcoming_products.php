@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.2 2005/07/05 16:44:22 spiderr Exp $
+// $Id: upcoming_products.php,v 1.3 2005/07/14 04:55:13 spiderr Exp $
 //
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
@@ -36,7 +36,7 @@
                        where p.products_id = p2c.products_id
                        and p2c.categories_id = c.categories_id
                        and c.parent_id = '" . (int)$new_products_category_id . "'
-                       and to_days(products_date_available) >= to_days(now())
+                       and products_date_available >= now()
                        and p.products_id = pd.products_id
                        and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
                        order by " . EXPECTED_PRODUCTS_FIELD . " " . EXPECTED_PRODUCTS_SORT . "

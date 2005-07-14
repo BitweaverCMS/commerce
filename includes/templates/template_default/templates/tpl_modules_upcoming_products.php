@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,14 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_upcoming_products.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_modules_upcoming_products.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h2 class="upcoming"><?php echo TABLE_HEADING_UPCOMING_PRODUCTS; ?></h2>
+<!-- bof: upcoming_products -->
 <table border="0" width="100%" cellspacing="0" cellpadding="2">
   <tr>
-    <td class="tableHeading">&nbsp;<?php echo TABLE_HEADING_UPCOMING_PRODUCTS; ?>&nbsp;</td>
-    <td align="right" class="tableHeading">&nbsp;<?php echo TABLE_HEADING_DATE_EXPECTED; ?>&nbsp;</td>
+    <td class="tableHeading"><?php echo TABLE_HEADING_UPCOMING_PRODUCTS; ?></td>
+    <td align="right" nowrap="nowrap" class="tableHeading"><?php echo TABLE_HEADING_DATE_EXPECTED; ?></td>
+  </tr>
+  <tr>
+    <td colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></td>
   </tr>
 <?php
     $row = 0;
@@ -36,10 +39,14 @@
         echo '  <tr class="upcomingProducts-odd">' . "\n";
       }
 
-      echo '    <td class="smallText">&nbsp;<a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $expected->fields['products_id']) . '">' . $expected->fields['products_name'] . '</a>&nbsp;</td>' . "\n" .
-           '    <td align="right" class="smallText">&nbsp;' . zen_date_short($expected->fields['date_expected']) . '&nbsp;</td>' . "\n" .
+      echo '    <td class="smallText"><a href="' . zen_href_link(zen_get_info_page($expected->fields['products_id']), 'products_id=' . $expected->fields['products_id']) . '">' . $expected->fields['products_name'] . '</a></td>' . "\n" .
+           '    <td align="right" class="smallText">' . zen_date_short($expected->fields['date_expected']) . '</td>' . "\n" .
            '  </tr>' . "\n";
       $expected->MoveNext();
     }
 ?>
+  <tr>
+    <td colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></td>
+  </tr>
 </table>
+<!-- eof: upcoming_products -->

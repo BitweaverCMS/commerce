@@ -17,15 +17,26 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_page_3_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_page_3_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php echo TEXT_INFORMATION; ?> 
-<?php $back = sizeof($_SESSION['navigation']->path)-2; ?>
-<br class="clear" />
-<div class="row">
-<span class="left"><?php echo '<a href="' . zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']) . '">' . TEXT_BACK . '</a>'; ?></span>
-<span class="right"><?php echo '<a href="' . zen_href_link(FILENAME_PAGE_4) . '">' . TEXT_NEXT . '</a>'; ?></span>
-</div>
-<br class="clear" />
+<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+  </tr>
+  <tr>
+    <td class="pageHeading" align="center"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+<?php if (TEXT_INFORMATION) { ?>
+  <tr>
+    <td class="main"><?php echo TEXT_INFORMATION; ?></td>
+  </tr>
+<?php } ?>
+<?php if (DEFINE_PAGE_3_STATUS == '1') { ?>
+  <tr>
+    <td class="plainBox"><?php require($define_page_3); ?></td>
+  </tr>
+<?php } ?>
+  <tr>
+    <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

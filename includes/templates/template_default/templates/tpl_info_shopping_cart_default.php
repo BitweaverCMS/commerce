@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,14 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_info_shopping_cart_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_info_shopping_cart_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<h2><?php echo SUB_HEADING_TITLE_1; ?></h2>
-<p><?php echo SUB_HEADING_TEXT_1; ?></p>
-<h2><?php echo SUB_HEADING_TITLE_2; ?></h2>
-<p><?php echo SUB_HEADING_TEXT_2; ?></p>
-<h2><?php echo SUB_HEADING_TITLE_3; ?></h2>
-<p><?php echo SUB_HEADING_TEXT_3; ?></p>
-<p align="right"><a href="javascript:window.close();"><?php echo TEXT_CLOSE_WINDOW; ?></a></p>
+<p class="main"><strong><h1><?php echo HEADING_TITLE; ?></h1></strong><br /><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></p>
+<p class="main"><strong><i><?php echo SUB_HEADING_TITLE_1; ?></i></strong><br /><?php echo SUB_HEADING_TEXT_1; ?></p>
+<p class="main"><strong><i><?php echo SUB_HEADING_TITLE_2; ?></i></strong><br /><?php echo SUB_HEADING_TEXT_2; ?></p>
+<p class="main"><strong><i><?php echo SUB_HEADING_TITLE_3; ?></i></strong><br /><?php echo SUB_HEADING_TEXT_3; ?></p>
+<p align="right" class="main"><a href="javascript:window.close();"><?php echo TEXT_CURRENT_CLOSE_WINDOW; ?></a></p>

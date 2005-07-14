@@ -17,57 +17,62 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_gv_faq_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+//// $Id: tpl_gv_faq_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<?php echo TEXT_INFORMATION; ?>
-<h2><?php echo SUB_HEADING_TITLE; ?></h2>
-<?php echo SUB_HEADING_TEXT; ?> 
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <tr>
+    <td class="main" height="10px"></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo TEXT_INFORMATION; ?></td>
+  </tr>
+  <tr>
+    <td class="main"><strong><?php echo SUB_HEADING_TITLE; ?></strong></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo SUB_HEADING_TEXT; ?></td>
+  </tr>
 <?php
 // only show when there is a GV balance
-  $gv_query = "select amount
-               from " . TABLE_COUPON_GV_CUSTOMER . "
-               where customer_id = '" . $_SESSION['customer_id'] . "'";
-  $gv_result = $db->Execute($gv_query);
-
-  if ($gv_result->fields['amount'] > 0 ) {
+  if ($has_gv_balance ) {
 ?>
-   <h2><?php echo BOX_HEADING_GIFT_VOUCHER; ?><h2>
-   
+  <tr>
+    <td class="main" height="10px"></td>
+  </tr>
+  <tr>
+    <td class="plainBoxHeading" colspan="2"><?php echo BOX_HEADING_GIFT_VOUCHER; ?></td>
+  </tr>
+  <tr>
+    <td class="plainBox" colspan="2">
+      <table border="0" width="100%" cellspacing="2" cellpadding="2">
+        <tr>
+          <td class="main"><?php echo VOUCHER_BALANCE; ?></td>
+          <td class="main"><?php echo $currencies->format($gv_result->fields['amount']); ?></td>
+          <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
 <?php
-// ADDED FOR CREDIT CLASS GV END ADDITION
-  if ($_SESSION['customer_id']) {
-    $gv_query = "select amount
-                 from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
-    $gv_result = $db->Execute($gv_query);
-
-    if ($gv_result->fields['amount'] > 0 ) {
-
-?>
-
- <p><?php echo VOUCHER_BALANCE; ?><?php echo $currencies->format($gv_result->fields['amount']); ?><?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?></p>
-<?php
-  }
-?>
-<?php
-    }
   }
   if ($_SESSION['gv_id']) {
-    $gv_query = "select coupon_amount
-                 from " . TABLE_COUPONS . "
-                 where coupon_id = '" . $_SESSION['gv_id'] . "'";
-
-    $coupon = $db->Execute($gv_query);
 ?>
-  <p><?php echo VOUCHER_REDEEMED; ?><?php echo $currencies->format($coupon->fields['coupon_amount']); ?></p>
+  <tr>
+    <td class="main"><?php echo VOUCHER_REDEEMED; ?></td>
+    <td class="main" align="right" valign="bottom"><?php echo $currencies->format($coupon->fields['coupon_amount']); ?></td>
+  </tr>
 <?php
   }
 ?>
 
-<?php $back = sizeof($_SESSION['navigation']->path)-2; ?>
-<div class="row">
-<span class="right"><?php echo '<a href="' . zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']) . '">' . zen_image_button('button_back.gif', IMAGE_BUTTON_BACK) . '</a>'; ?></span>
-</div>
-<br class="clear" />
+  <tr>
+    <td class="main" height="10px"></td>
+  </tr>
+  <tr>
+    <td class="main" colspan="2"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

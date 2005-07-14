@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,9 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_create_account_success_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_create_account_success_default.php,v 1.2 2005/07/14 04:55:15 spiderr Exp $
 //
 ?>
-<h1><?php echo HEADING_TITLE; ?></h1>
-<p class="plainbox"><?php echo TEXT_ACCOUNT_CREATED; ?></p>
-<?php echo '<a href="' . $origin_href . '">' . zen_image_button('button_continue.gif', IMAGE_BUTTON_CONTINUE) . '</a>'; ?>
+<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td class="pageHeading" align="center"><h1><?php echo HEADING_TITLE; ?></h1></td>
+  </tr>
+  <tr>
+    <td class="plainBox"><?php echo TEXT_ACCOUNT_CREATED; ?></td>
+  </tr>
+  <tr>
+    <td align="right"><?php echo '<a href="' . $origin_href . '">' . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
+  </tr>
+</table>

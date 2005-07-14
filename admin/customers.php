@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.3 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: customers.php,v 1.4 2005/07/14 04:55:12 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -976,7 +976,7 @@ if ($processed == true) {
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
 //      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%'";
-      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%' or c.customers_telephone rlike '" . $keywords . "' or a.entry_company rlike '" . $keywords . "' or a.entry_street_address rlike '" . $keywords . "' or a.entry_city rlike '" . $keywords . "' or a.entry_postcode rlike '" . $keywords . "'";
+      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%' or c.customers_telephone like '%" . $keywords . "%' or a.entry_company like '%" . $keywords . "%' or a.entry_street_address like '%" . $keywords . "%' or a.entry_city like '%" . $keywords . "%' or a.entry_postcode like '%" . $keywords . "%'";
     }
     $new_fields=', c.customers_telephone, a.entry_company, a.entry_street_address, a.entry_city, a.entry_postcode, c.customers_authorization, c.customers_referral';
     $customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_group_pricing, a.entry_country_id, a.entry_company, ci.customers_info_date_of_last_logon, ci.customers_info_date_account_created " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.customers_id= ci.customers_info_id left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by $disp_order";

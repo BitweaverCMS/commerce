@@ -17,12 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_time_out_default.php,v 1.1 2005/07/05 05:59:03 bitweaver Exp $
+// $Id: tpl_time_out_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
   <tr>
-    <td class="breadCrumb"><?php echo $breadcrumb->trail(BREAD_CRUMBS_SEPARATOR); ?></td>
   </tr>
   <tr>
     <td class="pageHeading" align="center"><h1><?php echo HEADING_TITLE; ?></h1></td>

@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_down_for_maintenance_default.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_down_for_maintenance_default.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
 //
 ?>
 <!-- body_text //-->

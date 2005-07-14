@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_info_display.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_product_info_display.php,v 1.3 2005/07/14 04:55:16 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -35,72 +35,285 @@
 // $products_quantity
 // $options_name - Array
 // $options_menu - Array
+//   $module_show_categories
 ?>
-<?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_PRODUCT_INFO, zen_get_all_get_params(array('action')) . 'action=add_product')); ?>
-<?php if (PRODUCT_INFO_PREVIOUS_NEXT=='1') { ?>
-	<div><?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
-</div>
+<?php
+if ($debug_on == '1') {
+  echo '<tr>';
+  echo '  <td colspan="2" class="smallText">';
+  echo 'Looking at ' . (int)$_GET['products_id'] . '<br />';
+  echo 'Base Price ' . zen_get_products_base_price((int)$_GET['products_id']) . '<br />';
+  echo 'Actual Price ' . zen_get_products_actual_price((int)$_GET['products_id']) . '<br />';
+  echo 'Special Price ' . zen_get_products_special_price((int)$_GET['products_id'], true) . '<br />';
+  echo 'Sale Maker Discount Type ' . zen_get_products_sale_discount_type((int)$_GET['products_id']) . '<br />';
+  echo 'Discount Calc ' . zen_get_discount_calc((int)$_GET['products_id']) . '<br />';
+  echo 'Discount Calc Attr $100 $75 $50 $25 ' . zen_get_discount_calc((int)$_GET['products_id'], true, 100) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 75) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 50) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 25) . '<br />';
+
+  echo '<br> Start of page - product <br>' .
+  zen_get_show_product_switch($products_id_current, 'weight') . '<br>' .
+  zen_get_show_product_switch($products_id_current, 'weight_attributes') . '<br>' .
+  zen_get_show_product_switch($products_id_current, 'date_added') . '<br>' .
+  zen_get_show_product_switch($products_id_current, 'quantity') . '<br>' .
+  zen_get_show_product_switch($products_id_current, 'model') . '<br>' .
+  SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES . '<br>' .
+  SHOW_PRODUCT_INFO_WEIGHT . '<br>' .
+  SHOW_PRODUCT_INFO_MANUFACTURER . '<br>' .
+  SHOW_PRODUCT_INFO_QUANTITY . '<br>' .
+  '<br>';
+  echo '  </td>';
+  echo '</tr>';
+}
+?>
+<?php echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+<tr>
+<td colspan="2" class="smallText">
+<?php
+if (false) {
+echo 'Looking at ' . (int)$_GET['products_id'] . '<br />';
+echo 'Base Price ' . zen_get_products_base_price((int)$_GET['products_id']) . '<br />';
+echo 'Actual Price ' . zen_get_products_actual_price((int)$_GET['products_id']) . '<br />';
+echo 'Special Price ' . zen_get_products_special_price((int)$_GET['products_id'], true) . '<br />';
+echo 'Sale Maker Discount Type ' . zen_get_products_sale_discount_type((int)$_GET['products_id']) . '<br />';
+echo 'Discount Calc ' . zen_get_discount_calc((int)$_GET['products_id']) . '<br />';
+echo 'Discount Calc Attr $100 $75 $50 $25 ' . zen_get_discount_calc((int)$_GET['products_id'], true, 100) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 75) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 50) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 25) . '<br />';
+}
+?>
+</td>
+</tr>
+
+<?php if (PRODUCT_INFO_PREVIOUS_NEXT == '1' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
+  <tr>
+    <td colspan="2" align="center">
+      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
+    </td>
+  </tr>
 <?php } ?>
-<h1><?php echo $products_name; ?></h1>
-<div class="productbox">
-	<div class="productimage">
-		<?php if (zen_not_null($products_image)) { ?>
-			<script language="javascript" type="text/javascript"><!--
-				document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image( CommerceProduct::getImageUrl( $products_image ), addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
-			//--></script>
-			<noscript>
-				<?php echo '<a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . zen_image( CommerceProduct::getImageUrl( $products_image ), $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '</a><br /><a href="' . zen_href_link(DIR_WS_IMAGES . $products_image) . '" target="_blank">' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>
-			</noscript>
-		<?php } ?>
+  <tr>
+    <td colspan="2" class="pageHeading" valign="top"><h1><?php echo $products_name; ?></h1></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
+<?php
+  if (zen_not_null($products_image)) {
+    require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+  } else {
+    echo '&nbsp;';
+  }
+?>
+    </td>
+    <td align="center" class="pageHeading">
+<?php
+// base price
+  if ($show_onetime_charges_description == 'true') {
+    $one_time = '<span class="smallText">' . TEXT_ONETIME_CHARGE_SYMBOL . TEXT_ONETIME_CHARGE_DESCRIPTION . '</span><br />';
+  } else {
+    $one_time = '';
+  }
+  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . zen_get_products_display_price((int)$_GET['products_id']);
+?>
+    </td>
+  </tr>
 
-		<?php if ($specials_price) { ?>
-		  <p class="specialprice"><span class="normalprice"><?php echo $products_price; ?></span> <?php echo $specials_price; ?></p>
-		<?php } else { echo "<p class=\"price\">" . $products_price . "</p>";  } ?>
+  <tr>
+    <td class="main" align="center" valign="top">
+      <?php echo ((SHOW_PRODUCT_INFO_MODEL == '1' and $products_model !='') ? TEXT_PRODUCT_MODEL . $products_model : '&nbsp;'); ?>
+    </td>
+  </tr>
+  <tr>
+    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_WEIGHT == '1' and $products_weight !=0) ? TEXT_PRODUCT_WEIGHT .  $products_weight . TEXT_PRODUCT_WEIGHT_UNIT : '&nbsp;'); ?></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="main" align="center">
+<?php
+  if ($pr_attr->fields['total'] > 0) {
+?>
+      <table border="0" width="90%" cellspacing="0" cellpadding="2">
+<?php if ($zv_display_select_option > 0) { ?>
+        <tr>
+          <td colspan="2" class="main" align="left"><?php echo TEXT_PRODUCT_OPTIONS; ?></td>
+        </tr>
+<?php } // show please select unless all are readonly ?>
+<?php
+    for($i=0;$i<sizeof($options_name);$i++) {
+?>
+<?php
+  if ($options_comment[$i] != '' and $options_comment_position[$i] == '0') {
+?>
 
-		<p><?php echo (!empty($manufacturers_name) ? TEXT_PRODUCT_MANUFACTURER . $manufacturers_name : ''); ?></p>
-	</div> <!-- close productimage -->
-
-	<div class="productfeatures">
-		<div class="formrow"><?php echo "<label>" . TEXT_PRODUCT_MODEL . "</label>" . $products_model; ?></div>
-
-		<?php echo ($products_weight !=0 ? '<div class="formrow"><label>' . TEXT_PRODUCT_WEIGHT . '</label>' . $products_weight . TEXT_PRODUCT_WEIGHT_UNIT . '</div>' : ''); ?>
-
-		<?php echo '<div class="formrow"><label>' . TEXT_PRODUCT_QUANTITY . '</label>' . $products_quantity . '</div>'; ?>
-
-		<?php if ($pr_attr->fields['total'] > 0) { ?>
-			<fieldset><legend><?php echo TEXT_PRODUCT_OPTIONS; ?></legend>
-			<?php for($i=0;$i<sizeof($options_name);$i++) { echo '<div class="formrow"><label>' . $options_name[$i] . ':</label>' . $options_menu[$i] . '</div>'; } ?>
-			<br style="clear:both"/>
-			</fieldset>
-		<?php } ?>
-
-		<?php echo ( (SHOW_IN_CART_QTY_PRODUCT_INFO and ($_SESSION['cart']->in_cart($_GET['products_id']) or $_SESSION['cart']->in_cart($_GET['products_id']))) ? '<div class="formrow"><label>' . PRODUCTS_ORDER_QTY_TEXT_IN_CART . '</label>' . $_SESSION['cart']->get_quantity($_GET['products_id']) . '</div>' : ''); ?>
-		<?php echo '<div class="formrow"><label>' . PRODUCTS_ORDER_QTY_TEXT . '</label>'; ?><input type="text" name="cart_quantity" value="1" maxlength="6" size="4" /><?php echo zen_draw_hidden_field('products_id', (int)$_GET['products_id']) . zen_image_submit('button_in_cart.gif', IMAGE_BUTTON_IN_CART) . '</div>'; ?>
-
-	</div> <!-- close productfeatures -->
-	<br style="clear:both" />
-</div> <!-- close productbox -->
-</form>
-<?php require($template->get_template_dir('/tpl_products_features.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_features.php'); ?>
-<div class="productdescription"><?php echo stripslashes($products_description); ?></div>
-
-<?php if (PRODUCT_INFO_PREVIOUS_NEXT=='2') { ?>
-	<div><?php require(DIR_WS_INCLUDES . 'products_next_previous.php'); ?></div>
+        <tr>
+          <td><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_TRANPARENT, '1', '5'); ?></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="ProductInfoComments" align="left" valign="bottom"><?php echo $options_comment[$i]; ?></td>
+        </tr>
+<?php
+  }
+?>
+        <tr>
+          <td class="main" align="left" valign="top"><?php echo $options_name[$i] . ':'; ?></td>
+          <td class="main" align="left" valign="top" width="75%"><?php echo $options_menu[$i]; ?></td>
+        </tr>
+<?php if ($options_comment[$i] != '' and $options_comment_position[$i] == '1') { ?>
+        <tr>
+          <td colspan="2" class="ProductInfoComments" align="left" valign="top"><?php echo $options_comment[$i]; ?></td>
+        </tr>
 <?php } ?>
 
-<?php if ($reviews->fields['count'] > 0) { ?>
-	<div id="reviews">
-		<?php echo TEXT_CURRENT_REVIEWS . ' ' . $reviews->fields['count']; ?>
-    	<?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params()) . '">' . zen_image_button('button_reviews.gif', IMAGE_BUTTON_REVIEWS) . '</a>'; ?>
-    </div>
+<?php
+if ($options_attributes_image[$i] != '') {
+?>
+        <tr><td colspan="2"><table class="products-attributes-images"><tr>
+          <?php echo $options_attributes_image[$i]; ?>
+        </tr></table></td></tr>
+<?php
+}
+?>
+<?php
+    }
+?>
+<?php
+  if ($show_onetime_charges_description == 'true') {
+?>
+        <tr>
+          <td colspan="2" class="main" align="left"><?php echo TEXT_ONETIME_CHARGE_SYMBOL . TEXT_ONETIME_CHARGE_DESCRIPTION; ?></td>
+        </tr>
 <?php } ?>
 
-<div class="center">
-	<?php if ($products_date_available > date('Y-m-d H:i:s')) { ?>
-		<p class="smalltext"><?php echo sprintf(TEXT_DATE_AVAILABLE, zen_date_long($products_date_available)); ?></p>
-	<?php } else { echo '<p class="smalltext">' . sprintf(TEXT_DATE_ADDED, zen_date_long($products_date_added)) . '</p>'; } ?>
+<?php
+  if ($show_attributes_qty_prices_description == 'true') {
+?>
+        <tr>
+          <td colspan="2" class="main" align="left"><?php echo zen_image(DIR_WS_TEMPLATE_ICONS . 'icon_status_green.gif', TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK, 10, 10) . '&nbsp;' . '<a href="javascript:popupWindowPrice(\'' . zen_href_link(FILENAME_POPUP_ATTRIBUTES_QTY_PRICES, 'products_id=' . $_GET['products_id'] . '&products_tax_class_id=' . $products_tax_class_id) . '\')">' . TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK . '</a>'; ?></td>
+        </tr>
+<?php } ?>
 
-	<?php if (zen_not_null($products_url)) { ?>
-		<p><?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?></p>
-	<?php } ?>
-</div>
+      </table>
+<?php
+  }
+?>
+    </td>
+  </tr>
+  <tr>
+    <td >&nbsp;</td>
+    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_QUANTITY == '1') ? $products_quantity . TEXT_PRODUCT_QUANTITY : '&nbsp;'); ?></td>
+  </tr>
+  <tr>
+    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_MANUFACTURER == '1' and !empty($manufacturers_name)) ? TEXT_PRODUCT_MANUFACTURER . $manufacturers_name : '&nbsp;'); ?></td>
+    <td align="center">
+<?php
+if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == '') {
+  echo '&nbsp;';
+} else {
+?>
+      <table border="0" width="150px" cellspacing="2" cellpadding="2">
+        <tr>
+          <td align="center" class="cartBox">
+            <?php echo ((SHOW_PRODUCT_INFO_IN_CART_QTY == '1' and $_SESSION['cart']->in_cart($_GET['products_id'])) ? PRODUCTS_ORDER_QTY_TEXT_IN_CART . $_SESSION['cart']->get_quantity($_GET['products_id']) . '<br /><br />' : '&nbsp;'); ?>
+            <?php
+            if ($products_qty_box_status == '0' or $products_quantity_order_max== '1') {
+              // hide the quantity box and default to 1
+              $the_button = '<input type="hidden" name="cart_quantity" value="1" />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']) . zen_image_submit(BUTTON_IMAGE_IN_CART, BUTTON_IN_CART_ALT);
+            } else {
+              // show the quantity box
+              $the_button = PRODUCTS_ORDER_QTY_TEXT . '<input type="text" name="cart_quantity" value="' . (zen_get_buy_now_qty($_GET['products_id'])) . '" maxlength="6" size="4" /><br />' . zen_get_products_quantity_min_units_display((int)$_GET['products_id']) . '<br />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']) . zen_image_submit(BUTTON_IMAGE_IN_CART, BUTTON_IN_CART_ALT);
+            }
+            echo zen_get_buy_now_button($_GET['products_id'], $the_button);
+            ?>
+          </td>
+        </tr>
+      </table>
+<?php } // CUSTOMERS_APPROVAL == '3' ?>
+    </td>
+  </tr>
+
+<?php
+  if ($products_discount_type != 0) {
+    echo '<tr><td colspan="2">';
+      require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_DISCOUNT_PRICES));
+    echo '</td></tr>';
+  }
+?>
+
+<?php if ($products_description != '') { ?>
+  <tr>
+    <td colspan="2" class="plainbox-description"><?php echo stripslashes($products_description); ?></td>
+  </tr>
+<?php } ?>
+
+<?php require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
+<?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
+  <tr>
+    <td colspan="2" align="center">
+      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
+    </td>
+  </tr>
+<?php } ?>
+  <tr>
+    <td align="center" colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main" align="left" valign="bottom">
+<?php
+  if ($reviews->fields['count'] > 0 or SHOW_PRODUCT_INFO_REVIEWS == '1') {
+    echo '<table align="left">';
+    echo '  <tr>';
+    echo '    <td class="main" align="center" valign="bottom">';
+    echo (SHOW_PRODUCT_INFO_REVIEWS_COUNT == '1' ? TEXT_CURRENT_REVIEWS . ' ' . $reviews->fields['count'] : '&nbsp;') . '<br />';
+    echo (SHOW_PRODUCT_INFO_REVIEWS == '1' ? '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params()) . '">' . zen_image_button(BUTTON_IMAGE_REVIEWS, BUTTON_REVIEWS_ALT) . '</a>' : '&nbsp;');
+    echo '    </td>';
+    echo '  </tr>';
+    echo '</table>';
+  }
+?>
+    </td>
+    <td class="main" align="right" valign="bottom">
+<?php
+  if (SHOW_PRODUCT_INFO_TELL_A_FRIEND == '1') {
+    echo '<table align="right">';
+    echo '  <tr>';
+    echo '    <td class="main" align="center" valign="bottom">';
+    echo (SHOW_PRODUCT_INFO_TELL_A_FRIEND == '1' ? '<a href="' . zen_href_link(FILENAME_TELL_A_FRIEND, 'products_id=' . $_GET['products_id']) . '">' . zen_image_button(BUTTON_IMAGE_TELLAFRIEND, BUTTON_TELLAFRIEND_ALT) . '</a>' : '');
+    echo '    </td>';
+    echo '  </tr>';
+    echo '</table>';
+  }
+?>
+    </td>
+  </tr>
+<?php
+  if ($products_date_available > date('Y-m-d H:i:s')) {
+    if (SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1') {
+?>
+  <tr>
+    <td colspan="2" align="center" class="smallText"><?php echo sprintf(TEXT_DATE_AVAILABLE, zen_date_long($products_date_available)); ?></td>
+  </tr>
+<?php
+    }
+  } else {
+    if (SHOW_PRODUCT_INFO_DATE_ADDED == '1') {
+?>
+  <tr>
+    <td colspan="2" align="center" class="smallText"><?php echo sprintf(TEXT_DATE_ADDED, zen_date_long($products_date_added)); ?></td>
+  </tr>
+<?php
+    } // SHOW_PRODUCT_INFO_DATE_ADDED
+  }
+?>
+<?php
+  if (zen_not_null($products_url)) {
+    if (SHOW_PRODUCT_INFO_URL == '1') {
+?>
+  <tr>
+    <td class="main" align="center" colspan="2">
+      <?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?>
+    </td>
+  </tr>
+ <?php
+    } // SHOW_PRODUCT_INFO_URL
+  }
+?>
+<tr>
+  <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
+</tr>
+</table></form>

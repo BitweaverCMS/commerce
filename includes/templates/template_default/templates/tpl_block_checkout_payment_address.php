@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_block_checkout_payment_address.php,v 1.1 2005/07/05 05:59:04 bitweaver Exp $
+// $Id: tpl_block_checkout_payment_address.php,v 1.2 2005/07/14 04:55:15 spiderr Exp $
 //
 ?>
  <tr>

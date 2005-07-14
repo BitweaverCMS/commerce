@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images.php,v 1.2 2005/07/08 06:13:03 spiderr Exp $
+// $Id: main_template_vars_images.php,v 1.3 2005/07/14 04:55:14 spiderr Exp $
 //
 ?>
 <?php
@@ -27,20 +27,20 @@ $products_image_medium = $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_
 $products_image_large = $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
 
 // check for a medium image else use small
-if (!file_exists(DIR_WS_IMAGES . 'medium/' . $products_image_medium)) {
-  $products_image_medium = DIR_WS_IMAGES . $products_image;
+if (!file_exists('medium/' . $products_image_medium)) {
+  $products_image_medium = $products_image;
 } else {
-  $products_image_medium = DIR_WS_IMAGES . 'medium/' . $products_image_medium;
+  $products_image_medium = 'medium/' . $products_image_medium;
 }
 // check for a large image else use medium else use small
-if (!file_exists(DIR_WS_IMAGES . 'large/' . $products_image_large)) {
-  if (!file_exists(DIR_WS_IMAGES . 'medium/' . $products_image_medium)) {
-    $products_image_large = DIR_WS_IMAGES . $products_image;
+if (!file_exists('large/' . $products_image_large)) {
+  if (!file_exists('medium/' . $products_image_medium)) {
+    $products_image_large = $products_image;
   } else {
-    $products_image_large = DIR_WS_IMAGES . 'medium/' . $products_image_medium;
+    $products_image_large = 'medium/' . $products_image_medium;
   }
 } else {
-  $products_image_large = DIR_WS_IMAGES . 'large/' . $products_image_large;
+  $products_image_large = 'large/' . $products_image_large;
 }
 /*
 echo
@@ -49,7 +49,6 @@ echo
 'Large ' . $products_image_large . '<br><br>';
 */
 // to be built into a single variable string
-
 ?>
 <script language="javascript" type="text/javascript"><!--
 document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image( CommerceProduct::getImageUrl( $products_image_medium ), addslashes($products_name), MEDIUM_IMAGE_WIDTH, MEDIUM_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');

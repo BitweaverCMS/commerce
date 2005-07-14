@@ -130,6 +130,7 @@
 // Output a function button in the selected language
   function zen_image_button($image, $alt = '', $parameters = '') {
     global $template, $current_page_base, $gBitLanguage;
+// return '<span class="button">'.$alt.'</span>';
 	if( $template ) {
 	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitLanguage->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 	} else {
