@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.5 2005/07/14 04:55:13 spiderr Exp $
+// $Id: functions_general.php,v 1.6 2005/07/14 08:09:08 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -42,7 +42,7 @@
         $url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
       }
     }
-bt();
+
 // clean up URL before executing it
   while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
   while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);

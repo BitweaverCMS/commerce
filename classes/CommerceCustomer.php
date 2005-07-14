@@ -111,33 +111,51 @@
 				}
 			}
 
-			return( count( $this->mErrors ) );
+			return( count( $this->mErrors ) == 0 );
 		}
 
 		// process a new shipping address
-		function storeAddress( $pParamHash ) {
-			global $current_page_base, $language_page_directory;
+		function storeAddress( &$pParamHash ) {
+			global $current_page_base, $language_page_directory, $template;
 
 			$directory_array = $template->get_template_part($language_page_directory, '/^'.$current_page_base . '/');
 			while(list ($key, $value) = each($directory_array)) {
-print "				require_once($language_page_directory . $value)<br/>";
 				require_once($language_page_directory . $value);
 			}
 
 			if( $this->verifyAddress( $pParamHash ) ) {
 				$process = true;
-
-				if( !empty( $pParamHash['address'] ) ) {
-					$db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
+vd( $pParamHash );
+				if( empty( $pParamHash['address'] ) ) {
+					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['store_address']);
 					$pParamHash['address_book_id'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 				} else {
 					$pParamHash['store_address']['customers_id'] = (int)$_SESSION['customer_id'];
-					$db->associateUpdate(TABLE_ADDRESS_BOOK, $sql_data_array, array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
+					$db->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['store_address'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
 				}
 			// process the selected shipping destination
 			}
 		}
 
+
+		function getAddresses( $pCustomerId ) {
+			global $db;
+			$ret = NULL;
+			if( is_numeric( $pCustomerId ) ) {
+				$query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
+									entry_company as company, entry_street_address as street_address,
+									entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
+									entry_state as state, entry_zone_id as zone_id,
+									entry_country_id as country_id, c.*
+							from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.entry_country_id=c.countries_id )
+							where customers_id = ?";
+
+				if( $rs = $db->query( $query, array( $pCustomerId ) ) ) {
+					$ret = $rs->GetRows();
+				}
+			}
+			return $ret;
+		}
 
 	}
 ?>

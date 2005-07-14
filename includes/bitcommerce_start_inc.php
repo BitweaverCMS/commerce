@@ -48,5 +48,6 @@
   require(DIR_FS_CLASSES . 'sniffer.php');
   $sniffer = new sniffer;
 
-
+	global $gBitCustomer;
+	$gBitCustomer = new CommerceCustomer( $_SESSION['customer_id'] );
 ?>

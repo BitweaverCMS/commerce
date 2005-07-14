@@ -9,14 +9,20 @@
 		<div class="body">
 			{form name='checkout_address' }
 				<input type="hidden" name="main_page" value="checkout_shipping" />
+				{if !$gBitUser->isRegistered()}
+					{include file="bitpackage:bitcommerce/register_customer.tpl"}
+				{/if}
+
 				{php} require BITCOMMERCE_PKG_PATH."templates/address_new.php"; {/php}
 
-				<h3>{tr}...Or Choose From Your Address Book Entries{/tr}</h3>
-				{tr}Please select the preferred shipping address if this order is to be delivered elsewhere.{/tr}
+				{if count( $addresses )}
+					<h3>{tr}...Or Choose From Your Address Book Entries{/tr}</h3>
+					{tr}Please select the preferred shipping address if this order is to be delivered elsewhere.{/tr}
 
-				<div class="row">
-					{include file="bitpackage:bitcommerce/address_list.tpl"}
-				</div>
+					<div class="row">
+						{include file="bitpackage:bitcommerce/address_list.tpl"}
+					</div>
+				{/if}
 
 				<div class="row">
 					{forminput}

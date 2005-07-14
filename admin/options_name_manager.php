@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: options_name_manager.php,v 1.2 2005/07/14 08:09:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -531,14 +531,14 @@ function go_option() {
                 <td colspan="4" class="smallText">
 <?php
     $per_page = MAX_ROW_LISTS_OPTIONS;
-    $options = "select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id = '" . (int)$_SESSION['languages_id'] . "' order by " . $option_order_by;
+    $options = "select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id = ? order by " . $option_order_by;
     if (!isset($_GET['option_page'])) {
       $_GET['option_page'] = 1;
     }
     $prev_option_page = $_GET['option_page'] - 1;
     $next_option_page = $_GET['option_page'] + 1;
 
-    $option_query = $db->Execute($options);
+    $option_query = $db->query($options, array( $_SESSION['languages_id'] ) );
 
     $option_page_start = ($per_page * $_GET['option_page']) - $per_page;
     $num_rows = $option_query->RecordCount();
@@ -555,7 +555,6 @@ function go_option() {
 // fix limit error on some versions
     if ($option_page_start < 0) { $option_page_start = 0; }
 
-    $options = $options . " LIMIT $option_page_start, $per_page";
 
     // Previous
     if ($prev_option_page)  {
@@ -596,7 +595,7 @@ function go_option() {
 <?php
     $next_id = 1;
     $rows = 0;
-    $options_values = $db->Execute($options);
+    $options_values = $db->query($options, array( $_SESSION['languages_id'] ), $option_page_start, $per_page );
     while (!$options_values->EOF) {
       $rows++;
 ?>

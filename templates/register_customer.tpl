@@ -1,29 +1,27 @@
 {strip}
 
-<div class="display login">
 	<div class="header">
 		<h1>{tr}Enter your user information{/tr}</h1>
 		{if $showmsg eq 'y'}<h2>{$msg}</h2>{/if}
 	</div>
 
-	<div class="body">
 		<p>{tr}Please enter your email and password below. If this is your first time here, an account will be created for you. If you have registered previously, you will automatically be logged in.{/tr}</a></p>
-		{form legend="Please fill in the following details"}
+		<fieldset>
 			{if $notrecognized eq 'y'}
-				<input type="hidden" name="REG[login]" value="{$reg.login}"/>
-				<input type="hidden" name="REG[password]" value="{$reg.password}"/>
-				<input type="hidden" name="REG[novalidation]" value="yes"/>
+				<input type="hidden" name="login" value="{$reg.login}"/>
+				<input type="hidden" name="password" value="{$reg.password}"/>
+				<input type="hidden" name="novalidation" value="yes"/>
 
 				<div class="row">
 					{formfeedback error=$errors.validate}
 					{formlabel label="Username" for="email"}
 					{forminput}
-						<input type="text" name="REG[email]" id="email" value="{$reg.email}"/>
+						<input type="text" name="email" id="email" value="{$reg.email}"/>
 					{/forminput}
 				</div>
 
 				<div class="row submit">
-					<input type="submit" name="REG[register]" value="{tr}register{/tr}" />
+					<input type="submit" name="register" value="{tr}register{/tr}" />
 				</div>
 			{elseif $showmsg ne 'y'}
 
@@ -31,7 +29,7 @@
 					{formfeedback error=$errors.email}
 					{formlabel label="Email" for="email"}
 					{forminput}
-						<input type="text" name="REG[email]" id="email" value="{$reg.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+						<input type="text" name="email" id="email" value="{$reg.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
 					{/forminput}
 				</div>
 
@@ -40,7 +38,7 @@
 						{formfeedback error=$errors.passcode}
 						{formlabel label="Passcode to register<br />(not your user password)" for="passcode"}
 						{forminput}
-							<input type="password" name="REG[passcode]" id="passcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input type="password" name="passcode" id="passcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
 						{/forminput}
 					</div>
 				{/if}
@@ -54,14 +52,14 @@
 						{formfeedback error=$errors.password}
 						{formlabel label="Password" for="pass"}
 						{forminput}
-							<input id="pass1" type="password" name="REG[password]" value="{$reg.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input id="pass1" type="password" name="password" value="{$reg.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
 						{/forminput}
 					</div>
 
 					<div class="row">
 						{formlabel label="Repeat password" for="password2"}
 						{forminput}
-							<input id="password2" type="password" name="REG[password2]" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input id="password2" type="password" name="password2" /> <acronym title="{tr}Required{/tr}">*</acronym>
 						{/forminput}
 					</div>
 
@@ -99,15 +97,13 @@
 					<div class="row">
 						{formlabel label="Registration code" for="regcode"}
 						{forminput}
-							<input type="text" maxlength="8" size="8" name="REG[regcode]" id="regcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input type="text" maxlength="8" size="8" name="regcode" id="regcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
 							{formhelp note="Please copy the code above into this field. This is a security feature to avoid automatic registration by bots."}
 						{/forminput}
 					</div>
 				{/if}
 
 			{/if}
-		{/form}
-	</div><!-- end .body -->
-</div><!-- end .login -->
+		</fieldset>
 
 {/strip}

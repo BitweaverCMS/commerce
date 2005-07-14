@@ -17,9 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.2 2005/07/14 04:55:17 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.3 2005/07/14 08:09:09 spiderr Exp $
 //
   require(DIR_WS_CLASSES . 'http_client.php');
+
+  global $gBitCustomer;
 
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -88,17 +90,12 @@ $smarty->assign_by_ref( 'order', $order );
 
 // if the order contains only virtual products, forward the customer to the billing page as
 // a shipping address is not needed
-  if ($order->content_type == 'virtual') {
-    if( $gBitUser->isRegistered() ) {
+	if ($order->content_type == 'virtual') {
 		$_SESSION['shipping'] = 'free_free';
 		$_SESSION['shipping']['title'] = 'free_free';
 		$_SESSION['sendto'] = false;
-	print "YOYOYOYOYOYO";
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-	} else {
-print $smarty->fetch( 'bitpackage:bitcommerce/register_customer.tpl' );
 	}
-  }
 
   $total_weight = $_SESSION['cart']->show_weight();
   $total_count = $_SESSION['cart']->count_contents();
@@ -137,126 +134,129 @@ print $smarty->fetch( 'bitpackage:bitcommerce/register_customer.tpl' );
   require(DIR_WS_MODULES . 'require_languages.php');
 
 // process the selected shipping method
-	if ( !empty( $_REQUEST['store_address'] ) ) {
-	    if (zen_not_null($_REQUEST['firstname']) && zen_not_null($_REQUEST['lastname']) && zen_not_null($_REQUEST['street_address'])) {
-			if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
-				$_SESSION['sendto'] = $_REQUEST['address'];
-			}
-		} elseif( !empty( $_REQUEST['address'] ) ) {
-vd( $_REQUEST['address'] );
-			$_SESSION['shipping'] = $_REQUEST['address'];
-			$reset_shipping = false;
-			if ($_SESSION['sendto']) {
-				if ($_SESSION['sendto'] != $_REQUEST['address']) {
-					if ($_SESSION['shipping']) {
-						$reset_shipping = true;
-					}
-				}
-			}
-
-			$_SESSION['sendto'] = $_REQUEST['address'];
-
-			$check_address_query = "select count(*) as total
-									from " . TABLE_ADDRESS_BOOK . "
-									where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-									and address_book_id = '" . (int)$_SESSION['sendto'] . "'";
-
-			$check_address = $db->Execute($check_address_query);
-
-			if ($check_address->fields['total'] == '1') {
-				if ($reset_shipping == true) $_SESSION['shipping'];
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-			} else {
-				$_SESSION['sendto'] = '';
-			}
+	if( !$gBitUser->isRegistered() && !empty( $_REQUEST['store_address'] ) ) {
+		$newUser = new BitPermUser();
+		if( $newUser->register( $_REQUEST ) ) {
+			$newUser->login( $_REQUEST['login'], $_REQUEST['password'], FALSE, FALSE );
+			$gBitUser = $newUser;
 		} else {
-			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-//			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-		}
-	} elseif( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
-		if (zen_not_null($_POST['comments'])) {
-			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
-		}
-		$comments = $_SESSION['comments'];
-
-		if ( (zen_count_shipping_modules() > 0) || ($free_shipping == true) ) {
-			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
-				$_SESSION['shipping'] = $_POST['shipping'];
-
-				list($module, $method) = explode('_', $_SESSION['shipping']);
-				if ( is_object($$module) || ($_SESSION['shipping'] == 'free_free') ) {
-				if ($_SESSION['shipping'] == 'free_free') {
-					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-					$quote[0]['methods'][0]['cost'] = '0';
-				} else {
-					$quote = $shipping_modules->quote($method, $module);
-				}
-				if (isset($quote['error'])) {
-					$_SESSION['shipping'] = '';
-				} else {
-					if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-					$_SESSION['shipping'] = array('id' => $_SESSION['shipping'],
-										'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-										'cost' => $quote[0]['methods'][0]['cost']);
-
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-					}
-				}
-				} else {
-				$_SESSION['shipping'] = false;
-				}
-			}
-		} else {
-		$_SESSION['shipping'] = false;
-
-		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+			$smarty->assign_by_ref( 'errors', $newUser->mErrors );
 		}
 	}
-
-	if( $_REQUEST['change_address'] ) {
-		$addresses_query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
-									entry_company as company, entry_street_address as street_address,
-									entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
-									entry_state as state, entry_zone_id as zone_id,
-									entry_country_id as country_id
-							from " . TABLE_ADDRESS_BOOK . "
-							where customers_id = ?";
-
-		if( $rs = $db->query( $addresses_query, array( $_SESSION['customer_id'] ) ) ) {
-			$smarty->assign( 'addresses', $rs->GetRows() );
-		}
-
-		$smarty->assign( 'changeAddress', TRUE );
-	} else {
-		// get all available shipping quotes
-		$quotes = $shipping_modules->quote();
-		// if no shipping method has been selected, automatically select the cheapest method.
-		// if the modules status was changed when none were available, to save on implementing
-		// a javascript force-selection method, also automatically select the cheapest shipping
-		// method if more than one module is now enabled
-		if ( !$_SESSION['shipping'] || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
-			$_SESSION['shipping'] = $shipping_modules->cheapest();
-		}
-
-
-		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-		$breadcrumb->add(NAVBAR_TITLE_2);
-
-		if( count( $quotes ) ) {
-			foreach( array_keys( $quotes ) as $i ) {
-				if( count( $quotes[$i]['methods'] ) ) {
-					foreach( array_keys( $quotes[$i]['methods'] ) as $j ) {
-						$quotes[$i]['methods'][$j]['format_add_tax'] = $currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], (isset($quotes[$i]['tax']) ? $quotes[$i]['tax'] : 0)));
+	if( $gBitUser->isRegistered() ) {
+		if ( !empty( $_REQUEST['store_address'] ) ) {
+			if( empty( $_REQUEST['address'] ) || (zen_not_null( $_REQUEST['firstname'] ) && zen_not_null( $_REQUEST['lastname'] ) && zen_not_null( $_REQUEST['street_address'] )) ) {
+				if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
+					$_SESSION['sendto'] = $_REQUEST['address'];
+				} else {
+					$smarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
+				}
+			} elseif( !empty( $_REQUEST['address'] ) ) {
+				$_SESSION['shipping'] = $_REQUEST['address'];
+				$reset_shipping = false;
+				if ($_SESSION['sendto']) {
+					if ($_SESSION['sendto'] != $_REQUEST['address']) {
+						if ($_SESSION['shipping']) {
+							$reset_shipping = true;
+						}
 					}
 				}
+
+				$_SESSION['sendto'] = $_REQUEST['address'];
+
+				$check_address_query = "select count(*) as total
+										from " . TABLE_ADDRESS_BOOK . "
+										where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+										and address_book_id = '" . (int)$_SESSION['sendto'] . "'";
+
+				$check_address = $db->Execute($check_address_query);
+
+				if ($check_address->fields['total'] == '1') {
+					if ($reset_shipping == true) $_SESSION['shipping'];
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+				} else {
+					$_SESSION['sendto'] = '';
+				}
+			} else {
+				$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+	//			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+			}
+		} elseif( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
+			if (zen_not_null($_POST['comments'])) {
+				$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
+			}
+			$comments = $_SESSION['comments'];
+
+			if ( (zen_count_shipping_modules() > 0) || ($free_shipping == true) ) {
+				if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
+					$_SESSION['shipping'] = $_POST['shipping'];
+
+					list($module, $method) = explode('_', $_SESSION['shipping']);
+					if ( is_object($$module) || ($_SESSION['shipping'] == 'free_free') ) {
+					if ($_SESSION['shipping'] == 'free_free') {
+						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
+						$quote[0]['methods'][0]['cost'] = '0';
+					} else {
+						$quote = $shipping_modules->quote($method, $module);
+					}
+					if (isset($quote['error'])) {
+						$_SESSION['shipping'] = '';
+					} else {
+						if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+						$_SESSION['shipping'] = array('id' => $_SESSION['shipping'],
+											'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+											'cost' => $quote[0]['methods'][0]['cost']);
+
+						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+						}
+					}
+					} else {
+					$_SESSION['shipping'] = false;
+					}
+				}
+			} else {
+			$_SESSION['shipping'] = false;
+
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 			}
 		}
 
-		$smarty->assign( 'shippingModules', zen_count_shipping_modules() );
-		$smarty->assign_by_ref( 'quotes', $quotes );
-		$smarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
-		$smarty->assign( 'freeShipping', $free_shipping );
-		$smarty->assign( 'sessionShippingId', $_SESSION['shipping'] );
+		if( $_REQUEST['change_address'] ) {
+			if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
+				$smarty->assign( 'addresses', $addresses );
+			}
+			$smarty->assign( 'changeAddress', TRUE );
+		} else {
+			// get all available shipping quotes
+			$quotes = $shipping_modules->quote();
+			// if no shipping method has been selected, automatically select the cheapest method.
+			// if the modules status was changed when none were available, to save on implementing
+			// a javascript force-selection method, also automatically select the cheapest shipping
+			// method if more than one module is now enabled
+			if ( !$_SESSION['shipping'] || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
+				$_SESSION['shipping'] = $shipping_modules->cheapest();
+			}
+
+
+			$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+			$breadcrumb->add(NAVBAR_TITLE_2);
+
+			if( count( $quotes ) ) {
+				foreach( array_keys( $quotes ) as $i ) {
+					if( count( $quotes[$i]['methods'] ) ) {
+						foreach( array_keys( $quotes[$i]['methods'] ) as $j ) {
+							$quotes[$i]['methods'][$j]['format_add_tax'] = $currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], (isset($quotes[$i]['tax']) ? $quotes[$i]['tax'] : 0)));
+						}
+					}
+				}
+			}
+
+			$smarty->assign( 'shippingModules', zen_count_shipping_modules() );
+			$smarty->assign_by_ref( 'quotes', $quotes );
+			$smarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
+			$smarty->assign( 'freeShipping', $free_shipping );
+			$smarty->assign( 'sessionShippingId', $_SESSION['shipping'] );
+		}
 	}
 
   print $smarty->fetch( 'bitpackage:bitcommerce/checkout_shipping.tpl' );

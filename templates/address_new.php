@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.1 2005/07/13 20:24:06 spiderr Exp $
+// $Id: address_new.php,v 1.2 2005/07/14 08:09:09 spiderr Exp $
 //
-	global $smarty, $db;
+	global $smarty, $db, $gBitCustomer;
 	$smarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
 	$smarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
 	$smarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
@@ -51,16 +51,7 @@
 		$smarty ->assign( 'primaryCheck', TRUE );
 	}
 
-	$addresses_query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
-								entry_company as company, entry_street_address as street_address,
-								entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
-								entry_state as state, entry_zone_id as zone_id,
-								entry_country_id as country_id, c.*
-						from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.entry_country_id=c.countries_id )
-						where customers_id = ?";
-
-	if( $rs = $db->query( $addresses_query, array( $_SESSION['customer_id'] ) ) ) {
-		$addresses = $rs->GetRows();
+	if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
 		$smarty->assign( 'addresses', $addresses );
 	}
 
