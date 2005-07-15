@@ -79,6 +79,12 @@
 			return( count( $gBitUser->mErrors ) == 0 );
 		}
 
+
+
+//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
+
+
+
 		function verifyAddress( &$pParamHash, &$errorHash ) {
 			if( empty( $pParamHash['customers_id'] ) || !is_numeric( $pParamHash['customers_id'] ) ) {
 				$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
@@ -184,6 +190,23 @@
 			// process the selected shipping destination
 			}
 			return( count( $this->mErrors ) == 0 );
+		}
+
+		function getAddress( $pAddressId, $pSecure = TRUE ) {
+			$ret = NULL;
+			if( is_numeric( $pAddressId ) && (!$pSecure || ($pSecure && $this->isValid())) ) {
+				$bindVars = array( $pAddressId );
+				$whereSql = '';
+				if( $pSecure ) {
+					$whereSql = " AND `customers_id`=?";
+					array_push( $bindVars, $this->mCustomerId );
+				}
+				$query = "SELECT * FROM " . TABLE_ADDRESS_BOOK . " WHERE `address_book_id`=? $whereSql";
+				if( $rs = $this->query( $query, $bindVars ) ) {
+					$ret = $rs->fields;
+				}
+			}
+			return( $ret );
 		}
 
 		function getDefaultAddress() {
