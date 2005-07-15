@@ -48,7 +48,7 @@
 <fieldset>
 						{include file="bitpackage:bitcommerce/address_display.tpl"}
 </fieldset>
-						{formhelp note="Your order will be shipped to the following address or you may change the shipping address by clicking the <em>Change Address</em> button."}
+						{formhelp note="Your order will be shipped to the following address or you may change the shipping address by clicking the Change Address button."}
 					{/forminput}
 				</div>
 
