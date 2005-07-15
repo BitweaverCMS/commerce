@@ -44,12 +44,19 @@
 				<div class="row">
 					{formlabel label="Shipping Address"}
 					{forminput}
-						{tr}Your order will be shipped to the following address or you may change the shipping address by clicking the <em>Change Address</em> button.{/tr}
 						{assign var=address value=$order->delivery}
+<fieldset>
 						{include file="bitpackage:bitcommerce/address_display.tpl"}
-						<input type="submit" name="change_address" value="{tr}Change address{/tr}" />
+</fieldset>
+						{formhelp note="Your order will be shipped to the following address or you may change the shipping address by clicking the <em>Change Address</em> button."}
 					{/forminput}
 				</div>
+
+				<div class="row submit">
+					<input type="submit" name="change_address" value="{tr}Change address{/tr}" />
+				</div>
+
+				<div class="clear"></div>
 
 				{if $shippingModules}
 					<h3>{tr}Shipping Method{/tr}</h3>
@@ -58,7 +65,7 @@
 					{elseif !$freeShipping}
 						<p>{tr}This is currently the only shipping method available to use on this order.{/tr}</p>
 					{/if}
-
+<fieldset>
 					{if $freeShipping}
 						<table border="1" width="100%" cellspacing="2" cellpadding="2">
 							<tr>
@@ -105,16 +112,24 @@
 						{/section}
 					{/if}
 				{/if}
+</fieldset>
 
+<fieldset>
 				<div class="row">
 					{formlabel label="Special Instructions or Comments About Your Order" for=""}
 					{forminput}
 						<textarea name="comments" wrap="soft" cols="60" rows="5"></textarea>
 					{/forminput}
 				</div>
+</fieldset>
+
+				<div class="clear"></div>
 
 				<h3>{tr}Continue to Step 2{/tr}</h3>
-				<p>{tr}- choose your payment method.{/tr} <input type="submit" value="Continue" /></p>
+				<p>{tr}- choose your payment method.{/tr} </p>
+				<div class="row submit">
+					<input type="submit" value="Continue" />
+				</div>
 			{/form}
 		</div><!-- end .body -->
 	{/if}
