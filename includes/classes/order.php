@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.3 2005/07/08 06:12:27 spiderr Exp $
+// $Id: order.php,v 1.4 2005/07/15 19:14:56 spiderr Exp $
 //
 
   class order {
@@ -508,86 +508,89 @@
     }
 
     function create($zf_ot_modules, $zf_mode = 2) {
-      global $db;
+		global $db;
 
-      if ($_SESSION['shipping'] == 'free_free') {
-        $this->info['shipping_module_code'] = $_SESSION['shipping'];
-      }
+		$db->StartTrans();
+		if ($_SESSION['shipping'] == 'free_free') {
+			$this->info['shipping_module_code'] = $_SESSION['shipping'];
+		}
 
-      $sql_data_array = array('customers_id' => $_SESSION['customer_id'],
-                          'customers_name' => $this->customer['firstname'] . ' ' . $this->customer['lastname'],
-                          'customers_company' => $this->customer['company'],
-                          'customers_street_address' => $this->customer['street_address'],
-                          'customers_suburb' => $this->customer['suburb'],
-                          'customers_city' => $this->customer['city'],
-                          'customers_postcode' => $this->customer['postcode'],
-                          'customers_state' => $this->customer['state'],
-                          'customers_country' => $this->customer['country']['title'],
-                          'customers_telephone' => $this->customer['telephone'],
-                          'customers_email_address' => $this->customer['email_address'],
-                          'customers_address_format_id' => $this->customer['format_id'],
-                          'delivery_name' => $this->delivery['firstname'] . ' ' . $this->delivery['lastname'],
-                          'delivery_company' => $this->delivery['company'],
-                          'delivery_street_address' => $this->delivery['street_address'],
-                          'delivery_suburb' => $this->delivery['suburb'],
-                          'delivery_city' => $this->delivery['city'],
-                          'delivery_postcode' => $this->delivery['postcode'],
-                          'delivery_state' => $this->delivery['state'],
-                          'delivery_country' => $this->delivery['country']['title'],
-                          'delivery_address_format_id' => $this->delivery['format_id'],
-                          'billing_name' => $this->billing['firstname'] . ' ' . $this->billing['lastname'],
-                          'billing_company' => $this->billing['company'],
-                          'billing_street_address' => $this->billing['street_address'],
-                          'billing_suburb' => $this->billing['suburb'],
-                          'billing_city' => $this->billing['city'],
-                          'billing_postcode' => $this->billing['postcode'],
-                          'billing_state' => $this->billing['state'],
-                          'billing_country' => $this->billing['country']['title'],
-                          'billing_address_format_id' => $this->billing['format_id'],
-                          'payment_method' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_METHOD_GV : $this->info['payment_method']),
-                          'payment_module_code' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_MODULE_GV : $this->info['payment_module_code']),
-                          'shipping_method' => $this->info['shipping_method'],
-                          'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
-                          'coupon_code' => $this->info['coupon_code'],
-                          'cc_type' => $this->info['cc_type'],
-                          'cc_owner' => $this->info['cc_owner'],
-                          'cc_number' => $this->info['cc_number'],
-                          'cc_expires' => $this->info['cc_expires'],
-                          'date_purchased' => 'now()',
-                          'orders_status' => $this->info['order_status'],
-                          'order_total' => $this->info['total'],
-                          'order_tax' => $this->info['tax'],
-                          'currency' => $this->info['currency'],
-                          'currency_value' => $this->info['currency_value'],
-                          'ip_address' => $_SERVER['REMOTE_ADDR']
-                          );
+		$sql_data_array = array('customers_id' => $_SESSION['customer_id'],
+							'customers_name' => $this->customer['firstname'] . ' ' . $this->customer['lastname'],
+							'customers_company' => $this->customer['company'],
+							'customers_street_address' => $this->customer['street_address'],
+							'customers_suburb' => $this->customer['suburb'],
+							'customers_city' => $this->customer['city'],
+							'customers_postcode' => $this->customer['postcode'],
+							'customers_state' => $this->customer['state'],
+							'customers_country' => $this->customer['country']['title'],
+							'customers_telephone' => $this->customer['telephone'],
+							'customers_email_address' => $this->customer['email_address'],
+							'customers_address_format_id' => $this->customer['format_id'],
+							'delivery_name' => $this->delivery['firstname'] . ' ' . $this->delivery['lastname'],
+							'delivery_company' => $this->delivery['company'],
+							'delivery_street_address' => $this->delivery['street_address'],
+							'delivery_suburb' => $this->delivery['suburb'],
+							'delivery_city' => $this->delivery['city'],
+							'delivery_postcode' => $this->delivery['postcode'],
+							'delivery_state' => $this->delivery['state'],
+							'delivery_country' => $this->delivery['country']['title'],
+							'delivery_address_format_id' => $this->delivery['format_id'],
+							'billing_name' => $this->billing['firstname'] . ' ' . $this->billing['lastname'],
+							'billing_company' => $this->billing['company'],
+							'billing_street_address' => $this->billing['street_address'],
+							'billing_suburb' => $this->billing['suburb'],
+							'billing_city' => $this->billing['city'],
+							'billing_postcode' => $this->billing['postcode'],
+							'billing_state' => $this->billing['state'],
+							'billing_country' => $this->billing['country']['title'],
+							'billing_address_format_id' => $this->billing['format_id'],
+							'payment_method' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_METHOD_GV : $this->info['payment_method']),
+							'payment_module_code' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_MODULE_GV : $this->info['payment_module_code']),
+							'shipping_method' => $this->info['shipping_method'],
+							'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
+							'coupon_code' => $this->info['coupon_code'],
+							'cc_type' => $this->info['cc_type'],
+							'cc_owner' => $this->info['cc_owner'],
+							'cc_number' => $this->info['cc_number'],
+							'cc_expires' => $this->info['cc_expires'],
+							'date_purchased' => 'now()',
+							'orders_status' => $this->info['order_status'],
+							'order_total' => $this->info['total'],
+							'order_tax' => $this->info['tax'],
+							'currency' => $this->info['currency'],
+							'currency_value' => $this->info['currency_value'],
+							'ip_address' => $_SERVER['REMOTE_ADDR']
+							);
 
 
-      $db->associateInsert(TABLE_ORDERS, $sql_data_array);
+		$db->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-      $insert_id = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
+		$insert_id = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
+	vd( $zf_ot_modules );
+		for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
+			$sql_data_array = array('orders_id' => $insert_id,
+									'title' => $zf_ot_modules[$i]['title'],
+									'text' => $zf_ot_modules[$i]['text'],
+									'value' => $zf_ot_modules[$i]['value'],
+									'class' => $zf_ot_modules[$i]['code'],
+									'sort_order' => $zf_ot_modules[$i]['sort_order']);
 
-      for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
-        $sql_data_array = array('orders_id' => $insert_id,
-                                'title' => $zf_ot_modules[$i]['title'],
-                                'text' => $zf_ot_modules[$i]['text'],
-                                'value' => $zf_ot_modules[$i]['value'],
-                                'class' => $zf_ot_modules[$i]['code'],
-                                'sort_order' => $zf_ot_modules[$i]['sort_order']);
+			$db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
+		}
 
-        $db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
-      }
+		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
+		$sql_data_array = array('orders_id' => $insert_id,
+							'orders_status_id' => $this->info['order_status'],
+							'date_added' => 'now()',
+							'customer_notified' => $customer_notification,
+							'comments' => $this->info['comments']);
 
-      $customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
-      $sql_data_array = array('orders_id' => $insert_id,
-                          'orders_status_id' => $this->info['order_status'],
-                          'date_added' => 'now()',
-                          'customer_notified' => $customer_notification,
-                          'comments' => $this->info['comments']);
+		$db->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
-      $db->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+		$db->CompleteTrans();
 
-      return($insert_id);
+		return($insert_id);
 
     }
 

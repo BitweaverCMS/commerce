@@ -17,23 +17,21 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_success_default.php,v 1.2 2005/07/14 04:55:15 spiderr Exp $
+// $Id: tpl_checkout_success_default.php,v 1.3 2005/07/15 19:15:06 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('order', zen_href_link(FILENAME_CHECKOUT_SUCCESS, 'action=update', 'SSL')); ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
   <tr>
-    <td align="center"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
-<?php if (TEXT_SUCCESS) { ?>
-  <tr>
-    <td class="plainBox"><?php echo TEXT_SUCCESS; ?></td>
-  </tr>
-<?php } ?>
-<?php if (DEFINE_CHECKOUT_SUCCESS_STATUS == '1') { ?>
-  <tr>
-    <td class="plainBox"><?php require($define_checkout_success); ?></td>
-  </tr>
+    <td align="center">
+		<h1><?php echo HEADING_TITLE; ?></h1>
+<?php 
+	global $gBitSmarty;
+
+	$gBitSmarty->fetch( 'bitpackage:bitcommerce/order_success.tpl' );
+
+?>
+  </td>
 <?php } ?>
 <?php
   if (CUSTOMERS_PRODUCTS_NOTIFICATION_STATUS == '1') {

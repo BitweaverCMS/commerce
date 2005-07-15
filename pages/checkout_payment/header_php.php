@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/15 09:24:08 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/07/15 19:14:59 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -25,7 +25,7 @@
   }
 
 // if the customer is not logged on, redirect them to the login page
-  if (!$_SESSION['customer_id'] || !$gBitCustomer->isValidAddress( $order->billing ) ) {
+  if (!$_SESSION['customer_id'] ) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'));
   }
@@ -74,6 +74,20 @@
   $order = new order;
   require(DIR_WS_CLASSES . 'order_total.php');
   $order_total_modules = new order_total;
+
+	// if the no billing address, try to get one by default
+	if( !$gBitCustomer->isValidAddress( $order->billing ) ) {
+		if( $gBitCustomer->isValidAddress( $order->delivery ) ) {
+			$order->billing = $order->delivery;
+			$_SESSION['billto'] = $_SESSION['sendto'];
+		} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
+			$order->billing = $defaultAddressId;
+			$_SESSION['billto'] = $defaultAddressId;
+		} else {
+			$_SESSION['navigation']->set_snapshot();
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'));
+		}
+	}
 
 //  $_SESSION['comments'] = '';
     $comments = $_SESSION['comments'];

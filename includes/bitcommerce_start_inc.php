@@ -50,4 +50,36 @@
 
 	global $gBitCustomer;
 	$gBitCustomer = new CommerceCustomer( $_SESSION['customer_id'] );
+	$gBitCustomer->load();
+
+// {{{ TIKI_MOD
+	global $gBitUser;
+	if( !empty( $_SESSION['customer_id'] ) && !$gBitUser->isRegistered() ) {
+		// we have lost our bitweaver
+		unset( $_SESSION['customer_id'] );
+	} elseif( $gBitUser->isRegistered() ) {
+	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
+	  $_SESSION['customer_id'] = $gBitUser->mUserId;
+	}
+
+	if( $session_started && $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
+		// Set theme related directories
+		$sql = "SELECT count(*) as total FROM " . TABLE_CUSTOMERS . "
+				WHERE customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
+		$check_user = $db->Execute($sql);
+		if( empty( $check_user['fields']['total'] ) ) {
+			$_REQUEST['action'] = 'process';
+			$email_format = zen_db_prepare_input( $gBitUser->mInfo['email'] );
+			if( $space = strpos( $gBitUser->mInfo['real_name'], ' ' ) ) {
+				$firstname = zen_db_prepare_input( substr( $gBitUser->mInfo['real_name'], 0, $space ) );
+				$lastname = zen_db_prepare_input( $gBitUser->mInfo['lastname'], $space );
+			}
+		}
+	}
+
+// }}} TIKI_MOD
+
+
+
+
 ?>

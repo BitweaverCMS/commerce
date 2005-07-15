@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.4 2005/07/15 09:24:13 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.5 2005/07/15 19:15:06 spiderr Exp $
 //
   require(DIR_WS_CLASSES . 'http_client.php');
 
@@ -60,25 +60,17 @@
     }
   }
 
-//	function loadShippingAddress () {
-		// if no shipping destination address was selected, use the customers own address as default
-		if( empty( $_SESSION['sendto'] ) ) {
-			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-		} else {
-			// verify the selected shipping address
-			$check_address_query = "select count(*) as total
-									from   " . TABLE_ADDRESS_BOOK . "
-									where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
-									and    address_book_id = '" . (int)$_SESSION['sendto'] . "'";
-
-			$check_address = $db->Execute($check_address_query);
-
-			if ($check_address->fields['total'] != '1') {
+	// if no shipping destination address was selected, use the customers own address as default
+	if( empty( $_SESSION['sendto'] ) ) {
+		if( empty( $_SESSION['customer_default_address_id'] ) ) {
+			$_SESSION['customer_default_address_id'] = $gBitCustomer->getDefaultAddress();
+		}
+		$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+	} elseif ( !$gBitCustomer->isAddressOwner( $_SESSION['sendto'] ) ) {
 			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
 			$_SESSION['shipping'] = '';
-			}
-		}
-//	}
+	}
+
 //vd( $_SESSION );
   require(DIR_WS_CLASSES . 'order.php');
   $order = new order;
@@ -145,6 +137,7 @@ $smarty->assign_by_ref( 'order', $order );
 			}
 			if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
 				$_SESSION['sendto'] = $_REQUEST['address'];
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
 				$smarty->assign( 'address', $_REQUEST['address_store'] );
 				$smarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
@@ -160,22 +153,21 @@ $smarty->assign_by_ref( 'order', $order );
 				}
 			}
 
-			$_SESSION['sendto'] = $_REQUEST['address'];
-
-			$check_address_query = "select count(*) as total
-									from " . TABLE_ADDRESS_BOOK . "
-									where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-									and address_book_id = '" . (int)$_SESSION['sendto'] . "'";
-
-			$check_address = $db->Execute($check_address_query);
-
-			if ($check_address->fields['total'] == '1') {
-				if ($reset_shipping == true) $_SESSION['shipping'];
+			if( $gBitCustomer->isAddressOwner( $_REQUEST['address'] ) ) {
+				if ($reset_shipping == true) {
+					$_SESSION['shipping']; // WTF!? dunno what was supposed to be here. - spiderr
+				}
+				if( empty( $_SESSION['customer_default_address_id'] ) ) {
+					$_SESSION['customer_default_address_id'] = $_REQUEST['address'];
+				}
+				if( !$gBitCustomer->getDefaultAddress() ) {
+					$gBitCustomer->setDefaultAddress( $_REQUEST['address'] );
+				}
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
 				$_SESSION['sendto'] = '';
 			}
-		} else {
+		} elseif( !empty( $_SESSION['customer_default_address_id'] ) ) {
 			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
 //			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 		}

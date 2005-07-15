@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.5 2005/07/14 04:55:13 spiderr Exp $
+// $Id: application_top.php,v 1.6 2005/07/15 19:14:56 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -204,36 +204,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     $session_started = true;
   }
 
-// {{{ TIKI_MOD
-	global $gBitUser;
-	if( !empty( $_SESSION['customer_id'] ) && !$gBitUser->isRegistered() ) {
-		// we have lost our bitweaver
-		require_once( DIR_WS_MODULES . 'pages/' . 'logoff/header_php.php' );
-		unset( $_SESSION['customer_id'] );
-	} elseif( $gBitUser->isRegistered() ) {
-	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
-	  $_SESSION['customer_id'] = $gBitUser->mUserId;
-	}
-
-	if( $session_started && $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
-		// Set theme related directories
-		$sql = "SELECT count(*) as total FROM " . TABLE_CUSTOMERS . "
-				WHERE customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
-		$check_user = $db->Execute($sql);
-		if( empty( $check_user['fields']['total'] ) ) {
-			$_REQUEST['action'] = 'process';
-			$email_format = zen_db_prepare_input( $gBitUser->mInfo['email'] );
-			if( $space = strpos( $gBitUser->mInfo['real_name'], ' ' ) ) {
-				$firstname = zen_db_prepare_input( substr( $gBitUser->mInfo['real_name'], 0, $space ) );
-				$lastname = zen_db_prepare_input( $gBitUser->mInfo['lastname'], $space );
-			}
-		}
-	}
-
-// }}} TIKI_MOD
-
-
-
 // set host_address once per session to reduce load on server
   if (!$_SESSION['customers_host_address']) {
     if (SESSION_IP_TO_HOST_ADDRESS == 'true') {
@@ -353,9 +323,18 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   if (isset($_REQUEST['manufacturers_id'])) $_REQUEST['manufacturers_id'] = ereg_replace('[^0-9]', '', $_REQUEST['manufacturers_id']);
   if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = ereg_replace('[^0-9_]', '', $_REQUEST['cPath']);
   if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = ereg_replace('[^0-9a-zA-Z_]', '', $_REQUEST['main_page']);
-  while (list($key, $value) = each($_REQUEST)) {
-    $_REQUEST[$key] = ereg_replace('[<>]', '', $value);
+
+	clean_input( $_REQUEST );
+
+function clean_input( &$pArray ) {
+  while (list($key, $value) = each($pArray)) {
+  	if( is_array( $pArray[$key] ) ) {
+		clean_input( $pArray );
+	} else {
+	    $pArray[$key] = ereg_replace('[<>]', '', $value);
+	}
   }
+}
 
 // validate products_id for search engines and bookmarks, etc.
   if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && $_SESSION['check_valid'] != 'false') {
@@ -698,7 +677,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
                                   zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
                                 }
                                 if (!is_array($notify)) $notify = array($notify);
-vd( $_REQUEST );
                                 for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
                                   $check_query = "SELECT count(*) as count
                                                   FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "

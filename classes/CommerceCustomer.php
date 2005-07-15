@@ -1,14 +1,33 @@
 <?php
 	class CommerceCustomer extends BitBase {
-		function CommerceCustomer() {
+		var $mCustomerId;
+
+		function CommerceCustomer( $pCustomerId ) {
 			BitBase::BitBase();
+			if( is_numeric( $pCustomerId ) ) {
+				$this->mCustomerId = $pCustomerId;
+			}
+		}
+
+		function isValid() {
+			return( !empty( $this->mCustomerId ) && is_numeric( $this->mCustomerId ) );
+		}
+
+		function load() {
+			if( $this->isValid() ) {
+				$sql = "SELECT * FROM " . TABLE_CUSTOMERS . " WHERE `customers_id`=?";
+				if( $rs = $this->query( $sql, array( $this->mCustomerId ) ) ) {
+					$this->mInfo = $rs->fields;
+				}
+			}
+			return( count( $this->mInfo ) );
 		}
 
 		function syncBitUser( $pInfo ) {
 			global $db;
 			// bitcommerce customers table to bitweaver users_users table
 			$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
-/*
+/* Fields in TABLE_CUSTOMERS:
 'customers_firstname'
 'customers_lastname'
 'customers_gender'
@@ -97,9 +116,7 @@
 				$pParamHash['address_store']['entry_city'] = $pParamHash['city'];
 			}
 
-			if( ACCOUNT_GENDER == 'true' && (empty( $pParamHash['gender'] ) || ($pParamHash['gender'] != 'm' && $pParamHash['gender'] != 'f' )) ) {
-				$errorHash['gender'] = tra( 'Please choose a title.' );
-			} else {
+			if( ACCOUNT_GENDER == 'true' && !empty( $pParamHash['gender'] ) ) {
 				$pParamHash['address_store']['entry_gender'] = $pParamHash['gender'];
 			}
 
@@ -157,27 +174,75 @@
 				$process = true;
 				if( empty( $pParamHash['address'] ) ) {
 					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
-					$pParamHash['address_book_id'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
+					$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 				} else {
-					$pParamHash['address_store']['customers_id'] = (int)$_SESSION['customer_id'];
 					$this->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
+				}
+				if( !$this->getDefaultAddress() ) {
+					$this->setDefaultAddress( $pParamHash['address'] );
 				}
 			// process the selected shipping destination
 			}
-vd( $this->mErrors );
 			return( count( $this->mErrors ) == 0 );
 		}
 
+		function getDefaultAddress() {
+			$ret = NULL;
+			if( $this->isValid() ) {
+				if( empty( $this->mInfo ) ) {
+					$this->load();
+				}
+				if( !empty( $this->mInfo['customers_default_address_id'] ) && $this->addressExists( $this->mInfo['customers_default_address_id'] ) ) {
+					$ret = $this->mInfo['customers_default_address_id'];
+				} elseif( !empty( $this->mInfo['customers_default_address_id'] ) ) {
+					// somehow we lost our default address - let's be sure to clean this up
+					$this->setDefaultAddress( NULL );
+					unset( $this->mInfo['customers_default_address_id'] );
+				}
+			}
+			return( $ret );
+		}
 
-		function isValidAddress( $pAddress ) {
+		function setDefaultAddress( $pAddressId ) {
+			$ret = NULL;
+			if( $this->isValid() && ( is_numeric( $pAddressId ) || is_null( $pAddressId ) ) ) {
+				$query = "UPDATE " . TABLE_CUSTOMERS . " SET `customers_default_address_id`=? WHERE `customers_id`=?";
+				$this->query( $query, array( $pAddressId, $this->mCustomerId ) );
+				$this->mInfo['customers_default_address_id'] = $pAddressId;
+				$ret = TRUE;
+			}
+			return( $ret );
+		}
+
+		function addressExists( $pAddressId ) {
+			global $gBitDb;
+			$ret = FALSE;
+			if( is_numeric( $pAddressId ) ) {
+				$query = "SELECT count(*) FROM " . TABLE_ADDRESS_BOOK . " WHERE `address_book_id`=?";
+				$ret = $gBitDb->GetOne( $query, array( $pAddressId ) );
+			}
+			return $ret;
+		}
+
+		function isValidAddress( $pAddressId ) {
 			$ret = FALSE;
 			$errors = array();
-			if( !$this->verifyAddress( $pAddress, $errors ) ) {
+			if( !$this->verifyAddress( $pAddressId, $errors ) ) {
 				unset( $errors['customers_id'] );
 				unset( $errors['gender'] );
 				if( !count( $errors ) ) {
 					$ret = TRUE;
 				}
+			}
+			return $ret;
+		}
+
+		function isAddressOwner( $pAddressId ) {
+			$ret = FALSE;
+			if( is_numeric( $pAddressId ) ) {
+				$query = "select count(*) as total from " . TABLE_ADDRESS_BOOK . "
+						  where `customers_id` = ? and `address_book_id` = ?";
+				$ret = $this->GetOne( $query, array( $this->mCustomerId, $pAddressId ) );
 			}
 			return $ret;
 		}

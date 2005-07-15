@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
+// $Id: html_output.php,v 1.4 2005/07/15 19:14:57 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -323,24 +323,6 @@
   }
 
 ////
-// Output a form hidden field
-  function zen_draw_hidden_field($name, $value = '', $parameters = '') {
-    $field = '<input type="hidden" name="' . zen_output_string($name) . '"';
-
-    if (zen_not_null($value)) {
-      $field .= ' value="' . zen_output_string($value) . '"';
-    } elseif (isset($GLOBALS[$name])) {
-      $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
-    }
-
-    if (zen_not_null($parameters)) $field .= ' ' . $parameters;
-
-    $field .= ' />';
-
-    return $field;
-  }
-
-////
 // Hide form elements
   function zen_hide_session_id() {
     global $session_started;
@@ -348,32 +330,6 @@
     if ( ($session_started == true) && defined('SID') && zen_not_null(SID) ) {
       return zen_draw_hidden_field(zen_session_name(), zen_session_id());
     }
-  }
-
-////
-// Output a form pull down menu
-  function zen_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false) {
-    $field = '<select name="' . zen_output_string($name) . '"';
-
-    if (zen_not_null($parameters)) $field .= ' ' . $parameters;
-
-    $field .= '>';
-
-    if (empty($default) && isset($GLOBALS[$name])) $default = stripslashes($GLOBALS[$name]);
-
-    for ($i=0, $n=sizeof($values); $i<$n; $i++) {
-      $field .= '<option value="' . zen_output_string($values[$i]['id']) . '"';
-      if ($default == $values[$i]['id']) {
-        $field .= ' selected="selected"';
-      }
-
-      $field .= '>' . zen_output_string($values[$i]['text'], array('"' => '&quot;', '\'' => '&#039;', '<' => '&lt;', '>' => '&gt;')) . '</option>';
-    }
-    $field .= '</select>';
-
-    if ($required == true) $field .= TEXT_FIELD_REQUIRED;
-
-    return $field;
   }
 
 ////

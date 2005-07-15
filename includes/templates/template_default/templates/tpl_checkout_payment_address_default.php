@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_address_default.php,v 1.5 2005/07/15 09:24:10 spiderr Exp $
+// $Id: tpl_checkout_payment_address_default.php,v 1.6 2005/07/15 19:14:59 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
@@ -53,7 +53,9 @@ if ($messageStack->size('checkout_address') > 0) {
 ?>
 <tr>
 	<td class="plainBox" colspan="3">
+<fieldset>
 		<?php require( BITCOMMERCE_PKG_PATH.'templates/address_new.php'); ?>
+</fieldset>
 	</td>
 </tr>
 <?php
@@ -76,16 +78,12 @@ if ($messageStack->size('checkout_address') > 0) {
 
 ?>
 <tr>
-	<td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
-	<td class="main" align="right"><?php echo zen_draw_hidden_field('action', 'submit') . zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT); ?></td>
+	<td class="main"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
+	<td class="main" colspan="2">
+		<span style="float:left"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></span>
+		<span style="float:right">
+		<?php echo zen_draw_hidden_field('action', 'submit') . zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT); ?>
+		</span>
+	</td>
 </tr>
-<?php
-if ($process == true) {
-?>
-<tr>
-	<td class="main" colspan="3"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
-</tr>
-<?php
-}
-?>
 </table></form>

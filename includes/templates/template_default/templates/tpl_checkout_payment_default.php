@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_default.php,v 1.3 2005/07/14 04:55:15 spiderr Exp $
+// $Id: tpl_checkout_payment_default.php,v 1.4 2005/07/15 19:15:06 spiderr Exp $
 //
 ?>
 <?php echo $payment_modules->javascript_validation(); ?>
@@ -126,7 +126,7 @@
       // echo 'WRONG ' . $selection[$i]['id'];
     }
     if (sizeof($selection) > 1) {
-      echo zen_draw_radio_field('payment', $selection[$i]['id']);
+      echo zen_draw_radio_field('payment', $selection[$i]['id'], ($i==0?TRUE:FALSE) );
     } else {
       echo zen_draw_hidden_field('payment', $selection[$i]['id']);
     }

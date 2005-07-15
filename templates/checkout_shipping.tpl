@@ -40,7 +40,7 @@
 		<div class="body">
 			{form name='checkout_address' }
 				<input type="hidden" name="action" value="process" />
-				<input type="hidden" name="main_page" value="checkout_payment" />
+				<input type="hidden" name="main_page" value="checkout_shipping" />
 				<div class="row">
 					{formlabel label="Shipping Address"}
 					{forminput}

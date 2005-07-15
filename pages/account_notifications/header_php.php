@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/15 19:14:58 spiderr Exp $
 //
-  if (!$_SESSION['customer_id']) {
+  if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
   }
@@ -32,69 +32,70 @@
 
   $global = $db->Execute($global_query);
 
-  if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
-    if (isset($_POST['product_global']) && is_numeric($_POST['product_global'])) {
-      $product_global = zen_db_prepare_input($_POST['product_global']);
-    } else {
-      $product_global = '0';
-    }
+	if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
+		if (isset($_POST['product_global']) && is_numeric($_POST['product_global'])) {
+			$product_global = zen_db_prepare_input($_POST['product_global']);
+		} else {
+			$product_global = '0';
+		}
 
-    (array)$products = $_POST['products'];
+		(array)$products = $_POST['products'];
 
-    if ($product_global != $global->fields['global_product_notifications']) {
-      $product_global = (($global->fields['global_product_notifications'] == '1') ? '0' : '1');
+		if ($product_global != $global->fields['global_product_notifications']) {
+			$product_global = (($global->fields['global_product_notifications'] == '1') ? '0' : '1');
 
-      $sql = "update " . TABLE_CUSTOMERS_INFO . "
-              set    global_product_notifications = '" . (int)$product_global . "'
-              where  customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+			$sql = "update " . TABLE_CUSTOMERS_INFO . "
+					set    global_product_notifications = '" . (int)$product_global . "'
+					where  customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $db->Execute($sql);
+			$db->Execute($sql);
 
-    } elseif (sizeof($products) > 0) {
-      $products_parsed = array();
-      for ($i=0, $n=sizeof($products); $i<$n; $i++) {
-        if (is_numeric($products[$i])) {
-          $products_parsed[] = $products[$i];
-        }
-      }
-      if (sizeof($products_parsed) > 0) {
-        $check_query = "select count(*) as total
-                        from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                        where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                        and    products_id not in (" . implode(',', $products_parsed) . ")";
+		}
+		if( count($products) > 0 ) {
+			$products_parsed = array();
+			for ($i=0, $n=count($products); $i<$n; $i++) {
+				if (is_numeric($products[$i])) {
+				$products_parsed[] = $products[$i];
+				}
+			}
+			if (count($products_parsed) > 0) {
+				$check_query = "select count(*) as total
+								from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
+								where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
+								and    products_id not in (" . implode(',', $products_parsed) . ")";
 
-        $check = $db->Execute($check_query);
+				$check = $db->Execute($check_query);
 
-        if ($check->fields['total'] > 0) {
-          $sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                  where       customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                  and         products_id not in (" . implode(',', $products_parsed) . ")";
+				if ($check->fields['total'] > 0) {
+				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
+						where       customers_id = '" . (int)$_SESSION['customer_id'] . "'
+						and         products_id not in (" . implode(',', $products_parsed) . ")";
 
-          $db->Execute($sql);
-        }
-      }
-    } else {
-      $check_query = "select count(*) as total
-                      from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                      where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+				$db->Execute($sql);
+				}
+			}
+		} else {
+			$check_query = "select count(*) as total
+							from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
+							where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
 
 
-      $check = $db->Execute($check_query);
+			$check = $db->Execute($check_query);
 
-      if ($check->fields['total'] > 0) {
-        $sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                where       customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+			if ($check->fields['total'] > 0) {
+				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
+						where       customers_id = '" . (int)$_SESSION['customer_id'] . "'";
 
-        $db->Execute($sql);
+				$db->Execute($sql);
 
-      }
-    }
+			}
+		}
 
-    $messageStack->add_session('account', SUCCESS_NOTIFICATIONS_UPDATED, 'success');
+		$messageStack->add_session('account', SUCCESS_NOTIFICATIONS_UPDATED, 'success');
 
-    zen_redirect(zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));
-  }
-  
+		zen_redirect(zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));
+	}
+
   $products_check_query = "select count(*) as total
                            from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
                            where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";

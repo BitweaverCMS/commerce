@@ -53,6 +53,7 @@
 						{formlabel label="Password" for="pass"}
 						{forminput}
 							<input id="pass1" type="password" name="password" value="{$reg.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							{formhelp note="If this is your first time registering, confirm your password below."}
 						{/forminput}
 					</div>
 

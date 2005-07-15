@@ -1,4 +1,5 @@
 {tr}<span class="inputrequirement">* Required information</span>{/tr}
+{formfeedback error=$errors.customers_id}
 <fieldset>
 {if $collectGender}
 	<div class="row">
