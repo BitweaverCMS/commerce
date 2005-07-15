@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/15 09:24:08 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -25,9 +25,9 @@
   }
 
 // if the customer is not logged on, redirect them to the login page
-  if (!$_SESSION['customer_id']) {
+  if (!$_SESSION['customer_id'] || !$gBitCustomer->isValidAddress( $order->billing ) ) {
     $_SESSION['navigation']->set_snapshot();
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+    zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'));
   }
 
 // if no shipping method has been selected, redirect the customer to the shipping method selection page

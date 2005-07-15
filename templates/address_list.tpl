@@ -1,4 +1,4 @@
-{if count( $addresses ) > 1}
+{if count( $addresses )}
 {include file="bitpackage:bitcommerce/checkout_javascript.tpl"}
 	{section name=ix loop=$addresses}
 		{if $addresses[ix].address_book_id == $sendToAddressId}

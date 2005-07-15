@@ -13,7 +13,7 @@
 				<input type="hidden" name="novalidation" value="yes"/>
 
 				<div class="row">
-					{formfeedback error=$errors.validate}
+					{formfeedback error=$userErrors.validate}
 					{formlabel label="Username" for="email"}
 					{forminput}
 						<input type="text" name="email" id="email" value="{$reg.email}"/>
@@ -26,7 +26,7 @@
 			{elseif $showmsg ne 'y'}
 
 				<div class="row">
-					{formfeedback error=$errors.email}
+					{formfeedback error=$userErrors.email}
 					{formlabel label="Email" for="email"}
 					{forminput}
 						<input type="text" name="email" id="email" value="{$reg.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
@@ -35,7 +35,7 @@
 
 				{if $gBitSystem->mPrefs.useRegisterPasscode eq 'y'}
 					<div class="row">
-						{formfeedback error=$errors.passcode}
+						{formfeedback error=$userErrors.passcode}
 						{formlabel label="Passcode to register<br />(not your user password)" for="passcode"}
 						{forminput}
 							<input type="password" name="passcode" id="passcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
@@ -49,7 +49,7 @@
 					</div>
 				{else}
 					<div class="row">
-						{formfeedback error=$errors.password}
+						{formfeedback error=$userErrors.password}
 						{formlabel label="Password" for="pass"}
 						{forminput}
 							<input id="pass1" type="password" name="password" value="{$reg.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
@@ -87,7 +87,7 @@
 					<hr />
 
 					<div class="row">
-						{formfeedback error=$errors.rnd_num_reg}
+						{formfeedback error=$userErrors.rnd_num_reg}
 						{formlabel label="Your registration code"}
 						{forminput}
 							<img src="{$gBitLoc.USERS_PKG_URL}random_num_img.php" alt="{tr}Random Image{/tr}"/>

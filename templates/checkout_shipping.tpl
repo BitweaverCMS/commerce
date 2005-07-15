@@ -27,7 +27,7 @@
 				<div class="row">
 					{forminput}
 						<input type="submit" name="" value="Cancel" />
-						<input type="submit" name="store_address" value="Continue" />
+						<input type="submit" name="submit_address" value="Continue" />
 					{/forminput}
 				</div>
 			{/form}

@@ -1,5 +1,9 @@
 <?php
 	class CommerceCustomer extends BitBase {
+		function CommerceCustomer() {
+			BitBase::BitBase();
+		}
+
 		function syncBitUser( $pInfo ) {
 			global $db;
 			// bitcommerce customers table to bitweaver users_users table
@@ -35,56 +39,82 @@
 			}
 		}
 
-		function verifyAddress( &$pParamHash ) {
+		function register( $pParamHash ) {
+			global $gBitUser, $gBitSmarty;
+			if( !empty( $_REQUEST['email'] ) && $gBitUser->userExists( array( 'email' => $_REQUEST['email'] ) ) ) {
+				if( $gBitUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE ) ) {
+					$_REQUEST['customers_id'] = $gBitUser->mUserId;
+				} else {
+					$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
+				}
+			} else {
+				$newUser = new BitPermUser();
+				if( $newUser->register( $_REQUEST ) ) {
+					$newUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
+					$_REQUEST['customers_id'] = $gBitUser->mUserId;
+					$gBitUser = $newUser;
+				} else {
+					$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
+				}
+			}
+			return( count( $gBitUser->mErrors ) == 0 );
+		}
+
+		function verifyAddress( &$pParamHash, &$errorHash ) {
+			if( empty( $pParamHash['customers_id'] ) || !is_numeric( $pParamHash['customers_id'] ) ) {
+				$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
+			} else {
+				$pParamHash['address_store']['customers_id'] = $pParamHash['customers_id'];
+			}
 
 			if( empty( $pParamHash['firstname'] ) || strlen( $pParamHash['firstname'] ) < ENTRY_FIRST_NAME_MIN_LENGTH ) {
-				$this->mErrors['firstname'] = tra( 'Your First Name must contain a minimum of ' . ENTRY_FIRST_NAME_MIN_LENGTH . ' characters.' );
+				$errorHash['firstname'] = tra( 'Your First Name must contain a minimum of ' . ENTRY_FIRST_NAME_MIN_LENGTH . ' characters.' );
 			} else {
-				$pParamHash['store_address']['entry_firstname'] = $pParamHash['firstname'];
+				$pParamHash['address_store']['entry_firstname'] = $pParamHash['firstname'];
 			}
 
 			if( empty( $pParamHash['lastname'] ) || strlen( $pParamHash['lastname'] ) < ENTRY_LAST_NAME_MIN_LENGTH ) {
-				$this->mErrors['lastname'] = tra( 'Your Last Name must contain a minimum of ' . ENTRY_LAST_NAME_MIN_LENGTH . ' characters.' );
+				$errorHash['lastname'] = tra( 'Your Last Name must contain a minimum of ' . ENTRY_LAST_NAME_MIN_LENGTH . ' characters.' );
 			} else {
-				$pParamHash['store_address']['entry_lastname'] = $pParamHash['lastname'];
+				$pParamHash['address_store']['entry_lastname'] = $pParamHash['lastname'];
 			}
 
 			if( empty( $pParamHash['street_address'] ) || strlen( $pParamHash['street_address'] ) < ENTRY_STREET_ADDRESS_MIN_LENGTH ) {
-				$this->mErrors['street_address'] = tra( 'Your Street Address must contain a minimum of ' . ENTRY_STREET_ADDRESS_MIN_LENGTH . ' characters.' );
+				$errorHash['street_address'] = tra( 'Your Street Address must contain a minimum of ' . ENTRY_STREET_ADDRESS_MIN_LENGTH . ' characters.' );
 			} else {
-				$pParamHash['store_address']['entry_street_address'] = $pParamHash['street_address'];
+				$pParamHash['address_store']['entry_street_address'] = $pParamHash['street_address'];
 			}
 
 			if( empty( $pParamHash['postcode'] ) || strlen( $pParamHash['street_address'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
-				$this->mErrors['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
+				$errorHash['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
 			} else {
-				$pParamHash['store_address']['entry_postcode'] = $pParamHash['postcode'];
+				$pParamHash['address_store']['entry_postcode'] = $pParamHash['postcode'];
 			}
 
-			if( empty( $pParamHash['postcode'] ) || strlen( $pParamHash['postcode'] ) < ENTRY_CITY_MIN_LENGTH ) {
-				$this->mErrors['city'] = tra( 'Your City must contain a minimum of ' . ENTRY_CITY_MIN_LENGTH . ' characters.' );
+			if( empty( $pParamHash['city'] ) || strlen( $pParamHash['city'] ) < ENTRY_CITY_MIN_LENGTH ) {
+				$errorHash['city'] = tra( 'Your City must contain a minimum of ' . ENTRY_CITY_MIN_LENGTH . ' characters.' );
 			} else {
-				$pParamHash['store_address']['entry_city'] = $pParamHash['city'];
+				$pParamHash['address_store']['entry_city'] = $pParamHash['city'];
 			}
 
-			if( ACCOUNT_GENDER == 'true' && (empty( $pParamHash['gender'] ) || $pParamHash['gender'] != 'm' || $pParamHash['gender'] != 'f' ) ) {
-				$this->mErrors['gender'] = tra( 'Please choose a title.' );
+			if( ACCOUNT_GENDER == 'true' && (empty( $pParamHash['gender'] ) || ($pParamHash['gender'] != 'm' && $pParamHash['gender'] != 'f' )) ) {
+				$errorHash['gender'] = tra( 'Please choose a title.' );
 			} else {
-				$pParamHash['store_address']['entry_gender'] = $pParamHash['gender'];
+				$pParamHash['address_store']['entry_gender'] = $pParamHash['gender'];
 			}
 
 			if( ACCOUNT_COMPANY == 'true' && !empty( $pParamHash['company'] ) ) {
-				$pParamHash['store_address']['entry_company'] = $pParamHash['company'];
+				$pParamHash['address_store']['entry_company'] = $pParamHash['company'];
 			}
 
 			if( ACCOUNT_SUBURB == 'true' && !empty( $pParamHash['suburb'] ) ) {
-				$pParamHash['store_address']['entry_suburb'] = $pParamHash['suburb'];
+				$pParamHash['address_store']['entry_suburb'] = $pParamHash['suburb'];
 			}
 
-			if( empty( $pParamHash['country'] ) || !is_numeric( $pParamHash['country'] ) || ($pParamHash['country'] < 1) ) {
-				$this->mErrors['country'] = tra( 'You must select a country from the Countries pull down menu.' );
+			if( empty( $pParamHash['country_id'] ) || !is_numeric( $pParamHash['country_id'] ) || ($pParamHash['country_id'] < 1) ) {
+				$errorHash['country_id'] = tra( 'You must select a country from the Countries pull down menu.' );
 			} else {
-				$pParamHash['store_address']['entry_country_id'] = $pParamHash['country'];
+				$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 				if (ACCOUNT_STATE == 'true') {
 					$zone_id = 0;
 					$check_query = "select count(*) as total
@@ -93,25 +123,25 @@
 
 					;
 
-					if( $check = $db->query( $check_query , array( $pParamHash['country'] ) ) ) {
+					if( $check = $this->query( $check_query , array( $pParamHash['country_id'] ) ) ) {
 						$zone_query = "select distinct zone_id from " . TABLE_ZONES . "
 									   where zone_country_id = ? and (zone_name like ? OR zone_code like ?)";
 
-						if ( $rs = $db->query($zone_query, array( $pParamHash['country'], strtoupper( $pParamHash['state'] ), strtoupper( $pParamHash['state'] ) ) ) ) {
-							$pParamHash['store_address']['entry_state'] = $pParamHash['state'];
-							$pParamHash['store_address']['entry_zone_id'] = $rs->fields['zone_id'];
+						if ( $rs = $this->query($zone_query, array( $pParamHash['country_id'], strtoupper( $pParamHash['state'] ), strtoupper( $pParamHash['state'] ) ) ) ) {
+							$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
+							$pParamHash['address_store']['entry_zone_id'] = $rs->fields['zone_id'];
 						} else {
-							$this->mErrors['state'] = tra( 'Please select a state from the States pull down menu.' );
+							$errorHash['state'] = tra( 'Please select a state from the States pull down menu.' );
 						}
 					} elseif( empty( $pParamHash['state'] ) || strlen( $pParamHash['state'] ) < ENTRY_STATE_MIN_LENGTH ) {
-						$this->mErrors['state'] = tra( 'Your State must contain a minimum of ' . ENTRY_STATE_MIN_LENGTH . ' characters.' );
+						$errorHash['state'] = tra( 'Your State must contain a minimum of ' . ENTRY_STATE_MIN_LENGTH . ' characters.' );
 					} else {
-						$pParamHash['store_address']['entry_state'] = $pParamHash['state'];
+						$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 					}
 				}
 			}
 
-			return( count( $this->mErrors ) == 0 );
+			return( count( $errorHash ) == 0 );
 		}
 
 		// process a new shipping address
@@ -123,20 +153,34 @@
 				require_once($language_page_directory . $value);
 			}
 
-			if( $this->verifyAddress( $pParamHash ) ) {
+			if( $this->verifyAddress( $pParamHash, $this->mErrors ) ) {
 				$process = true;
-vd( $pParamHash );
 				if( empty( $pParamHash['address'] ) ) {
-					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['store_address']);
+					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 					$pParamHash['address_book_id'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 				} else {
-					$pParamHash['store_address']['customers_id'] = (int)$_SESSION['customer_id'];
-					$db->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['store_address'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
+					$pParamHash['address_store']['customers_id'] = (int)$_SESSION['customer_id'];
+					$this->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
 				}
 			// process the selected shipping destination
 			}
+vd( $this->mErrors );
+			return( count( $this->mErrors ) == 0 );
 		}
 
+
+		function isValidAddress( $pAddress ) {
+			$ret = FALSE;
+			$errors = array();
+			if( !$this->verifyAddress( $pAddress, $errors ) ) {
+				unset( $errors['customers_id'] );
+				unset( $errors['gender'] );
+				if( !count( $errors ) ) {
+					$ret = TRUE;
+				}
+			}
+			return $ret;
+		}
 
 		function getAddresses( $pCustomerId ) {
 			global $db;
@@ -155,6 +199,21 @@ vd( $pParamHash );
 				}
 			}
 			return $ret;
+		}
+
+		function getCountryZones( $pCountryId ) {
+			global $gBitDb;
+			$ret = array();
+			if( is_numeric( $pCountryId ) ) {
+				$query = "SELECT zone_name from " . TABLE_ZONES . " WHERE zone_country_id = ? ORDER BY zone_name";
+				if( $rs = $gBitDb->query($query, array( $pCountryId ) ) ) {
+					while (!$rs->EOF) {
+						$ret[] = array('id' => $rs->fields['zone_name'], 'text' => $rs->fields['zone_name']);
+						$rs->MoveNext();
+					}
+				}
+			}
+			return( $ret );
 		}
 
 	}
