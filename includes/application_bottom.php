@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_bottom.php,v 1.1 2005/07/05 05:58:59 bitweaver Exp $
+// $Id: application_bottom.php,v 1.2 2005/07/16 15:17:38 spiderr Exp $
 //
 
 // close session (store variables)
@@ -26,6 +26,15 @@
   // breaks things
   // pconnect disabled safety switch
   // $db->close();
+
+	global $gBitSystem;
+	$title = META_TAG_TITLE;
+	if( empty( $title ) ) {
+		$title = ucfirst( BITCOMMERCE_PKG_DIR );
+	}
+	$gBitSystem->setBrowserTitle( $title );
+
+
 
   if ( (GZIP_LEVEL == '1') && ($ext_zlib_loaded == true) && ($ini_zlib_output_compression < 1) ) {
     if ( (PHP_VERSION < '4.0.4') && (PHP_VERSION >= '4') ) {

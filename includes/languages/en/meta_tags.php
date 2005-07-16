@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: meta_tags.php,v 1.2 2005/07/16 15:17:38 spiderr Exp $
 //
 
 // page title
-define('TITLE', 'Zen Cart!');
+define('TITLE', $gBitSystem->getPreference( 'siteTitle' ) );
 
 // Site Tagline
-define('SITE_TAGLINE', 'The Art of E-commerce');
+define('SITE_TAGLINE', $gBitSystem->getPreference( 'site_slogan' ) );
 
 // Custom Keywords
 define('CUSTOM_KEYWORDS', 'ecommerce, open source, shop, online shopping');

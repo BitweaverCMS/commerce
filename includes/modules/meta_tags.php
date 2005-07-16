@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
+// $Id: meta_tags.php,v 1.3 2005/07/16 15:17:38 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -54,20 +54,20 @@
   case 'account_notifications':
   case 'account_password':
   case 'address_book':
-    define('META_TAG_TITLE', HEADING_TITLE . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', HEADING_TITLE );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_1 . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_1);
     break;
 
   case 'address_book_process':
-    define('META_TAG_TITLE', NAVBAR_TITLE_ADD_ENTRY . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', NAVBAR_TITLE_ADD_ENTRY );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_ADD_ENTRY . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_ADD_ENTRY);
     break;
 
   case 'advanced_search_result':
   case 'password_forgotten':
-    define('META_TAG_TITLE', NAVBAR_TITLE_2 . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', NAVBAR_TITLE_2 );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_2 . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_2);
     break;
@@ -78,7 +78,7 @@
   case 'checkout_shipping':
   case 'checkout_success':
   case 'create_account_success':
-    define('META_TAG_TITLE', HEADING_TITLE . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', HEADING_TITLE );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . HEADING_TITLE . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . HEADING_TITLE);
     break;
@@ -90,7 +90,7 @@
       if ($category_metatags->EOF) {
         $meta_tags_over_ride = true;
       } else {
-        define('META_TAG_TITLE', $category_metatags->fields['categories_name'] . PRIMARY_SECTION . TITLE . TAGLINE);
+        define('META_TAG_TITLE', $category_metatags->fields['categories_name'] );
         define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . $category_metatags->fields['categories_name'] . SECONDARY_SECTION . KEYWORDS);
         define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $category_metatags->fields['categories_name']);
       } // EOF
@@ -101,7 +101,7 @@
         if ($manufacturer_metatags->EOF) {
           $meta_tags_over_ride = true;
         } else {
-          define('META_TAG_TITLE', $manufacturer_metatags->fields['manufacturers_name'] . PRIMARY_SECTION . TITLE . TAGLINE);
+          define('META_TAG_TITLE', $manufacturer_metatags->fields['manufacturers_name'] );
           define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . $manufacturer_metatags->fields['manufacturers_name'] . SECONDARY_SECTION . KEYWORDS);
           define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $manufacturer_metatags->fields['manufacturers_name']);
         } // EOF
@@ -111,13 +111,13 @@
         if ($category_metatags->EOF) {
           $meta_tags_over_ride = true;
         } else {
-          define('META_TAG_TITLE', $category_metatags->fields['categories_name'] . PRIMARY_SECTION . TITLE . TAGLINE);
+          define('META_TAG_TITLE', $category_metatags->fields['categories_name'] );
           define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . $category_metatags->fields['categories_name'] . SECONDARY_SECTION . KEYWORDS);
           define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $category_metatags->fields['categories_name']);
         } // EOF
       }
     } else {
-      define('META_TAG_TITLE', TITLE . TAGLINE);
+      define('META_TAG_TITLE', '' );
       define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . str_replace(array("'",'"'),'',strip_tags(HEADING_TITLE)) . SECONDARY_SECTION . KEYWORDS);
       define('META_TAG_KEYWORDS', KEYWORDS . ' ' . str_replace(array("'",'"'),'',strip_tags(HEADING_TITLE)));
     }
@@ -125,20 +125,20 @@
 
   case 'popup_image':
     $meta_products_name = zen_clean_html($products_values->fields['products_name']);
-    define('META_TAG_TITLE', $meta_products_name . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', $meta_products_name );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . $meta_products_name . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $meta_products_name);
     break;
 
   case 'popup_image_additional':
     $meta_products_name = zen_clean_html($products_values->fields['products_name']);
-    define('META_TAG_TITLE', $meta_products_name . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', $meta_products_name );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . $meta_products_name . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $meta_products_name);
     break;
 
   case 'popup_search_help':
-    define('META_TAG_TITLE', HEADING_SEARCH_HELP . PRIMARY_SECTION . TITLE . TAGLINE);
+    define('META_TAG_TITLE', HEADING_SEARCH_HELP );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . HEADING_SEARCH_HELP . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . HEADING_SEARCH_HELP);
     break;
@@ -182,7 +182,7 @@
         if (zen_check_show_prices() == 'true') {
           $meta_products_name .= $meta_products_price;
         }
-        $meta_products_name .= ($product_info_metatags->fields['metatags_title_tagline_status'] == '1' ? PRIMARY_SECTION . TITLE . TAGLINE : '');
+        $meta_products_name .= ($product_info_metatags->fields['metatags_title_tagline_status'] == '1' ? PRIMARY_SECTION  : '');
 
         if (!empty($product_info_metatags->fields['metatags_description'])) {
           // use custom description
@@ -232,7 +232,7 @@
 
         $products_description = zen_clean_html($products_description);
 
-        define('META_TAG_TITLE', $review_on . $meta_products_name . $meta_products_price . PRIMARY_SECTION . TITLE . TAGLINE);
+        define('META_TAG_TITLE', $review_on . $meta_products_name . $meta_products_price );
         define('META_TAG_DESCRIPTION', TITLE . ' ' . $meta_products_name . SECONDARY_SECTION . $products_description . ' ');
         define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $meta_products_name . ' ' . CUSTOM_KEYWORDS);
 
@@ -274,14 +274,14 @@
     break;
 
   default:
-    define('META_TAG_TITLE', (defined('NAVBAR_TITLE') ? NAVBAR_TITLE . PRIMARY_SECTION : '') . TITLE . TAGLINE);
+    define('META_TAG_TITLE', (defined('NAVBAR_TITLE') ? NAVBAR_TITLE : '') );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE);
   }
 
   // meta tags override due to 404, missing products_id, cPath or other EOF issues
   if ($meta_tags_over_ride == true) {
-    define('META_TAG_TITLE', (defined('NAVBAR_TITLE') ? NAVBAR_TITLE . PRIMARY_SECTION : '') . TITLE . TAGLINE);
+    define('META_TAG_TITLE', (defined('NAVBAR_TITLE') ? NAVBAR_TITLE . PRIMARY_SECTION : '') );
     define('META_TAG_DESCRIPTION', TITLE . (defined('NAVBAR_TITLE') ? PRIMARY_SECTION . NAVBAR_TITLE : '') . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . (defined('NAVBAR_TITLE') ? NAVBAR_TITLE : ''));
   }
