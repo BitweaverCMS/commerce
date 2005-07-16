@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
+// $Id: language.php,v 1.3 2005/07/16 22:56:42 lsces Exp $
 //
 
   class language {
@@ -70,11 +70,11 @@
 
 
       $this->catalog_languages = array();
-      $languages_query = "select languages_id, name, code, image, directory
-                          from " . TABLE_LANGUAGES . "
-                          order by sort_order";
+      $languages_query = "SELECT `languages_id`, `name`, `code`, `image`, `directory`
+                          FROM " . TABLE_LANGUAGES . "
+                          ORDER BY `sort_order`";
 
-      $languages = $db->Execute($languages_query);
+      $languages = $db->Query($languages_query);
 
       while (!$languages->EOF) {
         $this->catalog_languages[$languages->fields['code']] = array('id' => $languages->fields['languages_id'],
