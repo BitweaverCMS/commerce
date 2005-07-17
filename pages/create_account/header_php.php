@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/07/10 17:31:46 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/07/17 20:28:24 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $process = false;
@@ -307,8 +307,8 @@
       $db->Execute($sql);
 
       $sql = "insert into " . TABLE_CUSTOMERS_INFO . "
-                          (customers_info_id, customers_info_number_of_logons,
-                           customers_info_date_account_created)
+                          (customers_info_id, number_of_logons,
+                           date_account_created)
               values ('" . (int)$_SESSION['customer_id'] . "', '0', now())";
 
       $db->Execute($sql);

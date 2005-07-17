@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.4 2005/07/15 19:14:56 spiderr Exp $
+// $Id: order.php,v 1.5 2005/07/17 20:28:27 lsces Exp $
 //
 
   class order {
@@ -692,10 +692,10 @@ bt();
            if (DOWNLOAD_ENABLED == 'true') {
              $attributes_query = "select popt.products_options_name, poval.products_options_values_name,
                                pa.options_values_price, pa.price_prefix,
-                               pa.product_attribute_is_free, pa.products_attributes_weight, pa.products_attributes_weight_prefix,
+                               pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
                                pa.attributes_discounted, pa.attributes_price_base_included, pa.attributes_price_onetime,
-                               pa.attributes_price_factor, pa.attributes_price_factor_offset,
-                               pa.attributes_price_factor_onetime, pa.attributes_price_factor_onetime_offset,
+                               pa.attributes_price_factor, pa.attributes_pf_offset,
+                               pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
                                pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
                                pa.attributes_price_words, pa.attributes_price_words_free,
                                pa.attributes_price_letters, pa.attributes_price_letters_free,
@@ -716,10 +716,10 @@ bt();
            } else {
              $attributes_values = $db->Execute("select popt.products_options_name, poval.products_options_values_name,
                                pa.options_values_price, pa.price_prefix,
-                               pa.product_attribute_is_free, pa.products_attributes_weight, pa.products_attributes_weight_prefix,
+                               pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
                                pa.attributes_discounted, pa.attributes_price_base_included, pa.attributes_price_onetime,
-                               pa.attributes_price_factor, pa.attributes_price_factor_offset,
-                               pa.attributes_price_factor_onetime, pa.attributes_price_factor_onetime_offset,
+                               pa.attributes_price_factor, pa.attributes_pf_offset,
+                               pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
                                pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
                                pa.attributes_price_words, pa.attributes_price_words_free,
                                pa.attributes_price_letters, pa.attributes_price_letters_free
@@ -737,15 +737,15 @@ bt();
                                    'options_values_price' => $attributes_values->fields['options_values_price'],
                                    'price_prefix' => $attributes_values->fields['price_prefix'],
                                    'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
-                                   'products_attributes_weight' => $attributes_values->fields['products_attributes_weight'],
-                                   'products_attributes_weight_prefix' => $attributes_values->fields['products_attributes_weight_prefix'],
+                                   'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
+                                   'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
                                    'attributes_discounted' => $attributes_values->fields['attributes_discounted'],
                                    'attributes_price_base_included' => $attributes_values->fields['attributes_price_base_included'],
                                    'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
                                    'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
-                                   'attributes_price_factor_offset' => $attributes_values->fields['attributes_price_factor_offset'],
-                                   'attributes_price_factor_onetime' => $attributes_values->fields['attributes_price_factor_onetime'],
-                                   'attributes_price_factor_onetime_offset' => $attributes_values->fields['attributes_price_factor_onetime_offset'],
+                                   'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
+                                   'attributes_pf_onetime' => $attributes_values->fields['attributes_pf_onetime'],
+                                   'attributes_pf_onetime_offset' => $attributes_values->fields['attributes_pf_onetime_offset'],
                                    'attributes_qty_prices' => $attributes_values->fields['attributes_qty_prices'],
                                    'attributes_qty_prices_onetime' => $attributes_values->fields['attributes_qty_prices_onetime'],
                                    'attributes_price_words' => $attributes_values->fields['attributes_price_words'],

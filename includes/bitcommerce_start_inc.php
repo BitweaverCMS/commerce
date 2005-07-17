@@ -16,19 +16,19 @@
       $lng->set_language(DEFAULT_LANGUAGE);
     }
 
-    if( $lng->load( $gBitLanguage->getLanguage() ) ) {
-      $_SESSION['languages_id'] = $lng->mInfo['languages_id'];
-	} else {
+//    if( $lng->load( $gBitLanguage->getLanguage() ) ) {
+//      $_SESSION['languages_id'] = $lng->mInfo['languages_id'];
+//	} else {
       $_SESSION['languages_id'] = 1;
-	}
+//	}
   }
 
 // include the cache class
   require(DIR_FS_CLASSES . 'cache.php');
   $zc_cache = new cache;
 
-  $configuration = $db->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
-                                 from ' . TABLE_CONFIGURATION, '', true, 150);
+  $configuration = $db->Query('SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
+                                 FROM ' . TABLE_CONFIGURATION );
 
   while (!$configuration->EOF) {
 //    define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);

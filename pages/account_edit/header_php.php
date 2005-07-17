@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/05 16:44:22 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/07/17 20:28:27 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -113,7 +113,7 @@
       $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
 
       $sql = "update " . TABLE_CUSTOMERS_INFO . "
-              set        customers_info_date_account_last_modified = now()
+              set        date_account_last_modified = now()
               where      customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
 
       $db->Execute($sql);

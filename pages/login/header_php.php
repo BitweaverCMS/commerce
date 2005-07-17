@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/17 20:28:29 lsces Exp $
 //
 // redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled (or the session has not started)
   if ($session_started == false) {
@@ -73,8 +73,8 @@
         $_SESSION['customer_zone_id'] = $check_country->fields['entry_zone_id'];
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
-                set customers_info_date_of_last_logon = now(),
-                    customers_info_number_of_logons = customers_info_number_of_logons+1
+                set date_of_last_logon = now(),
+                    number_of_logons = number_of_logons+1
                 where customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
 
         $db->Execute($sql);

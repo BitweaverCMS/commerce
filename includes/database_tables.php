@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.4 2005/07/14 04:55:13 spiderr Exp $
+// $Id: database_tables.php,v 1.5 2005/07/17 20:28:26 lsces Exp $
 //
 
 // define the database table names used in the project
@@ -46,7 +46,7 @@
   define('TABLE_CURRENCIES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'currencies`');
   define('TABLE_CUSTOMERS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers`');
   define('TABLE_CUSTOMERS_BASKET', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers_basket`');
-  define('TABLE_CUSTOMERS_BASKET_ATTRIBUTES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers_basket_attributes`');
+  define('TABLE_CUSTOMERS_BASKET_ATTRIBUTES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers_basket_att`');
   define('TABLE_CUSTOMERS_INFO', '`'.BIT_DB_PREFIX.DB_PREFIX . 'customers_info`');
   define('TABLE_DB_CACHE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'db_cache`');
   define('TABLE_EMAIL_ARCHIVE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'email_archive`');
@@ -58,12 +58,12 @@
   define('TABLE_LAYOUT_BOXES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'layout_boxes`');
   define('TABLE_MANUFACTURERS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'manufacturers`');
   define('TABLE_MANUFACTURERS_INFO', '`'.BIT_DB_PREFIX.DB_PREFIX . 'manufacturers_info`');
-  define('TABLE_META_TAGS_PRODUCTS_DESCRIPTION', '`'.BIT_DB_PREFIX.DB_PREFIX . 'meta_tags_products_description`');
+  define('TABLE_META_TAGS_PRODUCTS_DESCRIPTION', '`'.BIT_DB_PREFIX.DB_PREFIX . 'meta_tags_products_desc`');
   define('TABLE_NEWSLETTERS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'newsletters`');
   define('TABLE_ORDERS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders`');
   define('TABLE_ORDERS_PRODUCTS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_products`');
-  define('TABLE_ORDERS_PRODUCTS_ATTRIBUTES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_products_attributes`');
-  define('TABLE_ORDERS_PRODUCTS_DOWNLOAD', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_products_download`');
+  define('TABLE_ORDERS_PRODUCTS_ATTRIBUTES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_products_att`');
+  define('TABLE_ORDERS_PRODUCTS_DOWNLOAD', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_products_dld`');
   define('TABLE_ORDERS_STATUS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_status`');
   define('TABLE_ORDERS_STATUS_HISTORY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_status_history`');
   define('TABLE_ORDERS_TYPE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'orders_type`');
@@ -71,19 +71,19 @@
   define('TABLE_PAYPAL', '`'.BIT_DB_PREFIX.DB_PREFIX . 'paypal`');
   define('TABLE_PAYPAL_SESSION', '`'.BIT_DB_PREFIX.DB_PREFIX . 'paypal_session`');
   define('TABLE_PAYPAL_PAYMENT_STATUS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'paypal_payment_status`');
-  define('TABLE_PAYPAL_PAYMENT_STATUS_HISTORY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'paypal_payment_status_history`');
+  define('TABLE_PAYPAL_PAYMENT_STATUS_HISTORY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'paypal_pment_stat_his`');
   define('TABLE_PRODUCTS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products`');
   define('TABLE_PRODUCT_TYPES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'product_types`');
   define('TABLE_PRODUCT_TYPE_LAYOUT', '`'.BIT_DB_PREFIX.DB_PREFIX . 'product_type_layout`');
   define('TABLE_PRODUCT_TYPES_TO_CATEGORY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'product_types_to_category`');
   define('TABLE_PRODUCTS_ATTRIBUTES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_attributes`');
-  define('TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_attributes_download`');
+  define('TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_attributes_dld`');
   define('TABLE_PRODUCTS_DESCRIPTION', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_description`');
   define('TABLE_PRODUCTS_DISCOUNT_QUANTITY', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_discount_quantity`');
   define('TABLE_PRODUCTS_NOTIFICATIONS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_notifications`');
   define('TABLE_PRODUCTS_OPTIONS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_options`');
   define('TABLE_PRODUCTS_OPTIONS_VALUES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_options_values`');
-  define('TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_options_values_to_products_options`');
+  define('TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS', '`'.BIT_DB_PREFIX.DB_PREFIX . 'prd_opt_val_to_prd_opt`');
   define('TABLE_PRODUCTS_OPTIONS_TYPES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_options_types`');
   define('TABLE_PRODUCTS_TO_CATEGORIES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'products_to_categories`');
   define('TABLE_PROJECT_VERSION', '`'.BIT_DB_PREFIX.DB_PREFIX . 'project_version`');
@@ -104,19 +104,19 @@
   define('TABLE_WHOS_ONLINE', '`'.BIT_DB_PREFIX.DB_PREFIX . 'whos_online`');
   define('TABLE_ZONES', '`'.BIT_DB_PREFIX.DB_PREFIX . 'zones`');
 
-DEFINE('SQL_CC_ENABLED', "select configuration_key from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%CC_ENABLED%' and configuration_value= '1'");
-DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_CATEGORY%' and configuration_value > 0 order by configuration_value");
-DEFINE('SQL_SHOW_PRODUCT_INFO_MAIN',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_MAIN%' and configuration_value > 0 order by configuration_value");
-DEFINE('SQL_SHOW_PRODUCT_INFO_MISSING',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION  . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_MISSING%' and configuration_value > 0 order by configuration_value");
-DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_LISTING_BELOW%' and configuration_value > 0 order by configuration_value");
-DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set banners_shown = banners_shown +1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set banners_clicked = banners_clicked + 1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.products_image 
+DEFINE('SQL_CC_ENABLED', "select `configuration_key` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%CC_ENABLED%' and `configuration_value`= '1'");
+DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_CATEGORY%' and `configuration_value` > 0 order by `configuration_value`");
+DEFINE('SQL_SHOW_PRODUCT_INFO_MAIN',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_MAIN%' and `configuration_value` > 0 order by `configuration_value`");
+DEFINE('SQL_SHOW_PRODUCT_INFO_MISSING',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION  . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_MISSING%' and `configuration_value` > 0 order by `configuration_value`");
+DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_LISTING_BELOW%' and `configuration_value` > 0 order by `configuration_value`");
+DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set `banners_shown` = `banners_shown` +1 where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set `banners_clicked` = `banners_clicked` + 1 where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_ALSO_PURCHASED', "select p.`products_id`, p.`products_image`
                      from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, " 
                             . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p 
-                     where opa.products_id = ?  and opa.orders_id = opb.orders_id and opb.products_id != ?  and opb.products_id = p.products_id and opb.orders_id = o.orders_id and p.products_status = '1' 
-                     order by o.date_purchased desc" 
+                     where opa.`products_id` = ?  and opa.`orders_id` = opb.`orders_id` and opb.`products_id` != ?  and opb.`products_id` = p.`products_id` and opb.`orders_id` = o.`orders_id` and p.`products_status` = '1' 
+                     order by o.`date_purchased` desc" 
                      );
 
 

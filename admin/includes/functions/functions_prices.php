@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.2 2005/07/08 05:56:39 spiderr Exp $
+// $Id: functions_prices.php,v 1.3 2005/07/17 20:28:26 lsces Exp $
 //
 //
 ////
@@ -943,7 +943,7 @@ If a special exist * 10+9
     $display_normal_price = zen_get_products_actual_price($pre_selected->fields["products_id"]);
     $display_special_price = zen_get_products_special_price($pre_selected->fields["products_id"]);
 
-    $attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_price_factor_offset"]);
+    $attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
 
     // per word and letter charges
     if (zen_get_attributes_type($attribute) == PRODUCTS_OPTIONS_TYPE_TEXT) {
@@ -981,7 +981,7 @@ If a special exist * 10+9
     $display_special_price = zen_get_products_special_price($pre_selected_onetime->fields["products_id"]);
 
     // price factor one time
-      $attributes_price_final_onetime += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected_onetime->fields["attributes_price_factor_onetime"], $pre_selected_onetime->fields["attributes_price_factor_onetime_offset"]);
+      $attributes_price_final_onetime += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected_onetime->fields["attributes_pf_onetime"], $pre_selected_onetime->fields["attributes_pf_onetime_offset"]);
 
     // onetime charge qty price
       $attributes_price_final_onetime += zen_get_attributes_qty_prices_onetime($pre_selected_onetime->fields["attributes_qty_prices_onetime"], 1);

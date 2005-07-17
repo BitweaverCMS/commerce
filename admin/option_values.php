@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.1 2005/07/05 05:59:54 bitweaver Exp $
+//  $Id: option_values.php,v 1.2 2005/07/17 20:28:25 lsces Exp $
 //
 ?>
 <?php
@@ -38,7 +38,7 @@
       foreach($_POST['options_values_new_sort_order'] as $id => $new_sort_order) {
         $row++;
 
-        $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_options_values_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where products_options_values_id= $id");
+        $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_ov_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where products_options_values_id= $id");
       }
       $messageStack->add_session(SUCCESS_OPTION_VALUES_SORT_ORDER . ' ' . zen_options_name($_GET['options_id']), 'success');
       $_GET['action']='';
@@ -165,14 +165,14 @@ if ($_GET['options_id']=='') {
 <?php
     echo '    <tr class="dataTableHeadingRow"><td class="dataTableHeadingContent">Option ID</td><td class="dataTableHeadingContent">Option Value Name</td><td class="dataTableHeadingContent">Sort Order</td></tr><tr>';
 
-    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.products_options_values_id = pov.products_options_values_id and povtpo.products_options_id='" . $_GET['options_id'] . "' and pov.language_id = '" . $_SESSION['languages_id'] . "' ORDER BY pov.products_options_values_sort_order, pov.products_options_values_id");
+    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.products_options_values_id = pov.products_options_values_id and povtpo.products_options_id='" . $_GET['options_id'] . "' and pov.language_id = '" . $_SESSION['languages_id'] . "' ORDER BY pov.products_ov_sort_order, pov.products_options_values_id");
 
     if (!$row->EOF) {
        $option_values_exist = true;
         while (!$row->EOF) {
             echo '      <td align="right" class="dataTableContent">' . $row->fields["products_options_values_id"] . '</td>' . "\n";
             echo '      <td class="dataTableContent">' . $row->fields["products_options_values_name"] . '</td>' . "\n";
-            echo '      <td class="dataTableContent" align="center">' . "<input type=\"text\" name=\"options_values_new_sort_order[".$row->fields['products_options_values_id']."]\" value={$row->fields['products_options_values_sort_order']} size=\"4\">" . '</td>' . "\n";
+            echo '      <td class="dataTableContent" align="center">' . "<input type=\"text\" name=\"options_values_new_sort_order[".$row->fields['products_options_values_id']."]\" value={$row->fields['products_ov_sort_order']} size=\"4\">" . '</td>' . "\n";
             echo '    </tr>' . "\n";
           $row->MoveNext();
         }

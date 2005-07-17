@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.2 2005/07/14 08:09:07 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.3 2005/07/17 20:28:25 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -307,7 +307,7 @@
           $next_id = ($start_id->fields['products_options_values_id'] + 1);
           while(!$copy_from_values->EOF) {
             $current_id = $copy_from_values->fields['products_options_values_id'];
-            $sql = "insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . " values ('" . $next_id . "', '" . $copy_from_values->fields['language_id'] . "', '" . $copy_from_values->fields['products_options_values_name'] . "', '" . $copy_from_values->fields['products_options_values_sort_order'] . "')";
+            $sql = "insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . " values ('" . $next_id . "', '" . $copy_from_values->fields['language_id'] . "', '" . $copy_from_values->fields['products_options_values_name'] . "', '" . $copy_from_values->fields['products_ov_sort_order'] . "')";
             $db->Execute($sql);
             $copy_from_values->MoveNext();
             if ($copy_from_values->fields['products_options_values_id'] != $current_id or $copy_from_values->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.4 2005/07/14 04:55:12 spiderr Exp $
+//  $Id: customers.php,v 1.5 2005/07/17 20:28:25 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -215,7 +215,7 @@
         $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "'");
 
         $db->Execute("update " . TABLE_CUSTOMERS_INFO . "
-                      set customers_info_date_account_last_modified = now()
+                      set date_account_last_modified = now()
                       where customers_info_id = '" . (int)$customers_id . "'");
 
         if ($entry_zone_id > 0) $entry_state = '';
@@ -883,7 +883,7 @@ if ($processed == true) {
 // Sort Listing
           switch ($_GET['list_order']) {
               case "id-asc":
-              $disp_order = "ci.customers_info_date_account_created";
+              $disp_order = "ci.date_account_created";
               break;
               case "firstname":
               $disp_order = "c.customers_firstname";
@@ -910,10 +910,10 @@ if ($processed == true) {
               $disp_order = "a.entry_company DESC";
               break;
               case "login-asc":
-              $disp_order = "ci.customers_info_date_of_last_logon";
+              $disp_order = "ci.date_of_last_logon";
               break;
               case "login-desc":
-              $disp_order = "ci.customers_info_date_of_last_logon DESC";
+              $disp_order = "ci.date_of_last_logon DESC";
               break;
               case "approval-asc":
               $disp_order = "c.customers_authorization";
@@ -922,7 +922,7 @@ if ($processed == true) {
               $disp_order = "c.customers_authorization DESC";
               break;
               default:
-              $disp_order = "ci.customers_info_date_account_created DESC";
+              $disp_order = "ci.date_account_created DESC";
           }
 ?>
              <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -979,7 +979,7 @@ if ($processed == true) {
       $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%' or c.customers_telephone like '%" . $keywords . "%' or a.entry_company like '%" . $keywords . "%' or a.entry_street_address like '%" . $keywords . "%' or a.entry_city like '%" . $keywords . "%' or a.entry_postcode like '%" . $keywords . "%'";
     }
     $new_fields=', c.customers_telephone, a.entry_company, a.entry_street_address, a.entry_city, a.entry_postcode, c.customers_authorization, c.customers_referral';
-    $customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_group_pricing, a.entry_country_id, a.entry_company, ci.customers_info_date_of_last_logon, ci.customers_info_date_account_created " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.customers_id= ci.customers_info_id left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by $disp_order";
+    $customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_group_pricing, a.entry_country_id, a.entry_company, ci.date_of_last_logon, ci.date_account_created " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.customers_id= ci.customers_info_id left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by $disp_order";
 
 // Split Page
 // reset page when page is unknown
@@ -1004,10 +1004,10 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
     $customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $customers_query_raw, $customers_query_numrows);
     $customers = $db->Execute($customers_query_raw);
     while (!$customers->EOF) {
-      $info = $db->Execute("select customers_info_date_account_created as date_account_created,
-                                   customers_info_date_account_last_modified as date_account_last_modified,
-                                   customers_info_date_of_last_logon as date_last_logon,
-                                   customers_info_number_of_logons as number_of_logons
+      $info = $db->Execute("select date_account_created,
+                                   date_account_last_modified,
+                                   date_of_last_logon as date_last_logon,
+                                   number_of_logons
                             from " . TABLE_CUSTOMERS_INFO . "
                             where customers_info_id = '" . $customers->fields['customers_id'] . "'");
 
@@ -1044,7 +1044,7 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
                 <td class="dataTableContent"><?php echo $customers->fields['customers_firstname']; ?></td>
                 <td class="dataTableContent"><?php echo $customers->fields['entry_company']; ?></td>
                 <td class="dataTableContent"><?php echo zen_date_short($info->fields['date_account_created']); ?></td>
-                <td class="dataTableContent"><?php echo zen_date_short($customers->fields['customers_info_date_of_last_logon']); ?></td>
+                <td class="dataTableContent"><?php echo zen_date_short($customers->fields['date_of_last_logon']); ?></td>
                 <td class="dataTableContent"><?php echo $group_name_entry; ?></td>
                 <td class="dataTableContent" align="center"><?php echo ($customers->fields['customers_authorization'] == 0 ? '<a href="' . zen_href_link(FILENAME_CUSTOMERS, 'action=status&current=' . $customers->fields['customers_authorization'] . '&cID=' . $customers->fields['customers_id'] . ($_GET['page'] > 0 ? '&page=' . $_GET['page'] : ''), 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>' : '<a href="' . zen_href_link(FILENAME_CUSTOMERS, 'action=status&current=' . $customers->fields['customers_authorization'] . '&cID=' . $customers->fields['customers_id'] . ($_GET['page'] > 0 ? '&page=' . $_GET['page'] : ''), 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>'); ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($customers->fields['customers_id'] == $cInfo->customers_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID')) . 'cID=' . $customers->fields['customers_id'] . ($_GET['page'] > 0 ? '&page=' . $_GET['page'] : ''), 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>

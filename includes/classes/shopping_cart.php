@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
+// $Id: shopping_cart.php,v 1.3 2005/07/17 20:28:27 lsces Exp $
 //
 
   class shoppingCart {
@@ -563,7 +563,7 @@
 // attributes_price_factor
               $added_charge = 0;
               if ($attribute_price->fields['attributes_price_factor'] > 0) {
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_price_factor_offset']);
+                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
 
                 $this->total += $qty * zen_add_tax($added_charge, $products_tax);
               }
@@ -580,12 +580,12 @@
               if ($attribute_price->fields['attributes_price_onetime'] > 0) {
                 $this->total += zen_add_tax($attribute_price->fields['attributes_price_onetime'], $products_tax);
               }
-// attributes_price_factor_onetime
+// attributes_pf_onetime
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_price_factor_onetime'] > 0) {
+              if ($attribute_price->fields['attributes_pf_onetime'] > 0) {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor_onetime'], $attribute_price->fields['attributes_price_factor_onetime_offset']);
+                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_pf_onetime'], $attribute_price->fields['attributes_pf_onetime_offset']);
 
                 $this->total += zen_add_tax($added_charge, $products_tax);
               }
@@ -606,7 +606,7 @@
         if (isset($this->contents[$products_id]['attributes'])) {
           reset($this->contents[$products_id]['attributes']);
           while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-            $attribute_weight_query = "select products_attributes_weight, products_attributes_weight_prefix
+            $attribute_weight_query = "select products_attributes_wt, products_attributes_wt_pfix
                                        from " . TABLE_PRODUCTS_ATTRIBUTES . "
                                        where products_id = '" . (int)$prid . "'
                                        and options_id = '" . (int)$option . "'
@@ -616,13 +616,13 @@
 
           // adjusted count for free shipping
           if ($product->fields['product_is_always_free_shipping'] != 1) {
-            $new_attributes_weight = $attribute_weight->fields['products_attributes_weight'];
+            $new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;
           }
 
 // + or blank adds
-            if ($attribute_weight->fields['products_attributes_weight_prefix'] == '-') {
+            if ($attribute_weight->fields['products_attributes_wt_pfix'] == '-') {
               $this->weight -= $qty * $new_attributes_weight;
             } else {
               $this->weight += $qty * $new_attributes_weight;
@@ -697,7 +697,7 @@
               if ($attribute_price->fields['attributes_price_factor'] > 0) {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_price_factor_offset']);
+                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
                 $attributes_price += $added_charge;
               }
 // attributes_qty_prices
@@ -772,12 +772,12 @@ if ((int)$products_id != $products_id) {
 }
                 $attributes_price_onetime += $attribute_price->fields['attributes_price_onetime'];
               }
-// attributes_price_factor_onetime
+// attributes_pf_onetime
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_price_factor_onetime'] > 0) {
+              if ($attribute_price->fields['attributes_pf_onetime'] > 0) {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor_onetime'], $attribute_price->fields['attributes_price_factor_onetime_offset']);
+                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_pf_onetime'], $attribute_price->fields['attributes_pf_onetime_offset']);
 
                 $attributes_price_onetime += $added_charge;
               }
@@ -807,7 +807,7 @@ if ((int)$products_id != $products_id) {
       if (isset($this->contents[$products_id]['attributes'])) {
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-          $attribute_weight_query = "select products_attributes_weight, products_attributes_weight_prefix
+          $attribute_weight_query = "select products_attributes_wt, products_attributes_wt_pfix
                                     from " . TABLE_PRODUCTS_ATTRIBUTES . "
                                     where products_id = '" . (int)$products_id . "'
                                     and options_id = '" . (int)$option . "'
@@ -821,16 +821,16 @@ if ((int)$products_id != $products_id) {
                           where products_id = '" . (int)$products_id . "'");
 
           if ($product->fields['product_is_always_free_shipping'] != 1) {
-            $new_attributes_weight = $attribute_weight_info->fields['products_attributes_weight'];
+            $new_attributes_weight = $attribute_weight_info->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;
           }
 
 // + or blank adds
-          if ($attribute_weight_info->fields['products_attributes_weight_prefix'] == '-') {
+          if ($attribute_weight_info->fields['products_attributes_wt_pfix'] == '-') {
             $attribute_weight -= $new_attributes_weight;
           } else {
-            $attribute_weight += $attribute_weight_info->fields['products_attributes_weight'];
+            $attribute_weight += $attribute_weight_info->fields['products_attributes_wt'];
           }
         }
       }

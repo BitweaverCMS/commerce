@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
+//  $Id: languages.php,v 1.3 2005/07/17 20:28:24 lsces Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -107,15 +107,15 @@
 
 // create additional products_options_values records
           $products_options_values = $db->Execute("select products_options_values_id,
-		                                                products_options_values_name, products_options_values_sort_order
+		                                                products_options_values_name, products_ov_sort_order
 						   from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
 						   where language_id = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options_values->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        (products_options_values_id, language_id, products_options_values_name, products_options_values_sort_order)
+                        (products_options_values_id, language_id, products_options_values_name, products_ov_sort_order)
 				                values ('" . (int)$products_options_values->fields['products_options_values_id'] . "',
-						                    '" . (int)$insert_id . "', '" . zen_db_input($products_options_values->fields['products_options_values_name']) . "', '" . zen_db_input($products_options_values->fields['products_options_values_sort_order']) . "')");
+						                    '" . (int)$insert_id . "', '" . zen_db_input($products_options_values->fields['products_options_values_name']) . "', '" . zen_db_input($products_options_values->fields['products_ov_sort_order']) . "')");
 
             $products_options_values->MoveNext();
           }

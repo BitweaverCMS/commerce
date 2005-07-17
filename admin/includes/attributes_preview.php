@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: attributes_preview.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+// $Id: attributes_preview.php,v 1.2 2005/07/17 20:28:29 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -74,7 +74,7 @@
 
 /*
                           pa.options_values_price, pa.price_prefix,
-                          pa.products_options_sort_order, pa.product_attribute_is_free, pa.products_attributes_weight, pa.products_attributes_weight_prefix,
+                          pa.products_options_sort_order, pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
@@ -127,7 +127,7 @@
               $new_attributes_price = $products_options->fields['options_values_price'];
             }
 
-            if ($products_options->fields['attributes_price_onetime'] != 0 or $products_options->fields['attributes_price_factor_onetime'] != 0) {
+            if ($products_options->fields['attributes_price_onetime'] != 0 or $products_options->fields['attributes_pf_onetime'] != 0) {
               $show_onetime_charges_description = 'true';
               $new_onetime_charges = zen_get_attributes_price_final_onetime($products_options->fields["products_attributes_id"], 1, '');
               $price_onetime = TEXT_ONETIME_CHARGE_SYMBOL . $currencies->display_price($new_onetime_charges,
@@ -170,8 +170,8 @@
           $products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_price;
 
 // collect weight information if it exists zen_get_show_product_switch($prod_id, 'WEIGHT_ATTRIBUTES')
-          if ((zen_get_show_product_switch($prod_id, 'WEIGHT_ATTRIBUTES') =='1' and $products_options->fields['products_attributes_weight'] != '0')) {
-            $products_options_display_weight = ' (' . $products_options->fields['products_attributes_weight_prefix'] . round($products_options->fields['products_attributes_weight'],2) . TEXT_PRODUCT_WEIGHT_UNIT . ')';
+          if ((zen_get_show_product_switch($prod_id, 'WEIGHT_ATTRIBUTES') =='1' and $products_options->fields['products_attributes_wt'] != '0')) {
+            $products_options_display_weight = ' (' . $products_options->fields['products_attributes_wt_pfix'] . round($products_options->fields['products_attributes_wt'],2) . TEXT_PRODUCT_WEIGHT_UNIT . ')';
             $products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_weight;
           } else {
             // reset

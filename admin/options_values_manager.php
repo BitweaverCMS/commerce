@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: options_values_manager.php,v 1.2 2005/07/17 20:28:24 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -60,17 +60,17 @@
         $value_name_array = $_POST['value_name'];
         $value_id = zen_db_prepare_input($_POST['value_id']);
         $option_id = zen_db_prepare_input($_POST['option_id']);
-        $products_options_values_sort_order = zen_db_prepare_input($_POST['products_options_values_sort_order']);
+        $products_ov_sort_order = zen_db_prepare_input($_POST['products_ov_sort_order']);
 
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
           $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                      (products_options_values_id, language_id, products_options_values_name, products_options_values_sort_order)
+                      (products_options_values_id, language_id, products_options_values_name, products_ov_sort_order)
                       values ('" . (int)$value_id . "',
                               '" . (int)$languages[$i]['id'] . "',
                               '" . zen_db_input($value_name) . "',
-                              '" . (int)$products_options_values_sort_order . "')");
+                              '" . (int)$products_ov_sort_order . "')");
         }
 
         $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
@@ -108,13 +108,13 @@
         $value_name_array = $_POST['value_name'];
         $value_id = zen_db_prepare_input($_POST['value_id']);
         $option_id = zen_db_prepare_input($_POST['option_id']);
-        $products_options_values_sort_order = zen_db_prepare_input($_POST['products_options_values_sort_order']);
+        $products_ov_sort_order = zen_db_prepare_input($_POST['products_ov_sort_order']);
 
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
           $db->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        set products_options_values_name = '" . zen_db_input($value_name) . "', products_options_values_sort_order = '" . (int)$products_options_values_sort_order . "'
+                        set products_options_values_name = '" . zen_db_input($value_name) . "', products_ov_sort_order = '" . (int)$products_ov_sort_order . "'
                         where products_options_values_id = '" . zen_db_input($value_id) . "'
                         and language_id = '" . (int)$languages[$i]['id'] . "'");
 
@@ -300,8 +300,8 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
 
         $products_options_sort_order = zen_db_prepare_input($products_attributes_defaults->fields['products_options_sort_order']);
         $product_attribute_is_free = zen_db_prepare_input($products_attributes_defaults->fields['product_attribute_is_free']);
-        $products_attributes_weight = zen_db_prepare_input($products_attributes_defaults->fields['products_attributes_weight']);
-        $products_attributes_weight_prefix = zen_db_prepare_input($products_attributes_defaults->fields['products_attributes_weight_prefix']);
+        $products_attributes_wt = zen_db_prepare_input($products_attributes_defaults->fields['products_attributes_wt']);
+        $products_attributes_wt_pfix = zen_db_prepare_input($products_attributes_defaults->fields['products_attributes_wt_pfix']);
         $attributes_display_only = zen_db_prepare_input($products_attributes_defaults->fields['attributes_display_only']);
         $attributes_default = zen_db_prepare_input($products_attributes_defaults->fields['attributes_default']);
         $attributes_discounted = zen_db_prepare_input($products_attributes_defaults->fields['attributes_discounted']);
@@ -309,9 +309,9 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
 
         $attributes_price_onetime = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_onetime']);
         $attributes_price_factor = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_factor']);
-        $attributes_price_factor_offset = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_factor_offset']);
-        $attributes_price_factor_onetime = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_factor_onetime']);
-        $attributes_price_factor_onetime_offset = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_factor_onetime_offset']);
+        $attributes_pf_offset = zen_db_prepare_input($products_attributes_defaults->fields['attributes_pf_offset']);
+        $attributes_pf_onetime = zen_db_prepare_input($products_attributes_defaults->fields['attributes_pf_onetime']);
+        $attributes_pf_onetime_offset = zen_db_prepare_input($products_attributes_defaults->fields['attributes_pf_onetime_offset']);
         $attributes_qty_prices = zen_db_prepare_input($products_attributes_defaults->fields['attributes_qty_prices']);
         $attributes_qty_prices_onetime = zen_db_prepare_input($products_attributes_defaults->fields['attributes_qty_prices_onetime']);
 
@@ -371,8 +371,8 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($price_prefix) . "',
                                   '" . zen_db_input($products_options_sort_order) . "',
                                   '" . zen_db_input($product_attribute_is_free) . "',
-                                  '" . zen_db_input($products_attributes_weight) . "',
-                                  '" . zen_db_input($products_attributes_weight_prefix) . "',
+                                  '" . zen_db_input($products_attributes_wt) . "',
+                                  '" . zen_db_input($products_attributes_wt_pfix) . "',
                                   '" . zen_db_input($attributes_display_only) . "',
                                   '" . zen_db_input($attributes_default) . "',
                                   '" . zen_db_input($attributes_discounted) . "',
@@ -380,9 +380,9 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_price_base_included) . "',
                                   '" . zen_db_input($attributes_price_onetime) . "',
                                   '" . zen_db_input($attributes_price_factor) . "',
-                                  '" . zen_db_input($attributes_price_factor_offset) . "',
-                                  '" . zen_db_input($attributes_price_factor_onetime) . "',
-                                  '" . zen_db_input($attributes_price_factor_onetime_offset) . "',
+                                  '" . zen_db_input($attributes_pf_offset) . "',
+                                  '" . zen_db_input($attributes_pf_onetime) . "',
+                                  '" . zen_db_input($attributes_pf_onetime_offset) . "',
                                   '" . zen_db_input($attributes_qty_prices) . "',
                                   '" . zen_db_input($attributes_qty_prices_onetime) . "',
                                   '" . zen_db_input($attributes_price_words) . "',
@@ -654,8 +654,8 @@ function go_option() {
                 <td colspan="5" class="smallText">
 <?php
     $per_page = MAX_ROW_LISTS_OPTIONS;
-//    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_options_values_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by LPAD(pov2po.products_options_id,11,'0'), LPAD(pov.products_options_values_sort_order,11,'0'), pov.products_options_values_name";
-    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_options_values_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id     left join " . TABLE_PRODUCTS_OPTIONS . " po on pov2po.products_options_id = po.products_options_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by  po.products_options_name, LPAD(pov.products_options_values_sort_order,11,'0'), pov.products_options_values_name";
+//    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by LPAD(pov2po.products_options_id,11,'0'), LPAD(pov.products_ov_sort_order,11,'0'), pov.products_options_values_name";
+    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id     left join " . TABLE_PRODUCTS_OPTIONS . " po on pov2po.products_options_id = po.products_options_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by  po.products_options_name, LPAD(pov.products_ov_sort_order,11,'0'), pov.products_options_values_name";
     if (!isset($_GET['value_page'])) {
       $_GET['value_page'] = 1;
     }
@@ -727,7 +727,7 @@ function go_option() {
       $option_id = $values_values->fields['products_options_id'];
 
       $values_name = $values_values->fields['products_options_values_name'];
-      $products_options_values_sort_order = $values_values->fields['products_options_values_sort_order'];
+      $products_ov_sort_order = $values_values->fields['products_ov_sort_order'];
       $rows++;
 ?>
               <tr class="<?php echo (floor($rows/2) == ($rows/2) ? 'attributes-even' : 'attributes-odd'); ?>">
@@ -743,8 +743,8 @@ function go_option() {
                                       where products_options_values_id = '" . (int)$values_values->fields['products_options_values_id'] . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
           $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . ' value="' . $value_name->fields['products_options_values_name'] . '">&nbsp;<br />';
         }
-          $products_options_values_sort_order = $db->Execute("select distinct products_options_values_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id = '" . (int)$values_values->fields['products_options_values_id'] . "'");
-          $inputs2 .= '&nbsp;<input type="text" name="products_options_values_sort_order" size="4" value="' . $products_options_values_sort_order->fields['products_options_values_sort_order'] . '">&nbsp;';
+          $products_ov_sort_order = $db->Execute("select distinct products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id = '" . (int)$values_values->fields['products_options_values_id'] . "'");
+          $inputs2 .= '&nbsp;<input type="text" name="products_ov_sort_order" size="4" value="' . $products_ov_sort_order->fields['products_ov_sort_order'] . '">&nbsp;';
 ?>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo $values_values->fields['products_options_values_id']; ?><input type="hidden" name="value_id" value="<?php echo $values_values->fields['products_options_values_id']; ?>">&nbsp;</td>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo "\n"; ?><select name="option_id">
@@ -777,7 +777,7 @@ function go_option() {
                 <td align="center" class="smallText">&nbsp;<?php echo $values_values->fields["products_options_values_id"]; ?>&nbsp;</td>
                 <td align="center" class="smallText">&nbsp;<?php echo $options_name; ?>&nbsp;</td>
                 <td class="smallText">&nbsp;<?php echo $values_name; ?>&nbsp;</td>
-                <td class="smallText" align="right"><?php echo $values_values->fields['products_options_values_sort_order']; ?></td>
+                <td class="smallText" align="right"><?php echo $values_values->fields['products_ov_sort_order']; ?></td>
 <?php
 // hide buttons when editing
   if ($action== 'update_option_value') {
@@ -831,7 +831,7 @@ function go_option() {
       for ($i = 0, $n = sizeof($languages); $i < $n; $i ++) {
         $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . '>&nbsp;<br />';
       }
-        $inputs2 .= TEXT_SORT . '<input type="text" name="products_options_values_sort_order" size="4">&nbsp;';
+        $inputs2 .= TEXT_SORT . '<input type="text" name="products_ov_sort_order" size="4">&nbsp;';
 ?>
                 </select>&nbsp;</td>
                 <td class="smallText"><input type="hidden" name="value_id" value="<?php echo $next_id; ?>"><?php echo $inputs; ?></td>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.2 2005/07/10 17:31:41 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.3 2005/07/17 20:28:25 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -213,8 +213,8 @@
 
             $products_options_sort_order = zen_db_prepare_input($_POST['products_options_sort_order']);
             $product_attribute_is_free = zen_db_prepare_input($_POST['product_attribute_is_free']);
-            $products_attributes_weight = zen_db_prepare_input($_POST['products_attributes_weight']);
-            $products_attributes_weight_prefix = zen_db_prepare_input($_POST['products_attributes_weight_prefix']);
+            $products_attributes_wt = zen_db_prepare_input($_POST['products_attributes_wt']);
+            $products_attributes_wt_pfix = zen_db_prepare_input($_POST['products_attributes_wt_pfix']);
             $attributes_display_only = zen_db_prepare_input($_POST['attributes_display_only']);
             $attributes_default = zen_db_prepare_input($_POST['attributes_default']);
             $attributes_discounted = zen_db_prepare_input($_POST['attributes_discounted']);
@@ -222,9 +222,9 @@
 
             $attributes_price_onetime = zen_db_prepare_input($_POST['attributes_price_onetime']);
             $attributes_price_factor = zen_db_prepare_input($_POST['attributes_price_factor']);
-            $attributes_price_factor_offset = zen_db_prepare_input($_POST['attributes_price_factor_offset']);
-            $attributes_price_factor_onetime = zen_db_prepare_input($_POST['attributes_price_factor_onetime']);
-            $attributes_price_factor_onetime_offset = zen_db_prepare_input($_POST['attributes_price_factor_onetime_offset']);
+            $attributes_pf_offset = zen_db_prepare_input($_POST['attributes_pf_offset']);
+            $attributes_pf_onetime = zen_db_prepare_input($_POST['attributes_pf_onetime']);
+            $attributes_pf_onetime_offset = zen_db_prepare_input($_POST['attributes_pf_onetime_offset']);
             $attributes_qty_prices = zen_db_prepare_input($_POST['attributes_qty_prices']);
             $attributes_qty_prices_onetime = zen_db_prepare_input($_POST['attributes_qty_prices_onetime']);
 
@@ -260,8 +260,8 @@
                                   '" . zen_db_input($price_prefix) . "',
                                   '" . zen_db_input($products_options_sort_order) . "',
                                   '" . zen_db_input($product_attribute_is_free) . "',
-                                  '" . zen_db_input($products_attributes_weight) . "',
-                                  '" . zen_db_input($products_attributes_weight_prefix) . "',
+                                  '" . zen_db_input($products_attributes_wt) . "',
+                                  '" . zen_db_input($products_attributes_wt_pfix) . "',
                                   '" . zen_db_input($attributes_display_only) . "',
                                   '" . zen_db_input($attributes_default) . "',
                                   '" . zen_db_input($attributes_discounted) . "',
@@ -269,9 +269,9 @@
                                   '" . zen_db_input($attributes_price_base_included) . "',
                                   '" . zen_db_input($attributes_price_onetime) . "',
                                   '" . zen_db_input($attributes_price_factor) . "',
-                                  '" . zen_db_input($attributes_price_factor_offset) . "',
-                                  '" . zen_db_input($attributes_price_factor_onetime) . "',
-                                  '" . zen_db_input($attributes_price_factor_onetime_offset) . "',
+                                  '" . zen_db_input($attributes_pf_offset) . "',
+                                  '" . zen_db_input($attributes_pf_onetime) . "',
+                                  '" . zen_db_input($attributes_pf_onetime_offset) . "',
                                   '" . zen_db_input($attributes_qty_prices) . "',
                                   '" . zen_db_input($attributes_qty_prices_onetime) . "',
                                   '" . zen_db_input($attributes_price_words) . "',
@@ -341,8 +341,8 @@
 
             $products_options_sort_order = zen_db_prepare_input($_POST['products_options_sort_order']);
             $product_attribute_is_free = zen_db_prepare_input($_POST['product_attribute_is_free']);
-            $products_attributes_weight = zen_db_prepare_input($_POST['products_attributes_weight']);
-            $products_attributes_weight_prefix = zen_db_prepare_input($_POST['products_attributes_weight_prefix']);
+            $products_attributes_wt = zen_db_prepare_input($_POST['products_attributes_wt']);
+            $products_attributes_wt_pfix = zen_db_prepare_input($_POST['products_attributes_wt_pfix']);
             $attributes_display_only = zen_db_prepare_input($_POST['attributes_display_only']);
             $attributes_default = zen_db_prepare_input($_POST['attributes_default']);
             $attributes_discounted = zen_db_prepare_input($_POST['attributes_discounted']);
@@ -350,9 +350,9 @@
 
             $attributes_price_onetime = zen_db_prepare_input($_POST['attributes_price_onetime']);
             $attributes_price_factor = zen_db_prepare_input($_POST['attributes_price_factor']);
-            $attributes_price_factor_offset = zen_db_prepare_input($_POST['attributes_price_factor_offset']);
-            $attributes_price_factor_onetime = zen_db_prepare_input($_POST['attributes_price_factor_onetime']);
-            $attributes_price_factor_onetime_offset = zen_db_prepare_input($_POST['attributes_price_factor_onetime_offset']);
+            $attributes_pf_offset = zen_db_prepare_input($_POST['attributes_pf_offset']);
+            $attributes_pf_onetime = zen_db_prepare_input($_POST['attributes_pf_onetime']);
+            $attributes_pf_onetime_offset = zen_db_prepare_input($_POST['attributes_pf_onetime_offset']);
             $attributes_qty_prices = zen_db_prepare_input($_POST['attributes_qty_prices']);
             $attributes_qty_prices_onetime = zen_db_prepare_input($_POST['attributes_qty_prices_onetime']);
 
@@ -396,17 +396,17 @@
                               price_prefix = '" . zen_db_input($price_prefix) . "',
                               products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "',
                               product_attribute_is_free = '" . zen_db_input($product_attribute_is_free) . "',
-                              products_attributes_weight = '" . zen_db_input($products_attributes_weight) . "',
-                              products_attributes_weight_prefix = '" . zen_db_input($products_attributes_weight_prefix) . "',
+                              products_attributes_wt = '" . zen_db_input($products_attributes_wt) . "',
+                              products_attributes_wt_pfix = '" . zen_db_input($products_attributes_wt_pfix) . "',
                               attributes_display_only = '" . zen_db_input($attributes_display_only) . "',
                               attributes_default = '" . zen_db_input($attributes_default) . "',
                               attributes_discounted = '" . zen_db_input($attributes_discounted) . "',
                               attributes_price_base_included = '" . zen_db_input($attributes_price_base_included) . "',
                               attributes_price_onetime = '" . zen_db_input($attributes_price_onetime) . "',
                               attributes_price_factor = '" . zen_db_input($attributes_price_factor) . "',
-                              attributes_price_factor_offset = '" . zen_db_input($attributes_price_factor_offset) . "',
-                              attributes_price_factor_onetime = '" . zen_db_input($attributes_price_factor_onetime) . "',
-                              attributes_price_factor_onetime_offset = '" . zen_db_input($attributes_price_factor_onetime_offset) . "',
+                              attributes_pf_offset = '" . zen_db_input($attributes_pf_offset) . "',
+                              attributes_pf_onetime = '" . zen_db_input($attributes_pf_onetime) . "',
+                              attributes_pf_onetime_offset = '" . zen_db_input($attributes_pf_onetime_offset) . "',
                               attributes_qty_prices = '" . zen_db_input($attributes_qty_prices) . "',
                               attributes_qty_prices_onetime = '" . zen_db_input($attributes_qty_prices_onetime) . "',
                               attributes_price_words = '" . zen_db_input($attributes_price_words) . "',
@@ -1182,7 +1182,7 @@ if ($action == '') {
         <table border="1" cellpadding="4" cellspacing="2" align="left">
           <tr>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_PRICE; ?><br /><input type="text" name="price_prefix" value="<?php echo $attributes_values->fields['price_prefix']; ?>" size="2">&nbsp;<input type="text" name="value_price" value="<?php echo $attributes_values->fields['options_values_price']; ?>" size="6">&nbsp;</td>
-            <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT; ?><br /><input type="text" name="products_attributes_weight_prefix" value="<?php echo $attributes_values->fields['products_attributes_weight_prefix']; ?>" size="2">&nbsp;<input type="text" name="products_attributes_weight" value="<?php echo $attributes_values->fields['products_attributes_weight']; ?>" size="6">&nbsp;</td>
+            <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT; ?><br /><input type="text" name="products_attributes_wt_pfix" value="<?php echo $attributes_values->fields['products_attributes_wt_pfix']; ?>" size="2">&nbsp;<input type="text" name="products_attributes_wt" value="<?php echo $attributes_values->fields['products_attributes_wt']; ?>" size="6">&nbsp;</td>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_SORT_ORDER; ?><br /><input type="text" name="products_options_sort_order" value="<?php echo $attributes_values->fields['products_options_sort_order']; ?>" size="4">&nbsp;</td>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME; ?><br />&nbsp;<input type="text" name="attributes_price_onetime" value="<?php echo $attributes_values->fields['attributes_price_onetime']; ?>" size="6">&nbsp;</td>
           </tr>
@@ -1193,17 +1193,17 @@ if ($action == '') {
       <td class="attributeBoxContent">
         <table border="1" cellpadding="4" cellspacing="2" align="left">
           <tr>
-            <td align="center" class="smallText" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR . ' ' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET; ?><br />&nbsp;<input type="text" name="attributes_price_factor" value="<?php echo $attributes_values->fields['attributes_price_factor']; ?>" size="6">&nbsp;&nbsp;<input type="text" name="attributes_price_factor_offset" value="<?php echo $attributes_values->fields['attributes_price_factor_offset']; ?>" size="6">&nbsp;</td>
-            <td align="center" class="smallText" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME . ' ' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME; ?><br />&nbsp;<input type="text" name="attributes_price_factor_onetime" value="<?php echo $attributes_values->fields['attributes_price_factor_onetime']; ?>" size="6">&nbsp;&nbsp;<input type="text" name="attributes_price_factor_onetime_offset" value="<?php echo $attributes_values->fields['attributes_price_factor_onetime_offset']; ?>" size="6">&nbsp;</td>
+            <td align="center" class="smallText" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR . ' ' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET; ?><br />&nbsp;<input type="text" name="attributes_price_factor" value="<?php echo $attributes_values->fields['attributes_price_factor']; ?>" size="6">&nbsp;&nbsp;<input type="text" name="attributes_pf_offset" value="<?php echo $attributes_values->fields['attributes_pf_offset']; ?>" size="6">&nbsp;</td>
+            <td align="center" class="smallText" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME . ' ' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME; ?><br />&nbsp;<input type="text" name="attributes_pf_onetime" value="<?php echo $attributes_values->fields['attributes_pf_onetime']; ?>" size="6">&nbsp;&nbsp;<input type="text" name="attributes_pf_onetime_offset" value="<?php echo $attributes_values->fields['attributes_pf_onetime_offset']; ?>" size="6">&nbsp;</td>
           </tr>
         </table>
       </td>
 <?php
     } else {
       echo zen_draw_hidden_field('attributes_price_factor', $attributes_values->fields['attributes_price_factor']);
-      echo zen_draw_hidden_field('attributes_price_factor_offset', $attributes_values->fields['attributes_price_factor_offset']);
-      echo zen_draw_hidden_field('attributes_price_factor_onetime', $attributes_values->fields['attributes_price_factor_onetime']);
-      echo zen_draw_hidden_field('attributes_price_factor_onetime_offset', $attributes_values->fields['attributes_price_factor_onetime_offset']);
+      echo zen_draw_hidden_field('attributes_pf_offset', $attributes_values->fields['attributes_pf_offset']);
+      echo zen_draw_hidden_field('attributes_pf_onetime', $attributes_values->fields['attributes_pf_onetime']);
+      echo zen_draw_hidden_field('attributes_pf_onetime_offset', $attributes_values->fields['attributes_pf_onetime_offset']);
     } // ATTRIBUTES_ENABLED_PRICE_FACTOR
 ?>
 
@@ -1398,7 +1398,7 @@ $attributes_price_final_onetime = $currencies->display_price($attributes_price_f
             <td class="smallText">&nbsp;<?php echo $options_name; ?>&nbsp;</td>
             <td class="smallText">&nbsp;<?php echo ($attributes_values->fields['attributes_image'] != '' ? zen_image(DIR_WS_IMAGES . 'icon_status_yellow.gif') . '&nbsp;' : '&nbsp;&nbsp;') . $values_name; ?>&nbsp;</td>
             <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["price_prefix"]; ?>&nbsp;<?php echo $attributes_values->fields["options_values_price"]; ?>&nbsp;</td>
-            <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["products_attributes_weight_prefix"]; ?>&nbsp;<?php echo $attributes_values->fields["products_attributes_weight"]; ?>&nbsp;</td>
+            <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["products_attributes_wt_pfix"]; ?>&nbsp;<?php echo $attributes_values->fields["products_attributes_wt"]; ?>&nbsp;</td>
             <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["products_options_sort_order"]; ?>&nbsp;</td>
 <?php
 // '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' .
@@ -1639,7 +1639,7 @@ $off_overwrite = false;
         <table border="1" cellpadding="4" cellspacing="2">
           <tr>
             <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_PRICE . '<br />'; ?><input type="text" name="price_prefix" size="2" value="+">&nbsp;<input type="text" name="value_price" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT . '<br />'; ?><input type="text" name="products_attributes_weight_prefix" size="2" value="+">&nbsp;<input type="text" name="products_attributes_weight" size="6">&nbsp;</td>
+            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT . '<br />'; ?><input type="text" name="products_attributes_wt_pfix" size="2" value="+">&nbsp;<input type="text" name="products_attributes_wt" size="6">&nbsp;</td>
             <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_SORT_ORDER; ?><br /><input type="text" name="products_options_sort_order" value="" size="4">&nbsp;</td>
             <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME . '<br />'; ?><input type="text" name="attributes_price_onetime" size="6">&nbsp;</td>
           </tr>
@@ -1650,8 +1650,8 @@ $off_overwrite = false;
       <td class="attributeBoxContent">
         <table border="1" cellpadding="4" cellspacing="2">
           <tr>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET . '<br />'; ?><input type="text" name="attributes_price_factor" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_price_factor_offset" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME . '<br />'; ?><input type="text" name="attributes_price_factor_onetime" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_price_factor_onetime_offset" size="6">&nbsp;</td>
+            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET . '<br />'; ?><input type="text" name="attributes_price_factor" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_pf_offset" size="6">&nbsp;</td>
+            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME . '<br />'; ?><input type="text" name="attributes_pf_onetime" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_pf_onetime_offset" size="6">&nbsp;</td>
           </tr>
         </table>
       </td>

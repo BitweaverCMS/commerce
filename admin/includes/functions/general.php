@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.4 2005/07/13 20:23:43 spiderr Exp $
+//  $Id: general.php,v 1.5 2005/07/17 20:28:26 lsces Exp $
 //
 
 ////
@@ -1883,8 +1883,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           '" . $products_copy_from->fields['price_prefix'] . "',
           '" . $products_copy_from->fields['products_options_sort_order'] . "',
           '" . $products_copy_from->fields['product_attribute_is_free'] . "',
-          '" . $products_copy_from->fields['products_attributes_weight'] . "',
-          '" . $products_copy_from->fields['products_attributes_weight_prefix'] . "',
+          '" . $products_copy_from->fields['products_attributes_wt'] . "',
+          '" . $products_copy_from->fields['products_attributes_wt_pfix'] . "',
           '" . $products_copy_from->fields['attributes_display_only'] . "',
           '" . $products_copy_from->fields['attributes_default'] . "',
           '" . $products_copy_from->fields['attributes_discounted'] . "',
@@ -1892,9 +1892,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           '" . $products_copy_from->fields['attributes_price_base_included'] . "',
           '" . $products_copy_from->fields['attributes_price_onetime'] . "',
           '" . $products_copy_from->fields['attributes_price_factor'] . "',
-          '" . $products_copy_from->fields['attributes_price_factor_offset'] . "',
-          '" . $products_copy_from->fields['attributes_price_factor_onetime'] . "',
-          '" . $products_copy_from->fields['attributes_price_factor_onetime_offset'] . "',
+          '" . $products_copy_from->fields['attributes_pf_offset'] . "',
+          '" . $products_copy_from->fields['attributes_pf_onetime'] . "',
+          '" . $products_copy_from->fields['attributes_pf_onetime_offset'] . "',
           '" . $products_copy_from->fields['attributes_qty_prices'] . "',
           '" . $products_copy_from->fields['attributes_qty_prices_onetime'] . "',
           '" . $products_copy_from->fields['attributes_price_words'] . "',
@@ -1911,8 +1911,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           price_prefix='" . $products_copy_from->fields['price_prefix'] . "',
           products_options_sort_order='" . $products_copy_from->fields['products_options_sort_order'] . "',
           product_attribute_is_free='" . $products_copy_from->fields['product_attribute_is_free'] . "',
-          products_attributes_weight='" . $products_copy_from->fields['products_attributes_weight'] . "',
-          products_attributes_weight_prefix='" . $products_copy_from->fields['products_attributes_weight_prefix'] . "',
+          products_attributes_wt='" . $products_copy_from->fields['products_attributes_wt'] . "',
+          products_attributes_wt_pfix='" . $products_copy_from->fields['products_attributes_wt_pfix'] . "',
           attributes_display_only='" . $products_copy_from->fields['attributes_display_only'] . "',
           attributes_default='" . $products_copy_from->fields['attributes_default'] . "',
           attributes_discounted='" . $products_copy_from->fields['attributes_discounted'] . "',
@@ -1920,9 +1920,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           attributes_price_base_included='" . $products_copy_from->fields['attributes_price_base_included'] . "',
           attributes_price_onetime='" . $products_copy_from->fields['attributes_price_onetime'] . "',
           attributes_price_factor='" . $products_copy_from->fields['attributes_price_factor'] . "',
-          attributes_price_factor_offset='" . $products_copy_from->fields['attributes_price_factor_offset'] . "',
-          attributes_price_factor_onetime='" . $products_copy_from->fields['attributes_price_factor_onetime'] . "',
-          attributes_price_factor_onetime_offset='" . $products_copy_from->fields['attributes_price_factor_onetime_offset'] . "',
+          attributes_pf_offset='" . $products_copy_from->fields['attributes_pf_offset'] . "',
+          attributes_pf_onetime='" . $products_copy_from->fields['attributes_pf_onetime'] . "',
+          attributes_pf_onetime_offset='" . $products_copy_from->fields['attributes_pf_onetime_offset'] . "',
           attributes_qty_prices='" . $products_copy_from->fields['attributes_qty_prices'] . "',
           attributes_qty_prices_onetime='" . $products_copy_from->fields['attributes_qty_prices_onetime'] . "',
           attributes_price_words='" . $products_copy_from->fields['attributes_price_words'] . "',
@@ -2004,9 +2004,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Set Product Attributes Sort Order to Products Option Value Sort Order
   function zen_update_attributes_products_option_values_sort_order($products_id) {
     global $db;
-    $attributes_sort_order = $db->Execute("SELECT distinct pa.products_attributes_id, pa.options_id, pa.options_values_id, pa.products_options_sort_order, pov.products_options_values_sort_order FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.products_id = '" . $products_id . "' and pa.options_values_id = pov.products_options_values_id");
+    $attributes_sort_order = $db->Execute("SELECT distinct pa.products_attributes_id, pa.options_id, pa.options_values_id, pa.products_options_sort_order, pov.products_ov_sort_order FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.products_id = '" . $products_id . "' and pa.options_values_id = pov.products_options_values_id");
     while (!$attributes_sort_order->EOF) {
-      $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set products_options_sort_order = '" . $attributes_sort_order->fields['products_options_values_sort_order'] . "' WHERE products_id = '" . $products_id . "' and products_attributes_id = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
+      $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set products_options_sort_order = '" . $attributes_sort_order->fields['products_ov_sort_order'] . "' WHERE products_id = '" . $products_id . "' and products_attributes_id = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
       $attributes_sort_order->MoveNext();
     }
   }

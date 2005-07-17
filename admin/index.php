@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: index.php,v 1.2 2005/07/17 20:28:25 lsces Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -130,11 +130,11 @@
 <div id="coltwo">
 <div class="reportBox">
 <div class="header"><?php echo BOX_ENTRY_NEW_CUSTOMERS; ?> </div>
-  <?php  $customers = $db->Execute("select c.customers_id as customers_id, c.customers_firstname as customers_firstname, c.customers_lastname as customers_lastname, a.customers_info_date_account_created as customers_info_date_account_created, a.customers_info_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.customers_id = a.customers_info_id order by a.customers_info_date_account_created DESC limit 5");
+  <?php  $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname, a.date_account_created, a.customers_info_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.customers_id = a.customers_info_id order by a.date_account_created DESC limit 5");
 
   while (!$customers->EOF) {
     echo '              <div class="row"><span class="left"><a href="' . zen_href_link(FILENAME_CUSTOMERS, 'search=' . $customers->fields['customers_lastname'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink">'. $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a></span><span class="rigth">' . "\n";
-    echo zen_date_short($customers->fields['customers_info_date_account_created']);
+    echo zen_date_short($customers->fields['date_account_created']);
     echo '              </span></div>' . "\n";
     $customers->MoveNext();
   }
