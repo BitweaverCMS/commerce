@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: stylesheet.css,v 1.4 2005/07/14 04:55:14 spiderr Exp $
+// $Id: stylesheet.css,v 1.5 2005/07/18 14:24:09 spiderr Exp $
 */
 .centershop {
 	padding: 0px;
@@ -410,4 +410,22 @@ TABLE.products-attributes-images {
 /*  border: 1px solid #9a9a9a; */
   float: left;
   padding: 2px;
+}
+
+/* Copied over from zencss */
+
+.specialprice {
+    color: #f00;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+.price {
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+.normalprice {
+    color: #666;
+    font-weight: normal;
+    text-decoration: line-through;
 }
