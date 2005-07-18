@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.6 2005/07/14 08:09:08 spiderr Exp $
+// $Id: functions_general.php,v 1.7 2005/07/18 14:35:52 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -1079,7 +1079,7 @@
       return true;
     }
 
-    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_shipping','1');
+    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1');
     $check_cart_cnt = $_SESSION['cart']->count_contents();
     $check_cart_weight = $_SESSION['cart']->show_weight();
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
+//  $Id: update_product.php,v 1.3 2005/07/18 14:35:50 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -42,7 +42,7 @@
                                   'product_is_free' => zen_db_prepare_input($_POST['product_is_free']),
                                   'product_is_call' => zen_db_prepare_input($_POST['product_is_call']),
                                   'products_quantity_mixed' => zen_db_prepare_input($_POST['products_quantity_mixed']),
-                                  'product_is_always_free_shipping' => zen_db_prepare_input($_POST['product_is_always_free_shipping']),
+                                  'product_is_always_free_ship' => zen_db_prepare_input($_POST['product_is_always_free_ship']),
                                   'products_qty_box_status' => zen_db_prepare_input($_POST['products_qty_box_status']),
                                   'products_quantity_order_max' => zen_db_prepare_input($_POST['products_quantity_order_max']),
                                   'products_sort_order' => zen_db_prepare_input($_POST['products_sort_order']),

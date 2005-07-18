@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.3 2005/07/17 20:28:27 lsces Exp $
+// $Id: shopping_cart.php,v 1.4 2005/07/18 14:35:51 spiderr Exp $
 //
 
   class shoppingCart {
@@ -445,7 +445,7 @@
 
 // products price
         $product_query = "select products_id, products_price, products_tax_class_id, products_weight,
-                          products_priced_by_attribute, product_is_always_free_shipping, products_discount_type, products_discount_type_from,
+                          products_priced_by_attribute, product_is_always_free_ship, products_discount_type, products_discount_type_from,
                           products_virtual, products_model
                           from " . TABLE_PRODUCTS . "
                           where products_id = '" . (int)$products_id . "'";
@@ -456,7 +456,7 @@
           $products_price = $product->fields['products_price'];
 
           // adjusted count for free shipping
-          if ($product->fields['product_is_always_free_shipping'] != 1 and $product->fields['products_virtual'] != 1) {
+          if ($product->fields['product_is_always_free_ship'] != 1 and $product->fields['products_virtual'] != 1) {
             $products_weight = $product->fields['products_weight'];
           } else {
             $products_weight = 0;
@@ -491,7 +491,7 @@
           }
 
 // shipping adjustments
-          if (($product->fields['product_is_always_free_shipping'] == 1) or ($product->fields['products_virtual'] == 1) or (ereg('^GIFT', addslashes($product->fields['products_model'])))) {
+          if (($product->fields['product_is_always_free_ship'] == 1) or ($product->fields['products_virtual'] == 1) or (ereg('^GIFT', addslashes($product->fields['products_model'])))) {
             $this->free_shipping_item += $qty;
             $this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
             $this->free_shipping_weight += ($qty * $products_weight);
@@ -615,7 +615,7 @@
             $attribute_weight = $db->Execute($attribute_weight_query);
 
           // adjusted count for free shipping
-          if ($product->fields['product_is_always_free_shipping'] != 1) {
+          if ($product->fields['product_is_always_free_ship'] != 1) {
             $new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;
@@ -816,11 +816,11 @@ if ((int)$products_id != $products_id) {
           $attribute_weight_info = $db->Execute($attribute_weight_query);
 
           // adjusted count for free shipping
-          $product = $db->Execute("select products_id, product_is_always_free_shipping
+          $product = $db->Execute("select products_id, product_is_always_free_ship
                           from " . TABLE_PRODUCTS . "
                           where products_id = '" . (int)$products_id . "'");
 
-          if ($product->fields['product_is_always_free_shipping'] != 1) {
+          if ($product->fields['product_is_always_free_ship'] != 1) {
             $new_attributes_weight = $attribute_weight_info->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;

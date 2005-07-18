@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart_default.php,v 1.4 2005/07/14 08:09:09 spiderr Exp $
+// $Id: tpl_shopping_cart_default.php,v 1.5 2005/07/18 14:35:53 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -43,7 +43,7 @@
       echo 'I AM GV ONLY ' . $_SESSION['cart']->gv_only() . ' - ' . $_SESSION['cart']->get_content_type() . '<br />';
       echo 'Free Products: ' .  $_SESSION['cart']->in_cart_check('product_is_free','1') . '<br />';
       echo 'Virtual Products: ' .  $_SESSION['cart']->in_cart_check('products_virtual','1') . '<br />';
-      echo 'Free Shipping Products: ' .  $_SESSION['cart']->in_cart_check('product_is_always_free_shipping','1') . '<br />';
+      echo 'Free Shipping Products: ' .  $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') . '<br />';
     }
   ?>
   </td>

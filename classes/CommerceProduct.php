@@ -94,7 +94,7 @@ class CommerceProduct extends BitBase {
 								'product_is_free' => zen_db_prepare_input($pParamHash['product_is_free']),
 								'product_is_call' => zen_db_prepare_input($pParamHash['product_is_call']),
 								'products_quantity_mixed' => zen_db_prepare_input($pParamHash['products_quantity_mixed']),
-								'product_is_always_free_shipping' => zen_db_prepare_input($pParamHash['product_is_always_free_shipping']),
+								'product_is_always_free_ship' => zen_db_prepare_input($pParamHash['product_is_always_free_ship']),
 								'products_qty_box_status' => (int)zen_db_prepare_input($pParamHash['products_qty_box_status']),
 								'products_quantity_order_max' => (int)zen_db_prepare_input($pParamHash['products_quantity_order_max']),
 								'products_sort_order' => zen_db_prepare_input($pParamHash['products_sort_order']),

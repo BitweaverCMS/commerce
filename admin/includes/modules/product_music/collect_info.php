@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: collect_info.php,v 1.2 2005/07/18 14:35:50 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -42,7 +42,7 @@
                        'product_is_free' => '',
                        'product_is_call' => '',
                        'products_quantity_mixed' => '',
-                       'product_is_always_free_shipping' => DEFAULT_PRODUCT_MUSIC_PRODUCTS_IS_ALWAYS_FREE_SHIPPING,
+                       'product_is_always_free_ship' => DEFAULT_PRODUCT_MUSIC_PRODUCTS_IS_ALWAYS_FREE_SHIPPING,
                        'products_qty_box_status' => PRODUCTS_QTY_BOX_STATUS,
                        'products_quantity_order_max' => '0',
                        'products_sort_order' => '0',
@@ -64,7 +64,7 @@
                                       pe.artists_id, pe.record_company_id,pe.music_genre_id,
                                       p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,
                                       p.product_is_free, p.product_is_call, p.products_quantity_mixed,
-                                      p.product_is_always_free_shipping, p.products_qty_box_status, p.products_quantity_order_max,
+                                      p.product_is_always_free_ship, p.products_qty_box_status, p.products_quantity_order_max,
                                       p.products_sort_order,
                                       p.products_discount_type, p.products_discount_type_from,
                                       p.products_price_sorter, p.master_categories_id
@@ -142,11 +142,11 @@
       default: $is_virtual = false; $not_virtual = true;
     }
 // Always Free Shipping
-    if (!isset($pInfo->product_is_always_free_shipping)) $pInfo->product_is_always_free_shipping = PRODUCTS_IS_ALWAYS_FREE_SHIPPING_DEFAULT;
-    switch ($pInfo->product_is_always_free_shipping) {
-      case '0': $is_product_is_always_free_shipping = false; $not_product_is_always_free_shipping = true; break;
-      case '1': $is_product_is_always_free_shipping = true; $not_product_is_always_free_shipping = false; break;
-      default: $is_product_is_always_free_shipping = false; $not_product_is_always_free_shipping = true;
+    if (!isset($pInfo->product_is_always_free_ship)) $pInfo->product_is_always_free_ship = PRODUCTS_IS_ALWAYS_FREE_SHIPPING_DEFAULT;
+    switch ($pInfo->product_is_always_free_ship) {
+      case '0': $is_product_is_always_free_ship = false; $not_product_is_always_free_ship = true; break;
+      case '1': $is_product_is_always_free_ship = true; $not_product_is_always_free_ship = false; break;
+      default: $is_product_is_always_free_ship = false; $not_product_is_always_free_ship = true;
     }
 // products_qty_box_status shows
     if (!isset($pInfo->products_qty_box_status)) $pInfo->products_qty_box_status = PRODUCTS_QTY_BOX_STATUS;
@@ -378,7 +378,7 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_IS_ALWAYS_FREE_SHIPPING; ?></td>
-            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_radio_field('product_is_always_free_shipping', '1', $is_product_is_always_free_shipping) . '&nbsp;' . TEXT_PRODUCT_IS_ALWAYS_FREE_SHIPPING . '&nbsp;' . zen_draw_radio_field('product_is_always_free_shipping', '0', $not_product_is_always_free_shipping) . '&nbsp;' . TEXT_PRODUCT_NOT_ALWAYS_FREE_SHIPPING . ' ' . ($pInfo->product_is_always_free_shipping == 1 ? '<br /><span class="errorText">' . TEXT_FREE_SHIPPING_EDIT . '</span>' : ''); ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_radio_field('product_is_always_free_ship', '1', $is_product_is_always_free_ship) . '&nbsp;' . TEXT_PRODUCT_IS_ALWAYS_FREE_SHIPPING . '&nbsp;' . zen_draw_radio_field('product_is_always_free_ship', '0', $not_product_is_always_free_ship) . '&nbsp;' . TEXT_PRODUCT_NOT_ALWAYS_FREE_SHIPPING . ' ' . ($pInfo->product_is_always_free_ship == 1 ? '<br /><span class="errorText">' . TEXT_FREE_SHIPPING_EDIT . '</span>' : ''); ?></td>
           </tr>
 
           <tr>

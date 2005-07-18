@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.5 2005/07/17 20:28:26 lsces Exp $
+//  $Id: general.php,v 1.6 2005/07/18 14:35:48 spiderr Exp $
 //
 
 ////
@@ -2308,7 +2308,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       return true;
     }
 
-    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_shipping','1');
+    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1');
     $check_cart_cnt = $_SESSION['cart']->count_contents();
     $check_cart_weight = $_SESSION['cart']->show_weight();
 

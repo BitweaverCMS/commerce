@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.4 2005/07/14 04:55:13 spiderr Exp $
+// $Id: functions_lookups.php,v 1.5 2005/07/18 14:35:52 spiderr Exp $
 //
 //
 /**
@@ -607,13 +607,13 @@
 
 ////
 // look up a product is always free shipping
-  function zen_get_product_is_always_free_shipping($lookup) {
+  function zen_get_product_is_always_free_ship($lookup) {
     global $db;
 
-    $sql = "select p.product_is_always_free_shipping from " . TABLE_PRODUCTS . " p  where p.products_id='" . $lookup . "'";
+    $sql = "select p.product_is_always_free_ship from " . TABLE_PRODUCTS . " p  where p.products_id='" . $lookup . "'";
     $look_up = $db->Execute($sql);
 
-    if ($look_up->fields['product_is_always_free_shipping'] == '1') {
+    if ($look_up->fields['product_is_always_free_ship'] == '1') {
       return true;
     } else {
       return false;

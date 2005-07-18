@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freeshipper.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: freeshipper.php,v 1.2 2005/07/18 14:35:53 spiderr Exp $
 //
   class freeshipper {
     var $code, $title, $description, $icon, $enabled;
@@ -34,7 +34,7 @@
       $this->tax_class = MODULE_SHIPPING_FREESHIPPER_TAX_CLASS;
 
       // enable only when entire cart is free shipping
-//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_shipping','1') == $_SESSION['cart']->count_contents()) {
+//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') == $_SESSION['cart']->count_contents()) {
       if (zen_get_shipping_enabled($this->code)) {
         $this->enabled = ((MODULE_SHIPPING_FREESHIPPER_STATUS == 'True') ? true : false);
       }

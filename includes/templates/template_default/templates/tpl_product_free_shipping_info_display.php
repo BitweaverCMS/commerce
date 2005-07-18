@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_free_shipping_info_display.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
+// $Id: tpl_product_free_shipping_info_display.php,v 1.3 2005/07/18 14:35:53 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -102,7 +102,7 @@ if ($debug_on == '1') {
   <tr>
     <td class="main" align="center" valign="top">
       <?php echo ((SHOW_PRODUCT_FREE_SHIPPING_INFO_MODEL == '1' and $products_model !='') ? TEXT_PRODUCT_MODEL . $products_model : '&nbsp;'); ?>
-      <?php echo (zen_get_product_is_always_free_shipping($products_id_current) ? '<br>' . TEXT_PRODUCT_FREE_SHIPPING_ICON : ''); ?>
+      <?php echo (zen_get_product_is_always_free_ship($products_id_current) ? '<br>' . TEXT_PRODUCT_FREE_SHIPPING_ICON : ''); ?>
     </td>
   </tr>
   <tr>
