@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.1 2005/07/08 05:56:40 spiderr Exp $
+//  $Id: sqlpatch.php,v 1.2 2005/07/26 12:31:50 spiderr Exp $
 //
   define('HEADING_TITLE','SQL Query Executor');
   define('HEADING_WARNING','BE SURE TO DO A FULL DATABASE BACKUP BEFORE RUNNING SCRIPTS HERE');
@@ -31,7 +31,7 @@
                               'field here, or by uploading a supplied script (.SQL) file.<br />' .
                               'When preparing scripts to be used by this tool, DO NOT include a table prefix, as this tool will ' .
                               'automatically insert the required prefix for the active database, based on settings in the store\'s ' .
-                              'admin/includes/configure.php file (DB_PREFIX definition).<br /><br />' .
+                              'admin/includes/configure.php file (BITCOMMERCE_DB_PREFIX definition).<br /><br />' .
                               'The commands entered or uploaded may only begin with the following statements, and MUST be in UPPERCASE:'.
                               '<br /><ul><li>DROP TABLE IF EXISTS</li><li>CREATE TABLE</li><li>INSERT INTO</li><li>ALTER TABLE</li>' .
                               '<li>UPDATE (just a single table)</li><li>DELETE FROM</li><li>DROP INDEX</li><li>CREATE INDEX</li>' .

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.3 2005/07/18 14:35:49 spiderr Exp $
+//  $Id: collect_info.php,v 1.4 2005/07/26 12:31:50 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -265,7 +265,7 @@ if (zen_get_product_is_linked($_GET['pID']) == 'true') {
 <?php } ?>
 <?php
 // hidden fields not changeable on products page
-echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id);
+echo zen_draw_hidden_field('master_categories_id', (!empty($pInfo->master_categories_id) ? $pInfo->master_categories_id : $current_category_id ) );
 echo zen_draw_hidden_field('products_discount_type', $pInfo->products_discount_type);
 echo zen_draw_hidden_field('products_discount_type_from', $pInfo->products_discount_type_from);
 echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorter);

@@ -17,25 +17,22 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.4 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.5 2005/07/26 12:31:54 spiderr Exp $
 //
 
   $header_template = 'tpl_header.php';
   $footer_template = 'tpl_footer.php';
 ?>
 
-
-<div id="header">
-<?php require(DIR_WS_MODULES . 'header_nav.php'); ?><br class="clear" />
+<div class="commercebar">
+	<span class="path"><?php echo $breadcrumb->trail(' &raquo; '); ?></span>
 </div>
-<?php require(DIR_WS_MODULES . 'header.php'); ?>
 
 <div id="content">
 
 	<div id="floatwrap">
 		<div id="col-main">
 	  		<div id="main">
-				<div class="breadCrumb"><?php echo $breadcrumb->trail(' &raquo; '); ?></div>
 <?php require($body_code); ?>
 			</div> <!-- end main -->
 		</div> <!-- end mainwrap -->

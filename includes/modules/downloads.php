@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
+// $Id: downloads.php,v 1.3 2005/07/26 12:31:53 spiderr Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
@@ -121,15 +121,9 @@
 ?>
 <?php
 // If there is a download in the order and they cannot get it, tell customer about download rules
-  $downloads_check_query = $db->Execute("select o.orders_id, opd.orders_products_download_id
-                          from " .
-                          TABLE_ORDERS . " o, " .
-                          TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
-                          where
-                          o.orders_id = opd.orders_id
-                          and o.orders_id = '" . $last_order . "'
-                          and opd.orders_products_filename != ''
-                          ");
+  $downloads_check_query = $db->query("select o.orders_id, opd.orders_products_download_id
+				                       from " .  TABLE_ORDERS . " o, " .  TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
+                				       where o.orders_id = opd.orders_id and o.orders_id = ? and opd.orders_products_filename != '' ", array( $last_order ) );
 
 if ($downloads_check_query->RecordCount() > 0 and $downloads->RecordCount() < 1) {
 ?>

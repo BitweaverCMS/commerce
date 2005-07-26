@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/07/15 19:14:59 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/07/26 12:31:54 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the login page
 // if there is nothing in the customers cart, redirect them to the shopping cart page
@@ -43,7 +43,7 @@
 				$_SESSION['billto'] = $_REQUEST['address'];
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 			} else {
-				$smarty->assign( 'address', $_REQUEST['address_store'] );
+				$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
 				$errors = array_merge( $errors, $gBitCustomer->mErrors );
 			}
 		} elseif (isset($_REQUEST['address'])) {
@@ -81,7 +81,7 @@
 		$_SESSION['billto'] = $_SESSION['customer_default_address_id'];
 	}
 
-	$smarty->assign_by_ref( 'errors', $errors );
+	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
 	$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 	$breadcrumb->add(NAVBAR_TITLE_2);

@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: paypal.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: paypal.php,v 1.2 2005/07/26 12:31:52 spiderr Exp $
 //
 
 // define the database table names used in the project
-  define('PAYPAL', DB_PREFIX . 'paypal');
+  define('PAYPAL', BITCOMMERCE_DB_PREFIX . 'paypal');
 
 ?>

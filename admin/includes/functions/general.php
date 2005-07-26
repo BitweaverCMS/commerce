@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.6 2005/07/18 14:35:48 spiderr Exp $
+//  $Id: general.php,v 1.7 2005/07/26 12:31:50 spiderr Exp $
 //
 
 ////
@@ -2395,14 +2395,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
 
 
-
-////
-// set the products_price_sorter
-  function zen_update_products_price_sorter($product_id) {
-    global $db;
-    $products_price_sorter = zen_get_products_actual_price($product_id);
-    $db->query("update " . TABLE_PRODUCTS . " set products_price_sorter=? WHERE products_id=?", array( $products_price_sorter, $product_id ) );
-  }
 
 ////
 // configuration key value lookup in TABLE_PRODUCT_TYPE_LAYOUT

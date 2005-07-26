@@ -348,6 +348,16 @@
     }
   }
 
+////
+// set the products_price_sorter
+  function zen_update_products_price_sorter($product_id) {
+    global $db;
+    if( !($products_price_sorter = zen_get_products_actual_price($product_id) ) ) {
+		$products_price_sorter = NULL;
+	}
+    $db->query("update " . TABLE_PRODUCTS . " set products_price_sorter=? WHERE products_id=?", array( $products_price_sorter, $product_id ) );
+  }
+
 
 
 ////

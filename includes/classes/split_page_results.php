@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: split_page_results.php,v 1.3 2005/07/11 07:11:37 spiderr Exp $
+// $Id: split_page_results.php,v 1.4 2005/07/26 12:31:52 spiderr Exp $
 //
 
   class splitPageResults {
@@ -32,9 +32,6 @@
 
 	  //lower case query to search for string positions
 	  $searchQuery = strtolower( $query );
-if ($debug) {
-  echo 'original_query=' . $query . '<br /><br />';
-}
       if (isset($_GET[$page_holder])) {
         $page = $_GET[$page_holder];
       } elseif (isset($_POST[$page_holder])) {
@@ -68,9 +65,6 @@ if ($debug) {
 
       $count_query = "select count(" . $count_string . ") as total " .
                                    substr($searchQuery, $pos_from, ($pos_to - $pos_from));
-if ($debug) {
-  echo 'count_query=' . $count_query . '<br /><br />';
-}
       $count = $db->Execute($count_query);
 
       $this->number_of_rows = $count->fields['total'];

@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: media_manager.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: media_manager.php,v 1.2 2005/07/26 12:31:53 spiderr Exp $
 //
-
+   global $db;
    $zv_collection_query = "select * from " . TABLE_MEDIA_TO_PRODUCTS . " 
                            where product_id = '" . (int)$_GET['products_id'] . "'";
    $zq_collections = $db->Execute($zv_collection_query);

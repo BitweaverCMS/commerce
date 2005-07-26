@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.5 2005/07/13 20:23:42 spiderr Exp $
+// $Id: index.php,v 1.6 2005/07/26 12:31:48 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -56,6 +56,7 @@ ob_start();
 
 	switch( $current_page ) {
 		case 'checkout_shipping_address':
+		case 'product_liberty_info':
 		case 'checkout_shipping':
 			require( BITCOMMERCE_PKG_PATH.'templates/'.$current_page.'.php' );
 			break;
@@ -118,7 +119,7 @@ require(DIR_WS_INCLUDES . 'application_bottom.php');
 
 // {{{ TIKI_MOD
 
-$smarty->assign_by_ref( 'bitcommerceCenter', ob_get_contents() );
+$gBitSmarty->assign_by_ref( 'bitcommerceCenter', ob_get_contents() );
 ob_end_clean();
 
 
@@ -130,7 +131,7 @@ if (COLUMN_LEFT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custome
 if (!$flag_disable_left) {
 ob_start();
 	require(DIR_WS_MODULES . 'column_left.php');
-	$smarty->assign_by_ref( 'bitcommerceLeft', ob_get_contents() );
+	$gBitSmarty->assign_by_ref( 'bitcommerceLeft', ob_get_contents() );
 ob_end_clean();
 }
 
@@ -143,7 +144,7 @@ if (!$flag_disable_right) {
 ob_start();
 	require(DIR_WS_MODULES . 'column_right.php');
 	$sideBar = ob_get_contents();
-	$smarty->assign_by_ref( 'bitcommerceRight', $sideBar );
+	$gBitSmarty->assign_by_ref( 'bitcommerceRight', $sideBar );
 ob_end_clean();
 }
 

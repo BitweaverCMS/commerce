@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_shipping.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: ot_shipping.php,v 1.2 2005/07/26 12:31:53 spiderr Exp $
 //
 
   class ot_shipping {
@@ -61,7 +61,7 @@
           } else {
             $shipping_tax_basis = $GLOBALS[$module]->tax_basis;
           }
-            
+
           if ($shipping_tax_basis == 'Billing') {
             $shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $order->billing['country']['id'], $order->billing['zone_id']);
             $shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $order->billing['country']['id'], $order->billing['zone_id']);

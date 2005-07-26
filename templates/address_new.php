@@ -17,17 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.3 2005/07/15 09:24:13 spiderr Exp $
+// $Id: address_new.php,v 1.4 2005/07/26 12:31:56 spiderr Exp $
 //
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
-	global $smarty, $db, $gBitCustomer;
-	$smarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
-	$smarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
-	$smarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
+	global $gBitSmarty, $db, $gBitCustomer;
+	$gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
+	$gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
+	$gBitSmarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
 	if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
-		$smarty->assign( 'collectState', TRUE );
+		$gBitSmarty->assign( 'collectState', TRUE );
 		if ( !empty( $entry['country_id'] ) ) {
 			if( $zones = CommerceCustomer::getCountryZones( $entry['country_id'] ) ) {
 				$statePullDown = zen_draw_pull_down_menu('state', $zones);
@@ -37,23 +37,23 @@ if( empty( $entry ) ) {
 		} else {
 			$statePullDown = zen_draw_input_field('state');
 		}
-		$smarty->assign( 'statePullDown', $statePullDown );
+		$gBitSmarty->assign( 'statePullDown', $statePullDown );
 	}
 
-	$smarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'] ) );
+	$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'] ) );
 
 	if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {
-		$smarty ->assign( 'primaryCheck', TRUE );
+		$gBitSmarty ->assign( 'primaryCheck', TRUE );
 	}
 
 	if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
-		$smarty->assign( 'addresses', $addresses );
+		$gBitSmarty->assign( 'addresses', $addresses );
 	}
 
 	if( !empty( $_SESSION['sendto'] ) ) {
-		$smarty->assign( 'sendToAddressId', $_SESSION['sendto'] );
+		$gBitSmarty->assign( 'sendToAddressId', $_SESSION['sendto'] );
 	}
 
-	print $smarty->fetch( 'bitpackage:bitcommerce/address_new.tpl' );
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/address_new.tpl' );
 ?>
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.2 2005/07/14 04:55:16 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.3 2005/07/26 12:31:55 spiderr Exp $
 //
   /*
 
@@ -31,12 +31,12 @@
   */
 ?>
 <?php
+  global $products_ids, $cPath, $module_show_categories, $previous, $next_item, $next_item_image, $next_item_button, $previous_image, $previous_button, $counter, $position;
 // only display when more than 1
   if ($products_ids->RecordCount() > 1) {
 ?>
 <table border="0" align="left" width="100%">
 <?php
-
     if ($cPath == '') {
       $cPath= zen_get_product_path((int)$_GET['products_id']);
     }
@@ -73,12 +73,12 @@
     }
 ?>
   <tr>
-    <td align="center" class="smallText" colspan="3"><?php echo (PREV_NEXT_PRODUCT); ?><?php echo ($position+1 . "/" . $counter); ?></td>
+    <td align="center" class="smallText" colspan="3"><?=tra( 'Product' )?> <?php echo ($position+1 . "/" . $counter); ?></td>
   </tr>
   <tr>
     <td align="center" valign="bottom" class="main"><a href="<?php echo zen_href_link(zen_get_info_page($previous), "cPath=$cPath&products_id=$previous"); ?>"><?php echo $previous_image . $previous_button; ?></a> </td>
     <td align="center" class="main"><a href="<?php echo zen_href_link(FILENAME_DEFAULT, "cPath=$cPath"); ?>"> <?php echo zen_image_button(BUTTON_IMAGE_RETURN_TO_PROD_LIST, BUTTON_RETURN_TO_PROD_LIST_ALT); ?></a> </td>
-    <td align="center" valign="bottom" class="main"><a href="<?php echo zen_href_link(zen_get_info_page($next_item), "cPath=$cPath&products_id=$next_item"); ?>"> <?php echo $next_item_image . $next_item_button; ?></a></td>
+    <td align="center" valign="bottom" class="main"><a href="<?php echo zen_href_link(zen_get_info_page($next_item), "cPath=$cPath&products_id=$next_item"); ?>"><?php echo $next_item_image . $next_item_button; ?></a></td>
   </tr>
 </table>
 <?php

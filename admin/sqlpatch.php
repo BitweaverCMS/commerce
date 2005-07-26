@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: sqlpatch.php,v 1.2 2005/07/26 12:31:49 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -34,7 +34,7 @@
                               'field here, or by uploading a supplied script (.SQL) file.<br />' .
                               'When preparing scripts to be used by this tool, DO NOT include a table prefix, as this tool will ' .
                               'automatically insert the required prefix for the active database, based on settings in the store\'s ' .
-                              'admin/includes/configure.php file (DB_PREFIX definition).<br /><br />' .
+                              'admin/includes/configure.php file (BITCOMMERCE_DB_PREFIX definition).<br /><br />' .
                               'The commands entered or uploaded may only begin with the following statements, and MUST be in UPPERCASE:'.
                               '<br /><ul><li>DROP TABLE IF EXISTS</li><li>CREATE TABLE</li><li>INSERT INTO</li><li>ALTER TABLE</li>' .
                               '<li>UPDATE (just a single table)</li><li>DELETE FROM</li><li>DROP INDEX</li><li>CREATE INDEX</li>' .
@@ -67,8 +67,8 @@ LEFT JOIN othercol_f po<br />
 ON p.othercol_f = po.othercol_f<br />
 WHERE p.othercol_f = pm.othercol_f;</li>
 </ul></code>' );
-  if (!defined('DB_PREFIX')) define('DB_PREFIX','');
-  if (!defined('TABLE_UPGRADE_EXCEPTIONS')) define('TABLE_UPGRADE_EXCEPTIONS', DB_PREFIX . 'upgrade_exceptions');
+  if (!defined('BITCOMMERCE_DB_PREFIX')) define('BITCOMMERCE_DB_PREFIX','');
+  if (!defined('TABLE_UPGRADE_EXCEPTIONS')) define('TABLE_UPGRADE_EXCEPTIONS', BITCOMMERCE_DB_PREFIX . 'upgrade_exceptions');
   define('REASON_TABLE_ALREADY_EXISTS','Cannot create table %s because it already exists');
   define('REASON_TABLE_DOESNT_EXIST','Cannot drop table %s because it does not exist.');
   define('REASON_TABLE_NOT_FOUND','Cannot execute because table %s does not exist.');
@@ -176,7 +176,7 @@ $linebreak = '
             break;
           case (substr($line_upper, 0, 13) == 'RENAME TABLE '):
             // RENAME TABLE command cannot be parsed to insert table prefixes, so skip if zen is using prefixes
-            if (zen_not_null(DB_PREFIX)) {
+            if (zen_not_null(BITCOMMERCE_DB_PREFIX)) {
               zen_write_to_upgrade_exceptions_table($line, 'RENAME TABLE command not supported by upgrader. Please use phpMyAdmin instead.', $sql_file);
               $ignore_line=true;
             }
@@ -292,7 +292,7 @@ $linebreak = '
 
   function zen_table_exists($tablename, $pre_install=false) {
     global $db;
-    $tables = $db->Execute("SHOW TABLES like '" . DB_PREFIX . $tablename . "'");
+    $tables = $db->Execute("SHOW TABLES like '" . BITCOMMERCE_DB_PREFIX . $tablename . "'");
     if (ZC_UPG_DEBUG3==true) echo 'Table check ('.$tablename.') = '. $tables->RecordCount() .'<br>';
     if ($tables->RecordCount() > 0) {
       return true;
@@ -367,7 +367,7 @@ $linebreak = '
     global $db;
     if (!zen_not_null($param)) return "Empty SQL Statement";
     $index = $param[2];
-    $sql = "show index from " . DB_PREFIX . $param[4];
+    $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[4];
     $result = $db->Execute($sql);
     while (!$result->EOF) {
       if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
@@ -389,7 +389,7 @@ $linebreak = '
     $index = (strtoupper($param[1])=='INDEX') ? $param[2] : $param[3];
     if (in_array('USING',$param)) return 'USING parameter found. Cannot validate syntax. Please run manually in phpMyAdmin.';
     $table = (strtoupper($param[2])=='INDEX' && strtoupper($param[4])=='ON') ? $param[5] : $param[4];
-    $sql = "show index from " . DB_PREFIX . $table;
+    $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $table;
     $result = $db->Execute($sql);
     while (!$result->EOF) {
       if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
@@ -414,7 +414,7 @@ $linebreak = '
         if (strtoupper($param[4]) == 'INDEX') {
           // check that the index to be added doesn't already exist
           $index = $param[5];
-          $sql = "show index from " . DB_PREFIX . $param[2];
+          $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo 'KEY: '.$result->fields['Key_name'].'<br />';
@@ -426,7 +426,7 @@ $linebreak = '
         } elseif (strtoupper($param[4])=='PRIMARY') {
           // check that the primary key to be added doesn't exist
           if ($param[5] != 'KEY') return;
-          $sql = "show index from " . DB_PREFIX . $param[2];
+          $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
@@ -439,7 +439,7 @@ $linebreak = '
         } elseif (!in_array(strtoupper($param[4]),array('CONSTRAINT','UNIQUE','PRIMARY','FULLTEXT','FOREIGN','SPATIAL') ) ) {
         // check that the column to be added does not exist
           $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
-          $sql = "show fields from " . DB_PREFIX . $param[2];
+          $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
@@ -458,7 +458,7 @@ $linebreak = '
         if (strtoupper($param[4]) == 'INDEX') {
           // check that the index to be dropped exists
           $index = $param[5];
-          $sql = "show index from " . DB_PREFIX . $param[2];
+          $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
@@ -473,7 +473,7 @@ $linebreak = '
         } elseif (strtoupper($param[4])=='PRIMARY') {
           // check that the primary key to be dropped exists
           if ($param[5] != 'KEY') return;
-          $sql = "show index from " . DB_PREFIX . $param[2];
+          $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
@@ -488,7 +488,7 @@ $linebreak = '
         } elseif (!in_array(strtoupper($param[4]),array('CONSTRAINT','UNIQUE','PRIMARY','FULLTEXT','FOREIGN','SPATIAL'))) {
           // check that the column to be dropped exists
           $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
-          $sql = "show fields from " . DB_PREFIX . $param[2];
+          $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
           $result = $db->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
@@ -506,7 +506,7 @@ $linebreak = '
       case ("CHANGE"):
         // just check that the column to be changed 'exists'
         $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
-        $sql = "show fields from " . DB_PREFIX . $param[2];
+        $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
         $result = $db->Execute($sql);
         while (!$result->EOF) {
           if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
@@ -537,7 +537,7 @@ $linebreak = '
      //[4]=blah blah
     $title = $values[1];
     $key  =  $values[3];
-    $sql = "select configuration_title from " . DB_PREFIX . "configuration where configuration_key='".$key."'";
+    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "configuration where configuration_key='".$key."'";
     $result = $db->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_CONFIG_KEY_ALREADY_EXISTS,$key);
   }
@@ -548,7 +548,7 @@ $linebreak = '
     $values=explode("'",$line);
     $title = $values[1];
     $key  =  $values[3];
-    $sql = "select configuration_title from " . DB_PREFIX . "product_type_layout where configuration_key='".$key."'";
+    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "product_type_layout where configuration_key='".$key."'";
     $result = $db->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_PRODUCT_TYPE_LAYOUT_KEY_ALREADY_EXISTS,$key);
   }
@@ -556,7 +556,7 @@ $linebreak = '
   function zen_write_to_upgrade_exceptions_table($line, $reason, $sql_file) {
     global $db;
     zen_create_exceptions_table();
-    $sql="INSERT INTO " . DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS . " VALUES ('','". $sql_file."','".$reason."', now(), '".addslashes($line)."')";
+    $sql="INSERT INTO " . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS . " VALUES ('','". $sql_file."','".$reason."', now(), '".addslashes($line)."')";
      if (ZC_UPG_DEBUG3==true) echo '<br />sql='.$sql.'<br />';
     $result = $db->Execute($sql);
     return $result;
@@ -565,14 +565,14 @@ $linebreak = '
   function zen_purge_exceptions_table() {
     global $db;
     zen_create_exceptions_table();
-    $result = $db->Execute("TRUNCATE TABLE " . DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS );
+    $result = $db->Execute("TRUNCATE TABLE " . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS );
     return $result;
   }
 
   function zen_create_exceptions_table() {
     global $db;
     if (!zen_table_exists(TABLE_UPGRADE_EXCEPTIONS)) {  
-      $result = $db->Execute("CREATE TABLE `" . DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS ."` (
+      $result = $db->Execute("CREATE TABLE `" . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS ."` (
             `upgrade_exception_id` smallint(5) NOT NULL auto_increment,
             `sql_file` varchar(50) default NULL,
             `reason` varchar(200) default NULL,
@@ -597,7 +597,7 @@ $linebreak = '
          if (@get_magic_quotes_gpc() > 0) $query_string = stripslashes($query_string);
          if ($debug==true) echo $query_string . '<br />';
          $query_string = explode($linebreak, ($query_string));
-         $query_results = executeSql($query_string, DB_DATABASE, DB_PREFIX);
+         $query_results = executeSql($query_string, DB_DATABASE, BITCOMMERCE_DB_PREFIX);
            if ($query_results['queries'] > 0 && $query_results['queries'] != $query_results['ignored']) {
              $messageStack->add($query_results['queries'].' statements processed.', 'success');
            } else {
@@ -625,7 +625,7 @@ $linebreak = '
             $upload_query = file($_FILES['sql_file']['tmp_name']);
             $query_string  = zen_db_prepare_input($upload_query);
             if ($query_string !='') {
-              $query_results = executeSql($query_string, DB_DATABASE, DB_PREFIX);
+              $query_results = executeSql($query_string, DB_DATABASE, BITCOMMERCE_DB_PREFIX);
               if ($query_results['queries'] > 0 && $query_results['queries'] != $query_results['ignored']) {
                 $messageStack->add($query_results['queries']. ' statements processed.', 'success');
               } else {

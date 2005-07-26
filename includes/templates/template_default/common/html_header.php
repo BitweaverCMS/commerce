@@ -17,26 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_header.php,v 1.3 2005/07/08 06:13:04 spiderr Exp $
+// $Id: html_header.php,v 1.4 2005/07/26 12:31:54 spiderr Exp $
 //
 // TODO
 // cvs block
 // stylesheets
 
 require(DIR_WS_MODULES . 'meta_tags.php');
-?>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>" />
-<title><?php echo META_TAG_TITLE; ?></title>
-<meta name="keywords" content="<?php echo META_TAG_KEYWORDS; ?>" />
-<meta name="description" content="<?php echo META_TAG_DESCRIPTION; ?>" />
-<base href="<?php echo (($request_type == 'SSL') ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG ); ?>" />
-<?php
-  $directory_array = $template->get_template_part($template->get_template_dir('.css',DIR_WS_TEMPLATE, $current_page_base,'css'), '/^style/', '.css');
 
-  while(list ($key, $value) = each($directory_array)) {
-    echo '<link rel="stylesheet" type="text/css" href="' . $template->get_template_dir('.css',DIR_WS_TEMPLATE, $current_page_base,'css') . '/' . $value . '" />';
-  }
   $directory_array = $template->get_template_part($template->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/common/', '/^jscript_/', '.js');
 
   while(list ($key, $value) = each($directory_array)) {

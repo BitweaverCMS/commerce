@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: dist-configure.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+// $Id: dist-configure.php,v 1.2 2005/07/26 12:31:49 spiderr Exp $
 //
 
 // Define the webserver and path parameters
@@ -71,7 +71,7 @@
 
 // define our database connection
   define('DB_TYPE', 'mysql');
-  define('DB_PREFIX', 'zen_');
+  define('BITCOMMERCE_DB_PREFIX', 'zen_');
   define('DB_SERVER', 'localhost'); // eg, localhost - should not be empty
   define('DB_SERVER_USERNAME', 'root');
   define('DB_SERVER_PASSWORD', '');

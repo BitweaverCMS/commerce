@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping_address.php,v 1.1 2005/07/13 20:24:06 spiderr Exp $
+// $Id: checkout_shipping_address.php,v 1.2 2005/07/26 12:31:56 spiderr Exp $
 //
 
 	if ($messageStack->size('checkout_address') > 0) {
-		$smarty->assign( 'errors', $messageStack->output('checkout_address') );
+		$gBitSmarty->assign( 'errors', $messageStack->output('checkout_address') );
 	}
 
 	if ($process == false) {
@@ -38,7 +38,7 @@
 								where customers_id = ?";
 
 			if( $rs = $db->query( $addresses_query, array( $_SESSION['customer_id'] ) ) ) {
-				$smarty->assign( 'addresses', $rs->GetRows() );
+				$gBitSmarty->assign( 'addresses', $rs->GetRows() );
 /*			while (!$rs->EOF) {
 				$format_id = zen_get_address_format_id($addresses->fields['country_id']);
 ?>
@@ -65,6 +65,6 @@
 			}
 		}
 	}
-  print $smarty->fetch( 'bitpackage:bitcommerce/checkout_shipping.tpl' );
+  print $gBitSmarty->fetch( 'bitpackage:bitcommerce/checkout_shipping.tpl' );
 
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.5 2005/07/17 20:28:27 lsces Exp $
+// $Id: order.php,v 1.6 2005/07/26 12:31:52 spiderr Exp $
 //
 
   class order {
@@ -567,12 +567,12 @@
 		$db->associateInsert(TABLE_ORDERS, $sql_data_array);
 
 		$insert_id = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
-	vd( $zf_ot_modules );
+
 		for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
 			$sql_data_array = array('orders_id' => $insert_id,
 									'title' => $zf_ot_modules[$i]['title'],
 									'text' => $zf_ot_modules[$i]['text'],
-									'value' => $zf_ot_modules[$i]['value'],
+									'value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
 									'class' => $zf_ot_modules[$i]['code'],
 									'sort_order' => $zf_ot_modules[$i]['sort_order']);
 

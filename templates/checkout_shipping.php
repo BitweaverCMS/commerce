@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.5 2005/07/15 19:15:06 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.6 2005/07/26 12:31:56 spiderr Exp $
 //
   require(DIR_WS_CLASSES . 'http_client.php');
 
@@ -74,7 +74,7 @@
 //vd( $_SESSION );
   require(DIR_WS_CLASSES . 'order.php');
   $order = new order;
-$smarty->assign_by_ref( 'order', $order );
+$gBitSmarty->assign_by_ref( 'order', $order );
 
 // register a random ID in the session to check throughout the checkout procedure
 // against alterations in the shopping cart contents
@@ -139,8 +139,8 @@ $smarty->assign_by_ref( 'order', $order );
 				$_SESSION['sendto'] = $_REQUEST['address'];
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
-				$smarty->assign( 'address', $_REQUEST['address_store'] );
-				$smarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
+				$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
+				$gBitSmarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
 			}
 		} elseif( !empty( $_REQUEST['address'] ) ) {
 			$_SESSION['shipping'] = $_REQUEST['address'];
@@ -213,9 +213,9 @@ $smarty->assign_by_ref( 'order', $order );
 
 		if( $_REQUEST['change_address'] || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
 			if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
-				$smarty->assign( 'addresses', $addresses );
+				$gBitSmarty->assign( 'addresses', $addresses );
 			}
-			$smarty->assign( 'changeAddress', TRUE );
+			$gBitSmarty->assign( 'changeAddress', TRUE );
 		} else {
 			// get all available shipping quotes
 			$quotes = $shipping_modules->quote();
@@ -241,12 +241,12 @@ $smarty->assign_by_ref( 'order', $order );
 				}
 			}
 
-			$smarty->assign( 'shippingModules', zen_count_shipping_modules() );
-			$smarty->assign_by_ref( 'quotes', $quotes );
-			$smarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
-			$smarty->assign( 'freeShipping', $free_shipping );
-			$smarty->assign( 'sessionShippingId', $_SESSION['shipping'] );
+			$gBitSmarty->assign( 'shippingModules', zen_count_shipping_modules() );
+			$gBitSmarty->assign_by_ref( 'quotes', $quotes );
+			$gBitSmarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
+			$gBitSmarty->assign( 'freeShipping', $free_shipping );
+			$gBitSmarty->assign( 'sessionShippingId', $_SESSION['shipping'] );
 		}
 
-  print $smarty->fetch( 'bitpackage:bitcommerce/checkout_shipping.tpl' );
+  print $gBitSmarty->fetch( 'bitpackage:bitcommerce/checkout_shipping.tpl' );
 ?>

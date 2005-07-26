@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.3 2005/07/17 20:28:28 lsces Exp $
+// $Id: functions_prices.php,v 1.4 2005/07/26 12:31:53 spiderr Exp $
 //
 //
 ////
@@ -1296,19 +1296,6 @@ If a special exist * 10
     } else {
       return false;
     }
-  }
-
-////
-// set the products_price_sorter
-  function zen_update_products_price_sorter($product_id) {
-    global $db;
-
-    $products_price_sorter = zen_get_products_actual_price($product_id);
-
-    $db->Execute("update " . TABLE_PRODUCTS . " set
-         products_price_sorter='" . zen_db_prepare_input($products_price_sorter) . "'
-         where products_id='" . $product_id . "'");
-
   }
 
 ////

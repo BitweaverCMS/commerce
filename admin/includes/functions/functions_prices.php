@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.3 2005/07/17 20:28:26 lsces Exp $
+// $Id: functions_prices.php,v 1.4 2005/07/26 12:31:49 spiderr Exp $
 //
 //
 ////
@@ -180,11 +180,12 @@
 // Is the product free?
   function zen_get_products_price_is_free($products_id) {
     global $db;
-    $product_check = $db->Execute("select product_is_free from " . TABLE_PRODUCTS . " where products_id = '" . $products_id . "'" . " limit 1");
-    if ($product_check->fields['product_is_free'] == '1') {
-      $the_free_price = true;
-    } else {
-      $the_free_price = false;
+    $the_free_price = false;
+	if( !empty( $products_id ) ) {
+      $product_check = $db->Execute("select product_is_free from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+      if ($product_check->fields['product_is_free'] == '1') {
+        $the_free_price = true;
+	  }
     }
     return $the_free_price;
   }
@@ -193,11 +194,12 @@
 // Is the product call for price?
   function zen_get_products_price_is_call($products_id) {
     global $db;
-    $product_check = $db->Execute("select product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . $products_id . "'" . " limit 1");
-    if ($product_check->fields['product_is_call'] == '1') {
-      $the_call_price = true;
-    } else {
-      $the_call_price = false;
+    $the_call_price = false;
+	if( !empty( $products_id ) ) {
+      $product_check = $db->Execute("select product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+      if ($product_check->fields['product_is_call'] == '1') {
+        $the_call_price = true;
+      }
     }
     return $the_call_price;
   }

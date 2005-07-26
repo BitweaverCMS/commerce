@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
+// $Id: product_listing.php,v 1.3 2005/07/26 12:31:53 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
@@ -172,7 +172,7 @@
     }
       $listing->MoveNext();
     }
-    $error_categories==false;
+    $error_categories = false;
   } else {
     $list_box_contents = array();
 

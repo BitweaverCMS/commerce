@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.6 2005/07/15 19:14:56 spiderr Exp $
+// $Id: application_top.php,v 1.7 2005/07/26 12:31:51 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -27,84 +27,11 @@ error_reporting(E_ALL & ~E_NOTICE);
 
   @ini_set("arg_separator.output","&");
 
-// Set the local configuration parameters - mainly for developers
-  if (file_exists(BITCOMMERCE_PKG_PATH.'includes/local/configure.php')) {
-    include(BITCOMMERCE_PKG_PATH.'includes/local/configure.php');
-  }
-// include server parameters
-  if (file_exists(BITCOMMERCE_PKG_PATH.'includes/configure.php')) {
-    include(BITCOMMERCE_PKG_PATH.'includes/configure.php');
-  }
-
-// include the list of extra configure files
-  if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_configures')) {
-    while ($zv_file = $za_dir->read()) {
-      if (strstr($zv_file, '.php')) {
-        require(DIR_WS_INCLUDES . 'extra_configures/' . $zv_file);
-      }
-    }
-  }
-
-
-// determine install status
-  if (( (!file_exists( BITCOMMERCE_PKG_PATH.'includes/configure.php') && !file_exists( BITCOMMERCE_PKG_PATH.'includes/local/configure.php' )) ) || (DB_TYPE == '') || (!file_exists( BITCOMMERCE_PKG_PATH.'includes/classes/db/' .DB_TYPE . '/query_factory.php'))) {
-print "DIE DIE DIE ";
-    header('location: zc_install/index.php');
-    exit;
-  }
 
 
 
-// Define the project version  (must come after DB class is loaded)
-  require(DIR_FS_INCLUDES . 'version.php');
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-// set the type of request (secure or not)
-  $request_type = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
-
-// set php_self in the local scope
-  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
-
-// include the list of project filenames
-  require(DIR_FS_INCLUDES . 'filenames.php');
-
-// include the list of project database tables
-  require(DIR_FS_INCLUDES . 'database_tables.php');
-
-// include the list of compatibility issues
-  require(DIR_FS_INCLUDES . 'functions/compatibility.php');
-
-// include the list of extra database tables and filenames
-//  include(DIR_WS_MODULES . 'extra_datafiles.php');
-  if ($za_dir = @dir(DIR_FS_INCLUDES . 'extra_datafiles')) {
-    while ($zv_file = $za_dir->read()) {
-      if (strstr($zv_file, '.php')) {
-        require(DIR_FS_INCLUDES . 'extra_datafiles/' . $zv_file);
-      }
-    }
-  }
-
-// set the HTTP GET parameters manually if search_engine_friendly_urls is enabled
-  if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
-    if (strlen($_SERVER['REQUEST_URI']) > 1) {
-      $GET_array = array();
-      $PHP_SELF = $_SERVER['SCRIPT_NAME'];
-      $vars = explode('/', substr($_SERVER['REQUEST_URI'], 1));
-      for ($i=0, $n=sizeof($vars); $i<$n; $i++) {
-        if (strpos($vars[$i], '[]')) {
-          $GET_array[substr($vars[$i], 0, -2)][] = $vars[$i+1];
-        } else {
-          $_REQUEST[$vars[$i]] = $vars[$i+1];
-        }
-        $i++;
-      }
-
-      if (sizeof($GET_array) > 0) {
-        while (list($key, $value) = each($GET_array)) {
-          $_REQUEST[$key] = $value;
-        }
-      }
-    }
-  }
 
 // define general functions used application-wide
   require_once(DIR_FS_FUNCTIONS . 'functions_general.php');
@@ -113,18 +40,6 @@ print "DIE DIE DIE ";
 
 // load extra functions
   require_once(DIR_FS_MODULES . 'extra_functions.php');
-
-
-
-
-
-
-
-
-
-
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-
 
 
 
@@ -833,6 +748,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 // include the breadcrumb class and start the breadcrumb trail
   require(DIR_WS_CLASSES . 'breadcrumb.php');
   $breadcrumb = new breadcrumb;
+  $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
 
   $breadcrumb->add(HEADER_TITLE_CATALOG, zen_href_link(FILENAME_DEFAULT));
 
@@ -869,9 +785,10 @@ case 'wishlist_add_cart': reset ($lvnr);
 
 // add the products model to the breadcrumb trail
   if ( !empty( $_REQUEST['products_id'] ) ) {
-    $gCommerceProduct = new CommerceProduct();
-    if( $gCommerceProduct->load( $_REQUEST['products_id'] ) ) {
-      $breadcrumb->add( $gCommerceProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
+    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+    if( $gBitProduct->load() ) {
+      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
     }
   }
 
