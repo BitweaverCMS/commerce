@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.7 2005/07/18 14:35:52 spiderr Exp $
+// $Id: functions_general.php,v 1.8 2005/07/26 14:43:42 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -828,21 +828,6 @@
 
 
 ////
-  function zen_db_prepare_input($string) {
-    if (is_string($string)) {
-      return trim(zen_sanitize_string(stripslashes($string)));
-    } elseif (is_array($string)) {
-      reset($string);
-      while (list($key, $value) = each($string)) {
-        $string[$key] = zen_db_prepare_input($value);
-      }
-      return $string;
-    } else {
-      return $string;
-    }
-  }
-
-////
 /*
   function $db->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
     global $db;
@@ -1222,24 +1207,6 @@
     }
     return $zp_result;
   }
-
-  function zen_get_languages() {
-    global $db;
-    $languages = $db->Execute("select languages_id, name, code, image, directory
-                               from " . TABLE_LANGUAGES . " order by sort_order");
-
-    while (!$languages->EOF) {
-      $languages_array[] = array('id' => $languages->fields['languages_id'],
-                                 'name' => $languages->fields['name'],
-                                 'code' => $languages->fields['code'],
-                                 'image' => $languages->fields['image'],
-                                 'directory' => $languages->fields['directory']);
-      $languages->MoveNext();
-    }
-
-    return $languages_array;
-  }
-
 
 
 

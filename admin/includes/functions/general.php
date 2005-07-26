@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.7 2005/07/26 12:31:50 spiderr Exp $
+//  $Id: general.php,v 1.8 2005/07/26 14:43:41 spiderr Exp $
 //
 
 ////
@@ -534,24 +534,6 @@
     $pieces = explode('{', $uprid);
 
     return $pieces[0];
-  }
-
-
-  function zen_get_languages() {
-    global $db;
-    $languages = $db->Execute("SELECT languages_id, name, code, image, directory
-                               FROM " . TABLE_LANGUAGES . " ORDER BY sort_order");
-
-    while (!$languages->EOF) {
-      $languages_array[] = array('id' => $languages->fields['languages_id'],
-                                 'name' => $languages->fields['name'],
-                                 'code' => $languages->fields['code'],
-                                 'image' => $languages->fields['image'],
-                                 'directory' => $languages->fields['directory']);
-      $languages->MoveNext();
-    }
-
-    return $languages_array;
   }
 
 
@@ -2984,22 +2966,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     $parent_id = $categories_lookup->fields['master_categories_id'];
 
     return $parent_id;
-  }
-
-  function zen_db_prepare_input($string) {
-  	if( empty( $string ) ) {
-		return NULL;
-    } elseif (is_string($string)) {
-      return trim(stripslashes($string));
-    } elseif (is_array($string)) {
-      reset($string);
-      while (list($key, $value) = each($string)) {
-        $string[$key] = zen_db_prepare_input($value);
-      }
-      return $string;
-    } else {
-      return $string;
-    }
   }
 
 ?>

@@ -659,7 +659,8 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   metatags_products_name_status I1,
   metatags_model_status I1,
   metatags_price_status I1,
-  metatags_title_tagline_status I1
+  metatags_title_tagline_status I1,
+  related_content_id I4,
 ",
 //  KEY idx_products_date_added_zen (products_date_added),
 //  KEY idx_products_status_zen ( products_status )
