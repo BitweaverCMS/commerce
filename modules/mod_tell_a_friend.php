@@ -17,24 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_tell_a_friend.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_tell_a_friend.php,v 1.2 2005/07/30 16:26:26 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
-// test if box should display
-  $show_tell_a_friend= false;
+	// test if box should display
+	$show_tell_a_friend= false;
 
-  if (isset($_GET['products_id']) and zen_products_id_valid($_GET['products_id'])) {
-    if (!($_GET['main_page']==FILENAME_TELL_A_FRIEND)) $show_tell_a_friend = true;
-  }
-
-  if ($show_tell_a_friend == true) {
-//	require($template->get_template_dir('tpl_tell_a_friend.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_tell_a_friend.php');
-    $title =  BOX_HEADING_TELL_A_FRIEND;
-    $left_corner = false;
-    $right_corner = false;
-    $right_arrow = false;
-    $title_link = false;
-//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-  }
+	if( $gBitProduct->isValid() && !($_GET['main_page']==FILENAME_TELL_A_FRIEND) ) {
+		$gBitSmarty->assign( 'sideboxTellFriend', TRUE );
+		if( empty( $moduleTitle ) ) {
+			$gBitSmarty->assign( 'moduleTitle', tra( 'Tell a friend' ) );
+		}
+	}
 ?>

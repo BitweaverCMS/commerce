@@ -1,27 +1,12 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  {bitmodule title=$moduleTitle name="tellafriend"}
-  $content = "";
-  $content = zen_draw_form('tell_a_friend', zen_href_link(FILENAME_TELL_A_FRIEND, '', 'NONSSL', false), 'get');
-  $content = zen_draw_input_field('to_email_address', '', 'size="15"') . '&nbsp;' . zen_image_submit('button_tell_a_friend.gif', BOX_HEADING_TELL_A_FRIEND) . zen_draw_hidden_field('products_id', $_GET['products_id']) . zen_hide_session_id() . '<p>' . BOX_TELL_A_FRIEND_TEXT . '</p>
-
+{if $sideboxTellFriend}
+{bitmodule title=$moduleTitle name="tellafriend"}
+{form ipackage=bitcommerce iname="quick_find" ifile="index.php?main_page=tell_a_friend"}
+	<div class="row">
+		<input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}" />
+		<input type="text" name="to_email_address" />
+		<input type="image" src="{$smarty.const.LIBERTY_PKG_URL}icons/mail_send.png" alt="{tr}Tell a friend{/tr}" />
+	</div>
+	<p>{tr}Tell someone you know about this product.{/tr}</p>
+{/form}
 {/bitmodule}
+{/if}

@@ -178,6 +178,10 @@ class CommerceProduct extends BitBase {
 		return( !empty( $this->mProductsId ) );
 	}
 
+	function isAvailable() {
+		return( $this->isValid() && !empty( $this->mInfo['products_status'] ) );
+	}
+
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),

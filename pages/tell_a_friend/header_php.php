@@ -18,33 +18,18 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/07/30 16:26:25 spiderr Exp $
 
 //
-  if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
-    $_SESSION['navigation']->set_snapshot();
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-  }
+	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
+		$_SESSION['navigation']->set_snapshot();
+		zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+	}
 
-  $valid_product = false;
-  if (isset($_GET['products_id'])) {
-    $product_info_query = "select pd.products_name
-                           from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                           where p.products_status = '1'
-                           and p.products_id = '" . (int)$_GET['products_id'] . "'
-                           and p.products_id = pd.products_id
-                           and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
-
-    $product_info = $db->Execute($product_info_query);
-
-    if ($product_info->RecordCount() > 0) {
-      $valid_product = true;
-    }
-  }
-
-  if ($valid_product == false) {
-    zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
-  }
+	$valid_product = false;
+	if( !$gBitProduct->isAvailable() ) {
+		zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
+	}
 
   require(DIR_WS_MODULES . 'require_languages.php');
 
