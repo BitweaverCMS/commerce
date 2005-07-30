@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.8 2005/07/30 03:01:52 spiderr Exp $
+// $Id: application_top.php,v 1.9 2005/07/30 15:59:38 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -375,6 +375,73 @@ function clean_input( &$pArray ) {
   require(DIR_WS_CLASSES . 'message_stack.php');
   $messageStack = new messageStack;
 
+
+
+
+
+// include the breadcrumb class and start the breadcrumb trail
+  require(DIR_WS_CLASSES . 'breadcrumb.php');
+  $breadcrumb = new breadcrumb;
+  $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
+
+  $breadcrumb->add(HEADER_TITLE_CATALOG, zen_href_link(FILENAME_DEFAULT));
+
+// add category names or the manufacturer name to the breadcrumb trail
+  if (isset($cPath_array)) {
+    for ($i=0, $n=sizeof($cPath_array); $i<$n; $i++) {
+      $categories_query = "SELECT categories_name
+                           FROM " . TABLE_CATEGORIES_DESCRIPTION . "
+                           WHERE categories_id = '" . (int)$cPath_array[$i] . "'
+                           and language_id = '" . (int)$_SESSION['languages_id'] . "'";
+
+      $categories = $db->Execute($categories_query);
+
+      if ($categories->RecordCount() > 0) {
+        $breadcrumb->add($categories->fields['categories_name'], zen_href_link(FILENAME_DEFAULT, 'cPath=' . implode('_', array_slice($cPath_array, 0, ($i+1)))));
+      } else {
+        break;
+      }
+    }
+  }
+
+// split to add manufacturers_name to the display
+  if (isset($_REQUEST['manufacturers_id'])) {
+    $manufacturers_query = "SELECT manufacturers_name
+                            FROM " . TABLE_MANUFACTURERS . "
+                            WHERE manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
+
+    $manufacturers = $db->Execute($manufacturers_query);
+
+    if ($manufacturers->RecordCount() > 0) {
+      $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_REQUEST['manufacturers_id']));
+    }
+  }
+
+// add the products model to the breadcrumb trail
+  if ( !empty( $_REQUEST['products_id'] ) ) {
+    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+    if( $gBitProduct->load() ) {
+      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
+    }
+	if( is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
+		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
+		die;
+	}
+  } else {
+    $gBitProduct = new CommerceProduct();
+  }
+	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+
+
+
+
+
+
+
+
+
+
+
 // Shopping cart actions
   if (isset($_REQUEST['action'])) {
 // redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled
@@ -393,6 +460,8 @@ function clean_input( &$pArray ) {
         $parameters = array('action', 'pid', 'main_page');
       }
     }
+
+
     switch ($_REQUEST['action']) {
       // customer wants to update the product quantity in their shopping cart
       // delete checkbox or 0 quantity removes FROM cart
@@ -428,10 +497,17 @@ function clean_input( &$pArray ) {
                               zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                               break;
 
-// remove individual products FROM cart
-      case 'remove_product': if (isset($_REQUEST['product_id']) && zen_not_null($_REQUEST['product_id'])) $_SESSION['cart']->remove($_REQUEST['product_id']);
-                             zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
-                             break;
+
+
+
+	// remove individual products FROM cart
+      case 'remove_product':
+	  	if (isset($_REQUEST['product_id']) && zen_not_null($_REQUEST['product_id'])) $_SESSION['cart']->remove($_REQUEST['product_id']);
+		zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
+		break;
+
+
+
       // customer adds a product FROM the products page
       case 'add_product' :
                               if (isset($_POST['products_id']) && is_numeric($_POST['products_id'])) {
@@ -581,55 +657,38 @@ function clean_input( &$pArray ) {
                               zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
                               break;
 
-      case 'notify' :         if ($_SESSION['customer_id']) {
-                                if (isset($_REQUEST['products_id'])) {
-                                  $notify = $_REQUEST['products_id'];
-                                } elseif (isset($_REQUEST['notify'])) {
-                                  $notify = $_REQUEST['notify'];
-                                } elseif (isset($_REQUEST['notify'])) {
-                                  $notify = $_REQUEST['notify'];
-                                } else {
-                                  zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
-                                }
-                                if (!is_array($notify)) $notify = array($notify);
-                                for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
-                                  $check_query = "SELECT count(*) as count
-                                                  FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                  WHERE products_id = '" . $notify[$i] . "'
-                                                  and customers_id = '" . $_SESSION['customer_id'] . "'";
-                                  $check = $db->Execute($check_query);
-                                  if ($check->fields['count'] < 1) {
-                                    $sql = "insert into " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                            (products_id, customers_id, date_added)
-                                            values ('" . $notify[$i] . "', '" . $_SESSION['customer_id'] . "', now())";
-                                    $db->Execute($sql);
-                                  }
-                                }
-                                zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
-                              } else {
-                                $_SESSION['navigation']->set_snapshot();
-                                zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-                              }
-                              break;
-      case 'notify_remove' :  if ($_SESSION['customer_id'] && isset($_REQUEST['products_id'])) {
-                                $check_query = "SELECT count(*) as count
-                                                FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                                WHERE products_id = '" . $_REQUEST['products_id'] . "'
-                                                and customers_id = '" . $_SESSION['customer_id'] . "'";
-
-                                $check = $db->Execute($check_query);
-                                if ($check->fields['count'] > 0) {
-                                  $sql = "delete FROM " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                          WHERE products_id = '" . $_REQUEST['products_id'] . "'
-                                          and customers_id = '" . $_SESSION['customer_id'] . "'";
-                                  $db->Execute($sql);
-                                }
-                                zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'main_page'))));
-                              } else {
-                                $_SESSION['navigation']->set_snapshot();
-                                zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-                              }
-                              break;
+		case 'notify' :
+			if( $gBitUser->isRegistered() ) {
+				if (isset($_REQUEST['products_id'])) {
+					$notify = $_REQUEST['products_id'];
+				} elseif (isset($_REQUEST['notify'])) {
+					$notify = $_REQUEST['notify'];
+				} elseif (isset($_REQUEST['notify'])) {
+					$notify = $_REQUEST['notify'];
+				} else {
+					zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
+				}
+				if (!is_array($notify)) {
+					$notify = array($notify);
+				}
+				for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
+					$gBitProduct->storeNotification( $gBitUser->mUserId, $notify[$i] );
+				}
+				zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
+			} else {
+				$_SESSION['navigation']->set_snapshot();
+				zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+			}
+			break;
+		case 'notify_remove' :
+			if( $gBitUser->isRegistered() && $gBitProduct->isValid() ) {
+				$gBitProduct->expungeNotification( $gBitUser->mUserId );
+				zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'main_page'))));
+			} else {
+				$_SESSION['navigation']->set_snapshot();
+				zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+			}
+			break;
       case 'cust_order' :     if ($_SESSION['customer_id'] && isset($_REQUEST['pid'])) {
                                 if (zen_has_product_attributes($_REQUEST['pid'])) {
                                   zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));
@@ -745,58 +804,6 @@ case 'wishlist_add_cart': reset ($lvnr);
     $cPath_array = array();
   }
 
-// include the breadcrumb class and start the breadcrumb trail
-  require(DIR_WS_CLASSES . 'breadcrumb.php');
-  $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
-
-  $breadcrumb->add(HEADER_TITLE_CATALOG, zen_href_link(FILENAME_DEFAULT));
-
-// add category names or the manufacturer name to the breadcrumb trail
-  if (isset($cPath_array)) {
-    for ($i=0, $n=sizeof($cPath_array); $i<$n; $i++) {
-      $categories_query = "SELECT categories_name
-                           FROM " . TABLE_CATEGORIES_DESCRIPTION . "
-                           WHERE categories_id = '" . (int)$cPath_array[$i] . "'
-                           and language_id = '" . (int)$_SESSION['languages_id'] . "'";
-
-      $categories = $db->Execute($categories_query);
-
-      if ($categories->RecordCount() > 0) {
-        $breadcrumb->add($categories->fields['categories_name'], zen_href_link(FILENAME_DEFAULT, 'cPath=' . implode('_', array_slice($cPath_array, 0, ($i+1)))));
-      } else {
-        break;
-      }
-    }
-  }
-
-// split to add manufacturers_name to the display
-  if (isset($_REQUEST['manufacturers_id'])) {
-    $manufacturers_query = "SELECT manufacturers_name
-                            FROM " . TABLE_MANUFACTURERS . "
-                            WHERE manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
-
-    $manufacturers = $db->Execute($manufacturers_query);
-
-    if ($manufacturers->RecordCount() > 0) {
-      $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_REQUEST['manufacturers_id']));
-    }
-  }
-
-// add the products model to the breadcrumb trail
-  if ( !empty( $_REQUEST['products_id'] ) ) {
-    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
-    if( $gBitProduct->load() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
-    }
-	if( is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
-		die;
-	}
-  } else {
-    $gBitProduct = new CommerceProduct();
-  }
 
   require(DIR_WS_CLASSES . 'category_tree.php');
 

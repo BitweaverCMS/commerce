@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: layout_controller.php,v 1.3 2005/07/30 15:59:35 spiderr Exp $
 //
 
 
@@ -213,8 +213,8 @@ if ($warning_new_box) {
               </tr>
 
 <?php
-  $boxes_directory = DIR_FS_CATALOG_MODULES . 'sideboxes' . '/';
-  $boxes_directory_template = DIR_FS_CATALOG_MODULES . 'sideboxes/' . $template_dir . '/';
+  $boxes_directory = BITCOMMERCE_PKG_PATH . 'modules/mod_';
+  $boxes_directory_template = BITCOMMERCE_PKG_PATH . 'modules/mod_';
 
   $column_controller = $db->Execute("select layout_id, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single from " . TABLE_LAYOUT_BOXES . " where layout_template='" . $template_dir . "' order by  layout_box_location, layout_box_sort_order");
   while (!$column_controller->EOF) {
@@ -230,7 +230,7 @@ if ($warning_new_box) {
       echo '              <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $column_controller->fields['layout_id']) . '\'">' . "\n";
     }
 ?>
-                <td class="dataTableContent" width="100"><?php echo (file_exists($boxes_directory_template . $column_controller->fields['layout_box_name']) ? '<span class="alert">' . ereg_replace(DIR_FS_CATALOG_MODULES, '', $boxes_directory_template) . '</span>' . $column_controller->fields['layout_box_name'] : ereg_replace(DIR_FS_CATALOG_MODULES, '', $boxes_directory) . $column_controller->fields['layout_box_name']); ?></td>
+                <td class="dataTableContent" width="100"><?php echo (file_exists($boxes_directory_template . $column_controller->fields['layout_box_name']) ? $column_controller->fields['layout_box_name'] : ereg_replace(DIR_FS_CATALOG_MODULES, '', $boxes_directory) . $column_controller->fields['layout_box_name']); ?></td>
                 <td class="<?php echo ( (file_exists($boxes_directory . $column_controller->fields['layout_box_name']) or file_exists($boxes_directory_template . $column_controller->fields['layout_box_name'])) ? dataTableContent : messageStackError ); ?>" align="center"><?php echo ($column_controller->fields['layout_box_status']=='1' ? TEXT_ON : '<span class="alert">' . TEXT_OFF .'</span>'); ?></td>
                 <td class="<?php echo ( (file_exists($boxes_directory . $column_controller->fields['layout_box_name']) or file_exists($boxes_directory_template . $column_controller->fields['layout_box_name'])) ? dataTableContent : messageStackError ); ?>" align="center"><?php echo ($column_controller->fields['layout_box_location']=='0' ? TEXT_LEFT : TEXT_RIGHT); ?></td>
                 <td class="<?php echo ( (file_exists($boxes_directory . $column_controller->fields['layout_box_name']) or file_exists($boxes_directory_template . $column_controller->fields['layout_box_name'])) ? dataTableContent : messageStackError ); ?>" align="center"><?php echo $column_controller->fields['layout_box_sort_order']; ?></td>

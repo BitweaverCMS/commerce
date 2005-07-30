@@ -2,9 +2,9 @@
 
 
 class CommerceProduct extends BitBase {
-	function CommerceProduct( $pProductId=NULL ) {
+	function CommerceProduct( $pProductsId=NULL ) {
 		BitBase::BitBase();
-		$this->mProductsId = $pProductId;
+		$this->mProductsId = $pProductsId;
 	}
 
 	function load() {
@@ -32,11 +32,11 @@ class CommerceProduct extends BitBase {
 		}
 	}
 
-	function getProduct( $pProductId ) {
+	function getProduct( $pProductsId ) {
 		global $db;
 		$ret = NULL;
-		if( is_numeric( $pProductId ) ) {
-			$bindVars = array( $pProductId );
+		if( is_numeric( $pProductsId ) ) {
+			$bindVars = array( $pProductsId );
 			array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 			$query = "SELECT *
 					  FROM " . TABLE_PRODUCTS . " p
@@ -112,17 +112,27 @@ class CommerceProduct extends BitBase {
 
 // 		$selectSql .= ' , s.* ';
 		if( !empty( $pListHash['specials'] ) ) {
-			$fromSql .= " INNER JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id ) ";
-			$whereSql .= " and s.status = '1' ";
+			$fromSql .= " INNER JOIN " . TABLE_SPECIALS . " s ON ( p.`products_id` = s.`products_id` ) ";
+			$whereSql .= " AND s.`status` = '1' ";
 // 		} else {
 // 			$fromSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
-			$fromSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.products_id = f.products_id ) ";
-			$whereSql .= " and f.status = '1' ";
-// 		} else {
-// 			$fromSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
+			$fromSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
+			$whereSql .= " AND f.`status` = '1' ";
+		}
+
+		if( !empty( $pListHash['best_sellers'] ) ) {
+			$whereSql .= " AND p.`products_ordered` > 0 ";
+		}
+
+
+		if( !empty( $pListHash['reviews'] ) ) {
+			$selectSql .= ' , r.`reviews_rating`, rd.`reviews_text` ';
+			$fromSql .= " INNER JOIN " . TABLE_REVIEWS . " r  ON ( p.`products_id` = r.`products_id` ) INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON ( r.`reviews_id` = rd.`reviews_id` ) ";
+			$whereSql .= " AND r.`status` = '1' AND rd.languages_id = ? ";
+			array_push( $bindVars, (int)$_SESSION['languages_id'] );
 		}
 
 		if ( !empty( $pListHash['category_id'] ) ) {
@@ -380,39 +390,39 @@ class CommerceProduct extends BitBase {
 		return $ret;
 	}
 
-	function quantityInCart( $pProductId = NULL ) {
-		if( empty( $pProductId ) && !empty( $this->mProductsId ) ) {
-			$pProductId = $this->mProductsId;
+	function quantityInCart( $pProductsId = NULL ) {
+		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
+			$pProductsId = $this->mProductsId;
 		}
-		return $_SESSION['cart']->get_quantity( $pProductId );
+		return $_SESSION['cart']->get_quantity( $pProductsId );
 	}
 
 	////
 	// Return quantity buy now
-	function getBuyNowQuantity( $pProductId = NULL) {
+	function getBuyNowQuantity( $pProductsId = NULL) {
 		global $cart;
-		if( empty( $pProductId ) && !empty( $this->mProductsId ) ) {
-			$pProductId = $this->mProductsId;
+		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
+			$pProductsId = $this->mProductsId;
 		}
-		$check_min = zen_get_products_quantity_order_min( $pProductId );
-		$check_units = zen_get_products_quantity_order_units( $pProductId );
+		$check_min = zen_get_products_quantity_order_min( $pProductsId );
+		$check_units = zen_get_products_quantity_order_units( $pProductsId );
 		$buy_now_qty=1;
 	// works on Mixed ON
 		switch (true) {
-		case ($_SESSION['cart']->in_cart_mixed($pProductId) == 0 ):
+		case ($_SESSION['cart']->in_cart_mixed($pProductsId) == 0 ):
 			if ($check_min >= $check_units) {
 			$buy_now_qty = $check_min;
 			} else {
 			$buy_now_qty = $check_units;
 			}
 			break;
-		case ($_SESSION['cart']->in_cart_mixed($pProductId) < $check_min):
-			$buy_now_qty = $check_min - $_SESSION['cart']->in_cart_mixed($pProductId);
+		case ($_SESSION['cart']->in_cart_mixed($pProductsId) < $check_min):
+			$buy_now_qty = $check_min - $_SESSION['cart']->in_cart_mixed($pProductsId);
 			break;
-		case ($_SESSION['cart']->in_cart_mixed($pProductId) > $check_min):
+		case ($_SESSION['cart']->in_cart_mixed($pProductsId) > $check_min):
 		// set to units or difference in units to balance cart
-			$new_units = $check_units - fmod($_SESSION['cart']->in_cart_mixed($pProductId), $check_units);
-	//echo 'Cart: ' . $_SESSION['cart']->in_cart_mixed($pProductId) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($_SESSION['cart']->in_cart_mixed($pProductId), $check_units) . '<br />';
+			$new_units = $check_units - fmod($_SESSION['cart']->in_cart_mixed($pProductsId), $check_units);
+	//echo 'Cart: ' . $_SESSION['cart']->in_cart_mixed($pProductsId) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($_SESSION['cart']->in_cart_mixed($pProductsId), $check_units) . '<br />';
 			$buy_now_qty = ($new_units > 0 ? $new_units : $check_units);
 			break;
 		default:
@@ -428,12 +438,12 @@ class CommerceProduct extends BitBase {
 
 	////
 	// Return a products quantity minimum and units display
-	function getQuantityMinUnitsDisplay($pProductId = NULL, $include_break = true, $shopping_cart_msg = false) {
-		if( empty( $pProductId ) && !empty( $this->mProductsId ) ) {
-			$pProductId = $this->mProductsId;
+	function getQuantityMinUnitsDisplay($pProductsId = NULL, $include_break = true, $shopping_cart_msg = false) {
+		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
+			$pProductsId = $this->mProductsId;
 		}
-		$check_min = zen_get_products_quantity_order_min($pProductId);
-		$check_units = zen_get_products_quantity_order_units($pProductId);
+		$check_min = zen_get_products_quantity_order_min($pProductsId);
+		$check_units = zen_get_products_quantity_order_units($pProductsId);
 
 		$the_min_units='';
 
@@ -445,7 +455,7 @@ class CommerceProduct extends BitBase {
 				$the_min_units .= ($the_min_units ? ' ' : '' ) . PRODUCTS_QUANTITY_UNIT_TEXT_LISTING . '&nbsp;' . $check_units;
 			}
 
-			if (($check_min > 0 or $check_units > 0) and !zen_get_products_quantity_mixed($pProductId)) {
+			if (($check_min > 0 or $check_units > 0) and !zen_get_products_quantity_mixed($pProductsId)) {
 				if ($include_break == true) {
 					$the_min_units .= '<br />' . ($shopping_cart_msg == false ? TEXT_PRODUCTS_MIX_OFF : TEXT_PRODUCTS_MIX_OFF_SHOPPING_CART);
 				} else {
@@ -461,7 +471,7 @@ class CommerceProduct extends BitBase {
 		}
 
 		// quantity max
-		$check_max = zen_get_products_quantity_order_max($pProductId);
+		$check_max = zen_get_products_quantity_order_max($pProductsId);
 
 		if ($check_max != 0) {
 			if ($include_break == true) {
@@ -478,11 +488,11 @@ class CommerceProduct extends BitBase {
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	function getDisplayPrice( $pProductId=NULL ) {
+	function getDisplayPrice( $pProductsId=NULL ) {
 		global $db, $currencies;
 
-		if( empty( $pProductId ) && !empty( $this->mProductsId ) ) {
-			$pProductId = $this->mProductsId;
+		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
+			$pProductsId = $this->mProductsId;
 		}
 	// 0 = normal shopping
 	// 1 = Login to shop
@@ -522,12 +532,12 @@ class CommerceProduct extends BitBase {
 		}
 
 		// $new_fields = ', product_is_free, product_is_call, product_is_showroom_only';
-		$product_check = $db->Execute("select products_tax_class_id, products_price, products_priced_by_attribute, product_is_free, product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$pProductId . "'" . " limit 1");
+		$product_check = $db->Execute("select products_tax_class_id, products_price, products_priced_by_attribute, product_is_free, product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$pProductsId . "'" . " limit 1");
 
 		$show_display_price = '';
-		$display_normal_price = zen_get_products_base_price($pProductId);
-		$display_special_price = zen_get_products_special_price($pProductId, true);
-		$display_sale_price = zen_get_products_special_price($pProductId, false);
+		$display_normal_price = zen_get_products_base_price($pProductsId);
+		$display_special_price = zen_get_products_special_price($pProductsId, true);
+		$display_sale_price = zen_get_products_special_price($pProductsId, false);
 
 		$show_sale_discount = '';
 		if (SHOW_SALE_DISCOUNT_STATUS == '1' and ($display_special_price != 0 or $display_sale_price != 0)) {
@@ -613,8 +623,37 @@ class CommerceProduct extends BitBase {
 	return $final_display_price . $free_tag . $call_tag;
 }
 
+	function expungeNotification( $pCustomersId, $pProductsId=NULL ) {
+		if( empty( $pProductsId ) ) {
+			$pProductsId = $this->mProductsId;
+		}
+		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) ) {
+			$sql = "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id` = ? AND `customers_id` = ? ";
+			$this->query( $sql, array( $pProductsId, $pCustomersId ) );
+		}
+	}
 
+	function storeNotification( $pCustomersId, $pProductsId=NULL ) {
+		if( empty( $pProductsId ) ) {
+			$pProductsId = $this->mProductsId;
+		}
+		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) && !$this->hasNotification( $pCustomersId, $pProductsId ) ) {
+			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, now())";
+			$this->query( $sql, array( $pProductsId, $pCustomersId ) );
+		}
+	}
 
+	function hasNotification( $pCustomersId, $pProductsId=NULL ) {
+		$ret = FALSE;
+		if( empty( $pProductsId ) ) {
+			$pProductsId = $this->mProductsId;
+		}
+		if( $this->isValid() && is_numeric( $pCustomersId ) ) {
+			$query = "SELECT count(*) AS `count` FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id`=? and `customers_id`=?";
+			$ret = $this->GetOne($query, array( $pProductsId, $pCustomersId ) );
+		}
+		return $ret;
+	}
 
 }
 
