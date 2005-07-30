@@ -17,41 +17,37 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_currencies.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_currencies.php,v 1.2 2005/07/30 16:45:37 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $db, $gBitProduct, $currencies;
 
-// test if box should display
-  $show_currencies= false;
+	// test if box should display
+	$show_currencies= false;
 
-  if (substr(basename($PHP_SELF), 0, 8) != 'checkout') {
-    $show_currencies= true;
-  }
+	if (substr(basename($PHP_SELF), 0, 8) != 'checkout') {
+		$show_currencies= true;
+	}
 
-  if ($show_currencies == true) {
-    if (isset($currencies) && is_object($currencies)) {
+	if ($show_currencies == true) {
+		if (isset($currencies) && is_object($currencies)) {
+			reset($currencies->currencies);
+			$currencies_array = array();
+			while (list($key, $value) = each($currencies->currencies)) {
+				$currencies_array[] = array('id' => $key, 'text' => $value['title']);
+			}
 
-      reset($currencies->currencies);
-      $currencies_array = array();
-      while (list($key, $value) = each($currencies->currencies)) {
-        $currencies_array[] = array('id' => $key, 'text' => $value['title']);
-      }
+			$hidden_get_variables = '';
+			reset($_GET);
+			while (list($key, $value) = each($_GET)) {
+				if ( ($key != 'currency') && ($key != zen_session_name()) && ($key != 'x') && ($key != 'y') ) {
+					$hidden_get_variables .= zen_draw_hidden_field($key, $value);
+				}
+			}
 
-      $hidden_get_variables = '';
-      reset($_GET);
-      while (list($key, $value) = each($_GET)) {
-        if ( ($key != 'currency') && ($key != zen_session_name()) && ($key != 'x') && ($key != 'y') ) {
-          $hidden_get_variables .= zen_draw_hidden_field($key, $value);
-        }
-      }
-
-  //	require($template->get_template_dir('tpl_currencies.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_currencies.php');
-      $title =  BOX_HEADING_CURRENCIES;
-      $left_corner = false;
-      $right_corner = false;
-      $right_arrow = false;
-      $title_link = false;
-  //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-    }
-  }
+			$gBitSmarty->assign( 'sideboxCurrenciesPulldown', zen_draw_pull_down_menu('currency', $currencies_array, $_SESSION['currency'], 'onchange="this.form.submit();" style="width: 100%"') );
+			if( empty( $moduleTitle ) ) {
+				$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
+			}
+		}
+	}
 ?>

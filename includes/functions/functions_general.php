@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.10 2005/07/30 16:26:25 spiderr Exp $
+// $Id: functions_general.php,v 1.11 2005/07/30 16:45:36 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -49,7 +49,6 @@
   // header locates should not have the &amp; in the address it breaks things
   while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
     header('Location: ' . $url);
-bt();
     zen_exit();
   }
 
