@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.6 2005/07/26 12:31:51 spiderr Exp $
+// $Id: database_tables.php,v 1.7 2005/07/30 03:01:53 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -104,14 +104,15 @@
   define('TABLE_WHOS_ONLINE', '`'.BITCOMMERCE_DB_PREFIX . 'whos_online`');
   define('TABLE_ZONES', '`'.BITCOMMERCE_DB_PREFIX . 'zones`');
 
+global $gBitDb;
 DEFINE('SQL_CC_ENABLED', "select `configuration_key` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%CC_ENABLED%' and `configuration_value`= '1'");
 DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_CATEGORY%' and `configuration_value` > 0 order by `configuration_value`");
 DEFINE('SQL_SHOW_PRODUCT_INFO_MAIN',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_MAIN%' and `configuration_value` > 0 order by `configuration_value`");
 DEFINE('SQL_SHOW_PRODUCT_INFO_MISSING',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION  . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_MISSING%' and `configuration_value` > 0 order by `configuration_value`");
 DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_LISTING_BELOW%' and `configuration_value` > 0 order by `configuration_value`");
-DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set `banners_shown` = `banners_shown` +1 where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set `banners_clicked` = `banners_clicked` + 1 where `banners_id` = '%s' and date_format(`banners_history_date`, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
+DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
+DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set `banners_shown` = `banners_shown` +1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
+DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set `banners_clicked` = `banners_clicked` + 1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_ALSO_PURCHASED', "select p.`products_id`, p.`products_image`
                      from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, "
                             . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p

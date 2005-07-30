@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: blk_advanced_search_result.php,v 1.2 2005/07/30 03:01:53 spiderr Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -75,14 +75,14 @@
   }
 
 //  $select_str = "select distinct " . $select_column_list . " m.manufacturers_id, p.products_id, pd.products_name, p.products_price, p.products_tax_class_id, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.products_price) as final_price ";
-  $select_str = "select distinct " . $select_column_list . " m.manufacturers_id, p.products_id, pd.products_name, p.products_price, p.products_tax_class_id, p.products_price_sorter ";
+  $select_str = "select " . $select_column_list . " m.manufacturers_id, p.products_id, pd.products_name, p.products_price, p.products_tax_class_id, p.products_price_sorter ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
     $select_str .= ", SUM(tr.tax_rate) as tax_rate ";
   }
 
 //  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd left join " . TABLE_SPECIALS . " s on p.products_id = s.products_id, " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c";
-  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id= p.products_id and mtpd.language_id = '" . $_SESSION['languages_id'] . "'";
+  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id) ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
     if (!$_SESSION['customer_country_id']) {
@@ -92,19 +92,21 @@
     $from_str .= " left join " . TABLE_TAX_RATES . " tr on p.products_tax_class_id = tr.tax_class_id left join " . TABLE_ZONES_TO_GEO_ZONES . " gz on tr.tax_zone_id = gz.geo_zone_id and (gz.zone_country_id is null or gz.zone_country_id = '0' or gz.zone_country_id = '" . $_SESSION['customer_country_id'] . "') and (gz.zone_id is null or gz.zone_id = '0' or gz.zone_id = '" . $_SESSION['customer_zone_id'] . "')";
   }
 
-  $where_str = " where p.products_status = '1' and p.products_id = pd.products_id and pd.language_id = '" . $_SESSION['languages_id'] . "' and p.products_id = p2c.products_id and p2c.categories_id = c.categories_id ";
+  $from_str .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON( p.products_id = p2c.products_id ) LEFT JOIN  " . TABLE_CATEGORIES . " c ON( p2c.`categories_id`=c.`categories_id` ) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id= p.products_id and mtpd.language_id = '" . $_SESSION['languages_id'] . "', " . TABLE_PRODUCTS_DESCRIPTION . " pd ";
+
+  $where_str = " where p.products_status = '1' and p.products_id = pd.products_id and pd.language_id = '" . $_SESSION['languages_id'] . "' ";
 
   if (isset($_GET['categories_id']) && zen_not_null($_GET['categories_id'])) {
     if ($_GET['inc_subcat'] == '1') {
       $subcategories_array = array();
       zen_get_subcategories($subcategories_array, $_GET['categories_id']);
-      $where_str .= " and p2c.products_id = p.products_id and p2c.products_id = pd.products_id and (p2c.categories_id = '" . (int)$_GET['categories_id'] . "'";
+      $where_str .= " and p2c.products_id = pd.products_id and (p2c.categories_id = '" . (int)$_GET['categories_id'] . "'";
       for ($i=0, $n=sizeof($subcategories_array); $i<$n; $i++ ) {
         $where_str .= " or p2c.categories_id = '" . $subcategories_array[$i] . "'";
       }
       $where_str .= ")";
     } else {
-      $where_str .= " and p2c.products_id = p.products_id and p2c.products_id = pd.products_id and pd.language_id = '" . $_SESSION['languages_id'] . "' and p2c.categories_id = '" . (int)$_GET['categories_id'] . "'";
+      $where_str .= " and pd.language_id = '" . $_SESSION['languages_id'] . "' and p2c.categories_id = '" . (int)$_GET['categories_id'] . "'";
     }
   }
 
@@ -124,7 +126,7 @@
             $where_str .= " " . $search_keywords[$i] . " ";
             break;
           default:
-            $where_str .= "(pd.products_name like '%" . addslashes($search_keywords[$i]) . "%' or p.products_model like '%" . addslashes($search_keywords[$i]) . "%' or m.manufacturers_name like '%" . addslashes($search_keywords[$i]) . "%'";
+            $where_str .= "(lower( pd.`products_name` ) like '%" . addslashes( strtolower( $search_keywords[$i]) ) . "%' or p.products_model like '%" . addslashes($search_keywords[$i]) . "%' or m.manufacturers_name like '%" . addslashes($search_keywords[$i]) . "%'";
 // search meta tags
             $where_str .= " or (mtpd.metatags_keywords like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_keywords !='')";
             $where_str .= " or (mtpd.metatags_description like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_description !='')";
@@ -219,7 +221,6 @@
         break;
     }
   }
-
   $listing_sql = $select_str . $from_str . $where_str . $order_str;
   require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING));
 ?>

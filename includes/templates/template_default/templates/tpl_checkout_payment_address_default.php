@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_address_default.php,v 1.7 2005/07/26 12:31:55 spiderr Exp $
+// $Id: tpl_checkout_payment_address_default.php,v 1.8 2005/07/30 03:02:00 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
@@ -38,6 +38,7 @@ if ($messageStack->size('checkout_address') > 0) {
 }
 
 	if( $gBitUser->isRegistered() ) {
+		if( !empty( $_SESSION['billto'] ) ) {
 ?>
 <tr>
 	<td class="main" align="center" valign="top"><?php echo TITLE_PAYMENT_ADDRESS . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?></td>
@@ -45,6 +46,7 @@ if ($messageStack->size('checkout_address') > 0) {
 	<td class="main" valign="top"><?php echo TEXT_SELECTED_PAYMENT_DESTINATION; ?></td>
 </tr>
 <?php
+		}
 	} else {
 		print $gBitSmarty->fetch( 'bitpackage:bitcommerce/register_customer.tpl' );
 	}

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart_default.php,v 1.5 2005/07/18 14:35:53 spiderr Exp $
+// $Id: tpl_shopping_cart_default.php,v 1.6 2005/07/30 03:02:00 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -30,7 +30,7 @@
   <td class="smallText" colspan="3" align="center">
   <?php
     if (SHOW_TOTALS_IN_CART == '1') {
-      echo TEXT_TOTAL_ITEMS . $_SESSION['cart']->count_contents() . TEXT_TOTAL_WEIGHT . $_SESSION['cart']->show_weight() . TEXT_SHIPPING_WEIGHT . TEXT_TOTAL_AMOUNT . $currencies->format($_SESSION['cart']->show_total()) . '<br />';
+      echo TEXT_TOTAL_ITEMS . $_SESSION['cart']->count_contents() . TEXT_TOTAL_WEIGHT . round( $_SESSION['cart']->show_weight(), 2 ) . TEXT_SHIPPING_WEIGHT . ' ( '. round( ($_SESSION['cart']->show_weight() * .45359), 2 ) .'kb ) '. TEXT_TOTAL_AMOUNT . $currencies->format($_SESSION['cart']->show_total()) . '<br />';
     }
     if (SHOW_TOTALS_IN_CART == '2') {
       echo TEXT_TOTAL_ITEMS . $_SESSION['cart']->count_contents() . ($_SESSION['cart']->show_weight() > 0 ? TEXT_TOTAL_WEIGHT . $_SESSION['cart']->show_weight() . TEXT_SHIPPING_WEIGHT : '') . TEXT_TOTAL_AMOUNT . $currencies->format($_SESSION['cart']->show_total()) . '<br />';
@@ -155,7 +155,7 @@
 
       $products_name = '<table border="0"  cellspacing="2" cellpadding="2">' .
                        '  <tr>' .
-                       '    <td class="productListing-data" align="center"><a href="' . zen_href_link(zen_get_info_page($products[$i]['id']), 'products_id=' . $products[$i]['id']) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image( CommerceProduct::getImageUrl( $products[$i]['image'] ), $products[$i]['name'], IMAGE_SHOPPING_CART_WIDTH, IMAGE_SHOPPING_CART_HEIGHT) : '') . '</a></td>' .
+                       '    <td class="productListing-data" align="center"><a href="' . zen_href_link(zen_get_info_page($products[$i]['id']), 'products_id=' . $products[$i]['id']) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image( CommerceProduct::getImageUrl( $products[$i]['id'], 'avatar' ), $products[$i]['name']) : '') . '</a></td>' .
                        '    <td class="productListing-data" valign="top"><a href="' . zen_href_link(zen_get_info_page($products[$i]['id']), 'products_id=' . $products[$i]['id']) . '"><span class="cartproductname">' . $products[$i]['name'] . '</span></a>';
 
       if (STOCK_CHECK == 'true') {

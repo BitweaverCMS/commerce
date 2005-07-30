@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_graphs.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+// $Id: html_graphs.php,v 1.2 2005/07/30 03:01:50 spiderr Exp $
 //
 
 ////
@@ -378,11 +378,11 @@
     $values = array();
     $dvalues = array();
 
-    $banner_stats = $db->Execute("select dayofmonth(banners_history_date) as name,
+    $banner_stats = $db->Execute("select ".$db->SQLDate( 'd', 'banners_history_date' )." as name,
 	                                     banners_shown as value, banners_clicked as dvalue
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where banners_id = '" . $banner_id . "'
-										 and to_days(now()) - to_days(banners_history_date) < " . $days . "
+										 and ".$db->OffsetDate( $days, 'banners_history_date' )." > now()
 										 order by banners_history_date");
 
     while (!$banner_stats->EOF) {
@@ -430,11 +430,11 @@
   function zen_banner_graph_yearly($banner_id) {
     global $db, $banner, $_GET;
 
-    $banner_stats = $db->Execute("select year(banners_history_date) as year,
+    $banner_stats = $db->Execute("select ".$db->SQLDate( 'Y', 'banners_history_date' )." as year,
 	                                     sum(banners_shown) as value, sum(banners_clicked) as dvalue
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where banners_id = '" . $banner_id . "'
-										 group by year(banners_history_date)");
+										 group by ".$db->SQLDate( 'Y', 'banners_history_date' ) );
 
     while (!$banner_stats->EOF) {
       $names[] = $banner_stats->fields['year'];
@@ -490,11 +490,11 @@
       $dvalues[] = '0';
     }
 
-    $banner_stats = $db->Execute("select month(banners_history_date) as banner_month, sum(banners_shown) as value,
+    $banner_stats = $db->Execute("select ".$db->SQLDate( 'm', 'banners_history_date' )." as banner_month, sum(banners_shown) as value,
 	                              sum(banners_clicked) as dvalue
 								  from " . TABLE_BANNERS_HISTORY . "
 								  where banners_id = '" . $banner_id . "'
-								  and year(banners_history_date) = '" . $year . "'
+								  and ".$db->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'
 								  group by month(banners_history_date)");
 
     while (!$banner_stats->EOF) {
@@ -554,12 +554,12 @@
       $dvalues[] = '0';
     }
 
-    $banner_stats = $db->Execute("select dayofmonth(banners_history_date) as banner_day,
+    $banner_stats = $db->Execute("select ".$db->SQLDate( 'd', 'banners_history_date' )." as banner_day,
 	                                     banners_shown as value, banners_clicked as dvalue
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where banners_id = '" . $banner_id . "'
-										 and month(banners_history_date) = '" . $month . "'
-										 and year(banners_history_date) = '" . $year . "'");
+										 and ".$db->SQLDate( 'm', 'banners_history_date' )." = '" . $month . "'
+										 and ".$db->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'");
 
     while (!$banner_stats->EOF) {
       $names[($banner_stats->fields['banner_day']-1)] = $banner_stats->fields['banner_day'];

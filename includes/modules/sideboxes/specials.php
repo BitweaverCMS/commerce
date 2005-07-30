@@ -17,44 +17,34 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
+// $Id: specials.php,v 1.3 2005/07/30 03:01:58 spiderr Exp $
 //
 
 // test if box should display
-  $show_specials= false;
+	$show_specials= false;
 
-  if (isset($_GET['products_id'])) {
-    $show_specials= false;
-  } else {
-    $show_specials= true;
-  }
+	if( $gBitProduct->isValid() ) {
+		$show_specials= true;
+	} else {
+		$show_specials= false;
+	}
 
-  if ($show_specials == true) {
-    $random_specials_sidebox_product_query = "select p.products_id, pd.products_name, p.products_price,
-                                    p.products_tax_class_id, p.products_image,
-                                    s.specials_new_products_price
-                             from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
-                                    . TABLE_SPECIALS . " s
-                             where p.products_status = '1'
-                             and p.products_id = s.products_id
-                             and pd.products_id = s.products_id
-                             and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                             and s.status = '1'
-                             limit " . MAX_RANDOM_SELECT_SPECIALS;
+	if ($show_specials == true) {
+		$listHash['max_records'] = 1;
+		$listHash['sort_mode'] = 'random';
+		$listHash['specials'] = TRUE;
 
-    $random_specials_sidebox_product = zen_random_select($random_specials_sidebox_product_query);
+		if( $specialsList = $gBitProduct->getList( $listHash ) ) {
+			$random_product = current( $specialsList );
+			$specials_box_price = zen_get_products_display_price($random_product['products_id']);
 
-    if ($random_specials_sidebox_product->RecordCount() > 0)  {
-$random_product = $random_specials_sidebox_product;
-      $specials_box_price = zen_get_products_display_price($random_specials_sidebox_product->fields['products_id']);
-
-      require($template->get_template_dir('tpl_specials.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_specials.php');
-      $title =  BOX_HEADING_SPECIALS;
-      $left_corner = false;
-      $right_corner = false;
-      $right_arrow = false;
-      $title_link = FILENAME_SPECIALS;
-      require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-    }
-  }
+			require($template->get_template_dir('tpl_specials.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_specials.php');
+			$title =  BOX_HEADING_SPECIALS;
+			$left_corner = false;
+			$right_corner = false;
+			$right_arrow = false;
+			$title_link = FILENAME_SPECIALS;
+			require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+		}
+	}
 ?>

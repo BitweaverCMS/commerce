@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_statistics.php,v 1.1 2005/07/05 05:59:56 bitweaver Exp $
+//  $Id: banner_statistics.php,v 1.2 2005/07/30 03:01:48 spiderr Exp $
 //
 
 
@@ -46,7 +46,7 @@
                                 where banners_id = '" . (int)$_GET['bID'] . "'");
 
   $years_array = array();
-  $years = $db->Execute("select distinct year(banners_history_date) as banner_year
+  $years = $db->Execute("select distinct ".$db->SQLDate( 'Y', 'banners_history_date' )." as banner_year
                               from " . TABLE_BANNERS_HISTORY . "
                               where banners_id = '" . (int)$_GET['bID'] . "'");
   while (!$years->EOF) {

@@ -17,36 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: information.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: information.php,v 1.2 2005/07/30 03:01:58 spiderr Exp $
 //
 
-  unset($information);
-  $information[] = '<a href="' . zen_href_link(FILENAME_SHIPPING) . '">' . BOX_INFORMATION_SHIPPING . '</a>';
-  $information[] = '<a href="' . zen_href_link(FILENAME_PRIVACY) . '">' . BOX_INFORMATION_PRIVACY . '</a>';
-  $information[] = '<a href="' . zen_href_link(FILENAME_CONDITIONS) . '">' . BOX_INFORMATION_CONDITIONS . '</a>';
-  $information[] = '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' . BOX_INFORMATION_CONTACT . '</a>';
-  if ( ($sniffer->phpBB['db_installed_config']) && ($sniffer->phpBB['files_installed'])  && (PHPBB_LINKS_ENABLED=='true')) {
-    $information[] = '<a href="' . zen_href_link($sniffer->phpBB['phpbb_url'] . FILENAME_BB_INDEX, '', 'NONSSL', '', '', true, false) . '" target="_blank">' . BOX_BBINDEX . '</a>';
-// or: $sniffer->phpBB['phpbb_url'] . FILENAME_BB_INDEX
-// or: str_replace(str_replace(DIR_WS_CATALOG, '', DIR_FS_CATALOG), '', DIR_WS_PHPBB)
-  }
-
-  // only show GV FAQ when installed
-  if (MODULE_ORDER_TOTAL_GV_STATUS=='true') {
-    $information[] = '<a href="' . zen_href_link(FILENAME_GV_FAQ) . '">' . BOX_INFORMATION_GV . '</a>';
-  }
-
-  if (SHOW_NEWSLETTER_UNSUBSCRIBE_LINK=='true') {
-    $information[] = '<a href="' . zen_href_link(FILENAME_UNSUBSCRIBE) . '">' . BOX_INFORMATION_UNSUBSCRIBE . '</a>';
-  }
-
-  require($template->get_template_dir('tpl_information.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_information.php');
-
-  $title =  BOX_HEADING_INFORMATION;
-  $left_corner = false;
-  $right_corner = false;
-  $right_arrow = false;
-  $title_link = false;
-
-  require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+	global $gBitSmarty;
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/mod_commerce_information.tpl' );
 ?>

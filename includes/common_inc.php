@@ -240,10 +240,17 @@
 
 
 ////
+  function zen_db_output($string) {
+    return htmlspecialchars($string);
+  }
+
+
+////
   function zen_db_prepare_input($string) {
+	global $gBitUser;
   	if( empty( $string ) ) {
 		return NULL;
-    } elseif (is_string($string)) {
+    } elseif (is_string($string) && !$gBitUser->hasPermission( 'bit_p_commerce_admin' ) ) {
       return trim(zen_sanitize_string(stripslashes($string)));
     } elseif (is_array($string)) {
       reset($string);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.1 2005/07/06 21:41:21 spiderr Exp $
+// $Id: en.php,v 1.2 2005/07/30 03:01:54 spiderr Exp $
 //
 
 // bof: removed for meta tags

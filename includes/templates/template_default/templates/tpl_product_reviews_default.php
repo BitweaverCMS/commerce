@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews_default.php,v 1.3 2005/07/14 04:55:16 spiderr Exp $
+// $Id: tpl_product_reviews_default.php,v 1.4 2005/07/30 03:02:00 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -50,7 +50,7 @@
 <?php
   $review_status = " and r.status = '1'";
 
-  $reviews_query_raw = "select r.reviews_id, left(rd.reviews_text, 100) as reviews_text,
+  $reviews_query_raw = "select r.reviews_id, rd.reviews_text,
                                r.reviews_rating, r.date_added, r.customers_name
                         from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                         where r.products_id = '" . (int)$_GET['products_id'] . "'
@@ -88,7 +88,7 @@
     <td class="smallText" align="right"><?php echo sprintf(TEXT_REVIEW_DATE_ADDED, zen_date_short($reviews->fields['date_added'])); ?></td>
   </tr>
   <tr>
-    <td valign="top" class="main" colspan="2"><?php echo zen_break_string(zen_output_string_protected(stripslashes($reviews->fields['reviews_text'])), 60, '-<br />') . ((strlen($reviews->fields['reviews_text']) >= 100) ? '..' : '') . '<br /><br /><i>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $reviews->fields['reviews_rating'] . '.gif', sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])) . '</i>'; ?></td>
+    <td valign="top" class="main" colspan="2"><?php echo zen_break_string(zen_output_string_protected(stripslashes( substr( $reviews->fields['reviews_text'], 0, 100 ) )), 60, '-<br />') . ((strlen($reviews->fields['reviews_text']) >= 100) ? '..' : '') . '<br /><br /><i>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $reviews->fields['reviews_rating'] . '.png', sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])) . '</i>'; ?></td>
   </tr>
   <tr>
     <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whats_new.php,v 1.2 2005/07/08 06:13:04 spiderr Exp $
+// $Id: whats_new.php,v 1.3 2005/07/30 03:01:58 spiderr Exp $
 //
 
   switch (true) {
@@ -41,18 +41,16 @@
       break;
   }
 
-  $random_whats_new_sidebox_product_query = "select p.products_id, p.products_image, p.products_tax_class_id, p.products_price
-                           from " . TABLE_PRODUCTS . " p
-                           where p.products_status = '1' " . $display_limit . "
-                           limit " . MAX_RANDOM_SELECT_NEW;
+	if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
+		list( $selectSql, $fromSql, $whereSql ) = CommerceProduct::getGatekeeperSql();
+	}
+	$listHash['max_records'] = 1;
+	$listHash['sort_mode'] = 'random';
 
-  $random_whats_new_sidebox_product = zen_random_select($random_whats_new_sidebox_product_query);
-
-  if ($random_whats_new_sidebox_product->RecordCount() > 0 ) {
-  	$random_product = $random_whats_new_sidebox_product;
-    $whats_new_price = zen_get_products_display_price($random_whats_new_sidebox_product->fields['products_id']);
-    $random_whats_new_sidebox_product->fields['products_name'] = zen_get_products_name($random_whats_new_sidebox_product->fields['products_id']);
-    $random_whats_new_sidebox_product->fields['specials_new_products_price'] = zen_get_products_special_price($random_whats_new_sidebox_product->fields['products_id']);
+  if( $productList = $gBitProduct->getList( $listHash ) ) {
+  	$random_product = current( $productList );
+    $whats_new_price = zen_get_products_display_price($random_product['products_id']);
+    $random_product['specials_new_products_price'] = zen_get_products_special_price($random_product['products_id']);
     require($template->get_template_dir('tpl_whats_new.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_whats_new.php');
     $title =  BOX_HEADING_WHATS_NEW;
     $left_corner = false;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: stylesheet.css,v 1.6 2005/07/26 12:31:55 spiderr Exp $
+// $Id: stylesheet.css,v 1.7 2005/07/30 03:01:59 spiderr Exp $
 */
 .centershop {
 	padding: 0px;
@@ -221,14 +221,14 @@ TD.footertop, TD.footerbottom {
 /*miscellaneous areas
 -------------------------------------*/
 .cartBox, .addtocart {
+	clear:both;
 	margin: auto;
-	margin-top:15px;
-   width: 150px;
-   background: #eff4f8;
-   font-size: 10px;
-   padding: 3px;
-   border: 1px dotted #ffb062;
-   text-align: center;
+	width: 150px;
+	background: #eff4f8;
+	font-size: 10px;
+	padding: 5px;
+	border: 1px dotted #ffb062;
+	text-align: center;
 }
 
 TR.productListing-odd, TR.upcomingProducts-odd {
@@ -433,7 +433,8 @@ TABLE.products-attributes-images {
     text-decoration: line-through;
 }
 
-.bitcommerce .productinfo {
+.bitcommerce .body .productinfo .header {
+	padding: 9px;
 	text-align: center;
 }
 

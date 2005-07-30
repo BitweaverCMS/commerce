@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_default.php,v 1.3 2005/07/14 04:55:15 spiderr Exp $
+// $Id: tpl_account_default.php,v 1.4 2005/07/30 03:02:00 spiderr Exp $
 //
 // Variables passed to this page from header_php.php
 //
@@ -63,31 +63,9 @@
       <table border="0" width="100%" cellspacing="2" cellpadding="2">
         <tr>
           <td class="main">
-            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_EDIT, '', 'SSL') . '">' . MY_ACCOUNT_INFORMATION . '</a>'; ?>
-          </td>
-        </tr>
-        <tr>
-          <td class="main">
             <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL') . '">' . MY_ACCOUNT_ADDRESS_BOOK . '</a>'; ?>
           </td>
         </tr>
-        <tr>
-          <td class="main">
-            <?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ACCOUNT_ARROW) . ' <a href="' . zen_href_link(FILENAME_ACCOUNT_PASSWORD, '', 'SSL') . '">' . MY_ACCOUNT_PASSWORD . '</a>'; ?>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-<?php
-  if (SHOW_NEWSLETTER_UNSUBSCRIBE_LINK !='false' or SHOW_NEWSLETTER_UNSUBSCRIBE_LINK !='0') {
-?>
-  <tr>
-    <td class="plainBoxHeading" colspan="2"><?php echo EMAIL_NOTIFICATIONS_TITLE; ?></td>
-  </tr>
-  <tr>
-    <td class="plainBox" colspan="2">
-      <table border="0" width="100%" cellspacing="2" cellpadding="2">
 <?php
   if (SHOW_NEWSLETTER_UNSUBSCRIBE_LINK=='true') {
 ?>
@@ -109,7 +87,6 @@
       </table>
     </td>
   </tr>
-<?php } // don't show unsubscribe or notification ?>
 <?php
 // only show when there is a GV balance
   if ($customer_has_gv_balance ) {

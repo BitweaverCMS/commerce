@@ -100,7 +100,7 @@
 											{if $smarty.section.ix.total > 1 || $smarty.section.jx.total > 1 }
 												{html_radios name="shipping" values="`$quotes[ix].id`_`$quotes[ix].methods[jx].id`" output=$quotes[ix].methods[jx].name checked=$checked}
 											{else}
-												{$quotes[ix].methods[jx].format_add_tax} <input type="hidden" name="shipping" value="`$quotes[ix].id`_ `$quotes[ix].methods[jx].id`" />
+												{$quotes[ix].methods[jx].format_add_tax} <input type="hidden" name="shipping" value="{"`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}" />
 											{/if}
 											{$quotes[ix].methods[jx].title}
 											{$quotes[ix].methods[jx].format_add_tax}

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.7 2005/07/26 12:31:51 spiderr Exp $
+// $Id: application_top.php,v 1.8 2005/07/30 03:01:52 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -790,6 +790,12 @@ case 'wishlist_add_cart': reset ($lvnr);
     if( $gBitProduct->load() ) {
       $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
     }
+	if( is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
+		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
+		die;
+	}
+  } else {
+    $gBitProduct = new CommerceProduct();
   }
 
   require(DIR_WS_CLASSES . 'category_tree.php');

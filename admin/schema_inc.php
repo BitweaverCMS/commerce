@@ -1,5 +1,38 @@
 <?php
 $tables = array(
+BITCOMMERCE_DB_PREFIX.'manufacturers' => "
+  manufacturers_id I4 PRIMARY AUTO,
+  manufacturers_name C(32),
+  manufacturers_image C(64),
+  date_added T,
+  last_modified T
+",
+//  KEY idx_mfg_name_zen (manufacturers_name)
+
+BITCOMMERCE_DB_PREFIX.'customers' => "
+  customers_id I4 PRIMARY AUTO,
+  customers_gender C(1),
+  customers_firstname C(32),
+  customers_lastname C(32),
+  customers_dob T,
+  customers_email_address C(96),
+  customers_nick C(96),
+  customers_default_address_id I4,
+  customers_telephone C(32),
+  customers_fax C(32),
+  customers_password C(40),
+  customers_newsletter C(1),
+  customers_group_pricing I4,
+  customers_email_format C(4) DEFAULT 'TEXT' NOTNULL,
+  customers_authorization I1,
+  customers_referral C(32)
+",
+//  KEY idx_email_address_zen ( customers_email_address ),
+//  KEY idx_referral_zen ( customers_referral(10) ),
+//  KEY idx_grp_pricing_zen ( customers_group_pricing ),
+//  KEY idx_nick_zen ( customers_nick ),
+//  KEY idx_newsletter_zen ( customers_newsletter )
+
 BITCOMMERCE_DB_PREFIX.'upgrade_exceptions' => "
   upgrade_exception_id I2 PRIMARY AUTO,
   sql_file C(50),
@@ -162,6 +195,216 @@ BITCOMMERCE_DB_PREFIX.'countries' => "
 ",
 //  KEY idx_countries_name_zen (countries_name)
 
+BITCOMMERCE_DB_PREFIX.'product_types' => "
+  type_id I4 PRIMARY AUTO,
+  type_name C(255),
+  type_handler C(255),
+  type_master_type I4 NOTNULL default '1',
+  allow_add_to_cart C(1) NOTNULL default 'Y',
+  default_image C(255),
+  date_added T,
+  last_modified T
+",
+//  KEY idx_type_master_type_zen ( type_master_type )
+
+BITCOMMERCE_DB_PREFIX.'product_types_to_category' => "
+  product_type_id I4,
+  category_id I4
+  CONSTRAINT ', CONSTRAINT `prod_types_to_cat_type_ref` FOREIGN KEY (`product_type_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )
+  			 , CONSTRAINT `prod_types_to_cat_cat_ref` FOREIGN KEY (`category_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."categories`( `categories_id` )'
+",
+//  KEY idx_category_id_zen ( category_id ),
+//  KEY idx_product_type_id_zen ( product_type_id )
+
+BITCOMMERCE_DB_PREFIX.'products' => "
+  products_id I4 PRIMARY AUTO,
+  products_type I4 NOTNULL,
+  products_quantity F DEFAULT '0' NOTNULL,
+  products_model C(32),
+  products_image C(250),
+  products_price N(15,4),
+  products_virtual I1,
+  products_date_added T,
+  products_last_modified T,
+  products_date_available T,
+  products_weight float,
+  products_status I1,
+  products_tax_class_id I4,
+  manufacturers_id I4,
+  products_ordered F DEFAULT '0' NOTNULL,
+  products_quantity_order_min F DEFAULT '1' NOTNULL,
+  products_quantity_order_units F DEFAULT '1' NOTNULL,
+  products_priced_by_attribute I1,
+  product_is_free I1,
+  product_is_call I1,
+  products_quantity_mixed I1,
+  product_is_always_free_ship I1,
+  products_qty_box_status I1 NOTNULL default '1',
+  products_quantity_order_max F DEFAULT '0' NOTNULL,
+  products_sort_order I4,
+  products_discount_type I1,
+  products_discount_type_from I1,
+  products_price_sorter N(15,4),
+  master_categories_id I4,
+  products_mixed_discount_qty I1 NOTNULL default '1',
+  metatags_title_status I1,
+  metatags_products_name_status I1,
+  metatags_model_status I1,
+  metatags_price_status I1,
+  metatags_title_tagline_status I1,
+  related_content_id I4
+  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY (`related_content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
+			  , CONSTRAINT `prod_type_ref`  FOREIGN KEY (`products_type`) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_id` )
+			  , CONSTRAINT `prod_manf_id_ref`  FOREIGN KEY (`manufacturers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."manufacturers` ( `manufacturers_id` )'
+",
+//  KEY idx_products_date_added_zen (products_date_added),
+//  KEY idx_products_status_zen ( products_status )
+
+BITCOMMERCE_DB_PREFIX.'products_options' => "
+  products_options_id I4,
+  language_id I4 NOTNULL default '1',
+  products_options_name C(32),
+  products_options_sort_order I4,
+  products_options_type I2,
+  products_options_length I2 NOTNULL default '32',
+  products_options_comment C(64),
+  products_options_size I2 NOTNULL default '32',
+  products_options_images_per_row I2 default '5',
+  products_options_images_style I1 default '0'
+",
+//  KEY idx_lang_id_zen ( language_id )
+
+BITCOMMERCE_DB_PREFIX.'products_attributes' => "
+  products_attributes_id I4 PRIMARY AUTO,
+  products_id I4 NOTNULL,
+  options_id I4,
+  options_values_id I4,
+  options_values_price N(15,4),
+  price_prefix C(1),
+  products_options_sort_order I4,
+  product_attribute_is_free I1,
+  products_attributes_wt F,
+  products_attributes_wt_pfix C(1),
+  attributes_display_only I1,
+  attributes_default I1,
+  attributes_discounted I1 NOTNULL default '1',
+  attributes_image C(64),
+  attributes_price_base_included I1 NOTNULL default '1',
+  attributes_price_onetime N(15,4),
+  attributes_price_factor N(15,4),
+  attributes_pf_offset N(15,4),
+  attributes_pf_onetime N(15,4),
+  attributes_pf_onetime_offset N(15,4),
+  attributes_qty_prices X,
+  attributes_qty_prices_onetime X,
+  attributes_price_words N(15,4),
+  attributes_price_words_free I2,
+  attributes_price_letters N(15,4),
+  attributes_price_letters_free I2,
+  attributes_required I1
+  CONSTRAINT ', CONSTRAINT `prod_attr_products_id_ref` FOREIGN KEY (products_id) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
+",
+//  KEY idx_id_options_id_values_zen ( products_id, options_id, options_values_id )
+
+BITCOMMERCE_DB_PREFIX.'products_attributes_dld' => "
+  products_attributes_id I4,
+  products_attributes_filename C(255),
+  products_attributes_maxdays I2 default '0',
+  products_attributes_maxcount I2 default '0'
+",
+
+BITCOMMERCE_DB_PREFIX.'products_description' => "
+  products_id I4 PRIMARY AUTO,
+  language_id I4 NOTNULL default '1',
+  products_name C(64),
+  products_description X,
+  products_url C(255),
+  products_viewed I2 default '0'
+  CONSTRAINT ', CONSTRAINT `prod_desc_products_id_ref` FOREIGN KEY (products_id) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
+",
+//  KEY idx_products_name_zen (products_name)
+
+BITCOMMERCE_DB_PREFIX.'products_discount_quantity' => "
+  discount_id I2,
+  products_id I4,
+  discount_qty FLOAT DEFAULT '0' NOTNULL,
+  discount_price N(15,4)
+",
+//  KEY idx_id_qty_zen ( products_id, discount_qty )
+
+BITCOMMERCE_DB_PREFIX.'product_music_extra' => "
+  products_id I4,
+  artists_id I4,
+  record_company_id I4,
+  music_genre_id I4
+",
+//  KEY idx_music_genre_id_zen ( music_genre_id )
+
+BITCOMMERCE_DB_PREFIX.'products_notifications' => "
+  products_id I4,
+  customers_id I4,
+  date_added T
+",
+
+BITCOMMERCE_DB_PREFIX.'products_options_types' => "
+  products_options_types_id I4,
+  products_options_types_name C(32)
+",
+
+BITCOMMERCE_DB_PREFIX.'products_options_values' => "
+  products_options_values_id I4,
+  language_id I4 NOTNULL default '1',
+  products_options_values_name C(64),
+  products_ov_sort_order I4
+",
+//  KEY idx_prod_opt_val_id_zen ( products_options_values_id )
+
+BITCOMMERCE_DB_PREFIX.'prd_opt_val_to_prd_opt' => "
+  prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
+  products_options_id I4,
+  products_options_values_id I4
+",
+
+BITCOMMERCE_DB_PREFIX.'products_to_categories' => "
+  products_id I4,
+  categories_id I4
+",
+//  KEY idx_cat_prod_id_zen (categories_id, products_id)
+
+BITCOMMERCE_DB_PREFIX.'record_artists' => "
+  artists_id I4 PRIMARY AUTO,
+  artists_name C(32),
+  artists_image C(64),
+  date_added T,
+  last_modified T
+",
+//  KEY idx_rec_artists_name_zen (artists_name)
+
+BITCOMMERCE_DB_PREFIX.'record_artists_info' => "
+  artists_id I4,
+  languages_id I4,
+  artists_url C(255),
+  url_clicked I2,
+  date_last_click T
+",
+
+BITCOMMERCE_DB_PREFIX.'record_company' => "
+  record_company_id I4 PRIMARY AUTO,
+  record_company_name C(32),
+  record_company_image C(64),
+  date_added T,
+  last_modified T
+",
+//  KEY idx_rec_company_name_zen (record_company_name)
+
+BITCOMMERCE_DB_PREFIX.'record_company_info' => "
+  record_company_id I4,
+  languages_id I4,
+  record_company_url C(255),
+  url_clicked I2,
+  date_last_click T
+",
+
 BITCOMMERCE_DB_PREFIX.'coupon_email_track' => "
   unique_id I4 PRIMARY AUTO,
   coupon_id I4,
@@ -248,30 +491,6 @@ BITCOMMERCE_DB_PREFIX.'currencies' => "
   value float(13,8),
   last_updated T
 ",
-
-BITCOMMERCE_DB_PREFIX.'customers' => "
-  customers_id I4 PRIMARY AUTO,
-  customers_gender C(1),
-  customers_firstname C(32),
-  customers_lastname C(32),
-  customers_dob T,
-  customers_email_address C(96),
-  customers_nick C(96),
-  customers_default_address_id I4,
-  customers_telephone C(32),
-  customers_fax C(32),
-  customers_password C(40),
-  customers_newsletter C(1),
-  customers_group_pricing I4,
-  customers_email_format C(4) DEFAULT 'TEXT' NOTNULL,
-  customers_authorization I1,
-  customers_referral C(32)
-",
-//  KEY idx_email_address_zen ( customers_email_address ),
-//  KEY idx_referral_zen ( customers_referral(10) ),
-//  KEY idx_grp_pricing_zen ( customers_group_pricing ),
-//  KEY idx_nick_zen ( customers_nick ),
-//  KEY idx_newsletter_zen ( customers_newsletter )
 
 BITCOMMERCE_DB_PREFIX.'customers_basket' => "
   customers_basket_id I4 PRIMARY AUTO,
@@ -388,15 +607,6 @@ BITCOMMERCE_DB_PREFIX.'layout_boxes' => "
 ",
 //  KEY idx_name_template_zen ( layout_template, layout_box_name ),
 //  KEY idx_layout_box_status_zen (layout_box_status)
-
-BITCOMMERCE_DB_PREFIX.'manufacturers' => "
-  manufacturers_id I4 PRIMARY AUTO,
-  manufacturers_name C(32),
-  manufacturers_image C(64),
-  date_added T,
-  last_modified T
-",
-//  KEY idx_mfg_name_zen (manufacturers_name)
 
 BITCOMMERCE_DB_PREFIX.'music_genre' => "
   music_genre_id I4 PRIMARY AUTO,
@@ -533,6 +743,7 @@ BITCOMMERCE_DB_PREFIX.'orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
+  CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY (products_id) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 //  KEY idx_orders_id_zen ( orders_id ),
 //  KEY orders_id_prod_id_zen ( orders_id , products_id )
@@ -604,209 +815,6 @@ BITCOMMERCE_DB_PREFIX.'orders_total' => "
   sort_order I4
 ",
 //  KEY idx_ot_orders_id_zen (orders_id)
-
-BITCOMMERCE_DB_PREFIX.'product_types' => "
-  type_id I4 PRIMARY AUTO,
-  type_name C(255),
-  type_handler C(255),
-  type_master_type I4 NOTNULL default '1',
-  allow_add_to_cart C(1) NOTNULL default 'Y',
-  default_image C(255),
-  date_added T,
-  last_modified T
-",
-//  KEY idx_type_master_type_zen ( type_master_type )
-
-BITCOMMERCE_DB_PREFIX.'product_types_to_category' => "
-  product_type_id I4,
-  category_id I4
-",
-//  KEY idx_category_id_zen ( category_id ),
-//  KEY idx_product_type_id_zen ( product_type_id )
-
-BITCOMMERCE_DB_PREFIX.'products' => "
-  products_id I4 PRIMARY AUTO,
-  products_type I4 NOTNULL default '1',
-  products_quantity F DEFAULT '0' NOTNULL,
-  products_model C(32),
-  products_image C(64),
-  products_price N(15,4),
-  products_virtual I1,
-  products_date_added T,
-  products_last_modified T,
-  products_date_available T,
-  products_weight float,
-  products_status I1,
-  products_tax_class_id I4,
-  manufacturers_id I4,
-  products_ordered F DEFAULT '0' NOTNULL,
-  products_quantity_order_min F DEFAULT '1' NOTNULL,
-  products_quantity_order_units F DEFAULT '1' NOTNULL,
-  products_priced_by_attribute I1,
-  product_is_free I1,
-  product_is_call I1,
-  products_quantity_mixed I1,
-  product_is_always_free_ship I1,
-  products_qty_box_status I1 NOTNULL default '1',
-  products_quantity_order_max F DEFAULT '0' NOTNULL,
-  products_sort_order I4,
-  products_discount_type I1,
-  products_discount_type_from I1,
-  products_price_sorter N(15,4),
-  master_categories_id I4,
-  products_mixed_discount_qty I1 NOTNULL default '1',
-  metatags_title_status I1,
-  metatags_products_name_status I1,
-  metatags_model_status I1,
-  metatags_price_status I1,
-  metatags_title_tagline_status I1,
-  related_content_id I4,
-",
-//  KEY idx_products_date_added_zen (products_date_added),
-//  KEY idx_products_status_zen ( products_status )
-
-BITCOMMERCE_DB_PREFIX.'products_attributes' => "
-  products_attributes_id I4 PRIMARY AUTO,
-  products_id I4,
-  options_id I4,
-  options_values_id I4,
-  options_values_price N(15,4),
-  price_prefix C(1),
-  products_options_sort_order I4,
-  product_attribute_is_free I1,
-  products_attributes_wt F,
-  products_attributes_wt_pfix C(1),
-  attributes_display_only I1,
-  attributes_default I1,
-  attributes_discounted I1 NOTNULL default '1',
-  attributes_image C(64),
-  attributes_price_base_included I1 NOTNULL default '1',
-  attributes_price_onetime N(15,4),
-  attributes_price_factor N(15,4),
-  attributes_pf_offset N(15,4),
-  attributes_pf_onetime N(15,4),
-  attributes_pf_onetime_offset N(15,4),
-  attributes_qty_prices X,
-  attributes_qty_prices_onetime X,
-  attributes_price_words N(15,4),
-  attributes_price_words_free I2,
-  attributes_price_letters N(15,4),
-  attributes_price_letters_free I2,
-  attributes_required I1
-",
-//  KEY idx_id_options_id_values_zen ( products_id, options_id, options_values_id )
-
-BITCOMMERCE_DB_PREFIX.'products_attributes_dld' => "
-  products_attributes_id I4,
-  products_attributes_filename C(255),
-  products_attributes_maxdays I2 default '0',
-  products_attributes_maxcount I2 default '0'
-",
-
-BITCOMMERCE_DB_PREFIX.'products_description' => "
-  products_id I4 PRIMARY AUTO,
-  language_id I4 NOTNULL default '1',
-  products_name C(64),
-  products_description X,
-  products_url C(255),
-  products_viewed I2 default '0'
-",
-//  KEY idx_products_name_zen (products_name)
-
-BITCOMMERCE_DB_PREFIX.'products_discount_quantity' => "
-  discount_id I2,
-  products_id I4,
-  discount_qty FLOAT DEFAULT '0' NOTNULL,
-  discount_price N(15,4)
-",
-//  KEY idx_id_qty_zen ( products_id, discount_qty )
-
-BITCOMMERCE_DB_PREFIX.'product_music_extra' => "
-  products_id I4,
-  artists_id I4,
-  record_company_id I4,
-  music_genre_id I4
-",
-//  KEY idx_music_genre_id_zen ( music_genre_id )
-
-BITCOMMERCE_DB_PREFIX.'products_notifications' => "
-  products_id I4,
-  customers_id I4,
-  date_added T
-",
-
-BITCOMMERCE_DB_PREFIX.'products_options' => "
-  products_options_id I4,
-  language_id I4 NOTNULL default '1',
-  products_options_name C(32),
-  products_options_sort_order I4,
-  products_options_type I2,
-  products_options_length I2 NOTNULL default '32',
-  products_options_comment C(64),
-  products_options_size I2 NOTNULL default '32',
-  products_options_images_per_row I2 default '5',
-  products_options_images_style I1 default '0'
-",
-//  KEY idx_lang_id_zen ( language_id )
-
-BITCOMMERCE_DB_PREFIX.'products_options_types' => "
-  products_options_types_id I4,
-  products_options_types_name C(32)
-",
-
-BITCOMMERCE_DB_PREFIX.'products_options_values' => "
-  products_options_values_id I4,
-  language_id I4 NOTNULL default '1',
-  products_options_values_name C(64),
-  products_ov_sort_order I4
-",
-//  KEY idx_prod_opt_val_id_zen ( products_options_values_id )
-
-BITCOMMERCE_DB_PREFIX.'prd_opt_val_to_prd_opt' => "
-  prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
-  products_options_id I4,
-  products_options_values_id I4
-",
-
-BITCOMMERCE_DB_PREFIX.'products_to_categories' => "
-  products_id I4,
-  categories_id I4
-",
-//  KEY idx_cat_prod_id_zen (categories_id, products_id)
-
-BITCOMMERCE_DB_PREFIX.'record_artists' => "
-  artists_id I4 PRIMARY AUTO,
-  artists_name C(32),
-  artists_image C(64),
-  date_added T,
-  last_modified T
-",
-//  KEY idx_rec_artists_name_zen (artists_name)
-
-BITCOMMERCE_DB_PREFIX.'record_artists_info' => "
-  artists_id I4,
-  languages_id I4,
-  artists_url C(255),
-  url_clicked I2,
-  date_last_click T
-",
-
-BITCOMMERCE_DB_PREFIX.'record_company' => "
-  record_company_id I4 PRIMARY AUTO,
-  record_company_name C(32),
-  record_company_image C(64),
-  date_added T,
-  last_modified T
-",
-//  KEY idx_rec_company_name_zen (record_company_name)
-
-BITCOMMERCE_DB_PREFIX.'record_company_info' => "
-  record_company_id I4,
-  languages_id I4,
-  record_company_url C(255),
-  url_clicked I2,
-  date_last_click T
-",
 
 BITCOMMERCE_DB_PREFIX.'reviews' => "
   reviews_id I4 PRIMARY AUTO,
@@ -1073,6 +1081,14 @@ $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 	'version' => '0.1',
 	'state' => 'experimental',
 	'dependencies' => '',
+) );
+
+
+// ### Default UserPermissions
+$gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
+	array('bit_p_commerce_admin', 'Can administer commerce.', 'admins', 'bitcommerce'),
+	array('bit_p_purchase', 'Can purchase webstore products', 'basic', 'bitcommerce'),
+	array('bit_p_edit_product', 'Can create and modify storefront products', 'editors', 'bitcommerce'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
@@ -1824,7 +1840,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (9, 'blue_strip', 'languages.php', 1, 1, 70, 50, 1)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (10, 'blue_strip', 'manufacturers.php', 1, 0, 30, 20, 1)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (11, 'blue_strip', 'manufacturer_info.php', 1, 1, 35, 95, 1)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (12, 'blue_strip', 'more_information.php', 1, 0, 200, 200, 1)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (12, 'blue_strip', 'more_information.php', 0, 0, 200, 200, 1)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (13, 'blue_strip', 'music_genres.php', 1, 1, 0, 0, 0)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (14, 'blue_strip', 'order_history.php', 0, 0, 0, 0, 0)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (15, 'blue_strip', 'product_notifications.php', 1, 1, 55, 85, 1)",
@@ -1940,6 +1956,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (3, 'Document - General', 'document_general', '3', 'N', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (4, 'Document - Product', 'document_product', '3', 'Y', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (5, 'Product - Free Shipping', 'product_free_shipping', '1', 'Y', '', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (6, 'Product - Linked', 'product_liberty', '1', 'Y', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (0, 'Dropdown')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (1, 'Text')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (2, 'Radio')",
@@ -2132,6 +2149,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (195,'Vizcaya','Vizcaya')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (195,'Zamora','Zamora')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (195,'Zaragoza','Zaragoza')",
+
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Quantity in Stock', 'SHOW_PRODUCT_LIBERTY_INFO_QUANTITY', '1', 'Display Quantity in Stock on Product Info 0= off 1= on', '6', '6', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
+
+
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Model Number', 'SHOW_PRODUCT_INFO_MODEL', '1', 'Display Model Number on Product Info 0= off 1= on', '1', '1', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Weight', 'SHOW_PRODUCT_INFO_WEIGHT', '1', 'Display Weight on Product Info 0= off 1= on', '1', '2', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Attribute Weight', 'SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES', '1', 'Display Attribute Weight on Product Info 0= off 1= on', '1', '3', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
@@ -2249,6 +2270,14 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."paypal_payment_status` VALUES (5, 'Refunded')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."paypal_payment_status` VALUES (6, 'Canceled_Reversal')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."paypal_payment_status` VALUES (7, 'Reversed')",
+
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_module_map` ( `module_rsrc` ) VALUES ( 'bitpackage:bitcommerce/mod_sidebox_left.tpl' )",
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_module_map` ( `module_rsrc` ) VALUES ( 'bitpackage:bitcommerce/mod_sidebox_right.tpl' )",
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_layouts_modules` ( `module_id`, `availability`, `title`, `cache_time`, `rows`, `params`, `groups` ) VALUES ( 1, NULL, 'Login Box', NULL, NULL, NULL, '-1' )",
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_layouts` (`user_id`, `module_id`, `position`, `ord`, `layout`) VALUES (".ROOT_USER_ID.", 1, 'r', 1, 'bitcommerce')",
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_layouts_modules` ( `module_id`, `availability`, `title`, `cache_time`, `rows`, `params`, `groups` ) VALUES ( 2, NULL, NULL, NULL, NULL, NULL, '-1' )",
+// "INSERT INTO `".BIT_DB_PREFIX."tiki_layouts` (`user_id`, `module_id`, `position`, `ord`, `layout`) VALUES (".ROOT_USER_ID.", 2, 'l', 1, 'bitcommerce')",
+
 ) );
 
 

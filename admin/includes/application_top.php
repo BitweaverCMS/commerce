@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.3 2005/07/08 05:56:38 spiderr Exp $
+//  $Id: application_top.php,v 1.4 2005/07/30 03:01:50 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -381,7 +381,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   require_once(DIR_WS_FUNCTIONS . 'password_funcs.php');
 
   global $gBitSystem, $gBitUser;
-  $gBitSystem->verifyPermission( 'bit_p_cart_admin' );
+  $gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
 
   if ((basename($PHP_SELF) == FILENAME_LOGIN . '.php') and (substr_count(dirname($PHP_SELF),'//') > 0 or substr_count(dirname($PHP_SELF),'.php') > 0)) {
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));

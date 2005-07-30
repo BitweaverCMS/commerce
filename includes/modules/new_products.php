@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.4 2005/07/08 06:12:59 spiderr Exp $
+// $Id: new_products.php,v 1.5 2005/07/30 03:01:56 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
@@ -47,7 +47,7 @@
   $display_limit = '';
 
   $listHash = array( 'category_id' => $new_products_category_id, 'sort_mode' => 'random' );
-  $new_products = CommerceProduct::getList( $listHash ); 
+  $new_products = $gBitProduct->getList( $listHash );
   $row = 0;
   $col = 0;
   $list_box_contents = '';
@@ -68,7 +68,7 @@
       $product['products_name'] = zen_get_products_name($product['products_id']);
       $list_box_contents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( $product['products_image_url'], $product['products_name'], IMAGE_PRODUCT_NEW_WIDTH, IMAGE_PRODUCT_NEW_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
+                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'], IMAGE_PRODUCT_NEW_WIDTH, IMAGE_PRODUCT_NEW_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
 
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS - 1)) {

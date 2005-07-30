@@ -17,12 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.3 2005/07/14 04:55:13 spiderr Exp $
+// $Id: specials_index.php,v 1.4 2005/07/30 03:01:56 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
 
-  if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
+
+
+	$listHash['specials'] = TRUE;
+	if ( !empty( $new_products_category_id ) ) {
+  		$listHash['categories_id'] = $new_products_category_id;
+	}
+
+/*
     $specials_index_query = "select p.products_id, p.products_image, pd.products_name
                            from " . TABLE_PRODUCTS . " p
                            left join " . TABLE_SPECIALS . " s on p.products_id = s.products_id
@@ -41,40 +48,38 @@
                            and p.products_id = s.products_id and p.products_id = pd.products_id and p.products_status = '1' and s.status = '1' and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
   }
-
   $specials_index = $db->query($specials_index_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);
+*/
+
 
   $row = 0;
   $col = 0;
   $list_box_contents = '';
 
-  $num_products_count = $specials_index->RecordCount();
 // show only when 1 or more
-  if ($num_products_count > 0) {
+  if ( $specialProducts = $gBitProduct->getList( $listHash ) ) {
+  	$num_products_count = count( $specialProducts );
     if ($num_products_count < SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS) {
       $col_width = 100/$num_products_count;
     } else {
       $col_width = 100/SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS;
     }
 
-    while (!$specials_index->EOF) {
+	foreach( array_keys( $specialProducts ) AS $productsId ) {
+		$products_price = zen_get_products_display_price( $productsId );
+		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
+		$list_box_contents[$row][$col] = array('align' => 'center',
+												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
+												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( CommerceProduct::getImageUrl( $productsId, 'avatar' ), $specialProducts['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
 
-      $products_price = zen_get_products_display_price($specials_index->fields['products_id']);
-
-      $specials_index->fields['products_name'] = zen_get_products_name($specials_index->fields['products_id']);
-      $list_box_contents[$row][$col] = array('align' => 'center',
-                                             'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $specials_index->fields['products_image'] ), $specials_index->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($specials_index->fields['products_id']), 'products_id=' . $specials_index->fields['products_id']) . '">' . $specials_index->fields['products_name'] . '</a><br />' . $products_price);
-
-      $col ++;
-      if ($col > (SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS - 1)) {
-        $col = 0;
-        $row ++;
-      }
-      $specials_index->MoveNext();
+		$col ++;
+		if ($col > (SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS - 1)) {
+			$col = 0;
+			$row ++;
+		}
     }
 
-    if ($specials_index->RecordCount() > 0) {
+    if( !empty( $specialProducts ) ) {
       $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
       require($template->get_template_dir('tpl_modules_specials_default.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_modules_specials_default.php');
     }

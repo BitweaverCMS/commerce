@@ -17,16 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_whats_new.php,v 1.2 2005/07/08 06:13:05 spiderr Exp $
+// $Id: tpl_whats_new.php,v 1.3 2005/07/30 03:02:00 spiderr Exp $
 //
   $id = whatsnew;
   $content = "";
-    if (zen_not_null($random_product->fields['specials_new_products_price'])) {
-      $price .= '<span class="normalprice">' . $currencies->display_price($random_product->fields['products_price'], zen_get_tax_rate($random_product->fields['products_tax_class_id'])) . '</span><br />';
-      $price .= '<span class="specialprice">' . $currencies->display_price($random_product->fields['specials_new_products_price'], zen_get_tax_rate($random_product->fields['products_tax_class_id'])) . '</span>';
+    if (zen_not_null($random_product['specials_new_products_price'])) {
+      $price .= '<span class="normalprice">' . $currencies->display_price($random_product['products_price'], zen_get_tax_rate($random_product['products_tax_class_id'])) . '</span><br />';
+      $price .= '<span class="specialprice">' . $currencies->display_price($random_product['specials_new_products_price'], zen_get_tax_rate($random_product['products_tax_class_id'])) . '</span>';
     } else {
-      $price = $currencies->display_price($random_product->fields['products_price'], zen_get_tax_rate($random_product->fields['products_tax_class_id']));
+      $price = $currencies->display_price($random_product['products_price'], zen_get_tax_rate($random_product['products_tax_class_id']));
     }
-
-    $content .= '<center><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $random_product->fields['products_id']) . '">' . zen_image(CommerceProduct::getImageUrl( $random_product->fields['products_image'] ), $random_product->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $random_product->fields['products_id']) . '">' . $random_product->fields['products_name'] . '</a><br />' . $price . '</center>';
+    $content .= '<center><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $random_product['products_id']) . '">' . zen_image(CommerceProduct::getImageUrl( $random_product['products_id'], 'avatar' ), $random_product['products_name']) . '</a><br /><a href="' . zen_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $random_product['products_id']) . '">' . $random_product['products_name'] . '</a><br />' . $price . '</center>';
 ?>

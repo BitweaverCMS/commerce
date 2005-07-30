@@ -128,19 +128,23 @@
   require(DIR_FS_CLASSES . 'sniffer.php');
   $sniffer = new sniffer;
 
-	global $gBitCustomer;
-	$gBitCustomer = new CommerceCustomer( $_SESSION['customer_id'] );
-	$gBitCustomer->load();
-
 // {{{ TIKI_MOD
 	global $gBitUser;
 	if( !empty( $_SESSION['customer_id'] ) && !$gBitUser->isRegistered() ) {
 		// we have lost our bitweaver
 		unset( $_SESSION['customer_id'] );
+		$customerId = NULL;
 	} elseif( $gBitUser->isRegistered() ) {
 	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
 	  $_SESSION['customer_id'] = $gBitUser->mUserId;
+	  $customerId = $_SESSION['customer_id'];
+	} else {
+	  $customerId = NULL;
 	}
+
+	global $gBitCustomer;
+	$gBitCustomer = new CommerceCustomer( $customerId );
+	$gBitCustomer->load();
 
 	if( $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
 		// Set theme related directories
