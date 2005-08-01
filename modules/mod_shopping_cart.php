@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.2 2005/08/01 13:10:51 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $db, $gBitProduct, $currencies;
 
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):
