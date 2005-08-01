@@ -1827,7 +1827,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (238,'Zambia','ZM','ZMB','1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (239,'Zimbabwe','ZW','ZWE','1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (1,'US Dollar','USD','\$','','.',',','2','1.0000', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (2,'Euro','EUR','','EUR','.',',','2','1.1036', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (2,'Euro','EUR','','&euro;','.',',','2','0.817565', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."languages` VALUES (1,'English','en','icon.gif','english',1)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (1, 'blue_strip', 'banner_box.php', 1, 0, 300, 1, 127)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."layout_boxes` (`layout_id`, `layout_template`, `layout_box_name`, `layout_box_status`, `layout_box_location`, `layout_box_sort_order`, `layout_box_sort_order_single`, `layout_box_status_single`) VALUES (2, 'blue_strip', 'banner_box2.php', 1, 1, 15, 1, 15)",
