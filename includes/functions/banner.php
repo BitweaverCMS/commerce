@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.3 2005/07/08 06:12:28 spiderr Exp $
+// $Id: banner.php,v 1.4 2005/08/02 15:35:43 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -100,14 +100,10 @@
   function zen_display_banner($action, $identifier) {
     global $db;
 
-    $my_page_ssl = $_SERVER['HTTPS'];
-    switch (true) {
-      case ($my_page_ssl=='on'):
+	if( !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] =='on' ) ) {
         $my_banner_filter=" and banners_on_ssl= " . "'1' ";
-        break;
-      case ($my_page_ssl=='off' ):
+	} else {
         $my_banner_filter='';
-        break;
     }
 
     if ($action == 'dynamic') {
@@ -167,14 +163,10 @@
   function zen_banner_exists($action, $identifier) {
     global $db;
 
-    $my_page_ssl = $_SERVER['HTTPS'];
-    switch (true) {
-      case ($my_page_ssl=='on'):
+	if( !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] =='on' ) ) {
         $my_banner_filter=" and banners_on_ssl= " . "'1' ";
-        break;
-      case ($my_page_ssl=='off' ):
+	} else {
         $my_banner_filter='';
-        break;
     }
 
     if ($action == 'dynamic') {

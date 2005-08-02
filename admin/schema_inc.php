@@ -210,8 +210,8 @@ BITCOMMERCE_DB_PREFIX.'product_types' => "
 BITCOMMERCE_DB_PREFIX.'product_types_to_category' => "
   product_type_id I4,
   category_id I4
-  CONSTRAINT ', CONSTRAINT \"prod_types_to_cat_type_ref\" FOREIGN KEY (\"product_type_id\") REFERENCES \"".BITCOMMERCE_DB_PREFIX."product_types\"( \"type_id\" )
-  			 , CONSTRAINT \"prod_types_to_cat_cat_ref\" FOREIGN KEY (\"category_id\") REFERENCES \"".BITCOMMERCE_DB_PREFIX."categories\"( \"categories_id\" )'
+  CONSTRAINT ', CONSTRAINT prod_types_to_cat_type_ref FOREIGN KEY (product_type_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types( type_id )
+  			 , CONSTRAINT prod_types_to_cat_cat_ref FOREIGN KEY (category_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."categories( categories_id )'
 ",
 //  KEY idx_category_id_zen ( category_id ),
 //  KEY idx_product_type_id_zen ( product_type_id )
@@ -253,9 +253,9 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   metatags_price_status I1,
   metatags_title_tagline_status I1,
   related_content_id I4
-  CONSTRAINT ', CONSTRAINT \"prod_content_id_ref\" FOREIGN KEY (\"related_content_id\") REFERENCES \"".BIT_DB_PREFIX."tiki_content\"( \"content_id\" )
-			  , CONSTRAINT \"prod_type_ref\"  FOREIGN KEY (\"products_type\") REFERENCES \"".BITCOMMERCE_DB_PREFIX."product_types\" ( \"type_id\" )
-			  , CONSTRAINT \"prod_manf_id_ref\"  FOREIGN KEY (\"manufacturers_id\") REFERENCES \"".BITCOMMERCE_DB_PREFIX."manufacturers\" ( \"manufacturers_id\" )'
+  CONSTRAINT ', CONSTRAINT prod_content_id_ref FOREIGN KEY (related_content_id) REFERENCES ".BIT_DB_PREFIX."tiki_content( content_id )
+			  , CONSTRAINT prod_type_ref  FOREIGN KEY (products_type) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types ( type_id )
+			  , CONSTRAINT prod_manf_id_ref  FOREIGN KEY (manufacturers_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers ( manufacturers_id )'
 ",
 //  KEY idx_products_date_added_zen (products_date_added),
 //  KEY idx_products_status_zen ( products_status )
@@ -302,7 +302,7 @@ BITCOMMERCE_DB_PREFIX.'products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_required I1
-  CONSTRAINT ', CONSTRAINT \"prod_attr_products_id_ref\" FOREIGN KEY (products_id) REFERENCES \"".BITCOMMERCE_DB_PREFIX."products\"( \"products_id\" )'
+  CONSTRAINT ', CONSTRAINT prod_attr_products_id_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
 ",
 //  KEY idx_id_options_id_values_zen ( products_id, options_id, options_values_id )
 
@@ -320,7 +320,7 @@ BITCOMMERCE_DB_PREFIX.'products_description' => "
   products_description X,
   products_url C(255),
   products_viewed I2 default '0'
-  CONSTRAINT ', CONSTRAINT \"prod_desc_products_id_ref\" FOREIGN KEY (products_id) REFERENCES \"".BITCOMMERCE_DB_PREFIX."products\"( \"products_id\" )'
+  CONSTRAINT ', CONSTRAINT prod_desc_products_id_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
 ",
 //  KEY idx_products_name_zen (products_name)
 
@@ -743,7 +743,7 @@ BITCOMMERCE_DB_PREFIX.'orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
-  CONSTRAINT ', CONSTRAINT \"orders_prod_products_id_ref\" FOREIGN KEY (products_id) REFERENCES \"".BITCOMMERCE_DB_PREFIX."products\"( \"products_id\" )'
+  CONSTRAINT ', CONSTRAINT orders_prod_products_id_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
 ",
 //  KEY idx_orders_id_zen ( orders_id ),
 //  KEY orders_id_prod_id_zen ( orders_id , products_id )

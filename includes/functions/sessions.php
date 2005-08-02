@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sessions.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: sessions.php,v 1.2 2005/08/02 15:35:43 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -108,7 +108,7 @@
     if (defined('DIR_WS_ADMIN')) {
       @ini_set('session.gc_maxlifetime', (SESSION_TIMEOUT_ADMIN < 900 ? (SESSION_TIMEOUT_ADMIN + 900) : SESSION_TIMEOUT_ADMIN));
     }
-    return session_start();
+    return TRUE;
   }
 
   function zen_session_register($variable) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.2 2005/07/10 17:31:45 spiderr Exp $
+// $Id: index.php,v 1.3 2005/08/02 15:35:44 spiderr Exp $
 //
 
 define('TEXT_MAIN',$gBitSystem->getPreference( 'commerce_main_text', '') );
@@ -70,9 +70,15 @@ define('TEXT_INFORMATION', '
 ');
 
 
-define('TABLE_HEADING_NEW_PRODUCTS', 'New Products For %s');
-define('TABLE_HEADING_UPCOMING_PRODUCTS', 'Upcoming Products');
-define('TABLE_HEADING_DATE_EXPECTED', 'Date Expected');
+if( !defined( 'TABLE_HEADING_NEW_PRODUCTS' ) ) {
+	define('TABLE_HEADING_NEW_PRODUCTS', 'New Products For %s');
+}
+if( !defined( 'TABLE_HEADING_UPCOMING_PRODUCTS' ) ) {
+	define('TABLE_HEADING_UPCOMING_PRODUCTS', 'Upcoming Products');
+}
+if( !defined( 'TABLE_HEADING_DATE_EXPECTED' ) ) {
+	define('TABLE_HEADING_DATE_EXPECTED', 'Date Expected');
+}
 
 if ( ($category_depth == 'products') || (isset($_GET['manufacturers_id'])) ) {
   define('HEADING_TITLE', 'Available Products');

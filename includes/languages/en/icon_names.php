@@ -17,15 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: icon_names.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: icon_names.php,v 1.2 2005/08/02 15:35:44 spiderr Exp $
 //
 
 // define the icon images used in the project
 
-define('ICON_IMAGE_xxx', '');
-define('ICON_IMAGE_xxx', '');
-define('ICON_IMAGE_xxx', '');
-define('ICON_IMAGE_xxx', '');
 define('ICON_IMAGE_xxx', '');
 
 //alt tags for buttons

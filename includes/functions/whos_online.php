@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.2 2005/07/08 06:12:28 spiderr Exp $
+// $Id: whos_online.php,v 1.3 2005/08/02 15:35:43 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -26,7 +26,7 @@
   function zen_update_whos_online() {
     global $db;
 
-    if ($_SESSION['customer_id']) {
+    if( !empty( $_SESSION['customer_id'] ) ) {
       $wo_customer_id = $_SESSION['customer_id'];
 
       $customer_query = "select customers_firstname, customers_lastname

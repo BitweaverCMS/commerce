@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: navigation_history.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: navigation_history.php,v 1.2 2005/08/02 15:35:43 spiderr Exp $
 //
 
   class navigationHistory {
@@ -35,9 +35,9 @@
     function add_current_page() {
       global $request_type, $cPath;
 
-      if (is_array($_GET)) {
-        reset($_GET);
-        while (list($key, $value) = each($_GET)) {
+      if (is_array($_REQUEST)) {
+        reset($_REQUEST);
+        while (list($key, $value) = each($_REQUEST)) {
           if ($key != 'main_page') {
             $get_vars[$key] = $value;
           }
@@ -46,7 +46,7 @@
 
       $set = 'true';
       for ($i=0, $n=sizeof($this->path); $i<$n; $i++) {
-        if ( ($this->path[$i]['page'] == $_GET['main_page']) ) {
+        if ( ($this->path[$i]['page'] == $_REQUEST['main_page']) ) {
           if (isset($cPath)) {
             if (!isset($this->path[$i]['get']['cPath'])) {
               continue;
@@ -77,8 +77,8 @@
       }
 
       if ($set == 'true') {
-        if ($_GET['main_page']) {
-          $page = $_GET['main_page'];
+        if ($_REQUEST['main_page']) {
+          $page = $_REQUEST['main_page'];
         } else {
             $page = 'index';
         }
@@ -92,7 +92,7 @@
     function remove_current_page() {
 
       $last_entry_position = sizeof($this->path) - 1;
-      if ($this->path[$last_entry_position]['page'] == $_GET['main_page']) {
+      if ($this->path[$last_entry_position]['page'] == $_REQUEST['main_page']) {
         unset($this->path[$last_entry_position]);
       }
     }
@@ -106,14 +106,14 @@
                                 'get' => $page['get'],
                                 'post' => $page['post']);
       } else {
-        reset($_GET);
-        while (list($key, $value) = each($_GET)) {
+        reset($_REQUEST);
+        while (list($key, $value) = each($_REQUEST)) {
           if ($key != 'main_page') {
             $get_vars[$key] = $value;
           }
         }
-        if ($_GET['main_page']) {
-          $page = $_GET['main_page'];
+        if ($_REQUEST['main_page']) {
+          $page = $_REQUEST['main_page'];
         } else {
           $page = 'index';
         }

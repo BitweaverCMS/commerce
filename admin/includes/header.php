@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.2 2005/07/08 05:56:38 spiderr Exp $
+//  $Id: header.php,v 1.3 2005/08/02 15:35:35 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -127,28 +127,6 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     }
   }
 ?>
-<!-- All HEADER_ definitions in the columns below are defined in includes/languages/english.php //-->
-<table border="0" width="100%" cellspacing="0" cellpadding="0" class="header">
-<?php
-// special spacing for alt_nav.php
-  if (basename($PHP_SELF) == 'alt_nav.php') {
-?>
-<tr><td>&nbsp;</td></tr>
-<?php } // alt_nav spacing ?>
-  <tr>
-    <td align="left" valign="top" height="<?php echo HEADER_LOGO_HEIGHT; ?>" width="<?php echo HEADER_LOGO_WIDTH; ?>"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">' . zen_image(DIR_WS_IMAGES . HEADER_LOGO_IMAGE, HEADER_ALT_TEXT) . '</a>'; ?></td>
-    <td colspan="2" align="left"><table width="100%"><tr>
-    <td align="left" class="main" valign="top"><?php echo ($new_gv_queue_cnt > 0 ? $goto_gv . '<br />' . sprintf(TEXT_SHOW_GV_QUEUE, $new_gv_queue_cnt) : ''); ?></td>
-<?php
-  if ($new_version) {
-?>
-    <td align="right" class="main" valign="top"><?php echo $new_version; ?></td>
-<?php
-  }
-?>
-    </tr></table></td>
-  </tr>
-</table>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <tr class="headerBar" height="20" width="100%">
 
@@ -164,7 +142,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     ?>
     </td>
     <td class="headerBarContent" align="center"><b><?php echo date("r", time()) . 'GMT'  . '&nbsp;[' .  $_SERVER['REMOTE_ADDR'] . ' ]&nbsp;'; ?></b></td>
-    <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . zen_catalog_href_link() . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.zen-cart.com/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>&nbsp;|&nbsp;<a href="' . zen_href_link(FILENAME_LOGOFF) . '" class="headerLink">' . HEADER_TITLE_LOGOFF . '</a>&nbsp;'; ?></td>
+    <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . BITCOMMERCE_PKG_URL . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.bitcommerce.org/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>'; ?></td>
   </tr>
 </table>
 <?php require(DIR_WS_INCLUDES . 'header_navigation.php'); ?>

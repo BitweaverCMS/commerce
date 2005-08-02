@@ -111,8 +111,9 @@ class CommerceProduct extends BitBase {
 		global $gBitSystem;
 		BitBase::prepGetList( $pListHash );
 		$bindVars = array();
-		$whereSql = '';
 		$selectSql = '';
+		$fromSql = '';
+		$whereSql = '';
 
 
 // 		$selectSql .= ' , s.* ';

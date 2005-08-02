@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.3 2005/07/16 15:17:38 spiderr Exp $
+// $Id: meta_tags.php,v 1.4 2005/08/02 15:35:45 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -42,10 +42,13 @@
     $keywords_string_metatags .= $keywords_metatags->fields['categories_name'] . ' ';
     $keywords_metatags->MoveNext();
   }
+  if( empty( $keywords_string_metatags ) ) {
+  	$keywords_string_metatags = NULL;
+  }
   define('KEYWORDS', zen_clean_html($keywords_string_metatags) . CUSTOM_KEYWORDS);
 
 // Get different meta tag values depending on main_page values
-  switch ($_GET['main_page']) {
+  switch ($_REQUEST['main_page']) {
   case 'advanced_search':
   case 'account_edit':
   case 'account_history':
@@ -95,8 +98,8 @@
         define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $category_metatags->fields['categories_name']);
       } // EOF
     } elseif ($category_depth == 'products') {
-	    if (isset($_GET['manufacturers_id'])) {
-        $sql = "select manufacturers_name from " . TABLE_MANUFACTURERS . " where manufacturers_id = '" . (int)$_GET['manufacturers_id'] . "'";
+	    if (isset($_REQUEST['manufacturers_id'])) {
+        $sql = "select manufacturers_name from " . TABLE_MANUFACTURERS . " where manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
         $manufacturer_metatags = $db->Execute($sql);
         if ($manufacturer_metatags->EOF) {
           $meta_tags_over_ride = true;
@@ -149,11 +152,11 @@
   case 'product_reviews_info':
     $review_on = META_TAGS_REVIEW;
 //  case 'product_info':
-  case (strstr($_GET['main_page'], 'product_') or strstr($_GET['main_page'], 'document_')):
+  case (strstr($_REQUEST['main_page'], 'product_') or strstr($_REQUEST['main_page'], 'document_')):
 /*
     $sql = "select p.products_id, pd.products_name, pd.products_description, p.products_model, p.products_price, p.products_tax_class_id, p.product_is_free, p.products_price_sorter,
             p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status, p.metatags_price_status, p.metatags_title_tagline_status,
-            mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.products_status = '1' and p.products_id = '" . (int)$_GET['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+            mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.products_status = '1' and p.products_id = '" . (int)$_REQUEST['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 */
 
     $sql= "select pd.products_name, p.products_model, p.products_price_sorter,
@@ -161,7 +164,7 @@
                                       p.products_id, p.metatags_price_status, p.metatags_title_tagline_status,
                                       mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description
                               from " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                              where p.products_id = '" . (int)$_GET['products_id'] . "'
+                              where p.products_id = '" . (int)$_REQUEST['products_id'] . "'
                               and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
     $product_info_metatags = $db->Execute($sql);
@@ -208,7 +211,7 @@
 
       } else {
         // build un-customized meta tag
-        if (META_TAG_INCLUDE_PRICE == '1' and !strstr($_GET['main_page'], 'document_general')) {
+        if (META_TAG_INCLUDE_PRICE == '1' and !strstr($_REQUEST['main_page'], 'document_general')) {
           if ($product_info_metatags->fields['product_is_free'] != '1') {
             if (zen_check_show_prices() == 'true') {
               $meta_products_price = zen_get_products_actual_price($product_info_metatags->fields['products_id']);
@@ -241,7 +244,7 @@
     break;
 
   case 'product_reviews_info_OFF':
-    $sql = "select rd.reviews_text, r.reviews_rating, r.reviews_id, r.customers_name, p.products_id, p.products_price, p.products_tax_class_id, p.products_model, pd.products_name, p.product_is_free from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where r.reviews_id = '" . (int)$_GET['reviews_id'] . "' and r.reviews_id = rd.reviews_id and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "' and r.products_id = p.products_id and p.products_status = '1' and p.products_id = pd.products_id and pd.language_id = '". (int)$_SESSION['languages_id'] . "'";
+    $sql = "select rd.reviews_text, r.reviews_rating, r.reviews_id, r.customers_name, p.products_id, p.products_price, p.products_tax_class_id, p.products_model, pd.products_name, p.product_is_free from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where r.reviews_id = '" . (int)$_REQUEST['reviews_id'] . "' and r.reviews_id = rd.reviews_id and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "' and r.products_id = p.products_id and p.products_status = '1' and p.products_id = pd.products_id and pd.language_id = '". (int)$_SESSION['languages_id'] . "'";
     $review_metatags = $db->Execute($sql);
     if ($review_metatags->EOF) {
       $meta_tags_over_ride = true;
@@ -280,7 +283,7 @@
   }
 
   // meta tags override due to 404, missing products_id, cPath or other EOF issues
-  if ($meta_tags_over_ride == true) {
+  if( !empty($meta_tags_over_ride) ) {
     define('META_TAG_TITLE', (defined('NAVBAR_TITLE') ? NAVBAR_TITLE . PRIMARY_SECTION : '') );
     define('META_TAG_DESCRIPTION', TITLE . (defined('NAVBAR_TITLE') ? PRIMARY_SECTION . NAVBAR_TITLE : '') . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . (defined('NAVBAR_TITLE') ? NAVBAR_TITLE : ''));

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box_all.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_banner_box_all.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -32,15 +32,11 @@
 	$new_banner_search = zen_build_banners_group(SHOW_BANNERS_GROUP_SET_ALL);
 
 	// secure pages
-	$my_page_ssl = $_SERVER['HTTPS'];
-	switch (true) {
-		case ($my_page_ssl=='on'):
-			$my_banner_filter=" and banners_on_ssl= " . "'1' ";
-			break;
-		case ($my_page_ssl=='off' ):
-			$my_banner_filter='';
-			break;
-	}
+	if( !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] =='on' ) ) {
+        $my_banner_filter=" and banners_on_ssl= " . "'1' ";
+	} else {
+        $my_banner_filter='';
+    }
 
 	$sql = "select banners_id from " . TABLE_BANNERS . " where status = '1' " . $new_banner_search . $my_banner_filter . " order by banners_sort_order";
 	$banners_all = $db->Execute($sql);
@@ -51,6 +47,7 @@
 	while( !$banners_all->EOF ) {
 		$banner = zen_banner_exists('dynamic', SHOW_BANNERS_GROUP_SET_ALL);
 		array_push( $sideboxBannersAll, zen_display_banner('static', $banners_all->fields['banners_id']) );
+		$banners_all->MoveNext();
 	}
 
 	if( empty( $moduleTitle ) ) {

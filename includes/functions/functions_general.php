@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.11 2005/07/30 16:45:36 spiderr Exp $
+// $Id: functions_general.php,v 1.12 2005/08/02 15:35:43 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -1195,7 +1195,7 @@
     $zp_filter_terms = $db->Execute($zp_sql);
     $zp_result = false;
     while (!$zp_filter_terms->EOF) {
-      if (zen_not_null($_GET[$zp_filter_terms->fields['get_term_name']])) $zp_result = true;
+      if ( !empty( $_GET[$zp_filter_terms->fields['get_term_name']] ) ) $zp_result = true;
       $zp_filter_terms->MoveNext();
     }
     return $zp_result;

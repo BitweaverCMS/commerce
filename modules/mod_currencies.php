@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_currencies.php,v 1.2 2005/07/30 16:45:37 spiderr Exp $
+// $Id: mod_currencies.php,v 1.3 2005/08/02 15:35:45 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
 	// test if box should display
 	$show_currencies= false;
 
-	if (substr(basename($PHP_SELF), 0, 8) != 'checkout') {
+	if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
 		$show_currencies= true;
 	}
 

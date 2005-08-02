@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.6 2005/07/26 12:31:48 spiderr Exp $
+// $Id: index.php,v 1.7 2005/08/02 15:35:34 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -100,8 +100,9 @@ ob_start();
 				}
 			  $za_onload_array[]=$read_contents;
 			}
-			if ($zc_first_field !='') $za_onload_array[] = $zc_first_field; // for backwards compatibility with previous $zc_first_field usage
-			if (count($za_onload_array)>0) $zv_onload=implode(';',$za_onload_array);
+			if( !empty( $zc_first_field ) ) $za_onload_array[] = $zc_first_field; // for backwards compatibility with previous $zc_first_field usage
+			$zv_onload = '';
+			if( !empty( $za_onload_array ) ) $zv_onload=implode(';',$za_onload_array);
 			$zv_onload = str_replace(';;',';',$zv_onload.';'); //ensure we have just one ';' between each, and at the end
 			if (trim($zv_onload) == ';') $zv_onload='';  // ensure that a blank list is truly blank and thus ignored.
 
@@ -122,13 +123,13 @@ require(DIR_WS_INCLUDES . 'application_bottom.php');
 $gBitSmarty->assign_by_ref( 'bitcommerceCenter', ob_get_contents() );
 ob_end_clean();
 
-
+/*
 // Get the left sideboxes
 if (COLUMN_LEFT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == '')) {
   // global disable of column_left
   $flag_disable_left = true;
 }
-if (!$flag_disable_left) {
+if( !empty( $flag_disable_left ) ) {
 ob_start();
 	require(DIR_WS_MODULES . 'column_left.php');
 	$gBitSmarty->assign_by_ref( 'bitcommerceLeft', ob_get_contents() );
@@ -140,13 +141,15 @@ if (COLUMN_RIGHT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custom
   // global disable of column_right
   $flag_disable_right = true;
 }
-if (!$flag_disable_right) {
+
+if( !empty( $flag_disable_right ) ) {
 ob_start();
 	require(DIR_WS_MODULES . 'column_right.php');
 	$sideBar = ob_get_contents();
 	$gBitSmarty->assign_by_ref( 'bitcommerceRight', $sideBar );
 ob_end_clean();
 }
+*/
 
 global $gTikiSystem;
 //$gTikiSystem->mPrefs['feature_left_column'] = 'n';

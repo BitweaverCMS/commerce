@@ -17,14 +17,20 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whos_online.php,v 1.1 2005/07/30 15:08:16 spiderr Exp $
+// $Id: mod_whos_online.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
 // test if box should display
   $show_whos_online= false;
-
   $show_whos_online= true;
+
+  if( empty( $n_members ) ) {
+  	$n_members = 0;
+  }
+  if( empty( $n_guests ) ) {
+  	$n_guests = 0;
+  }
 
 // Set expiration time, default is 1200 secs (20 mins)
   $xx_mins_ago = (time() - 1200);
@@ -59,12 +65,11 @@
     $word_member = '&nbsp;' . BOX_WHOS_ONLINE_MEMBERS;
   }
 
-  if (($n_guests >= 1) && ($n_members >= 1)) $word_and = '&nbsp;' . BOX_WHOS_ONLINE_AND . '&nbsp;<br />';
-
   $textstring = $there_is_are;
   if ($n_guests >= 1) $textstring .= $n_guests . $word_guest;
 
-  $textstring .= $word_and;
+  if (($n_guests >= 1) && ($n_members >= 1)) $textstring .= '&nbsp;' . BOX_WHOS_ONLINE_AND . '&nbsp;<br />';
+
   if ($n_members >= 1) $textstring .= $n_members . $word_member;
 
   $textstring .= '&nbsp;' . BOX_WHOS_ONLINE_ONLINE;

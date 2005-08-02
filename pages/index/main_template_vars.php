@@ -17,36 +17,36 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: main_template_vars.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
 //
 //die($category_depth);
-//die($_GET['music_genre_id']);
+//die($_REQUEST['music_genre_id']);
 
 // release manufactures_id when nothing is there so a blank filter is not setup.
 // this will result in the home page, if used
-  if ($_GET['manufacturers_id'] <= 0) {
-    unset($_GET['manufacturers_id']);
+  if( !empty( $_REQUEST['manufacturers_id'] ) && ($_REQUEST['manufacturers_id'] <= 0) ) {
+    unset($_REQUEST['manufacturers_id']);
     unset($manufacturers_id);
   }
 
 // release music_genre_id when nothing is there so a blank filter is not setup.
 // this will result in the home page, if used
-  if ($_GET['music_genre_id'] <= 0) {
-    unset($_GET['music_genre_id']);
+  if( !empty( $_REQUEST['music_genre_id'] ) &&  ($_REQUEST['music_genre_id'] <= 0) ) {
+    unset($_REQUEST['music_genre_id']);
     unset($music_genre_id);
   }
 
 // release record_company_id when nothing is there so a blank filter is not setup.
 // this will result in the home page, if used
-  if ($_GET['record_company_id'] <= 0) {
-    unset($_GET['record_company_id']);
+  if( !empty( $_REQUEST['record_company_id'] ) &&  ($_REQUEST['record_company_id'] <= 0) ) {
+    unset($_REQUEST['record_company_id']);
     unset($record_company_id);
   }
 
 // only elease typefilter if both record_company_id and music_genre_id are blank
 // this will result in the home page, if used
-  if ($_GET['record_company_id'] <= 0 and $_GET['music_genre_id'] <= 0) {
-    unset($_GET['typefilter']);
+  if( !empty( $_REQUEST['music_genre_id'] ) &&  ($_REQUEST['record_company_id'] <= 0 && $_REQUEST['music_genre_id'] <= 0) ) {
+    unset($_REQUEST['typefilter']);
     unset($typefilter);
   }
 
@@ -109,7 +109,7 @@
     $tpl_page_body = 'tpl_index_categories.php';
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//  } elseif ($category_depth == 'products' || isset($_GET['manufacturers_id']) || isset($_GET['music_genre_id'])) {
+//  } elseif ($category_depth == 'products' || isset($_REQUEST['manufacturers_id']) || isset($_REQUEST['music_genre_id'])) {
   } elseif ($category_depth == 'products' || zen_check_url_get_terms()) {
     if (SHOW_PRODUCT_INFO_ALL_PRODUCTS == '1') {
       // set a category filter
@@ -165,9 +165,9 @@
     }
 // add the product filters for other product types here
 //
-if (isset($_GET['typefilter'])) {
+if (isset($_REQUEST['typefilter'])) {
 //die('here1');
-  require(DIR_WS_INCLUDES . 'index_filters/' . $_GET['typefilter'] . '_filter.php');
+  require(DIR_WS_INCLUDES . 'index_filters/' . $_REQUEST['typefilter'] . '_filter.php');
 } else {
   require(DIR_WS_INCLUDES . 'index_filters/default_filter.php');
 }

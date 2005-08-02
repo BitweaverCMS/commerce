@@ -17,55 +17,52 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_order_history.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
-  if ($_SESSION['customer_id']) {
-// retreive the last x products purchased
-  $orders_history_query = "select distinct op.products_id, o.date_purchased
-                   from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_PRODUCTS . " p
-                   where o.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                   and o.orders_id = op.orders_id
-                   and op.products_id = p.products_id
-                   and p.products_status = '1'
-                   order by o.date_purchased desc
-                   limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;
+	if( $gBitUser->isRegistered() ) {
+		// retreive the last x products purchased
+		$orders_history_query = "select distinct op.products_id, o.date_purchased
+						from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_PRODUCTS . " p
+						where o.customers_id = ?
+						and o.orders_id = op.orders_id
+						and op.products_id = p.products_id
+						and p.products_status = '1'
+						order by o.date_purchased desc
+						limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;
 
-    $orders_history = $db->Execute($orders_history_query);
+		$orders_history = $db->query( $orders_history_query, $gBitUser->mUserId );
 
-    if ($orders_history->RecordCount() > 0) {
-      $product_ids = '';
-      while (!$orders_history->EOF) {
-        $product_ids .= (int)$orders_history->fields['products_id'] . ',';
-        $orders_history->MoveNext();
-      }
-      $product_ids = substr($product_ids, 0, -1);
-      $rows=0;
-      $customer_orders_string = '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
-      $products_history_query = "select products_id, products_name
-                         from " . TABLE_PRODUCTS_DESCRIPTION . "
-                         where products_id in (" . $product_ids . ")
-                         and language_id = '" . (int)$_SESSION['languages_id'] . "'
-                         order by products_name";
+		if ($orders_history->RecordCount() > 0) {
+			$product_ids = '';
+			while (!$orders_history->EOF) {
+				$product_ids .= (int)$orders_history->fields['products_id'] . ',';
+				$orders_history->MoveNext();
+			}
+			$product_ids = substr($product_ids, 0, -1);
+			$rows=0;
+			$customer_orders_string = '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
+			$products_history_query = "select products_id, products_name
+								from " . TABLE_PRODUCTS_DESCRIPTION . "
+								where products_id in (" . $product_ids . ")
+								and language_id = '" . (int)$_SESSION['languages_id'] . "'
+								order by products_name";
 
-      $products_history = $db->Execute($products_history_query);
+			$products_history = $db->Execute($products_history_query);
 
-      while (!$products_history->EOF) {
-        $rows++;
-        $customer_orders[$rows]['id'] = $products_history->fields['products_id'];
-        $customer_orders[$rows]['name'] = $products_history->fields['products_name'];
-        $products_history->MoveNext();
-      }
-      $customer_orders_string .= '</table>';
+			while (!$products_history->EOF) {
+				$rows++;
+				$customer_orders[$rows]['id'] = $products_history->fields['products_id'];
+				$customer_orders[$rows]['name'] = $products_history->fields['products_name'];
+				$products_history->MoveNext();
+			}
 
-  //	require($template->get_template_dir('tpl_order_history.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_order_history.php');
-      $title =  BOX_HEADING_CUSTOMER_ORDERS;
-      $left_corner = false;
-      $right_corner = false;
-      $right_arrow = false;
-      $title_link = false;
-  //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-    }
-  }
+			$gBitSmarty->assign( 'sideboxCustomerOrders', $customer_orders );
+
+		}
+		if( empty( $moduleTitle ) ) {
+			$gBitSmarty->assign( 'moduleTitle', tra( 'Order History' ) );
+		}
+	}
 ?>

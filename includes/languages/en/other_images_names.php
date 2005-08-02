@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: other_images_names.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: other_images_names.php,v 1.2 2005/08/02 15:35:44 spiderr Exp $
 //
 // define the other images used in the project
 
@@ -38,10 +38,6 @@ define('OTHER_IMAGE_BOX_CORNER_TOP_R', 'corner_right.jpg');
 define('OTHER_IMAGE_BOX_CORNER_BOTTOM_L', 'corner_left_b.jpg');
 define('OTHER_IMAGE_BOX_CORNER_BOTTOM_R', 'corner_right_b.jpg');
 define('OTHER_IMAGE_CUSTOMERS_AUTHORIZATION', 'customer_authorization.gif');
-define('OTHER_IMAGE_', '');
-define('OTHER_IMAGE_', '');
-define('OTHER_IMAGE_', '');
-define('OTHER_IMAGE_', '');
 
 //alt tags for other images
 
@@ -62,7 +58,4 @@ define('OTHER_PRICE_IS_FREE_ALT', '');
 define('OTHER_SILVER_SEPARATOR_ALT', '');
 define('OTHER_TRANPARENT_ALT', '');
 define('OTHER_IMAGE_CUSTOMERS_AUTHORIZATION_ALT', 'CUSTOMER APPROVAL IS PENDING ...');
-define('OTHER_xxx_ALT', '');
-define('OTHER_xxx_ALT', '');
-define('OTHER_xxx_ALT', '');
 ?>

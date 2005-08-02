@@ -1,5 +1,5 @@
 {strip}
 <ul>
-	<li><a class="item" href="{$gBitLoc.BITCOMMERCE_PKG_URL}admin/index.php">{tr}Administer Bitcart{/tr}</a></li>
+	<li><a class="item" href="{$gBitLoc.BITCOMMERCE_PKG_URL}admin/">{tr}Administration{/tr}</a></li>
 </ul>
 {/strip}

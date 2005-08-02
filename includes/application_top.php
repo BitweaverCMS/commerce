@@ -17,18 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.10 2005/07/30 16:26:25 spiderr Exp $
+// $Id: application_top.php,v 1.11 2005/08/02 15:35:42 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
-error_reporting(E_ALL & ~E_NOTICE);
+// error_reporting(E_ALL & ~E_NOTICE);
 
   @ini_set("arg_separator.output","&");
 
-
-
+if( empty( $_REQUEST['main_page'] ) ) {
+	$_REQUEST['main_page'] = NULL;
+}
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
@@ -54,7 +55,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
 
 // include cache functions if enabled
-  if (USE_CACHE == 'true') include(DIR_WS_FUNCTIONS . 'cache.php');
+  if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') include(DIR_WS_FUNCTIONS . 'cache.php');
 
 
 // {{{ TIKI_MOD
