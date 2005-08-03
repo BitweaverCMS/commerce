@@ -47,6 +47,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_FS_BACKUP', DIR_FS_ADMIN . 'backups/');
   define('DIR_FS_FILE_MANAGER_ROOT', '/a1/viovio/live/commerce'); // path to starting directory of the file manager
 
+  mkdir_p( DIR_FS_CATALOG_IMAGES );
 /*
 
 // Define the webserver and path parameters

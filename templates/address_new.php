@@ -17,11 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.4 2005/07/26 12:31:56 spiderr Exp $
+// $Id: address_new.php,v 1.5 2005/08/03 00:35:51 spiderr Exp $
 //
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
+if( empty( $entry['country_id'] ) ) {
+	$entry['country_id'] = '223';
+}
+
 	global $gBitSmarty, $db, $gBitCustomer;
 	$gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
 	$gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
@@ -30,7 +34,7 @@ if( empty( $entry ) ) {
 		$gBitSmarty->assign( 'collectState', TRUE );
 		if ( !empty( $entry['country_id'] ) ) {
 			if( $zones = CommerceCustomer::getCountryZones( $entry['country_id'] ) ) {
-				$statePullDown = zen_draw_pull_down_menu('state', $zones);
+				$statePullDown = zen_draw_pull_down_menu('state', $zones, '', '', false, TRUE );
 			} else {
 				$statePullDown = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
 			}

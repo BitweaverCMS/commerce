@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.4 2005/08/02 15:35:45 spiderr Exp $
+// $Id: meta_tags.php,v 1.5 2005/08/03 00:35:49 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -46,6 +46,8 @@
   	$keywords_string_metatags = NULL;
   }
   define('KEYWORDS', zen_clean_html($keywords_string_metatags) . CUSTOM_KEYWORDS);
+
+	$review_on = '';
 
 // Get different meta tag values depending on main_page values
   switch ($_REQUEST['main_page']) {
@@ -159,7 +161,7 @@
             mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.products_status = '1' and p.products_id = '" . (int)$_REQUEST['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
 */
 
-    $sql= "select pd.products_name, p.products_model, p.products_price_sorter,
+    $sql= "select pd.products_name, pd.products_description, p.products_model, p.products_price_sorter, p.products_tax_class_id,
                                       p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status,
                                       p.products_id, p.metatags_price_status, p.metatags_title_tagline_status,
                                       mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description
@@ -212,7 +214,7 @@
       } else {
         // build un-customized meta tag
         if (META_TAG_INCLUDE_PRICE == '1' and !strstr($_REQUEST['main_page'], 'document_general')) {
-          if ($product_info_metatags->fields['product_is_free'] != '1') {
+          if( empty( $product_info_metatags->fields['product_is_free'] ) ) {
             if (zen_check_show_prices() == 'true') {
               $meta_products_price = zen_get_products_actual_price($product_info_metatags->fields['products_id']);
               $meta_products_price = SECONDARY_SECTION . $currencies->display_price($meta_products_price, zen_get_tax_rate($product_info_metatags->fields['products_tax_class_id']));

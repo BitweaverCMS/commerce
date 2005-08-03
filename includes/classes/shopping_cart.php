@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.4 2005/07/18 14:35:51 spiderr Exp $
+// $Id: shopping_cart.php,v 1.5 2005/08/03 00:35:48 spiderr Exp $
 //
 
   class shoppingCart {
@@ -802,7 +802,7 @@ if ((int)$products_id != $products_id) {
     function attributes_weight($products_id) {
       global $db;
 
-      $attributes_weight = 0;
+      $attribute_weight = 0;
 
       if (isset($this->contents[$products_id]['attributes'])) {
         reset($this->contents[$products_id]['attributes']);
@@ -951,7 +951,7 @@ if ((int)$products_id != $products_id) {
                                     'onetime_charges' => ($this->attributes_price_onetime_charges($products_id, $new_qty)),
                                     'tax_class_id' => $product['products_tax_class_id'],
                                     'attributes' => (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : ''),
-                                    'attributes_values' => $this->contents[$products_id]['attributes_values'],
+                                    'attributes_values' => (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : ''),
                                     'products_priced_by_attribute' => $product['products_priced_by_attribute'],
                                     'product_is_free' => $product['product_is_free'],
                                     'products_discount_type' => $product['products_discount_type'],

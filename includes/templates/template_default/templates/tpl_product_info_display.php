@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_info_display.php,v 1.3 2005/07/14 04:55:16 spiderr Exp $
+// $Id: tpl_product_info_display.php,v 1.4 2005/08/03 00:35:50 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -38,7 +38,7 @@
 //   $module_show_categories
 ?>
 <?php
-if ($debug_on == '1') {
+if( !empty( $debug_on ) ) {
   echo '<tr>';
   echo '  <td colspan="2" class="smallText">';
   echo 'Looking at ' . (int)$_GET['products_id'] . '<br />';
@@ -105,7 +105,7 @@ echo 'Discount Calc Attr $100 $75 $50 $25 ' . zen_get_discount_calc((int)$_GET['
     <td align="center" class="pageHeading">
 <?php
 // base price
-  if ($show_onetime_charges_description == 'true') {
+  if( !empty( $show_onetime_charges_description ) && $show_onetime_charges_description == 'true') {
     $one_time = '<span class="smallText">' . TEXT_ONETIME_CHARGE_SYMBOL . TEXT_ONETIME_CHARGE_DESCRIPTION . '</span><br />';
   } else {
     $one_time = '';

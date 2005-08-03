@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.2 2005/08/01 13:10:51 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.3 2005/08/03 00:35:50 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -45,7 +45,7 @@
   if ($show_shopping_cart_box == true) {
   if ($_SESSION['cart']->count_contents() > 0) {
 
-  $id = shoppingcart;
+  $id = 'shoppingcart';
   $content ="";
   if ($_SESSION['cart']->count_contents() > 0) {
     $content = '<table border="0" width="100%" cellspacing="0" cellpadding="0">';
@@ -88,7 +88,7 @@
       $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext"><a href="'. zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a></td></tr></table>';
     }
   }
-  if ($_SESSION['gv_id']) {
+  if( !empty( $_SESSION['gv_id'] ) ) {
     $gv_query = "select coupon_amount
                  from " . TABLE_COUPONS . "
                  where coupon_id = '" . $_SESSION['gv_id'] . "'";
@@ -98,7 +98,7 @@
     $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $currencies->format($coupon->fields['coupon_amount']) . '</td></tr></table>';
 
   }
-  if ($_SESSION['cc_id']) {
+  if( !empty( $_SESSION['cc_id'] ) ) {
     $content .= zen_draw_separator();
     $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . CART_COUPON . '</td><td class="smalltext" align="right" valign="bottom">' . '<a href="javascript:couponpopupWindow(\'' . zen_href_link(FILENAME_POPUP_COUPON_HELP, 'cID=' . $_SESSION['cc_id']) . '\')">' . CART_COUPON_INFO . '</a>' . '</td></tr></table>';
   }

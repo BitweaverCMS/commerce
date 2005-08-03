@@ -108,12 +108,15 @@
 
 ////
 // Output a form pull down menu
-  function zen_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false) {
+  function zen_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false, $blank = false ) {
     $field = '<select name="' . zen_output_string($name) . '"';
 
     if (zen_not_null($parameters)) $field .= ' ' . $parameters;
 
     $field .= '>';
+	if( $blank ) {
+	    $field .= '<option value=""></option>';
+	}
 
     if (empty($default) && isset($GLOBALS[$name])) $default = stripslashes($GLOBALS[$name]);
 
@@ -455,6 +458,8 @@
       $final_display_price = $show_normal_price . $show_special_price . $show_sale_price . $show_sale_discount;
     }
 
+	$free_tag = '';
+	$call_tag = '';
     // If Free, Show it
     if ($product_check->fields['product_is_free'] == '1') {
       if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
@@ -1390,6 +1395,58 @@ If a special exist * 10+9
     $db->query("update " . TABLE_PRODUCTS . " set products_price_sorter=? WHERE products_id=?", array( $products_price_sorter, $product_id ) );
   }
 
+
+
+function reset_bitcommerce_layout() {
+	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
+	global $modlib;
+
+	$modules = array(
+		'l' => array(
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_whats_new.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_manufacturers.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_reviews.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_featured.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_information.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_categories.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_commerce_information.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_banner_box.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_document_categories.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_order_history.tpl' ),
+		),
+
+		'r' => array(
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_banner_box_all.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_search.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_banner_box2.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_shopping_cart.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_best_sellers.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_manufacturer_info.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_specials.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_product_notifications.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_tell_a_friend.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_languages.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_currencies.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_whos_online.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_music_genres.tpl' ),
+			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_record_companies.tpl' ),
+		)
+	);
+	$i = 1;
+	$modlib->removeAllLayoutModules( ROOT_USER_ID, BITCOMMERCE_PKG_NAME );
+	foreach( array_keys( $modules ) as $col ) {
+		foreach( $modules[$col] as $moduleHash ) {
+			$moduleHash['fPackage'] = BITCOMMERCE_PKG_NAME;
+			$modlib->storeModule( $moduleHash );
+			$moduleHash['user_id'] = ROOT_USER_ID;
+			$moduleHash['pos'] = $col;
+			$moduleHash['ord'] = $i++;
+			$moduleHash['layout'] = BITCOMMERCE_PKG_NAME;
+			$modlib->storeLayout( $moduleHash );
+		}
+		$i = 1;
+	}
+}
 
 
 ////

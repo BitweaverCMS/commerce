@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.11 2005/08/02 15:35:42 spiderr Exp $
+// $Id: application_top.php,v 1.12 2005/08/03 00:35:47 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -120,7 +120,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   }
 
 // set host_address once per session to reduce load on server
-  if (!$_SESSION['customers_host_address']) {
+  if( empty( $_SESSION['customers_host_address'] ) ) {
     if (SESSION_IP_TO_HOST_ADDRESS == 'true') {
       $_SESSION['customers_host_address']= gethostbyaddr($_SERVER['REMOTE_ADDR']);
     } else {
@@ -423,7 +423,7 @@ function clean_input( &$pArray ) {
     if( $gBitProduct->load() ) {
       $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
     }
-	if( is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
+	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
 		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
 		die;
 	}
@@ -551,8 +551,8 @@ function clean_input( &$pArray ) {
       // process normally
 
 // iii 030813 added: File uploading: save uploaded files with unique file names
-          $real_ids = $_REQUEST['id'];
-          if ($_REQUEST['number_of_uploads'] > 0) {
+          $real_ids = !empty( $_REQUEST['id'] ) ? $_REQUEST['id'] : 0;
+          if( !empty( $_REQUEST['number_of_uploads'] ) ) {
             require(DIR_WS_CLASSES . 'upload.php');
             for ($i = 1, $n = $_REQUEST['number_of_uploads']; $i <= $n; $i++) {
               if (zen_not_null($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]]) and ($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] != 'none')) {
@@ -580,7 +580,7 @@ function clean_input( &$pArray ) {
             }
           }
 
-                                $_SESSION['cart']->add_cart($_POST['products_id'], $_SESSION['cart']->get_quantity(zen_get_uprid($_POST['products_id'], $real_ids))+($new_qty), $real_ids);
+          $_SESSION['cart']->add_cart($_POST['products_id'], $_SESSION['cart']->get_quantity(zen_get_uprid($_POST['products_id'], $real_ids))+($new_qty), $real_ids);
 // iii 030813 end of changes.
         } // eof: set error message
       } // eof: quantity maximum = 1

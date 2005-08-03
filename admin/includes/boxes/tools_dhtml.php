@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tools_dhtml.php,v 1.2 2005/08/02 15:35:36 spiderr Exp $
+//  $Id: tools_dhtml.php,v 1.3 2005/08/03 00:35:46 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_TOOLS, 'link' => zen_href_link(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_TOOLS_TEMPLATE_SELECT, 'link' => zen_href_link(FILENAME_TEMPLATE_SELECT, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_TOOLS_LAYOUT_CONTROLLER, 'link' => KERNEL_PKG_URL.'admin/index.php?page=layout&amp;fPackage='.BITCOMMERCE_PKG_NAME, '', 'NONSSL');
+  $za_contents[] = array('text' => 'RESET LAYOUT', 'link' => FILENAME_LAYOUT_CONTROLLER.'.php?action=reset_defaults', '', 'NONSSL');
 // removed broken
 //  $za_contents[] = array('text' => BOX_TOOLS_BACKUP, 'link' => zen_href_link(FILENAME_BACKUP, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_TOOLS_BANNER_MANAGER, 'link' => zen_href_link(FILENAME_BANNER_MANAGER, '', 'NONSSL'));

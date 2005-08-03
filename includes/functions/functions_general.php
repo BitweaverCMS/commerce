@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.12 2005/08/02 15:35:43 spiderr Exp $
+// $Id: functions_general.php,v 1.13 2005/08/03 00:35:48 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -37,7 +37,7 @@
  * @param string The url to redirect to
 */
   function zen_redirect($url) {
-    if ( (ENABLE_SSL == true) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
+    if ( (ENABLE_SSL == true) && !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
       if (substr($url, 0, strlen(HTTP_SERVER)) == HTTP_SERVER) { // NONSSL url
         $url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
       }

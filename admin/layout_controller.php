@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.3 2005/07/30 15:59:35 spiderr Exp $
+//  $Id: layout_controller.php,v 1.4 2005/08/03 00:35:45 spiderr Exp $
 //
 
 
@@ -128,14 +128,10 @@
         zen_redirect(zen_href_link(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page']));
         break;
       case 'reset_defaults':
-        $reset_boxes = $db->Execute("select * from " . TABLE_LAYOUT_BOXES . " where layout_template= 'default_template_settings'");
-        while (!$reset_boxes->EOF) {
-          $db->Execute("update " . TABLE_LAYOUT_BOXES . " set layout_box_status= '" . $reset_boxes->fields['layout_box_status'] . "', layout_box_location= '" . $reset_boxes->fields['layout_box_location'] . "', layout_box_sort_order='" . $reset_boxes->fields['layout_box_sort_order'] . "', layout_box_sort_order_single='" . $reset_boxes->fields['layout_box_sort_order_single'] . "', layout_box_status_single='" . $reset_boxes->fields['layout_box_status_single'] . "' where layout_box_name='" . $reset_boxes->fields['layout_box_name'] . "' and layout_template='" . $template_dir . "'");
-          $reset_boxes->MoveNext();
-        }
 
+		reset_bitcommerce_layout();
         $messageStack->add_session(SUCCESS_BOX_RESET . $template_dir, 'success');
-        zen_redirect(zen_href_link(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page']));
+        zen_redirect( KERNEL_PKG_URL.'admin/index.php?page=layout&amp;fPackage='.BITCOMMERCE_PKG_NAME );
         break;
     }
   }

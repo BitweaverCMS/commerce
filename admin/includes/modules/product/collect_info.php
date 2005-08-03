@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.4 2005/07/26 12:31:50 spiderr Exp $
+//  $Id: collect_info.php,v 1.5 2005/08/03 00:35:47 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -437,7 +437,7 @@ updateGross();
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
 <?php
-  $dir = @dir(DIR_FS_CATALOG_IMAGES);
+  $dir = dir(DIR_FS_CATALOG_IMAGES);
   $dir_info[] = array('id' => '', 'text' => "Main Directory");
   while ($file = $dir->read()) {
     if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
