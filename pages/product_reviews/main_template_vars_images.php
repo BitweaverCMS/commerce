@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: main_template_vars_images.php,v 1.2 2005/08/03 13:26:02 spiderr Exp $
 //
 ?>
 <?php
@@ -28,20 +28,10 @@ $products_image_large = $products_image_base . IMAGE_SUFFIX_LARGE . $products_im
 
 // to be built into a single variable string
 
-if (file_exists(DIR_WS_IMAGES . 'medium/' . $products_image_medium)) {
 ?>
 <script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . 'medium/' . $products_image_medium, addslashes($products_name), MEDIUM_IMAGE_WIDTH, MEDIUM_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
+document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '\\\')">' . zen_image( $gBitProduct->getImageUrl() ) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
 //--></script>
-<?php
-} else {
-?>
-<script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $_GET['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . $products_image, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
-//--></script>
-<?php
-}
-?>
 <noscript>
 <?php
 if (file_exists(DIR_WS_IMAGES . 'medium/' . $products_image_medium)) {

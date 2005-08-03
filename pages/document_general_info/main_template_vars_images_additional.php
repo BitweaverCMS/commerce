@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images_additional.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: main_template_vars_images_additional.php,v 1.2 2005/08/03 13:26:00 spiderr Exp $
 //
 ?>
 <?php
@@ -90,13 +90,13 @@ if ($products_image_directory != '') {
 ?>
   <td align="center" class="smallText">
 <script language="javascript" type="text/javascript"><!--
-document.write('<?php echo (file_exists($products_image_large_additional) ? '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE_ADDITIONAL, 'pID=' . $_GET['products_id'] . '&pic=' . $i . '&products_image_large_additional=' . $products_image_large_additional) . '\\\')">' . zen_image($products_image_directory . $file, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>' : zen_image($products_image_directory . $file, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"')); ?>');
+document.write('<?php echo (file_exists($products_image_large_additional) ? '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE_ADDITIONAL, 'products_id=' . $_GET['products_id'] . '&pic=' . $i . '&products_image_large_additional=' . $products_image_large_additional) . '\\\')">' . zen_image($products_image_directory . $file, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>' : zen_image($products_image_directory . $file, addslashes($products_name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"')); ?>');
 //--></script>
 <noscript>
 <?php
 //$products_image_large_additional = $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
   if (file_exists($products_image_large_additional)) {
-    echo '<a href="' . zen_href_link(FILENAME_POPUP_IMAGE_ADDITIONAL, 'pID=' . $_GET['products_id'] . '&pic=' . $i . '&products_image_large_additional=' . $products_image_large_additional) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $products_image, $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>';
+    echo '<a href="' . zen_href_link(FILENAME_POPUP_IMAGE_ADDITIONAL, 'products_id=' . $_GET['products_id'] . '&pic=' . $i . '&products_image_large_additional=' . $products_image_large_additional) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $products_image, $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>';
   } else {
     echo zen_image(DIR_WS_IMAGES . $products_image, $products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />';
   }

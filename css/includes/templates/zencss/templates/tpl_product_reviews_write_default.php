@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews_write_default.php,v 1.1 2005/07/05 05:59:28 bitweaver Exp $
+// $Id: tpl_product_reviews_write_default.php,v 1.2 2005/08/03 13:26:00 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('product_reviews_write', zen_href_link(FILENAME_PRODUCT_REVIEWS_WRITE, 'action=process&products_id=' . $_GET['products_id']), 'post', 'onsubmit="return checkForm();"'); ?> 
@@ -35,7 +35,7 @@
   if (zen_not_null($product_info->fields['products_image'])) {
 ?>
 <script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'pID=' . $product_info->fields['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . $product_info->fields['products_image'], addslashes($product_info->fields['products_name']), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
+document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $product_info->fields['products_id']) . '\\\')">' . zen_image(DIR_WS_IMAGES . $product_info->fields['products_image'], addslashes($product_info->fields['products_name']), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
 //--></script>
 <noscript>
 <?php echo '<a href="' . zen_href_link(DIR_WS_IMAGES . $product_info->fields['products_image']) . '" target="_blank">' . zen_image(DIR_WS_IMAGES . $product_info->fields['products_image'], $product_info->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"') . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?> 
