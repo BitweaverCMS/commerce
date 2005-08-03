@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: option_values.php,v 1.4 2005/08/03 17:07:44 spiderr Exp $
 //
 ?>
 <?php
@@ -30,7 +30,7 @@
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   switch($_GET['action']) {

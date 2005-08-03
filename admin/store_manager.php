@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: store_manager.php,v 1.4 2005/08/03 17:07:53 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   $languages = zen_get_languages();

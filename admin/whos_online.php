@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: whos_online.php,v 1.3 2005/08/03 17:07:54 spiderr Exp $
 //
 
 // highlight bots
@@ -70,7 +70,7 @@ function zen_check_minutes($the_time_last_click) {
 
   require('includes/application_top.php');
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   // same time_entry as time_last_click for 600 seconds = 10 minutes assumed to have left immediately

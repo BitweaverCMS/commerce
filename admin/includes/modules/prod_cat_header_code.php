@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: prod_cat_header_code.php,v 1.2 2005/07/18 14:35:48 spiderr Exp $
+//  $Id: prod_cat_header_code.php,v 1.3 2005/08/03 17:07:55 spiderr Exp $
 //
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
 

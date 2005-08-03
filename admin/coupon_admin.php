@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.5 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.6 2005/08/03 17:07:30 spiderr Exp $
 //
 
   require('includes/application_top.php');
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   if ($_GET['selected_box']) {

@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: stats_customers.php,v 1.3 2005/08/03 17:07:52 spiderr Exp $
 //
   require('includes/application_top.php');
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">

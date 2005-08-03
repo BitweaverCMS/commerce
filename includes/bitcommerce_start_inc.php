@@ -291,6 +291,9 @@
 
 // add the products model to the breadcrumb trail
   if ( !empty( $_REQUEST['products_id'] ) ) {
+  	if( empty( $cPath ) ) {
+		$cPath = '';
+	}
     $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
     if( $gBitProduct->load() ) {
       $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));

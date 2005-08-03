@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: email_welcome.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: email_welcome.php,v 1.5 2005/08/03 17:07:34 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   if (file_exists('../' . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . (($template_dir=='') ? '' : '/'.$template_dir) .'/' . 'create_account.php')) {

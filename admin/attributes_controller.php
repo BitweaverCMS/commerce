@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.4 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.5 2005/08/03 17:07:27 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,7 +39,7 @@
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
   }
 
-  require(DIR_WS_CLASSES . 'currencies.php');
+  
   $currencies = new currencies();
 
   $languages = zen_get_languages();
