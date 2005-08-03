@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.3 2005/08/03 00:35:50 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.4 2005/08/03 13:04:48 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -26,7 +26,7 @@
       $show_shopping_cart_box = true;
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '1'):
-      if ($_SESSION['cart']->count_contents() > 0 || (zen_user_has_gv_account($_SESSION['customer_id']) > 0)) {
+      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && (zen_user_has_gv_account( $gBitUser->mUserId ) > 0) ) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;

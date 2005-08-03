@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.4 2005/07/30 03:01:56 spiderr Exp $
+// $Id: specials_index.php,v 1.5 2005/08/03 13:04:40 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -70,7 +70,7 @@
 		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
 		$list_box_contents[$row][$col] = array('align' => 'center',
 												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( CommerceProduct::getImageUrl( $productsId, 'avatar' ), $specialProducts['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
+												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( CommerceProduct::getImageUrl( $productsId, 'avatar' ), $specialProducts['products_name']) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
 
 		$col ++;
 		if ($col > (SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS - 1)) {

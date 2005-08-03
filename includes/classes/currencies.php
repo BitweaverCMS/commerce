@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.2 2005/07/13 20:24:01 spiderr Exp $
+// $Id: currencies.php,v 1.3 2005/08/03 13:03:20 spiderr Exp $
 //
 
 ////
@@ -69,7 +69,7 @@
         $format_string= '';
       }
 
-      return $format_string;
+      return ' '.$format_string;
     }
 
     function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {

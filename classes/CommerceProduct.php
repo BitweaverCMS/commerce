@@ -299,12 +299,12 @@ class CommerceProduct extends BitBase {
 				}
 			}
 
-
-
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				file_exists( $pParamHash['products_image'] );
 				$fileHash['dest_path']		= STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
+ 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['source_file']	= $pParamHash['products_image'];
+				$fileHash['name']			= basename( $fileHash['source_file'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: message_stack.php,v 1.2 2005/08/02 15:35:43 spiderr Exp $
+// $Id: message_stack.php,v 1.3 2005/08/03 13:04:38 spiderr Exp $
 //
 
   class messageStack extends tableBox {
@@ -38,7 +38,7 @@
 
 // class methods
     function add($class, $message, $type = 'error') {
-      global $template;
+      global $template, $current_page_base;
       if ($type == 'error') {
         $this->messages[] = array('params' => 'class="messageStackError"', 'class' => $class, 'text' => zen_image($template->get_template_dir('error.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'error.gif', ICON_ERROR) . '&nbsp;' . $message);
       } elseif ($type == 'warning') {
@@ -54,7 +54,7 @@
 
     function add_session($class, $message, $type = 'error') {
 
-      if (!$_SESSION['messageToStack']) {
+      if( empty( $_SESSION['messageToStack'] ) ) {
         $messageToStack = array();
       } else {
         $messageToStack = $_SESSION['messageToStack'];

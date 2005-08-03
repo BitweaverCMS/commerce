@@ -17,13 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.12 2005/08/03 00:35:47 spiderr Exp $
+// $Id: application_top.php,v 1.13 2005/08/03 13:04:38 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
-// error_reporting(E_ALL & ~E_NOTICE);
+// if( defined( 'IS_LIVE' ) ) {
+	error_reporting(E_ALL & ~E_NOTICE);
+// }
 
   @ini_set("arg_separator.output","&");
 
@@ -168,7 +170,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   }
 
 // create the shopping cart & fix the cart if necesary
-  if (!$_SESSION['cart']) {
+  if( empty( $_SESSION['cart'] ) ) {
     $_SESSION['cart'] = new shoppingCart;
   }
 
@@ -225,9 +227,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   include(DIR_WS_MODULES . 'extra_definitions.php');
 
 // currency
-  if (!$_SESSION['currency'] || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
+  if( empty( $_SESSION['currency'] ) || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
     if (isset($_REQUEST['currency'])) {
-      if (!$_SESSION['currency'] = zen_currency_exists($_REQUEST['currency'])) $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
+      if ( empty( $_SESSION['currency'] ) && zen_currency_exists($_REQUEST['currency'])) $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
     } else {
       $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
     }
@@ -760,7 +762,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 
 // only process once per session do not include banners as banners expire per click as well as per date
 // this is processed in the admin for dates that expire as being worked on
-  if ($_SESSION['update_expirations'] != 'true') {
+  if( !empty( $_SESSION['update_expirations'] ) && $_SESSION['update_expirations'] != 'true') {
     // auto expire special products
       require(DIR_WS_FUNCTIONS . 'specials.php');
       zen_start_specials();

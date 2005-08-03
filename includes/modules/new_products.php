@@ -17,9 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.6 2005/08/02 15:35:45 spiderr Exp $
+// $Id: new_products.php,v 1.7 2005/08/03 13:04:39 spiderr Exp $
 //
-
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
 // display limits
@@ -71,7 +70,7 @@
       $product['products_name'] = zen_get_products_name($product['products_id']);
       $list_box_contents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'], IMAGE_PRODUCT_NEW_WIDTH, IMAGE_PRODUCT_NEW_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
+                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
 
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS - 1)) {

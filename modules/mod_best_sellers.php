@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_best_sellers.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_best_sellers.php,v 1.2 2005/08/03 13:04:42 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -25,13 +25,13 @@
   $show_best_sellers= false;
 
   if( $gBitUser->isValid() ) {
-    if ($_SESSION['customer_id']) {
+    if( $gBitUser->isRegistered() ) {
       $check_query = "select count(*) as count
                       from " . TABLE_CUSTOMERS_INFO . "
-                      where customers_info_id = '" . (int)$_SESSION['customer_id'] . "'
-                      and global_product_notifications = '1'";
+                      where `customers_info_id` = ?
+                      and `global_product_notifications` = '1'";
 
-      $check = $db->Execute($check_query);
+      $check = $db->query( $check_query, array( $gBitUser->mUserId ) );
 
       if ($check->fields['count'] > 0) {
         $show_best_sellers= true;

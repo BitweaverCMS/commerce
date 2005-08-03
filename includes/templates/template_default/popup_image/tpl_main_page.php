@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,10 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: tpl_main_page.php,v 1.2 2005/08/03 13:04:41 spiderr Exp $
 //
 
 ?>
 <body onload="resize();">
-<?php echo zen_image(DIR_WS_IMAGES . $products_values->fields['products_image'], $products_values->fields['products_name']); ?>
+<div class="header">
+	<h1><?=$gBitProduct->getTitle();?></h1>
+</div>
+<?php echo zen_image( CommerceProduct::getImageUrl( $gBitProduct->mProductsId, 'large' ), $gBitProduct->getTitle() ); ?>
 </body>

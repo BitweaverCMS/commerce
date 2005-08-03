@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_list_box_content.php,v 1.3 2005/08/03 00:35:50 spiderr Exp $
+// $Id: tpl_list_box_content.php,v 1.4 2005/08/03 13:04:41 spiderr Exp $
 //
 
 //print_r($list_box_contents);
@@ -33,9 +33,9 @@
     <?php
     for($col=0;$col<sizeof($list_box_contents[$row]);$col++) {
       $r_params = "";
-      if ($list_box_contents[$row][$col]['align']) $r_params = 'align="' . $list_box_contents[$row][$col]['align']. '"';
-      if ($list_box_contents[$row][$col]['params']) $r_params .= ' ' . $list_box_contents[$row][$col]['params'];
-      if ($list_box_contents[$row][$col]['text']) {
+      if ( !empty( $list_box_contents[$row][$col]['align'] ) ) $r_params = 'align="' . $list_box_contents[$row][$col]['align']. '"';
+      if ( !empty( $list_box_contents[$row][$col]['params'] ) ) $r_params .= ' ' . $list_box_contents[$row][$col]['params'];
+      if ( !empty( $list_box_contents[$row][$col]['text'] ) ) {
 ?>
     <td <?php echo $r_params; ?>>
       <?php

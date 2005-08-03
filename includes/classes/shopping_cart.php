@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.5 2005/08/03 00:35:48 spiderr Exp $
+// $Id: shopping_cart.php,v 1.6 2005/08/03 13:04:38 spiderr Exp $
 //
 
   class shoppingCart {
@@ -125,7 +125,7 @@
     }
 
     function reset($reset_database = false) {
-      global $db;
+      global $db, $gBitUser;
 
       $this->contents = array();
       $this->total = 0;
@@ -137,16 +137,12 @@
       $this->free_shipping_price = 0;
       $this->free_shipping_weight = 0;
 
-      if ($_SESSION['customer_id'] && ($reset_database == true)) {
-        $sql = "delete from " . TABLE_CUSTOMERS_BASKET . "
-                where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+      if( $gBitUser->isRegistered() && ($reset_database == true)) {
+        $sql = "delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
+        $db->query($sql, array( $gBitUser->mUserId ) );
 
-        $db->Execute($sql);
-
-        $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
-
-        $db->Execute($sql);
+        $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where customers_id = ?";
+        $db->query($sql, array( $gBitUser->mUserId ) );
       }
 
       unset($this->cartID);
@@ -330,7 +326,7 @@
 
       reset($this->contents);
       while (list($key,) = each($this->contents)) {
-        if ($this->contents[$key]['qty'] <= 0) {
+        if (empty( $this->contents[$key]['qty'] ) || $this->contents[$key]['qty'] <= 0) {
           unset($this->contents[$key]);
 // remove from database
           if ($_SESSION['customer_id']) {

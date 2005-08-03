@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: jscript_main.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: jscript_main.php,v 1.2 2005/08/03 13:04:40 spiderr Exp $
 //
 ?>
 <script language="javascript" type="text/javascript"><!--
@@ -31,8 +31,8 @@ function resize() {
   var width = screen.width;
   var leftpos = width / 2 - imgWidth / 2;
   var toppos = height / 2 - imgHeight / 2;
-  window.moveTo(leftpos, toppos);
-  window.resizeTo(imgWidth, imgHeight);
+//   window.moveTo(leftpos, toppos);
+//   window.resizeTo(imgWidth, imgHeight);
   }
   self.focus();
 }

@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/03 13:04:40 spiderr Exp $
 //
   $_SESSION['navigation']->remove_current_page();
-
+/*
   $products_values = $db->Execute("select pd.products_name, p.products_image
                                   from " . TABLE_PRODUCTS . " p
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -28,8 +28,6 @@
                                   where p.products_status = '1'
                                   and p.products_id = '" . $_GET['pID'] . "'
                                   and pd.language_id = '" . $_SESSION['languages_id'] . "'");
-
-$products_image = $products_values->fields['products_image'];
 
 //auto replace with defined missing image
   if ($products_image == '' and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
@@ -57,4 +55,7 @@ if (!file_exists(DIR_WS_IMAGES . 'large/' . $products_image_large)) {
 } else {
   $products_image_large = DIR_WS_IMAGES . 'large/' . $products_image_large;
 }
+*/
+$products_image_medium = CommerceProduct::getImageUrl( $_GET['pID'], 'medium' );
+$products_image_large = CommerceProduct::getImageUrl( $_GET['pID'], 'large' );
 ?>

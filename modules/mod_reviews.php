@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_reviews.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_reviews.php,v 1.2 2005/08/03 13:04:48 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -33,6 +33,7 @@
 	if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
 		$gBitSmarty->assign( 'sideboxReview', current( $sideboxReview ) );
 	} elseif ( isset($_GET['products_id']) and zen_products_id_valid($_GET['products_id'])) {
+		$gBitSmarty->assign( 'reviewProductsId', $_GET['products_id'] );
 		$gBitSmarty->assign( 'writeReview', TRUE );
 	}
 	if( empty( $moduleTitle ) ) {
