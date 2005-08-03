@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: option_name.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 //
 ?>
 <?php
@@ -27,7 +27,7 @@
   $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id='" . $_SESSION['languages_id'] . "' limit 1");
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
-    zen_redirect(zen_href_link(FILENAME_OPTIONS_NAME_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
 
 //  if (!$lng_id) $_GET['lng_id'] = $_SESSION['languages_id'];
@@ -52,7 +52,7 @@ if ($_GET['action'] == "update_sort_order") {
     }
         $messageStack->add_session(SUCCESS_OPTION_SORT_ORDER, 'success');
         $_GET['action']='';
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_OPTIONS_NAME, 'options_id=' . $options_id . '&lng_id=' . $_GET['lng_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_NAME, 'options_id=' . $options_id . '&lng_id=' . $_GET['lng_id']));
 }
 
 ?>
@@ -110,7 +110,7 @@ if ($_GET['action'] == "update_sort_order") {
               </form>
             </tr>
 
-            <form name = "update" action="<?php echo zen_href_link(FILENAME_PRODUCTS_OPTIONS_NAME, 'action=update_sort_order&lng_id=' . $_GET['lng_id'], 'NONSSL'); ?>"' method="post"
+            <form name = "update" action="<?php echo zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_NAME, 'action=update_sort_order&lng_id=' . $_GET['lng_id'], 'NONSSL'); ?>"' method="post"
 <?php
     echo '<tr class="dataTableHeadingRow">';
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.2 2005/07/05 18:40:21 spiderr Exp $
+//  $Id: specials.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -36,7 +36,7 @@
         $update_price = $db->Execute("select products_id from " . TABLE_SPECIALS . " where specials_id = '" . $_GET['id'] . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
-        zen_redirect(zen_href_link(FILENAME_SPECIALS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'sID=' . $_GET['id'], 'NONSSL'));
+        zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'sID=' . $_GET['id'], 'NONSSL'));
         break;
       case 'insert':
         if ($_POST['products_id'] < 1) {
@@ -78,9 +78,9 @@
 
         } // nothing selected
         if ($_GET['go_back'] == 'ON'){
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_id));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_id));
         } else {
-          zen_redirect(zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $new_special->fields['specials_id']));
+          zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $new_special->fields['specials_id']));
         }
         break;
       case 'update':
@@ -110,14 +110,14 @@
         $update_price = $db->Execute("select products_id from " . TABLE_SPECIALS . " where specials_id = '" . (int)$specials_id . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
-        zen_redirect(zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials_id));
+        zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials_id));
         break;
       case 'deleteconfirm':
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page']));
+          zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page']));
         }
         $specials_id = zen_db_prepare_input($_GET['sID']);
 
@@ -130,7 +130,7 @@
 
         zen_update_products_price_sorter($update_price_id);
 
-        zen_redirect(zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page']));
         break;
     }
   }
@@ -187,7 +187,7 @@
 <?php
 // show reset search
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
-    echo '<a href="' . zen_href_link(FILENAME_SPECIALS) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
+    echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
   }
   echo HEADING_TITLE_SEARCH_DETAIL . ' ' . zen_draw_input_field('search');
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -264,7 +264,7 @@ var StartDate = new ctlSpiffyCalendarBox("StartDate", "new_special", "start", "b
 var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate2","<?php echo (($sInfo->expires_date == '0001-01-01') ? '' : zen_date_short($sInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
 
-      <tr><form name="new_special" <?php echo 'action="' . zen_href_link(FILENAME_SPECIALS, zen_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action . '&go_back=' . $_GET['go_back'], 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('specials_id', $_GET['sID']); ?>
+      <tr><form name="new_special" <?php echo 'action="' . zen_href_link_admin(FILENAME_SPECIALS, zen_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action . '&go_back=' . $_GET['go_back'], 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('specials_id', $_GET['sID']); ?>
         <td><br><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main"><?php echo TEXT_SPECIALS_PRODUCT; ?>&nbsp;</td>
@@ -290,7 +290,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main"><br><?php echo TEXT_SPECIALS_PRICE_TIP; ?></td>
-            <td class="main" align="right" valign="top"><br><?php echo (($form_action == 'insert') ? zen_image_submit('button_insert.gif', IMAGE_INSERT) : zen_image_submit('button_update.gif', IMAGE_UPDATE)). '&nbsp;&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . (isset($_GET['sID']) ? '&sID=' . $_GET['sID'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+            <td class="main" align="right" valign="top"><br><?php echo (($form_action == 'insert') ? zen_image_submit('button_insert.gif', IMAGE_INSERT) : zen_image_submit('button_update.gif', IMAGE_UPDATE)). '&nbsp;&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . (isset($_GET['sID']) ? '&sID=' . $_GET['sID'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
           </tr>
         </table></td>
       </form></tr>
@@ -338,9 +338,9 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
       }
 
       if (isset($sInfo) && is_object($sInfo) && ($specials->fields['specials_id'] == $sInfo->specials_id)) {
-        echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '\'">' . "\n";
+        echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=edit') . '\'">' . "\n";
+        echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=edit') . '\'">' . "\n";
       }
 
       if ($specials->fields['products_priced_by_attribute'] == '1') {
@@ -361,16 +361,16 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
                 <td  class="dataTableContent" align="center">
 <?php
       if ($specials->fields['status'] == '1') {
-        echo '<a href="' . zen_href_link(FILENAME_SPECIALS, 'action=setflag&flag=0&id=' . $specials->fields['specials_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
+        echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'action=setflag&flag=0&id=' . $specials->fields['specials_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
       } else {
-        echo '<a href="' . zen_href_link(FILENAME_SPECIALS, 'action=setflag&flag=1&id=' . $specials->fields['specials_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
+        echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'action=setflag&flag=1&id=' . $specials->fields['specials_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
       }
 ?>
                 </td>
                 <td class="dataTableContent" align="right">
-                  <?php echo '<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
-				          <?php echo '<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
-                  <?php if (isset($sInfo) && is_object($sInfo) && ($specials->fields['specials_id'] == $sInfo->specials_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_SPECIALS, zen_get_all_get_params(array('sID')) . 'sID=' . $specials->fields['specials_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
+				          <?php echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials->fields['specials_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
+                  <?php if (isset($sInfo) && is_object($sInfo) && ($specials->fields['specials_id'] == $sInfo->specials_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, zen_get_all_get_params(array('sID')) . 'sID=' . $specials->fields['specials_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
 				        </td>
       </tr>
 <?php
@@ -387,7 +387,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
   if (empty($action)) {
 ?>
                   <tr>
-                    <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_product.gif', IMAGE_NEW_PRODUCT) . '</a>'; ?></td>
+                    <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_product.gif', IMAGE_NEW_PRODUCT) . '</a>'; ?></td>
                   </tr>
 <?php
   }
@@ -406,7 +406,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
       $contents = array('form' => zen_draw_form('specials', FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $sInfo->products_name . '</b>');
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (is_object($sInfo)) {
@@ -418,8 +418,8 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
         $specials_current_price = $sInfo->products_price;
       }
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit&products_filter=' . $sInfo->products_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit&products_filter=' . $sInfo->products_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a>');
         $contents[] = array('text' => '<br>' . TEXT_INFO_DATE_ADDED . ' ' . zen_date_short($sInfo->specials_date_added));
         $contents[] = array('text' => '' . TEXT_INFO_LAST_MODIFIED . ' ' . zen_date_short($sInfo->specials_last_modified));
         $contents[] = array('align' => 'center', 'text' => '<br>' . zen_info_image($sInfo->products_image, $sInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT));
@@ -430,7 +430,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
         $contents[] = array('text' => '<br>' . TEXT_INFO_AVAILABLE_DATE . ' <b>' . (($specials->fields['specials_date_available'] != '0001-01-01' and $specials->fields['specials_date_available'] !='') ? zen_date_short($specials->fields['specials_date_available']) : TEXT_NONE) . '</b>');
         $contents[] = array('text' => '<br>' . TEXT_INFO_EXPIRES_DATE . ' <b>' . (($specials->fields['expires_date'] != '0001-01-01' and $specials->fields['expires_date'] !='') ? zen_date_short($specials->fields['expires_date']) : TEXT_NONE) . '</b>');
         $contents[] = array('text' => '' . TEXT_INFO_STATUS_CHANGE . ' ' . zen_date_short($sInfo->date_status_change));
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_CATEGORIES, '&action=new_product' . '&cPath=' . zen_get_product_path($sInfo->products_id, 'override') . '&pID=' . $sInfo->products_id . '&product_type=' . zen_get_products_type($sInfo->products_id)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, '&action=new_product' . '&cPath=' . zen_get_product_path($sInfo->products_id, 'override') . '&pID=' . $sInfo->products_id . '&product_type=' . zen_get_products_type($sInfo->products_id)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>');
       }
       break;
   }

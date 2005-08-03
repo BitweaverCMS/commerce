@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.14 2005/08/03 13:41:03 spiderr Exp $
+// $Id: application_top.php,v 1.15 2005/08/03 15:35:14 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -34,11 +34,11 @@ if( empty( $_REQUEST['main_page'] ) ) {
 }
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php');
+require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
 
 
 // define general functions used application-wide
-  require_once(DIR_FS_FUNCTIONS . 'functions_general.php');
-  require_once(DIR_FS_FUNCTIONS . 'html_output.php');
   require_once(DIR_FS_FUNCTIONS . 'functions_email.php');
 
 // load extra functions
@@ -48,72 +48,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 
 
-
-
-// set the top level domains
-  $http_domain = zen_get_top_level_domain(HTTP_SERVER);
-  $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-  $current_domain = (($request_type == 'NONSSL') ? $http_domain : $https_domain);
-  if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
-
-// include cache functions if enabled
-  if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') include(DIR_WS_FUNCTIONS . 'cache.php');
-
-
-// include navigation history class
-  require_once(DIR_WS_CLASSES . 'navigation_history.php');
-
-// define how the session functions will be used
-  require(DIR_WS_FUNCTIONS . 'sessions.php');
-
-// set the session name and save path
-  zen_session_name('zenid');
-  zen_session_save_path(SESSION_WRITE_DIRECTORY);
-
-// set the session cookie parameters
-    session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
-// set the session ID if it exists
-   if (isset($_REQUEST[zen_session_name()])) {
-     zen_session_id($_REQUEST[zen_session_name()]);
-   } elseif ( ($request_type == 'SSL') && isset($_REQUEST[zen_session_name()]) ) {
-     zen_session_id($_REQUEST[zen_session_name()]);
-   }
-
-// start the session
-  $session_started = false;
-  if (SESSION_FORCE_COOKIE_USE == 'True') {
-    zen_setcookie('cookie_test', 'please_accept_for_session', time()+60*60*24*30, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
-    if (isset($_COOKIE['cookie_test'])) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } elseif (SESSION_BLOCK_SPIDERS == 'True') {
-    $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-    $spider_flag = false;
-
-    if (zen_not_null($user_agent)) {
-      $spiders = file(DIR_WS_INCLUDES . 'spiders.txt');
-
-      for ($i=0, $n=sizeof($spiders); $i<$n; $i++) {
-        if (zen_not_null($spiders[$i])) {
-          if (is_integer(strpos($user_agent, trim($spiders[$i])))) {
-            $spider_flag = true;
-            break;
-          }
-        }
-      }
-    }
-
-    if ($spider_flag == false) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } else {
-    zen_session_start();
-    $session_started = true;
-  }
 
 // set host_address once per session to reduce load on server
   if( empty( $_SESSION['customers_host_address'] ) ) {
@@ -362,61 +296,6 @@ function clean_input( &$pArray ) {
   $messageStack = new messageStack;
 
 
-
-
-
-// include the breadcrumb class and start the breadcrumb trail
-  require(DIR_WS_CLASSES . 'breadcrumb.php');
-  $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
-
-  $breadcrumb->add(HEADER_TITLE_CATALOG, zen_href_link(FILENAME_DEFAULT));
-
-// add category names or the manufacturer name to the breadcrumb trail
-  if (isset($cPath_array)) {
-    for ($i=0, $n=sizeof($cPath_array); $i<$n; $i++) {
-      $categories_query = "SELECT categories_name
-                           FROM " . TABLE_CATEGORIES_DESCRIPTION . "
-                           WHERE categories_id = '" . (int)$cPath_array[$i] . "'
-                           and language_id = '" . (int)$_SESSION['languages_id'] . "'";
-
-      $categories = $db->Execute($categories_query);
-
-      if ($categories->RecordCount() > 0) {
-        $breadcrumb->add($categories->fields['categories_name'], zen_href_link(FILENAME_DEFAULT, 'cPath=' . implode('_', array_slice($cPath_array, 0, ($i+1)))));
-      } else {
-        break;
-      }
-    }
-  }
-
-// split to add manufacturers_name to the display
-  if (isset($_REQUEST['manufacturers_id'])) {
-    $manufacturers_query = "SELECT manufacturers_name
-                            FROM " . TABLE_MANUFACTURERS . "
-                            WHERE manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
-
-    $manufacturers = $db->Execute($manufacturers_query);
-
-    if ($manufacturers->RecordCount() > 0) {
-      $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_REQUEST['manufacturers_id']));
-    }
-  }
-
-// add the products model to the breadcrumb trail
-  if ( !empty( $_REQUEST['products_id'] ) ) {
-    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
-    if( $gBitProduct->load() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
-    }
-	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
-		die;
-	}
-  } else {
-    $gBitProduct = new CommerceProduct();
-  }
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
 
 
 

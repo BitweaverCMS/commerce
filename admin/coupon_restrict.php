@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: coupon_restrict.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -148,16 +148,16 @@
                 <td class="dataTableContent" align="center"><?php echo $category_name; ?></td>
 <?php
 		if ($cr_list->fields['coupon_restrict']=='N') {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
 		} else {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
 		}
 		if ($cr_list->fields['coupon_restrict']=='Y') {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
 		} else {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
 		}
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=remove&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icons/delete.gif', IMAGE_REMOVE) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=remove&info=' . $cr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icons/delete.gif', IMAGE_REMOVE) . '</a></td>';
 ?>
               </tr>
 <?php
@@ -172,7 +172,7 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
@@ -238,16 +238,16 @@
                 <td class="dataTableContent" align="center"><?php echo $product_name; ?></td>
 <?php
 		if ($pr_list->fields['coupon_restrict']=='N') {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_ALLOW) . '</a></td>';
 		} else {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_DENY) . '</a></td>';
 		}
 		if ($pr_list->fields['coupon_restrict']=='Y') {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_DENY) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif', IMAGE_DENY) . '</a></td>';
 		} else {
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_ALLOW) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=switch_status&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_ALLOW) . '</a></td>';
 		}
-		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=remove&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icons/delete.gif', IMAGE_REMOVE) . '</a></td>';
+		  echo '<td class="dataTableContent" align="center"><a href="' . zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=remove&info=' . $pr_list->fields['restrict_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icons/delete.gif', IMAGE_REMOVE) . '</a></td>';
 ?>
               </tr>
 <?php
@@ -262,7 +262,7 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
 <?php
@@ -276,9 +276,9 @@
       }
 ?>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
-                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('cPath_prod', zen_get_category_tree(), $current_category_id, 'onChange="this.form.submit();"'); ?></td></form>
-                    <form name="restrict_category" method="post" action="<?php echo zen_href_link('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+                    <form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
                     <td class="smallText" valign="top"><?php echo HEADER_PRODUCT_NAME; ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('products', $products_array, $current_category_id); ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('restrict_status', $restrict_array); ?></td>
@@ -296,7 +296,7 @@
             <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
           <tr>
-            <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+            <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>

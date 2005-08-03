@@ -17,12 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.5 2005/08/03 13:41:02 spiderr Exp $
+//  $Id: application_top.php,v 1.6 2005/08/03 15:35:08 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
 
-//require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+global $gBitSystem, $gBitUser;
+$gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
+
+
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 error_reporting(E_ALL & ~E_NOTICE);
 
 // Start the clock for the page parse time log
@@ -128,27 +132,6 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 
 
-  if ( !empty( $_REQUEST['products_id'] ) ) {
-    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
-    if( $gBitProduct->load() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
-    }
-	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
-		die;
-	}
-  } else {
-    $gBitProduct = new CommerceProduct();
-  }
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
-
-
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-
-
-
-
-
 // Define the project version  (must come after db class is loaded)
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
 
@@ -213,31 +196,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // initialize the logger class
   require_once(DIR_WS_CLASSES . 'logger.php');
 
-// include shopping cart class
-  require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php');
-
-
-// define how the session functions will be used
-  require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'sessions.php');
-
-// set the session name and save path
-  $http_domain = zen_get_top_level_domain(HTTP_SERVER);
-  $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-  $current_domain = (($request_type == 'NONSSL') ? $http_domain : $https_domain);
-  if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
-  zen_session_name('zenAdminID');
-  zen_session_save_path(SESSION_WRITE_DIRECTORY);
-
-// set the session cookie parameters
-//   if (function_exists('session_set_cookie_params')) {
-    session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-//  } elseif (function_exists('ini_set')) {
-//    @ini_set('session.cookie_lifetime', '0');
-//    @ini_set('session.cookie_path', DIR_WS_ADMIN);
-//  }
-
-// lets start our session
-  zen_session_start();
   $session_started = true;
 
 // Set theme related directories
@@ -393,11 +351,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // include the password crypto functions
   require_once(DIR_WS_FUNCTIONS . 'password_funcs.php');
 
-  global $gBitSystem, $gBitUser;
-  $gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
-
   if ((basename($PHP_SELF) == FILENAME_LOGIN . '.php') and (substr_count(dirname($PHP_SELF),'//') > 0 or substr_count(dirname($PHP_SELF),'.php') > 0)) {
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+    zen_redirect(zen_href_link_admin(FILENAME_LOGIN, '', 'SSL'));
   }
 
   // audience functions are for newsletter and mass-email audience-selection queries

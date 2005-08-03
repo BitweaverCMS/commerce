@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.13 2005/08/03 00:35:48 spiderr Exp $
+// $Id: functions_general.php,v 1.14 2005/08/03 15:35:15 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -118,29 +118,6 @@
     global $HTTP_USER_AGENT;
 
     return stristr($HTTP_USER_AGENT, $component);
-  }
-
-
-////
-// Wrapper function for round()
-  function zen_round($number, $precision) {
-    if (strpos($number, '.') && (strlen(substr($number, strpos($number, '.')+1)) > $precision)) {
-      $number = substr($number, 0, strpos($number, '.') + 1 + $precision + 1);
-
-      if (substr($number, -1) >= 5) {
-        if ($precision > 1) {
-          $number = substr($number, 0, -1) + ('0.' . str_repeat(0, $precision-1) . '1');
-        } elseif ($precision == 1) {
-          $number = substr($number, 0, -1) + 0.1;
-        } else {
-          $number = substr($number, 0, -1) + 1;
-        }
-      } else {
-        $number = substr($number, 0, -1);
-      }
-    }
-
-    return $number;
   }
 
 
@@ -711,32 +688,6 @@
   }
 
 ////
-  function zen_get_top_level_domain($url) {
-    if (strpos($url, '://')) {
-      $url = parse_url($url);
-      $url = $url['host'];
-    }
-//echo $url;
-
-    $domain_array = explode('.', $url);
-    $domain_size = sizeof($domain_array);
-    if ($domain_size > 1) {
-      if (SESSION_USE_FQDN == 'True') return $url;
-      if (is_numeric($domain_array[$domain_size-2]) && is_numeric($domain_array[$domain_size-1])) {
-        return false;
-      } else {
-        if ($domain_size > 3) {
-          return $domain_array[$domain_size-3] . '.' . $domain_array[$domain_size-2] . '.' . $domain_array[$domain_size-1];
-        } else {
-          return $domain_array[$domain_size-2] . '.' . $domain_array[$domain_size-1];
-        }
-      }
-    } else {
-      return false;
-    }
-  }
-
-////
   function zen_setcookie($name, $value = '', $expire = 0, $path = '/', $domain = '', $secure = 0) {
     setcookie($name, $value, $expire, $path, $domain, $secure);
   }
@@ -1114,35 +1065,6 @@
   }
 
 ////
-// remove common HTML from text for display as paragraph
-  function zen_clean_html($clean_it) {
-
-    $clean_it = preg_replace('/\r/', ' ', $clean_it);
-    $clean_it = preg_replace('/\t/', ' ', $clean_it);
-    $clean_it = preg_replace('/\n/', ' ', $clean_it);
-
-    $clean_it= nl2br($clean_it);
-
-// update breaks with a space for text displays in all listings with descriptions
-    while (strstr($clean_it, '<br>')) $clean_it = str_replace('<br>', ' ', $clean_it);
-    while (strstr($clean_it, '<br />')) $clean_it = str_replace('<br />', ' ', $clean_it);
-    while (strstr($clean_it, '<br/>')) $clean_it = str_replace('<br/>', ' ', $clean_it);
-    while (strstr($clean_it, '<p>')) $clean_it = str_replace('<p>', ' ', $clean_it);
-    while (strstr($clean_it, '</p>')) $clean_it = str_replace('</p>', ' ', $clean_it);
-
-// temporary fix more for reviews than anything else
-    while (strstr($clean_it, '<span class="smallText">')) $clean_it = str_replace('<span class="smallText">', ' ', $clean_it);
-    while (strstr($clean_it, '</span>')) $clean_it = str_replace('</span>', ' ', $clean_it);
-
-    while (strstr($clean_it, '  ')) $clean_it = str_replace('  ', ' ', $clean_it);
-
-// remove other html code to prevent problems on display of text
-    $clean_it = strip_tags($clean_it);
-    return $clean_it;
-  }
-
-
-////
 // find module directory
 // include template specific immediate /modules files
 // new_products, products_new_listing, featured_products, featured_products_listing, product_listing, specials_index, upcoming,
@@ -1207,17 +1129,13 @@
 ////
 // call additional function files
 // prices and quantities
-  require(DIR_FS_FUNCTIONS . 'functions_prices.php');
-// taxes
-  require(DIR_FS_FUNCTIONS . 'functions_taxes.php');
+  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
 // gv and coupons
-  require(DIR_FS_FUNCTIONS . 'functions_gvcoupons.php');
+  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php');
 // categories, paths, pulldowns
-  require(DIR_FS_FUNCTIONS . 'functions_categories.php');
+  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_categories.php');
 // customers and addresses
-  require(DIR_FS_FUNCTIONS . 'functions_customers.php');
-// lookup information
-  require(DIR_FS_FUNCTIONS . 'functions_lookups.php');
+  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php');
 ////
 /////////////////////////////////////////////
 ?>

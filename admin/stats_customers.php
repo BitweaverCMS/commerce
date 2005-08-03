@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers.php,v 1.1 2005/07/05 05:59:57 bitweaver Exp $
+//  $Id: stats_customers.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -93,9 +93,9 @@
       $rows = '0' . $rows;
     }
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link(FILENAME_CUSTOMERS, 'cID=' . $customers->fields['customers_id'], 'NONSSL'); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link_admin(FILENAME_CUSTOMERS, 'cID=' . $customers->fields['customers_id'], 'NONSSL'); ?>'">
                 <td class="dataTableContent" align="right"><?php echo $customers->fields['customers_id']; ?>&nbsp;&nbsp;</td>
-                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link(FILENAME_CUSTOMERS, 'cID=' . $customers->fields['customers_id'], 'NONSSL') . '">' . $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a>'; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, 'cID=' . $customers->fields['customers_id'], 'NONSSL') . '">' . $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a>'; ?></td>
                 <td class="dataTableContent" align="right"><?php echo $currencies->format($customers->fields['ordersum']); ?>&nbsp;</td>
               </tr>
 <?php

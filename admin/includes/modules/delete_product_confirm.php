@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: delete_product_confirm.php,v 1.1 2005/07/05 06:00:04 bitweaver Exp $
+//  $Id: delete_product_confirm.php,v 1.2 2005/08/03 15:35:12 spiderr Exp $
 //
 //
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $_GET['cPath'] . '&pID=' . $_GET['pID'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+          zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $_GET['cPath'] . '&pID=' . $_GET['pID'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
         }
         if (isset($_POST['products_id']) && isset($_POST['product_categories']) && is_array($_POST['product_categories'])) {
           $product_id = zen_db_prepare_input($_POST['products_id']);
@@ -45,5 +45,5 @@
           }
         }
 
-        zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath));
+        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath));
 ?>

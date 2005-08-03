@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_purchased.php,v 1.2 2005/07/06 02:20:42 spiderr Exp $
+//  $Id: stats_products_purchased.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -95,9 +95,9 @@ $products_query_raw = "select sum(op.products_quantity) as products_ordered, op.
     }
     $cPath = zen_get_product_path($products->fields['products_id']);
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page='); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page='); ?>'">
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_id']; ?>&nbsp;&nbsp;</td>
-                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page=') . '">' . $products->fields['products_name'] . '</a>'; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page=') . '">' . $products->fields['products_name'] . '</a>'; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $products->fields['products_ordered']; ?>&nbsp;</td>
               </tr>
 <?php

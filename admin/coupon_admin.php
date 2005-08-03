@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.4 2005/07/10 15:56:29 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.5 2005/08/03 15:35:06 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -50,7 +50,7 @@
     if (zen_admin_demo()) {
       $_GET['action']= '';
       $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-      zen_redirect(zen_href_link(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to)));
+      zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to)));
     }
     $from = zen_db_prepare_input($_POST['from']);
     $subject = zen_db_prepare_input($_POST['subject']);
@@ -85,7 +85,7 @@
     if (SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_STATUS== '1' and SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO != '') {
       zen_mail('', SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO, SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_SUBJECT . ' ' . $subject , $message, '',$from, $html_msg, 'coupon_extra');
     }
-    zen_redirect(zen_href_link(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
+    zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
   }
 
   if ( ($_GET['action'] == 'preview_email') && (!$_POST['customers_email_address']) ) {
@@ -106,14 +106,14 @@
           $_SESSION['html_editor_preference_status'] = 'HTMLAREA';
         }
         $action='';
-        zen_redirect(zen_href_link(FILENAME_COUPON_ADMIN));
+        zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN));
         break;
     case 'confirmdelete':
       // demo active test
       if (zen_admin_demo()) {
         $_GET['action']= '';
         $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-        zen_redirect(zen_href_link(FILENAME_COUPON_ADMIN));
+        zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN));
       }
       $db->Execute("update " . TABLE_COUPONS . "
                     set coupon_active = 'N'
@@ -210,7 +210,7 @@
           }
         }
       }
-      zen_redirect(zen_href_link(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']));
+      zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']));
   }
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -351,9 +351,9 @@ function check_form(form_name) {
         $cInfo = new objectInfo($cc_list->fields);
       }
       if ( (is_object($cInfo)) && ($cc_list->fields['unique_id'] == $cInfo->unique_id) ) {
-        echo '          <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cInfo->coupon_id . '&action=voucherreport&uid=' . $cinfo->unique_id) . '\'">' . "\n";
+        echo '          <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cInfo->coupon_id . '&action=voucherreport&uid=' . $cinfo->unique_id) . '\'">' . "\n";
       } else {
-        echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cc_list->fields['coupon_id'] . '&action=voucherreport&uid=' . $cc_list->fields['unique_id']) . '\'">' . "\n";
+        echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cc_list->fields['coupon_id'] . '&action=voucherreport&uid=' . $cc_list->fields['unique_id']) . '\'">' . "\n";
       }
 $customer = $db->Execute("select customers_firstname, customers_lastname
                           from " . TABLE_CUSTOMERS . "
@@ -364,7 +364,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
                 <td class="dataTableContent" align="center"><?php echo $customer->fields['customers_firstname'] . ' ' . $customer->fields['customers_lastname']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $cc_list->fields['redeem_ip']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo zen_date_short($cc_list->fields['redeem_date']); ?></td>
-                <td class="dataTableContent" align="right"><?php if ( (is_object($cInfo)) && ($cc_list->fields['unique_id'] == $cInfo->unique_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'reports_page=' . $_GET['reports_page'] . '&cid=' . $cc_list->fields['coupon_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if ( (is_object($cInfo)) && ($cc_list->fields['unique_id'] == $cInfo->unique_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'reports_page=' . $_GET['reports_page'] . '&cid=' . $cc_list->fields['coupon_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
       $cc_list->MoveNext();
@@ -378,7 +378,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
               </tr>
 
               <tr>
-                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cInfo->coupon_id) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cInfo->coupon_id) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
               </tr>
             </table></td>
           </tr>
@@ -486,7 +486,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
                 <table border="0" width="100%" cellpadding="0" cellspacing="2">
                   <tr>
                     <td><?php ?>&nbsp;</td>
-                    <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
+                    <td align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
                   </tr>
                 </table></td>
               </tr>
@@ -585,7 +585,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
               <tr>
-                <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' .  zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
+                <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' .  zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
               </tr>
             </table></td>
           </form></tr>
@@ -858,7 +858,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
       </tr>
       <tr>
         <td align="left"><?php echo zen_image_submit('button_preview.gif',COUPON_BUTTON_PREVIEW); ?></td>
-        <td align="left"><?php echo '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']); ?>"><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>
+        <td align="left"><?php echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'cid=' . $_GET['cid']); ?>"><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>
       </td>
       </tr>
       </td></table></form>
@@ -930,9 +930,9 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
         $cInfo = new objectInfo($cc_list->fields);
       }
       if ( (is_object($cInfo)) && ($cc_list->fields['coupon_id'] == $cInfo->coupon_id) ) {
-        echo '          <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cInfo->coupon_id . '&action=edit') . '\'">' . "\n";
+        echo '          <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cInfo->coupon_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cc_list->fields['coupon_id']) . '\'">' . "\n";
+        echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cc_list->fields['coupon_id']) . '\'">' . "\n";
       }
       $coupon_desc = $db->Execute("select coupon_name
                                    from " . TABLE_COUPONS_DESCRIPTION . "
@@ -952,7 +952,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
 ?>
             &nbsp;</td>
                 <td class="dataTableContent" align="center"><?php echo $cc_list->fields['coupon_code']; ?></td>
-                <td class="dataTableContent" align="right"><?php if ( (is_object($cInfo)) && ($cc_list->fields['coupon_id'] == $cInfo->coupon_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cc_list->fields['coupon_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if ( (is_object($cInfo)) && ($cc_list->fields['coupon_id'] == $cInfo->coupon_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cc_list->fields['coupon_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
       $cc_list->MoveNext();
@@ -966,7 +966,7 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
               </tr>
 
               <tr>
-                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cInfo->coupon_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
+                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_COUPON_ADMIN, 'page=' . $_GET['page'] . '&cid=' . $cInfo->coupon_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
               </tr>
             </table></td>
           </tr>
@@ -1002,8 +1002,8 @@ $customer = $db->Execute("select customers_firstname, customers_lastname
       }
       if ($_GET['action'] == 'voucherdelete') {
         $contents[] = array('text'=> TEXT_CONFIRM_DELETE . '</br></br>' .
-                '<a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'action=confirmdelete&cid='.$_GET['cid'],'NONSSL').'">'.zen_image_button('button_confirm.gif','Confirm Delete ' . TEXT_GV_NAME).'</a>' .
-                '<a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_cancel.gif','Cancel').'</a>'
+                '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=confirmdelete&cid='.$_GET['cid'],'NONSSL').'">'.zen_image_button('button_confirm.gif','Confirm Delete ' . TEXT_GV_NAME).'</a>' .
+                '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_cancel.gif','Cancel').'</a>'
                 );
       } else {
         $prod_details = NONE;
@@ -1034,10 +1034,10 @@ $category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where 
                      DATE_CREATED . '&nbsp;::&nbsp; ' . zen_date_short($cInfo->date_created) . '<br />' .
                      DATE_MODIFIED . '&nbsp;::&nbsp; ' . zen_date_short($cInfo->date_modified) . '<br /><br />' .
                      ($cInfo->coupon_id != '' ?
-                     '<center><a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'action=email&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_email.gif','Email ' . TEXT_GV_NAME).'</a>' .
-                     '<a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'action=voucheredit&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_edit.gif','Edit ' . TEXT_GV_NAME).'</a>' .
-                     '<a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'action=voucherdelete&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_delete.gif','Delete ' . TEXT_GV_NAME).'</a>' .
-                     '<br /><a href="'.zen_href_link('coupon_restrict.php','cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_restrict.gif','Restrict').'</a><a href="'.zen_href_link(FILENAME_COUPON_ADMIN,'action=voucherreport&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_report.gif',TEXT_GV_NAME . ' Report').'</a></center>'
+                     '<center><a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=email&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_email.gif','Email ' . TEXT_GV_NAME).'</a>' .
+                     '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucheredit&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_edit.gif','Edit ' . TEXT_GV_NAME).'</a>' .
+                     '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherdelete&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_delete.gif','Delete ' . TEXT_GV_NAME).'</a>' .
+                     '<br /><a href="'.zen_href_link_admin('coupon_restrict.php','cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_restrict.gif','Restrict').'</a><a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherreport&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_report.gif',TEXT_GV_NAME . ' Report').'</a></center>'
                      : ' who ' . $cInfo->coupon_id . ' - ' . $_GET['cid'])
                      );
         }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_taxes.php,v 1.3 2005/08/03 00:35:49 spiderr Exp $
+// $Id: functions_taxes.php,v 1.4 2005/08/03 15:35:15 spiderr Exp $
 //
 //
 ////
@@ -25,6 +25,7 @@
 // TABLES: tax_rates, zones_to_geo_zones
   function zen_get_tax_rate($class_id, $country_id = -1, $zone_id = -1) {
     global $db, $gBitUser;
+    global $customer_zone_id, $customer_country_id;
 
     if ( ($country_id == -1) && ($zone_id == -1) ) {
       if( !$gBitUser->isRegistered() ) {
@@ -33,8 +34,12 @@
       } elseif( !empty( $_SESSION['customer_country_id'] ) && !empty( $_SESSION['customer_zone_id'] ) ) {
         $country_id = $_SESSION['customer_country_id'];
         $zone_id = $_SESSION['customer_zone_id'];
-      }
+      } else {
+        $country_id = $customer_country_id;
+        $zone_id = $customer_zone_id;
+	  }
     }
+
 
     if (STORE_PRODUCT_TAX_BASIS == 'Store') {
       if ($zone_id != STORE_ZONE) return 0;

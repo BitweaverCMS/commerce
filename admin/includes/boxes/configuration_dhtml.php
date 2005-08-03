@@ -17,19 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration_dhtml.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
+//  $Id: configuration_dhtml.php,v 1.3 2005/08/03 15:35:09 spiderr Exp $
 //
 
 ?>
 <!-- configuration //-->
 <li class="submenu">
-<a target="_top" href="<?php echo  zen_href_link(FILENAME_ALT_NAV, '', 'NONSSL') ?>"><?php echo BOX_HEADING_CONFIGURATION; ?></a><ul>
+<a target="_top" href="<?php echo  zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL') ?>"><?php echo BOX_HEADING_CONFIGURATION; ?></a><ul>
 <?php
   $heading = array();
   $contents = array();
   $heading[] = array('text'  => BOX_HEADING_CONFIGURATION,
 
-                     'link'  => zen_href_link(basename($PHP_SELF), zen_get_all_get_params(array('selected_box')) . 'selected_box=configuration'));
+                     'link'  => zen_href_link_admin(basename($PHP_SELF), zen_get_all_get_params(array('selected_box')) . 'selected_box=configuration'));
   if (1 == 1) {
     $cfg_groups = '';
     $configuration_groups = $db->Execute("select configuration_group_id as cg_id,
@@ -38,7 +38,7 @@
                                                 where visible = '1' order by sort_order");
 
     while (!$configuration_groups->EOF) {
-      $cfg_groups .= '<li><a href="' . zen_href_link(FILENAME_CONFIGURATION, 'gID=' . $configuration_groups->fields['cg_id'], 'NONSSL') . '">' . $configuration_groups->fields['cg_title'] . '</a></li>';
+      $cfg_groups .= '<li><a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $configuration_groups->fields['cg_id'], 'NONSSL') . '">' . $configuration_groups->fields['cg_title'] . '</a></li>';
       $configuration_groups->MoveNext();
     }
   }

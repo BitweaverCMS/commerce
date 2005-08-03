@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.5 2005/07/18 14:35:52 spiderr Exp $
+// $Id: functions_lookups.php,v 1.6 2005/08/03 15:35:15 spiderr Exp $
 //
 //
 /**
@@ -104,9 +104,19 @@
     }
   }
 
-////
-// Returns the zone (State/Province) code
-// TABLES: zones
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Function    : zen_get_zone_code
+  //
+  // Arguments   : country           country code string
+  //               zone              state/province zone_id
+  //               def_state         default string if zone==0
+  //
+  // Return      : state_prov_code   state/province code
+  //
+  // Description : Function to retrieve the state/province code (as in FL for Florida etc)
+  //
+  ////////////////////////////////////////////////////////////////////////////////////////////////
   function zen_get_zone_code($country_id, $zone_id, $default_zone) {
     global $db;
     $zone_query = "select zone_code
@@ -543,11 +553,7 @@
 // look up a products image and send back the image
   function zen_get_products_image($product_id, $width = SMALL_IMAGE_WIDTH, $height = SMALL_IMAGE_HEIGHT) {
     global $db;
-
-    $sql = "select p.products_image from " . TABLE_PRODUCTS . " p  where products_id=?";
-    $look_up = $db->query( $sql, array($product_id) );
-
-    return zen_image(STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images'. $look_up->fields['products_image'], zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
+    return zen_image( CommerceProduct::getImageUrl( $product_id ), zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
   }
 
 ////
@@ -577,6 +583,13 @@
     return $allow_add_to_cart->fields['allow_add_to_cart'];
   }
 
+// build configuration_key based on product type and return its value
+// example: To get the settings for metatags_products_name_status for a product use:
+// zen_get_show_product_switch($_GET['pID'], 'metatags_products_name_status')
+// the product is looked up for the products_type which then builds the configuration_key example:
+// SHOW_PRODUCT_INFO_METATAGS_PRODUCTS_NAME_STATUS
+// the value of the configuration_key is then returned
+// NOTE: keys are looked up first in the product_type_layout table and if not found looked up in the configuration table.
     function zen_get_show_product_switch($lookup, $field, $suffix= 'SHOW_', $prefix= '_INFO', $field_prefix= '_', $field_suffix='') {
       global $db;
 

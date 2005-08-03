@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//$Id: password_forgotten.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//$Id: password_forgotten.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -26,11 +26,11 @@
   if (zen_admin_demo()) {
     $_GET['action']= '';
     $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-    zen_redirect(zen_href_link(FILENAME_DEFAULT));
+    zen_redirect(zen_href_link_admin(FILENAME_DEFAULT));
   }
 
   if (isset($_POST['login'])) {
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+    zen_redirect(zen_href_link_admin(FILENAME_LOGIN, '', 'SSL'));
   }
 
 $error_check = false;
@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
 <link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
 </head>
 <body id="login">
-<form name="login" action="<?php echo zen_href_link(FILENAME_PASSWORD_FORGOTTEN, '', 'SSL'); ?>" method = "POST">
+<form name="login" action="<?php echo zen_href_link_admin(FILENAME_PASSWORD_FORGOTTEN, '', 'SSL'); ?>" method = "POST">
 <fieldset>
 <legend><?php echo HEADING_TITLE; ?></legend>
 <label for="admin_email"><?php echo TEXT_ADMIN_EMAIL; ?><input type="text" id="admin_email" name="admin_email" value="<?php echo $_POST['admin_email']; ?>" /></label>

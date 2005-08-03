@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: tax_rates.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -41,7 +41,7 @@
                             '" . zen_db_input($tax_priority) . "',
                             now())");
 
-        zen_redirect(zen_href_link(FILENAME_TAX_RATES));
+        zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES));
         break;
       case 'save':
         $tax_rates_id = zen_db_prepare_input($_GET['tID']);
@@ -60,21 +60,21 @@
                           tax_priority = '" . zen_db_input($tax_priority) . "',
                           last_modified = now() where tax_rates_id = '" . (int)$tax_rates_id . "'");
 
-        zen_redirect(zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
+        zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;
       case 'deleteconfirm':
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
+          zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
         }
         $tax_rates_id = zen_db_prepare_input($_GET['tID']);
 
         $db->Execute("delete from " . TABLE_TAX_RATES . "
                       where tax_rates_id = '" . (int)$tax_rates_id . "'");
 
-        zen_redirect(zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
         break;
     }
   }
@@ -141,16 +141,16 @@
     }
 
     if (isset($trInfo) && is_object($trInfo) && ($rates->fields['tax_rates_id'] == $trInfo->tax_rates_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=edit') . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=edit') . '\'">' . "\n";
     } else {
-      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $rates->fields['tax_rates_id']) . '\'">' . "\n";
+      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $rates->fields['tax_rates_id']) . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $rates->fields['tax_priority']; ?></td>
                 <td class="dataTableContent"><?php echo $rates->fields['tax_class_title']; ?></td>
                 <td class="dataTableContent"><?php echo $rates->fields['geo_zone_name']; ?></td>
                 <td class="dataTableContent"><?php echo zen_display_tax_value($rates->fields['tax_rate']); ?>%</td>
-                <td class="dataTableContent" align="right"><?php if (isset($trInfo) && is_object($trInfo) && ($rates->fields['tax_rates_id'] == $trInfo->tax_rates_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $rates->fields['tax_rates_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($trInfo) && is_object($trInfo) && ($rates->fields['tax_rates_id'] == $trInfo->tax_rates_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $rates->fields['tax_rates_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     $rates->MoveNext();
@@ -166,7 +166,7 @@
   if (empty($action)) {
 ?>
                   <tr>
-                    <td colspan="5" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_tax_rate.gif', IMAGE_NEW_TAX_RATE) . '</a>'; ?></td>
+                    <td colspan="5" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_tax_rate.gif', IMAGE_NEW_TAX_RATE) . '</a>'; ?></td>
                   </tr>
 <?php
   }
@@ -189,7 +189,7 @@
       $contents[] = array('text' => '<br>' . TEXT_INFO_TAX_RATE . '<br>' . zen_draw_input_field('tax_rate'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_RATE_DESCRIPTION . '<br>' . zen_draw_input_field('tax_description'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_TAX_RATE_PRIORITY . '<br>' . zen_draw_input_field('tax_priority'));
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . '&nbsp;<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_TAX_RATE . '</b>');
@@ -201,7 +201,7 @@
       $contents[] = array('text' => '<br>' . TEXT_INFO_TAX_RATE . '<br>' . zen_draw_input_field('tax_rate', $trInfo->tax_rate));
       $contents[] = array('text' => '<br>' . TEXT_INFO_RATE_DESCRIPTION . '<br>' . zen_draw_input_field('tax_description', $trInfo->tax_description));
       $contents[] = array('text' => '<br>' . TEXT_INFO_TAX_RATE_PRIORITY . '<br>' . zen_draw_input_field('tax_priority', $trInfo->tax_priority));
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_TAX_RATE . '</b>');
@@ -209,13 +209,13 @@
       $contents = array('form' => zen_draw_form('rates', FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id  . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $trInfo->tax_class_title . ' ' . number_format($trInfo->tax_rate, TAX_DECIMAL_PLACES) . '%</b>');
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (is_object($trInfo)) {
         $heading[] = array('text' => '<b>' . $trInfo->tax_class_title . '</b>');
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
-        $contents[] = array('align' => 'center', 'text' =>  '<a href="' . zen_href_link(FILENAME_GEO_ZONES, '', 'NONSSL') . '">' . zen_image_button('button_define_zones.gif', IMAGE_DEFINE_ZONES) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $trInfo->tax_rates_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
+        $contents[] = array('align' => 'center', 'text' =>  '<a href="' . zen_href_link_admin(FILENAME_GEO_ZONES, '', 'NONSSL') . '">' . zen_image_button('button_define_zones.gif', IMAGE_DEFINE_ZONES) . '</a>');
         $contents[] = array('text' => '<br>' . TEXT_INFO_DATE_ADDED . ' ' . zen_date_short($trInfo->date_added));
         $contents[] = array('text' => '' . TEXT_INFO_LAST_MODIFIED . ' ' . zen_date_short($trInfo->last_modified));
         $contents[] = array('text' => '<br>' . TEXT_INFO_RATE_DESCRIPTION . '<br>' . $trInfo->tax_description);

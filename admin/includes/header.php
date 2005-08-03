@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.3 2005/08/02 15:35:35 spiderr Exp $
+//  $Id: header.php,v 1.4 2005/08/03 15:35:09 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -113,7 +113,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     if ($new_version != '' && $new_version != TEXT_VERSION_CHECK_CURRENT) $new_version .= '<br /><a href="' . $lines[6] . '" target="_blank">'. TEXT_VERSION_CHECK_DOWNLOAD .'</a>';
   } else {
     // display the "check for updated version" button.  The button link should be the current page and all param's
-    $url=($_SERVER['REQUEST_URI']!='') ? $_SERVER['REQUEST_URI'] : zen_href_link(FILENAME_DEFAULT);
+    $url=($_SERVER['REQUEST_URI']!='') ? $_SERVER['REQUEST_URI'] : zen_href_link_admin(FILENAME_DEFAULT);
     $url .= (strpos($url,'?')>5) ? '&vcheck=yes' : '?vcheck=yes';
     if ($zv_db_patch_ok == true || $version_check_sysinfo==true ) $new_version = '<a href="' . $url . '">' . zen_image_button('button_check_new_version.gif',IMAGE_CHECK_VERSION) . '</a>';
   }
@@ -123,7 +123,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     $new_gv_queue= $db->Execute("select * from " . TABLE_COUPON_GV_QUEUE . " where release_flag='N'");
     if ($new_gv_queue->RecordCount() > 0) {
       $new_gv_queue_cnt= $new_gv_queue->RecordCount();
-      $goto_gv = '<a href="' . zen_href_link(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
+      $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
     }
   }
 ?>
@@ -142,7 +142,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     ?>
     </td>
     <td class="headerBarContent" align="center"><b><?php echo date("r", time()) . 'GMT'  . '&nbsp;[' .  $_SERVER['REMOTE_ADDR'] . ' ]&nbsp;'; ?></b></td>
-    <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . BITCOMMERCE_PKG_URL . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.bitcommerce.org/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>'; ?></td>
+    <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . BITCOMMERCE_PKG_URL . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.bitcommerce.org/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>'; ?></td>
   </tr>
 </table>
 <?php require(DIR_WS_INCLUDES . 'header_navigation.php'); ?>

@@ -44,6 +44,117 @@
   }
 
 
+////
+// remove common HTML from text for display as paragraph
+  function zen_clean_html($clean_it) {
+
+    $clean_it = preg_replace('/\r/', ' ', $clean_it);
+    $clean_it = preg_replace('/\t/', ' ', $clean_it);
+    $clean_it = preg_replace('/\n/', ' ', $clean_it);
+
+    $clean_it= nl2br($clean_it);
+
+// update breaks with a space for text displays in all listings with descriptions
+    while (strstr($clean_it, '<br>')) $clean_it = str_replace('<br>', ' ', $clean_it);
+    while (strstr($clean_it, '<br />')) $clean_it = str_replace('<br />', ' ', $clean_it);
+    while (strstr($clean_it, '<br/>')) $clean_it = str_replace('<br/>', ' ', $clean_it);
+    while (strstr($clean_it, '<p>')) $clean_it = str_replace('<p>', ' ', $clean_it);
+    while (strstr($clean_it, '</p>')) $clean_it = str_replace('</p>', ' ', $clean_it);
+
+// temporary fix more for reviews than anything else
+    while (strstr($clean_it, '<span class="smallText">')) $clean_it = str_replace('<span class="smallText">', ' ', $clean_it);
+    while (strstr($clean_it, '</span>')) $clean_it = str_replace('</span>', ' ', $clean_it);
+
+    while (strstr($clean_it, '  ')) $clean_it = str_replace('  ', ' ', $clean_it);
+
+// remove other html code to prevent problems on display of text
+    $clean_it = strip_tags($clean_it);
+    return $clean_it;
+  }
+
+
+////
+// The HTML href link wrapper function
+  function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
+    global $request_type, $session_started, $http_domain, $https_domain;
+
+    if (!zen_not_null($page)) {
+      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine the page link!</strong><br /><br />');
+    }
+
+    if ($connection == 'NONSSL') {
+      $link = HTTP_SERVER;
+    } elseif ($connection == 'SSL') {
+      if (ENABLE_SSL == 'true') {
+        $link = HTTPS_SERVER ;
+      } else {
+        $link = HTTP_SERVER;
+      }
+    } else {
+      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine connection method on a link!<br /><br />Known methods: NONSSL SSL</strong><br /><br />');
+    }
+
+    if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
+
+    if (!$static) {
+      if (zen_not_null($parameters)) {
+        $link .= 'index.php?main_page='. $page . "&" . zen_output_string($parameters);
+      } else {
+        $link .= 'index.php?main_page=' . $page;
+      }
+    } else {
+      if (zen_not_null($parameters)) {
+        $link .= $page . "&" . zen_output_string($parameters);
+      } else {
+        $link .= $page;
+      }
+    }
+
+    $separator = '&';
+
+    while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
+// Add the session ID when moving from different HTTP and HTTPS servers, or when SID is defined
+    if ( ($add_session_id == true) && ($session_started == true) && (SESSION_FORCE_COOKIE_USE == 'False') ) {
+      if (defined('SID') && zen_not_null(SID)) {
+        $sid = SID;
+//      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
+      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
+
+
+        if ($http_domain != $https_domain) {
+          $sid = zen_session_name() . '=' . zen_session_id();
+        }
+      }
+    }
+
+// clean up the link before processing
+    while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
+    while (strstr($link, '&amp;&amp;')) $link = str_replace('&amp;&amp;', '&amp;', $link);
+
+    if ( (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
+      while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
+
+      $link = str_replace('&amp;', '/', $link);
+      $link = str_replace('?', '/', $link);
+      $link = str_replace('&', '/', $link);
+      $link = str_replace('=', '/', $link);
+
+      $separator = '?';
+    }
+
+    if (isset($sid)) {
+      $link .= $separator . $sid;
+    }
+
+// clean up the link after processing
+    while (strstr($link, '&amp;&amp;')) $link = str_replace('&amp;&amp;', '&amp;', $link);
+
+    $link = ereg_replace('&', '&amp;', $link);
+    return $link;
+  }
+
+
+
 /**
  * Parse the data used in the html tags to ensure the tags will not break.
  * Basically just an extension to the php strstr function
@@ -1447,6 +1558,53 @@ function reset_bitcommerce_layout() {
 		$i = 1;
 	}
 }
+
+
+////
+  function zen_get_top_level_domain($url) {
+    if (strpos($url, '://')) {
+      $url = parse_url($url);
+      $url = $url['host'];
+    }
+    $domain_array = explode('.', $url);
+    $domain_size = sizeof($domain_array);
+    if ($domain_size > 1) {
+      if (SESSION_USE_FQDN == 'True') return $url;
+      if (is_numeric($domain_array[$domain_size-2]) && is_numeric($domain_array[$domain_size-1])) {
+        return false;
+      } else {
+        if ($domain_size > 3) {
+          return $domain_array[$domain_size-3] . '.' . $domain_array[$domain_size-2] . '.' . $domain_array[$domain_size-1];
+        } else {
+          return $domain_array[$domain_size-2] . '.' . $domain_array[$domain_size-1];
+        }
+      }
+    } else {
+      return false;
+    }
+  }
+
+////
+// Wrapper function for round()
+  function zen_round($number, $precision) {
+    if (strpos($number, '.') && (strlen(substr($number, strpos($number, '.')+1)) > $precision)) {
+      $number = substr($number, 0, strpos($number, '.') + 1 + $precision + 1);
+
+      if (substr($number, -1) >= 5) {
+        if ($precision > 1) {
+          $number = substr($number, 0, -1) + ('0.' . str_repeat(0, $precision-1) . '1');
+        } elseif ($precision == 1) {
+          $number = substr($number, 0, -1) + 0.1;
+        } else {
+          $number = substr($number, 0, -1) + 1;
+        }
+      } else {
+        $number = substr($number, 0, -1);
+      }
+    }
+
+    return $number;
+  }
 
 
 ////

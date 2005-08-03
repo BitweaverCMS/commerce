@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: box.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: box.php,v 1.2 2005/08/03 15:35:10 spiderr Exp $
 //
 /*
   Example usage:
@@ -25,7 +25,7 @@
   $heading = array();
   $heading[] = array('params' => 'class="menuBoxHeading"',
                      'text'  => BOX_HEADING_TOOLS,
-                     'link'  => zen_href_link(basename($PHP_SELF), zen_get_all_get_params(array('selected_box')) . 'selected_box=tools'));
+                     'link'  => zen_href_link_admin(basename($PHP_SELF), zen_get_all_get_params(array('selected_box')) . 'selected_box=tools'));
 
   $contents = array();
   $contents[] = array('text'  => SOME_TEXT);

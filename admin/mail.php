@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: mail.php,v 1.1 2005/07/05 05:59:59 bitweaver Exp $
+//  $Id: mail.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -36,7 +36,7 @@ if (EMAIL_ATTACHMENT_UPLOADS_ENABLED=='EMAIL_ATTACHMENT_UPLOADS_ENABLED') define
       $_SESSION['html_editor_preference_status'] = 'HTMLAREA';
     }
     $action='';
-    zen_redirect(zen_href_link(FILENAME_MAIL));
+    zen_redirect(zen_href_link_admin(FILENAME_MAIL));
   }
 
   if ( ($action == 'send_email_to_user') && isset($_POST['customers_email_address']) && !isset($_POST['back_x']) ) {
@@ -51,7 +51,7 @@ if (EMAIL_ATTACHMENT_UPLOADS_ENABLED=='EMAIL_ATTACHMENT_UPLOADS_ENABLED') define
     if (empty($mail_sent_to)) {
       $messageStack->add_session(ERROR_NO_CUSTOMER_SELECTED, 'error');
       $_GET['action']='';
-      zen_redirect(zen_href_link(FILENAME_MAIL));
+      zen_redirect(zen_href_link_admin(FILENAME_MAIL));
     }
 
     $from = zen_db_prepare_input($_POST['from']);
@@ -65,7 +65,7 @@ if (EMAIL_ATTACHMENT_UPLOADS_ENABLED=='EMAIL_ATTACHMENT_UPLOADS_ENABLED') define
     if (zen_admin_demo()) {
       $_GET['action']= '';
       $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-      zen_redirect(zen_href_link(FILENAME_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to)));
+      zen_redirect(zen_href_link_admin(FILENAME_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to)));
     }
 
     //send message using the zen email function
@@ -79,7 +79,7 @@ if (EMAIL_ATTACHMENT_UPLOADS_ENABLED=='EMAIL_ATTACHMENT_UPLOADS_ENABLED') define
       $mail->MoveNext();
     }
 
-    zen_redirect(zen_href_link(FILENAME_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
+    zen_redirect(zen_href_link_admin(FILENAME_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
   }
 
   if ( EMAIL_ATTACHMENTS_ENABLED && $action == 'preview') {
@@ -305,7 +305,7 @@ function check_form(form_name) {
                 <table border="0" width="100%" cellpadding="0" cellspacing="2">
                   <tr>
                     <td><?php echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="back"'); ?></td>
-                    <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_MAIL) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
+                    <td align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_MAIL) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL); ?></td>
                   </tr>
                 </table></td>
               </tr>
@@ -422,7 +422,7 @@ function check_form(form_name) {
  ?>
               <tr>
                 <td colspan="2" align="right"><?php echo zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;' .
-                '<a href="' . zen_href_link($origin, 'cID=' . zen_db_prepare_input($_GET['cID']), $mode) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+                '<a href="' . zen_href_link_admin($origin, 'cID=' . zen_db_prepare_input($_GET['cID']), $mode) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
               </tr>
             </table></td>
           </form></tr>

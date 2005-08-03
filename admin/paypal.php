@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: paypal.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -117,16 +117,16 @@ echo zen_draw_form('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING_PAYME
     }
 
     if (isset($ipnInfo) && is_object($ipnInfo) && ($ipn_trans->fields['paypal_ipn_id'] == $ipnInfo->paypal_ipn_id) ) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_ORDERS, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipnInfo->paypal_ipn_id . '&oID=' . $ipnInfo->zen_order_id . '&action=edit' . '&referer=ipn') . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipnInfo->paypal_ipn_id . '&oID=' . $ipnInfo->zen_order_id . '&action=edit' . '&referer=ipn') . '\'">' . "\n";
     } else {
-      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_PAYPAL, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipn_trans->fields['paypal_ipn_id']) . '\'">' . "\n";
+      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_PAYPAL, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipn_trans->fields['paypal_ipn_id']) . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"> <?php echo $ipn_trans->fields['zen_order_id'] ?> </td>
                 <td class="dataTableContent"> <?php echo $ipn_trans->fields['txn_type']; ?>
                 <td class="dataTableContent"><?php echo $ipn_trans->fields['payment_status_name'] . ' '. $ipn_trans->fields['payment_status']; ?></td>
                 <td class="dataTableContent" align="right"><?php echo $ipn_trans->fields['mc_currency'] . ' '.number_format($ipn_trans->fields['mc_gross'], 2); ?></td>
-                <td class="dataTableContent" align="right"><?php if (isset($ipnInfo) && is_object($ipnInfo) && ($ipn_trans->fields['paypal_ipn_id'] == $ipnInfo->paypal_ipn_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_PAYPAL, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipn_trans->fields['paypal_ipn_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($ipnInfo) && is_object($ipnInfo) && ($ipn_trans->fields['paypal_ipn_id'] == $ipnInfo->paypal_ipn_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_PAYPAL, 'page=' . $HTTP_GET_VARS['page'] . '&ipnID=' . $ipn_trans->fields['paypal_ipn_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     $ipn_trans->MoveNext();
@@ -158,7 +158,7 @@ echo zen_draw_form('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING_PAYME
         $ipn = $db->Execute("select * from " . TABLE_PAYPAL_PAYMENT_STATUS_HISTORY . " where paypal_ipn_id = '" . $ipnInfo->paypal_ipn_id . "'");
         $ipn_count = $ipn->RecordCount();
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('ipnID', 'action')) . 'oID=' . $ipnInfo->zen_order_id .'&' . 'ipnID=' . $ipnInfo->paypal_ipn_id .'&action=edit' . '&referer=ipn') . '">' . zen_image_button('button_orders.gif', IMAGE_ORDERS) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('ipnID', 'action')) . 'oID=' . $ipnInfo->zen_order_id .'&' . 'ipnID=' . $ipnInfo->paypal_ipn_id .'&action=edit' . '&referer=ipn') . '">' . zen_image_button('button_orders.gif', IMAGE_ORDERS) . '</a>');
         $contents[] = array('text' => '<br>' . TABLE_HEADING_NUM_HISTORY_ENTRIES . ': '. $ipn_count);
         $count = 1;
         while (!$ipn->EOF) {

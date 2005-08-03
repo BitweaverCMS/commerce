@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next_display.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: products_previous_next_display.php,v 1.2 2005/08/03 15:35:12 spiderr Exp $
 //
 
 // used following load of products_previous_next.php
@@ -38,11 +38,11 @@
       </tr>
       <tr>
         <?php if ($counter > 0 ) { ?>
-          <td align="center" class="main"><a href="<?php echo zen_href_link($curr_page, "products_filter=" . $previous . '&current_category_id=' . $current_category_id); ?>"><?php echo zen_image_button('button_prev.gif', BUTTON_PREVIOUS_ALT); ?></a>&nbsp;&nbsp;</td>
+          <td align="center" class="main"><a href="<?php echo zen_href_link_admin($curr_page, "products_filter=" . $previous . '&current_category_id=' . $current_category_id); ?>"><?php echo zen_image_button('button_prev.gif', BUTTON_PREVIOUS_ALT); ?></a>&nbsp;&nbsp;</td>
         <?php } ?>
         <td align="left" class="main"><?php echo zen_draw_form('new_category', $curr_page, '', 'get'); ?>&nbsp;&nbsp;<?php echo zen_draw_pull_down_menu('current_category_id', zen_get_category_tree('', '', '0', '', '', true), '', 'onChange="this.form.submit();"'); ?><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']); echo zen_draw_hidden_field('action', 'new_cat'); ?>&nbsp;&nbsp;</form></td>
         <?php if ($counter > 0 ) { ?>
-          <td align="center" class="main">&nbsp;&nbsp;<a href="<?php echo zen_href_link($curr_page, "products_filter=" . $next_item . '&current_category_id=' . $current_category_id); ?>"><?php echo zen_image_button('button_next.gif', BUTTON_NEXT_ALT); ?></a></td>
+          <td align="center" class="main">&nbsp;&nbsp;<a href="<?php echo zen_href_link_admin($curr_page, "products_filter=" . $next_item . '&current_category_id=' . $current_category_id); ?>"><?php echo zen_image_button('button_next.gif', BUTTON_NEXT_ALT); ?></a></td>
         <?php } ?>
       </tr>
     </table></td>

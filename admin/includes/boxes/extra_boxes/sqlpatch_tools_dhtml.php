@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch_tools_dhtml.php,v 1.1 2005/07/05 06:00:04 bitweaver Exp $
+//  $Id: sqlpatch_tools_dhtml.php,v 1.2 2005/08/03 15:35:10 spiderr Exp $
 //
 ?>
 <?php
-  $za_contents[] = array('text' => BOX_TOOLS_SQLPATCH, 'link' => zen_href_link(FILENAME_SQLPATCH, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TOOLS_SQLPATCH, 'link' => zen_href_link_admin(FILENAME_SQLPATCH, '', 'NONSSL'));
 ?>

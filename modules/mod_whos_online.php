@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whos_online.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
+// $Id: mod_whos_online.php,v 1.3 2005/08/03 15:35:15 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
 // test if box should display
   $show_whos_online= false;
   $show_whos_online= true;
+	$user_total = 0;
 
   if( empty( $n_members ) ) {
   	$n_members = 0;
@@ -38,48 +39,47 @@
   $db->Execute("delete from " . TABLE_WHOS_ONLINE . " where time_last_click < '" . $xx_mins_ago . "'");
 
   $whos_online_query = $db->Execute("select customer_id from " . TABLE_WHOS_ONLINE);
+  $user_total = $whos_online_query->RecordCount();
   while (!$whos_online_query->EOF) {
-    if (!$whos_online_query->fields['customer_id'] == 0) $n_members++;
-    if ($whos_online_query->fields['customer_id'] == 0) $n_guests++;
-
-    $user_total = sprintf($whos_online_query->RecordCount());
-
+    if (!$whos_online_query->fields['customer_id'] == 0) {
+		$n_members++;
+	}
+    if ($whos_online_query->fields['customer_id'] == 0) {
+		$n_guests++;
+	}
     $whos_online_query->MoveNext();
   }
 
   if ($user_total == 1) {
-    $there_is_are = BOX_WHOS_ONLINE_THEREIS . '&nbsp;';
+    $there_is_are = tra( 'There is' ) . '&nbsp;';
   } else {
-    $there_is_are = BOX_WHOS_ONLINE_THEREARE . '&nbsp;';
+    $there_is_are = tra( 'There are' ) . '&nbsp;';
   }
 
   if ($n_guests == 1) {
-    $word_guest = '&nbsp;' . BOX_WHOS_ONLINE_GUEST;
+    $word_guest = '&nbsp;' . tra( 'Guest' );
   } else {
-    $word_guest = '&nbsp;' . BOX_WHOS_ONLINE_GUESTS;
+    $word_guest = '&nbsp;' . tra( 'Guests' );
   }
 
   if ($n_members == 1) {
-    $word_member = '&nbsp;' . BOX_WHOS_ONLINE_MEMBER;
+    $word_member = '&nbsp;' . tra( 'Member' );
   } else {
-    $word_member = '&nbsp;' . BOX_WHOS_ONLINE_MEMBERS;
+    $word_member = '&nbsp;' . tra( 'Members' );
   }
 
   $textstring = $there_is_are;
   if ($n_guests >= 1) $textstring .= $n_guests . $word_guest;
 
-  if (($n_guests >= 1) && ($n_members >= 1)) $textstring .= '&nbsp;' . BOX_WHOS_ONLINE_AND . '&nbsp;<br />';
+  if (($n_guests >= 1) && ($n_members >= 1)) $textstring .= '&nbsp;' . tra( 'and' ) . '&nbsp;<br />';
 
   if ($n_members >= 1) $textstring .= $n_members . $word_member;
 
-  $textstring .= '&nbsp;' . BOX_WHOS_ONLINE_ONLINE;
-
-
-  $whos_online[] = $textstring;
+  $textstring .= '&nbsp;' . tra( 'online' );
 
 	// only show if either the tutorials are active or additional links are active
-	if (sizeof($whos_online) > 0) {
-		$gBitSmarty->assign( 'sideboxWhosOnline', $whos_online );
+	if( $user_total ) {
+		$gBitSmarty->assign( 'sideboxWhosOnline', $textstring );
 	}
 	if( empty( $moduleTitle ) ) {
 		$gBitSmarty->assign( 'moduleTitle', tra( 'Who\'s Online' ) );

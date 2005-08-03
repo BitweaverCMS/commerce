@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product_meta_tags.php,v 1.2 2005/07/05 16:44:04 spiderr Exp $
+//  $Id: update_product_meta_tags.php,v 1.3 2005/08/03 15:35:12 spiderr Exp $
 //
 
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
@@ -74,6 +74,6 @@
               $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
             }
           }
-          zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+          zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
         }
 ?>

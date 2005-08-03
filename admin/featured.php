@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: featured.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -32,7 +32,7 @@
       case 'setflag':
         zen_set_featured_status($_GET['id'], $_GET['flag']);
 
-        zen_redirect(zen_href_link(FILENAME_FEATURED, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'fID=' . $_GET['id'], 'NONSSL'));
+        zen_redirect(zen_href_link_admin(FILENAME_FEATURED, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'fID=' . $_GET['id'], 'NONSSL'));
         break;
       case 'insert':
         if ($_POST['products_id'] < 1) {
@@ -52,9 +52,9 @@
         $new_featured = $db->Execute("select featured_id from " . TABLE_FEATURED . " where products_id='" . (int)$products_id . "'");
         } // nothing selected to add
         if ($_GET['go_back'] == 'ON'){
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_id));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_id));
         } else {
-          zen_redirect(zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $new_featured->fields['featured_id']));
+          zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $new_featured->fields['featured_id']));
         }
         break;
       case 'update':
@@ -69,21 +69,21 @@
                           featured_date_available = '" . zen_db_input($featured_date_available) . "'
                       where featured_id = '" . (int)$featured_id . "'");
 
-        zen_redirect(zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured_id));
+        zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured_id));
         break;
       case 'deleteconfirm':
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page']));
+          zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page']));
         }
         $featured_id = zen_db_prepare_input($_GET['fID']);
 
         $db->Execute("delete from " . TABLE_FEATURED . "
                       where featured_id = '" . (int)$featured_id . "'");
 
-        zen_redirect(zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page']));
         break;
     }
   }
@@ -140,7 +140,7 @@
 <?php
 // show reset search
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
-    echo '<a href="' . zen_href_link(FILENAME_FEATURED) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
+    echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
   }
   echo HEADING_TITLE_SEARCH_DETAIL . ' ' . zen_draw_input_field('search');
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -206,7 +206,7 @@ var StartDate = new ctlSpiffyCalendarBox("StartDate", "new_featured", "start", "
 var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDate2","<?php echo (($fInfo->expires_date == '0001-01-01') ? '' : zen_date_short($fInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
 
-      <tr><form name="new_featured" <?php echo 'action="' . zen_href_link(FILENAME_FEATURED, zen_get_all_get_params(array('action', 'info', 'fID')) . 'action=' . $form_action . '&go_back=' . $_GET['go_back'], 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('featured_id', $_GET['fID']); ?>
+      <tr><form name="new_featured" <?php echo 'action="' . zen_href_link_admin(FILENAME_FEATURED, zen_get_all_get_params(array('action', 'info', 'fID')) . 'action=' . $form_action . '&go_back=' . $_GET['go_back'], 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('featured_id', $_GET['fID']); ?>
         <td><br><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main"><?php echo TEXT_FEATURED_PRODUCT; ?>&nbsp;</td>
@@ -225,7 +225,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr>
-            <td colspan="2" class="main" align="right" valign="top"><br><?php echo (($form_action == 'insert') ? zen_image_submit('button_insert.gif', IMAGE_INSERT) : zen_image_submit('button_update.gif', IMAGE_UPDATE)). '&nbsp;&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . (isset($_GET['fID']) ? '&fID=' . $_GET['fID'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+            <td colspan="2" class="main" align="right" valign="top"><br><?php echo (($form_action == 'insert') ? zen_image_submit('button_insert.gif', IMAGE_INSERT) : zen_image_submit('button_update.gif', IMAGE_UPDATE)). '&nbsp;&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . (isset($_GET['fID']) ? '&fID=' . $_GET['fID'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
           </tr>
         </table></td>
       </form></tr>
@@ -271,9 +271,9 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
       }
 
       if (isset($fInfo) && is_object($fInfo) && ($featured->fields['featured_id'] == $fInfo->featured_id)) {
-        echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=edit') . '\'">' . "\n";
+        echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=edit') . '\'">' . "\n";
+        echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=edit') . '\'">' . "\n";
       }
 
 ?>
@@ -285,16 +285,16 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
                 <td  class="dataTableContent" align="center">
 <?php
       if ($featured->fields['status'] == '1') {
-        echo '<a href="' . zen_href_link(FILENAME_FEATURED, 'action=setflag&flag=0&id=' . $featured->fields['featured_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
+        echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'action=setflag&flag=0&id=' . $featured->fields['featured_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
       } else {
-        echo '<a href="' . zen_href_link(FILENAME_FEATURED, 'action=setflag&flag=1&id=' . $featured->fields['featured_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
+        echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'action=setflag&flag=1&id=' . $featured->fields['featured_id'] . '&page=' . $_GET['page'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
       }
 ?>
                 </td>
                 <td class="dataTableContent" align="right">
-                  <?php echo '<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
-				          <?php echo '<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
-                  <?php if (isset($fInfo) && is_object($fInfo) && ($featured->fields['featured_id'] == $fInfo->featured_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_FEATURED, zen_get_all_get_params(array('fID')) . 'fID=' . $featured->fields['featured_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
+				          <?php echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured->fields['featured_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
+                  <?php if (isset($fInfo) && is_object($fInfo) && ($featured->fields['featured_id'] == $fInfo->featured_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, zen_get_all_get_params(array('fID')) . 'fID=' . $featured->fields['featured_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
 				        </td>
       </tr>
 <?php
@@ -311,7 +311,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
   if (empty($action)) {
 ?>
                   <tr>
-                    <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_product.gif', IMAGE_NEW_PRODUCT) . '</a>'; ?></td>
+                    <td colspan="2" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new_product.gif', IMAGE_NEW_PRODUCT) . '</a>'; ?></td>
                   </tr>
 <?php
   }
@@ -330,14 +330,14 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
       $contents = array('form' => zen_draw_form('featured', FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br /><b>' . $fInfo->products_name . '</b>');
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (is_object($fInfo)) {
         $heading[] = array('text' => '<b>' . $fInfo->products_name . '</b>');
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit&products_filter=' . $fInfo->products_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $fInfo->featured_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit&products_filter=' . $fInfo->products_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a>');
         $contents[] = array('text' => '<br />' . TEXT_INFO_DATE_ADDED . ' ' . zen_date_short($fInfo->featured_date_added));
         $contents[] = array('text' => '' . TEXT_INFO_LAST_MODIFIED . ' ' . zen_date_short($fInfo->featured_last_modified));
         $contents[] = array('align' => 'center', 'text' => '<br />' . zen_info_image($fInfo->products_image, $fInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT));
@@ -345,7 +345,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
         $contents[] = array('text' => '<br />' . TEXT_INFO_AVAILABLE_DATE . ' <b>' . (($fInfo->featured_date_available != '0001-01-01' and $fInfo->featured_date_available !='') ? zen_date_short($fInfo->featured_date_available) : TEXT_NONE) . '</b>');
         $contents[] = array('text' => TEXT_INFO_EXPIRES_DATE . ' <b>' . (($fInfo->expires_date != '0001-01-01' and $fInfo->expires_date !='') ? zen_date_short($fInfo->expires_date) : TEXT_NONE) . '</b>');
         $contents[] = array('text' => '<br />' . TEXT_INFO_STATUS_CHANGE . ' ' . zen_date_short($fInfo->date_status_change));
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_CATEGORIES, '&action=new_product' . '&cPath=' . zen_get_product_path($fInfo->products_id, 'override') . '&pID=' . $fInfo->products_id . '&product_type=' . zen_get_products_type($fInfo->products_id)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, '&action=new_product' . '&cPath=' . zen_get_product_path($fInfo->products_id, 'override') . '&pID=' . $fInfo->products_id . '&product_type=' . zen_get_products_type($fInfo->products_id)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . '</a>');
       }
       break;
   }

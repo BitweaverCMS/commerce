@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.3 2005/07/15 19:14:55 spiderr Exp $
+//  $Id: html_output.php,v 1.4 2005/08/03 15:35:11 spiderr Exp $
 //
 
 ////
 // The HTML href link wrapper function
-  function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
+  function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
     global $request_type, $session_started, $http_domain, $https_domain;
     if ($page == '') {
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine the page link!<br><br>Function used:<br><br>zen_href_link(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
+      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine the page link!<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
 
     if ($connection == 'NONSSL') {
@@ -37,7 +37,7 @@
         $link = HTTP_SERVER . DIR_WS_ADMIN;
       }
     } else {
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
+      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
     if (!strstr($page, '.php')) $page .= '.php';
     if ($parameters == '') {
@@ -79,7 +79,7 @@
         $link = HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
       }
     } else {
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
+      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
     if ($parameters == '') {
       $link .= 'index.php?main_page='. $page;
@@ -172,15 +172,15 @@
     $form = '<form name="' . zen_output_string($name) . '" action="';
     if (zen_not_null($parameters)) {
       if ($usessl) {
-        $form .= zen_href_link($action, $parameters, 'NONSSL');
+        $form .= zen_href_link_admin($action, $parameters, 'NONSSL');
       } else {
-        $form .= zen_href_link($action, $parameters, 'NONSSL');
+        $form .= zen_href_link_admin($action, $parameters, 'NONSSL');
       }
     } else {
       if ($usessl) {
-        $form .= zen_href_link($action, '', 'NONSSL');
+        $form .= zen_href_link_admin($action, '', 'NONSSL');
       } else {
-        $form .= zen_href_link($action, '', 'NONSSL');
+        $form .= zen_href_link_admin($action, '', 'NONSSL');
       }
     }
     $form .= '" method="' . zen_output_string($method) . '"';

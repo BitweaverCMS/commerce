@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: login.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: login.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@ bt();
     }
     if ($message == false) {
       $_SESSION['admin_id'] = $result->fields['admin_id'];
-      zen_redirect(zen_href_link(FILENAME_DEFAULT, '', 'SSL'));
+      zen_redirect(zen_href_link_admin(FILENAME_DEFAULT, '', 'SSL'));
     }
   }
 ?>
@@ -50,14 +50,14 @@ bt();
 <link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
 </head>
 <body id="login" onload="document.getElementById('admin_name').focus()">
-<form name="login" action="<?php echo zen_href_link(FILENAME_LOGIN, '', 'SSL'); ?>" method = "POST">
+<form name="login" action="<?php echo zen_href_link_admin(FILENAME_LOGIN, '', 'SSL'); ?>" method = "POST">
   <fieldset>
     <legend><?php echo HEADING_TITLE; ?></legend>
     <label for="admin_name"><?php echo TEXT_ADMIN_NAME; ?><input type="text" id="admin_name" name="admin_name" value="<?php echo $_POST['admin_name']; ?>" /></label>
     <label for="admin_pass"><?php echo TEXT_ADMIN_PASS; ?><input type="password" id="admin_pass" name="admin_pass" value="<?php echo $_POST['admin_pass']; ?>" /></label>
     <?php echo $pass_message; ?>
     <input type="submit" name="submit" class="button" value="Login" />
-    <?php echo '<a style="float: right;" href="' . zen_href_link(FILENAME_PASSWORD_FORGOTTEN, '', 'NONSSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?>
+    <?php echo '<a style="float: right;" href="' . zen_href_link_admin(FILENAME_PASSWORD_FORGOTTEN, '', 'NONSSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?>
   </fieldset>
 </form>
 </body>

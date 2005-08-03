@@ -17,11 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_banner_box.php,v 1.2 2005/08/03 15:35:15 spiderr Exp $
 //
 	global $db, $gBitProduct, $banner;
+	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
+	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
 
-	$banner_box[] = TEXT_BANNER_BOX;
 	$banner_box_group= SHOW_BANNERS_GROUP_SET7;
 
 	$bannerRs = zen_banner_exists('dynamic', $banner_box_group);

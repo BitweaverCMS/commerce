@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.2 2005/07/18 14:35:49 spiderr Exp $
+//  $Id: preview_info.php,v 1.3 2005/08/03 15:35:12 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -129,7 +129,7 @@
       }
 ?>
       <tr>
-        <td align="right"><?php echo '<a href="' . zen_href_link($back_url, $back_url_params, 'NONSSL') . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+        <td align="right"><?php echo '<a href="' . zen_href_link_admin($back_url, $back_url_params, 'NONSSL') . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
       </tr>
 <?php
     } else {
@@ -160,7 +160,7 @@
       } else {
         echo zen_image_submit('button_insert.gif', IMAGE_INSERT);
       }
-      echo '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
+      echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
 ?></td>
       </tr>
     </table></form>

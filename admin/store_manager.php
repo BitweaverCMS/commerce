@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: store_manager.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -52,7 +52,7 @@
       }
       $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_SORT_ALL, 'success');
       $action='';
-      zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+      zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
       break;
 
     case ('update_all_products_price_sorter'):
@@ -66,7 +66,7 @@
     }
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_PRICE_SORTER, 'success');
     $action='';
-    zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
     break;
 
     case ('update_all_products_viewed'):
@@ -76,7 +76,7 @@
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_VIEWED, 'success');
     $action='';
-    zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
     break;
 
     case ('update_all_products_ordered'):
@@ -86,7 +86,7 @@
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_ORDERED, 'success');
     $action='';
-    zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
     break;
 
     case ('update_counter'):
@@ -96,7 +96,7 @@
 
     $messageStack->add_session(SUCCESS_UPDATE_COUNTER . $_POST['new_counter'], 'success');
     $action='';
-    zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
     break;
 
     case ('update_all_master_categories_id'):
@@ -117,7 +117,7 @@
 
     $messageStack->add_session(SUCCESS_UPDATE_ALL_MASTER_CATEGORIES_ID, 'success');
     $action='';
-    zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
     break;
 
     case ('update_orders_id'):
@@ -135,7 +135,7 @@
     case ('locate_configuration'):
       if ($_POST['configuration_key'] == '') {
         $messageStack->add_session(ERROR_CONFIGURATION_KEY_NOT_ENTERED, 'caution');
-        zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+        zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
       }
       $found = 'false';
       $language_files_group = $_POST['language_files'];
@@ -263,7 +263,7 @@
     case ('locate_configuration_key'):
       if ($_POST['configuration_key'] == '') {
         $messageStack->add_session(ERROR_CONFIGURATION_KEY_NOT_ENTERED, 'caution');
-        zen_redirect(zen_href_link(FILENAME_STORE_MANAGER));
+        zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
       }
       $found = 'false';
       $language_files_group = $_POST['language_files'];
@@ -395,7 +395,7 @@ if ($show_configuration_info == 'true') {
             <td class="main" align="right" valign="middle">
               <?php
                 if ($show_products_type_layout == 'false' and ($check_configure->fields['configuration_id'] != 0 and $check_configure->fields['configuration_group_id'] != 6)) {
-                  echo '<a href="' . zen_href_link(FILENAME_CONFIGURATION, 'gID=' . $check_configure_group->fields['configuration_group_id'] . '&cID=' . $check_configure->fields['configuration_id']) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
+                  echo '<a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $check_configure_group->fields['configuration_group_id'] . '&cID=' . $check_configure->fields['configuration_id']) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
                 } else {
                   $page= '';
                   if (strstr($check_configure->fields['configuration_key'], 'MODULE_SHIPPING')) $page .= 'shipping';
@@ -403,10 +403,10 @@ if ($show_configuration_info == 'true') {
                   if (strstr($check_configure->fields['configuration_key'], 'MODULE_ORDER_TOTAL')) $page .= 'ordertotal';
 
                   if ($show_products_type_layout == 'true') {
-                    echo '<a href="' . zen_href_link(FILENAME_PRODUCT_TYPES) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
+                    echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCT_TYPES) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
                   } else {
                     if ($page != '') {
-                      echo '<a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $page) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
+                      echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $page) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>';
                     } else {
                       echo TEXT_INFO_NO_EDIT_AVAILABLE . '<br />';
                     }
@@ -414,7 +414,7 @@ if ($show_configuration_info == 'true') {
                 }
               ?>
               </td>
-            <td class="main" align="center" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
+            <td class="main" align="center" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
         </table>
       </td></tr>
@@ -427,7 +427,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_ATTRIBUTES_FEATURES_UPDATES; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER, 'action=update_all_products_attributes_sort_order') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_attributes_sort_order') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>
@@ -438,7 +438,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_PRICE_SORTER_UPDATE; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER, 'action=update_all_products_price_sorter') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_price_sorter') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>
@@ -447,7 +447,7 @@ if ($show_configuration_info == 'true') {
 <!-- bof: reset all counter to 0 -->
       <tr>
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
-          <tr><form name = "update_counter" action="<?php echo zen_href_link(FILENAME_STORE_MANAGER, 'action=update_counter', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "update_counter" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_counter', 'NONSSL'); ?>"' method="post">
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_COUNTER_UPDATE; ?></td>
             <td class="main" align="left" valign="bottom"><?php echo zen_draw_input_field('new_counter'); ?></td>
             <td class="main" align="right" valign="middle"><?php echo zen_image_submit('button_reset.gif', IMAGE_RESET); ?></td>
@@ -461,7 +461,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_VIEWED_UPDATE; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER, 'action=update_all_products_viewed') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_viewed') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>
@@ -472,7 +472,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_ORDERED_UPDATE; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER, 'action=update_all_products_ordered') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_ordered') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>
@@ -483,7 +483,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_MASTER_CATEGORIES_ID_UPDATE; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_STORE_MANAGER, 'action=update_all_master_categories_id') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_master_categories_id') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>
@@ -492,7 +492,7 @@ if ($show_configuration_info == 'true') {
 <!-- bof: resrt test order to new order number -->
       <tr>
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
-          <tr><form name = "update_orders" action="<?php echo zen_href_link(FILENAME_STORE_MANAGER, 'action=update_orders_id', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "update_orders" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_orders_id', 'NONSSL'); ?>"' method="post">
             <td class="main" align="left" valign="top"><?php echo TEXT_ORDERS_ID_UPDATE; ?></td>
             <td class="main" align="left" valign="bottom">
               <?php echo TEXT_OLD_ORDERS_ID . '&nbsp;&nbsp;&nbsp;' . zen_draw_input_field('old_orders_id'); ?>
@@ -514,7 +514,7 @@ if ($show_configuration_info == 'true') {
             <td colspan="3" class="main" align="left" valign="middle"><?php echo TEXT_CONFIGURATION_CONSTANT; ?></td>
           </tr>
 
-          <tr><form name = "locate_configure_key" action="<?php echo zen_href_link(FILENAME_STORE_MANAGER, 'action=locate_configuration_key', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "locate_configure_key" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration_key', 'NONSSL'); ?>"' method="post">
             <td class="main" align="left" valign="bottom"><?php echo '<strong>' . TEXT_CONFIGURATION_KEY . '</strong>' . '<br />' . zen_draw_input_field('configuration_key'); ?></td>
             <td class="main" align="center" valign="bottom"><?php echo zen_image_submit('button_search.gif', IMAGE_SEARCH); ?></td>
             <td class="main" width="60%">&nbsp;</td>
@@ -533,7 +533,7 @@ if ($show_configuration_info == 'true') {
             <td colspan="3" class="main" align="left" valign="middle"><?php echo TEXT_CONFIGURATION_CONSTANT_FILES; ?></td>
           </tr>
 
-          <tr><form name = "locate_configure" action="<?php echo zen_href_link(FILENAME_STORE_MANAGER, 'action=locate_configuration', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "locate_configure" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration', 'NONSSL'); ?>"' method="post">
             <td class="main" align="left" valign="bottom"><?php echo '<strong>' . TEXT_CONFIGURATION_KEY_FILES . '</strong>' . '<br />' . zen_draw_input_field('configuration_key'); ?></td>
             <td class="main" align="left" valign="middle">
               <?php

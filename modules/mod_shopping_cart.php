@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.4 2005/08/03 13:04:48 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.5 2005/08/03 15:35:15 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
+if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):
       $show_shopping_cart_box = true;
@@ -120,4 +121,5 @@
 		$gBitSmarty->assign( 'moduleTitle', tra( 'Shopping Cart' ) );
 	}
   }
+}
 ?>

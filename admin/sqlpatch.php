@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.2 2005/07/26 12:31:49 spiderr Exp $
+//  $Id: sqlpatch.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -748,7 +748,7 @@ $linebreak = '
         </tr>
     <tr>
       <td width="300" align="right">
-        <a href="<?php echo zen_href_link(FILENAME_SQLPATCH, 'action=help'); ?>" target='_blank'><?php echo zen_image_button('button_details.gif', IMAGE_DETAILS); ?></a></td>
+        <a href="<?php echo zen_href_link_admin(FILENAME_SQLPATCH, 'action=help'); ?>" target='_blank'><?php echo zen_image_button('button_details.gif', IMAGE_DETAILS); ?></a></td>
     </tr>
 <!-- body_text_eof //-->
 </table>

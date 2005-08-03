@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.3 2005/07/17 20:28:25 lsces Exp $
+//  $Id: attributes_controller.php,v 1.4 2005/08/03 15:35:06 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -26,17 +26,17 @@
   $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id='" . $_SESSION['languages_id'] . "' limit 1");
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
-    zen_redirect(zen_href_link(FILENAME_OPTIONS_NAME_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
   $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id != '0' and language_id='" . $_SESSION['languages_id'] . "' limit 1");
   if ($chk_option_values->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
-    zen_redirect(zen_href_link(FILENAME_OPTIONS_VALUES_MANAGER));
+    zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
   $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS . " limit 1");
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
-    zen_redirect(zen_href_link(FILENAME_CATEGORIES));
+    zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
   }
 
   require(DIR_WS_CLASSES . 'currencies.php');
@@ -54,7 +54,7 @@
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
     $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
     $products_filter = $new_product_query->fields['products_id'];
-    zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id));
+    zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id));
   }
 
 // set categories and products if not set
@@ -62,7 +62,7 @@
     $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
     $products_filter = $new_product_query->fields['products_id'];
     if ($products_filter != '') {
-      zen_redirect(zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id));
+      zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id));
     }
   } else {
     if ($products_filter == '' and $current_category_id == '') {
@@ -99,7 +99,7 @@
         } else {
           $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_display_only='0' where products_id='" . $_GET['products_filter'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         }
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_product_attribute_is_free':
@@ -110,7 +110,7 @@
         } else {
           $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set product_attribute_is_free='0' where products_id='" . $_GET['products_filter'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         }
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_default':
@@ -121,7 +121,7 @@
         } else {
           $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_default='0' where products_id='" . $_GET['products_filter'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         }
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_discounted':
@@ -136,7 +136,7 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($_GET['products_filter']);
 
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_price_base_included':
@@ -151,7 +151,7 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($_GET['products_filter']);
 
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_required':
@@ -162,7 +162,7 @@
         } else {
           $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_required='0' where products_id='" . $_GET['products_filter'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         }
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
 //// EOF OF FLAGS
@@ -171,7 +171,7 @@
       case 'set_products_filter':
         $_GET['products_filter'] = $_POST['products_filter'];
         $action='';
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $_GET['products_filter'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 // update by product
       case ('update_product'):
@@ -182,7 +182,7 @@
           zen_update_attributes_products_option_values_sort_order($products_filter);
         }
         $action='';
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_GET['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_GET['current_category_id']));
         break;
       case 'add_product_attributes':
 // check for duplicate and block them
@@ -302,7 +302,7 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($_POST['products_id']);
 
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&products_filter=' . $_POST['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&products_filter=' . $_POST['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
       case 'update_product_attribute':
         $check_duplicate = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
@@ -435,14 +435,14 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($_POST['products_id']);
 
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
       case 'delete_attribute':
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $_POST['current_category_id']));
+          zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $_POST['current_category_id']));
         }
         $attribute_id = zen_db_prepare_input($_GET['attribute_id']);
 
@@ -456,8 +456,8 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($products_filter);
 
-//        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info']));
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $current_category_id));
+//        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&current_category_id=' . $current_category_id));
         break;
 // delete all attributes
       case 'delete_all_attributes':
@@ -469,7 +469,7 @@
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($products_filter);
 
-        zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
+        zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
 // attributes copy to product
@@ -480,7 +480,7 @@
       zen_copy_products_attributes($_POST['products_filter'], $_POST['products_update_id']);
       $_GET['action']= '';
       $products_filter = $_POST['products_update_id'];
-      zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
+      zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
       break;
 
 // attributes copy to category
@@ -499,7 +499,7 @@
       }
       $_GET['action']= '';
       $products_filter = $_POST['products_filter'];
-      zen_redirect(zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
+      zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $_POST['current_category_id']));
       break;
 
     }
@@ -548,7 +548,7 @@ function translate_type_to_name($opt_type) {
 <script language="javascript"><!--
 function go_option() {
   if (document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value != "none") {
-    location = "<?php echo zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
+    location = "<?php echo zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
   }
 }
 function popupWindow(url) {
@@ -586,7 +586,7 @@ function popupWindow(url) {
     echo zen_draw_form('search', FILENAME_CATEGORIES, '', 'get');
 // show reset search
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
-      echo '<a href="' . zen_href_link(FILENAME_CATEGORIES) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
+      echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
     }
     echo HEADING_TITLE_SEARCH_DETAIL . ' ' . zen_draw_input_field('search');
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -604,8 +604,8 @@ function popupWindow(url) {
       <tr>
         <td width="100%"><table border="0" cellspacing="2" cellpadding="2">
           <tr>
-  	        <td height="40" valign="bottom"><a href="<?php echo  zen_href_link(FILENAME_OPTIONS_NAME_MANAGER, '', 'NONSSL') ?>"><?php echo zen_image_button('button_option_names.gif', IMAGE_OPTION_NAMES); ?></a></td>
-  	        <td height="40" valign="bottom"><a href="<?php echo  zen_href_link(FILENAME_OPTIONS_VALUES_MANAGER, '', 'NONSSL') ?>"><?php echo zen_image_button('button_option_values.gif', IMAGE_OPTION_VALUES); ?></a></td>
+  	        <td height="40" valign="bottom"><a href="<?php echo  zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER, '', 'NONSSL') ?>"><?php echo zen_image_button('button_option_names.gif', IMAGE_OPTION_NAMES); ?></a></td>
+  	        <td height="40" valign="bottom"><a href="<?php echo  zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, '', 'NONSSL') ?>"><?php echo zen_image_button('button_option_values.gif', IMAGE_OPTION_VALUES); ?></a></td>
           </tr>
         </table></td>
       </tr>
@@ -645,11 +645,11 @@ if ($action == 'attributes_preview') {
             </td>
           </tr>
           <tr>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . $current_category_id . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . $current_category_id . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>'; ?></td>
             <td class="smallText" align="center">
               <?php
                 if ($zc_products->get_allow_add_to_cart($products_filter) == "Y") {
-                  echo '<a href="' . zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '<br />' . TEXT_PRODUCTS_PRICE_MANAGER . '</a>';
+                  echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '<br />' . TEXT_PRODUCTS_PRICE_MANAGER . '</a>';
                 } else {
                   echo TEXT_INFO_ALLOW_ADD_TO_CART_NO;
                 }
@@ -658,11 +658,11 @@ if ($action == 'attributes_preview') {
 <?php
   if (zen_has_product_attributes($products_filter, 'false')) {
 ?>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, '&action=update_product' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_update_sort.gif', IMAGE_UPDATE_SORT) . '<br />' . TEXT_ATTRIBUTES_UPDATE_SORT_ORDER . '</a>'; ?></td>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attributes_preview' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_preview.gif', IMAGE_PREVIEW) . '<br />' . TEXT_ATTRIBUTES_PREVIEW . '</a>'; ?></td>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, '&action=delete_all_attributes_confirm' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '<br />' . TEXT_ATTRIBUTES_DELETE . '</a>'; ?></td>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attribute_features_copy_to_product' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_copy_to.gif', IMAGE_COPY) . '<br />' . TEXT_ATTRIBUTES_COPY_TO_PRODUCTS . '</a>'; ?></td>
-            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attribute_features_copy_to_category' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_copy_to.gif', IMAGE_COPY) . '<br />' . TEXT_ATTRIBUTES_COPY_TO_CATEGORY . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&action=update_product' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_update_sort.gif', IMAGE_UPDATE_SORT) . '<br />' . TEXT_ATTRIBUTES_UPDATE_SORT_ORDER . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attributes_preview' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_preview.gif', IMAGE_PREVIEW) . '<br />' . TEXT_ATTRIBUTES_PREVIEW . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&action=delete_all_attributes_confirm' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '<br />' . TEXT_ATTRIBUTES_DELETE . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attribute_features_copy_to_product' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_copy_to.gif', IMAGE_COPY) . '<br />' . TEXT_ATTRIBUTES_COPY_TO_PRODUCTS . '</a>'; ?></td>
+            <td class="smallText" align="center"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&action=attribute_features_copy_to_category' . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_copy_to.gif', IMAGE_COPY) . '<br />' . TEXT_ATTRIBUTES_COPY_TO_CATEGORY . '</a>'; ?></td>
 <?php
 } else {
 ?>
@@ -672,7 +672,7 @@ if ($action == 'attributes_preview') {
 ?>
           </tr>
           <tr>
-            <td class="smallText" align="center" colspan="7"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, '&products_filter=' . $products_filter) . '">' . IMAGE_PRODUCTS_TO_CATEGORIES . '</a>'; ?></td>
+            <td class="smallText" align="center" colspan="7"><?php echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, '&products_filter=' . $products_filter) . '">' . IMAGE_PRODUCTS_TO_CATEGORIES . '</a>'; ?></td>
           </tr>
         </table></td>
       </form></tr>
@@ -689,13 +689,13 @@ if ($action == 'attributes_preview') {
 <?php
   if ($action == 'delete_all_attributes_confirm') {
 ?>
-      <tr><form name="delete_all"<?php echo 'action="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_all_attributes') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
+      <tr><form name="delete_all"<?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_all_attributes') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
         <td colspan="2"><table border="2" cellspacing="2" cellpadding="4">
           <tr>
             <td><table border="0" cellspacing="2" cellpadding="2">
               <tr>
                 <td class="alert" align="center"><?php echo TEXT_DELETE_ALL_ATTRIBUTES . $products_filter . '<br />' . zen_get_products_name($products_filter); ?></td>
-                <td class="main" align="center"><?php echo zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+                <td class="main" align="center"><?php echo zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
               </tr>
             </table></td>
           </table></td>
@@ -712,7 +712,7 @@ if ($action == 'attributes_preview') {
     $products_exclude_array = array();
     $products_exclude_array[] = $products_filter;
 ?>
-      <tr><form name="product_copy_to_product"<?php echo 'action="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attributes_copy_to_product') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']) . zen_draw_hidden_field('products_id', $_GET['products_filter']) . zen_draw_hidden_field('products_update_id', $_GET['products_update_id']) . zen_draw_hidden_field('copy_attributes', $_GET['copy_attributes']); ?>
+      <tr><form name="product_copy_to_product"<?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attributes_copy_to_product') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']) . zen_draw_hidden_field('products_id', $_GET['products_filter']) . zen_draw_hidden_field('products_update_id', $_GET['products_update_id']) . zen_draw_hidden_field('copy_attributes', $_GET['copy_attributes']); ?>
         <td colspan="2"><table border="2" cellspacing="0" cellpadding="2">
           <tr>
             <td><table border="0" cellspacing="2" cellpadding="4">
@@ -722,7 +722,7 @@ if ($action == 'attributes_preview') {
               </tr>
               <tr>
                 <td class="alert" align="center"><?php echo TEXT_INFO_ATTRIBUTES_FEATURE_COPY_TO . '<br />' . zen_draw_products_pull_down('products_update_id', 'size="5"', $products_exclude_array, true, '', true); ?></td>
-                <td class="main" align="center"><?php echo zen_image_submit('button_copy.gif', IMAGE_COPY) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+                <td class="main" align="center"><?php echo zen_image_submit('button_copy.gif', IMAGE_COPY) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
               </tr>
             </table></td>
           </table></td>
@@ -735,7 +735,7 @@ if ($action == 'attributes_preview') {
 <?php
   if ($action == 'attribute_features_copy_to_category') {
 ?>
-      <tr><form name="product_copy_to_category"<?php echo 'action="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attributes_copy_to_category') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']) . zen_draw_hidden_field('products_id', $_GET['products_filter']) . zen_draw_hidden_field('products_update_id', $_GET['products_update_id']) . zen_draw_hidden_field('copy_attributes', $_GET['copy_attributes']) . zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
+      <tr><form name="product_copy_to_category"<?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attributes_copy_to_category') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']) . zen_draw_hidden_field('products_id', $_GET['products_filter']) . zen_draw_hidden_field('products_update_id', $_GET['products_update_id']) . zen_draw_hidden_field('copy_attributes', $_GET['copy_attributes']) . zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
         <td colspan="2"><table border="2" cellspacing="0" cellpadding="2">
           <tr>
             <td><table border="0" cellspacing="2" cellpadding="4">
@@ -745,7 +745,7 @@ if ($action == 'attributes_preview') {
               </tr>
               <tr>
                 <td class="alert" align="center"><?php echo TEXT_INFO_ATTRIBUTES_FEATURE_CATEGORIES_COPY_TO . '<br />' . zen_draw_products_pull_down_categories('categories_update_id', 'size="5"', '', true, true); ?></td>
-                <td class="main" align="center"><?php echo zen_image_submit('button_copy.gif', IMAGE_COPY) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+                <td class="main" align="center"><?php echo zen_image_submit('button_copy.gif', IMAGE_COPY) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
               </tr>
             </table></td>
           </table></td>
@@ -766,7 +766,7 @@ if ($action == 'attributes_preview') {
   include(DIR_WS_INCLUDES . 'attributes_preview.php');
 ?>
       <tr>
-        <td colspan="2" class="main" align="center" height= "40" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td colspan="2" class="main" align="center" height= "40" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
       <tr>
         <td colspan="2"><table border="1" cellspacing="0" cellpadding="2" align="center" class="main_page">
@@ -834,7 +834,7 @@ if ($options_attributes_image[$i] != '') {
       </tr>
 
       <tr>
-        <td colspan="2" class="main" align="center" height= "40" valign="middle"><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td colspan="2" class="main" align="center" height= "40" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter . '&current_category_id=' . $current_category_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
 <?php
 } // eof: attributes preview
@@ -859,7 +859,7 @@ if ($action == 'attributes_preview') {
         </table></td>
       </tr>
 
-      <tr><form name="set_products_filter_id" <?php echo 'action="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_products_filter') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
+      <tr><form name="set_products_filter_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_products_filter') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_filter', $_GET['products_filter']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
         <td colspan="2"><table border="0" cellspacing="0" cellpadding="2">
 
 <?php
@@ -950,7 +950,7 @@ if ($action == '') {
 // fix here border width
 ?>
       <tr>
-        <td><form name="attributes" action="<?php echo zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=' . $form_action . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter ); ?>" method="post", enctype="multipart/form-data"><table border="0" cellspacing="0" cellpadding="2">
+        <td><form name="attributes" action="<?php echo zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=' . $form_action . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter ); ?>" method="post", enctype="multipart/form-data"><table border="0" cellspacing="0" cellpadding="2">
 
           <tr>
             <td colspan="10" class="smallText">
@@ -978,12 +978,12 @@ if ($action == '') {
 
   // Previous
   if ($prev_attribute_page) {
-    echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $prev_attribute_page . '&products_filter=' . $products_filter) . '"> &lt;&lt; </a> | ';
+    echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $prev_attribute_page . '&products_filter=' . $products_filter) . '"> &lt;&lt; </a> | ';
   }
 
   for ($i = 1; $i <= $num_pages; $i++) {
     if ($i != $_GET['attribute_page']) {
-      echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $i  . '&products_filter=' . $products_filter) . '">' . $i . '</a> | ';
+      echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $i  . '&products_filter=' . $products_filter) . '">' . $i . '</a> | ';
     } else {
       echo '<b><font color="red">' . $i . '</font></b> | ';
     }
@@ -991,7 +991,7 @@ if ($action == '') {
 
   // Next
   if ($_GET['attribute_page'] != $num_pages) {
-    echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $next_attribute_page . '&products_filter=' . $products_filter) . '"> &gt;&gt; </a>';
+    echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $next_attribute_page . '&products_filter=' . $products_filter) . '"> &gt;&gt; </a>';
   }
 ?>
             </td>
@@ -1166,7 +1166,7 @@ if ($action == '') {
   <td class="attributeBoxContent">
     <table border="1" cellpadding="4" cellspacing="2" align="left" width="100%">
       <tr>
-        <td align="right" class="pageHeading"><?php echo TEXT_SAVE_CHANGES . '&nbsp;&nbsp;' . zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>&nbsp;</td>
+        <td align="right" class="pageHeading"><?php echo TEXT_SAVE_CHANGES . '&nbsp;&nbsp;' . zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;<?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>&nbsp;</td>
       </tr>
     </table>
   </td>
@@ -1371,7 +1371,7 @@ if ($action == '') {
             <td class="attributeBoxContent">&nbsp;<b><?php echo $values_name; ?></b>&nbsp;</td>
             <td align="right" class="attributeBoxContent">&nbsp;<b><?php echo $attributes_values->fields["options_values_price"]; ?></b>&nbsp;</td>
             <td align="center" class="attributeBoxContent">&nbsp;<b><?php echo $attributes_values->fields["price_prefix"]; ?></b>&nbsp;</td>
-            <td colspan="3" align="center" class="attributeBoxContent">&nbsp;<b><?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_attribute&attribute_id=' . $_GET['attribute_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">'; ?><?php echo zen_image_button('button_confirm.gif', IMAGE_CONFIRM); ?></a>&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>&nbsp;</b></td>
+            <td colspan="3" align="center" class="attributeBoxContent">&nbsp;<b><?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_attribute&attribute_id=' . $_GET['attribute_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id) . '">'; ?><?php echo zen_image_button('button_confirm.gif', IMAGE_CONFIRM); ?></a>&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></a>&nbsp;</b></td>
             <td colspan="3" align="center" class="attributeBoxContent">&nbsp;</td>
           </tr>
           <tr class="attributeBoxContent">
@@ -1401,19 +1401,19 @@ $attributes_price_final_onetime = $currencies->display_price($attributes_price_f
             <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["products_attributes_wt_pfix"]; ?>&nbsp;<?php echo $attributes_values->fields["products_attributes_wt"]; ?>&nbsp;</td>
             <td align="right" class="smallText">&nbsp;<?php echo $attributes_values->fields["products_options_sort_order"]; ?>&nbsp;</td>
 <?php
-// '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' .
+// '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' .
 // $marker = '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">';
 if ($action == '') {
 ?>
 <td>
   <table border="0" align="center" cellpadding="2" cellspacing="2">
       <tr>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_display_only"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_off.gif', LEGEND_ATTRIBUTES_DISPLAY_ONLY) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', LEGEND_ATTRIBUTES_DISPLAY_ONLY)) . '</a>'; ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["product_attribute_is_free"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_off.gif', LEGEND_ATTRIBUTES_IS_FREE) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_on.gif', LEGEND_ATTRIBUTES_IS_FREE)) . '</a>'; ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_default"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_off.gif', LEGEND_ATTRIBUTES_DEFAULT) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_on.gif', LEGEND_ATTRIBUTES_DEFAULT)) . '</a>' ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_discounted"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_off.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_on.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED)) . '</a>'; ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_price_base_included"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_off.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_on.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED)) . '</a>'; ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_required"] == '0' ? '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_off.gif', LEGEND_ATTRIBUTES_REQUIRED) . '</a>' : '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', LEGEND_ATTRIBUTES_REQUIRED)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_display_only"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_off.gif', LEGEND_ATTRIBUTES_DISPLAY_ONLY) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_display_only' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', LEGEND_ATTRIBUTES_DISPLAY_ONLY)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["product_attribute_is_free"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_off.gif', LEGEND_ATTRIBUTES_IS_FREE) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_on.gif', LEGEND_ATTRIBUTES_IS_FREE)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_default"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_off.gif', LEGEND_ATTRIBUTES_DEFAULT) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_on.gif', LEGEND_ATTRIBUTES_DEFAULT)) . '</a>' ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_discounted"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_off.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_on.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_price_base_included"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_off.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_on.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_required"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_off.gif', LEGEND_ATTRIBUTES_REQUIRED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', LEGEND_ATTRIBUTES_REQUIRED)) . '</a>'; ?></td>
       </tr>
     </table>
 </td>
@@ -1438,7 +1438,7 @@ if ($action == '') {
 <?php
   } else {
 ?>
-            <td align="center" class="smallText">&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attribute&attribute_id=' . $attributes_values->fields['products_attributes_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_edit.gif', IMAGE_UPDATE); ?></a>&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_product_attribute&attribute_id=' . $attributes_values->fields['products_attributes_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) , '">'; ?><?php echo zen_image_button('button_delete.gif', IMAGE_DELETE); ?></a>&nbsp;</td>
+            <td align="center" class="smallText">&nbsp;<?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=update_attribute&attribute_id=' . $attributes_values->fields['products_attributes_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) . '">'; ?><?php echo zen_image_button('button_edit.gif', IMAGE_UPDATE); ?></a>&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=delete_product_attribute&attribute_id=' . $attributes_values->fields['products_attributes_id'] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_filter=' . $products_filter . '&current_category_id=' . $current_category_id ) , '">'; ?><?php echo zen_image_button('button_delete.gif', IMAGE_DELETE); ?></a>&nbsp;</td>
 <?php
   }
 ?>

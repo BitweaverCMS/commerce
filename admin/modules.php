@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.3 2005/07/13 21:28:34 spiderr Exp $
+//  $Id: modules.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -81,7 +81,7 @@
 
         $configuration = $db->Execute($configuration_query);
 
-        zen_redirect(zen_href_link(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
+        zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
         break;
       case 'install':
       case 'remove':
@@ -101,7 +101,7 @@
           }
         }
 
-        zen_redirect(zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL'));
+        zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL'));
         break;
     }
   }
@@ -216,12 +216,12 @@
       }
       if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) {
         if ($module->check() > 0) {
-          echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL') . '\'">' . "\n";
+          echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL') . '\'">' . "\n";
         } else {
           echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
         }
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
+        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo $module->title; ?></td>
@@ -233,7 +233,7 @@
 ?>
                 <td class="dataTableContent" align="left">&nbsp;&nbsp;&nbsp;<?php echo (is_numeric($module->sort_order) ? (($orders_status_name->fields['orders_status_id'] < 1) ? TEXT_DEFAULT : $orders_status_name->fields['orders_status_name']) : ''); ?>&nbsp;&nbsp;&nbsp;</td>
 <?php } ?>
-                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     }
@@ -284,7 +284,7 @@
         $contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
       }
       $contents[] = array('text' => $keys);
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
@@ -316,11 +316,11 @@
           $contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
         }
         $keys = substr($keys, 0, strrpos($keys, '<br><br>'));
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . zen_image_button('button_module_remove.gif', IMAGE_MODULE_REMOVE) . '</a> <a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . zen_image_button('button_module_remove.gif', IMAGE_MODULE_REMOVE) . '</a> <a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>');
         $contents[] = array('text' => '<br>' . $mInfo->description);
         $contents[] = array('text' => '<br>' . $keys);
       } else {
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=install', 'NONSSL') . '">' . zen_image_button('button_module_install.gif', IMAGE_MODULE_INSTALL) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=install', 'NONSSL') . '">' . zen_image_button('button_module_install.gif', IMAGE_MODULE_INSTALL) . '</a>');
         $contents[] = array('text' => '<br>' . $mInfo->description);
       }
       break;

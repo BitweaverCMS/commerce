@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to |
 // | license@zen-cart.com so we can mail you a copy immediately.|
 // +----------------------------------------------------------------------+
-//$Id: admin.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//$Id: admin.php,v 1.3 2005/08/03 15:35:06 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -31,7 +31,7 @@ switch ($action) {
 case (zen_admin_demo()):
   $action='';
   $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-	zen_redirect(zen_href_link(FILENAME_ADMIN));
+	zen_redirect(zen_href_link_admin(FILENAME_ADMIN));
   break;
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 case 'insert':
@@ -90,13 +90,13 @@ if ($error == false) {
 	} // end action check
 
 
-	zen_redirect(zen_href_link(FILENAME_ADMIN, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'adminID=' . $admins_id));
+	zen_redirect(zen_href_link_admin(FILENAME_ADMIN, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'adminID=' . $admins_id));
 
 } // end error check
 
 
 //echo $action;
-//	zen_redirect(zen_href_link(FILENAME_ADMIN, (isset($_GET['page']) ? 'page=' . '&' : '') . 'adminID=' . $admins_id));
+//	zen_redirect(zen_href_link_admin(FILENAME_ADMIN, (isset($_GET['page']) ? 'page=' . '&' : '') . 'adminID=' . $admins_id));
 break;
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ $admin_id = zen_db_prepare_input($_GET['adminID']);
 $db->Execute("delete from " . TABLE_ADMIN . " where admin_id = '" . (int)$admin_id . "'");
 
 
-	zen_redirect(zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page']));
+	zen_redirect(zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page']));
 break;
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 } // end switch
@@ -187,9 +187,9 @@ if ((!isset($_GET['adminID']) || (isset($_GET['adminID']) && ($_GET['adminID'] =
 }
 
 if (isset($adminInfo) && is_object($adminInfo) && ($admins->fields['admin_id'] == $adminInfo->admin_id)) {
-	echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '\'">' . "\n";
+	echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '\'">' . "\n";
 } else {
-	echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '') . '\'">' . "\n";
+	echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '') . '\'">' . "\n";
 }
 ?>
 
@@ -197,9 +197,9 @@ if (isset($adminInfo) && is_object($adminInfo) && ($admins->fields['admin_id'] =
 		<td class="dataTableContent"><?php echo $admins->fields['admin_name']; ?></td>
 		<td class="dataTableContent"><?php echo $admins->fields['admin_email']; ?></td>
 		<td class="dataTableContent" align="right">
-<?php echo '<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
-<?php echo '<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
-<?php echo '<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=resetpassword') . '">' . zen_image(DIR_WS_IMAGES . 'icon_reset.gif', ICON_RESET) . '</a>'; ?>
+<?php echo '<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
+<?php echo '<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
+<?php echo '<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=resetpassword') . '">' . zen_image(DIR_WS_IMAGES . 'icon_reset.gif', ICON_RESET) . '</a>'; ?>
 		</td>
 </tr>
 
@@ -227,7 +227,7 @@ if (empty($action)) {
 	<tr>
 		<td align="right" colspan="4" class="smallText">
 <?php
-echo '<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>';
+echo '<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>';
 ?>
 		</td>
 	</tr>
@@ -286,7 +286,7 @@ $contents[] = array(
 	'text' => '
 <br>
 ' . zen_image_submit('button_save.gif', IMAGE_SAVE) . '
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $_GET['adminID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $_GET['adminID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'
 );
 
 
@@ -343,7 +343,7 @@ $contents[] = array(
 	'text' => '
 <br>
 ' . zen_image_submit('button_save.gif', IMAGE_SAVE) . '
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
 ');
 
 break;
@@ -381,7 +381,7 @@ $contents[] = array(
 	'text' => '
 <br>
 ' . zen_image_submit('button_save.gif', IMAGE_SAVE) . '
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
 ');
 
 break;
@@ -403,7 +403,7 @@ $contents[] = array(
 	'text' => '
 <br>
 ' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>
 ');
 
 break;
@@ -420,9 +420,9 @@ if (isset($adminInfo) && is_object($adminInfo)) {
 	$contents[] = array(
 	'align' => 'center',
 	'text' => '
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=resetpassword') . '">' . zen_image_button('button_reset_pwd.gif', IMAGE_RESET) . '</a>
-<a href="' . zen_href_link(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=resetpassword') . '">' . zen_image_button('button_reset_pwd.gif', IMAGE_RESET) . '</a>
+<a href="' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>
 	');
 }
 

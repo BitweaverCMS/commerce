@@ -17,22 +17,22 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_admin_dhtml.php,v 1.1 2005/07/05 06:00:04 bitweaver Exp $
+//  $Id: gv_admin_dhtml.php,v 1.2 2005/08/03 15:35:09 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
-  $za_heading = array('text' => BOX_HEADING_GV_ADMIN, 'link' => zen_href_link(FILENAME_ALT_NAV, '', 'NONSSL'));
+  $za_heading = array('text' => BOX_HEADING_GV_ADMIN, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
 
 // don't Coupons unless installed
 if (MODULE_ORDER_TOTAL_COUPON_STATUS=='true') {
-  $za_contents[] = array('text' => BOX_COUPON_ADMIN, 'link' => zen_href_link(FILENAME_COUPON_ADMIN, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_COUPON_ADMIN, 'link' => zen_href_link_admin(FILENAME_COUPON_ADMIN, '', 'NONSSL'));
  } // coupons installed
 
 // don't Gift Vouchers unless installed
 if (MODULE_ORDER_TOTAL_GV_STATUS=='true') {
-  $za_contents[] = array('text' => BOX_GV_ADMIN_QUEUE, 'link' => zen_href_link(FILENAME_GV_QUEUE, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_GV_ADMIN_MAIL, 'link' => zen_href_link(FILENAME_GV_MAIL, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_GV_ADMIN_SENT, 'link' => zen_href_link(FILENAME_GV_SENT, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_GV_ADMIN_QUEUE, 'link' => zen_href_link_admin(FILENAME_GV_QUEUE, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_GV_ADMIN_MAIL, 'link' => zen_href_link_admin(FILENAME_GV_MAIL, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_GV_ADMIN_SENT, 'link' => zen_href_link_admin(FILENAME_GV_SENT, '', 'NONSSL'));
 } // gift vouchers installed
 
 // if both are off display msg

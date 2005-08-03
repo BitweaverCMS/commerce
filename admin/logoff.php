@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: logoff.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: logoff.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
   unset($_SESSION['admin_id']);
-  zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+  zen_redirect(zen_href_link_admin(FILENAME_LOGIN, '', 'SSL'));
   require('includes/application_bottom.php')
 ?>

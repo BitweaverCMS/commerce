@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.3 2005/07/10 17:31:42 spiderr Exp $
+//  $Id: group_pricing.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -45,13 +45,13 @@
             $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
           }
         }
-        zen_redirect(zen_href_link(FILENAME_GROUP_PRICING, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'gID=' . $group_id));
+        zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'gID=' . $group_id));
       break;
       case 'deleteconfirm':
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
+          zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
         }
         $group_id = zen_db_prepare_input($_GET['gID']);
         $db->Execute("delete from " . TABLE_GROUP_PRICING . " where group_id = '" . (int)$group_id . "'");
@@ -60,7 +60,7 @@
           $db->Execute("update " . TABLE_CUSTOMERS ." set customers_group_pricing = '0'");
           $customers_query->MoveNext();
         }
-        zen_redirect(zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
       break;
     }
   }
@@ -130,18 +130,18 @@
     }
 
     if (isset($gInfo) && is_object($gInfo) && ($groups->fields['group_id'] == $gInfo->group_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '\'">' . "\n";
     } else {
-      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '\'">' . "\n";
+      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $groups->fields['group_id']; ?></td>
                 <td class="dataTableContent"><?php echo $groups->fields['group_name']; ?></td>
                 <td class="dataTableContent"><?php echo $groups->fields['group_percentage']; ?></td>
                 <td class="dataTableContent" align="right">
-                  <?php echo '<a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
-                  <?php echo '<a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
-                  <?php if (isset($gInfo) && is_object($gInfo) && ($groups->fields['group_id'] == $gInfo->group_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_GROUP_PRICING, zen_get_all_get_params(array('gID')) . 'gID=' . $groups->fields['group_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $groups->fields['group_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
+                  <?php if (isset($gInfo) && is_object($gInfo) && ($groups->fields['group_id'] == $gInfo->group_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, zen_get_all_get_params(array('gID')) . 'gID=' . $groups->fields['group_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
                 </td>
               </tr>
 <?php
@@ -160,7 +160,7 @@
   if (empty($action)) {
 ?>
               <tr>
-                <td align="right" colspan="4" class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
+                <td align="right" colspan="4" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
               </tr>
 <?php
   }
@@ -178,7 +178,7 @@
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_GROUP_PRICING_NAME . '<br>' . zen_draw_input_field('group_name', '', zen_set_field_length(TABLE_GROUP_PRICING, 'group_name')));
       $contents[] = array('text' => '<br>' . TEXT_GROUP_PRICING_AMOUNT . '<br>' . zen_draw_input_field('group_percentage', ''));
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $_GET['gID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $_GET['gID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_PRICING_GROUP . '</b>');
@@ -187,7 +187,7 @@
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_GROUP_PRICING_NAME . '<br>' . zen_draw_input_field('group_name', $gInfo->group_name, zen_set_field_length(TABLE_GROUP_PRICING, 'group_name')));
       $contents[] = array('text' => '<br>' . TEXT_GROUP_PRICING_AMOUNT . '<br>' . zen_draw_input_field('group_percentage', $gInfo->group_percentage));
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_PRICING_GROUP . '</b>');
@@ -201,13 +201,13 @@
         $contents[] = array('text' => '<br>' . sprintf(TEXT_DELETE_WARNING_CUSTOMERS, $gInfo->customer_count));
       }
 
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (isset($gInfo) && is_object($gInfo)) {
         $heading[] = array('text' => '<b>' . $gInfo->group_name . '</b>');
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
         $contents[] = array('text' => '<br>' . TEXT_DATE_ADDED . ' ' . zen_date_short($gInfo->date_added));
         if (zen_not_null($gInfo->last_modified)) $contents[] = array('text' => TEXT_LAST_MODIFIED . ' ' . zen_date_short($gInfo->last_modified));
         $contents[] = array('text' => '<br>' . TEXT_CUSTOMERS . ' ' . $gInfo->customer_count);

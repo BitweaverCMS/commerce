@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.3 2005/07/18 14:35:50 spiderr Exp $
+//  $Id: copy_to_confirm.php,v 1.4 2005/08/03 15:35:14 spiderr Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -170,5 +170,5 @@ if ( $_POST['copy_attributes']=='copy_attributes_yes' and $_POST['copy_as'] == '
           zen_update_products_price_sorter($products_id);
 
         }
-        zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $categories_id . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $categories_id . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 ?>

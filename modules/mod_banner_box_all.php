@@ -17,14 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box_all.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
+// $Id: mod_banner_box_all.php,v 1.3 2005/08/03 15:35:15 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
 // INSERT INTO configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Banner Display Group - Side Box banner_box_all', 'SHOW_BANNERS_GROUP_SET_ALL', 'BannersAll', 'The Banner Display Group may only be from one (1) Banner Group for the Banner All sidebox<br /><br />Default Group is BannersAll<br /><br />What Banner Group do you want to use in the Side Box - banner_box_all?<br />Leave blank for none', '19', '72', '', '', now());
 // ALTER TABLE `banners` ADD `banners_sort_order` INT( 11 ) DEFAULT '0' NOT NULL;
-
-	$banner_box[] = TEXT_BANNER_BOX_ALL;
 
 	$banner_box_group= SHOW_BANNERS_GROUP_SET_ALL;
 

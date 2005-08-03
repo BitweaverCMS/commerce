@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.2 2005/07/10 17:31:42 spiderr Exp $
+//  $Id: gv_mail.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -35,7 +35,7 @@
       $_SESSION['html_editor_preference_status'] = 'HTMLAREA';
     }
     $action='';
-    zen_redirect(zen_href_link(FILENAME_GV_MAIL));
+    zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL));
   }
 
   if ( ($_GET['action'] == 'send_email_to_user') && ($_POST['customers_email_address'] || $_POST['email_to']) && (!$_POST['back_x']) ) {
@@ -50,7 +50,7 @@
     if (zen_admin_demo()) {
       $_GET['action']= '';
       $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-      zen_redirect(zen_href_link(FILENAME_GV_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to)));
+      zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to)));
     }
     $from = zen_db_prepare_input($_POST['from']);
     $subject = zen_db_prepare_input($_POST['subject']);
@@ -152,7 +152,7 @@
                                           '" . $_POST['email_to'] . "', now() )");
 
     }
-    zen_redirect(zen_href_link(FILENAME_GV_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
+    zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
   }
 
   if ( ($_GET['action'] == 'preview') && (!$_POST['customers_email_address']) && (!$_POST['email_to']) ) {
@@ -357,7 +357,7 @@ function check_form(form_name) {
                 <table border="0" width="100%" cellpadding="0" cellspacing="2">
                   <tr>
                     <td><?php echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="back"'); ?></td>
-                    <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_GV_MAIL) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . ($_POST['amount'] <= 0 ? '' : zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL)); ?></td>
+                    <td align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_GV_MAIL) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a> ' . ($_POST['amount'] <= 0 ? '' : zen_image_submit('button_send_mail.gif', IMAGE_SEND_EMAIL)); ?></td>
                   </tr>
                 </table></td>
               </tr>

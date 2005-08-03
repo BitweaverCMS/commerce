@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: define_pages_editor.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: define_pages_editor.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -80,7 +80,7 @@
           $_SESSION['html_editor_preference_status'] = 'HTMLAREA';
         }
         $action='';
-        zen_redirect(zen_href_link(FILENAME_DEFINE_PAGES_EDITOR));
+        zen_redirect(zen_href_link_admin(FILENAME_DEFINE_PAGES_EDITOR));
         break;
     case 'save':
       if ( ($_GET['lngdir']) && ($_GET['filename']) ) {
@@ -94,7 +94,7 @@
           fwrite($new_file, $file_contents, strlen($file_contents));
           fclose($new_file);
         }
-        zen_redirect(zen_href_link(FILENAME_DEFINE_PAGES_EDITOR));
+        zen_redirect(zen_href_link_admin(FILENAME_DEFINE_PAGES_EDITOR));
       }
       break;
   }
@@ -218,7 +218,7 @@ if (isset($_GET['filename'])) {
                 <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
               <tr>
-                <td align="right"><?php if ($file_writeable) { echo zen_image_submit('button_save.gif', IMAGE_SAVE) . '&nbsp;<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'define_it=' .$_GET['define_it'] . '&action=new_page') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>' . '&nbsp;' . '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR . '.php') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; } else { echo '<a href="' . zen_href_link(FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; } ?></td>
+                <td align="right"><?php if ($file_writeable) { echo zen_image_submit('button_save.gif', IMAGE_SAVE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_DEFINE_PAGES_EDITOR, 'define_it=' .$_GET['define_it'] . '&action=new_page') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>' . '&nbsp;' . '<a href="' . zen_href_link_admin(FILENAME_DEFINE_PAGES_EDITOR . '.php') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; } ?></td>
               </tr>
             </table></td>
           </form></tr>
@@ -232,7 +232,7 @@ if (isset($_GET['filename'])) {
             <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
           <tr>
-            <td><?php echo '<a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+            <td><?php echo '<a href="' . zen_href_link_admin($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
           </tr>
 <?php
     }
@@ -242,7 +242,7 @@ if (isset($_GET['filename'])) {
           <tr>
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td class="smallText"><a href="<?php echo zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $filename); ?>"><b><?php echo $filename; ?></b></a></td>
+                <td class="smallText"><a href="<?php echo zen_href_link_admin($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $filename); ?>"><b><?php echo $filename; ?></b></a></td>
 <?php
     $dir = dir(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage());
     $left = false;
@@ -250,7 +250,7 @@ if (isset($_GET['filename'])) {
       $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
       while ($file = $dir->read()) {
         if (substr($file, strrpos($file, '.')) == $file_extension) {
-          echo '                <td class="smallText"><a href="' . zen_href_link($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $file) . '">' . $file . '</a></td>' . "\n";
+          echo '                <td class="smallText"><a href="' . zen_href_link_admin($_GET['filename'], 'lngdir=' . $gBitLanguage->getLanguage() . '&filename=' . $file) . '">' . $file . '</a></td>' . "\n";
           if (!$left) {
             echo '              </tr>' . "\n" .
                  '              <tr>' . "\n";
@@ -269,7 +269,7 @@ if (isset($_GET['filename'])) {
             <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
           <tr>
-            <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_FILE_MANAGER, 'current_path=' . DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_file_manager.gif', IMAGE_FILE_MANAGER) . '</a>'; ?></td>
+            <td align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_FILE_MANAGER, 'current_path=' . DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage()) . '">' . zen_image_button('button_file_manager.gif', IMAGE_FILE_MANAGER) . '</a>'; ?></td>
           </tr>
 <?php
   }

@@ -15,4 +15,10 @@ if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'bit_' );
 }
 
+	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
+if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
+	// include shopping cart class
+	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
+}
+
 ?>

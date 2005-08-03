@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: downloads_manager.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -33,7 +33,7 @@
       case 'insert':
       case 'save':
         $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " set products_attributes_filename='" . $_POST['products_attributes_filename'] . "', products_attributes_maxdays='" . $_POST['products_attributes_maxdays'] . "', products_attributes_maxcount='" . $_POST['products_attributes_maxcount'] . "' where products_attributes_id='" . $_GET['padID'] . "'");
-        zen_redirect(zen_href_link(FILENAME_DOWNLOADS_MANAGER, 'padID=' . $_GET['padID'] . '&page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, 'padID=' . $_GET['padID'] . '&page=' . $_GET['page']));
         break;
     }
   }
@@ -51,7 +51,7 @@
 <script language="javascript"><!--
 function go_option() {
   if (document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value != "none") {
-    location = "<?php echo zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
+    location = "<?php echo zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
   }
 }
 //--></script>
@@ -89,7 +89,7 @@ function go_option() {
 <?php
 // show reset search
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
-    echo '<a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
+    echo '<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
   }
   echo HEADING_TITLE_SEARCH_DETAIL . ' ' . zen_draw_input_field('search');
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -165,9 +165,9 @@ function go_option() {
 ?>
 <?php
       if (isset($padInfo) && is_object($padInfo) && ($products_downloads_query->fields['products_attributes_id'] == $padInfo->products_attributes_id)) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=edit' . '&page=' . $_GET['page']) . '\'">' . "\n";
+        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=edit' . '&page=' . $_GET['page']) . '\'">' . "\n";
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID')) . 'padID=' . $products_downloads_query->fields['products_attributes_id'] . '&page=' . $_GET['page']) . '\'">' . "\n";
+        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID')) . 'padID=' . $products_downloads_query->fields['products_attributes_id'] . '&page=' . $_GET['page']) . '\'">' . "\n";
       }
 ?>
 
@@ -180,7 +180,7 @@ function go_option() {
                 <td class="smallText"><?php echo $filename_is_missing . '&nbsp;' . $products_downloads_query->fields['products_attributes_filename']; ?></td>
                 <td class="smallText"><?php echo $products_downloads_query->fields['products_attributes_maxdays']; ?></td>
                 <td class="smallText"><?php echo $products_downloads_query->fields['products_attributes_maxcount']; ?></td>
-                <td class="dataTableContent" align="right"><?php if (isset($padInfo) && is_object($padInfo) && ($products_downloads_query->fields['products_attributes_id'] == $padInfo->products_attributes_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID')) . 'padID=' . $products_downloads_query->fields['products_attributes_id'] . '&page=' . $_GET['page']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($padInfo) && is_object($padInfo) && ($products_downloads_query->fields['products_attributes_id'] == $padInfo->products_attributes_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID')) . 'padID=' . $products_downloads_query->fields['products_attributes_id'] . '&page=' . $_GET['page']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
   $products_downloads_query->MoveNext();
@@ -204,7 +204,7 @@ function go_option() {
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
 ?>
                   <tr>
-                    <td align="right" colspan="2"><?php echo '<a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
+                    <td align="right" colspan="2"><?php echo '<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
                   </tr>
 <?php
   }
@@ -227,7 +227,7 @@ function go_option() {
 
       $contents = array('form' => zen_draw_form('products_downloads_delete', FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=deleteconfirm' . '&page=' . $_GET['page']));
       $contents[] = array('text' => TEXT_DELETE_INTRO . '<br /><br /><b>' . $padInfo->products_name . ' - ' . $padInfo->products_attributes_filename . '</b>');
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id) . '&page=' . $_GET['page'] . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id) . '&page=' . $_GET['page'] . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
 */
     case 'edit':
@@ -239,15 +239,15 @@ function go_option() {
       $contents[] = array('text' => '<br />' . TEXT_INFO_FILENAME . '<br />' . zen_draw_input_field('products_attributes_filename', $padInfo->products_attributes_filename));
       $contents[] = array('text' => '<br />' . TEXT_INFO_MAX_DAYS . '<br />' . zen_draw_input_field('products_attributes_maxdays', $padInfo->products_attributes_maxdays));
       $contents[] = array('text' => '<br />' . TEXT_INFO_MAX_COUNT . '<br />' . zen_draw_input_field('products_attributes_maxcount', $padInfo->products_attributes_maxcount));
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, 'padID=' . $padInfo->products_attributes_id) . '&page=' . $_GET['page'] . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, 'padID=' . $padInfo->products_attributes_id) . '&page=' . $_GET['page'] . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (isset($padInfo) && is_object($padInfo)) {
         $heading[] = array('text' => '<b>' . $padInfo->products_attributes_id . ' ' . $padInfo->products_attributes_filename . '</b>');
 
         $contents[] = array('align' => 'center', 'text' =>
-          '<a href="' . zen_href_link(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&page=' . $_GET['page'].'&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>' .
-          '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $padInfo->products_id) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>'
+          '<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&page=' . $_GET['page'].'&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>' .
+          '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $padInfo->products_id) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>'
           );
         $contents[] = array('text' => '<br />' . TEXT_PRODUCTS_NAME . $padInfo->products_name);
         $contents[] = array('text' => TEXT_PRODUCTS_MODEL . $padInfo->products_model);

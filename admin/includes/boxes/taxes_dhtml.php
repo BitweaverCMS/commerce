@@ -17,17 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: taxes_dhtml.php,v 1.1 2005/07/05 06:00:04 bitweaver Exp $
+//  $Id: taxes_dhtml.php,v 1.2 2005/08/03 15:35:09 spiderr Exp $
 //
 
   $za_contents = array();
   $za_heading = array();
-  $za_heading = array('text' => BOX_HEADING_LOCATION_AND_TAXES, 'link' => zen_href_link(FILENAME_ALT_NAV, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TAXES_COUNTRIES, 'link' => zen_href_link(FILENAME_COUNTRIES, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TAXES_ZONES, 'link' => zen_href_link(FILENAME_ZONES, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TAXES_GEO_ZONES, 'link' => zen_href_link(FILENAME_GEO_ZONES, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TAXES_TAX_CLASSES, 'link' => zen_href_link(FILENAME_TAX_CLASSES, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TAXES_TAX_RATES, 'link' => zen_href_link(FILENAME_TAX_RATES, '', 'NONSSL'));
+  $za_heading = array('text' => BOX_HEADING_LOCATION_AND_TAXES, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TAXES_COUNTRIES, 'link' => zen_href_link_admin(FILENAME_COUNTRIES, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TAXES_ZONES, 'link' => zen_href_link_admin(FILENAME_ZONES, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TAXES_GEO_ZONES, 'link' => zen_href_link_admin(FILENAME_GEO_ZONES, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TAXES_TAX_CLASSES, 'link' => zen_href_link_admin(FILENAME_TAX_CLASSES, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_TAXES_TAX_RATES, 'link' => zen_href_link_admin(FILENAME_TAX_RATES, '', 'NONSSL'));
 if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
   while ($zv_file = $za_dir->read()) {
     if (preg_match('/taxes_dhtml.php$/', $zv_file)) {

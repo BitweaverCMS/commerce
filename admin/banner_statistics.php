@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_statistics.php,v 1.2 2005/07/30 03:01:48 spiderr Exp $
+//  $Id: banner_statistics.php,v 1.3 2005/08/03 15:35:06 spiderr Exp $
 //
 
 
@@ -126,7 +126,7 @@
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_BANNER_MANAGER, 'page=' . $_GET['page'] . '&bID=' . $_GET['bID']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_BANNER_MANAGER, 'page=' . $_GET['page'] . '&bID=' . $_GET['bID']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
       </tr>
       <tr>
         <td align="center">
@@ -190,7 +190,7 @@
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_BANNER_MANAGER, 'page=' . $_GET['page'] . '&bID=' . $_GET['bID']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_BANNER_MANAGER, 'page=' . $_GET['page'] . '&bID=' . $_GET['bID']) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
       </tr>
     </table></td>
 <!-- body_text_eof //-->

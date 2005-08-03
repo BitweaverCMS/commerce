@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: media_manager.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -31,24 +31,24 @@
         $db->Execute("delete from " . TABLE_MEDIA_TO_PRODUCTS . "
                       where media_id = '" . (int)$_GET['mID'] . "'
                       and product_id = '" . (int)$_GET['product_id'] . "'");
-       zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . (int)$_GET['mID']);
+       zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . (int)$_GET['mID']);
 
       break;
       case 'add_product':
         $product_add_query = $db->Execute("insert into " . TABLE_MEDIA_TO_PRODUCTS . " (media_id, product_id) values
                                            ('" . (int)$_GET['mID'] . "', '" . (int)$_GET['current_product_id'] . "')");
-         zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . $_GET['mID']);
+         zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . $_GET['mID']);
 
       break;
       case 'new_cat':
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
     $products_filter = $new_product_query->fields['products_id'];
-    zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id . '&mID=' . $_GET['mID']));
+    zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id . '&mID=' . $_GET['mID']));
       break;
       case 'remove_clip':
         $delete_query = "delete from " . TABLE_MEDIA_CLIPS . " where clip_id  = '" . $_GET['clip_id'] . "'";
         $db->Execute($delete_query);
-        zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'action=edit&page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=edit&page=' . $_GET['page']));
       break;
       case 'insert':
       case 'save':
@@ -102,14 +102,14 @@
           }
         }
 
-        zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . ($media_id != '' ? 'mID=' . $media_id : '')));
+        zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . ($media_id != '' ? 'mID=' . $media_id : '')));
         break;
       case 'deleteconfirm':
         // demo active test
         if (zen_admin_demo()) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page']));
+          zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page']));
         }
         $media_id = zen_db_prepare_input($_GET['mID']);
 
@@ -129,7 +129,7 @@
 //                        where manufacturers_id = '" . (int)$manufacturers_id . "'");
         }
 
-        zen_redirect(zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page']));
+        zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page']));
         break;
     }
   }
@@ -194,16 +194,16 @@
     }
 
     if (isset($mInfo) && is_object($mInfo) && ($media->fields['media_id'] == $mInfo->media_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id']) . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id']) . '\'">' . "\n";
     } else {
-      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id']) . '\'">' . "\n";
+      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id']) . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $media->fields['media_name']; ?></td>
                 <td class="dataTableContent" align="right">
-                  <?php echo '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
-                  <?php echo '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
-                  <?php if (isset($mInfo) && is_object($mInfo) && ($media->fields['media_id'] == $mInfo->media_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, zen_get_all_get_params(array('mID')) . 'mID=' . $media->fields['media_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id'] . '&action=edit') . '">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>'; ?>
+                  <?php echo '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $media->fields['media_id'] . '&action=delete') . '">' . zen_image(DIR_WS_IMAGES . 'icon_delete.gif', ICON_DELETE) . '</a>'; ?>
+                  <?php if (isset($mInfo) && is_object($mInfo) && ($media->fields['media_id'] == $mInfo->media_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, zen_get_all_get_params(array('mID')) . 'mID=' . $media->fields['media_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>
                 </td>
               </tr>
 <?php
@@ -222,7 +222,7 @@
   if (empty($action)) {
 ?>
               <tr>
-                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
+                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
               </tr>
 <?php
   }
@@ -240,7 +240,7 @@
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_MEDIA_COLLECTION_NAME . '<br>' . zen_draw_input_field('media_name', '', zen_set_field_length(TABLE_MEDIA_MANAGER, 'media_name')));
 
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $_GET['mID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $_GET['mID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_MEDIA_COLLECTION . '</b>');
@@ -248,7 +248,7 @@
       $contents = array('form' => zen_draw_form('collections', FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_MEDIA_COLLECTION_NAME . '<br>' . zen_draw_input_field('media_name', $mInfo->media_name, zen_set_field_length(TABLE_MEDIA_MANAGER, 'media_name')));
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 
       $contents[] = array('text' => zen_draw_separator('pixel_black.gif'));
       $contents[] = array('text' => TEXT_MEDIA_EDIT_INSTRUCTIONS);
@@ -275,7 +275,7 @@
       $clip_query = "select * from " . TABLE_MEDIA_CLIPS . " where media_id = '" . $mInfo->media_id . "'";
       $clips = $db->Execute($clip_query);
       while (!$clips->EOF) {
-        $contents[] = array('text' => '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'action=remove_clip&mID='.$mInfo->media_id.'&clip_id='.$clips->fields['clip_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $clips->fields['clip_filename'] . '<br />');
+        $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=remove_clip&mID='.$mInfo->media_id.'&clip_id='.$clips->fields['clip_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $clips->fields['clip_filename'] . '<br />');
         $clips->MoveNext();
       }
       break;
@@ -291,7 +291,7 @@
         $contents[] = array('text' => '<br>' . sprintf(TEXT_DELETE_WARNING_PRODUCTS, $mInfo->products_count));
       }
 
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'products':
       $new_product_query = $db->Execute("select ptc.*, pd.products_name from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
@@ -313,16 +313,16 @@
                                 where media_id = '" . $mInfo->media_id . "'";
       $products_linked = $db->Execute($products_linked_query);
       while (!$products_linked->EOF) {
-        $contents[] = array('text' => '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'action=remove_product&mID='.$mInfo->media_id.'&product_id='. $products_linked->fields['product_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $zc_products->products_name($products_linked->fields['product_id']) . '<br />');
+        $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=remove_product&mID='.$mInfo->media_id.'&product_id='. $products_linked->fields['product_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $zc_products->products_name($products_linked->fields['product_id']) . '<br />');
         $products_linked->MoveNext();
       }
-      $contents[] = array('align' => 'center', 'text' =>  '<br /><a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+      $contents[] = array('align' => 'center', 'text' =>  '<br /><a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     default:
       if (isset($mInfo) && is_object($mInfo)) {
         $heading[] = array('text' => '<b>' . $mInfo->media_name . '</b>');
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a> ' . '<a href="' . zen_href_link(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=products') . '">' . zen_image_button('button_assign_to_product.gif', IMAGE_PRODUCTS) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a> ' . '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=products') . '">' . zen_image_button('button_assign_to_product.gif', IMAGE_PRODUCTS) . '</a>');
         $contents[] = array('text' => '<br>' . TEXT_DATE_ADDED . ' ' . zen_date_short($mInfo->date_added));
         if (zen_not_null($mInfo->last_modified)) $contents[] = array('text' => TEXT_LAST_MODIFIED . ' ' . zen_date_short($mInfo->last_modified));
         $contents[] = array('text' => '<br>' . TEXT_PRODUCTS . ' ' . $mInfo->products_count);

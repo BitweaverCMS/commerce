@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.3 2005/07/18 14:35:50 spiderr Exp $
+//  $Id: update_product.php,v 1.4 2005/08/03 15:35:14 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -149,7 +149,7 @@
 // future image handler code
 define('IMAGE_MANAGER_HANDLER', 0);
           if ($new_image == 'true' and IMAGE_MANAGER_HANDLER >= 1) {
-            $src= DIR_FS_CATALOG . DIR_WS_IMAGES . zen_get_products_image((int)$products_id);
+            $src= CommerceProduct::getImageUrl( $products_id );
             $filename_small= $src;
             preg_match("/.*\/(.*)\.(\w*)$/", $src, $fname);
             list($oiwidth, $oiheight, $oitype) = getimagesize($src);
@@ -173,7 +173,7 @@ define('IMAGE_MANAGER_HANDLER', 0);
             $large_width= $oiwidth;
             $large_height= $oiheight;
 
-            $products_image = zen_get_products_image((int)$products_id);
+            $products_image = CommerceProduct::getImageUrl( $products_id );
             $products_image_extention = substr($products_image, strrpos($products_image, '.'));
             $products_image_base = ereg_replace($products_image_extention, '', $products_image);
 
@@ -190,6 +190,6 @@ define('IMAGE_MANAGER_HANDLER', 0);
             }
           }
 
-          zen_redirect(zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+          zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
         }
 ?>

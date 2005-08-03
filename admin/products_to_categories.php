@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: products_to_categories.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -47,7 +47,7 @@ function array_minus_array($a, $b) {
         // do not proceed unless categories are different
         if ($copy_from_linked == $copy_to_linked) {
           $messageStack->add_session(WARNING_DUPLICATE_PRODUCTS_TO_CATEGORY_LINKED, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         }
 
         $check_category_from = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $copy_from_linked . "' limit 1");
@@ -71,7 +71,7 @@ function array_minus_array($a, $b) {
 
         if ($zv_invalid_copy_linked == 'true') {
           $messageStack->add_session($zv_complete_message_linked, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         }
 
         ///////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ function array_minus_array($a, $b) {
           $messageStack->add_session($zv_complete_message_linked, $warning_color);
         }
 
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         break;
 
       case 'remove_categories_products_to_another_category_linked':
@@ -151,7 +151,7 @@ function array_minus_array($a, $b) {
         // do not proceed unless categories are different
         if ($remove_from_linked == $remove_to_linked) {
           $messageStack->add_session(WARNING_DUPLICATE_PRODUCTS_TO_CATEGORY_LINKED, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         }
 
         $check_category_from = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $remove_from_linked . "' limit 1");
@@ -176,7 +176,7 @@ function array_minus_array($a, $b) {
 
         if ($zv_invalid_remove_linked == 'true') {
           $messageStack->add_session($zv_complete_message_linked, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         }
 
         ///////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ function array_minus_array($a, $b) {
 
           $stop_warning_message = WARNING_MASTER_CATEGORIES_ID_CONFLICT . ' ' . TEXT_MASTER_CATEGORIES_ID_CONFLICT_FROM . $remove_from_linked . TEXT_MASTER_CATEGORIES_ID_CONFLICT_TO . $remove_to_linked . '<br />' . TEXT_INFO_MASTER_CATEGORIES_ID_PURPOSE . WARNING_MASTER_CATEGORIES_ID_CONFLICT_FIX . '<br /><br />' . TEXT_INFO_MASTER_CATEGORIES_ID_CONFLICT . $remove_to_linked . '<br />' . $stop_warning . '<br />';
           $messageStack->add_session($stop_warning_message, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $master_categories_id_stop[0]['products_id']));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $master_categories_id_stop[0]['products_id']));
 //          die('THIS IS THE MASTER CATEGORIES ID!! ' . $remove_to_linked . ' - stop: ' . sizeof($master_categories_id_stop) . '<br>');
         }
 
@@ -262,7 +262,7 @@ function array_minus_array($a, $b) {
           $messageStack->add_session($zv_complete_message_linked, $warning_color);
         }
 
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         break;
 
       case 'reset_categories_products_to_another_category_master':
@@ -284,7 +284,7 @@ function array_minus_array($a, $b) {
 
         if ($zv_invalid_reset_master == 'true') {
           $messageStack->add_session($zv_complete_message_master, 'warning');
-          zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+          zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         }
 
         ///////////////////////////////////////////////////////////////
@@ -301,7 +301,7 @@ function array_minus_array($a, $b) {
         }
 
         $messageStack->add_session($zv_complete_message_master, 'success');
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         break;
 
       case 'set_master_categories_id':
@@ -309,7 +309,7 @@ function array_minus_array($a, $b) {
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($products_filter);
 
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $_GET['products_filter']));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $_GET['products_filter']));
         break;
 
       case 'update_product':
@@ -371,7 +371,7 @@ function array_minus_array($a, $b) {
           $messageStack->add_session(WARNING_MASTER_CATEGORIES_ID, 'warning');
         }
 
-        zen_redirect(zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
+        zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter));
         break;
 
     }
@@ -403,7 +403,7 @@ function array_minus_array($a, $b) {
 <script language="javascript"><!--
 function go_option() {
   if (document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value != "none") {
-    location = "<?php echo zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
+    location = "<?php echo zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'option_page=' . ($_GET['option_page'] ? $_GET['option_page'] : 1)); ?>&option_order_by="+document.option_order_by.selected.options[document.option_order_by.selected.selectedIndex].value;
   }
 }
 //--></script>
@@ -571,7 +571,7 @@ function go_option() {
               <tr>
                 <td colspan="3" valign="middle" height="10"><?php echo zen_draw_separator('pixel_black.gif', '100%', '3'); ?></td>
               </tr>
-              <form name="linked_copy" method="post" action="<?php echo zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=copy_categories_products_to_another_category_linked' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
+              <form name="linked_copy" method="post" action="<?php echo zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=copy_categories_products_to_another_category_linked' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
               <tr class="dataTableHeadingRow">
                 <td colspan="3" class="dataTableContent"><?php echo TEXT_INFO_COPY_ALL_PRODUCTS_TO_CATEGORY_LINKED; ?></td>
               </tr>
@@ -598,7 +598,7 @@ function go_option() {
               <tr>
                 <td colspan="3" valign="middle" height="10"><?php echo zen_draw_separator('pixel_black.gif', '100%', '3'); ?></td>
               </tr>
-              <form name="linked_remove" method="post" action="<?php echo zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=remove_categories_products_to_another_category_linked' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
+              <form name="linked_remove" method="post" action="<?php echo zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=remove_categories_products_to_another_category_linked' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
               <tr class="dataTableHeadingRow">
                 <td colspan="3" class="dataTableContent"><?php echo TEXT_INFO_REMOVE_ALL_PRODUCTS_TO_CATEGORY_LINKED; ?></td>
               </tr>
@@ -628,7 +628,7 @@ function go_option() {
               <tr>
                 <td colspan="3" valign="middle" height="10"><?php echo zen_draw_separator('pixel_black.gif', '100%', '3'); ?></td>
               </tr>
-              <form name="master_reset" method="post" action="<?php echo zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=reset_categories_products_to_another_category_master' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
+              <form name="master_reset" method="post" action="<?php echo zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'action=reset_categories_products_to_another_category_master' . '&products_filter=' . $products_filter, 'NONSSL'); ?>">
               <tr class="dataTableHeadingRow">
                 <td colspan="3" class="dataTableContent"><?php echo TEXT_INFO_RESET_ALL_PRODUCTS_TO_CATEGORY_MASTER; ?></td>
               </tr>
@@ -665,7 +665,7 @@ function go_option() {
       }
       $contents[] = array('text' => '<b>' . TEXT_PRODUCTS_NAME . $product_to_copy->fields['products_name'] . '<br />' . TEXT_PRODUCTS_MODEL . $product_to_copy->fields['products_model'] . '</b>');
       $contents[] = array('text' => '<br />' . TEXT_SET_PRODUCTS_TO_CATEGORIES_LINKS . '<br />' . TEXT_PRODUCTS_ID . zen_draw_input_field('products_filter', $products_filter));
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>' . '</form>');
+      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_filter=' . $products_filter) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>' . '</form>');
       break;
     default:
       $heading[] = array('text' => '<b>' . $product_to_copy->fields['products_id'] . ' ' . $product_to_copy->fields['products_name'] . '</b>');
@@ -684,10 +684,10 @@ function go_option() {
           $contents[] = array('align' => 'center', 'text' => '<input type="submit" value="' . BUTTON_NEW_PRODUCTS_TO_CATEGORIES . '"></form>');
           $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3') . '<br />&nbsp;');
           $contents[] = array('align' => 'center', 'text' =>
-            '<a href="' . zen_href_link(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>&nbsp;&nbsp;' .
-            '<a href="' . zen_href_link(FILENAME_PRODUCTS_PRICE_MANAGER, '&products_filter=' . $products_filter) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a><br /><br />' .
-            '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . zen_get_parent_category_id($products_filter) . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '</a>&nbsp;&nbsp;' .
-            '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_parent_category_id($products_filter) . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '</a>' . '<br />&nbsp;'
+            '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products_filter) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>&nbsp;&nbsp;' .
+            '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, '&products_filter=' . $products_filter) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a><br /><br />' .
+            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_parent_category_id($products_filter) . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '</a>&nbsp;&nbsp;' .
+            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_parent_category_id($products_filter) . '&pID=' . $products_filter . '&product_type=' . zen_get_products_type($products_filter)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '</a>' . '<br />&nbsp;'
             );
           break;
       }

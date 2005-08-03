@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers_referrals.php,v 1.1 2005/07/05 05:59:58 bitweaver Exp $
+//  $Id: stats_customers_referrals.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -158,7 +158,7 @@
             <td class="main" align="left"><?php echo zen_date_long($customers_orders->fields['date_purchased']); ?></td>
             <td class="main" align="left">Order #<?php echo $customers_orders->fields['orders_id']; ?></td>
             <td class="main" align="left">Discount Coupon ID# <?php echo $customers_orders->fields['coupon_code']; ?></td>
-            <td class="main" align="left"><?php echo '<a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $customers_orders->fields['orders_id'] . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>'; ?></td>
+            <td class="main" align="left"><?php echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $customers_orders->fields['orders_id'] . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>'; ?></td>
           </tr>
           <tr>
             <td><table border="0" cellspacing="0" cellpadding="2">
