@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.4 2005/07/30 03:01:50 spiderr Exp $
+//  $Id: application_top.php,v 1.5 2005/08/03 13:41:02 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -128,6 +128,19 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 
 
+  if ( !empty( $_REQUEST['products_id'] ) ) {
+    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+    if( $gBitProduct->load() ) {
+      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
+    }
+	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
+		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
+		die;
+	}
+  } else {
+    $gBitProduct = new CommerceProduct();
+  }
+	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
 
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );

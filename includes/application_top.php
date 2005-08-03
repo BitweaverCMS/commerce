@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.13 2005/08/03 13:04:38 spiderr Exp $
+// $Id: application_top.php,v 1.14 2005/08/03 13:41:03 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -60,14 +60,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
   if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') include(DIR_WS_FUNCTIONS . 'cache.php');
 
 
-// {{{ TIKI_MOD
-// include shopping cart class
-  require_once(DIR_WS_CLASSES . 'shopping_cart.php');
-
-
 // include navigation history class
   require_once(DIR_WS_CLASSES . 'navigation_history.php');
-// }}} TIKI_MOD
 
 // define how the session functions will be used
   require(DIR_WS_FUNCTIONS . 'sessions.php');
@@ -168,16 +162,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
       zen_redirect(zen_href_link(FILENAME_LOGIN));
     }
   }
-
-// create the shopping cart & fix the cart if necesary
-  if( empty( $_SESSION['cart'] ) ) {
-    $_SESSION['cart'] = new shoppingCart;
-  }
-
-
-// include currencies class and create an instance
-  require(DIR_WS_CLASSES . 'currencies.php');
-  $currencies = new currencies();
 
 // include the mail classes
   require(DIR_WS_CLASSES . 'mime.php');
@@ -806,8 +790,6 @@ case 'wishlist_add_cart': reset ($lvnr);
     $cPath_array = array();
   }
 
-
-  require(DIR_WS_CLASSES . 'category_tree.php');
 
 // set which precautions should be checked
   define('WARN_INSTALL_EXISTENCE', 'true');

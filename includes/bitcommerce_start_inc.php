@@ -163,5 +163,20 @@
 
 // }}} TIKI_MOD
 
+// include shopping cart class
+  require_once(DIR_FS_CLASSES . 'shopping_cart.php');
+
+
+// create the shopping cart & fix the cart if necesary
+  if( empty( $_SESSION['cart'] ) ) {
+    $_SESSION['cart'] = new shoppingCart;
+  }
+
+// include currencies class and create an instance
+  require(DIR_FS_CLASSES . 'currencies.php');
+  $currencies = new currencies();
+
+  require(DIR_FS_CLASSES . 'category_tree.php');
+
 
 ?>
