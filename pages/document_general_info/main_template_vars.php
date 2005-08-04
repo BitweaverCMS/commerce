@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: main_template_vars.php,v 1.2 2005/08/04 07:01:31 spiderr Exp $
 //
   $sql = "select count(*) as total
           from " . TABLE_PRODUCTS . " p, " .
@@ -32,7 +32,7 @@
 
   if ( $res->fields['total'] < 1 ) {
 
-    $tpl_page_body = '/tpl_product_info_noproduct.php';
+    $mid = 'bitpackage:bitcommerce/product_not_available';
 
   } else {
 
@@ -257,7 +257,11 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
     }
   }
 
-  require($template->get_template_dir($tpl_page_body,DIR_WS_TEMPLATE, $current_page_base,'templates'). $tpl_page_body);
+	if( !empty( $mid ) ) {
+		print $gBitSmarty->fetch( $mid );
+	} else {
+		require( DIR_FS_PAGES . $current_page_base . '/' . $tpl_page_body);
+	}
 
   require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_ALSO_PURCHASED_PRODUCTS));
 ?>

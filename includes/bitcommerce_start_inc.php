@@ -253,7 +253,7 @@
   $breadcrumb = new breadcrumb;
   $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
 
-  $breadcrumb->add( tra( 'Shopping' ), BITCOMMERCE_PKG_PATH );
+  $breadcrumb->add( tra( 'Shopping' ), BITCOMMERCE_PKG_URL );
 
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {

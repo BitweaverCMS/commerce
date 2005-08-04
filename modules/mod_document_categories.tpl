@@ -1,38 +1,38 @@
-{if $box_categories_array}
+{if $sideboxDocumentCategories}
 {bitmodule title=$moduleTitle name="documentcategories"}
-{section name=ix loop=$box_categories_array}
-{if $box_categories_array[ix].top == 'true'}
-        $new_style = 'category-top';
-{elseif $box_categories_array[ix].has_sub_cat}
-        $new_style = 'category-subs';
+{section name=ix loop=$sideboxDocumentCategories}
+{if $sideboxDocumentCategories[ix].top == 'true'}
+        {assign var=new_style value='category-top'}
+{elseif $sideboxDocumentCategories[ix].has_sub_cat}
+        {assign var=new_style value='category-subs'}
 {else}
-        $new_style = 'category-products
+        {assign var=new_style value='category-products'}
 {/if}
 
-<a class="' . $new_style . '" href="' . zen_href_link(FILENAME_DEFAULT, $box_categories_array[ix].path) . '">';
+<a class="{$new_style}" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=index&amp;{$sideboxDocumentCategories[ix].path}">
 
-{if $box_categories_array[ix].current}
-{if $box_categories_array[ix].has_sub_cat}
-span class="category-subs-parent">' . $box_categories_array[ix].name . '</span>';
+{if $sideboxDocumentCategories[ix].current}
+{if $sideboxDocumentCategories[ix].has_sub_cat}
+<span class="category-subs-parent">{$sideboxDocumentCategories[ix].name}</span>
 {else}
-span class="category-subs-selected">' . $box_categories_array[ix].name . '</span>';
+<span class="category-subs-selected">{$sideboxDocumentCategories[ix].name}</span>
 {/if}
 {else}
-        $content .= $box_categories_array[ix].name;
+        {$sideboxDocumentCategories[ix].name}
 {/if}
 
-{if $box_categories_array[ix].has_sub_cat}
-        $content .= CATEGORIES_SEPARATOR;
+{if $sideboxDocumentCategories[ix].has_sub_cat}
+        {$smart.const.CATEGORIES_SEPARATOR}
 {/if}
-</a>';
+</a>
 
-{if SHOW_COUNTS == 'true'}
-        if ((CATEGORIES_COUNT_ZERO == '1' and $box_categories_array[ix].count == 0) or $box_categories_array[$i]['count'] >= 1) {
-          $content .= CATEGORIES_COUNT_PREFIX . $box_categories_array[ix].count . CATEGORIES_COUNT_SUFFIX;
-{/if}
+{if $smarty.const.SHOW_COUNTS == 'true'}
+    {if ($smart.const.CATEGORIES_COUNT_ZERO == '1' && $sideboxDocumentCategories[ix].count == 0) || $sideboxDocumentCategories[$i].count >= 1}
+		{$smarty.const.CATEGORIES_COUNT_PREFIX}{$sideboxDocumentCategories[ix].count}{$smarty.const.CATEGORIES_COUNT_SUFFIX}
+	{/if}
 {/if}
 
-<br />';
+<br />
 {/section}
 {/bitmodule}
 {/if}

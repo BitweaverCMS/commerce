@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.6 2005/08/03 15:35:15 spiderr Exp $
+// $Id: functions_lookups.php,v 1.7 2005/08/04 07:01:00 spiderr Exp $
 //
 //
 /**
@@ -285,13 +285,8 @@
 
   function zen_get_category_description($category_id, $fn_language_id) {
     global $db;
-    $category_query = "select categories_description
-                       from " . TABLE_CATEGORIES_DESCRIPTION . "
-                       where categories_id = '" . $category_id . "'
-                       and language_id = '" . $fn_language_id . "'";
-
-    $category = $db->Execute($category_query);
-
+    $category_query = "select categories_description from " . TABLE_CATEGORIES_DESCRIPTION . " where categories_id = ? and language_id = ?";
+    $category = $db->query($category_query, array( $category_id, $fn_language_id) );
     return $category->fields['categories_description'];
   }
 

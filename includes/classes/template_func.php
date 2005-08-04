@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: template_func.php,v 1.2 2005/07/13 20:24:01 spiderr Exp $
+// $Id: template_func.php,v 1.3 2005/08/04 07:01:00 spiderr Exp $
 //
 
   class template_func {
@@ -43,6 +43,7 @@
     }
 
     function get_template_dir($template_code, $current_template, $current_page, $template_dir, $debug=false) {
+
 //	echo 'template_default/' . $template_dir . '=' . $template_code;
       if (template_func::file_exists($current_template . $current_page, $template_code)) {
         return $current_template . $current_page . '/';
@@ -54,6 +55,7 @@
         return DIR_WS_TEMPLATES . 'template_default/' . $template_dir;
 //        return $current_template . $template_dir;
       }
+
     }
     function file_exists($file_dir, $file_pattern, $debug=false) {
       $file_found = false;

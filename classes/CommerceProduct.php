@@ -148,8 +148,8 @@ class CommerceProduct extends BitBase {
 				$pListHash['category_id'] = current( $path );
 			}
 			if( is_numeric( $pListHash['category_id'] ) ) {
-				$fromSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON p.products_id = s.products_id, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c ";
-				$whereSql .= " AND p.products_id = p2c.products_id AND p2c.categories_id = c.categories_id AND c.parent_id=? ";
+				$fromSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
+				$whereSql .= " AND c.parent_id=? ";
 				array_push( $bindVars, $pListHash['category_id'] );
 			}
 		}
@@ -233,7 +233,7 @@ class CommerceProduct extends BitBase {
 	}
 
 	function store( &$pParamHash ) {
-		$this->StartTrans();
+		$this->mDb->StartTrans();
 		if( $this->verify( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
@@ -368,7 +368,7 @@ class CommerceProduct extends BitBase {
 				}
 			}
 */
-			$this->CompleteTrans();
+			$this->mDb->CompleteTrans();
 			$this->load();
 		}
 		return( $this->mProductsId );
@@ -382,11 +382,11 @@ class CommerceProduct extends BitBase {
 			if( $this->isPurchased() ) {
 				$this->mErrors['expunge'] = tra( 'This product cannot be deleted because it has been purchased' );
 			} else {
-				$this->StartTrans();
+				$this->mDb->StartTrans();
 				$this->query( "DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION ." WHERE `products_id`=?", array( $this->mProductsId ) );
 				$this->query( "DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES ." WHERE `products_id`=?", array( $this->mProductsId ) );
 				$this->query( "DELETE FROM " . TABLE_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
-				$this->CompleteTrans();
+				$this->mDb->CompleteTrans();
 			}
 		}
 		return( count( $this->mErrors ) == 0 );

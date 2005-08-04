@@ -58,6 +58,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
   define('DIR_FS_CLASSES', DIR_FS_INCLUDES . 'classes/');
   define('DIR_FS_FUNCTIONS', DIR_FS_INCLUDES . 'functions/');
   define('DIR_FS_MODULES', DIR_FS_INCLUDES . 'modules/');
+  define('DIR_FS_PAGES', DIR_FS_MODULES . 'pages/');
   define('DIR_FS_DOWNLOAD', DIR_FS_CATALOG . 'download/');
   define('DIR_FS_DOWNLOAD_PUBLIC', DIR_FS_CATALOG . 'pub/');
   define('DIR_WS_UPLOADS', DIR_WS_IMAGES . 'uploads/');

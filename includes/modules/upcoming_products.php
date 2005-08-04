@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.3 2005/07/14 04:55:13 spiderr Exp $
+// $Id: upcoming_products.php,v 1.4 2005/08/04 07:01:02 spiderr Exp $
 //
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
@@ -46,6 +46,6 @@
   $expected = $db->Execute($expected_query);
 
   if ($expected->RecordCount() > 0) {
-    require($template->get_template_dir('tpl_modules_upcoming_products.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_modules_upcoming_products.php');
+    require( DIR_FS_MODULES . 'tpl_modules_upcoming_products.php');
   }
 ?>

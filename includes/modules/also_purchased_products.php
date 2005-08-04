@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: also_purchased_products.php,v 1.2 2005/07/06 02:20:43 spiderr Exp $
+// $Id: also_purchased_products.php,v 1.3 2005/08/04 07:01:01 spiderr Exp $
 //
   if (isset($_GET['products_id']) && SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS > 0) {
 
@@ -51,7 +51,7 @@
 
         $title =  TEXT_ALSO_PURCHASED_PRODUCTS;
       }
-      require($template->get_template_dir('tpl_modules_also_purchased_products.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_modules_also_purchased_products.php');
+      require( DIR_FS_MODULES . 'tpl_modules_also_purchased_products.php');
     }
   }
 ?>

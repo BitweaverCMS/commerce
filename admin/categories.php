@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.5 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: categories.php,v 1.6 2005/08/04 07:00:59 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -198,14 +198,12 @@
                 $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
 
               }
-	    }
+		    }
           }
         } elseif ($action == 'update_category') {
           $update_sql_data = array('last_modified' => 'now()');
-
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-
-          $db->associateInsert(TABLE_CATEGORIES, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "'");
+          $db->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'name' => 'categories_id', 'value' => $categories_id ) );
         }
 
         $languages = zen_get_languages();
@@ -226,7 +224,13 @@
 
             $db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
           } elseif ($action == 'update_category') {
-            $db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array, 'update', "categories_id = '" . (int)$categories_id . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
+			$setSql = ( '`'.implode( array_keys( $sql_data_array ), '`=?, `' ).'`=?' );
+			$bindVars = array_values( $sql_data_array );
+			array_push( $bindVars, $categories_id );
+			array_push( $bindVars, $languages[$i]['id'] );
+
+			$query = "UPDATE " . TABLE_CATEGORIES_DESCRIPTION . " SET $setSql WHERE `categories_id`=? AND `language_id`=? ";
+			$db->query( $query, $bindVars );
           }
         }
 

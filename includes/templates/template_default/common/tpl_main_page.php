@@ -17,16 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.5 2005/07/26 12:31:54 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.6 2005/08/04 07:02:05 spiderr Exp $
 //
 
   $header_template = 'tpl_header.php';
   $footer_template = 'tpl_footer.php';
-?>
 
-<div class="commercebar">
-	<span class="path"><?php echo $breadcrumb->trail(' &raquo; '); ?></span>
-</div>
+  print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commerce_nav.tpl' );
+?>
 
 <div id="content">
 

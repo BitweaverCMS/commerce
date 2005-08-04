@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.5 2005/08/03 13:04:40 spiderr Exp $
+// $Id: product_listing.php,v 1.6 2005/08/04 07:01:02 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
@@ -190,4 +190,4 @@
     $show_bottom_submit_button = 'true';
   }
 ?>
-<?php  require($template->get_template_dir('tpl_modules_product_listing.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_modules_product_listing.php'); ?>
+<?php  require( DIR_FS_MODULES . 'tpl_modules_product_listing.php' ); ?>

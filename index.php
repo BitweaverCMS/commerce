@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.7 2005/08/02 15:35:34 spiderr Exp $
+// $Id: index.php,v 1.8 2005/08/04 07:00:58 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -56,7 +56,6 @@ ob_start();
 
 	switch( $current_page ) {
 		case 'checkout_shipping_address':
-		case 'product_liberty_info':
 		case 'checkout_shipping':
 			require( BITCOMMERCE_PKG_PATH.'templates/'.$current_page.'.php' );
 			break;

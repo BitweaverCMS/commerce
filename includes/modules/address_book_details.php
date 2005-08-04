@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_book_details.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: address_book_details.php,v 1.2 2005/08/04 07:01:01 spiderr Exp $
 //
-  require($template->get_template_dir('tpl_modules_address_book_details.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_modules_address_book_details.php');
+  require( DIR_FS_MODULES . 'tpl_modules_address_book_details.php');
 ?>
