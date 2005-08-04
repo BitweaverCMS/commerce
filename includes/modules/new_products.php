@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.8 2005/08/04 07:01:02 spiderr Exp $
+// $Id: new_products.php,v 1.9 2005/08/04 07:24:05 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
@@ -86,7 +86,7 @@
       } else {
         $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
       }
-      require( DIR_FS_MODULES . '/tpl_modules_whats_new.php' );
+      require( DIR_FS_MODULES . 'tpl_modules_whats_new.php' );
     }
   }
 ?>
