@@ -2,17 +2,12 @@
 
 {bitmodule title=$moduleTitle name="orderhistory"}
 
-<table border="0" width="100%" cellspacing="0" cellpadding="1">
-{section name=ix loop=$sideboxCustomerOrders}
-<tr>
-	<td class="infoboxcontents">
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=product_info&products_id={$sideboxCustomerOrders[ix].id}">{$sideboxCustomerOrders[ix].name}</a>
-	</td>
-	<td class="infoboxcontents" align="right" valign="top"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=index.php&amp;action=cust_order&pid={$customer_orders[ix].id}">{biticon ipackage="bitcommerce" iname="cart"}</a>
-	</td>
-</tr>
-{/section}
-</table>
+<ul>
+{foreach from=$sideboxCustomerOrders key=orderId item=order}
+<li><a class="floaticon" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=index.php&amp;action=cust_order&pid={$order.id}">{biticon ipackage="bitcommerce" iname="small_cart"}</a><a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=product_info&products_id={$order.id}">{$order.name}</a>
+</li>
+{/foreach}
+</ul>
 {/bitmodule}
 
 {/if}
