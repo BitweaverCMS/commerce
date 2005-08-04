@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.5 2005/08/03 00:35:49 spiderr Exp $
+// $Id: meta_tags.php,v 1.6 2005/08/04 17:59:42 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -34,7 +34,7 @@
     define('TAGLINE', '');
   }
 
-
+	$keywords_string_metatags = '';
 // Get all top category names for use with web site keywords
   $sql = "select cd.categories_name from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.parent_id = '0' and c.categories_id = cd.categories_id and cd.language_id='" . (int)$_SESSION['languages_id'] . "' and c.categories_status='1'";
   $keywords_metatags = $db->Execute($sql);

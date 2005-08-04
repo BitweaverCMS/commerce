@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.7 2005/08/04 15:09:12 spiderr Exp $
+//  $Id: application_top.php,v 1.8 2005/08/04 17:59:41 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -27,7 +27,7 @@ $gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
 
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-// error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE);
 
 // Start the clock for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());

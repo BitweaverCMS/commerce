@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.15 2005/08/03 15:35:14 spiderr Exp $
+// $Id: application_top.php,v 1.16 2005/08/04 17:59:42 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
 // if( defined( 'IS_LIVE' ) ) {
-	error_reporting(E_ALL & ~E_NOTICE);
+// 	error_reporting(E_ALL & ~E_NOTICE);
 // }
 
   @ini_set("arg_separator.output","&");
@@ -147,10 +147,12 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
 // currency
   if( empty( $_SESSION['currency'] ) || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
     if (isset($_REQUEST['currency'])) {
-      if ( empty( $_SESSION['currency'] ) && zen_currency_exists($_REQUEST['currency'])) $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
-    } else {
-      $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
-    }
+      if ( zen_currency_exists($_REQUEST['currency'])) {
+	   $_SESSION['currency'] = $_REQUEST['currency'];
+      } else {
+        $_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
+      }
+	}
   }
 
 // Sanitize get parameters in the url
