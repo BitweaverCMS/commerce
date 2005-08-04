@@ -1838,7 +1838,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (3, 'Document - General', 'document_general', '3', 'N', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (4, 'Document - Product', 'document_product', '3', 'Y', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (5, 'Product - Free Shipping', 'product_free_shipping', '1', 'Y', '', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (6, 'Product - Linked', 'product_liberty', '1', 'Y', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (0, 'Dropdown')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (1, 'Text')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (2, 'Radio')",
