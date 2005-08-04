@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.16 2005/08/04 17:59:42 spiderr Exp $
+// $Id: application_top.php,v 1.17 2005/08/04 21:38:10 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
 // if( defined( 'IS_LIVE' ) ) {
-// 	error_reporting(E_ALL & ~E_NOTICE);
+ 	error_reporting(E_ALL & ~E_NOTICE);
 // }
 
   @ini_set("arg_separator.output","&");
