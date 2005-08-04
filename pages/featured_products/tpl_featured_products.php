@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_featured_products.php,v 1.1 2005/08/04 07:01:34 spiderr Exp $
+// $Id: tpl_featured_products.php,v 1.2 2005/08/04 07:15:21 spiderr Exp $
 //
 ?>
 
@@ -34,10 +34,12 @@
 
   $featured_products_array = array();
 
-  $featured_products_query_raw = "select p.products_id, pd.products_name, p.products_image, p.products_price, p.products_tax_class_id, p.products_date_added, m.manufacturers_name, p.products_model, p.products_quantity, p.products_weight from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m on (p.manufacturers_id = m.manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                                  left join " . TABLE_FEATURED . " f on p.products_id = f.products_id
-                                  where p.products_status = '1' and p.products_id = f.products_id and f.status = '1'
-                                  and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'" . $order_by;
+  $featured_products_query_raw = "select p.products_id, pd.products_name, p.products_image, p.products_price, p.products_tax_class_id, p.products_date_added, m.manufacturers_name, p.products_model, p.products_quantity, p.products_weight from " . TABLE_PRODUCTS . " p
+  				INNER JOIN  " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
+				left join " . TABLE_MANUFACTURERS . " m on (p.manufacturers_id = m.manufacturers_id)
+                left join " . TABLE_FEATURED . " f on p.products_id = f.products_id
+			where p.products_status = '1' and p.products_id = f.products_id and f.status = '1'
+                                  and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'" . $order_by;
 
   $featured_products_split = new splitPageResults($featured_products_query_raw, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS);
 ?>

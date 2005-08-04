@@ -11,6 +11,7 @@
       <span class="price">{$sideboxFeature.display_price}</span>
 {/if}
 
+<div><a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=featured_products">{tr}See more...{/tr}</a></div>
 </div>
 {/bitmodule}
 {/if}
