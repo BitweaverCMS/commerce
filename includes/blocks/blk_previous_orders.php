@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_previous_orders.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: blk_previous_orders.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
 //
   $orders_query = "select o.orders_id, o.date_purchased, o.delivery_name,
                           o.delivery_country, o.billing_name, o.billing_country,
@@ -41,7 +41,7 @@
       $order_name = $orders->fields['billing_name'];
       $order_country = $orders->fields['billing_country'];
     }
-    require($template->get_template_dir('tpl_block_previous_orders.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_block_previous_orders.php');
+    require( DIR_FS_BLOCKS . 'tpl_block_previous_orders.php');
     $orders->MoveNext();
   }
 ?>

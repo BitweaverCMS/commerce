@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_checkout_shipping_address.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: blk_checkout_shipping_address.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
 //
       $radio_buttons = 0;
 
@@ -33,7 +33,7 @@
 
       while (!$addresses->EOF) {
         $format_id = zen_get_address_format_id($addresses->fields['country_id']);
-        require($template->get_template_dir('tpl_block_checkout_shipping_address.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_block_checkout_shipping_address.php');
+        require( DIR_FS_BLOCKS . 'tpl_block_checkout_shipping_address.php');
         $radio_buttons++;
         $addresses->MoveNext();
       }

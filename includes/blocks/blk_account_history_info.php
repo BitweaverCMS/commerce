@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history_info.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: blk_account_history_info.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
 //
   $statuses_query = "select os.orders_status_name, osh.date_added, osh.comments
                      from   " . TABLE_ORDERS_STATUS . " os, " . TABLE_ORDERS_STATUS_HISTORY . " osh
@@ -27,10 +27,10 @@
                      order by   osh.date_added";
 
   $statuses = $db->Execute($statuses_query);
- 
+
   while (!$statuses->EOF) {
 
-    require($template->get_template_dir('tpl_block_account_history_info.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_block_account_history_info.php');
+    require( DIR_FS_BLOCKS . 'tpl_block_account_history_info.php');
 
     $statuses->MoveNext();
   }
