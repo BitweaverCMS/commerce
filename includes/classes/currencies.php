@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.4 2005/08/04 17:33:41 spiderr Exp $
+// $Id: currencies.php,v 1.5 2005/08/04 18:05:56 spiderr Exp $
 //
 
 ////
@@ -127,11 +127,11 @@
 		if( !empty( $pParamHash['symbol_left'] ) ) {
 			$pParamHash['currency_store']['symbol_left'] = $pParamHash['symbol_left'];
 		}
+		if( !empty( $pParamHash['symbol_right'] ) ) {
+			$pParamHash['currency_store']['symbol_right'] = $pParamHash['symbol_right'];
+		}
 		if( !empty( $pParamHash['title'] ) ) {
 			$pParamHash['currency_store']['title'] = $pParamHash['title'];
-		}
-		if( empty( $pParamHash['symbol_right'] ) ) {
-			$pParamHash['currency_store']['symbol_right'] = $pParamHash['symbol_right'];
 		}
 		$pParamHash['currency_store']['value'] = ( !empty( $pParamHash['value'] ) ? $pParamHash['value'] : 1 );
 		$pParamHash['currency_store']['last_updated'] = 'now()';
