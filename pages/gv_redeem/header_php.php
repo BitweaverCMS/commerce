@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/04 15:09:15 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the login page
   if (!$_SESSION['customer_id']) {
@@ -52,7 +52,7 @@
   } else {
     zen_redirect(zen_href_link(FILENAME_DEFAULT));
   }
-  if ((!$error) && ($_SESSION['customer_id'])) {
+  if( (!$error) && ( $gBitUser->isRegistered() ) ) {
 // Update redeem status
     $gv_query = "insert into  " . TABLE_COUPON_REDEEM_TRACK . "
                               (coupon_id, customer_id, redeem_date, redeem_ip)
@@ -63,7 +63,7 @@
 
     $gv_update = "update " . TABLE_COUPONS . "
                   set coupon_active = 'N'
-                  where coupon_id = '" . $coupon['coupon_id'] . "'";
+                  where coupon_id = '" . $coupon->fields['coupon_id'] . "'";
 
     $db->Execute($gv_update);
 

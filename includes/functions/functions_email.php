@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_email.php,v 1.2 2005/08/04 15:09:14 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -60,11 +60,11 @@ define('EMAIL_SYSTEM_DEBUG','off');
     if (!isset($to_email_address)) $to_email_address=$to_address; //if not more than one, just use the main one.
 
     //define some additional html message blocks available to templates, then build the html portion.
-    if ($block['EMAIL_TO_NAME']=='')      $block['EMAIL_TO_NAME'] = $to_name;
-    if ($block['EMAIL_TO_ADDRESS']=='')   $block['EMAIL_TO_ADDRESS'] = $to_email_address;
-    if ($block['EMAIL_SUBJECT']=='')      $block['EMAIL_SUBJECT'] = $email_subject;
-    if ($block['EMAIL_FROM_NAME']=='')    $block['EMAIL_FROM_NAME'] = $from_email_name;
-    if ($block['EMAIL_FROM_ADDRESS']=='') $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
+    if( empty( $block['EMAIL_TO_NAME'] ) )      $block['EMAIL_TO_NAME'] = $to_name;
+    if( empty( $block['EMAIL_TO_ADDRESS'] ) )   $block['EMAIL_TO_ADDRESS'] = $to_email_address;
+    if( empty( $block['EMAIL_SUBJECT'] ) )      $block['EMAIL_SUBJECT'] = $email_subject;
+    if( empty( $block['EMAIL_FROM_NAME'] ) )    $block['EMAIL_FROM_NAME'] = $from_email_name;
+    if( empty( $block['EMAIL_FROM_ADDRESS'] ) ) $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
     $email_html = zen_build_html_email_from_template($module, $block);
 
 
@@ -118,7 +118,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
     }
 
 // process attachments
-    if (EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
+    if ( defined( 'EMAIL_ATTACHMENTS_ENABLED' ) && EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
 //    while ( list($key, $value) = each($attachments_list)) {
       $fileraw = $message->get_file(DIR_FS_ADMIN.'attachments/'.$attachments_list['file']);
       $filemime = ((zen_not_null($attachments_list['file_type']) ) ? $attachments_list['file_type'] : $message->findMime($attachments_list) );    //findMime determines what type this attachment is (XLS, PDF, etc) and sends proper vendor c_type.
@@ -207,7 +207,6 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 
   function zen_build_html_email_from_template($module='default',$block) {
-
   // Identify and Read the template file for the type of message being sent
     $template_filename_base = DIR_FS_EMAIL_TEMPLATES . "email_template_";
 
@@ -232,31 +231,32 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 
   //check for some specifics that need to be included with all messages
-  if ($block['EMAIL_STORE_NAME']=='')       $block['EMAIL_STORE_NAME']       = STORE_NAME;
-  if ($block['EMAIL_STORE_URL']=='')        $block['EMAIL_STORE_URL']        = '<a href="'.HTTP_CATALOG_SERVER . DIR_WS_CATALOG.'">'.STORE_NAME.'</a>';
-  if ($block['EMAIL_STORE_OWNER']=='')      $block['EMAIL_STORE_OWNER']      = STORE_OWNER;
-  if ($block['EMAIL_FOOTER_COPYRIGHT']=='') $block['EMAIL_FOOTER_COPYRIGHT'] = EMAIL_FOOTER_COPYRIGHT;
-  if ($block['EMAIL_DISCLAIMER']=='')       $block['EMAIL_DISCLAIMER']       = sprintf(EMAIL_DISCLAIMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
-  if ($block['EMAIL_SPAM_DISCLAIMER']=='')  $block['EMAIL_SPAM_DISCLAIMER']  = EMAIL_SPAM_DISCLAIMER;
-  if ($block['BASE_HREF']=='')              $block['BASE_HREF']              = HTTP_SERVER . DIR_WS_CATALOG;
-  if ($block['EMAIL_DATE_SHORT']=='')       $block['EMAIL_DATE_SHORT']       = zen_date_short(date("Y-m-d"));
-  if ($block['EMAIL_DATE_LONG']=='')        $block['EMAIL_DATE_LONG']        = zen_date_long(date("Y-m-d"));
+  if( empty( $block['EMAIL_STORE_NAME'] ) )       $block['EMAIL_STORE_NAME']       = STORE_NAME;
+  if( empty( $block['EMAIL_STORE_URL'] ) )        $block['EMAIL_STORE_URL']        = '<a href="'.HTTP_CATALOG_SERVER . DIR_WS_CATALOG.'">'.STORE_NAME.'</a>';
+  if( empty( $block['EMAIL_STORE_OWNER'] ) )      $block['EMAIL_STORE_OWNER']      = STORE_OWNER;
+  if( empty( $block['EMAIL_FOOTER_COPYRIGHT'] ) ) $block['EMAIL_FOOTER_COPYRIGHT'] = EMAIL_FOOTER_COPYRIGHT;
+  if( empty( $block['EMAIL_DISCLAIMER'] ) )       $block['EMAIL_DISCLAIMER']       = sprintf(EMAIL_DISCLAIMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
+  if( empty( $block['EMAIL_SPAM_DISCLAIMER'] ) )  $block['EMAIL_SPAM_DISCLAIMER']  = EMAIL_SPAM_DISCLAIMER;
+  if( empty( $block['BASE_HREF'] ) )              $block['BASE_HREF']              = HTTP_SERVER . DIR_WS_CATALOG;
+  if( empty( $block['EMAIL_DATE_SHORT'] ) )       $block['EMAIL_DATE_SHORT']       = zen_date_short(date("Y-m-d"));
+  if( empty( $block['EMAIL_DATE_LONG'] ) )        $block['EMAIL_DATE_LONG']        = zen_date_long(date("Y-m-d"));
 
-    if ($block['EXTRA_INFO'] =='EXTRA_INFO')  $block['EXTRA_INFO']  = '';
+    if( empty( $block['GV_LINK_OTHER'] ) )  $block['GV_LINK_OTHER']  = '';
+    if( empty( $block['EXTRA_INFO'] ) || $block['EXTRA_INFO'] =='EXTRA_INFO' )  $block['EXTRA_INFO']  = '';
     if (substr($module,-6) != '_extra' && $module != 'contact_us')  $block['EXTRA_INFO']  = '';
 
     $block['COUPON_BLOCK'] = '';
-    if ($block['COUPON_TEXT_VOUCHER_IS'] && $block['COUPON_TEXT_TO_REDEEM']) {
+    if( !empty( $block['COUPON_TEXT_VOUCHER_IS'] ) && !empty( $block['COUPON_TEXT_TO_REDEEM'] ) ) {
       $block['COUPON_BLOCK'] = '<div class="coupon-block">' . $block['COUPON_TEXT_VOUCHER_IS'] . $block['COUPON_DESCRIPTION'] . '<br />' . $block['COUPON_TEXT_TO_REDEEM'] . '<span class="coupon-code">' . $block['COUPON_CODE'] . '</span></div>';
     }
 
     $block['GV_BLOCK'] = '';
-    if ($block['GV_WORTH'] && $block['GV_REDEEM'] && $block['GV_CODE_URL']) {
+    if ( ( $block['GV_WORTH'] ) && !empty( $block['GV_REDEEM'] ) && !empty( $block['GV_CODE_URL'] ) ) {
       $block['GV_BLOCK'] = '<div class="gv-block">' . $block['GV_WORTH'] . '<br />' . $block['GV_REDEEM'] . $block['GV_CODE_URL'] . '<br />' . $block['GV_LINK_OTHER'] . '</div>';
     }
 
     //prepare the "unsubscribe" link:
-    if (function_exists(zen_catalog_href_link)) {
+    if (function_exists( 'zen_catalog_href_link' )) {
   $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',TEXT_UNSUBSCRIBE) . ' <a href="' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
     } else {
   $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',TEXT_UNSUBSCRIBE) . ' <a href="' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';

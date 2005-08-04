@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.6 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: application_top.php,v 1.7 2005/08/04 15:09:12 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -27,13 +27,13 @@ $gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
 
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-error_reporting(E_ALL & ~E_NOTICE);
+// error_reporting(E_ALL & ~E_NOTICE);
 
 // Start the clock for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 
 // Set the level of error reporting
-//  error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE);
 
 // set php_self in the local scope
   if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -143,24 +143,6 @@ error_reporting(E_ALL & ~E_NOTICE);
   define('PROJECT_DB_VERSION_PATCH2',$project_db_info->fields['project_version_patch2']);
   define('PROJECT_DB_VERSION_PATCH1_SOURCE',$project_db_info->fields['project_version_patch1_source']);
   define('PROJECT_DB_VERSION_PATCH2_SOURCE',$project_db_info->fields['project_version_patch2_source']);
-
-// set application wide parameters
-  $configuration = $db->Execute('select configuration_key as cfg_key, configuration_value as cfg_value
-                                 from ' . TABLE_CONFIGURATION);
-
-  while (!$configuration->EOF) {
-    define($configuration->fields['cfg_key'], $configuration->fields['cfg_value']);
-    $configuration->MoveNext();
-  }
-
-// set product type layout paramaters
-  $configuration = $db->Execute('select configuration_key as cfg_key, configuration_value as cfg_value
-                          from ' . TABLE_PRODUCT_TYPE_LAYOUT);
-
-  while (!$configuration->EOF) {
-    define($configuration->fields['cfg_key'], $configuration->fields['cfg_value']);
-    $configuration->movenext();
-  }
 
 // GZIP for Admin
 // if gzip_compression is enabled, start to buffer the output
