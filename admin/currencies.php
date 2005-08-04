@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.4 2005/08/03 17:07:31 spiderr Exp $
+//  $Id: currencies.php,v 1.5 2005/08/04 17:33:40 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  
+
   $currencies = new currencies();
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -54,7 +54,7 @@
           $db->associateInsert(TABLE_CURRENCIES, $sql_data_array);
           $currency_id = zen_db_insert_id( TABLE_CURRENCIES, 'currency_id' );
         } elseif ($action == 'save') {
-          $db->associateInsert(TABLE_CURRENCIES, $sql_data_array, 'update', "currencies_id = '" . (int)$currency_id . "'");
+          $db->associateUpdate(TABLE_CURRENCIES, $sql_data_array, array( 'name'=>'currencies_id', 'value'=> $currency_id ) );
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
@@ -90,6 +90,9 @@
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
         break;
+      case 'bulk':
+	  	$currencies->bulkImport( $_REQUEST['bulk_currencies'] );
+	  	break;
       case 'update':
         $server_used = CURRENCY_SERVER_PRIMARY;
 
@@ -239,7 +242,27 @@
 <?php
   }
 ?>
-                </table></td>
+                </table>
+
+<?=zen_draw_form('currencies', FILENAME_CURRENCIES, 'page=' . $_GET['page'] . (isset($cInfo) ? '&cID=' . $cInfo->currencies_id : '') . '&action=bulk')?>
+				<h1 class="pageHeading">Bulk Import Currencies</h1>
+				Here you can paste in currencies values. All values should be relative to the US Dollar, and have the following example format:
+<fieldset>
+[three letter abbreviatinon] [Name separated by at most one space] [dollar/currency] [currency/dollar]
+</fieldset>
+<textarea cols="80" rows="10" name="bulk_currencies">
+USD United States Dollars                 1.0000000000          1.0000000000
+EUR Euro                                  1.2186191347          0.8206009339
+GBP United Kingdom Pounds                 1.7684362222          0.5654713399
+CAD Canada Dollars                        0.8253906445          1.2115475341
+AUD Australia Dollars                     0.7620792397          1.3121995036
+JPY Japan Yen                             0.0089098765        112.2350011215
+</textarea>
+
+<br/><input type="submit" name="bulk_submit" value="Bulk Update" />
+
+</form>
+				</td>
               </tr>
             </table></td>
 <?php

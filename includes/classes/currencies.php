@@ -17,18 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.3 2005/08/03 13:03:20 spiderr Exp $
+// $Id: currencies.php,v 1.4 2005/08/04 17:33:41 spiderr Exp $
 //
 
 ////
 // Class to handle currencies
 // TABLES: currencies
-  class currencies {
+  class currencies extends BitBase {
     var $currencies;
 
 // class constructor
     function currencies() {
       global $db;
+	  BitBase::BitBase();
       $this->currencies = array();
       $currencies_query = "select code, title, symbol_left, symbol_right, decimal_point,
                                   thousands_point, decimal_places, value
@@ -109,5 +110,65 @@
     function display_price($products_price, $products_tax, $quantity = 1) {
       return $this->format(zen_add_tax($products_price, $products_tax) * $quantity);
     }
+
+	function verify( &$pParamHash ) {
+		if( empty( $pParamHash['code'] ) ) {
+			$this->mErrors = tra( 'A currency code is required' );
+		} else {
+			$pParamHash['currency_store']['code'] = $pParamHash['code'];
+		}
+		$pParamHash['currency_store']['decimal_places'] = ( !empty( $pParamHash['decimal_places'] ) ? $pParamHash['decimal_places'] : 2 );
+		$pParamHash['currency_store']['decimal_point'] = ( !empty( $pParamHash['decimal_point'] ) ? $pParamHash['decimal_point'] : '.' );
+		$pParamHash['currency_store']['thousands_point'] = ( !empty( $pParamHash['thousands_point'] ) ? $pParamHash['thousands_point'] : ',' );
+
+		if( empty( $pParamHash['symbol_left'] ) && empty( $pParamHash['symbol_right'] ) ) {
+			$pParamHash['currency_store']['symbol_right'] = $pParamHash['code'];
+		}
+		if( !empty( $pParamHash['symbol_left'] ) ) {
+			$pParamHash['currency_store']['symbol_left'] = $pParamHash['symbol_left'];
+		}
+		if( !empty( $pParamHash['title'] ) ) {
+			$pParamHash['currency_store']['title'] = $pParamHash['title'];
+		}
+		if( empty( $pParamHash['symbol_right'] ) ) {
+			$pParamHash['currency_store']['symbol_right'] = $pParamHash['symbol_right'];
+		}
+		$pParamHash['currency_store']['value'] = ( !empty( $pParamHash['value'] ) ? $pParamHash['value'] : 1 );
+		$pParamHash['currency_store']['last_updated'] = 'now()';
+
+		return( count( $this->mErrors ) == 0 );
+	}
+
+	function store( &$pParamHash ) {
+		if( $this->verify( $pParamHash ) ) {
+			if( $currenciesId = $this->currencyExists( $pParamHash['currency_store']['code'] ) ) {
+				$this->associateUpdate( TABLE_CURRENCIES, $pParamHash['currency_store'], array( 'name' => 'currencies_id', 'value'=>$currenciesId ) );
+			} else {
+				$this->associateInsert( TABLE_CURRENCIES, $pParamHash['currency_store'] );
+				$currenciesId = zen_db_insert_id( TABLE_CURRENCIES, 'currencies_id' );
+			}
+		}
+	}
+
+	function currencyExists( $code ) {
+		return $this->getOne( "select currencies_id from " . TABLE_CURRENCIES . " where code = ?", array( $code ) );
+	}
+
+	function bulkImport( $pBulkString ) {
+		$lines = explode( "\n", $pBulkString );
+		if( count( $lines ) ) {
+			foreach( $lines as $line ) {
+				$currValues = array();
+				preg_match( '/([A-Z]{3}) ([\w]+[\w ]*) [ ]+([\d\.]+)[ ]+([\d\.]+)/', $line, $currValues );
+				if( count( $currValues ) > 1 ) {
+					$currHash['code'] = $currValues[1];
+					$currHash['title'] = $currValues[2];
+					$currHash['value'] = $currValues[4];
+					$this->store( $currHash );
+				}
+			}
+		}
+		sscanf( $pBulkString, "\n" );
+	}
   }
 ?>
