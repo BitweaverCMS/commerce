@@ -6,6 +6,6 @@
 		<br>
 		<input value="Search" style="width: 50px;"  type="submit">
 		<br>
-		<a href="{$gBitLoc.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search" >Detailed Search</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search" >Detailed Search</a>
 	</div>
 {/form}

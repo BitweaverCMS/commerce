@@ -91,7 +91,7 @@
 						{formfeedback error=$userErrors.rnd_num_reg}
 						{formlabel label="Your registration code"}
 						{forminput}
-							<img src="{$gBitLoc.USERS_PKG_URL}random_num_img.php" alt="{tr}Random Image{/tr}"/>
+							<img src="{$smarty.const.USERS_PKG_URL}random_num_img.php" alt="{tr}Random Image{/tr}"/>
 						{/forminput}
 					</div>
 
