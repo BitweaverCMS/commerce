@@ -1019,9 +1019,9 @@ BITCOMMERCE_DB_PREFIX.'paypal_pment_stat_his' => "
 
 BITCOMMERCE_DB_PREFIX.'pubs_credit_card_log' => "
   orders_id I4 NOTNULL ,
-  ref_id I4 NOTNULL ,
-  trans_result C( 250 ) NOTNULL,
-  trans_auth_code C( 30 ) NOTNULL,
+  ref_id C(64) NOTNULL ,
+  trans_result C(250) NOTNULL,
+  trans_auth_code C(30) NOTNULL,
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
