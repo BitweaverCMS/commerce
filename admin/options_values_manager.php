@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.4 2005/08/05 20:11:51 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -655,14 +655,16 @@ function go_option() {
 <?php
     $per_page = MAX_ROW_LISTS_OPTIONS;
 //    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by LPAD(pov2po.products_options_id,11,'0'), LPAD(pov.products_ov_sort_order,11,'0'), pov.products_options_values_name";
-    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id     left join " . TABLE_PRODUCTS_OPTIONS . " po on pov2po.products_options_id = po.products_options_id where pov.language_id = '" . (int)$_SESSION['languages_id'] . "' and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by  po.products_options_name, LPAD(pov.products_ov_sort_order,11,'0'), pov.products_options_values_name";
+    $values = "select pov.products_options_values_id, pov.products_options_values_name, pov2po.products_options_id, pov.products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id     left join " . TABLE_PRODUCTS_OPTIONS . " po on pov2po.products_options_id = po.products_options_id where pov.language_id = ? and pov2po.products_options_values_id !='" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "' order by  po.products_options_name, LPAD(pov.products_ov_sort_order,11,'0'), pov.products_options_values_name";
+	$bindVars[] = $_SESSION['languages_id'];
+
     if (!isset($_GET['value_page'])) {
       $_GET['value_page'] = 1;
     }
     $prev_value_page = $_GET['value_page'] - 1;
     $next_value_page = $_GET['value_page'] + 1;
 
-    $value_query = $db->Execute($values);
+    $value_query = $db->query($values, $bindVars);
 
     $value_page_start = ($per_page * $_GET['value_page']) - $per_page;
     $num_rows = $value_query->RecordCount();
@@ -678,8 +680,6 @@ function go_option() {
 
 // fix limit error on some versions
     if ($value_page_start < 0) { $value_page_start = 0; }
-
-    $values = $values . " LIMIT $value_page_start, $per_page";
 
     // Previous
     if ($prev_value_page)  {
@@ -717,7 +717,7 @@ function go_option() {
 <?php
     $next_id = 1;
     $rows = 0;
-    $values_values = $db->Execute($values);
+    $values_values = $db->query($values, $bindVars, $per_page, $value_page_start);
     while (!$values_values->EOF) {
       $options_name = zen_options_name($values_values->fields['products_options_id']);
 // iii 030813 added: Option Type Feature and File Uploading

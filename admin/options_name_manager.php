@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.5 2005/08/03 17:07:44 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.6 2005/08/05 20:11:51 spiderr Exp $
 //
 
   require('includes/application_top.php');
   $languages = zen_get_languages();
 
-  
+
   $currencies = new currencies();
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -67,15 +67,7 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $option_name = zen_db_prepare_input($option_name_array[$languages[$i]['id']]);
 
-          $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
-                      (products_options_id, products_options_name, language_id, products_options_sort_order, products_options_type, products_options_images_per_row, products_options_images_style)
-                      values ('" . (int)$products_options_id . "',
-                              '" . zen_db_input($option_name) . "',
-                              '" . (int)$languages[$i]['id'] . "',
-                              '" . $products_options_sort_order[$languages[$i]['id']] . "',
-                              '" . zen_db_input($option_type) . "',
-                              '" . zen_db_input($products_options_images_per_row) . "',
-                              '" . zen_db_input($products_options_images_style) . "')");
+          $db->query(" insert into " . TABLE_PRODUCTS_OPTIONS . " (products_options_id, products_options_name, language_id, products_options_sort_order, products_options_type, products_options_images_per_row, products_options_images_style) values ( ?, ?, ?, ?, ?, ?, ? )", array( $products_options_id, $option_name, $languages[$i]['id'], $products_options_sort_order[$languages[$i]['id']], $option_type, $products_options_images_per_row, $products_options_images_style ) );
         }
 
 // iii 030811 added:  For TEXT and FILE option types, automatically add
