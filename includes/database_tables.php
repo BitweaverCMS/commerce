@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.7 2005/07/30 03:01:53 spiderr Exp $
+// $Id: database_tables.php,v 1.8 2005/08/06 12:40:40 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -88,6 +88,7 @@
   define('TABLE_PRODUCTS_TO_CATEGORIES', '`'.BITCOMMERCE_DB_PREFIX . 'products_to_categories`');
   define('TABLE_PROJECT_VERSION', '`'.BITCOMMERCE_DB_PREFIX . 'project_version`');
   define('TABLE_PROJECT_VERSION_HISTORY', '`'.BITCOMMERCE_DB_PREFIX . 'project_version_history`');
+  define('TABLE_PUBS_CREDIT_CARD_LOG',  '`'.BITCOMMERCE_DB_PREFIX . 'pubs_credit_card_log`');
   define('TABLE_QUERY_BUILDER', '`'.BITCOMMERCE_DB_PREFIX . 'query_builder`');
   define('TABLE_REVIEWS', '`'.BITCOMMERCE_DB_PREFIX . 'reviews`');
   define('TABLE_REVIEWS_DESCRIPTION', '`'.BITCOMMERCE_DB_PREFIX . 'reviews_description`');
