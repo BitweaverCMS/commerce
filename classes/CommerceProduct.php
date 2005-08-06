@@ -42,6 +42,7 @@ class CommerceProduct extends BitBase {
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
+						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( p.`related_content_id`=tc.`content_id`)
 					  WHERE p.`products_id`=? AND pd.`language_id`=?";
 			if( $ret = $db->getRow( $query, $bindVars ) ) {
