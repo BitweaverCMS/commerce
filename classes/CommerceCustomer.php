@@ -16,7 +16,7 @@
 		function load() {
 			if( $this->isValid() ) {
 				$sql = "SELECT * FROM " . TABLE_CUSTOMERS . " WHERE `customers_id`=?";
-				if( $rs = $this->query( $sql, array( $this->mCustomerId ) ) ) {
+				if( $rs = $this->mDb->query( $sql, array( $this->mCustomerId ) ) ) {
 					$this->mInfo = $rs->fields;
 				}
 			}
@@ -146,11 +146,11 @@
 
 					;
 
-					if( $check = $this->query( $check_query , array( $pParamHash['country_id'] ) ) ) {
+					if( $check = $this->mDb->query( $check_query , array( $pParamHash['country_id'] ) ) ) {
 						$zone_query = "select distinct zone_id from " . TABLE_ZONES . "
 									   where zone_country_id = ? and (zone_name like ? OR zone_code like ?)";
 
-						if ( $rs = $this->query($zone_query, array( $pParamHash['country_id'], strtoupper( $pParamHash['state'] ), strtoupper( $pParamHash['state'] ) ) ) ) {
+						if ( $rs = $this->mDb->query($zone_query, array( $pParamHash['country_id'], strtoupper( $pParamHash['state'] ), strtoupper( $pParamHash['state'] ) ) ) ) {
 							$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 							$pParamHash['address_store']['entry_zone_id'] = $rs->fields['zone_id'];
 						} else {
@@ -182,7 +182,7 @@
 					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 					$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 				} else {
-					$this->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
+					$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
 				}
 				if( !$this->getDefaultAddress() ) {
 					$this->setDefaultAddress( $pParamHash['address'] );
@@ -202,7 +202,7 @@
 					array_push( $bindVars, $this->mCustomerId );
 				}
 				$query = "SELECT * FROM " . TABLE_ADDRESS_BOOK . " WHERE `address_book_id`=? $whereSql";
-				if( $rs = $this->query( $query, $bindVars ) ) {
+				if( $rs = $this->mDb->query( $query, $bindVars ) ) {
 					$ret = $rs->fields;
 				}
 			}
@@ -230,7 +230,7 @@
 			$ret = NULL;
 			if( $this->isValid() && ( is_numeric( $pAddressId ) || is_null( $pAddressId ) ) ) {
 				$query = "UPDATE " . TABLE_CUSTOMERS . " SET `customers_default_address_id`=? WHERE `customers_id`=?";
-				$this->query( $query, array( $pAddressId, $this->mCustomerId ) );
+				$this->mDb->query( $query, array( $pAddressId, $this->mCustomerId ) );
 				$this->mInfo['customers_default_address_id'] = $pAddressId;
 				$ret = TRUE;
 			}
@@ -265,7 +265,7 @@
 			if( is_numeric( $pAddressId ) ) {
 				$query = "select count(*) as total from " . TABLE_ADDRESS_BOOK . "
 						  where `customers_id` = ? and `address_book_id` = ?";
-				$ret = $this->GetOne( $query, array( $this->mCustomerId, $pAddressId ) );
+				$ret = $this->mDb->getOne( $query, array( $this->mCustomerId, $pAddressId ) );
 			}
 			return $ret;
 		}

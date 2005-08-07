@@ -168,8 +168,8 @@ class CommerceProduct extends BitBase {
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 					$fromSql
-				  where p.products_status = '1' $whereSql ORDER BY ".$this->convert_sortmode( $pListHash['sort_mode'] );
-		if( $rs = $this->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
+				  where p.products_status = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
+		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			$ret = $rs->GetAssoc();
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
@@ -244,16 +244,16 @@ class CommerceProduct extends BitBase {
 	//          if (isset($pParamHash['products_image']) && zen_not_null($pParamHash['products_image']) && ($pParamHash['products_image'] != 'none')) {
 			if( $this->isValid() ) {
 				$action = 'update_product';
-				$this->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'name'=>'products_id', 'value'=>$this->mProductsId ) );
+				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'name'=>'products_id', 'value'=>$this->mProductsId ) );
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( (int)$this->mProductsId );
 			} else {
 				$action = 'insert_product';
-				$this->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
+				$this->mDb->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
 				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( $this->mProductsId );
-				$this->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
+				$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
 			}
 
 			$languages = zen_get_languages();
@@ -267,12 +267,12 @@ class CommerceProduct extends BitBase {
 				if ($action == 'insert_product') {
 					$bindVars['products_id'] = $this->mProductsId;
 					$bindVars['language_id'] = $language_id;
-					$this->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
+					$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
 				} elseif ($action == 'update_product') {
 					$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
 					$bindVars['products_id'] = $this->mProductsId;
 					$bindVars['language_id'] = $language_id;
-					$this->query( $query, $bindVars );
+					$this->mDB->query( $query, $bindVars );
 				}
 			}
 
@@ -292,11 +292,11 @@ class CommerceProduct extends BitBase {
 					$bindVars['metatags_description'] = zen_db_prepare_input($pParamHash['metatags_description'][$language_id]);
 				}
 
-				$this->query( "DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "WHERE `products_id`=?", array( $this->mProductsId ) );
+				$this->mDb->query( "DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "WHERE `products_id`=?", array( $this->mProductsId ) );
 				if( !empty( $bindVars ) ) {
 					$bindVars['products_id'] = $this->mProductsId;
 					$bindVars['language_id'] = $language_id;
-					$this->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $bindVars);
+					$this->mDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $bindVars);
 				}
 			}
 
@@ -384,9 +384,9 @@ class CommerceProduct extends BitBase {
 				$this->mErrors['expunge'] = tra( 'This product cannot be deleted because it has been purchased' );
 			} else {
 				$this->mDb->StartTrans();
-				$this->query( "DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION ." WHERE `products_id`=?", array( $this->mProductsId ) );
-				$this->query( "DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES ." WHERE `products_id`=?", array( $this->mProductsId ) );
-				$this->query( "DELETE FROM " . TABLE_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
+				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION ." WHERE `products_id`=?", array( $this->mProductsId ) );
+				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES ." WHERE `products_id`=?", array( $this->mProductsId ) );
+				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
 				$this->mDb->CompleteTrans();
 			}
 		}
@@ -396,7 +396,7 @@ class CommerceProduct extends BitBase {
 	function isPurchased() {
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$ret = $this->GetOne( "SELECT COUNT( `products_id` ) FROM " . TABLE_ORDERS_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
+			$ret = $this->mDb->getOne( "SELECT COUNT( `products_id` ) FROM " . TABLE_ORDERS_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
 		}
 		return $ret;
 	}
@@ -640,7 +640,7 @@ class CommerceProduct extends BitBase {
 		}
 		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) ) {
 			$sql = "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id` = ? AND `customers_id` = ? ";
-			$this->query( $sql, array( $pProductsId, $pCustomersId ) );
+			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId ) );
 		}
 	}
 
@@ -650,7 +650,7 @@ class CommerceProduct extends BitBase {
 		}
 		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) && !$this->hasNotification( $pCustomersId, $pProductsId ) ) {
 			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, now())";
-			$this->query( $sql, array( $pProductsId, $pCustomersId ) );
+			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId ) );
 		}
 	}
 
@@ -661,7 +661,7 @@ class CommerceProduct extends BitBase {
 		}
 		if( $this->isValid() && is_numeric( $pCustomersId ) ) {
 			$query = "SELECT count(*) AS `count` FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id`=? and `customers_id`=?";
-			$ret = $this->GetOne($query, array( $pProductsId, $pCustomersId ) );
+			$ret = $this->mDb->getOne($query, array( $pProductsId, $pCustomersId ) );
 		}
 		return $ret;
 	}

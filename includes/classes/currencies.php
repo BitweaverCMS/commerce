@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.5 2005/08/04 18:05:56 spiderr Exp $
+// $Id: currencies.php,v 1.6 2005/08/07 22:17:00 lsces Exp $
 //
 
 ////
@@ -142,9 +142,9 @@
 	function store( &$pParamHash ) {
 		if( $this->verify( $pParamHash ) ) {
 			if( $currenciesId = $this->currencyExists( $pParamHash['currency_store']['code'] ) ) {
-				$this->associateUpdate( TABLE_CURRENCIES, $pParamHash['currency_store'], array( 'name' => 'currencies_id', 'value'=>$currenciesId ) );
+				$this->mDb->associateUpdate( TABLE_CURRENCIES, $pParamHash['currency_store'], array( 'name' => 'currencies_id', 'value'=>$currenciesId ) );
 			} else {
-				$this->associateInsert( TABLE_CURRENCIES, $pParamHash['currency_store'] );
+				$this->mDb->associateInsert( TABLE_CURRENCIES, $pParamHash['currency_store'] );
 				$currenciesId = zen_db_insert_id( TABLE_CURRENCIES, 'currencies_id' );
 			}
 		}
