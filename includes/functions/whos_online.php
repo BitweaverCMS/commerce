@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.3 2005/08/02 15:35:43 spiderr Exp $
+// $Id: whos_online.php,v 1.4 2005/08/10 12:04:12 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -61,32 +61,24 @@
 
     $stored_customer = $db->Execute($stored_customer_query);
 
+	if( empty( $wo_customer_id ) ) {
+		$wo_customer_id = NULL;
+	}
+
     if ($stored_customer->fields['count'] > 0) {
       $sql = "update " . TABLE_WHOS_ONLINE . "
-              set customer_id = '" . (int)$wo_customer_id . "',
-                  full_name = '" . zen_db_input($wo_full_name) . "',
-                  ip_address = '" . zen_db_input($wo_ip_address) . "',
-                  time_last_click = '" . zen_db_input($current_time) . "',
-                  last_page_url = '" . zen_db_input(substr($wo_last_page_url, 0, 255)) . "',
-                  host_address = '" . zen_db_input($_SESSION['customers_host_address']) . "',
-                  user_agent = '" . zen_db_input(substr($wo_user_agent, 0, 255)) . "'
-              where session_id = '" . zen_db_input($wo_session_id) . "'";
+              set customer_id = ?, full_name = ?, ip_address = ?, time_last_click = ?, last_page_url = ?, host_address = ?, user_agent = ?
+              where session_id = ?";
 
-      $db->Execute($sql);
+      $db->query($sql, array( $wo_customer_id, $wo_full_name, $wo_ip_address, $current_time, substr($wo_last_page_url, 0, 255), $_SESSION['customers_host_address'], substr($wo_user_agent, 0, 255), $wo_session_id ) );
 
     } else {
       $sql = "insert into " . TABLE_WHOS_ONLINE . "
                               (customer_id, full_name, session_id, ip_address, time_entry,
                                time_last_click, last_page_url, host_address, user_agent)
-              values ('" . (int)$wo_customer_id . "', '" . zen_db_input($wo_full_name) . "', '"
-                         . zen_db_input($wo_session_id) . "', '" . zen_db_input($wo_ip_address)
-                         . "', '" . zen_db_input($current_time) . "', '" . zen_db_input($current_time)
-                         . "', '" . zen_db_input($wo_last_page_url)
-                         . "', '" . zen_db_input($_SESSION['customers_host_address'])
-                         . "', '" . zen_db_input($wo_user_agent)
-                         . "')";
+              values ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
-       $db->Execute($sql);
+       $db->query( $sql, array( $wo_customer_id, $wo_full_name, $wo_session_id, $wo_ip_address, $current_time, $current_time, $wo_last_page_url, $_SESSION['customers_host_address'], $wo_user_agent ) );
     }
   }
 ?>
