@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_confirmation.php,v 1.1 2005/08/04 07:01:25 spiderr Exp $
+// $Id: tpl_checkout_confirmation.php,v 1.2 2005/08/11 17:30:57 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -106,7 +106,13 @@
 
     echo '        </td>' . "\n";
 
-    if (sizeof($order->info['tax_groups']) > 1) echo '            <td class="main" valign="top" align="right">' . zen_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n";
+    if ( !empty( $order->info['tax_groups'] ) ) {
+		echo '            <td class="main" valign="top" align="right">';
+		if( !empty( $order->products[$i]['tax'] ) ) {
+			echo zen_display_tax_value($order->products[$i]['tax']) . '%';
+		}
+		echo '</td>' . "\n";
+	}
 
     echo '        <td class="main" align="right" valign="top">' .
                     $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) .

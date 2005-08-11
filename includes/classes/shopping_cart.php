@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.8 2005/08/11 08:04:21 spiderr Exp $
+// $Id: shopping_cart.php,v 1.9 2005/08/11 17:30:57 spiderr Exp $
 //
 
   class shoppingCart {
@@ -946,6 +946,8 @@ if ((int)$products_id != $products_id) {
                                     'final_price' => ($products_price + $this->attributes_price($products_id)),
                                     'onetime_charges' => ($this->attributes_price_onetime_charges($products_id, $new_qty)),
                                     'tax_class_id' => $product['products_tax_class_id'],
+                                    'tax' => (isset($product['tax_rate']) ? $product['tax_rate'] : NULL),
+                                    'tax_description' => (isset($product['tax_description']) ? $product['tax_description'] : NULL),
                                     'attributes' => (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : ''),
                                     'attributes_values' => (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : ''),
                                     'products_priced_by_attribute' => $product['products_priced_by_attribute'],
@@ -957,7 +959,6 @@ if ((int)$products_id != $products_id) {
 									);
         }
       }
-
       return $products_array;
     }
 

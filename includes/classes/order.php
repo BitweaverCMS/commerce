@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.7 2005/08/11 08:04:21 spiderr Exp $
+// $Id: order.php,v 1.8 2005/08/11 17:30:57 spiderr Exp $
 //
 
   class order {
@@ -191,7 +191,7 @@
 	                                'id' => $orders_products->fields['products_id'],
                                         'name' => $orders_products->fields['products_name'],
                                         'model' => $orders_products->fields['products_model'],
-                                        'tax' => $orders_products->fields['products_tax'],
+                                        'tax' => $orders_products->fields['tax_rate'],
                                         'price' => $orders_products->fields['products_price'],
                                         'final_price' => $orders_products->fields['final_price'],
                                         'onetime_charges' => $orders_products->fields['onetime_charges'],
@@ -414,8 +414,8 @@
         $this->products[$index] = array('qty' => $products[$i]['quantity'],
                                         'name' => $products[$i]['name'],
                                         'model' => $products[$i]['model'],
-                                        'tax' => zen_get_tax_rate($products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id']),
-                                        'tax_description' => zen_get_tax_description($products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id']),
+                                        'tax' => $products[$i]['tax'],
+                                        'tax_description' => $products[$i]['tax_description'],
                                         'price' => $products[$i]['price'],
                                         'final_price' => $products[$i]['price'] + $_SESSION['cart']->attributes_price($products[$i]['id']),
                                         'onetime_charges' => $_SESSION['cart']->attributes_price_onetime_charges($products[$i]['id'], $products[$i]['quantity']),

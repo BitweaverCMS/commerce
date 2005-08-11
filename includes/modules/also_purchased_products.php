@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: also_purchased_products.php,v 1.3 2005/08/04 07:01:01 spiderr Exp $
+// $Id: also_purchased_products.php,v 1.4 2005/08/11 17:30:57 spiderr Exp $
 //
   if (isset($_GET['products_id']) && SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS > 0) {
 
@@ -38,9 +38,10 @@
       $info_box_contents = array();
       while (!$orders->EOF) {
         $orders->fields['products_name'] = zen_get_products_name($orders->fields['products_id']);
+        $orders->fields['products_name'] = zen_get_products_name($orders->fields['products_id']);
         $list_box_contents[$row][$col] = array('align' => 'center',
                                                'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $orders->fields['products_image'], $orders->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
+                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $orders->fields['products_id'], 'avatar' ), $orders->fields['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
 
         $col ++;
         if ($col > (SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS - 1)) {
@@ -49,7 +50,7 @@
         }
         $orders->MoveNext();
 
-        $title =  TEXT_ALSO_PURCHASED_PRODUCTS;
+        $title =  tra( 'Customers who bought this product also purchased...' );
       }
       require( DIR_FS_MODULES . 'tpl_modules_also_purchased_products.php');
     }

@@ -44,6 +44,8 @@ class CommerceProduct extends BitBase {
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( p.`related_content_id`=tc.`content_id`)
+						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
+						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 					  WHERE p.`products_id`=? AND pd.`language_id`=?";
 			if( $ret = $db->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {

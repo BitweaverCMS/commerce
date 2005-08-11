@@ -1916,7 +1916,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."languages` VALUES (1,'English','en','icon.gif','english',1)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '1', '1', 'Pending')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '2', '1', 'Processing')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '3', '1', 'Delivered')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '3', '1', 'Shipped')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '4', '1', 'Update')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (1, 'Product - General', 'product', '1', 'Y', '', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (2, 'Product - Music', 'product_music', '1', 'Y', '', 'NOW', 'NOW')",
