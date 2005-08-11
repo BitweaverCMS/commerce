@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.9 2005/08/11 17:30:57 spiderr Exp $
+// $Id: shopping_cart.php,v 1.10 2005/08/11 18:07:06 spiderr Exp $
 //
 
   class shoppingCart {
@@ -933,30 +933,24 @@ if ((int)$products_id != $products_id) {
             $new_qty = (int)$new_qty;
           }
 
-          $products_array[] = array('id' => $products_id,
-                                    'name' => $product['products_name'],
-                                    'model' => $product['products_model'],
-                                    'image' => $product['products_image'],
-                                    'image_url' => $product['products_image_url'],
-                                    'price' => ($product['product_is_free'] =='1' ? 0 : $products_price),
+		  $product['id'] = $products_id;
+          $product['name'] = $product['products_name'];
+          $product['model'] = $product['products_model'];
+          $product['image'] = $product['products_image'];
+          $product['image_url'] = $product['products_image_url'];
+          $product['price'] = ($product['product_is_free'] =='1' ? 0 : $products_price);
 //                                    'quantity' => $this->contents[$products_id]['qty'],
-                                    'quantity' => $new_qty,
-                                    'weight' => $product['products_weight'] + $this->attributes_weight($products_id),
+          $product['quantity'] = $new_qty;
+          $product['weight'] = $product['products_weight'] + $this->attributes_weight($products_id);
 // fix here
-                                    'final_price' => ($products_price + $this->attributes_price($products_id)),
-                                    'onetime_charges' => ($this->attributes_price_onetime_charges($products_id, $new_qty)),
-                                    'tax_class_id' => $product['products_tax_class_id'],
-                                    'tax' => (isset($product['tax_rate']) ? $product['tax_rate'] : NULL),
-                                    'tax_description' => (isset($product['tax_description']) ? $product['tax_description'] : NULL),
-                                    'attributes' => (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : ''),
-                                    'attributes_values' => (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : ''),
-                                    'products_priced_by_attribute' => $product['products_priced_by_attribute'],
-                                    'product_is_free' => $product['product_is_free'],
-                                    'products_discount_type' => $product['products_discount_type'],
-                                    'products_discount_type_from' => $product['products_discount_type_from'],
-                                    'related_content_id' => $product['related_content_id'],
-                                    'related_group_id' => $product['related_group_id'],
-									);
+          $product['final_price'] = $products_price + $this->attributes_price($products_id);
+          $product['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
+          $product['tax_class_id'] = $product['products_tax_class_id'];
+          $product['tax'] = (isset($product['tax_rate']) ? $product['tax_rate'] : NULL);
+          $product['tax_description'] = (isset($product['tax_description']) ? $product['tax_description'] : NULL);
+          $product['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
+          $product['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
+          $products_array[] = $product;
         }
       }
       return $products_array;

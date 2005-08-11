@@ -65,11 +65,17 @@ class CommerceProduct extends BitBase {
 		}
 	}
 
-	function getDisplayUrl() {
+	function getDisplayUrl( $pProductsId=NULL, $pTypeHandler=NULL ) {
+		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
+			$pProductsId = $this->mProductsId;
+			if( empty( $pTypeHandler ) ) {
+				$pTypeHandler = $this->mInfo['type_handler'];
+			}
+		}
 		$ret = NULL;
-		if( $this->isValid() ) {
-			$typeHandler = ( !empty( $this->mInfo['type_handler'] ) ? $this->mInfo['type_handler'] : 'product' );
-			$ret = BITCOMMERCE_PKG_URL.'index.php?main_page='.$typeHandler.'_info&products_id='.$this->mProductsId;
+		if( is_numeric( $pProductsId ) ) {
+			$typeHandler = ( !empty( $pTypeHandler ) ? $pTypeHandler : 'product' );
+			$ret = BITCOMMERCE_PKG_URL.'index.php?main_page='.$pTypeHandler.'_info&products_id='.$pProductsId;
 		}
 		return $ret;
 	}

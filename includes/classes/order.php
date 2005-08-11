@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.8 2005/08/11 17:30:57 spiderr Exp $
+// $Id: order.php,v 1.9 2005/08/11 18:07:06 spiderr Exp $
 //
 
   class order {
@@ -155,12 +155,10 @@
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
-      $orders_products_query = "select orders_products_id, products_id, products_name,
-                                       products_model, products_price, products_tax,
-                                       products_quantity, final_price,
-                                       onetime_charges,
-                                       products_priced_by_attribute, product_is_free, products_discount_type, products_discount_type_from
-                                from " . TABLE_ORDERS_PRODUCTS . "
+      $orders_products_query = "select op.*, pt.*
+                                from " . TABLE_ORDERS_PRODUCTS . " op
+									LEFT OUTER JOIN  " . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
+									LEFT OUTER JOIN  " . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
                                 where orders_id = '" . (int)$order_id . "'";
 
       $orders_products = $db->Execute($orders_products_query);
@@ -187,18 +185,13 @@
             $new_qty = (int)$new_qty;
           }
 
-        $this->products[$index] = array('qty' => $new_qty,
-	                                'id' => $orders_products->fields['products_id'],
-                                        'name' => $orders_products->fields['products_name'],
-                                        'model' => $orders_products->fields['products_model'],
-                                        'tax' => $orders_products->fields['tax_rate'],
-                                        'price' => $orders_products->fields['products_price'],
-                                        'final_price' => $orders_products->fields['final_price'],
-                                        'onetime_charges' => $orders_products->fields['onetime_charges'],
-                                        'products_priced_by_attribute' => $orders_products->fields['products_priced_by_attribute'],
-                                        'product_is_free' => $orders_products->fields['product_is_free'],
-                                        'products_discount_type' => $orders_products->fields['products_discount_type'],
-                                        'products_discount_type_from' => $orders_products->fields['products_discount_type_from']);
+        $this->products[$index] = $orders_products->fields;
+		$this->products[$index]['qty'] = $new_qty;
+		$this->products[$index]['id'] = $orders_products->fields['products_id'];
+		$this->products[$index]['name'] = $orders_products->fields['products_name'];
+		$this->products[$index]['model'] = $orders_products->fields['products_model'];
+		$this->products[$index]['tax'] = $orders_products->fields['tax_rate'];
+		$this->products[$index]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
         $attributes_query = "select products_options_id, products_options_values_id, products_options, products_options_values, options_values_price,
@@ -411,22 +404,9 @@
       $index = 0;
       $products = $_SESSION['cart']->get_products();
       for ($i=0, $n=sizeof($products); $i<$n; $i++) {
-        $this->products[$index] = array('qty' => $products[$i]['quantity'],
-                                        'name' => $products[$i]['name'],
-                                        'model' => $products[$i]['model'],
-                                        'tax' => $products[$i]['tax'],
-                                        'tax_description' => $products[$i]['tax_description'],
-                                        'price' => $products[$i]['price'],
-                                        'final_price' => $products[$i]['price'] + $_SESSION['cart']->attributes_price($products[$i]['id']),
-                                        'onetime_charges' => $_SESSION['cart']->attributes_price_onetime_charges($products[$i]['id'], $products[$i]['quantity']),
-                                        'weight' => $products[$i]['weight'],
-                                        'products_priced_by_attribute' => $products[$i]['products_priced_by_attribute'],
-                                        'product_is_free' => $products[$i]['product_is_free'],
-                                        'products_discount_type' => $products[$i]['products_discount_type'],
-                                        'products_discount_type_from' => $products[$i]['products_discount_type_from'],
-                                        'related_content_id' => $products[$i]['related_content_id'],
-                                        'related_group_id' => $products[$i]['related_group_id'],
-                                        'id' => $products[$i]['id']);
+        $this->products[$index] = $products[$i];
+        $this->products[$index]['final_price'] = $products[$i]['price'] + $_SESSION['cart']->attributes_price($products[$i]['id']);
+        $this->products[$index]['onetime_charges'] = $_SESSION['cart']->attributes_price_onetime_charges($products[$i]['id'], $products[$i]['quantity']);
 
         if ($products[$i]['attributes']) {
           $subindex = 0;
