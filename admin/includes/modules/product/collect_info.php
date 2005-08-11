@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.6 2005/08/03 15:35:13 spiderr Exp $
+//  $Id: collect_info.php,v 1.7 2005/08/11 08:04:21 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -56,18 +56,9 @@
 
     if (isset($_GET['pID']) && empty($_POST)) {
       $product = $db->Execute("select pd.products_name, pd.products_description, pd.products_url,
-                                      p.products_id, p.products_quantity, p.products_model,
-                                      p.products_image, p.products_price, p.products_virtual, p.products_weight,
-                                      p.products_date_added, p.products_last_modified,
+                                      p.*,
                                       ".$db->mDb->SQLDate('Y-m-d','p.products_date_available')." as
-                                      products_date_available, p.products_status, p.products_tax_class_id,
-                                      p.manufacturers_id,
-                                      p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,
-                                      p.product_is_free, p.product_is_call, p.products_quantity_mixed,
-                                      p.product_is_always_free_ship, p.products_qty_box_status, p.products_quantity_order_max,
-                                      p.products_sort_order,
-                                      p.products_discount_type, p.products_discount_type_from,
-                                      p.products_price_sorter, p.master_categories_id
+                                      products_date_available, p.products_status, p.products_tax_class_id
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where p.products_id = '" . (int)$_GET['pID'] . "'
                               and p.products_id = pd.products_id
@@ -303,7 +294,26 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           </tr>
 <?php
     }
+
+	global $gBitUser;
+	$listHash = array();
+	$groups = $gBitUser->getAllGroups( $listHash );
+
 ?>
+
+          <tr>
+            <td class="main"><?=tra("Related Group ID")?></td>
+            <td class="main">
+				<select name="related_group_id">
+					<option value=""></value>
+<?php
+	foreach( $groups['data'] as $group ) {
+		print '<option value="'.$group['group_id'].'" '.($pInfo->related_group_id == $group['group_id'] ? 'selected="selected"': '') .' >'.$group['group_name']."</option>\n";
+	}
+?>
+				</select>
+			 User will be added to this group upon successful purchase</td>
+          </tr>
 
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>

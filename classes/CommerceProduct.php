@@ -26,7 +26,7 @@ class CommerceProduct extends BitBase {
 
 	function loadByRelatedContent( $pContentId ) {
 		if( is_numeric( $pContentId ) ) {
-			if( $this->mProductsId = $this->getOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `related_content_id`=?", array( $pContentId ) ) ) {
+			if( $this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `related_content_id`=?", array( $pContentId ) ) ) {
 				return( $this->load() );
 			}
 		}
@@ -210,6 +210,7 @@ class CommerceProduct extends BitBase {
 			'products_discount_type_from' => (!empty( $pParamHash['products_discount_type_from'] ) ? $pParamHash['products_discount_type_from'] : NULL),
 			'products_price_sorter' => (!empty( $pParamHash['products_price_sorter'] ) ? $pParamHash['products_price_sorter'] : NULL),
 			'related_content_id' => (!empty( $pParamHash['related_content_id'] ) ? $pParamHash['related_content_id'] : NULL),
+			'related_group_id' => (!empty( $pParamHash['related_group_id'] ) ? $pParamHash['related_group_id'] : NULL),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
@@ -217,9 +218,9 @@ class CommerceProduct extends BitBase {
 			);
 
 		if( !empty( $pParamHash['products_date_available'] ) ) {
-			$pParamHash['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : 'now()';
+			$pParamHash['product_store']['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : 'now()';
 		} else {
-			$pParamHash['products_date_available'] = NULL;
+			$pParamHash['product_store']['products_date_available'] = NULL;
 		}
 
 		$pParamHash['product_store']['products_last_modified'] = 'now()';

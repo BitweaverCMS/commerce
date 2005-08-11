@@ -232,8 +232,10 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   metatags_model_status I1,
   metatags_price_status I1,
   metatags_title_tagline_status I1,
-  related_content_id I4
+  related_content_id I4,
+  related_group_id I4
   CONSTRAINT ', CONSTRAINT prod_content_id_ref FOREIGN KEY (related_content_id) REFERENCES ".BIT_DB_PREFIX."tiki_content( content_id )
+			  , CONSTRAINT prod_group_id_ref FOREIGN KEY (related_group_id) REFERENCES ".BIT_DB_PREFIX."users_groups( group_id )
 			  , CONSTRAINT prod_type_ref  FOREIGN KEY (products_type) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types ( type_id )
 			  , CONSTRAINT prod_manf_id_ref  FOREIGN KEY (manufacturers_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers ( manufacturers_id )'
 ",
@@ -1120,7 +1122,7 @@ $indices = array (
   'orders_status_orders_cust_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders', 'cols' => ' orders_status, orders_id, customers_id ', 'opts' => NULL),
   'orders_prod_orders_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products', 'cols' => 'orders_id', 'opts' => NULL),
   'orders_prod_prod_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products', 'cols' => 'products_id', 'opts' => NULL),
-  'orders_prod_orders_prod_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products', 'cols' => 'orders_id', 'opts' => array('UNIQUE')),
+  'orders_prod_orders_prod_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products', 'cols' => 'orders_id, products_id', 'opts' => array('UNIQUE')),
   'orders_prod_att_orders_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products_att', 'cols' => 'orders_id', 'opts' => NULL),
   'orders_prod_att_prod_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products_att', 'cols' => 'orders_products_id ', 'opts' => NULL),
   'orders_prod_dld_orders_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'orders_products_dld', 'cols' => 'orders_id', 'opts' => NULL),

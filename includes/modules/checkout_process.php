@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: checkout_process.php,v 1.2 2005/08/11 08:04:21 spiderr Exp $
 //
 
   require(DIR_WS_MODULES . 'require_languages.php');
@@ -50,7 +50,7 @@
   if (!isset($_SESSION['payment']) && !$credit_covers) {
     zen_redirect(zen_href_link(FILENAME_DEFAULT));
   }
-
+$gBitDb->mDb->StartTrans();
 // load the before_process function from the payment modules
   $payment_modules->before_process();
 
@@ -59,6 +59,7 @@
   $payment_modules->after_order_create($insert_id);
 
   $order->create_add_products($insert_id);
+$gBitDb->mDb->completeTrans();
 
   $order->send_order_email($insert_id, 2);
 

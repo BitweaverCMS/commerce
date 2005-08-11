@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.6 2005/07/26 12:31:52 spiderr Exp $
+// $Id: order.php,v 1.7 2005/08/11 08:04:21 spiderr Exp $
 //
 
   class order {
@@ -424,6 +424,8 @@
                                         'product_is_free' => $products[$i]['product_is_free'],
                                         'products_discount_type' => $products[$i]['products_discount_type'],
                                         'products_discount_type_from' => $products[$i]['products_discount_type_from'],
+                                        'related_content_id' => $products[$i]['related_content_id'],
+                                        'related_group_id' => $products[$i]['related_group_id'],
                                         'id' => $products[$i]['id']);
 
         if ($products[$i]['attributes']) {
@@ -680,8 +682,14 @@
         $db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 
 		$insert_id = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
-bt();
+
         $order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
+
+		if( !empty( $this->products[$i]['related_group_id'] ) ) {
+			global $gBitUser;
+			$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['related_group_id'] );
+		}
+
 
 //------insert customer choosen option to order--------
         $attributes_exist = '0';

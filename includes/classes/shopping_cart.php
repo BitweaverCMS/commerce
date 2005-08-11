@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.7 2005/08/11 04:36:37 spiderr Exp $
+// $Id: shopping_cart.php,v 1.8 2005/08/11 08:04:21 spiderr Exp $
 //
 
   class shoppingCart {
@@ -951,7 +951,10 @@ if ((int)$products_id != $products_id) {
                                     'products_priced_by_attribute' => $product['products_priced_by_attribute'],
                                     'product_is_free' => $product['product_is_free'],
                                     'products_discount_type' => $product['products_discount_type'],
-                                    'products_discount_type_from' => $product['products_discount_type_from']);
+                                    'products_discount_type_from' => $product['products_discount_type_from'],
+                                    'related_content_id' => $product['related_content_id'],
+                                    'related_group_id' => $product['related_group_id'],
+									);
         }
       }
 

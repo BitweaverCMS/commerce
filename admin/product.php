@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: product.php,v 1.5 2005/08/11 08:04:20 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -76,6 +76,7 @@
          }
         break;
       case 'new_product_preview_meta_tags':
+bt();
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview_meta_tags.php')) {
           require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview_meta_tags.php');
          } else {
