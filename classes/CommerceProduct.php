@@ -272,7 +272,7 @@ class CommerceProduct extends BitBase {
 					$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
 					$bindVars['products_id'] = $this->mProductsId;
 					$bindVars['language_id'] = $language_id;
-					$this->mDB->query( $query, $bindVars );
+					$this->mDb->query( $query, $bindVars );
 				}
 			}
 

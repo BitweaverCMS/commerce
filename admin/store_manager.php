@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.4 2005/08/03 17:07:53 spiderr Exp $
+//  $Id: store_manager.php,v 1.5 2005/08/11 04:36:37 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -27,7 +27,7 @@
 
   $languages = zen_get_languages();
 
-  $products_filter = (isset($_GET['products_filter']) ? $_GET['products_filter'] : $products_filter);
+  $productsId = (isset($_GET['products_id']) ? $_GET['products_id'] : $productsId);
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
 

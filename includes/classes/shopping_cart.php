@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.6 2005/08/03 13:04:38 spiderr Exp $
+// $Id: shopping_cart.php,v 1.7 2005/08/11 04:36:37 spiderr Exp $
 //
 
   class shoppingCart {
@@ -1145,7 +1145,7 @@ if ((int)$products_id != $products_id) {
 
       // check if mixed is on
 //      $product = $db->Execute("select products_id, products_mixed_discount_quantity from " . TABLE_PRODUCTS . " where products_id='" . (int)$products_id . "' limit 1");
-      $product = $db->Execute("select products_id, products_mixed_discount_quantity from " . TABLE_PRODUCTS . " where products_id='" . zen_get_prid($products_id) . "' limit 1");
+      $product = $db->Execute("select products_id, products_mixed_discount_qty from " . TABLE_PRODUCTS . " where products_id='" . zen_get_prid($products_id) . "' limit 1");
 
       // if mixed attributes is off return qty for current attribute selection
       if ($product->fields['products_mixed_discount_quantity'] == '0') {

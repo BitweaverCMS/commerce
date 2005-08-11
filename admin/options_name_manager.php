@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.6 2005/08/05 20:11:51 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.7 2005/08/11 04:36:37 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -791,7 +791,7 @@ function go_option() {
         }
 ?>
                   </select>&nbsp;</td>
-                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_PRODUCT; ?><br /><?php echo zen_draw_products_pull_down_attributes('product_to_update', 'size="5"', '', true, $_GET['products_filter'], true); ?></td>
+                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_PRODUCT; ?><br /><?php echo zen_draw_products_pull_down_attributes('product_to_update', 'size="5"', '', true, $_GET['products_id'], true); ?></td>
 
                   <td align="center" class="dataTableHeadingContent">&nbsp;<?php echo zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;</td>
                   </form>
@@ -819,7 +819,7 @@ function go_option() {
         }
 ?>
                   </select>&nbsp;</td>
-                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_CATEGORY; ?><br /><?php echo zen_draw_products_pull_down_categories('category_to_update', 'size="5"', '', true, $_GET['products_filter'], true); ?></td>
+                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_CATEGORY; ?><br /><?php echo zen_draw_products_pull_down_categories('category_to_update', 'size="5"', '', true, $_GET['products_id'], true); ?></td>
 
                   <td align="lef" class="dataTableHeadingContent">&nbsp;<?php echo zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;</td>
                   </form>
@@ -897,7 +897,7 @@ function go_option() {
         }
 ?>
                   </select>&nbsp;</td>
-                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_PRODUCT; ?><br /><?php echo zen_draw_products_pull_down_attributes('product_to_update', 'size="5"', '', true, $_GET['products_filter'], true); ?></td>
+                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_PRODUCT; ?><br /><?php echo zen_draw_products_pull_down_attributes('product_to_update', 'size="5"', '', true, $_GET['products_id'], true); ?></td>
 
                   <td align="center" class="dataTableHeadingContent">&nbsp;<?php echo zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;</td>
                   </form>
@@ -925,7 +925,7 @@ function go_option() {
         }
 ?>
                   </select>&nbsp;</td>
-                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_CATEGORY; ?><br /><?php echo zen_draw_products_pull_down_categories('category_to_update', 'size="5"', '', true, $_GET['products_filter'], true); ?></td>
+                  <td class="dataTableHeadingContent"><?php echo TEXT_SELECT_CATEGORY; ?><br /><?php echo zen_draw_products_pull_down_categories('category_to_update', 'size="5"', '', true, $_GET['products_id'], true); ?></td>
 
                   <td align="lef" class="dataTableHeadingContent">&nbsp;<?php echo zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>&nbsp;</td>
                   </form>

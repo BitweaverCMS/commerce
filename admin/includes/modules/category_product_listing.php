@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.3 2005/08/03 15:35:11 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -305,7 +305,7 @@ if ($_GET['page'] == '' and $_GET['pID'] != '') {
         if (zen_has_product_attributes($products->fields['products_id'], 'false')) {
           echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] .'&action=attribute_features' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . ((!empty($products->fields['products_id']) && zen_has_product_attributes($products->fields['products_id'], 'false')) ? zen_image(DIR_WS_IMAGES . 'icon_attributes_on.gif', ICON_ATTRIBUTES) : zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES)) . '</a>';
         } else {
-          echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES) . '</a>';
+          echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES) . '</a>';
         }
 ?>
 <?php
@@ -313,7 +313,7 @@ if ($_GET['page'] == '' and $_GET['pID'] != '') {
 ?>
 <?php
         if ($zc_products->get_allow_add_to_cart($products->fields['products_id']) == "Y") {
-          echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_filter=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_products_price_manager.gif', ICON_PRODUCTS_PRICE_MANAGER) . '</a>';
+          echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_products_price_manager.gif', ICON_PRODUCTS_PRICE_MANAGER) . '</a>';
         }
 // meta tags
         if (zen_get_metatags_keywords($products->fields['products_id'], (int)$_SESSION['languages_id']) or zen_get_metatags_description($products->fields['products_id'], (int)$_SESSION['languages_id'])) {

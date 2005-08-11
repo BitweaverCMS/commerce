@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.3 2005/08/03 17:07:34 spiderr Exp $
+//  $Id: downloads_manager.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -247,7 +247,7 @@ function go_option() {
 
         $contents[] = array('align' => 'center', 'text' =>
           '<a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&page=' . $_GET['page'].'&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>' .
-          '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_filter=' . $padInfo->products_id) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>'
+          '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $padInfo->products_id) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>'
           );
         $contents[] = array('text' => '<br />' . TEXT_PRODUCTS_NAME . $padInfo->products_name);
         $contents[] = array('text' => TEXT_PRODUCTS_MODEL . $padInfo->products_model);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.1 2005/07/05 06:00:05 bitweaver Exp $
+//  $Id: products_previous_next.php,v 1.2 2005/08/11 04:36:37 spiderr Exp $
 //
 
 /////
@@ -26,7 +26,7 @@
   if ($prev_next_list=='') {
 // calculate the previous and next
 
-    $check_type = $db->Execute("select products_type from " . TABLE_PRODUCTS . " where products_id='" . $products_filter . "'");
+    $check_type = $db->Execute("select products_type from " . TABLE_PRODUCTS . " where products_id='" . $productsId . "'");
     define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
 
     // sort order
@@ -61,7 +61,7 @@
     if (!$current_category_id) {
       $sql = "SELECT categories_id
               from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-              where  products_id ='" .  $products_filter . "'";
+              where  products_id ='" .  $productsId . "'";
 
       $cPath_row = $db->Execute($sql);
       $current_category_id = $cPath_row->fields['categories_id'];
@@ -88,7 +88,7 @@
     reset ($id_array);
     $counter = 0;
     while (list($key, $value) = each ($id_array)) {
-      if ($value == $products_filter) {
+      if ($value == $productsId) {
         $position = $counter;
         if ($key == 0) {
           $previous = -1; // it was the first to be found
