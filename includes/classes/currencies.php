@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.6 2005/08/07 22:17:00 lsces Exp $
+// $Id: currencies.php,v 1.7 2005/08/11 03:33:23 spiderr Exp $
 //
 
 ////
@@ -57,20 +57,22 @@
 // class methods
     function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
 
-      if (empty($currency_type)) $currency_type = $_SESSION['currency'];
+		if (empty($currency_type)) {
+			$currency_type = !empty( $_SESSION['currency'] ) && !empty( $this->currencies[ $_SESSION['currency']] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+		}
 
-      if ($calculate_currency_value == true) {
-        $rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['value'];
-        $format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];
-      } else {
-        $format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];
-      }
+		if ($calculate_currency_value == true) {
+			$rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['value'];
+			$format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];
+		} else {
+			$format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];
+		}
 
-      if (DOWN_FOR_MAINTENANCE=='true' and DOWN_FOR_MAINTENANCE_PRICES_OFF=='true') {
-        $format_string= '';
-      }
+		if (DOWN_FOR_MAINTENANCE=='true' and DOWN_FOR_MAINTENANCE_PRICES_OFF=='true') {
+			$format_string= '';
+		}
 
-      return ' '.$format_string;
+		return ' '.$format_string;
     }
 
     function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
