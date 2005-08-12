@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.9 2005/08/12 07:03:21 spiderr Exp $
+// $Id: index.php,v 1.10 2005/08/12 17:03:27 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -48,6 +48,11 @@ ob_start();
 //    if (!is_dir(DIR_WS_MODULES .  'pages/' . $_REQUEST['main_page'])) $_REQUEST['main_page'] = 'index';
   }
 
+	if( preg_match( '/^product_/', $_REQUEST['main_page'] ) ) {
+		if( $gBitProduct->isValid() ) {
+			$_REQUEST['main_page'] = $gBitProduct->mInfo['info_page'];
+		}
+	}
   $current_page = $_REQUEST['main_page'];
   $current_page_base = $current_page;
   $code_page_directory = DIR_WS_MODULES . 'pages/' . $current_page_base;
