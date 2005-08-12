@@ -141,8 +141,8 @@ BITCOMMERCE_DB_PREFIX.'categories' => "
 BITCOMMERCE_DB_PREFIX.'categories_description' => "
   categories_id I4 PRIMARY,
   language_id I4 PRIMARY NOTNULL default '1',
-  categories_name C(32),
-  categories_description X2 NOTNULL
+  categories_name C(32) NOTNULL,
+  categories_description X2
   CONSTRAINT ', CONSTRAINT cat_desc_cat_ref FOREIGN KEY ( categories_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."categories( categories_id )'
 ",
 
@@ -1918,11 +1918,11 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '2', '1', 'Processing')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '3', '1', 'Shipped')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."orders_status` VALUES ( '4', '1', 'Update')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (1, 'Product - General', 'product', '1', 'Y', '', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (2, 'Product - Music', 'product_music', '1', 'Y', '', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (3, 'Document - General', 'document_general', '3', 'N', '', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (4, 'Document - Product', 'document_product', '3', 'Y', '', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` VALUES (5, 'Product - Free Shipping', 'product_free_shipping', '1', 'Y', '', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - General', 'product', '1', 'Y', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - Music', 'product_music', '1', 'Y', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Document - General', 'document_general', '3', 'N', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Document - Product', 'document_product', '3', 'Y', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - Free Shipping', 'product_free_shipping', '1', 'Y', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (0, 'Dropdown')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (1, 'Text')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (2, 'Radio')",

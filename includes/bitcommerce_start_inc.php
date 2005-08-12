@@ -287,16 +287,18 @@
   }
 
 
-
-
 // add the products model to the breadcrumb trail
   if ( !empty( $_REQUEST['products_id'] ) ) {
-  	if( empty( $cPath ) ) {
-		$cPath = '';
+  	if( empty( $_REQUEST['cPath'] ) ) {
+		$_REQUEST['cPath'] = '';
 	}
+	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
+      $breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
+	}
+
     $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
     if( $gBitProduct->load() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'cPath=' . $cPath . '&products_id=' . $_REQUEST['products_id']));
+      $breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
     }
 	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
 		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
@@ -306,8 +308,6 @@
     $gBitProduct = new CommerceProduct();
   }
 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
-
-
 
 
 // taxes

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.9 2005/08/04 07:24:05 spiderr Exp $
+// $Id: new_products.php,v 1.10 2005/08/12 07:03:22 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
@@ -63,14 +63,13 @@
     } else {
       $col_width = 100/SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS;
     }
-
+// $gBitProduct->debug();
     foreach( $new_products as $product ) {
       $products_price = zen_get_products_display_price($product['products_id']);
 
-      $product['products_name'] = zen_get_products_name($product['products_id']);
       $list_box_contents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
+                                             'text' => '<a href="' . zen_href_link(zen_get_info_page($product['products_id']), 'products_id=' . $product['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'] ) . '</a><br /><a href="' . zen_href_link( $product['info_page'], 'products_id=' . $product['products_id']) . '">' . $product['products_name'] . '</a><br />' . $products_price);
 
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS - 1)) {
@@ -88,5 +87,6 @@
       }
       require( DIR_FS_MODULES . 'tpl_modules_whats_new.php' );
     }
+// $gBitProduct->debug( 0 );
   }
 ?>

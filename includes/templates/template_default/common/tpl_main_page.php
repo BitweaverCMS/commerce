@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.6 2005/08/04 07:02:05 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.7 2005/08/12 07:03:22 spiderr Exp $
 //
 
-  $header_template = 'tpl_header.php';
-  $footer_template = 'tpl_footer.php';
+	$header_template = 'tpl_header.php';
+	$footer_template = 'tpl_footer.php';
+	require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php');
 
-  print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commerce_nav.tpl' );
 ?>
 
 <div id="content">

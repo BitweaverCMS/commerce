@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.8 2005/08/04 07:00:58 spiderr Exp $
+// $Id: index.php,v 1.9 2005/08/12 07:03:21 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -34,11 +34,14 @@ ob_start();
 // determine the page directory
 
 
-  if( !isset($_REQUEST['main_page']) || !zen_not_null($_REQUEST['main_page']) ) {
-  	$_REQUEST['main_page'] = 'index';
-  } else {
-    // ensure compatibility
-  	$_GET['main_page'] = $_REQUEST['main_page'];
+  if( empty( $_REQUEST['main_page'] ) ) {
+  	if( !empty( $_REQUEST['products_id'] ) ) {
+		$_REQUEST['main_page'] = 'product_info';
+	} else {
+		$_REQUEST['main_page'] = 'index';
+	}
+	// compatibility for shite code
+	$_GET['main_page'] = $_REQUEST['main_page'];
   }
 
   if (MISSING_PAGE_CHECK == 'true') {

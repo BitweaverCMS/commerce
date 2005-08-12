@@ -2,9 +2,12 @@
 
 
 class CommerceProduct extends BitBase {
+	var $mInfo;
+
 	function CommerceProduct( $pProductsId=NULL ) {
 		BitBase::BitBase();
 		$this->mProductsId = $pProductsId;
+		$this->mInfo = array();
 	}
 
 	function load() {
@@ -14,7 +17,7 @@ class CommerceProduct extends BitBase {
 				global $gLibertySystem;
 				$this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'], $this->mInfo['content_type_guid'] );
 				if( empty( $this->mContent ) || !$this->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-					unset( $this->mInfo );
+					$this->mInfo = array();
 					unset( $this->mContent );
 				} else {
 					$this->mInfo['display_link'] = $this->mContent->getDisplayLink( $this->mContent->getTitle(), $this->mContent->mInfo );
@@ -76,6 +79,10 @@ class CommerceProduct extends BitBase {
 		if( is_numeric( $pProductsId ) ) {
 			$typeHandler = ( !empty( $pTypeHandler ) ? $pTypeHandler : 'product' );
 			$ret = BITCOMMERCE_PKG_URL.'index.php?main_page='.$pTypeHandler.'_info&products_id='.$pProductsId;
+		}
+
+		if( !empty( $_REQUEST['cPath'] ) ) {
+			$ret .= '&cPath=' . $_REQUEST['cPath'];
 		}
 		return $ret;
 	}
@@ -163,6 +170,8 @@ class CommerceProduct extends BitBase {
 			}
 		}
 
+		$fromSql .= ' AND pd.`language_id`=?';
+		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			list( $gateSelectSql, $gateFromSql, $gateWhereSql ) = $this->getGatekeeperSql();

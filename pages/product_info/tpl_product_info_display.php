@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_info_display.php,v 1.1 2005/08/04 07:01:58 spiderr Exp $
+// $Id: tpl_product_info_display.php,v 1.2 2005/08/12 07:03:22 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -65,33 +65,12 @@ if( !empty( $debug_on ) ) {
 }
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-<tr>
-<td colspan="2" class="smallText">
-<?php
-if (false) {
-echo 'Looking at ' . (int)$_GET['products_id'] . '<br />';
-echo 'Base Price ' . zen_get_products_base_price((int)$_GET['products_id']) . '<br />';
-echo 'Actual Price ' . zen_get_products_actual_price((int)$_GET['products_id']) . '<br />';
-echo 'Special Price ' . zen_get_products_special_price((int)$_GET['products_id'], true) . '<br />';
-echo 'Sale Maker Discount Type ' . zen_get_products_sale_discount_type((int)$_GET['products_id']) . '<br />';
-echo 'Discount Calc ' . zen_get_discount_calc((int)$_GET['products_id']) . '<br />';
-echo 'Discount Calc Attr $100 $75 $50 $25 ' . zen_get_discount_calc((int)$_GET['products_id'], true, 100) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 75) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 50) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 25) . '<br />';
-}
-?>
-</td>
-</tr>
 
-<?php if (PRODUCT_INFO_PREVIOUS_NEXT == '1' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
-  <tr>
-    <td colspan="2" align="center">
-      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php'); ?>
-    </td>
-  </tr>
-<?php } ?>
-  <tr>
-    <td colspan="2" class="pageHeading" valign="top"><h1><?php echo $products_name; ?></h1></td>
-  </tr>
+<div class="header">
+	<h1><?=$products_name;?></h1>
+</div>
+
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
@@ -206,7 +185,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
   echo '&nbsp;';
 } else {
 ?>
-      <table border="0" width="150px" cellspacing="2" cellpadding="2">
+      <table border="0" style="width:150px" cellspacing="2" cellpadding="2">
         <tr>
           <td align="center" class="cartBox">
             <?php echo ((SHOW_PRODUCT_INFO_IN_CART_QTY == '1' and $_SESSION['cart']->in_cart($_GET['products_id'])) ? PRODUCTS_ORDER_QTY_TEXT_IN_CART . $_SESSION['cart']->get_quantity($_GET['products_id']) . '<br /><br />' : '&nbsp;'); ?>

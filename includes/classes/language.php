@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.3 2005/07/16 22:56:42 lsces Exp $
+// $Id: language.php,v 1.4 2005/08/12 07:03:22 spiderr Exp $
 //
 
   class language {
@@ -106,17 +106,19 @@
 	}
 
     function get_browser_language() {
-      $this->browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+		if( !empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			$this->browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
-      for ($i=0, $n=sizeof($this->browser_languages); $i<$n; $i++) {
-        reset($this->languages);
-        while (list($key, $value) = each($this->languages)) {
-          if (eregi('^(' . $value[0] . ')(;q=[0-9]\\.[0-9])?$', $this->browser_languages[$i]) && isset($this->catalog_languages[$key])) {
-            $this->language = $this->catalog_languages[$key];
-            break 2;
-          }
-        }
-      }
+			for ($i=0, $n=sizeof($this->browser_languages); $i<$n; $i++) {
+				reset($this->languages);
+				while (list($key, $value) = each($this->languages)) {
+					if (eregi('^(' . $value[0] . ')(;q=[0-9]\\.[0-9])?$', $this->browser_languages[$i]) && isset($this->catalog_languages[$key])) {
+						$this->language = $this->catalog_languages[$key];
+						break 2;
+					}
+				}
+			}
+		}
     }
   }
 ?>

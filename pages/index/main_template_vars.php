@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.3 2005/08/04 07:01:36 spiderr Exp $
+// $Id: main_template_vars.php,v 1.4 2005/08/12 07:03:22 spiderr Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -183,6 +183,7 @@ if (isset($_REQUEST['typefilter'])) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   }
 
+  if( !empty( $current_category_id ) ) {
 // categories_description
     $sql = "select categories_description from " . TABLE_CATEGORIES_DESCRIPTION . "
             where categories_id= '" . $current_category_id . "'
@@ -191,6 +192,6 @@ if (isset($_REQUEST['typefilter'])) {
     $categories_description_lookup= $db->Execute($sql);
 
     $current_categories_description = $categories_description_lookup->fields['categories_description'];
-
+	}
   require( DIR_FS_PAGES . $current_page_base . '/' . $tpl_page_body);
 ?>
