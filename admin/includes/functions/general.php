@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.10 2005/08/12 17:06:18 spiderr Exp $
+//  $Id: general.php,v 1.11 2005/08/12 18:02:07 spiderr Exp $
 //
 
 ////
@@ -204,7 +204,7 @@
     return $category_tree_array;
   }
 
-
+/*
 ////
 // products with name, model and price pulldown
   function zen_draw_products_pull_down($name, $parameters = '', $exclude = '', $show_id = false, $set_selected = false, $show_model = false, $show_current_category = false) {
@@ -252,7 +252,7 @@
 
     return $select_string;
   }
-
+*/
 
   function zen_info_image($image, $alt, $width = '', $height = '') {
     if (zen_not_null($image) && (file_exists(DIR_FS_CATALOG_IMAGES . $image)) ) {
@@ -1401,23 +1401,6 @@
   }
 
 ////
-// Parse and secure the cPath parameter values
-  function zen_parse_category_path($cPath) {
-// make sure the category IDs are integers
-    $cPath_array = array_map('zen_string_to_int', explode('_', $cPath));
-
-// make sure no duplicate category IDs exist which could lock the server in a loop
-    $tmp_array = array();
-    $n = sizeof($cPath_array);
-    for ($i=0; $i<$n; $i++) {
-      if (!in_array($cPath_array[$i], $tmp_array)) {
-        $tmp_array[] = $cPath_array[$i];
-      }
-    }
-
-    return $tmp_array;
-  }
-////
 // Create a Coupon Code. length may be between 1 and 16 Characters
 // $salt needs some thought.
 
@@ -1775,123 +1758,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   }
 
 ////
-// product pulldown with attributes
-  function zen_draw_products_pull_down_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $new_fields=', p.products_model';
-
-    $products = $db->Execute("SELECT distinct p.products_id, pd.products_name, p.products_price" . $new_fields .
-        " FROM " . TABLE_PRODUCTS . " p, " .
-        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
-        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE p.products_id= pa.products_id and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY products_name");
-
-    while (!$products->EOF) {
-      if (!in_array($products->fields['products_id'], $exclude)) {
-        $display_price = zen_get_products_base_price($products->fields['products_id']);
-        $select_string .= '<option value="' . $products->fields['products_id'] . '">' . $products->fields['products_name'] . ' (' . TEXT_MODEL . ' ' . $products->fields['products_model'] . ') (' . $currencies->format($display_price) . ')</option>';
-      }
-      $products->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-
-
-////
-// categories pulldown with products
-  function zen_draw_products_pull_down_categories($name, $parameters = '', $exclude = '', $show_id = false, $show_parent = false) {
-    global $db, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
-        " FROM " . TABLE_CATEGORIES . " c, " .
-        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
-        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " .
-        " WHERE ptoc.categories_id = c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
-
-    while (!$categories->EOF) {
-      if (!in_array($categories->fields['categories_id'], $exclude)) {
-        if ($show_parent == true) {
-          $parent = zen_get_products_master_categories_name($categories->fields['categories_id']);
-          if ($parent != '') {
-            $parent = ' : in ' . $parent;
-          }
-        } else {
-          $parent = '';
-        }
-        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . $parent . ($show_id ? ' - ID#' . $categories->fields['categories_id'] : '') . '</option>';
-      }
-      $categories->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-
-////
-// categories pulldown with products with attributes
-  function zen_draw_products_pull_down_categories_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
-        " FROM " . TABLE_CATEGORIES . " c, " .
-        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
-        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
-        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE pa.products_id= ptoc.products_id and ptoc.categories_id= c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
-    while (!$categories->EOF) {
-      if (!in_array($categories->fields['categories_id'], $exclude)) {
-        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . '</option>';
-      }
-      $categories->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-
-////
 // Check if a demo is active
   function zen_admin_demo() {
     global $db;
@@ -1941,58 +1807,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       $valid_downloads = 'disabled';
     }
     return $valid_downloads;
-  }
-
-////
-// Construct a category path to the product
-// TABLES: products_to_categories
-  function zen_get_product_path($products_id, $status_override = '1') {
-    global $db;
-    $cPath = '';
-
-    $category_query = "SELECT p2c.categories_id
-                       FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                       WHERE p.products_id = '" . (int)$products_id . "' " .
-                       ($status_override == '1' ? " and p.products_status = '1' " : '') . "
-                       and p.products_id = p2c.products_id limit 1";
-
-    $category = $db->Execute($category_query);
-
-    if ($category->RecordCount() > 0) {
-
-      $categories = array();
-      zen_get_parent_categories($categories, $category->fields['categories_id']);
-
-      $categories = array_reverse($categories);
-
-      $cPath = implode('_', $categories);
-
-      if (zen_not_null($cPath)) $cPath .= '_';
-      $cPath .= $category->fields['categories_id'];
-    }
-
-    return $cPath;
-  }
-
-////
-// Recursively go through the categories and retreive all parent categories IDs
-// TABLES: categories
-  function zen_get_parent_categories(&$categories, $categories_id) {
-    global $db;
-    $parent_categories_query = "SELECT parent_id
-                                FROM " . TABLE_CATEGORIES . "
-                                WHERE categories_id = '" . (int)$categories_id . "'";
-
-    $parent_categories = $db->Execute($parent_categories_query);
-
-    while (!$parent_categories->EOF) {
-      if ($parent_categories->fields['parent_id'] == 0) return true;
-      $categories[sizeof($categories)] = $parent_categories->fields['parent_id'];
-      if ($parent_categories->fields['parent_id'] != $categories_id) {
-        zen_get_parent_categories($categories, $parent_categories->fields['parent_id']);
-      }
-      $parent_categories->MoveNext();
-    }
   }
 
 ////
@@ -2103,34 +1917,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     } else {
       return -1;
     }
-  }
-
-////
-  function zen_get_categories($categories_array = '', $parent_id = '0', $indent = '') {
-    global $db;
-
-    if (!is_array($categories_array)) $categories_array = array();
-
-    $categories_query = "SELECT c.categories_id, cd.categories_name
-                         FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                         WHERE parent_id = '" . (int)$parent_id . "'
-                         and c.categories_id = cd.categories_id
-                         and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                         ORDER BY sort_order, cd.categories_name";
-
-    $categories = $db->Execute($categories_query);
-
-    while (!$categories->EOF) {
-      $categories_array[] = array('id' => $categories->fields['categories_id'],
-                                  'text' => $indent . $categories->fields['categories_name']);
-
-      if ($categories->fields['categories_id'] != $parent_id) {
-        $categories_array = zen_get_categories($categories_array, $categories->fields['categories_id'], $indent . '&nbsp;&nbsp;');
-      }
-      $categories->MoveNext();
-    }
-
-    return $categories_array;
   }
 
 
@@ -2581,5 +2367,220 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     return $parent_id;
   }
+
+/*
+////
+// product pulldown with attributes
+  function zen_draw_products_pull_down_attributes($name, $parameters = '', $exclude = '') {
+    global $db, $currencies;
+
+    if ($exclude == '') {
+      $exclude = array();
+    }
+
+    $select_string = '<SELECT name="' . $name . '"';
+
+    if ($parameters) {
+      $select_string .= ' ' . $parameters;
+    }
+
+    $select_string .= '>';
+
+    $new_fields=', p.products_model';
+
+    $products = $db->Execute("SELECT distinct p.products_id, pd.products_name, p.products_price" . $new_fields .
+        " FROM " . TABLE_PRODUCTS . " p, " .
+        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
+        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
+        " WHERE p.products_id= pa.products_id and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY products_name");
+
+    while (!$products->EOF) {
+      if (!in_array($products->fields['products_id'], $exclude)) {
+        $display_price = zen_get_products_base_price($products->fields['products_id']);
+        $select_string .= '<option value="' . $products->fields['products_id'] . '">' . $products->fields['products_name'] . ' (' . TEXT_MODEL . ' ' . $products->fields['products_model'] . ') (' . $currencies->format($display_price) . ')</option>';
+      }
+      $products->MoveNext();
+    }
+
+    $select_string .= '</select>';
+
+    return $select_string;
+  }
+
+////
+// categories pulldown with products
+  function zen_draw_products_pull_down_categories($name, $parameters = '', $exclude = '', $show_id = false, $show_parent = false) {
+    global $db, $currencies;
+
+    if ($exclude == '') {
+      $exclude = array();
+    }
+
+    $select_string = '<SELECT name="' . $name . '"';
+
+    if ($parameters) {
+      $select_string .= ' ' . $parameters;
+    }
+
+    $select_string .= '>';
+
+    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
+        " FROM " . TABLE_CATEGORIES . " c, " .
+        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
+        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " .
+        " WHERE ptoc.categories_id = c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
+
+    while (!$categories->EOF) {
+      if (!in_array($categories->fields['categories_id'], $exclude)) {
+        if ($show_parent == true) {
+          $parent = zen_get_products_master_categories_name($categories->fields['categories_id']);
+          if ($parent != '') {
+            $parent = ' : in ' . $parent;
+          }
+        } else {
+          $parent = '';
+        }
+        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . $parent . ($show_id ? ' - ID#' . $categories->fields['categories_id'] : '') . '</option>';
+      }
+      $categories->MoveNext();
+    }
+
+    $select_string .= '</select>';
+
+    return $select_string;
+  }
+
+////
+// categories pulldown with products with attributes
+  function zen_draw_products_pull_down_categories_attributes($name, $parameters = '', $exclude = '') {
+    global $db, $currencies;
+
+    if ($exclude == '') {
+      $exclude = array();
+    }
+
+    $select_string = '<SELECT name="' . $name . '"';
+
+    if ($parameters) {
+      $select_string .= ' ' . $parameters;
+    }
+
+    $select_string .= '>';
+
+    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
+        " FROM " . TABLE_CATEGORIES . " c, " .
+        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
+        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
+        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
+        " WHERE pa.products_id= ptoc.products_id and ptoc.categories_id= c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
+    while (!$categories->EOF) {
+      if (!in_array($categories->fields['categories_id'], $exclude)) {
+        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . '</option>';
+      }
+      $categories->MoveNext();
+    }
+
+    $select_string .= '</select>';
+
+    return $select_string;
+  }
+////
+// Parse and secure the cPath parameter values
+  function zen_parse_category_path($cPath) {
+// make sure the category IDs are integers
+    $cPath_array = array_map('zen_string_to_int', explode('_', $cPath));
+
+// make sure no duplicate category IDs exist which could lock the server in a loop
+    $tmp_array = array();
+    $n = sizeof($cPath_array);
+    for ($i=0; $i<$n; $i++) {
+      if (!in_array($cPath_array[$i], $tmp_array)) {
+        $tmp_array[] = $cPath_array[$i];
+      }
+    }
+
+    return $tmp_array;
+  }
+////
+// Construct a category path to the product
+// TABLES: products_to_categories
+  function zen_get_product_path($products_id, $status_override = '1') {
+    global $db;
+    $cPath = '';
+
+    $category_query = "SELECT p2c.categories_id
+                       FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
+                       WHERE p.products_id = '" . (int)$products_id . "' " .
+                       ($status_override == '1' ? " and p.products_status = '1' " : '') . "
+                       and p.products_id = p2c.products_id limit 1";
+
+    $category = $db->Execute($category_query);
+
+    if ($category->RecordCount() > 0) {
+
+      $categories = array();
+      zen_get_parent_categories($categories, $category->fields['categories_id']);
+
+      $categories = array_reverse($categories);
+
+      $cPath = implode('_', $categories);
+
+      if (zen_not_null($cPath)) $cPath .= '_';
+      $cPath .= $category->fields['categories_id'];
+    }
+
+    return $cPath;
+  }
+
+////
+// Recursively go through the categories and retreive all parent categories IDs
+// TABLES: categories
+  function zen_get_parent_categories(&$categories, $categories_id) {
+    global $db;
+    $parent_categories_query = "SELECT parent_id
+                                FROM " . TABLE_CATEGORIES . "
+                                WHERE categories_id = '" . (int)$categories_id . "'";
+
+    $parent_categories = $db->Execute($parent_categories_query);
+
+    while (!$parent_categories->EOF) {
+      if ($parent_categories->fields['parent_id'] == 0) return true;
+      $categories[sizeof($categories)] = $parent_categories->fields['parent_id'];
+      if ($parent_categories->fields['parent_id'] != $categories_id) {
+        zen_get_parent_categories($categories, $parent_categories->fields['parent_id']);
+      }
+      $parent_categories->MoveNext();
+    }
+  }
+
+////
+  function zen_get_categories($categories_array = '', $parent_id = '0', $indent = '') {
+    global $db;
+
+    if (!is_array($categories_array)) $categories_array = array();
+
+    $categories_query = "SELECT c.categories_id, cd.categories_name
+                         FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
+                         WHERE parent_id = '" . (int)$parent_id . "'
+                         and c.categories_id = cd.categories_id
+                         and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                         ORDER BY sort_order, cd.categories_name";
+
+    $categories = $db->Execute($categories_query);
+
+    while (!$categories->EOF) {
+      $categories_array[] = array('id' => $categories->fields['categories_id'],
+                                  'text' => $indent . $categories->fields['categories_name']);
+
+      if ($categories->fields['categories_id'] != $parent_id) {
+        $categories_array = zen_get_categories($categories_array, $categories->fields['categories_id'], $indent . '&nbsp;&nbsp;');
+      }
+      $categories->MoveNext();
+    }
+
+    return $categories_array;
+  }
+
+*/
 
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.6 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.7 2005/08/12 18:02:06 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,7 +39,7 @@
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
   }
 
-  
+
   $currencies = new currencies();
 
   $languages = zen_get_languages();
@@ -974,8 +974,6 @@ if ($action == '') {
 // fix limit error on some versions
     if ($attribute_page_start < 0) { $attribute_page_start = 0; }
 
-  $attributes = $attributes . " LIMIT $attribute_page_start, $per_page";
-
   // Previous
   if ($prev_attribute_page) {
     echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'attribute_page=' . $prev_attribute_page . '&products_id=' . $productsId) . '"> &lt;&lt; </a> | ';
@@ -1017,7 +1015,7 @@ if ($action == '') {
 
 <?php
   $next_id = 1;
-  $attributes_values = $db->Execute($attributes);
+  $attributes_values = $db->query($attributes, NULL, $per_page, $attribute_page_start );
 
   if ($attributes_values->RecordCount() == 0) {
 ?>

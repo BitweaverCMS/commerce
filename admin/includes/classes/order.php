@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: order.php,v 1.2 2005/08/12 18:02:06 spiderr Exp $
 //
 
   class order {
@@ -146,7 +146,7 @@
             $new_qty = (int)$new_qty;
           }
 
-        $this->products[$index] = array('qty' => $new_qty,
+        $this->products[$index] = array('quantity' => $new_qty,
                                         'name' => $orders_products->fields['products_name'],
                                         'model' => $orders_products->fields['products_model'],
                                         'tax' => $orders_products->fields['products_tax'],
