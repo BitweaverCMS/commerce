@@ -151,6 +151,13 @@ class CommerceProduct extends BitBase {
 			$whereSql .= " AND p.`products_ordered` > 0 ";
 		}
 
+		if( !empty( $pListHash['freshness'] ) ) {
+			if ( $pListHash['freshness'] == '1' ) {
+				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.products_date_added' )." >= ".$this->mDb->SQLDate( 'Ym' );
+			} else {
+				$whereSql .= ' and '.$this->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.products_date_added' ).' > NOW()';
+			}
+		}
 
 		if( !empty( $pListHash['reviews'] ) ) {
 			$selectSql .= ' , r.`reviews_rating`, rd.`reviews_text` ';
@@ -197,6 +204,7 @@ class CommerceProduct extends BitBase {
 				}
 			}
 		}
+
 		return( $ret );
 	}
 

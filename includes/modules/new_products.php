@@ -17,34 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.12 2005/08/12 21:00:02 spiderr Exp $
+// $Id: new_products.php,v 1.13 2005/08/12 23:42:39 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
-// display limits
-  switch (true) {
-    case (SHOW_NEW_PRODUCTS_LIMIT == '0'):
-      $display_limit = '';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '1'):
-      $display_limit = " and date_format(p.products_date_added, '%Y%m') >= date_format(now(), '%Y%m')";
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '30'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 30';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '60'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 60';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '90'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 90';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '120'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 120';
-      break;
-  }
-  // nuke MYSQL specific stuff for now - spiderr
-//   $display_limit = '';
-
+	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
   	$listHash['num_rows'] = MAX_DISPLAY_PRODUCTS_LISTING;
 	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 	$listHash['sort_mode'] = 'products_date_added_desc';
