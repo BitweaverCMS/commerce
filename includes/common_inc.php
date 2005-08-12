@@ -889,7 +889,7 @@ If a special exist * 10+9
     switch (true) {
       case (zen_get_discount_qty($product_id, $qty) and !$attributes_id):
         // discount quanties exist and this is not an attribute
-        // $this->contents[$products_id]['qty']
+        // $this->contents[$products_id]['quantity']
         $check_discount_qty_price = zen_get_products_discount_price_qty($product_id, $qty, $attributes_amount);
 //echo 'How much 1 ' . $qty . ' : ' . $attributes_amount . ' vs ' . $check_discount_qty_price . '<br />';
         return $check_discount_qty_price;
@@ -897,7 +897,7 @@ If a special exist * 10+9
 
       case (zen_get_discount_qty($product_id, $qty) and zen_get_products_price_is_priced_by_attributes($product_id)):
         // discount quanties exist and this is not an attribute
-        // $this->contents[$products_id]['qty']
+        // $this->contents[$products_id]['quantity']
         $check_discount_qty_price = zen_get_products_discount_price_qty($product_id, $qty, $attributes_amount);
 //echo 'How much 2 ' . $qty . ' : ' . $attributes_amount . ' vs ' . $check_discount_qty_price . '<br />';
 

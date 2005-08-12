@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.9 2005/08/11 18:07:06 spiderr Exp $
+// $Id: order.php,v 1.10 2005/08/12 18:29:44 spiderr Exp $
 //
 
   class order {
@@ -186,7 +186,7 @@
           }
 
         $this->products[$index] = $orders_products->fields;
-		$this->products[$index]['qty'] = $new_qty;
+		$this->products[$index]['quantity'] = $new_qty;
 		$this->products[$index]['id'] = $orders_products->fields['products_id'];
 		$this->products[$index]['name'] = $orders_products->fields['products_name'];
 		$this->products[$index]['model'] = $orders_products->fields['products_model'];
@@ -457,7 +457,7 @@
 // add onetime charges here
 //$_SESSION['cart']->attributes_price_onetime_charges($products[$i]['id'], $products[$i]['quantity'])
 
-        $shown_price = (zen_add_tax($this->products[$index]['final_price'], $this->products[$index]['tax']) * $this->products[$index]['qty'])
+        $shown_price = (zen_add_tax($this->products[$index]['final_price'], $this->products[$index]['tax']) * $this->products[$index]['quantity'])
                       + zen_add_tax($this->products[$index]['onetime_charges'], $this->products[$index]['tax']);
         $this->info['subtotal'] += $shown_price;
 
@@ -617,8 +617,8 @@
           if ($stock_values->RecordCount() > 0) {
 // do not decrement quantities if products_attributes_filename exists
             if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values->fields['products_attributes_filename'])) {
-              $stock_left = $stock_values->fields['products_quantity'] - $this->products[$i]['qty'];
-              $this->products[$i]['stock_reduce'] = $this->products[$i]['qty'];
+              $stock_left = $stock_values->fields['products_quantity'] - $this->products[$i]['quantity'];
+              $this->products[$i]['stock_reduce'] = $this->products[$i]['quantity'];
             } else {
               $stock_left = $stock_values->fields['products_quantity'];
             }
@@ -643,8 +643,8 @@
         }
 
 // Update products_ordered (for bestsellers list)
-//    $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%d', $order->products[$i]['qty']) . " where products_id = '" . zen_get_prid($order->products[$i]['id']) . "'");
-         $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%f', $this->products[$i]['qty']) . " where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
+//    $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%d', $order->products[$i]['quantity']) . " where products_id = '" . zen_get_prid($order->products[$i]['id']) . "'");
+         $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%f', $this->products[$i]['quantity']) . " where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
 
         $sql_data_array = array('orders_id' => $zf_insert_id,
                             'products_id' => zen_get_prid($this->products[$i]['id']),
@@ -654,7 +654,7 @@
                             'final_price' => $this->products[$i]['final_price'],
                             'onetime_charges' => $this->products[$i]['onetime_charges'],
                             'products_tax' => $this->products[$i]['tax'],
-                            'products_quantity' => $this->products[$i]['qty'],
+                            'products_quantity' => $this->products[$i]['quantity'],
                             'products_priced_by_attribute' => $this->products[$i]['products_priced_by_attribute'],
                             'product_is_free' => $this->products[$i]['product_is_free'],
                             'products_discount_type' => $this->products[$i]['products_discount_type'],
@@ -760,22 +760,22 @@
         }
       }
 //------insert customer choosen option eof ----
-      $this->total_weight += ($this->products[$i]['qty'] * $this->products[$i]['weight']);
-      $this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->products[$i]['qty'];
+      $this->total_weight += ($this->products[$i]['quantity'] * $this->products[$i]['weight']);
+      $this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->products[$i]['quantity'];
       $this->total_cost += $total_products_price;
 
 // include onetime charges
-      $this->products_ordered .=  $this->products[$i]['qty'] . ' x ' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') . ' = ' .
-                            $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['qty']) .
+      $this->products_ordered .=  $this->products[$i]['quantity'] . ' x ' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') . ' = ' .
+                            $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
                             ($this->products[$i]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .
                             $this->products_ordered_attributes . "\n";
       $this->products_ordered_html .=
 	'<tr>' .
-	'<td class="product-details" align="right" valign="top" width="30">' . $this->products[$i]['qty'] . '&nbsp;x</td>' .
+	'<td class="product-details" align="right" valign="top" width="30">' . $this->products[$i]['quantity'] . '&nbsp;x</td>' .
 	'<td class="product-details" valign="top">' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') .
 	'<nobr><small><em> '. $this->products_ordered_attributes .'</em></small></nobr></td>' .
 	'<td class="product-details-num" valign="top" align="right">' .
-	    $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['qty']) .
+	    $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
 	    ($this->products[$i]['onetime_charges'] !=0 ?
                  '</td></tr><tr><td class="product-details">' . TEXT_ONETIME_CHARGES_EMAIL . '</td>' .
                  '<td>' . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .

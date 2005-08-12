@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_confirmation_default.php,v 1.1 2005/07/05 05:59:28 bitweaver Exp $
+// $Id: tpl_checkout_confirmation_default.php,v 1.2 2005/08/12 18:29:43 spiderr Exp $
 //
 ?>
 <h1><?php echo HEADING_TITLE; ?></h1>
@@ -53,11 +53,11 @@
 
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '          <tr>' . "\n" .
-         '            <td align="right" valign="top" width="30">' . $order->products[$i]['qty'] . '&nbsp;x</td>' . "\n" .
+         '            <td align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
          '            <td valign="top">' . $order->products[$i]['name'];
 
     if (STOCK_CHECK == 'true') {
-      echo zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty']);
+      echo zen_check_stock($order->products[$i]['id'], $order->products[$i]['quantity']);
     }
 
     if ( (isset($order->products[$i]['attributes'])) && (sizeof($order->products[$i]['attributes']) > 0) ) {
@@ -70,7 +70,7 @@
 
     if (sizeof($order->info['tax_groups']) > 1) echo '            <td valign="top" align="right">' . zen_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n";
 
-    echo '            <td align="right" valign="top">' . $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) . '</td>' . "\n" .
+    echo '            <td align="right" valign="top">' . $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['quantity']) . '</td>' . "\n" .
          '          </tr>' . "\n";
   }
 ?>

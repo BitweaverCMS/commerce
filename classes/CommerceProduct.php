@@ -49,6 +49,7 @@ class CommerceProduct extends BitBase {
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( p.`related_content_id`=tc.`content_id`)
 						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
 						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
+						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 					  WHERE p.`products_id`=? AND pd.`language_id`=?";
 			if( $ret = $db->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
@@ -242,10 +243,8 @@ class CommerceProduct extends BitBase {
 		}
 
 		$pParamHash['product_store']['products_last_modified'] = 'now()';
-		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL );
-		if( $this->isValid() ) {
-			$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_category'] ) ? $pParamHash['master_category'] : NULL );
-		} else {
+		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_category'] ) ? $pParamHash['master_category'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL ));
+		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = 'now()';
 		}
 

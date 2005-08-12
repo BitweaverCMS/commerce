@@ -39,7 +39,7 @@
   require_once(DIR_FS_INCLUDES . 'functions/compatibility.php');
 
 // include the list of compatibility issues
-//   require_once(BITCOMMERCE_PKG_PATH . 'includes/functions/functions_categories.php');
+   require_once(BITCOMMERCE_PKG_PATH . 'includes/functions/functions_categories.php');
 
 // include the list of extra database tables and filenames
 //  require_once(DIR_WS_MODULES . 'extra_datafiles.php');
@@ -292,16 +292,12 @@
 
 // add the products model to the breadcrumb trail
   if ( !empty( $_REQUEST['products_id'] ) ) {
-  	if( empty( $_REQUEST['cPath'] ) ) {
-		$_REQUEST['cPath'] = '';
-	}
-	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
-      $breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
-	}
-
     $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+
     if( $gBitProduct->load() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+	  	if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
+			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
+		}
     }
 	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
 		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
@@ -310,6 +306,17 @@
   } else {
     $gBitProduct = new CommerceProduct();
   }
+
+  	if( empty( $_REQUEST['cPath'] ) ) {
+		$_REQUEST['cPath'] = '';
+	}
+	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
+      $breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
+	}
+	if( $gBitProduct->isValid() ) {
+      $breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+	}
+
 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
 
 

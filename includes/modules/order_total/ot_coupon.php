@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: ot_coupon.php,v 1.2 2005/08/12 18:29:44 spiderr Exp $
 //
 
   class ot_coupon {
@@ -290,7 +290,7 @@ function update_credit_account($i) {
     global $db, $order;
     $products_id = zen_get_prid($product_id);
  // products price
-    $qty = $_SESSION['cart']->contents[$product_id]['qty'];
+    $qty = $_SESSION['cart']->contents[$product_id]['quantity'];
     $product = $db->Execute("select products_id, products_price, products_tax_class_id, products_weight
                              from " . TABLE_PRODUCTS . " where products_id='" . $products_id . "'");
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: ot_gv.php,v 1.2 2005/08/12 18:29:44 spiderr Exp $
 //
 
   class ot_gv {
@@ -107,7 +107,7 @@
     function update_credit_account($i) {
       global $db, $order, $insert_id;
       if (ereg('^GIFT', addslashes($order->products[$i]['model']))) {
-        $gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['qty']);
+        $gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['quantity']);
         if ($this->credit_tax=='true') $gv_order_amount = $gv_order_amount * (100 + $order->products[$i]['tax']) / 100;
         $gv_order_amount = $gv_order_amount * 100 / 100;
         if (MODULE_ORDER_TOTAL_GV_QUEUE == 'false') {

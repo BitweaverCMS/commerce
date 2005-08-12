@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.11 2005/08/12 16:59:37 spiderr Exp $
+// $Id: shopping_cart.php,v 1.12 2005/08/12 18:29:44 spiderr Exp $
 //
 
   class shoppingCart {
@@ -37,7 +37,7 @@
         reset($this->contents);
         while (list($products_id, ) = each($this->contents)) {
 //          $products_id = urldecode($products_id);
-          $qty = $this->contents[$products_id]['qty'];
+          $qty = $this->contents[$products_id]['quantity'];
           $product_query = "select products_id
                             from " . TABLE_CUSTOMERS_BASKET . "
                             where customers_id = '" . (int)$_SESSION['customer_id'] . "'
@@ -96,7 +96,7 @@
       $products = $db->Execute($products_query);
 
       while (!$products->EOF) {
-        $this->contents[$products->fields['products_id']] = array('qty' => $products->fields['customers_basket_quantity']);
+        $this->contents[$products->fields['products_id']] = array('quantity' => $products->fields['customers_basket_quantity']);
 // attributes
 // set contents in sort order
 
@@ -160,7 +160,7 @@
         $this->update_quantity($products_id, $qty, $attributes);
       } else {
         $this->contents[] = array($products_id);
-        $this->contents[$products_id] = array('qty' => $qty);
+        $this->contents[$products_id] = array('quantity' => $qty);
 // insert into database
         if ($_SESSION['customer_id']) {
           $sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
@@ -245,7 +245,7 @@
 
       if (empty($quantity)) return true; // nothing needs to be updated if theres no quantity, so we return true..
 
-      $this->contents[$products_id] = array('qty' => $quantity);
+      $this->contents[$products_id] = array('quantity' => $quantity);
 // update database
       if ($_SESSION['customer_id']) {
         $sql = "update " . TABLE_CUSTOMERS_BASKET . "
@@ -326,7 +326,7 @@
 
       reset($this->contents);
       while (list($key,) = each($this->contents)) {
-        if (empty( $this->contents[$key]['qty'] ) || $this->contents[$key]['qty'] <= 0) {
+        if (empty( $this->contents[$key]['quantity'] ) || $this->contents[$key]['quantity'] <= 0) {
           unset($this->contents[$key]);
 // remove from database
           if ($_SESSION['customer_id']) {
@@ -360,7 +360,7 @@
 
     function get_quantity($products_id) {
       if (isset($this->contents[$products_id])) {
-        return $this->contents[$products_id]['qty'];
+        return $this->contents[$products_id]['quantity'];
       } else {
         return 0;
       }
@@ -437,7 +437,7 @@
 
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
-        $qty = $this->contents[$products_id]['qty'];
+        $qty = $this->contents[$products_id]['quantity'];
 
 // products price
         $product_query = "select products_id, products_price, products_tax_class_id, products_weight,
@@ -633,7 +633,7 @@
       global $db;
 
       $attributes_price = 0;
-      $qty = $this->contents[$products_id]['qty'];
+      $qty = $this->contents[$products_id]['quantity'];
 
       if (isset($this->contents[$products_id]['attributes'])) {
 
@@ -701,7 +701,7 @@
               if ($attribute_price->fields['attributes_qty_prices'] != '') {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $this->contents[$products_id]['qty']);
+                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $this->contents[$products_id]['quantity']);
                 $attributes_price += $added_charge;
               }
 
@@ -878,11 +878,11 @@ if ((int)$products_id != $products_id) {
           } else {
 // discount qty pricing
             if ( !empty( $product->fields['products_discount_type'] ) ) {
-              $products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['qty']);
+              $products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['quantity']);
             }
           }
             if ($check_for_valid_cart == true) {
-                $check_quantity = $this->contents[$products_id]['qty'];
+                $check_quantity = $this->contents[$products_id]['quantity'];
                 $check_quantity_min = $product['products_quantity_order_min'];
               // Check quantity min
                 if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
@@ -914,17 +914,17 @@ if ((int)$products_id != $products_id) {
           if (QUANTITY_DECIMALS != 0) {
 //          $new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-            $fix_qty = $this->contents[$products_id]['qty'];
+            $fix_qty = $this->contents[$products_id]['quantity'];
             switch (true) {
             case (!strstr($fix_qty, '.')):
               $new_qty = $fix_qty;
               break;
             default:
-              $new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['qty']);
+              $new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
               break;
             }
           } else {
-            $new_qty = $this->contents[$products_id]['qty'];
+            $new_qty = $this->contents[$products_id]['quantity'];
           }
 
           $new_qty = round($new_qty, QUANTITY_DECIMALS);
@@ -939,8 +939,7 @@ if ((int)$products_id != $products_id) {
           $product['image'] = $product['products_image'];
           $product['image_url'] = $product['products_image_url'];
           $product['price'] = ($product['product_is_free'] =='1' ? 0 : $products_price);
-//        $product[                            'quantity' => $this->contents[$products_id]['qty'],
-          $product['qty'] = $new_qty;
+          $product['quantity'] = $new_qty;
           $product['weight'] = $product['products_weight'] + $this->attributes_weight($products_id);
 // fix here
           $product['final_price'] = $products_price + $this->attributes_price($products_id);
@@ -985,7 +984,7 @@ if ((int)$products_id != $products_id) {
           $free_ship_check = $db->Execute("select products_virtual, products_model, products_price from " . TABLE_PRODUCTS . " where products_id = '" . zen_get_prid($products_id) . "'");
           $virtual_check = false;
           if (ereg('^GIFT', addslashes($free_ship_check->fields['products_model']))) {
-            $gift_voucher += ($free_ship_check->fields['products_price'] + $this->attributes_price($products_id)) * $this->contents[$products_id]['qty'];
+            $gift_voucher += ($free_ship_check->fields['products_price'] + $this->attributes_price($products_id)) * $this->contents[$products_id]['quantity'];
           }
           if (isset($this->contents[$products_id]['attributes'])) {
             reset($this->contents[$products_id]['attributes']);
@@ -1129,7 +1128,7 @@ if ((int)$products_id != $products_id) {
       while (list($products_id, ) = each($check_contents)) {
         $test_id = zen_get_prid($products_id);
         if ($test_id == $chk_products_id) {
-          $in_cart_mixed_qty += $check_contents[$products_id]['qty'];
+          $in_cart_mixed_qty += $check_contents[$products_id]['quantity'];
         }
       }
       return $in_cart_mixed_qty;
@@ -1159,7 +1158,7 @@ if ((int)$products_id != $products_id) {
       while (list($products_id, ) = each($check_contents)) {
         $test_id = zen_get_prid($products_id);
         if ($test_id == $chk_products_id) {
-          $in_cart_mixed_qty_discount_quantity += $check_contents[$products_id]['qty'];
+          $in_cart_mixed_qty_discount_quantity += $check_contents[$products_id]['quantity'];
         }
       }
       return $in_cart_mixed_qty_discount_quantity;
@@ -1182,7 +1181,7 @@ if ((int)$products_id != $products_id) {
         // check if field it true
         $product_check = $db->Execute("select " . $check_what . " as check_it from " . TABLE_PRODUCTS . " where products_id='" . $testing_id . "' limit 1");
         if ($product_check->fields['check_it'] == $check_value) {
-          $in_cart_check_qty += $this->contents[$products_id]['qty'];
+          $in_cart_check_qty += $this->contents[$products_id]['quantity'];
         }
       }
       return $in_cart_check_qty;

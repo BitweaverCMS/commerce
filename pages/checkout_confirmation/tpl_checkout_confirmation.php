@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_confirmation.php,v 1.3 2005/08/12 16:59:38 spiderr Exp $
+// $Id: tpl_checkout_confirmation.php,v 1.4 2005/08/12 18:29:44 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -91,11 +91,11 @@
 
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['qty'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
          '          <td class="main" valign="top">' . $order->products[$i]['name'];
 
     if (STOCK_CHECK == 'true') {
-      echo zen_check_stock(stripslashes($order->products[$i]['id']), $order->products[$i]['qty']);
+      echo zen_check_stock(stripslashes($order->products[$i]['id']), $order->products[$i]['quantity']);
     }
 
     if ( !empty( $order->products[$i]['attributes'] ) && (sizeof($order->products[$i]['attributes']) > 0) ) {
@@ -115,7 +115,7 @@
 	}
 
     echo '        <td class="main" align="right" valign="top">' .
-                    $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) .
+                    $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['quantity']) .
                     ($order->products[$i]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->products[$i]['onetime_charges'], $order->products[$i]['tax'], 1) : '') .
                   '</td>' . "\n" .
          '      </tr>' . "\n";

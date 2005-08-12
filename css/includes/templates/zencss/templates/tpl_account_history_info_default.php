@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_history_info_default.php,v 1.1 2005/07/05 05:59:28 bitweaver Exp $
+// $Id: tpl_account_history_info_default.php,v 1.2 2005/08/12 18:29:43 spiderr Exp $
 //
 ?>
 >
@@ -48,7 +48,7 @@
 
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '          <tr>' . "\n" .
-         '            <td align="right" valign="top" width="30">' . $order->products[$i]['qty'] . '&nbsp;x</td>' . "\n" .
+         '            <td align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
          '            <td valign="top">' . $order->products[$i]['name'];
 
     if ( (isset($order->products[$i]['attributes'])) && (sizeof($order->products[$i]['attributes']) > 0) ) {
@@ -63,7 +63,7 @@
       echo '            <td valign="top" align="right">' . zen_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n";
     }
 
-    echo '            <td  align="right" valign="top">' . $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['qty'], true, $order->info['currency'], $order->info['currency_value']) . '</td>' . "\n" .
+    echo '            <td  align="right" valign="top">' . $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . '</td>' . "\n" .
          '          </tr>' . "\n";
   }
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_history_info.php,v 1.2 2005/08/11 18:07:07 spiderr Exp $
+// $Id: tpl_account_history_info.php,v 1.3 2005/08/12 18:29:44 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -102,7 +102,7 @@
   }
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['qty'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
          '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$i]['id'], $order->products[$i]['type_handler'] ) .'">'. $order->products[$i]['name'] . '</a>';
 
     if ( (isset($order->products[$i]['attributes'])) && (sizeof($order->products[$i]['attributes']) > 0) ) {
@@ -118,7 +118,7 @@
     }
 
     echo '          <td class="main" align="right" valign="top">' .
-                      $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['qty'], true, $order->info['currency'], $order->info['currency_value']) .
+                      $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                       ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '').
                     '</td>' . "\n" .
          '        </tr>' . "\n";
