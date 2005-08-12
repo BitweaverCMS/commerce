@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_featured_products.php,v 1.2 2005/08/04 07:15:21 spiderr Exp $
+// $Id: tpl_featured_products.php,v 1.3 2005/08/12 19:16:05 spiderr Exp $
 //
 ?>
 
@@ -50,7 +50,8 @@
     // bof: multiple products
 
 // check how many rows
-    $check_products_all = $db->Execute($featured_products_split->sql_query);
+	$offset = MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+    $check_products_all = $db->Execute( $featured_products_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
     $how_many = 0;
     while (!$check_products_all->EOF) {
       if (zen_has_product_attributes($check_products_all->fields['products_id'])) {

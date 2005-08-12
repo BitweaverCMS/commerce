@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews.php,v 1.1 2005/08/04 07:01:59 spiderr Exp $
+// $Id: tpl_product_reviews.php,v 1.2 2005/08/12 19:16:07 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -74,7 +74,8 @@
 <?php
     }
 
-    $reviews = $db->Execute($reviews_split->sql_query);
+	$offset = MAX_DISPLAY_NEW_REVIEWS * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+    $reviews = $db->query($reviews_split->sql_query, NULL, MAX_DISPLAY_NEW_REVIEWS, $offset);
 
     while (!$reviews->EOF) {
 ?>

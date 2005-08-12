@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.5 2005/08/04 07:01:01 spiderr Exp $
+// $Id: featured_products.php,v 1.6 2005/08/12 19:16:05 spiderr Exp $
 //
 
 
 	$title = TABLE_HEADING_FEATURED_PRODUCTS;
 
 	$listHash['max_records'] = MAX_DISPLAY_SEARCH_RESULTS_FEATURED;
+	$listHash['offset'] = MAX_DISPLAY_SEARCH_RESULTS_FEATURED * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 	$listHash['sort_mode'] = 'random';
 	$listHash['featured'] = TRUE;
 

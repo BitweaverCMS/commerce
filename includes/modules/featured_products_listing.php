@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products_listing.php,v 1.2 2005/07/18 14:35:52 spiderr Exp $
+// $Id: featured_products_listing.php,v 1.3 2005/08/12 19:16:05 spiderr Exp $
 //
 
 ?>
@@ -29,13 +29,13 @@
   $group_id = zen_get_configuration_key_value('PRODUCT_FEATURED_LIST_GROUP_ID');
 
   if ($featured_products_split->number_of_rows > 0) {
-    $featured_products = $db->Execute($featured_products_split->sql_query);
+    $featured_products = $db->query($featured_products_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
 
     while (!$featured_products->EOF) {
 
 
       if (PRODUCT_FEATURED_LIST_IMAGE != '0') {
-        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . $featured_products->fields['products_image'], $featured_products->fields['products_name'], IMAGE_FEATURED_PRODUCTS_LISTING_WIDTH, IMAGE_FEATURED_PRODUCTS_LISTING_HEIGHT) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
+        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $featured_products->fields['products_id'], 'avatar' ), $featured_products->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
       } else {
         $display_products_image = '';
       }

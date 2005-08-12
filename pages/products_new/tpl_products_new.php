@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_new.php,v 1.1 2005/08/04 07:02:01 spiderr Exp $
+// $Id: tpl_products_new.php,v 1.2 2005/08/12 19:16:07 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -59,9 +59,9 @@
 
   if (PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART > 0 and $show_submit == 'true' and $products_new_split->number_of_rows > 0) {
     // bof: multiple products
-
 // check how many rows
-    $check_products_all = $db->Execute($products_new_split->sql_query);
+	$offset = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+    $check_products_all = $db->query($products_new_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_NEW, $offset );
     $how_many = 0;
     while (!$check_products_all->EOF) {
       if (zen_has_product_attributes($check_products_all->fields['products_id'])) {
@@ -70,7 +70,6 @@
       }
       $check_products_all->MoveNext();
     }
-
     if ( (($how_many > 0 and $show_submit == 'true' and $products_new_split->number_of_rows > 0) and (PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART == 1 or  PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART == 3)) ) {
       $show_top_submit_button = 'true';
     } else {

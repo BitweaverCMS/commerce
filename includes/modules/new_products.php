@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.10 2005/08/12 07:03:22 spiderr Exp $
+// $Id: new_products.php,v 1.11 2005/08/12 19:16:05 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
@@ -45,10 +45,13 @@
   // nuke MYSQL specific stuff for now - spiderr
   $display_limit = '';
 
-	$listHash['sort_mode'] = 'random';
+  	$listHash['num_rows'] = MAX_DISPLAY_PRODUCTS_LISTING;
+	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+	$listHash['sort_mode'] = 'created';
 	if ( !empty( $new_products_category_id ) ) {
 		$listHash['category_id'] = $new_products_category_id;
 	}
+
   $new_products = $gBitProduct->getList( $listHash );
   $row = 0;
   $col = 0;

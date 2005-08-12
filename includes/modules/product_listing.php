@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.6 2005/08/04 07:01:02 spiderr Exp $
+// $Id: product_listing.php,v 1.7 2005/08/12 19:16:05 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
+
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.products_id', 'page');
 
   if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0 and $show_submit == 'true' and $listing_split->number_of_rows > 0) {
@@ -80,7 +81,8 @@
 
   if ($listing_split->number_of_rows > 0) {
     $rows = 0;
-    $listing = $db->Execute($listing_split->sql_query);
+	$offset = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+    $listing = $db->query( $listing_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_LISTING, $offset );
     while (!$listing->EOF) {
       $rows++;
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_new_listing.php,v 1.4 2005/07/30 03:01:56 spiderr Exp $
+// $Id: products_new_listing.php,v 1.5 2005/08/12 19:16:05 spiderr Exp $
 //
 
 ?>
@@ -29,7 +29,8 @@
   $group_id = zen_get_configuration_key_value('PRODUCT_NEW_LIST_GROUP_ID');
 
   if ($products_new_split->number_of_rows > 0) {
-    $products_new = $db->Execute($products_new_split->sql_query);
+	$offset = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+    $products_new = $db->query($products_new_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_NEW, $offset);
     while (!$products_new->EOF) {
 
       if (PRODUCT_NEW_LIST_IMAGE != '0') {
