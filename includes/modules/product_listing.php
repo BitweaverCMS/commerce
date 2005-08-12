@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.7 2005/08/12 19:16:05 spiderr Exp $
+// $Id: product_listing.php,v 1.8 2005/08/12 21:00:02 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
@@ -87,9 +87,9 @@
       $rows++;
 
       if ((($rows-$extra_row)/2) == floor(($rows-$extra_row)/2)) {
-        $list_box_contents[$rows] = array('params' => 'class="productListing-even"');
+        $list_box_contents[$rows] = array('params' => 'class="even"');
       } else {
-        $list_box_contents[$rows] = array('params' => 'class="productListing-odd"');
+        $list_box_contents[$rows] = array('params' => 'class="odd"');
       }
 
       $cur_row = sizeof($list_box_contents) - 1;
@@ -155,7 +155,7 @@
         }
 
         $list_box_contents[$rows][$col] = array('align' => $lc_align,
-                                               'params' => 'class="productListing-data"',
+                                               'params' => 'class="data"',
                                                'text'  => $lc_text);
       }
 
@@ -163,10 +163,10 @@
       if (PRODUCT_LIST_DESCRIPTION > 0) {
         $rows++;
         if ($extra_row == 1) {
-          $list_box_description = "productListing-data-description-even";
+          $list_box_description = "even";
           $extra_row=0;
         } else {
-          $list_box_description = "productListing-data-description-odd";
+          $list_box_description = "odd";
           $extra_row=1;
         }
         $list_box_contents[$rows][] = array('params' => 'class="' . $list_box_description . '" colspan="' . $zc_col_count_description . '"',
@@ -178,8 +178,8 @@
   } else {
     $list_box_contents = array();
 
-    $list_box_contents[0] = array('params' => 'class="productListing-odd"');
-    $list_box_contents[0][] = array('params' => 'class="productListing-data"',
+    $list_box_contents[0] = array('params' => 'class="odd"');
+    $list_box_contents[0][] = array('params' => 'class="data"',
                                    'text' => TEXT_NO_PRODUCTS);
 
     $error_categories = true;

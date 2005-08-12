@@ -402,9 +402,54 @@ class CommerceProduct extends BitBase {
 				$this->mErrors['expunge'] = tra( 'This product cannot be deleted because it has been purchased' );
 			} else {
 				$this->mDb->StartTrans();
-				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION ." WHERE `products_id`=?", array( $this->mProductsId ) );
-				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES ." WHERE `products_id`=?", array( $this->mProductsId ) );
-				$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
+/*
+Skip deleting of images for now
+				if( !empty( $this->mInfo['products_image'] ) ) {
+					$duplicate_image = $this->mDb->GetOne("SELECT count(*) as total
+                                     FROM " . TABLE_PRODUCTS . "
+                                     WHERE products_image = ?", array( $this->mInfo['products_image'] ) );
+					if ($duplicate_image < 2 ) {
+						$products_image = $product_image->fields['products_image'];
+						$products_image_extention = substr($products_image, strrpos($products_image, '.'));
+						$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+
+						$filename_medium = 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
+								$filename_large = 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
+
+						if (file_exists(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image'])) {
+							@unlink(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image']);
+						}
+						if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_medium)) {
+							@unlink(DIR_FS_CATALOG_IMAGES . $filename_medium);
+						}
+						if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_large)) {
+							@unlink(DIR_FS_CATALOG_IMAGES . $filename_large);
+						}
+					}
+*/
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE products_id = ?");
+
+				zen_products_attributes_download_delete($product_id);
+
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE products_id = ?");
+
+				$product_reviews = $this->mDb->query("SELECT reviews_id FROM " . TABLE_REVIEWS . " WHERE products_id = ?");
+				while (!$product_reviews->EOF) {
+					$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
+								WHERE reviews_id = '" . (int)$product_reviews->fields['reviews_id'] . "'");
+					$product_reviews->MoveNext();
+				}
+
+				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE products_id = ?");
+
 				$this->mDb->CompleteTrans();
 			}
 		}

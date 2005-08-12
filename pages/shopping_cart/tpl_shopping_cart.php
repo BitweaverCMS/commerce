@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart.php,v 1.2 2005/08/12 18:29:44 spiderr Exp $
+// $Id: tpl_shopping_cart.php,v 1.3 2005/08/12 21:00:07 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -121,9 +121,9 @@
 
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
       if (($i/2) == floor($i/2)) {
-        $info_box_contents[] = array('params' => 'class="productListing-even"');
+        $info_box_contents[] = array('params' => 'class="even"');
       } else {
-        $info_box_contents[] = array('params' => 'class="productListing-odd"');
+        $info_box_contents[] = array('params' => 'class="odd"');
       }
 
       $cur_row = sizeof($info_box_contents) - 1;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.6 2005/08/04 07:01:02 spiderr Exp $
+// $Id: specials_index.php,v 1.7 2005/08/12 21:00:02 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -81,7 +81,7 @@
 
     if( !empty( $specialProducts ) ) {
       $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
-      require( DIR_FS_MODULES . 'tpl_modules_specials_default.php');
+      require( DIR_FS_MODULES . 'tpl_modules_specials.php');
     }
   }
 ?>

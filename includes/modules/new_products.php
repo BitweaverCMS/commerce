@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.11 2005/08/12 19:16:05 spiderr Exp $
+// $Id: new_products.php,v 1.12 2005/08/12 21:00:02 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
@@ -43,11 +43,11 @@
       break;
   }
   // nuke MYSQL specific stuff for now - spiderr
-  $display_limit = '';
+//   $display_limit = '';
 
   	$listHash['num_rows'] = MAX_DISPLAY_PRODUCTS_LISTING;
 	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-	$listHash['sort_mode'] = 'created';
+	$listHash['sort_mode'] = 'products_date_added_desc';
 	if ( !empty( $new_products_category_id ) ) {
 		$listHash['category_id'] = $new_products_category_id;
 	}
