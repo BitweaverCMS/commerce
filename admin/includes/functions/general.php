@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.9 2005/08/03 15:35:11 spiderr Exp $
+//  $Id: general.php,v 1.10 2005/08/12 17:06:18 spiderr Exp $
 //
 
 ////
@@ -50,7 +50,7 @@
     return $customers_values->fields['customers_firstname'] . ' ' . $customers_values->fields['customers_lastname'];
   }
 
-
+/*
   function zen_get_path($current_category_id = '') {
     global $cPath_array, $db;
 // set to 0 if Top Level
@@ -93,7 +93,7 @@
 
     return 'cPath=' . $cPath_new;
   }
-
+*/
 
   function zen_get_all_get_params($exclude_array = '') {
     global $_GET;
@@ -989,9 +989,6 @@
     $db->Execute("delete FROM " . TABLE_SPECIALS . "
                   WHERE products_id = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS . "
-                  WHERE products_id = '" . (int)$product_id . "'");
-
 //    if ($ptc == 'true') {
       $db->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
                     WHERE products_id = '" . (int)$product_id . "'");
@@ -1031,6 +1028,9 @@
                   WHERE products_id = '" . (int)$product_id . "'");
 
     $db->Execute("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
+                  WHERE products_id = '" . (int)$product_id . "'");
+
+    $db->Execute("delete FROM " . TABLE_PRODUCTS . "
                   WHERE products_id = '" . (int)$product_id . "'");
 
   }
@@ -2102,29 +2102,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     } else {
       return -1;
-    }
-  }
-
-
-
-
-
-
-////
-// Return true if the category has subcategories
-// TABLES: categories
-  function zen_has_category_subcategories($category_id) {
-    global $db;
-    $child_category_query = "SELECT count(*) as count
-                             FROM " . TABLE_CATEGORIES . "
-                             WHERE parent_id = '" . (int)$category_id . "'";
-
-    $child_category = $db->Execute($child_category_query);
-
-    if ($child_category->fields['count'] > 0) {
-      return true;
-    } else {
-      return false;
     }
   }
 
