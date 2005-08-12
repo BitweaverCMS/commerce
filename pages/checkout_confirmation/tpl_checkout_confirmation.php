@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_confirmation.php,v 1.2 2005/08/11 17:30:57 spiderr Exp $
+// $Id: tpl_checkout_confirmation.php,v 1.3 2005/08/12 16:59:38 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -98,7 +98,7 @@
       echo zen_check_stock(stripslashes($order->products[$i]['id']), $order->products[$i]['qty']);
     }
 
-    if ( (isset($order->products[$i]['attributes'])) && (sizeof($order->products[$i]['attributes']) > 0) ) {
+    if ( !empty( $order->products[$i]['attributes'] ) && (sizeof($order->products[$i]['attributes']) > 0) ) {
       for ($j=0, $n2=sizeof($order->products[$i]['attributes']); $j<$n2; $j++) {
         echo '<br /><nobr>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'] . '</i></nobr>';
       }

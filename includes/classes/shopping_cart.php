@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.10 2005/08/11 18:07:06 spiderr Exp $
+// $Id: shopping_cart.php,v 1.11 2005/08/12 16:59:37 spiderr Exp $
 //
 
   class shoppingCart {
@@ -939,8 +939,8 @@ if ((int)$products_id != $products_id) {
           $product['image'] = $product['products_image'];
           $product['image_url'] = $product['products_image_url'];
           $product['price'] = ($product['product_is_free'] =='1' ? 0 : $products_price);
-//                                    'quantity' => $this->contents[$products_id]['qty'],
-          $product['quantity'] = $new_qty;
+//        $product[                            'quantity' => $this->contents[$products_id]['qty'],
+          $product['qty'] = $new_qty;
           $product['weight'] = $product['products_weight'] + $this->attributes_weight($products_id);
 // fix here
           $product['final_price'] = $products_price + $this->attributes_price($products_id);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_categories.php,v 1.2 2005/08/12 16:59:37 spiderr Exp $
 //
 //
 ////
@@ -102,24 +102,6 @@
     }
 
     return $products_count;
-  }
-
-////
-// Return true if the category has subcategories
-// TABLES: categories
-  function zen_has_category_subcategories($category_id) {
-    global $db;
-    $child_category_query = "select count(*) as count
-                             from " . TABLE_CATEGORIES . "
-                             where parent_id = '" . (int)$category_id . "'";
-
-    $child_category = $db->Execute($child_category_query);
-
-    if ($child_category->fields['count'] > 0) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
 ////

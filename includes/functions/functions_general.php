@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.14 2005/08/03 15:35:15 spiderr Exp $
+// $Id: functions_general.php,v 1.15 2005/08/12 16:59:37 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -827,6 +827,7 @@
 ////
 // Set back button
   function zen_back_link() {
+/*
     if (sizeof($_SESSION['navigation']->path)-2 > 0) {
       $back = sizeof($_SESSION['navigation']->path)-2;
       $link = '<a href="' . zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']) . '">';
@@ -838,7 +839,8 @@
       }
       $_SESSION['navigation'] = new navigationHistory;
     }
-    return $link;
+*/
+    return '<a href="javascript:history.back()">';
   }
 
 
@@ -1129,13 +1131,13 @@
 ////
 // call additional function files
 // prices and quantities
-  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
+  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
 // gv and coupons
-  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php');
+  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php');
 // categories, paths, pulldowns
-  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_categories.php');
+  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_categories.php');
 // customers and addresses
-  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php');
+  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php');
 ////
 /////////////////////////////////////////////
 ?>

@@ -38,6 +38,9 @@
 // include the list of compatibility issues
   require_once(DIR_FS_INCLUDES . 'functions/compatibility.php');
 
+// include the list of compatibility issues
+//   require_once(BITCOMMERCE_PKG_PATH . 'includes/functions/functions_categories.php');
+
 // include the list of extra database tables and filenames
 //  require_once(DIR_WS_MODULES . 'extra_datafiles.php');
   if ($za_dir = @dir(DIR_FS_INCLUDES . 'extra_datafiles')) {

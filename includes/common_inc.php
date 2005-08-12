@@ -1507,6 +1507,24 @@ If a special exist * 10+9
   }
 
 
+////
+// Return true if the category has subcategories
+// TABLES: categories
+  function zen_has_category_subcategories($category_id) {
+    global $db;
+    $child_category_query = "select count(*) as count
+                             from " . TABLE_CATEGORIES . "
+                             where parent_id = '" . (int)$category_id . "'";
+
+    $child_category = $db->Execute($child_category_query);
+
+    if ($child_category->fields['count'] > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 
 function reset_bitcommerce_layout() {
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
