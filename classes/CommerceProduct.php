@@ -57,6 +57,7 @@ class CommerceProduct extends BitBase {
 					$ret['products_image_url'] = NULL;
 				}
 				$ret['products_weight_kg'] = $ret['products_weight'] * .45359;
+				$ret['info_page'] = $ret['type_handler'].'_info';
 			}
 		}
 		return $ret;
