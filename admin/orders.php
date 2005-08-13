@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.6 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: orders.php,v 1.7 2005/08/13 17:06:17 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -278,7 +278,7 @@
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main" valign="top"><strong><?php echo ENTRY_CUSTOMER; ?></strong></td>
-                <td class="main"><?php echo zen_address_format($order->customer['format_id'], $order->customer, 1, '', '<br />'); ?></td>
+                <td class="main"><?php echo $gBitUser->getDisplayLink( $order->info['login'], $order->info ); ?></td>
               </tr>
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '5'); ?></td>
@@ -374,15 +374,15 @@
 }
 ?>
       <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <td><table class="data" border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr class="dataTableHeadingRow">
-            <td class="dataTableHeadingContent" colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
-            <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></td>
-            <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TAX; ?></td>
-            <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_EXCLUDING_TAX; ?></td>
-            <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_INCLUDING_TAX; ?></td>
-            <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_EXCLUDING_TAX; ?></td>
-            <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></td>
+            <th colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></th>
+            <th><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></th>
+            <th align="right"><?php echo TABLE_HEADING_TAX; ?></th>
+            <th align="right"><?php echo TABLE_HEADING_PRICE_EXCLUDING_TAX; ?></th>
+            <th align="right"><?php echo TABLE_HEADING_PRICE_INCLUDING_TAX; ?></th>
+            <th align="right"><?php echo TABLE_HEADING_TOTAL_EXCLUDING_TAX; ?></th>
+            <th align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></th>
           </tr>
 <?php
     for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
@@ -402,22 +402,22 @@
       echo '            </td>' . "\n" .
            '            <td class="dataTableContent" valign="top">' . $order->products[$i]['model'] . '</td>' . "\n" .
            '            <td class="dataTableContent" align="right" valign="top">' . zen_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n" .
-           '            <td class="dataTableContent" align="right" valign="top"><strong>' .
+           '            <td class="dataTableContent" align="right" valign="top">' .
                           $currencies->format($order->products[$i]['final_price'], true, $order->info['currency'], $order->info['currency_value']) .
                           ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format($order->products[$i]['onetime_charges'], true, $order->info['currency'], $order->info['currency_value']) : '') .
-                        '</strong></td>' . "\n" .
-           '            <td class="dataTableContent" align="right" valign="top"><strong>' .
+                        '</td>' . "\n" .
+           '            <td class="dataTableContent" align="right" valign="top">' .
                           $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) .
                           ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '') .
-                        '</strong></td>' . "\n" .
-           '            <td class="dataTableContent" align="right" valign="top"><strong>' .
+                        '</td>' . "\n" .
+           '            <td class="dataTableContent" align="right" valign="top">' .
                           $currencies->format($order->products[$i]['final_price'] * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                           ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format($order->products[$i]['onetime_charges'], true, $order->info['currency'], $order->info['currency_value']) : '') .
-                        '</strong></td>' . "\n" .
-           '            <td class="dataTableContent" align="right" valign="top"><strong>' .
+                        '</td>' . "\n" .
+           '            <td class="dataTableContent" align="right" valign="top">' .
                           $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                           ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '') .
-                        '</strong></td>' . "\n";
+                        '</td>' . "\n";
       echo '          </tr>' . "\n";
     }
 ?>
@@ -445,12 +445,12 @@
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
       <tr>
-        <td class="main"><table border="1" cellspacing="0" cellpadding="5">
+        <td class="data"><table border="0" cellspacing="0" cellpadding="5">
           <tr>
-            <td class="smallText" align="center"><strong><?php echo TABLE_HEADING_DATE_ADDED; ?></strong></td>
-            <td class="smallText" align="center"><strong><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></strong></td>
-            <td class="smallText" align="center"><strong><?php echo TABLE_HEADING_STATUS; ?></strong></td>
-            <td class="smallText" align="center"><strong><?php echo TABLE_HEADING_COMMENTS; ?></strong></td>
+            <th><?php echo TABLE_HEADING_DATE_ADDED; ?></th>
+            <th><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></th>
+            <th><?php echo TABLE_HEADING_STATUS; ?></th>
+            <th><?php echo TABLE_HEADING_COMMENTS; ?></th>
           </tr>
 <?php
     $orders_history = $db->Execute("select orders_status_id, date_added, customer_notified, comments
@@ -585,13 +585,13 @@
               $disp_order = "c.customers_id DESC";
           }
 ?>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_ORDERS_ID; ?></td>
-                <td class="dataTableHeadingContent" align="left" width="50"><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></td>
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CUSTOMERS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ORDER_TOTAL; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_DATE_PURCHASED; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STATUS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
+                <th align="center"><?php echo TABLE_HEADING_ORDERS_ID; ?></th>
+                <th align="left" width="50"><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></th>
+                <th><?php echo TABLE_HEADING_CUSTOMERS; ?></th>
+                <th align="right"><?php echo TABLE_HEADING_ORDER_TOTAL; ?></th>
+                <th align="center"><?php echo TABLE_HEADING_DATE_PURCHASED; ?></th>
+                <th align="right"><?php echo TABLE_HEADING_STATUS; ?></th>
+                <th align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
               </tr>
 
 <?php

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.4 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: index.php,v 1.5 2005/08/13 17:06:17 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -104,11 +104,12 @@
 ?>
 </table>
 <table class="data">
-<tr><th colspan="2"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
-  <?php  $orders = $db->Execute("select o.orders_id as orders_id, o.customers_name as customers_name, o.customers_id, o.date_purchased as date_purchased, o.currency, o.currency_value, ot.class, ot.text as order_total from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id) where class = 'ot_total' order by orders_id DESC limit 5");
+<tr><th colspan="3"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
+  <?php  $orders = $db->Execute("select *, ot.text as order_total from " . TABLE_ORDERS . " o  INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id) where class = 'ot_total' order by o.orders_id DESC limit 5");
 
   while (!$orders->EOF) {
-    echo '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink"> ' . $orders->fields['customers_name'] . '</a></span><span class="center">' . $orders->fields['order_total'] . '</td><td>' . "\n";
+  	$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink"> ';
+    echo '<tr><td>'. $orderAnchor . $orders->fields['orders_id'] . ' - '. $gBitUser->getDisplayName( FALSE, $orders->fields ) . '</a> ' . '</td><td>' . $orders->fields['order_total'] . '</td><td align="right">' . "\n";
     echo zen_date_short($orders->fields['date_purchased']);
     echo '</td></tr>' . "\n";
     $orders->MoveNext();

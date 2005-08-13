@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.3 2005/08/13 16:36:10 spiderr Exp $
+//  $Id: order.php,v 1.4 2005/08/13 17:06:18 spiderr Exp $
 //
 
   class order {
@@ -36,7 +36,7 @@
     function query($order_id) {
       global $db;
       $order = $db->Execute("select *
-                             from " . TABLE_ORDERS . "
+                             from " . TABLE_ORDERS . " o INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
                              where orders_id = '" . (int)$order_id . "'");
 
 
