@@ -17,36 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whats_new.php,v 1.3 2005/08/11 04:36:37 spiderr Exp $
+// $Id: mod_whats_new.php,v 1.4 2005/08/13 00:19:18 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-  switch (true) {
-    case (SHOW_NEW_PRODUCTS_LIMIT == '0'):
-      $display_limit = '';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '1'):
-      $display_limit = " and date_format(p.products_date_added, '%Y%m') >= date_format(now(), '%Y%m')";
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '30'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 30';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '60'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 60';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '90'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 90';
-      break;
-    case (SHOW_NEW_PRODUCTS_LIMIT == '120'):
-      $display_limit = ' and TO_DAYS(NOW()) - TO_DAYS(p.products_date_added) <= 120';
-      break;
-  }
-
 	if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 		list( $selectSql, $fromSql, $whereSql ) = CommerceProduct::getGatekeeperSql();
 	}
+	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
 	$listHash['max_records'] = 1;
 	$listHash['sort_mode'] = 'random';
 
