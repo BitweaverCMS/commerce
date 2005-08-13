@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.7 2005/08/12 18:02:06 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.8 2005/08/13 16:36:09 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -139,13 +139,13 @@
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
-      case 'set_flag_attributes_price_base_included':
+      case 'set_flag_attributes_price_base_inc':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_price_base_included from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
-        if ($new_flag->fields['attributes_price_base_included'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_included='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_price_base_inc from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        if ($new_flag->fields['attributes_price_base_inc'] == '0') {
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_inc='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_included='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_inc='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
         }
 
         // reset products_price_sorter for searches etc.
@@ -218,7 +218,7 @@
             $attributes_display_only = zen_db_prepare_input($_POST['attributes_display_only']);
             $attributes_default = zen_db_prepare_input($_POST['attributes_default']);
             $attributes_discounted = zen_db_prepare_input($_POST['attributes_discounted']);
-            $attributes_price_base_included = zen_db_prepare_input($_POST['attributes_price_base_included']);
+            $attributes_price_base_inc = zen_db_prepare_input($_POST['attributes_price_base_inc']);
 
             $attributes_price_onetime = zen_db_prepare_input($_POST['attributes_price_onetime']);
             $attributes_price_factor = zen_db_prepare_input($_POST['attributes_price_factor']);
@@ -266,7 +266,7 @@
                                   '" . zen_db_input($attributes_default) . "',
                                   '" . zen_db_input($attributes_discounted) . "',
                                   '" . zen_db_input($attributes_image_name) . "',
-                                  '" . zen_db_input($attributes_price_base_included) . "',
+                                  '" . zen_db_input($attributes_price_base_inc) . "',
                                   '" . zen_db_input($attributes_price_onetime) . "',
                                   '" . zen_db_input($attributes_price_factor) . "',
                                   '" . zen_db_input($attributes_pf_offset) . "',
@@ -346,7 +346,7 @@
             $attributes_display_only = zen_db_prepare_input($_POST['attributes_display_only']);
             $attributes_default = zen_db_prepare_input($_POST['attributes_default']);
             $attributes_discounted = zen_db_prepare_input($_POST['attributes_discounted']);
-            $attributes_price_base_included = zen_db_prepare_input($_POST['attributes_price_base_included']);
+            $attributes_price_base_inc = zen_db_prepare_input($_POST['attributes_price_base_inc']);
 
             $attributes_price_onetime = zen_db_prepare_input($_POST['attributes_price_onetime']);
             $attributes_price_factor = zen_db_prepare_input($_POST['attributes_price_factor']);
@@ -401,7 +401,7 @@
                               attributes_display_only = '" . zen_db_input($attributes_display_only) . "',
                               attributes_default = '" . zen_db_input($attributes_default) . "',
                               attributes_discounted = '" . zen_db_input($attributes_discounted) . "',
-                              attributes_price_base_included = '" . zen_db_input($attributes_price_base_included) . "',
+                              attributes_price_base_inc = '" . zen_db_input($attributes_price_base_inc) . "',
                               attributes_price_onetime = '" . zen_db_input($attributes_price_onetime) . "',
                               attributes_price_factor = '" . zen_db_input($attributes_price_factor) . "',
                               attributes_pf_offset = '" . zen_db_input($attributes_pf_offset) . "',
@@ -1139,11 +1139,11 @@ if ($action == '') {
       case '1': $on_attributes_discounted = true; $off_attributes_discounted = false; break;
       default: $on_attributes_discounted = false; $off_attributes_discounted = true;
     }
-// set radio values attributes_price_base_included
-    switch ($attributes_values->fields['attributes_price_base_included']) {
-      case '0': $on_attributes_price_base_included = false; $off_attributes_price_base_included = true; break;
-      case '1': $on_attributes_price_base_included = true; $off_attributes_price_base_included = false; break;
-      default: $on_attributes_price_base_included = false; $off_attributes_price_base_included = true;
+// set radio values attributes_price_base_inc
+    switch ($attributes_values->fields['attributes_price_base_inc']) {
+      case '0': $on_attributes_price_base_inc = false; $off_attributes_price_base_inc = true; break;
+      case '1': $on_attributes_price_base_inc = true; $off_attributes_price_base_inc = false; break;
+      default: $on_attributes_price_base_inc = false; $off_attributes_price_base_inc = true;
     }
 // set radio values attributes_required
     switch ($attributes_values->fields['attributes_required']) {
@@ -1258,7 +1258,7 @@ if ($action == '') {
                 <td class="smallText" align="center" width="150" bgcolor="#0000ff"><?php echo TEXT_ATTRIBUTES_IS_FREE . '<br>' . zen_draw_radio_field('product_attribute_is_free', '0', $off_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('product_attribute_is_free', '1', $on_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td class="smallText" align="center" width="150" bgcolor="#ffa346"><?php echo TEXT_ATTRIBUTES_DEFAULT . '<br>' . zen_draw_radio_field('attributes_default', '0', $off_attributes_default) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_default', '1', $on_attributes_default) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td class="smallText" align="center" width="150" bgcolor="#ff00ff"><?php echo TEXT_ATTRIBUTE_IS_DISCOUNTED . '<br>' . zen_draw_radio_field('attributes_discounted', '0', $off_attributes_discounted) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_discounted', '1', $on_attributes_discounted) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#d200f0"><?php echo TEXT_ATTRIBUTE_PRICE_BASE_INCLUDED . '<br>' . zen_draw_radio_field('attributes_price_base_included', '0', $off_attributes_price_base_included) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_price_base_included', '1', $on_attributes_price_base_included) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
+                <td class="smallText" align="center" width="150" bgcolor="#d200f0"><?php echo TEXT_ATTRIBUTE_PRICE_BASE_INCLUDED . '<br>' . zen_draw_radio_field('attributes_price_base_inc', '0', $off_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_price_base_inc', '1', $on_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td align="center" class="smallText" width="150" bgcolor="#fd0000"><?php echo TEXT_ATTRIBUTES_REQUIRED . '<br>' . zen_draw_radio_field('attributes_required', '0', $off_attributes_required) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_required', '1', $on_attributes_required) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
               </tr>
 
@@ -1410,7 +1410,7 @@ if ($action == '') {
         <td class="smallText" align="center"><?php echo ($attributes_values->fields["product_attribute_is_free"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_off.gif', LEGEND_ATTRIBUTES_IS_FREE) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_product_attribute_is_free' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_blue_on.gif', LEGEND_ATTRIBUTES_IS_FREE)) . '</a>'; ?></td>
         <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_default"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_off.gif', LEGEND_ATTRIBUTES_DEFAULT) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_default' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_orange_on.gif', LEGEND_ATTRIBUTES_DEFAULT)) . '</a>' ?></td>
         <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_discounted"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_off.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_discounted' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_pink_on.gif', LEGEND_ATTRIBUTE_IS_DISCOUNTED)) . '</a>'; ?></td>
-        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_price_base_included"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_off.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_included' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_on.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED)) . '</a>'; ?></td>
+        <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_price_base_inc"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_inc' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_off.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_price_base_inc' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_purple_on.gif', LEGEND_ATTRIBUTE_PRICE_BASE_INCLUDED)) . '</a>'; ?></td>
         <td class="smallText" align="center"><?php echo ($attributes_values->fields["attributes_required"] == '0' ? '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_off.gif', LEGEND_ATTRIBUTES_REQUIRED) . '</a>' : '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_flag_attributes_required' . '&attributes_id=' . $attributes_values->fields["products_attributes_id"] . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') . '&products_id=' . $productsId) . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', LEGEND_ATTRIBUTES_REQUIRED)) . '</a>'; ?></td>
       </tr>
     </table>
@@ -1610,8 +1610,8 @@ $on_attributes_default = false;
 $off_attributes_default = true;
 $on_attributes_discounted = true;
 $off_attributes_discounted = false;
-$on_attributes_price_base_included = true;
-$off_attributes_price_base_included = false;
+$on_attributes_price_base_inc = true;
+$off_attributes_price_base_inc = false;
 $on_attributes_required = false;
 $off_attributes_required = true;
 $on_overwrite = true;
@@ -1702,7 +1702,7 @@ $off_overwrite = false;
                 <td class="smallText" align="center" width="150" bgcolor="#0000ff"><?php echo TEXT_ATTRIBUTES_IS_FREE . '<br>' . zen_draw_radio_field('product_attribute_is_free', '0', $off_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('product_attribute_is_free', '1', $on_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td class="smallText" align="center" width="150" bgcolor="#ffa346"><?php echo TEXT_ATTRIBUTES_DEFAULT . '<br>' . zen_draw_radio_field('attributes_default', '0', $off_attributes_default) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_default', '1', $on_attributes_default) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td class="smallText" align="center" width="150" bgcolor="#ff00ff"><?php echo TEXT_ATTRIBUTE_IS_DISCOUNTED . '<br>' . zen_draw_radio_field('attributes_discounted', '0', $off_attributes_discounted) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_discounted', '1', $on_attributes_discounted) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#d200f0"><?php echo TEXT_ATTRIBUTE_PRICE_BASE_INCLUDED . '<br>' . zen_draw_radio_field('attributes_price_base_included', '0', $off_attributes_price_base_included) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_price_base_included', '1', $on_attributes_price_base_included) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
+                <td class="smallText" align="center" width="150" bgcolor="#d200f0"><?php echo TEXT_ATTRIBUTE_PRICE_BASE_INCLUDED . '<br>' . zen_draw_radio_field('attributes_price_base_inc', '0', $off_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_price_base_inc', '1', $on_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
                 <td align="center" class="smallText" width="150" bgcolor="#fd0000"><?php echo TEXT_ATTRIBUTES_REQUIRED . '<br>' . zen_draw_radio_field('attributes_required', '0', $off_attributes_required) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_required', '1', $on_attributes_required) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
               </tr>
 

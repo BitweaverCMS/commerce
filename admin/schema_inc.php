@@ -268,7 +268,7 @@ BITCOMMERCE_DB_PREFIX.'products_attributes' => "
   attributes_default I1,
   attributes_discounted I1 NOTNULL default '1',
   attributes_image C(64),
-  attributes_price_base_included I1 NOTNULL default '1',
+  attributes_price_base_inc I1 NOTNULL default '1',
   attributes_price_onetime N(15,4),
   attributes_price_factor N(15,4),
   attributes_pf_offset N(15,4),

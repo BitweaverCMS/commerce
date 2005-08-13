@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: catalog_dhtml.php,v 1.2 2005/08/03 15:35:09 spiderr Exp $
+//  $Id: catalog_dhtml.php,v 1.3 2005/08/13 16:36:09 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array('text' => BOX_HEADING_CATALOG, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
@@ -38,6 +38,13 @@
   $za_contents[] = array('text' => BOX_CATALOG_SALEMAKER, 'link' => zen_href_link_admin(FILENAME_SALEMAKER, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_PRODUCTS_EXPECTED, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_EXPECTED, '', 'NONSSL'));
 
+if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
+  while ($zv_file = $za_dir->read()) {
+    if (preg_match('/extras_dhtml.php$/', $zv_file)) {
+      require(DIR_WS_BOXES . 'extra_boxes/' . $zv_file);
+    }
+  }
+}
 
 if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
   while ($zv_file = $za_dir->read()) {

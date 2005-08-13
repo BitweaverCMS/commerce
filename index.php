@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.10 2005/08/12 17:03:27 spiderr Exp $
+// $Id: index.php,v 1.11 2005/08/13 16:36:09 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -29,7 +29,6 @@
   require_once('includes/application_top.php');
 // We need to buffer output
 ob_start();
-// {{{ TIKI_MOD
 
 // determine the page directory
 

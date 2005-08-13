@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.4 2005/08/03 15:35:11 spiderr Exp $
+//  $Id: html_output.php,v 1.5 2005/08/13 16:36:10 spiderr Exp $
 //
 
 ////
@@ -25,6 +25,7 @@
   function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
     global $request_type, $session_started, $http_domain, $https_domain;
     if ($page == '') {
+ bt();
       die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine the page link!<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
 

@@ -216,6 +216,14 @@ class CommerceProduct extends BitBase {
 		return( $this->isValid() && !empty( $this->mInfo['products_status'] ) );
 	}
 
+	function isPurchased() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$ret = $this->mDb->GetOne( "SELECT COUNT(*) FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `products_id`=?", array( $this->mProductsId ) );
+		}
+		return $ret;
+	}
+
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
@@ -462,14 +470,6 @@ Skip deleting of images for now
 			}
 		}
 		return( count( $this->mErrors ) == 0 );
-	}
-
-	function isPurchased() {
-		$ret = FALSE;
-		if( $this->isValid() ) {
-			$ret = $this->mDb->getOne( "SELECT COUNT( `products_id` ) FROM " . TABLE_ORDERS_PRODUCTS ." WHERE `products_id`=?", array( $this->mProductsId ) );
-		}
-		return $ret;
 	}
 
 	function quantityInCart( $pProductsId = NULL ) {

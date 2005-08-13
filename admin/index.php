@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: index.php,v 1.4 2005/08/13 16:36:09 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -88,73 +88,76 @@
 
 ?>
 <div id="colone">
-<div class="reportBox">
-<div class="header"><?php echo BOX_TITLE_STATISTICS; ?> </div>
-<?php
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_COUNTER_DATE . '</span><span class="rigth"> ' . $counter_startdate_formatted . '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_COUNTER . '</span><span class="rigth"> ' . $counter->fields['counter'] . '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_CUSTOMERS . '</span><span class="rigth"> ' . $customers->fields['count'] . '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_PRODUCTS . ' </span><span class="rigth">' . $products->fields['count'] . '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_PRODUCTS_OFF . ' </span><span class="rigth">' . $products_off->fields['count'] . '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_REVIEWS . '</span><span class="rigth">' . $reviews->fields['count']. '</span></div>';
-    if (REVIEWS_APPROVAL=='1') {
-	  echo '<div class="row"><span class="left"><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></span><span class="rigth">' . $reviews_pending->fields['count']. '</span></div>';
-    }
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_NEWSLETTERS . '</span><span class="rigth"> ' . $newsletters->fields['count']. '</span></div>';
-
-	echo '<br /><div class="row"><span class="left">' . BOX_ENTRY_SPECIALS_EXPIRED . '</span><span class="rigth"> ' . $specials->fields['count']. '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_SPECIALS_ACTIVE . '</span><span class="rigth"> ' . $specials_act->fields['count']. '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_FEATURED_EXPIRED . '</span><span class="rigth"> ' . $featured->fields['count']. '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_FEATURED_ACTIVE . '</span><span class="rigth"> ' . $featured_act->fields['count']. '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_SALEMAKER_EXPIRED . '</span><span class="rigth"> ' . $salemaker->fields['count']. '</span></div>';
-	echo '<div class="row"><span class="left">' . BOX_ENTRY_SALEMAKER_ACTIVE . '</span><span class="rigth"> ' . $salemaker_act->fields['count']. '</span></div>';
-
-?>
- </div>
- <div class="reportBox">
-   <div class="header"><?php echo BOX_TITLE_ORDERS; ?> </div>
+<table class="data">
+   <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
   <?php   $orders_contents = '';
   $orders_status = $db->Execute("select orders_status_name, orders_status_id from " . TABLE_ORDERS_STATUS . " where language_id = '" . $_SESSION['languages_id'] . "'");
 
   while (!$orders_status->EOF) {
     $orders_pending = $db->Execute("select count(*) as count from " . TABLE_ORDERS . " where orders_status = '" . $orders_status->fields['orders_status_id'] . "'");
 
-    $orders_contents .= '<div class="row"><span class="left"><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status->fields['orders_status_id'], 'NONSSL') . '">' . $orders_status->fields['orders_status_name'] . '</a>:</span><span class="rigth"> ' . $orders_pending->fields['count'] . '</span>   </div>';
+    $orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status->fields['orders_status_id'], 'NONSSL') . '">' . $orders_status->fields['orders_status_name'] . '</a>:</td><td> ' . $orders_pending->fields['count'] . '</td></tr>';
     $orders_status->MoveNext();
   }
 
   echo $orders_contents;
 ?>
-  </div>
-</div>
-<div id="coltwo">
-<div class="reportBox">
-<div class="header"><?php echo BOX_ENTRY_NEW_CUSTOMERS; ?> </div>
-  <?php  $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname, a.date_account_created, a.customers_info_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.customers_id = a.customers_info_id order by a.date_account_created DESC limit 5");
-
-  while (!$customers->EOF) {
-    echo '              <div class="row"><span class="left"><a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, 'search=' . $customers->fields['customers_lastname'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink">'. $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a></span><span class="rigth">' . "\n";
-    echo zen_date_short($customers->fields['date_account_created']);
-    echo '              </span></div>' . "\n";
-    $customers->MoveNext();
-  }
-?>
-</div>
-</div>
-<div id="colthree">
-<div class="reportBox">
-<div class="header"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </div>
+</table>
+<table class="data">
+<tr><th colspan="2"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
   <?php  $orders = $db->Execute("select o.orders_id as orders_id, o.customers_name as customers_name, o.customers_id, o.date_purchased as date_purchased, o.currency, o.currency_value, ot.class, ot.text as order_total from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id) where class = 'ot_total' order by orders_id DESC limit 5");
 
   while (!$orders->EOF) {
-    echo '              <div class="row"><span class="left"><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink"> ' . $orders->fields['customers_name'] . '</a></span><span class="center">' . $orders->fields['order_total'] . '</span><span class="rigth">' . "\n";
+    echo '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink"> ' . $orders->fields['customers_name'] . '</a></span><span class="center">' . $orders->fields['order_total'] . '</td><td>' . "\n";
     echo zen_date_short($orders->fields['date_purchased']);
-    echo '              </span></div>' . "\n";
+    echo '</td></tr>' . "\n";
     $orders->MoveNext();
   }
 ?>
+</table>
 </div>
+
+<div id="coltwo">
+<table class="data">
+<tr><th><?php echo BOX_ENTRY_NEW_CUSTOMERS; ?> </th></tr>
+  <?php  $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname, a.date_account_created, a.customers_info_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.customers_id = a.customers_info_id order by a.date_account_created DESC limit 5");
+
+  while (!$customers->EOF) {
+    echo '<tr><td><a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, 'search=' . $customers->fields['customers_lastname'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink">'. $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a>' . "\n";
+    echo zen_date_short($customers->fields['date_account_created']);
+    echo '</tr></td>' . "\n";
+    $customers->MoveNext();
+  }
+?>
+</table>
 </div>
+
+<div id="colthree">
+<table class="data">
+<tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
+<?php
+	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_COUNTER . '</td><td> ' . $counter->fields['counter'] . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_CUSTOMERS . '</td><td> ' . $customers->fields['count'] . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products->fields['count'] . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off->fields['count'] . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_REVIEWS . '</td><td>' . $reviews->fields['count']. '</td></tr>';
+    if (REVIEWS_APPROVAL=='1') {
+	  echo '<td><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></td><td>' . $reviews_pending->fields['count']. '</td></tr>';
+    }
+	echo '<tr><td>' . BOX_ENTRY_NEWSLETTERS . '</td><td> ' . $newsletters->fields['count']. '</td></tr>';
+
+	echo '<tr><td>' . BOX_ENTRY_SPECIALS_EXPIRED . '</td><td> ' . $specials->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SPECIALS_ACTIVE . '</td><td> ' . $specials_act->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_FEATURED_EXPIRED . '</td><td> ' . $featured->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_FEATURED_ACTIVE . '</td><td> ' . $featured_act->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_EXPIRED . '</td><td> ' . $salemaker->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_ACTIVE . '</td><td> ' . $salemaker_act->fields['count']. '</td></tr>';
+
+?>
+</table>
+</div>
+
 <!-- The following copyright announcement is in compliance
 to section 2c of the GNU General Public License, and
 thus can not be removed, or can only be modified
@@ -167,4 +170,8 @@ following copyright announcement. //-->
 </div>
 </body>
 </html>
+
 <?php require('includes/application_bottom.php'); ?>
+<!-- footer //-->
+<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<!-- footer_eof //-->

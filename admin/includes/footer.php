@@ -17,12 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: footer.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: footer.php,v 1.2 2005/08/13 16:36:09 spiderr Exp $
 //
 
+$gBitSmarty->assign_by_ref( 'bitcommerceAdmin', ob_get_contents() );
+ob_end_clean();
+
+$gBitSystem->mLayout = array( 1 );
+
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_bitcommerce.tpl', tra( 'Admin' ).' '.ucfirst( BITCOMMERCE_PKG_DIR ).' : '.HEADING_TITLE );
+
 ?>
-<table border="0" width="100%" cellspacing="10" cellpadding="10">
-  <tr>
-    <td align="center" class="smallText" height="100" valign="bottom"><a href="http://www.zen-cart.com" target="_blank"><img src="images/small_zen_logo.gif" alt="Zen Cart:: the art of e-commerce" border="0"></a><br /><br />E-Commerce Engine Copyright &copy; 2003 <a href="http://www.zen-cart.com" target="_blank">Zen Cart&trade;</a></td>
-  </tr>
-</table>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.4 2005/08/03 15:35:09 spiderr Exp $
+//  $Id: header.php,v 1.5 2005/08/13 16:36:09 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -126,6 +126,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
       $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
     }
   }
+/*
 ?>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <tr class="headerBar" height="20" width="100%">
@@ -145,4 +146,5 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . BITCOMMERCE_PKG_URL . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.bitcommerce.org/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>'; ?></td>
   </tr>
 </table>
-<?php require(DIR_WS_INCLUDES . 'header_navigation.php'); ?>
+*/
+?>

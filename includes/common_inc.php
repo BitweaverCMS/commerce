@@ -432,8 +432,8 @@
 // is there a products_price to add to attributes
       $products_price = $product_check->fields['products_price'];
 
-      // do not select display only attributes and attributes_price_base_included is true
-      $product_att_query = $db->Execute("select options_id, price_prefix, options_values_price, attributes_display_only, attributes_price_base_included from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id = '" . (int)$products_id . "' and attributes_display_only != '1' and attributes_price_base_included='1'". " order by options_id, price_prefix, options_values_price");
+      // do not select display only attributes and attributes_price_base_inc is true
+      $product_att_query = $db->Execute("select options_id, price_prefix, options_values_price, attributes_display_only, attributes_price_base_inc from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id = '" . (int)$products_id . "' and attributes_display_only != '1' and attributes_price_base_inc='1'". " order by options_id, price_prefix, options_values_price");
 
       $the_options_id= 'x';
       $the_base_price= 0;

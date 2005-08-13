@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.11 2005/08/12 18:02:07 spiderr Exp $
+//  $Id: general.php,v 1.12 2005/08/13 16:36:10 spiderr Exp $
 //
 
 ////
@@ -1635,7 +1635,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           '" . $products_copy_from->fields['attributes_default'] . "',
           '" . $products_copy_from->fields['attributes_discounted'] . "',
           '" . $products_copy_from->fields['attributes_image'] . "',
-          '" . $products_copy_from->fields['attributes_price_base_included'] . "',
+          '" . $products_copy_from->fields['attributes_price_base_inc'] . "',
           '" . $products_copy_from->fields['attributes_price_onetime'] . "',
           '" . $products_copy_from->fields['attributes_price_factor'] . "',
           '" . $products_copy_from->fields['attributes_pf_offset'] . "',
@@ -1663,7 +1663,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           attributes_default='" . $products_copy_from->fields['attributes_default'] . "',
           attributes_discounted='" . $products_copy_from->fields['attributes_discounted'] . "',
           attributes_image='" . $products_copy_from->fields['attributes_image'] . "',
-          attributes_price_base_included='" . $products_copy_from->fields['attributes_price_base_included'] . "',
+          attributes_price_base_inc='" . $products_copy_from->fields['attributes_price_base_inc'] . "',
           attributes_price_onetime='" . $products_copy_from->fields['attributes_price_onetime'] . "',
           attributes_price_factor='" . $products_copy_from->fields['attributes_price_factor'] . "',
           attributes_pf_offset='" . $products_copy_from->fields['attributes_pf_offset'] . "',
@@ -1677,7 +1677,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           attributes_price_letters_free='" . $products_copy_from->fields['attributes_price_letters_free'] . "',
           attributes_required='" . $products_copy_from->fields['attributes_required'] . "'"
            . " WHERE products_id='" . $products_id_to . "'" . " and options_id= '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] . "'");
-//           . " WHERE products_id='" . $products_id_to . "'" . " and options_id= '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] . "' and attributes_image='" . $products_copy_from->fields['attributes_image'] . "' and attributes_price_base_included='" . $products_copy_from->fields['attributes_price_base_included'] .  "'");
+//           . " WHERE products_id='" . $products_id_to . "'" . " and options_id= '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] . "' and attributes_image='" . $products_copy_from->fields['attributes_image'] . "' and attributes_price_base_inc='" . $products_copy_from->fields['attributes_price_base_inc'] .  "'");
           $messageStack->add_session(TEXT_ATTRIBUTE_COPY_UPDATING . $products_copy_from->fields['products_attributes_id'] . ' for Products ID#' . $products_id_to, 'caution');
         }
       }
@@ -2115,7 +2115,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   }
 
   function zen_draw_admin_box($zf_header, $zf_content) {
-    $zp_boxes = '<li class="submenu"><a target="_top" href="' . $zf_header['link'] . '">' . $zf_header['text'] . '</a>';
+    $zp_boxes = '<li class="submenu">' . $zf_header['text'];
     $zp_boxes .= '<UL>' . "\n";
     for ($i=0; $i<sizeof($zf_content); $i++) {
       $zp_boxes .= '<li>';

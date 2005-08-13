@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.2 2005/08/12 18:02:06 spiderr Exp $
+//  $Id: order.php,v 1.3 2005/08/13 16:36:10 spiderr Exp $
 //
 
   class order {
@@ -35,19 +35,7 @@
 
     function query($order_id) {
       global $db;
-      $order = $db->Execute("select cc_cvv, customers_name, customers_company, customers_street_address,
-                                    customers_suburb, customers_city, customers_postcode,
-                                    customers_state, customers_country, customers_telephone,
-                                    customers_email_address, customers_address_format_id, delivery_name,
-                                    delivery_company, delivery_street_address, delivery_suburb,
-                                    delivery_city, delivery_postcode, delivery_state, delivery_country,
-                                    delivery_address_format_id, billing_name, billing_company,
-                                    billing_street_address, billing_suburb, billing_city, billing_postcode,
-                                    billing_state, billing_country, billing_address_format_id,
-                                    coupon_code, payment_method, payment_module_code, shipping_method, shipping_module_code,
-                                    cc_type, cc_owner, cc_number, cc_expires, currency,
-                                    currency_value, date_purchased, orders_status, last_modified,
-                                    order_total, order_tax, ip_address
+      $order = $db->Execute("select *
                              from " . TABLE_ORDERS . "
                              where orders_id = '" . (int)$order_id . "'");
 
@@ -64,25 +52,9 @@
         $totals->MoveNext();
       }
 
-      $this->info = array('currency' => $order->fields['currency'],
-                          'currency_value' => $order->fields['currency_value'],
-                          'payment_method' => $order->fields['payment_method'],
-                          'payment_module_code' => $order->fields['payment_module_code'],
-                          'shipping_method' => $order->fields['shipping_method'],
-                          'shipping_module_code' => $order->fields['shipping_module_code'],
-                          'coupon_code' => $order->fields['coupon_code'],
-                          'cc_type' => $order->fields['cc_type'],
-                          'cc_owner' => $order->fields['cc_owner'],
-                          'cc_number' => $order->fields['cc_number'],
-                          'cc_cvv' => $order->fields['cc_cvv'],
-                          'cc_expires' => $order->fields['cc_expires'],
-                          'date_purchased' => $order->fields['date_purchased'],
-                          'orders_status' => $order->fields['orders_status'],
-                          'total' => $order->fields['order_total'],
-                          'tax' => $order->fields['order_tax'],
-                          'last_modified' => $order->fields['last_modified'],
-                          'ip_address' => $order->fields['ip_address']
-                          );
+	  $this->info = $order->fields;
+      $this->info['total'] = $order->fields['order_total'];
+      $this->info['tax'] = $order->fields['order_tax'];
 
       $this->customer = array('name' => $order->fields['customers_name'],
                               'company' => $order->fields['customers_company'],

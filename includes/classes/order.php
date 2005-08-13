@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.10 2005/08/12 18:29:44 spiderr Exp $
+// $Id: order.php,v 1.11 2005/08/13 16:36:10 spiderr Exp $
 //
 
   class order {
@@ -590,7 +590,7 @@
 // lowstock email report
       $this->email_low_stock='';
 
-  for ($i=0, $n=sizeof($this->products); $i<$n; $i++) {
+  for ($i=0, $n=count( $this->products ); $i<$n; $i++) {
 // Stock Update - Joao Correia
         if (STOCK_LIMITED == 'true') {
           if (DOWNLOAD_ENABLED == 'true') {
@@ -674,14 +674,14 @@
 //------insert customer choosen option to order--------
         $attributes_exist = '0';
         $this->products_ordered_attributes = '';
-        if (isset($this->products[$i]['attributes'])) {
+        if( !empty($this->products[$i]['attributes']) ) {
            $attributes_exist = '1';
-           for ($j=0, $n2=sizeof($this->products[$i]['attributes']); $j<$n2; $j++) {
+           for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
            if (DOWNLOAD_ENABLED == 'true') {
              $attributes_query = "select popt.products_options_name, poval.products_options_values_name,
                                pa.options_values_price, pa.price_prefix,
                                pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
-                               pa.attributes_discounted, pa.attributes_price_base_included, pa.attributes_price_onetime,
+                               pa.attributes_discounted, pa.attributes_price_base_inc, pa.attributes_price_onetime,
                                pa.attributes_price_factor, pa.attributes_pf_offset,
                                pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
                                pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
@@ -693,9 +693,9 @@
                                left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                 on pa.products_attributes_id=pad.products_attributes_id
                                where pa.products_id = '" . zen_db_input($this->products[$i]['id']) . "'
-                                and pa.options_id = '" . $this->products[$i]['attributes'][$j]['option_id'] . "'
+                                and pa.options_id = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
                                 and pa.options_id = popt.products_options_id
-                                and pa.options_values_id = '" . $this->products[$i]['attributes'][$j]['value_id'] . "'
+                                and pa.options_values_id = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
                                 and pa.options_values_id = poval.products_options_values_id
                                 and popt.language_id = '" . $_SESSION['languages_id'] . "'
                                 and poval.language_id = '" . $_SESSION['languages_id'] . "'";
@@ -705,7 +705,7 @@
              $attributes_values = $db->Execute("select popt.products_options_name, poval.products_options_values_name,
                                pa.options_values_price, pa.price_prefix,
                                pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
-                               pa.attributes_discounted, pa.attributes_price_base_included, pa.attributes_price_onetime,
+                               pa.attributes_discounted, pa.attributes_price_base_inc, pa.attributes_price_onetime,
                                pa.attributes_price_factor, pa.attributes_pf_offset,
                                pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
                                pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
@@ -728,7 +728,7 @@
                                    'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
                                    'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
                                    'attributes_discounted' => $attributes_values->fields['attributes_discounted'],
-                                   'attributes_price_base_included' => $attributes_values->fields['attributes_price_base_included'],
+                                   'attributes_price_base_inc' => $attributes_values->fields['attributes_price_base_inc'],
                                    'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
                                    'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
                                    'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.4 2005/08/05 20:11:51 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.5 2005/08/13 16:36:09 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -305,7 +305,7 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
         $attributes_display_only = zen_db_prepare_input($products_attributes_defaults->fields['attributes_display_only']);
         $attributes_default = zen_db_prepare_input($products_attributes_defaults->fields['attributes_default']);
         $attributes_discounted = zen_db_prepare_input($products_attributes_defaults->fields['attributes_discounted']);
-        $attributes_price_base_included = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_base_included']);
+        $attributes_price_base_inc = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_base_inc']);
 
         $attributes_price_onetime = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_onetime']);
         $attributes_price_factor = zen_db_prepare_input($products_attributes_defaults->fields['attributes_price_factor']);
@@ -377,7 +377,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_default) . "',
                                   '" . zen_db_input($attributes_discounted) . "',
                                   '" . zen_db_input($attributes_image_name) . "',
-                                  '" . zen_db_input($attributes_price_base_included) . "',
+                                  '" . zen_db_input($attributes_price_base_inc) . "',
                                   '" . zen_db_input($attributes_price_onetime) . "',
                                   '" . zen_db_input($attributes_price_factor) . "',
                                   '" . zen_db_input($attributes_pf_offset) . "',

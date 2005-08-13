@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,15 +17,32 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers_dhtml.php,v 1.2 2005/08/03 15:35:09 spiderr Exp $
+//  $Id: customers_dhtml.php,v 1.3 2005/08/13 16:36:09 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_CUSTOMERS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_ORDERS, 'link' => zen_href_link_admin(FILENAME_ORDERS, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_LOCALIZATION_ORDERS_STATUS, 'link' => zen_href_link_admin(FILENAME_ORDERS_STATUS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_GROUP_PRICING, 'link' => zen_href_link_admin(FILENAME_GROUP_PRICING, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_PAYPAL, 'link' => zen_href_link_admin(FILENAME_PAYPAL, '', 'NONSSL'));
+// don't Coupons unless installed
+if (MODULE_ORDER_TOTAL_COUPON_STATUS=='true') {
+  $za_contents[] = array('text' => BOX_COUPON_ADMIN, 'link' => zen_href_link_admin(FILENAME_COUPON_ADMIN, '', 'NONSSL'));
+ } // coupons installed
+
+// don't Gift Vouchers unless installed
+if (MODULE_ORDER_TOTAL_GV_STATUS=='true') {
+  $za_contents[] = array('text' => BOX_GV_ADMIN_QUEUE, 'link' => zen_href_link_admin(FILENAME_GV_QUEUE, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_GV_ADMIN_MAIL, 'link' => zen_href_link_admin(FILENAME_GV_MAIL, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_GV_ADMIN_SENT, 'link' => zen_href_link_admin(FILENAME_GV_SENT, '', 'NONSSL'));
+} // gift vouchers installed
+
+// if both are off display msg
+if (!defined('MODULE_ORDER_TOTAL_COUPON_STATUS') and !defined('MODULE_ORDER_TOTAL_GV_STATUS')) {
+  $za_contents[] = array('text' => NOT_INSTALLED_TEXT, 'link' => '');
+} // coupons and gift vouchers not installed
 if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
   while ($zv_file = $za_dir->read()) {
     if (preg_match('/customers_dhtml.php$/', $zv_file)) {
