@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: products_to_categories.php,v 1.5 2005/08/14 19:30:43 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -305,7 +305,7 @@ function array_minus_array($a, $b) {
         break;
 
       case 'set_master_categories_id':
-        $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $_GET['master_category'] . "' where products_id='" . $productsId . "'");
+        $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $_GET['master_categories_id'] . "' where products_id='" . $productsId . "'");
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($productsId);
 
@@ -458,7 +458,7 @@ function go_option() {
             <td class="main">
               <?php
                 echo '&nbsp;&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
-                echo '<strong>' . TEXT_MASTER_CATEGORIES_ID . '</strong> ' . zen_draw_pull_down_menu('master_category', zen_get_master_categories_pulldown($productsId), $product_to_copy->fields['master_categories_id'], 'onChange="this.form.submit();"');
+                echo '<strong>' . TEXT_MASTER_CATEGORIES_ID . '</strong> ' . zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($productsId), $product_to_copy->fields['master_categories_id'], 'onChange="this.form.submit();"');
                 if ($product_to_copy->fields['master_categories_id'] <= 0) {
                   echo '&nbsp;&nbsp;' . '<span class="alert">' . WARNING_MASTER_CATEGORIES_ID . '</span>';
                 }

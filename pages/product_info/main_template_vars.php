@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.6 2005/08/12 07:03:22 spiderr Exp $
+// $Id: main_template_vars.php,v 1.7 2005/08/14 19:30:45 spiderr Exp $
 //
 
   $sql = "select count(*) as total
@@ -33,7 +33,7 @@
 
   if ( $res->fields['total'] < 1 ) {
 
-    $mid = 'bitpackage:bitcommerce/product_not_available';
+    $mid = 'bitpackage:bitcommerce/product_not_available.tpl';
 
   } else {
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.5 2005/08/14 19:30:42 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -96,8 +96,8 @@
     switch ($action) {
       case ('update'):
 
-        if ($_POST['master_category']) {
-          $master_categories_id = $_POST['master_category'];
+        if ($_POST['master_categories_id']) {
+          $master_categories_id = $_POST['master_categories_id'];
         } else {
           $master_categories_id = $_POST['master_categories_id'];
         }
@@ -578,7 +578,7 @@ if (zen_get_product_is_linked($productsId) == 'true') {
               <?php
                 // echo zen_draw_pull_down_menu('products_tax_class_id', $tax_class_array, $pInfo->products_tax_class_id);
                 echo zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
-                echo zen_draw_pull_down_menu('master_category', zen_get_master_categories_pulldown($productsId), $pInfo->master_categories_id); ?>
+                echo zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($productsId), $pInfo->master_categories_id); ?>
             </td>
           </tr>
           <tr>

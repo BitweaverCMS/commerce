@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.2 2005/08/12 07:03:22 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.3 2005/08/14 19:30:45 spiderr Exp $
 //
   /*
 
@@ -92,7 +92,7 @@
 			$counter = 0;
 			while (list($key, $value) = each ($id_array)) {
 			if ($value == (int)$_GET['products_id']) {
-				$position = $counter;
+				$position = $counter + 1;
 				if ($key == 0) {
 				$previous = -1; // it was the first to be found
 				} else {
@@ -147,8 +147,12 @@
 		if ($products_ids->RecordCount() > 1) {
 			$gBitSmarty->assign( 'navPosition', $position );
 			$gBitSmarty->assign( 'navCounter', $counter );
-			$gBitSmarty->assign( 'navPreviousUrl', zen_href_link(zen_get_info_page($previous), "cPath=$cPath&products_id=$previous") );
-			$gBitSmarty->assign( 'navNextUrl', zen_href_link(zen_get_info_page($next_item), "cPath=$cPath&products_id=$next_item") );
+			if( !empty( $previous ) ) {
+				$gBitSmarty->assign( 'navPreviousUrl', zen_href_link(zen_get_info_page($previous), "cPath=$cPath&products_id=$previous") );
+			}
+			if( !empty( $next_item ) ) {
+				$gBitSmarty->assign( 'navNextUrl', zen_href_link(zen_get_info_page($next_item), "cPath=$cPath&products_id=$next_item") );
+			}
 
 /*
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.4 2005/08/03 15:35:14 spiderr Exp $
+//  $Id: update_product.php,v 1.5 2005/08/14 19:30:44 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -87,7 +87,7 @@
 
           } elseif ($action == 'update_product') {
             $update_sql_data = array( 'products_last_modified' => 'now()',
-                                      'master_categories_id' => ($_POST['master_category'] > 0 ? zen_db_prepare_input($_POST['master_category']) : zen_db_prepare_input($_POST['master_categories_id'])));
+                                      'master_categories_id' => ($_POST['master_categories_id'] > 0 ? zen_db_prepare_input($_POST['master_categories_id']) : zen_db_prepare_input($_POST['master_categories_id'])));
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 

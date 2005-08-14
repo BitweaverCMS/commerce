@@ -179,7 +179,8 @@
 
   require_once(DIR_FS_CLASSES . 'category_tree.php');
 
-
+// taxes
+  require_once(DIR_FS_FUNCTIONS . 'functions_taxes.php');
 
 
 
@@ -291,37 +292,34 @@
 
 
 // add the products model to the breadcrumb trail
-  if ( !empty( $_REQUEST['products_id'] ) ) {
-    $gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+	if ( !empty( $_REQUEST['products_id'] ) ) {
+		$gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
 
-    if( $gBitProduct->load() ) {
-	  	if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
-			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
+		if( $gBitProduct->load() ) {
+			if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
+				$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
+			}
 		}
-    }
-	if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) && !$gBitProduct->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-		$gBitSystem->display( 'bitpackage:bitcommerce/product_not_available.tpl' );
-		die;
+	} else {
+		$gBitProduct = new CommerceProduct();
 	}
-  } else {
-    $gBitProduct = new CommerceProduct();
-  }
 
-  	if( empty( $_REQUEST['cPath'] ) ) {
+	if( empty( $_REQUEST['cPath'] ) ) {
 		$_REQUEST['cPath'] = '';
 	}
 	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
-      $breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
+		$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
 	}
-	if( $gBitProduct->isValid() ) {
-      $breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+	if( $gBitProduct->isAvailable() ) {
+		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+		if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) ) {
+			global $gContent;
+			$gContent = &$gBitProduct->mContent;
+			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct->mContent );
+		}
 	}
 
 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
-
-
-// taxes
-  require_once(DIR_FS_FUNCTIONS . 'functions_taxes.php');
 
 
 

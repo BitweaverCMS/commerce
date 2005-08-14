@@ -13,15 +13,15 @@ class CommerceProduct extends BitBase {
 	function load() {
 		if( is_numeric( $this->mProductsId ) ) {
 			$this->mInfo = $this->getProduct( $this->mProductsId );
+			if( !$this->isAvailable() ) {
+				$this->mInfo = array();
+				unset( $this->mContent );
+				unset( $this->mProductsId );
+			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				$this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'], $this->mInfo['content_type_guid'] );
-				if( empty( $this->mContent ) || !$this->mContent->hasUserAccess( 'bit_p_purchase' ) ) {
-					$this->mInfo = array();
-					unset( $this->mContent );
-				} else {
 					$this->mInfo['display_link'] = $this->mContent->getDisplayLink( $this->mContent->getTitle(), $this->mContent->mInfo );
-				}
 			}
 		}
 		return( count( $this->mInfo ) );
@@ -67,6 +67,12 @@ class CommerceProduct extends BitBase {
 	function getTitle() {
 		if( $this->isValid() ) {
 			return( $this->mInfo['products_name'] );
+		}
+	}
+
+	function getTypeName() {
+		if( $this->isValid() ) {
+			return( $this->mInfo['type_name'] );
 		}
 	}
 
@@ -213,7 +219,26 @@ class CommerceProduct extends BitBase {
 	}
 
 	function isAvailable() {
-		return( $this->isValid() && !empty( $this->mInfo['products_status'] ) );
+		global $gBitUser;
+		if( $this->isValid() ) {
+ 			if( !empty( $this->mInfo['products_status'] ) ) {
+				$ret = TRUE;
+			} else {
+				$ret = $this->isOwner();
+			}
+ 		} else {
+			$ret = TRUE;
+		}
+		return( $ret );
+	}
+
+	function isOwner() {
+		global $gBitUser;
+		$ret = FALSE;
+		if( $this->mInfo['user_id'] ) {
+			$ret = $gBitUser->mUserId == $this->mInfo['user_id'];
+		}
+		return( $ret );
 	}
 
 	function isPurchased() {
@@ -231,7 +256,7 @@ class CommerceProduct extends BitBase {
 			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
 			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : NULL),
-			'products_status' => (!empty( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
+			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
 			'products_virtual' => (!empty( $pParamHash['products_virtual'] ) ? (int)$pParamHash['products_virtual'] : NULL),
 			'products_tax_class_id' => (!empty( $pParamHash['products_tax_class_id'] ) ? $pParamHash['products_tax_class_id'] : NULL),
 			'manufacturers_id' => (!empty( $pParamHash['manufacturers_id'] ) ? $pParamHash['manufacturers_id'] : NULL),
@@ -259,7 +284,7 @@ class CommerceProduct extends BitBase {
 		}
 
 		$pParamHash['product_store']['products_last_modified'] = 'now()';
-		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_category'] ) ? $pParamHash['master_category'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL ));
+		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL ));
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = 'now()';
 		}
@@ -276,6 +301,7 @@ class CommerceProduct extends BitBase {
 // $this->debug();
 	// when set to none remove from database
 	//          if (isset($pParamHash['products_image']) && zen_not_null($pParamHash['products_image']) && ($pParamHash['products_image'] != 'none')) {
+
 			if( $this->isValid() ) {
 				$action = 'update_product';
 				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'name'=>'products_id', 'value'=>$this->mProductsId ) );

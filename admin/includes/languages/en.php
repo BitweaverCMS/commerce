@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.1 2005/07/08 05:58:55 spiderr Exp $
+//  $Id: en.php,v 1.2 2005/08/14 19:30:43 spiderr Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -537,7 +537,7 @@ define('TEXT_NO', 'No');
 
 // shipping error messages
 define('ERROR_SHIPPING_CONFIGURATION', '<strong>Shipping Configuration errors!</strong>');
-define('ERROR_SHIPPING_ORIGIN_ZIP', '<strong>Warning:</strong> Store Zip Code is not defined. See Configuration | Shipping/Packaging to set it.');
+define('ERROR_SHIPPING_ORIGIN_ZIP', '<strong>Warning:</strong> Store Zip Code is not defined. See <a href="'.BITCOMMERCE_PKG_URL.'admin/configuration.php?gID=7&cID=161&action=edit">Configuration | Shipping/Packaging</a> to set it.');
 define('ERROR_ORDER_WEIGHT_ZERO_STATUS', '<strong>Warning:</strong> 0 weight is configured for Free Shipping and Free Shipping Module is not enabled');
 define('ERROR_USPS_STATUS', '<strong>Warning:</strong> USPS is either missing the username and/or password, or ... it is set to TEST rather than PRODUCTION and will not work<br />If you still cannot retrieve quotes, contact USPS and activate your live account');
 

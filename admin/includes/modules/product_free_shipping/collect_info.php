@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.3 2005/08/03 15:35:13 spiderr Exp $
+//  $Id: collect_info.php,v 1.4 2005/08/14 19:30:44 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -252,7 +252,7 @@ if (zen_get_product_is_linked($_GET['pID']) == 'true') {
               <?php
                 // echo zen_draw_pull_down_menu('products_tax_class_id', $tax_class_array, $pInfo->products_tax_class_id);
                 echo zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
-                echo zen_draw_pull_down_menu('master_category', zen_get_master_categories_pulldown($_GET['pID']), $pInfo->master_categories_id); ?>
+                echo zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($_GET['pID']), $pInfo->master_categories_id); ?>
             </td>
           </tr>
           <tr>
