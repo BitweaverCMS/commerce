@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: database.php,v 1.3 2005/07/05 18:40:22 spiderr Exp $
+//  $Id: database.php,v 1.4 2005/08/18 22:56:15 lsces Exp $
 //
 
 
-  function $db->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
+  function associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
     global $db;
     reset($data);
     if ($action == 'insert') {
