@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.11 2005/08/13 16:36:10 spiderr Exp $
+// $Id: order.php,v 1.12 2005/08/19 13:24:30 spiderr Exp $
 //
 
   class order {
@@ -665,9 +665,9 @@
 
         $order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
 
-		if( !empty( $this->products[$i]['related_group_id'] ) ) {
+		if( !empty( $this->products[$i]['purchase_group_id'] ) ) {
 			global $gBitUser;
-			$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['related_group_id'] );
+			$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['purchase_group_id'] );
 		}
 
 

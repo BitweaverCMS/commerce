@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.12 2005/08/13 16:36:10 spiderr Exp $
+//  $Id: general.php,v 1.13 2005/08/19 13:24:26 spiderr Exp $
 //
 
 ////
@@ -1955,39 +1955,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       return 'false';
     }
   }
-
-
-////
-  function zen_count_products_in_cats($category_id) {
-    global $db;
-    $cat_products_query = "SELECT count(if (p.products_status='1',1,NULL)) as pr_on, count(*) as total
-                           FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                           WHERE p.products_id = p2c.products_id
-                           and p2c.categories_id = '" . (int)$category_id . "'";
-
-    $pr_count = $db->Execute($cat_products_query);
-//    echo $pr_count->RecordCount();
-    $c_array['this_count'] += $pr_count->fields['total'];
-    $c_array['this_count_on'] += $pr_count->fields['pr_on'];
-
-    $cat_child_categories_query = "SELECT categories_id
-                               FROM " . TABLE_CATEGORIES . "
-                               WHERE parent_id = '" . (int)$category_id . "'";
-
-    $cat_child_categories = $db->Execute($cat_child_categories_query);
-
-    if ($cat_child_categories->RecordCount() > 0) {
-      while (!$cat_child_categories->EOF) {
-          $m_array = zen_count_products_in_cats($cat_child_categories->fields['categories_id']);
-          $c_array['this_count'] += $m_array['this_count'];
-          $c_array['this_count_on'] += $m_array['this_count_on'];
-
-//          $this_count_on += $pr_count->fields['pr_on'];
-        $cat_child_categories->MoveNext();
-      }
-    }
-    return $c_array;
- }
 
 ////
 // Return the number of products in a category

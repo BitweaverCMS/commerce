@@ -17,15 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whats_new.php,v 1.4 2005/08/13 00:19:18 spiderr Exp $
+// $Id: mod_whats_new.php,v 1.5 2005/08/19 13:24:32 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-		list( $selectSql, $fromSql, $whereSql ) = CommerceProduct::getGatekeeperSql();
-	}
 	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
 	$listHash['max_records'] = 1;
 	$listHash['sort_mode'] = 'random';

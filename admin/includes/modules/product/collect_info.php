@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.8 2005/08/14 19:30:43 spiderr Exp $
+//  $Id: collect_info.php,v 1.9 2005/08/19 13:24:26 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -304,11 +304,11 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           <tr>
             <td class="main"><?=tra("Related Group ID")?></td>
             <td class="main">
-				<select name="related_group_id">
+				<select name="purchase_group_id">
 					<option value=""></value>
 <?php
 	foreach( $groups['data'] as $group ) {
-		print '<option value="'.$group['group_id'].'" '.($pInfo->related_group_id == $group['group_id'] ? 'selected="selected"': '') .' >'.$group['group_name']."</option>\n";
+		print '<option value="'.$group['group_id'].'" '.($pInfo->purchase_group_id == $group['group_id'] ? 'selected="selected"': '') .' >'.$group['group_name']."</option>\n";
 	}
 ?>
 				</select>

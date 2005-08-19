@@ -1,18 +1,29 @@
 <?php
 
+require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
 
-class CommerceProduct extends BitBase {
-	var $mInfo;
+define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 
-	function CommerceProduct( $pProductsId=NULL ) {
-		BitBase::BitBase();
+class CommerceProduct extends LibertyAttachable {
+
+	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
+		LibertyAttachable::LibertyAttachable();
+		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
+						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
+						'content_description' => 'Product',
+						'handler_class' => 'CommerceProduct',
+						'handler_package' => 'bitcommerce',
+						'handler_file' => 'classes/CommerceProduct.php',
+						'maintainer_url' => 'http://www.bitcommerce.org'
+				) );
 		$this->mProductsId = $pProductsId;
-		$this->mInfo = array();
+		$this->mContentId = $pContentId;
+		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
 	}
 
 	function load() {
-		if( is_numeric( $this->mProductsId ) ) {
-			$this->mInfo = $this->getProduct( $this->mProductsId );
+		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
+			$this->mContentId = $this->mInfo['content_id'];
 			if( !$this->isAvailable() ) {
 				$this->mInfo = array();
 				unset( $this->mContent );
@@ -20,7 +31,7 @@ class CommerceProduct extends BitBase {
 			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
-				$this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'], $this->mInfo['content_type_guid'] );
+				$this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] );
 					$this->mInfo['display_link'] = $this->mContent->getDisplayLink( $this->mContent->getTitle(), $this->mContent->mInfo );
 			}
 		}
@@ -36,22 +47,23 @@ class CommerceProduct extends BitBase {
 	}
 
 	function getProduct( $pProductsId ) {
-		global $db;
 		$ret = NULL;
 		if( is_numeric( $pProductsId ) ) {
-			$bindVars = array( $pProductsId );
-			array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
-			$query = "SELECT *
+			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
+			$this->getServicesSql( 'content_load_function', $selectSql, $joinSql, $whereSql, $bindVars );
+			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
+			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,tc.*
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
+					  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
+					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`) $joinSql
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
-						LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( p.`related_content_id`=tc.`content_id`)
 						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
 						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
-					  WHERE p.`products_id`=? AND pd.`language_id`=?";
-			if( $ret = $db->getRow( $query, $bindVars ) ) {
+					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
+			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
 					$ret['products_image_url'] = CommerceProduct::getImageUrl( $ret['products_image'] );
 				} else {
@@ -76,21 +88,24 @@ class CommerceProduct extends BitBase {
 		}
 	}
 
-	function getDisplayUrl( $pProductsId=NULL, $pTypeHandler=NULL ) {
+	function getDisplayUrl( $pProductsId=NULL, $pCatPath=NULL ) {
+		global $gBitSystem;
 		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
 			$pProductsId = $this->mProductsId;
-			if( empty( $pTypeHandler ) ) {
-				$pTypeHandler = $this->mInfo['type_handler'];
-			}
 		}
-		$ret = NULL;
+		$ret = BITCOMMERCE_PKG_URL;
 		if( is_numeric( $pProductsId ) ) {
-			$typeHandler = ( !empty( $pTypeHandler ) ? $pTypeHandler : 'product' );
-			$ret = BITCOMMERCE_PKG_URL.'index.php?main_page='.$pTypeHandler.'_info&products_id='.$pProductsId;
-		}
-
-		if( !empty( $_REQUEST['cPath'] ) ) {
-			$ret .= '&cPath=' . $_REQUEST['cPath'];
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+				$ret .= $pProductsId;
+				if( !empty( $pCatPath ) ) {
+					$ret .= '/' . $_REQUEST['cPath'];
+				}
+			} else {
+				$ret = BITCOMMERCE_PKG_URL.'index.php?products_id='.$pProductsId;
+				if( !empty( $pCatPath ) ) {
+					$ret .= '&cPath=' . $_REQUEST['cPath'];
+				}
+			}
 		}
 		return $ret;
 	}
@@ -109,26 +124,16 @@ class CommerceProduct extends BitBase {
 		return $ret;
 	}
 
-	function getGatekeeperSql() {
-		global $gBitDb, $gBitUser;
-		$selectSql = '';
-		$whereSql = '';
-		$fromSql = '';
-		if( $gBitDb->isAdvancedPostgresEnabled() ) {
-			$whereSql .= " AND (SELECT ts.`security_id` FROM connectby('tiki_fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', p.`related_content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."tiki_content_security_map` tcsm,  `".BIT_DB_PREFIX."tiki_security` ts
-						WHERE ts.`security_id`=tcsm.`security_id` AND tcsm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
-		} else {
-			$selectSql .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-			$fromSql .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (p.`related_content_id`=tcs.`content_id`)
-						  LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( tcs.`content_id`=tc.`content_id`)
-						  LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )
-						  LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_fisheye_gallery_image_map` tfgim ON (tfgim.`item_content_id`=tc.`content_id`)
-						  LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs2 ON (tfgim.`gallery_content_id`=tcs2.`content_id`)
-						  LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts2 ON (ts2.`security_id`=tcs2.`security_id` )";
-			$whereSql .= ' AND (tcs2.`security_id` IS NULL OR tc.`user_id`='.$gBitUser->mUserId.') ';
-			$bindVars[] = $gBitUser->mUserId;
+	function getGatekeeperSql( &$pSelectSql, &$pJoinSql, &$pWhereSql ) {
+		global $gBitSystem, $gBitUser;
+		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
+				$pSelectSql .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
+				$pJoinSql   .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (p.`content_id`=tcs.`content_id`)
+								LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` ) ";
+			if( !$this->isOwner() && !$gBitUser->isAdmin() ) {
+				$pWhereSql .= ' AND tcs.`security_id` IS NULL ';
+			}
 		}
-		return( array( $selectSql, $fromSql, $whereSql ) );
 	}
 
 	function getList( &$pListHash ) {
@@ -136,20 +141,20 @@ class CommerceProduct extends BitBase {
 		BitBase::prepGetList( $pListHash );
 		$bindVars = array();
 		$selectSql = '';
-		$fromSql = '';
+		$joinSql = '';
 		$whereSql = '';
 
 
 // 		$selectSql .= ' , s.* ';
 		if( !empty( $pListHash['specials'] ) ) {
-			$fromSql .= " INNER JOIN " . TABLE_SPECIALS . " s ON ( p.`products_id` = s.`products_id` ) ";
+			$joinSql .= " INNER JOIN " . TABLE_SPECIALS . " s ON ( p.`products_id` = s.`products_id` ) ";
 			$whereSql .= " AND s.`status` = '1' ";
 // 		} else {
-// 			$fromSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
+// 			$joinSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
-			$fromSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
+			$joinSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
 			$whereSql .= " AND f.`status` = '1' ";
 		}
 
@@ -167,7 +172,7 @@ class CommerceProduct extends BitBase {
 
 		if( !empty( $pListHash['reviews'] ) ) {
 			$selectSql .= ' , r.`reviews_rating`, rd.`reviews_text` ';
-			$fromSql .= " INNER JOIN " . TABLE_REVIEWS . " r  ON ( p.`products_id` = r.`products_id` ) INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON ( r.`reviews_id` = rd.`reviews_id` ) ";
+			$joinSql .= " INNER JOIN " . TABLE_REVIEWS . " r  ON ( p.`products_id` = r.`products_id` ) INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON ( r.`reviews_id` = rd.`reviews_id` ) ";
 			$whereSql .= " AND r.`status` = '1' AND rd.languages_id = ? ";
 			array_push( $bindVars, (int)$_SESSION['languages_id'] );
 		}
@@ -179,32 +184,30 @@ class CommerceProduct extends BitBase {
 				$pListHash['category_id'] = current( $path );
 			}
 			if( is_numeric( $pListHash['category_id'] ) ) {
-				$fromSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
+				$joinSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
 				$whereSql .= " AND c.parent_id=? ";
 				array_push( $bindVars, $pListHash['category_id'] );
 			}
 		}
 
-		$fromSql .= ' AND pd.`language_id`=?';
+		$joinSql .= ' AND pd.`language_id`=?';
 		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			list( $gateSelectSql, $gateFromSql, $gateWhereSql ) = $this->getGatekeeperSql();
-			$selectSql .= $gateSelectSql;
-			$whereSql .= $gateWhereSql;
-			$fromSql .= $gateFromSql;
+			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
 		}
 
 		$query = "select p.products_id AS hash_key, p.*, pd.`products_name`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
-					$fromSql
+					$joinSql
 				  where p.products_status = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			$ret = $rs->GetAssoc();
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
+				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], 'avatar' );
 				}
@@ -212,6 +215,13 @@ class CommerceProduct extends BitBase {
 		}
 
 		return( $ret );
+	}
+
+	function getInfoPage() {
+		if( !empty( $this->mInfo['info_page'] ) ) {
+  			$ret = $this->mInfo['info_page'];
+		}
+		return $ret;
 	}
 
 	function isValid() {
@@ -270,12 +280,21 @@ class CommerceProduct extends BitBase {
 			'products_discount_type_from' => (!empty( $pParamHash['products_discount_type_from'] ) ? $pParamHash['products_discount_type_from'] : NULL),
 			'products_price_sorter' => (!empty( $pParamHash['products_price_sorter'] ) ? $pParamHash['products_price_sorter'] : NULL),
 			'related_content_id' => (!empty( $pParamHash['related_content_id'] ) ? $pParamHash['related_content_id'] : NULL),
-			'related_group_id' => (!empty( $pParamHash['related_group_id'] ) ? $pParamHash['related_group_id'] : NULL),
+			'purchase_group_id' => (!empty( $pParamHash['purchase_group_id'] ) ? $pParamHash['purchase_group_id'] : NULL),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
 			'products_quantity_order_max' => (!empty( $pParamHash['products_quantity_order_max'] ) && is_numeric( $pParamHash['products_quantity_order_max'] ) ? $pParamHash['products_quantity_order_max'] : 0),
 			);
+
+		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
+		if( count( $pParamHash['products_name'] ) ) {
+			$pParamHash['title'] = current( $pParamHash['products_name'] );
+		}
+
+		if( empty( $pParamHash['content_id'] ) ) {
+			$pParamHash['content_id'] = $this->mContentId;
+		}
 
 		if( !empty( $pParamHash['products_date_available'] ) ) {
 			$pParamHash['product_store']['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : 'now()';
@@ -283,18 +302,19 @@ class CommerceProduct extends BitBase {
 			$pParamHash['product_store']['products_date_available'] = NULL;
 		}
 
-		$pParamHash['product_store']['products_last_modified'] = 'now()';
-		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL ));
+		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? 'now()' : $pParamHash['products_last_modified']);
+		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL));
 		if( !$this->isValid() ) {
-			$pParamHash['product_store']['products_date_added'] = 'now()';
+			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? 'now()' : $pParamHash['products_date_added']);
 		}
+
 
 		return( TRUE );
 	}
 
 	function store( &$pParamHash ) {
 		$this->mDb->StartTrans();
-		if( $this->verify( $pParamHash ) ) {
+		if( $this->verify( $pParamHash ) && LibertyAttachable::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
 			}
@@ -308,6 +328,7 @@ class CommerceProduct extends BitBase {
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( (int)$this->mProductsId );
 			} else {
+				$pParamHash['product_store']['content_id'] = $pParamHash['content_id'];
 				$action = 'insert_product';
 				$this->mDb->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
 				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
@@ -432,6 +453,7 @@ class CommerceProduct extends BitBase {
 			$this->mDb->CompleteTrans();
 			$this->load();
 		}
+
 		return( $this->mProductsId );
 	}
 
@@ -469,28 +491,37 @@ Skip deleting of images for now
 						}
 					}
 */
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE products_id = ?", array( $this->mProductsId ) );
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE products_id = ?", array( $this->mProductsId ));
 
-				zen_products_attributes_download_delete($product_id);
+				// remove downloads if they exist
+				$remove_downloads= $this->mDb->Execute("SELECT products_attributes_id FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id= '" . $this->mProductsId . "'");
+				while (!$remove_downloads->EOF) {
+					$db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE products_attributes_id=?", array( $remove_downloads->fields['products_attributes_id'] ) );
+					$remove_downloads->MoveNext();
+				}
 
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE products_id = ?", array( $this->mProductsId ));
 
-				$product_reviews = $this->mDb->query("SELECT reviews_id FROM " . TABLE_REVIEWS . " WHERE products_id = ?");
+				$product_reviews = $this->mDb->query("SELECT reviews_id FROM " . TABLE_REVIEWS . " WHERE products_id = ?", array( $this->mProductsId ));
 				while (!$product_reviews->EOF) {
 					$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
-								WHERE reviews_id = '" . (int)$product_reviews->fields['reviews_id'] . "'");
+								WHERE reviews_id = ?", array( $product_reviews->fields['reviews_id'] ) );
 					$product_reviews->MoveNext();
 				}
 
-				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id = ?");
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE products_id = ?");
+				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE products_id = ?", array( $this->mProductsId ));
+
+				$this->mInfo = array();
+				unset( $this->mContent );
+				unset( $this->mProductsId );
 
 				$this->mDb->CompleteTrans();
 			}
@@ -512,6 +543,7 @@ Skip deleting of images for now
 		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
 			$pProductsId = $this->mProductsId;
 		}
+
 		$check_min = zen_get_products_quantity_order_min( $pProductsId );
 		$check_units = zen_get_products_quantity_order_units( $pProductsId );
 		$buy_now_qty=1;

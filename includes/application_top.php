@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.17 2005/08/04 21:38:10 spiderr Exp $
+// $Id: application_top.php,v 1.18 2005/08/19 13:24:30 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -466,7 +466,7 @@ function clean_input( &$pArray ) {
       // performed by the 'buy now' button in product listings and review page
       case 'buy_now' :        if (isset($_REQUEST['products_id'])) {
                                 if (zen_has_product_attributes($_REQUEST['products_id'])) {
-                                  zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['products_id']), 'products_id=' . $_REQUEST['products_id']));
+                                  zen_redirect( CommerceProduct::getDisplayUrl( $_REQUEST['products_id']) );
                                 } else {
 
                                   $add_max = zen_get_products_quantity_order_max($_REQUEST['products_id']);

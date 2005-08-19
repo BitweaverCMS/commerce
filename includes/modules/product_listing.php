@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.8 2005/08/12 21:00:02 spiderr Exp $
+// $Id: product_listing.php,v 1.9 2005/08/19 13:24:31 spiderr Exp $
 //
 
   $show_submit = zen_run_normal();
@@ -93,22 +93,26 @@
       }
 
       $cur_row = sizeof($list_box_contents) - 1;
-
       for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
         $lc_align = '';
 
         switch ($column_list[$col]) {
           case 'PRODUCT_LIST_MODEL':
             $lc_align = '';
-            $lc_text = '&nbsp;' . $listing->fields['products_model'] . '&nbsp;';
+            $lc_text = $listing->fields['products_model'];
             break;
           case 'PRODUCT_LIST_NAME':
             $lc_align = '';
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>&nbsp;';
+              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>';
             }
+			// add description
+			if (PRODUCT_LIST_DESCRIPTION > 0) {
+				$lc_text .= '<div>' . zen_trunc_string(zen_clean_html(zen_get_products_description($listing->fields['products_id'], $_SESSION['languages_id'])), PRODUCT_LIST_DESCRIPTION) . '</div>';
+			}
+
             break;
           case 'PRODUCT_LIST_MANUFACTURER':
             $lc_align = '';
@@ -159,19 +163,6 @@
                                                'text'  => $lc_text);
       }
 
-// add description and match alternating colors
-      if (PRODUCT_LIST_DESCRIPTION > 0) {
-        $rows++;
-        if ($extra_row == 1) {
-          $list_box_description = "even";
-          $extra_row=0;
-        } else {
-          $list_box_description = "odd";
-          $extra_row=1;
-        }
-        $list_box_contents[$rows][] = array('params' => 'class="' . $list_box_description . '" colspan="' . $zc_col_count_description . '"',
-                                            'text' => zen_trunc_string(zen_clean_html(zen_get_products_description($listing->fields['products_id'], $_SESSION['languages_id'])), PRODUCT_LIST_DESCRIPTION));
-    }
       $listing->MoveNext();
     }
     $error_categories = false;

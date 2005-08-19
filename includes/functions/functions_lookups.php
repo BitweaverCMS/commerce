@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.7 2005/08/04 07:01:00 spiderr Exp $
+// $Id: functions_lookups.php,v 1.8 2005/08/19 13:24:30 spiderr Exp $
 //
 //
 /**
@@ -472,6 +472,7 @@
 // look up the product type from product_id and return an info page name
   function zen_get_info_page($zf_product_id) {
 		global $db;
+		return '';
 		$sql = "select products_type from " . TABLE_PRODUCTS . " where products_id = '" . (int)$zf_product_id . "'";
 		$zp_type = $db->Execute($sql);
 		if ($zp_type->RecordCount() == 0) {

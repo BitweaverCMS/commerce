@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.2 2005/08/12 16:59:37 spiderr Exp $
+// $Id: functions_categories.php,v 1.3 2005/08/19 13:24:30 spiderr Exp $
 //
 //
 ////
@@ -69,23 +69,19 @@
 // Return the number of products in a category
 // TABLES: products, products_to_categories, categories
   function zen_count_products_in_category($category_id, $include_inactive = false) {
-    global $db;
+    global $db, $gBitProduct;
     $products_count = 0;
+
+	$selectSql=''; $joinSql=''; $whereSql='';
+	$gBitProduct->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
     if ($include_inactive == true) {
-      $products_query = "select count(*) as total
-                         from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                         where p.products_id = p2c.products_id
-                         and p2c.categories_id = '" . (int)$category_id . "'";
-
-    } else {
-      $products_query = "select count(*) as total
-                         from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                         where p.products_id = p2c.products_id
-                         and p.products_status = '1'
-                         and p2c.categories_id = '" . (int)$category_id . "'";
-
+		$whereSql .= " and p.products_status = '1' ";
     }
-    $products = $db->Execute($products_query);
+      $products_query = "select count(*) as `total`
+                         from " . TABLE_PRODUCTS . " p
+						  INNER JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON (p.`products_id` = p2c.`products_id`) $joinSql
+                         where p2c.`categories_id` = ? $whereSql";
+    $products = $db->query($products_query, array( $category_id ) );
     $products_count += $products->fields['total'];
 
     $child_categories_query = "select categories_id

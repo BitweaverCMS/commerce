@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.3 2005/08/14 19:30:45 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.4 2005/08/19 13:24:32 spiderr Exp $
 //
   /*
 
@@ -197,7 +197,7 @@
 <?php
 */
 		}
-		print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commerce_nav.tpl' );
+// 		print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commerce_nav.tpl' );
 	}
 	// eof: previous next
 

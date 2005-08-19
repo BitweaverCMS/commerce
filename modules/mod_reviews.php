@@ -17,13 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_reviews.php,v 1.2 2005/08/03 13:04:48 spiderr Exp $
+// $Id: mod_reviews.php,v 1.3 2005/08/19 13:24:32 spiderr Exp $
 //
 	global $db, $gBitProduct;
-
-	if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-		list( $selectSql, $fromSql, $whereSql ) = CommerceProduct::getGatekeeperSql();
-	}
 
 	$listHash['reviews'] = TRUE;
 	if( $gBitProduct->isValid() ) {

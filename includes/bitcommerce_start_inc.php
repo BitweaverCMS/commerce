@@ -312,10 +312,10 @@
 	}
 	if( $gBitProduct->isAvailable() ) {
 		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
-		if( !empty( $gBitProduct->mContent ) && is_object( $gBitProduct->mContent ) ) {
-			global $gContent;
-			$gContent = &$gBitProduct->mContent;
-			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct->mContent );
+		global $gContent;
+		if( empty( $gContent ) ) {
+			$gContent = &$gBitProduct;
+			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
 		}
 	}
 

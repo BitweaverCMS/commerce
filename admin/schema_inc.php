@@ -198,6 +198,7 @@ BITCOMMERCE_DB_PREFIX.'product_types_to_category' => "
 
 BITCOMMERCE_DB_PREFIX.'products' => "
   products_id I4 PRIMARY AUTO,
+  content_id I4 NOTNULL,
   products_type I4 NOTNULL,
   products_quantity F DEFAULT '0' NOTNULL,
   products_model C(32),
@@ -233,9 +234,10 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   metatags_price_status I1,
   metatags_title_tagline_status I1,
   related_content_id I4,
-  related_group_id I4
-  CONSTRAINT ', CONSTRAINT prod_content_id_ref FOREIGN KEY (related_content_id) REFERENCES ".BIT_DB_PREFIX."tiki_content( content_id )
-			  , CONSTRAINT prod_group_id_ref FOREIGN KEY (related_group_id) REFERENCES ".BIT_DB_PREFIX."users_groups( group_id )
+  purchase_group_id I4
+  CONSTRAINT ', CONSTRAINT prod_content_id_ref FOREIGN KEY (content_id) REFERENCES ".BIT_DB_PREFIX."tiki_content( content_id )
+			  , CONSTRAINT prod_rel_content_id_ref FOREIGN KEY (related_content_id) REFERENCES ".BIT_DB_PREFIX."tiki_content( content_id )
+			  , CONSTRAINT prod_pur_group_id_ref FOREIGN KEY (purchase_group_id) REFERENCES ".BIT_DB_PREFIX."users_groups( group_id )
 			  , CONSTRAINT prod_type_ref  FOREIGN KEY (products_type) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types ( type_id )
 			  , CONSTRAINT prod_manf_id_ref  FOREIGN KEY (manufacturers_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers ( manufacturers_id )'
 ",
@@ -1070,7 +1072,9 @@ $indices = array (
   'products_manufacturers_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'manufacturers_id', 'opts' => NULL),
   'products_type_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'products_type', 'opts' => NULL),
   'products_status_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'products_status', 'opts' => NULL),
+  'products_content_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'content_id', 'opts' => array('UNIQUE')),
   'products_related_content_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'related_content_id', 'opts' => NULL),
+  'products_pur_group_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products', 'cols' => 'purchase_group_id', 'opts' => NULL),
   'lang_id_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products_options', 'cols' => 'language_id', 'opts' => NULL),
   'id_options_id_values_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products_attributes', 'cols' => ' products_id, options_id, options_values_id ', 'opts' => NULL),
   'prod_attr_products_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'products_attributes', 'cols' => 'products_id', 'opts' => NULL),

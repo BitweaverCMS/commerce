@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.12 2005/08/12 18:29:44 spiderr Exp $
+// $Id: shopping_cart.php,v 1.13 2005/08/19 13:24:30 spiderr Exp $
 //
 
   class shoppingCart {
@@ -836,14 +836,14 @@ if ((int)$products_id != $products_id) {
 
 
     function get_products($check_for_valid_cart = false) {
-      global $db;
+      global $db, $gBitProduct;
 
       if (!is_array($this->contents)) return false;
 
       $products_array = array();
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
-        if( $product = CommerceProduct::getProduct( $products_id ) ) {
+        if( $product = $gBitProduct->getProduct( $products_id ) ) {
 
           $prid = $product['products_id'];
           $products_price = $product['products_price'];

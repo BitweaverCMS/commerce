@@ -76,11 +76,7 @@
 ////
 // The HTML href link wrapper function
   function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
-    global $request_type, $session_started, $http_domain, $https_domain;
-
-    if (!zen_not_null($page)) {
-      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine the page link!</strong><br /><br />');
-    }
+    global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
 
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER;
@@ -96,11 +92,15 @@
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
 
+	if( !empty( $page ) ) {
+		$page = 'main_page='. $page . "&";
+	}
+
     if (!$static) {
       if (zen_not_null($parameters)) {
-        $link .= 'index.php?main_page='. $page . "&" . zen_output_string($parameters);
+        $link .= 'index.php?'. $page . zen_output_string($parameters);
       } else {
-        $link .= 'index.php?main_page=' . $page;
+        $link .= 'index.php?' . $page;
       }
     } else {
       if (zen_not_null($parameters)) {
@@ -131,7 +131,7 @@
     while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
     while (strstr($link, '&amp;&amp;')) $link = str_replace('&amp;&amp;', '&amp;', $link);
 
-    if ( (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
+    if ( 0 &&( $gBitSystem->isFeatureActive( 'pretty_urls' )) && ($search_engine_safe == true) ) {
       while (strstr($link, '&&')) $link = str_replace('&&', '&', $link);
 
       $link = str_replace('&amp;', '/', $link);
