@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/07/10 17:31:45 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/08/19 17:16:57 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -151,11 +151,11 @@
       if (ACCOUNT_COMPANY == 'true') $sql_data_array['entry_company'] = $company;
       if (ACCOUNT_SUBURB == 'true') $sql_data_array['entry_suburb'] = $suburb;
       if (ACCOUNT_STATE == 'true') {
-        if ($zone_id > 0) {
-          $sql_data_array['entry_zone_id'] = (int)$zone_id;
-          $sql_data_array['entry_state'] = '';
+		if( !empty( $zone_id ) && is_numeric( $zone_id ) ) {
+          $sql_data_array['entry_zone_id'] = $zone_id;
+          $sql_data_array['entry_state'] = NULL;
         } else {
-          $sql_data_array['entry_zone_id'] = '0';
+          $sql_data_array['entry_zone_id'] = NULL;
           $sql_data_array['entry_state'] = $state;
         }
       }
@@ -168,7 +168,9 @@
         if ( (isset($_POST['primary']) && ($_POST['primary'] == 'on')) || ($_GET['edit'] == $_SESSION['customer_default_address_id']) ) {
           $_SESSION['customer_first_name'] = $firstname;
           $_SESSION['customer_country_id'] = $country;
-          $_SESSION['customer_zone_id'] = (($zone_id > 0) ? (int)$zone_id : '0');
+			if( !empty( $zone_id ) && is_numeric( $zone_id ) ) {
+				$_SESSION['customer_zone_id'] = $zone_id;
+			}
           $_SESSION['customer_default_address_id'] = (int)$_GET['edit'];
 
           $sql_data_array = array('customers_firstname' => $firstname,

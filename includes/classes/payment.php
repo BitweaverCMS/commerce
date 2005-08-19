@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
+// $Id: payment.php,v 1.3 2005/08/19 17:16:57 spiderr Exp $
 //
 
   class payment {
@@ -62,7 +62,10 @@
 
         for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
 //          include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/' . $include_modules[$i]['file']);
-          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false'));
+			$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false');
+			if( file_exists( $langFile ) ) {
+				include( $langFile );
+			}
           include(DIR_WS_MODULES . 'payment/' . $include_modules[$i]['file']);
 
           $GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class'];
