@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: modules.php,v 1.5 2005/08/19 16:37:42 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -180,7 +180,10 @@
   $installed_modules = array();
   for ($i=0, $n=sizeof($directory_array); $i<$n; $i++) {
     $file = $directory_array[$i];
-    include(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/' . $module_type . '/' . $file);
+	$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/' . $module_type . '/' . $file;
+	if( file_exists( $langFile ) ) {
+	    include( $langFile );
+	}
     include($module_directory . $file);
     $class = substr($file, 0, strrpos($file, '.'));
     if (zen_class_exists($class)) {

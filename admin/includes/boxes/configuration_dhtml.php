@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration_dhtml.php,v 1.4 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: configuration_dhtml.php,v 1.5 2005/08/19 16:37:42 spiderr Exp $
 //
 
 ?>
 <!-- configuration //-->
+<li><a href="<?=BITCOMMERCE_PKG_URL?>admin/"><?=tra( 'Summary' )?></a></li>
 <li class="submenu">
-<a target="_top" href="<?php echo  zen_href_link_admin(FILENAME_DEFAULT, '', 'NONSSL') ?>"><?php echo BOX_HEADING_CONFIGURATION; ?></a><ul>
+<?php echo BOX_HEADING_CONFIGURATION; ?><ul>
 <?php
 	global $db;
 	$heading = array();
