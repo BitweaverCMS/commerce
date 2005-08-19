@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.2 2005/08/02 15:35:45 spiderr Exp $
+// $Id: mod_order_history.php,v 1.3 2005/08/19 17:12:34 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -53,8 +53,8 @@
 
 			while (!$products_history->EOF) {
 				$rows++;
-				$customer_orders[$rows]['id'] = $products_history->fields['products_id'];
-				$customer_orders[$rows]['name'] = $products_history->fields['products_name'];
+				$customer_orders[$rows] = $products_history->fields;
+				$customer_orders[$rows]['display_url'] = CommerceProduct::getDisplayUrl( $products_history->fields['products_id'] );
 				$products_history->MoveNext();
 			}
 

@@ -1,6 +1,6 @@
 {bitmodule title=$moduleTitle name="whatsnew"}
 <center>
-<a href="{$newProduct.display_url}"><img src="{$newProduct.products_image_url}" alt="{$newProduct.products_name|escape:html}" /></a><br /><a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=product_info&products_id={$newProduct.products_id}">
+<a href="{$newProduct.display_url}"><img src="{$newProduct.products_image_url}" alt="{$newProduct.products_name|escape:html}" /></a><br /><a href="{$newProduct.display_url}">
 <br />{$newProduct.products_name}</a><br />
 {if $newProduct.specials_new_products_price}
       <span class="normalprice">{$newProduct.display_price}</span><br />
