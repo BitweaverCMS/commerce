@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: message_stack.php,v 1.3 2005/08/03 13:04:38 spiderr Exp $
+// $Id: message_stack.php,v 1.4 2005/08/19 18:51:00 spiderr Exp $
 //
 
   class messageStack extends tableBox {
@@ -39,17 +39,7 @@
 // class methods
     function add($class, $message, $type = 'error') {
       global $template, $current_page_base;
-      if ($type == 'error') {
-        $this->messages[] = array('params' => 'class="messageStackError"', 'class' => $class, 'text' => zen_image($template->get_template_dir('error.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'error.gif', ICON_ERROR) . '&nbsp;' . $message);
-      } elseif ($type == 'warning') {
-        $this->messages[] = array('params' => 'class="messageStackWarning"', 'class' => $class, 'text' => zen_image($template->get_template_dir('warning.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
-      } elseif ($type == 'success') {
-        $this->messages[] = array('params' => 'class="messageStackSuccess"', 'class' => $class, 'text' => zen_image($template->get_template_dir('success.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'success.gif', ICON_SUCCESS) . '&nbsp;' . $message);
-      } elseif ($type == 'caution') {
-        $this->messages[] = array('params' => 'class="messageStackCaution"', 'class' => $class, 'text' => zen_image($template->get_template_dir('warning.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
-      } else {
-        $this->messages[] = array('params' => 'class="messageStackError"', 'class' => $class, 'text' => $message);
-      }
+        $this->messages[] = array('params' => 'class="messageStackError"', 'class' => $class, 'type'=>$type, 'text' => $message);
     }
 
     function add_session($class, $message, $type = 'error') {
@@ -72,14 +62,14 @@
     function output($class) {
       $this->table_data_parameters = 'class="messageBox"';
 
-      $output = array();
+      $this->table_data_parameters = 'class="messageBox"';
+	  $ret = '<div class="clear formfeedback"><ul>';
       for ($i=0, $n=sizeof($this->messages); $i<$n; $i++) {
-        if ($this->messages[$i]['class'] == $class) {
-          $output[] = $this->messages[$i];
-        }
+	  	$ret .= '<li class="'.$this->messages[$i]['type'].'">'.$this->messages[$i]['text'].'</li>';
       }
+	  $ret .= '</ul></div>';
 
-      return $this->tableBox($output);
+		return $ret;
     }
 
     function size($class) {

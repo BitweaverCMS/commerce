@@ -139,7 +139,7 @@
 	} elseif( $gBitUser->isRegistered() ) {
 	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
 	  $_SESSION['customer_id'] = $gBitUser->mUserId;
-	  $customerId = $_SESSION['customer_id'];
+	  $customerId = $gBitUser->mUserId;
 	} else {
 	  $customerId = NULL;
 	}

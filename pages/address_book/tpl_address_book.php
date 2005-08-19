@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_address_book.php,v 1.1 2005/08/04 07:01:23 spiderr Exp $
+// $Id: tpl_address_book.php,v 1.2 2005/08/19 18:51:01 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -32,6 +32,9 @@
   </tr>
 <?php
   }
+
+	$defaultAddressId = $gBitCustomer->getDefaultAddress();
+	if( !empty( $defaultAddressId ) ) {
 ?>
   <tr>
     <td class="plainBox" colspan="2">
@@ -42,12 +45,15 @@
             <strong><?php echo PRIMARY_ADDRESS_TITLE; ?></strong><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?>
           </td>
           <td class="main">
-            <?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['customer_default_address_id'], true, ' ', '<br />'); ?>
+            <?php echo zen_address_label($_SESSION['customer_id'], $defaultAddressId, true, ' ', '<br />'); ?>
           </td>
         </tr>
       </table>
     </td>
   </tr>
+<?php
+	}
+?>
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo ADDRESS_BOOK_TITLE; ?></td>
   </tr>

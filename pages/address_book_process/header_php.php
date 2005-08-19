@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/19 17:16:57 spiderr Exp $
+// $Id: header_php.php,v 1.5 2005/08/19 18:51:01 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -40,6 +40,16 @@
 // error checking when updating or adding an entry
   $process = false;
   if (isset($_POST['action']) && (($_POST['action'] == 'process') || ($_POST['action'] == 'update'))) {
+  	$_REQUEST['address'] = $_REQUEST['edit'];
+	if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
+      $messageStack->add_session('addressbook', SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED, 'success');
+      zen_redirect(zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL'));
+	} else {
+		foreach( $gBitCustomer->mErrors as $errString ) {
+			$messageStack->add_session( 'addressbook', $errString );
+		}
+	}
+/*
     $process = true;
     $error = false;
 
@@ -203,11 +213,8 @@
           $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
         }
       }
-
-      $messageStack->add_session('addressbook', SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED, 'success');
-
-      zen_redirect(zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL'));
     }
+*/
   }
 
   if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {

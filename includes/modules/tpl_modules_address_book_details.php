@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_address_book_details.php,v 1.1 2005/08/04 07:24:06 spiderr Exp $
+// $Id: tpl_modules_address_book_details.php,v 1.2 2005/08/19 18:51:00 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -122,7 +122,7 @@
   </tr>
   <tr>
     <td class="main"><?php echo ENTRY_COUNTRY; ?></td>
-    <td class="main"><?php echo zen_get_country_list('country', $entry->fields['entry_country_id']) . '&nbsp;' . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_get_country_list('country_id', $entry->fields['entry_country_id']) . '&nbsp;' . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?></td>
   </tr>
 <?php
   if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {
@@ -133,4 +133,4 @@
 <?php
   }
 ?>
-</table> 
+</table>

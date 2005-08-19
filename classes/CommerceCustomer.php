@@ -86,8 +86,13 @@
 
 
 		function verifyAddress( &$pParamHash, &$errorHash ) {
+			global $gBitUser;
 			if( empty( $pParamHash['customers_id'] ) || !is_numeric( $pParamHash['customers_id'] ) ) {
-				$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
+				if( $this->isValid() ) {
+					$pParamHash['address_store']['customers_id'] = $this->mCustomerId;
+				} else {
+					$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
+				}
 			} else {
 				$pParamHash['address_store']['customers_id'] = $pParamHash['customers_id'];
 			}
