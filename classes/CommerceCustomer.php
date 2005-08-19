@@ -189,7 +189,7 @@
 				} else {
 					$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
 				}
-				if( !$this->getDefaultAddress() ) {
+				if( !$this->getDefaultAddress() || !empty( $pParamHash['primary'] ) ) {
 					$this->setDefaultAddress( $pParamHash['address'] );
 				}
 			// process the selected shipping destination
