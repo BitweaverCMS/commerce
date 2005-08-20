@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
+// $Id: blk_account_history.php,v 1.3 2005/08/20 13:19:13 spiderr Exp $
 //
   $orders_total = zen_count_customer_orders();
 
@@ -42,7 +42,6 @@
                          where      orders_id = '" . (int)$history->fields['orders_id'] . "'";
 
       $products = $db->Execute($products_query);
-
       if (zen_not_null($history->fields['delivery_name'])) {
         $order_type = TEXT_ORDER_SHIPPED_TO;
         $order_name = $history->fields['delivery_name'];
@@ -50,7 +49,7 @@
         $order_type = TEXT_ORDER_BILLED_TO;
         $order_name = $history->fields['billing_name'];
       }
-      require($template->get_template_dir('tpl_block_account_history.php', DIR_WS_TEMPLATE, $current_page_base,'templates'). '/' . 'tpl_block_account_history.php');
+      require(DIR_WS_BLOCKS . 'tpl_block_account_history.php');
       $history->MoveNext();
     }
   } else {

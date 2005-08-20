@@ -8,6 +8,6 @@
 {else}
       <span class="price">{$newProduct.display_price}</span>
 {/if}
-<div><a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=products_new">{tr}See more...{/tr}</a></div>
+<div><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=products_new">{tr}See more...{/tr}</a></div>
 </center>
 {/bitmodule}

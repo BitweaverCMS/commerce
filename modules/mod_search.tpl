@@ -9,7 +9,7 @@
 	</div>
 
 	<div class="row">
-  <a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search">{tr}Advanced Search{/tr}</a>
+  <a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search">{tr}Advanced Search{/tr}</a>
 	</div>
 {/form}
 

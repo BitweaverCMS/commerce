@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_success.php,v 1.1 2005/08/04 07:01:28 spiderr Exp $
+// $Id: tpl_checkout_success.php,v 1.2 2005/08/20 13:19:13 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('order', zen_href_link(FILENAME_CHECKOUT_SUCCESS, 'action=update', 'SSL')); ?>
@@ -27,7 +27,7 @@
 		<div class="heading">
 			<h1><?php echo HEADING_TITLE; ?></h1>
 		</div>
-<?php 
+<?php
 	global $gBitSmarty;
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/order_success.tpl' );
 ?>
@@ -56,7 +56,7 @@
   </tr>
 <?php } ?>
   <tr>
-    <td class="main"><?php echo TEXT_YOUR_ORDER_NUMBER . $zv_orders_id; ?></td>
+    <td class="main"><?php echo TEXT_YOUR_ORDER_NUMBER . '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $zv_orders_id, 'SSL', false); ?>"><?=$zv_orders_id?></a></td>
   </tr>
   <tr>
     <td class="plainBox"><?php  echo TEXT_SEE_ORDERS . '<br /><br />' . TEXT_CONTACT_STORE_OWNER;?></td>

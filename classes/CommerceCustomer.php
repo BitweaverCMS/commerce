@@ -255,7 +255,7 @@
 		function isValidAddress( $pAddressId ) {
 			$ret = FALSE;
 			$errors = array();
-			if( !$this->verifyAddress( $pAddressId, $errors ) ) {
+			if( !($ret = $this->verifyAddress( $pAddressId, $errors ) ) ) {
 				unset( $errors['customers_id'] );
 				unset( $errors['gender'] );
 				if( !count( $errors ) ) {

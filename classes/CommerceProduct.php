@@ -93,7 +93,7 @@ class CommerceProduct extends LibertyAttachable {
 		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
 			$pProductsId = $this->mProductsId;
 		}
-		$ret = BITCOMMERCE_PKG_URL;
+		$ret = HTTP_SERVER.BITCOMMERCE_PKG_URL;
 		if( is_numeric( $pProductsId ) ) {
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 				$ret .= $pProductsId;
@@ -101,7 +101,7 @@ class CommerceProduct extends LibertyAttachable {
 					$ret .= '/' . $_REQUEST['cPath'];
 				}
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.'index.php?products_id='.$pProductsId;
+				$ret .= 'index.php?products_id='.$pProductsId;
 				if( !empty( $pCatPath ) ) {
 					$ret .= '&cPath=' . $_REQUEST['cPath'];
 				}

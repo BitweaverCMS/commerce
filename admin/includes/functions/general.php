@@ -17,14 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.13 2005/08/19 13:24:26 spiderr Exp $
+//  $Id: general.php,v 1.14 2005/08/20 13:19:13 spiderr Exp $
 //
 
 ////
 // Redirect to another page or site
   function zen_redirect($url) {
     global $logger;
-
 // clean up URL before executing it
     while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
     while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
