@@ -12,7 +12,7 @@ if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 		$lastQuote++;
 	}
 	$prefix = substr( BIT_DB_PREFIX,  $lastQuote );
-	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'bit_' );
+	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'com_' );
 }
 
 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
