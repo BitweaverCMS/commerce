@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.2 2005/07/30 03:01:54 spiderr Exp $
+// $Id: en.php,v 1.3 2005/08/21 20:56:07 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -538,7 +538,7 @@ define('TEXT_ATTRIBUTES_QTY_PRICES_ONETIME_HELP', 'Option Quantity Discounts One
   define('TEXT_PRODUCT_ALL_LISTING_MULTIPLE_ADD_TO_CART', 'Add: ');
   define('TEXT_PRODUCT_FEATURED_LISTING_MULTIPLE_ADD_TO_CART', 'Add: ');
   define('TEXT_PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART', 'Add: ');
-  define('SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART','Add Selected Products to Cart');
+  define('SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART','Add Multiple Products to Cart');
 
 // discount qty table
 define('TEXT_HEADER_DISCOUNT_PRICES_PERCENTAGE', 'Qty Discounts off Price');
