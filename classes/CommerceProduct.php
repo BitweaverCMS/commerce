@@ -155,6 +155,10 @@ class CommerceProduct extends LibertyAttachable {
 // 			$joinSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
 		}
 
+		if( empty( $pListHash['thumbnail_size'] ) ) {
+			$pListHash['thumbnail_size'] = 'icon';
+		}
+
 		if( !empty( $pListHash['featured'] ) ) {
 			$joinSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
 			$whereSql .= " AND f.`status` = '1' ";
@@ -217,7 +221,7 @@ class CommerceProduct extends LibertyAttachable {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
 				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], 'avatar' );
+					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
 				}
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
