@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.4 2005/08/12 07:03:22 spiderr Exp $
+// $Id: main_template_vars.php,v 1.5 2005/08/21 13:47:59 spiderr Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -50,8 +50,7 @@
     unset($typefilter);
   }
 
-  if ($category_depth == 'nested')
-    {
+  if ($category_depth == 'nested') {
     $sql = "select cd.categories_name, c.categories_image
             from   " . TABLE_CATEGORIES . " c, " .
                        TABLE_CATEGORIES_DESCRIPTION . " cd
@@ -62,8 +61,7 @@
 
     $category = $db->Execute($sql);
 
-    if (isset($cPath) && strpos($cPath, '_'))
-    {
+    if (isset($cPath) && strpos($cPath, '_')) {
 // check to see if there are deeper categories within the current category
       $category_links = array_reverse($cPath_array);
       for($i=0, $n=sizeof($category_links); $i<$n; $i++)
@@ -77,8 +75,7 @@
 
         $categories = $db->Execute($sql);
 
-        if ($categories->fields['total'] < 1)
-        {
+        if ($categories->fields['total'] < 1) {
         // do nothing, go through the loop
         } else {
           $categories_query = "select c.categories_id, cd.categories_name, c.categories_image, c.parent_id
@@ -110,7 +107,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //  } elseif ($category_depth == 'products' || isset($_REQUEST['manufacturers_id']) || isset($_REQUEST['music_genre_id'])) {
-  } elseif ($category_depth == 'products' || zen_check_url_get_terms()) {
+  } elseif ($category_depth == 'products' || !empty( $_GET['user_id'] ) || zen_check_url_get_terms() ) {
     if (SHOW_PRODUCT_INFO_ALL_PRODUCTS == '1') {
       // set a category filter
       $new_products_category_id = $cPath;
