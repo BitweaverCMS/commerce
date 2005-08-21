@@ -144,6 +144,8 @@ class CommerceProduct extends LibertyAttachable {
 		$joinSql = '';
 		$whereSql = '';
 
+		// This needs to go first since it puts a bindvar in the joinSql
+		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 
 // 		$selectSql .= ' , s.* ';
 		if( !empty( $pListHash['specials'] ) ) {
@@ -160,6 +162,11 @@ class CommerceProduct extends LibertyAttachable {
 
 		if( !empty( $pListHash['best_sellers'] ) ) {
 			$whereSql .= " AND p.`products_ordered` > 0 ";
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
+			$whereSql .= " AND tc.`user_id` = ? ";
+			array_push( $bindVars, $pListHash['user_id'] );
 		}
 
 		if( !empty( $pListHash['freshness'] ) ) {
@@ -191,26 +198,36 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		$joinSql .= ' AND pd.`language_id`=?';
-		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
 		}
 
-		$query = "select p.products_id AS hash_key, p.*, pd.`products_name`, pt.* $selectSql
+		$query = "select p.products_id AS hash_key, p.*, pd.`products_name`, tc.`created`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
+				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 					$joinSql
 				  where p.products_status = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			$ret = $rs->GetAssoc();
+			global $currencies;
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
 				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], 'avatar' );
 				}
+
+				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
+					$taxRate[$ret[$productId]['products_tax_class_id']] = zen_get_tax_rate( $ret[$productId]['products_tax_class_id'] );
+				}
+				$ret[$productId]['products_weight_kg'] = $ret[$productId]['products_weight'] * .45359;
+
+				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
+				// zen_get_products_display_price is a query hog
+				$ret[$productId]['display_price'] = zen_get_products_display_price( $productId );
 			}
 		}
 
@@ -782,6 +799,30 @@ Skip deleting of images for now
 			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId ) );
 		}
 	}
+
+	function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
+		$ret = FALSE;
+		if( empty( $pProductsId ) ) {
+			$pProductsId = $this->mProductsId;
+		}
+
+		if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
+			// don't include READONLY attributes to determin if attributes must be selected to add to cart
+			$query = "select pa.products_attributes_id
+						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id
+						where pa.products_id = ? and po.products_options_type != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+		} else {
+			// regardless of READONLY attributes no add to cart buttons
+			$query = "select pa.products_attributes_id
+						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						where pa.products_id = ?";
+		}
+
+		$attributes = $this->mDb->getOne($query, array( $pProductsId) );
+
+		return( $attributes->fields['products_attributes_id'] > 0 );
+	}
+
 
 	function hasNotification( $pCustomersId, $pProductsId=NULL ) {
 		$ret = FALSE;

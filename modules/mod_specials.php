@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_specials.php,v 1.2 2005/08/12 19:16:10 spiderr Exp $
+// $Id: mod_specials.php,v 1.3 2005/08/21 14:12:57 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -28,7 +28,6 @@
 
 	if( $specialsList = $gBitProduct->getList( $listHash ) ) {
 		$sideboxSpecial = current( $specialsList );
-		$sideboxSpecial['display_price'] = $currencies->display_price($sideboxSpecial['products_price'], zen_get_tax_rate( $sideboxSpecial['products_tax_class_id'] ) );
 		$sideboxSpecial['display_special_price'] = zen_get_products_display_price( $sideboxSpecial['products_id'] );
 
 		$gBitSmarty->assign( 'sideboxSpecial', $sideboxSpecial );
