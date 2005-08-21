@@ -19,7 +19,6 @@
     }
   }
 
-
 // Define the project version  (must come after DB class is loaded)
   require_once(DIR_FS_INCLUDES . 'version.php');
 
@@ -320,6 +319,8 @@
 	}
 
 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	$gBitSmarty->assign( 'runNormal', zen_run_normal() );
+
 
 
 
