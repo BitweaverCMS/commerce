@@ -10,6 +10,7 @@ function couponpopupWindow(url) {
 
 {$sideboxShoppingCartContent}
 
+<em><a href="{$smarty.const.HTTPS_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping">{tr}Checkout{/tr}&nbsp;&raquo;</a></em>
 {/bitmodule}
 
 {/if}
