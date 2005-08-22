@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.2 2005/08/22 08:01:36 spiderr Exp $
+// $Id: payflowpro.php,v 1.3 2005/08/22 08:13:20 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -396,7 +396,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 			    if ($this->result != "0") {
 					$db->Execute("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values (NULL,'" .$this->pnref. "', '". $this->result . "','-','failed for cust_id: ". $gBitUser->mUserId." - ".$order->customer['email_address'].":".$codeHash['RESPMSG']."','".number_format($order->info['total'], 2,'.','')."',now() )");
 			    	$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$codeHash['RESPMSG'],'error');
-// 			    	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
+ 			    	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
 				}
 		}//End of if Not Windows (else)
 }
