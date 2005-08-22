@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.1 2005/08/21 14:32:13 spiderr Exp $
+// $Id: payflowpro.php,v 1.2 2005/08/22 08:01:36 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -493,7 +493,7 @@ function placeholder_for_so_call(){
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '8', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Host Server OS', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'Linux/Unix', 'Choose your server OS. <br>To use <strong>Linux/Unix</strong>, you need to compile the --with-pfpro support into PHP from the Verisign SDK.<br />To use <strong>Windows</strong>, you need to install the COM objects from the Verisign SDK.', '6', '10', 'zen_cfg_select_option(array(\'Linux/Unix\', \'Windows\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('PayFlow Pro Certificate Path', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH', '" . DIR_FS_CATALOG . "includes/modules/payment/payflopro', 'What is the full path to your PFPRO CERT files?<br />Sometimes is: /usr/local/payflowpro/certs<br />but depends on your host.', '6', '11', now())");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('PayFlow Pro Certificate Path', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH', '" . DIR_FS_CATALOG . "includes/modules/payment/payflowpro', 'What is the full path to your PFPRO CERT files?<br />Sometimes is: /usr/local/payflowpro/certs<br />but depends on your host.', '6', '11', now())");
     }
 
 ////////////////////////////////////////////////////
