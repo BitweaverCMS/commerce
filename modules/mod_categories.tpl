@@ -13,8 +13,22 @@
 
 </li>
 {/section}
+
+{if $smarty.const.SHOW_CATEGORIES_BOX_PRODUCTS_NEW=='true'}
 <li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=specials">{tr}Specials{/tr}</a></li>
+{/if}
+
+{if $smarty.const.SHOW_CATEGORIES_BOX_SPECIALS=='true'}
 <li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=products_new">{tr}New Products{/tr}</a></li>
+{/if}
+
+{if $smarty.const.SHOW_CATEGORIES_BOX_FEATURED_PRODUCTS=='true'}
+<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=featured_products">{tr}Featured Products{/tr}</a></li>
+{/if}
+
+{if $smarty.const.SHOW_CATEGORIES_BOX_PRODUCTS_ALL=='true'}
+<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=products_new">{tr}All Products{/tr}</a></li>
+{/if}
 
 </ul>
 {/bitmodule}
