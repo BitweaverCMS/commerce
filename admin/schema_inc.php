@@ -373,7 +373,7 @@ BITCOMMERCE_DB_PREFIX.'record_artists_info' => "
   artists_id I4 PRIMARY,
   languages_id I4,
   artists_url C(255),
-  url_clicked I2,
+  url_clicked I4,
   date_last_click T
 ",
 
@@ -389,7 +389,7 @@ BITCOMMERCE_DB_PREFIX.'record_company_info' => "
   record_company_id I4 PRIMARY,
   languages_id I4,
   record_company_url C(255),
-  url_clicked I2,
+  url_clicked I4,
   date_last_click T
 ",
 
@@ -404,14 +404,14 @@ BITCOMMERCE_DB_PREFIX.'coupon_email_track' => "
 ",
 
 BITCOMMERCE_DB_PREFIX.'coupon_gv_customer' => "
-  customer_id I2,
+  customer_id I4,
   amount N(8,4)
 ",
 
 BITCOMMERCE_DB_PREFIX.'coupon_gv_queue' => "
-  unique_id I2 PRIMARY AUTO,
-  customer_id I2,
-  order_id I2,
+  unique_id I4 PRIMARY AUTO,
+  customer_id I4,
+  order_id I4,
   amount N(8,4),
   date_created T,
   ipaddr C(32),
@@ -579,7 +579,7 @@ BITCOMMERCE_DB_PREFIX.'manufacturers_info' => "
   manufacturers_id I4,
   languages_id I4,
   manufacturers_url C(255),
-  url_clicked I2,
+  url_clicked I4,
   date_last_click T
   CONSTRAINT ', CONSTRAINT manf_info_manf_id_ref  FOREIGN KEY (manufacturers_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers ( manufacturers_id )'
 ",
@@ -646,7 +646,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   customers_country C(32),
   customers_telephone C(32),
   customers_email_address C(96),
-  customers_address_format_id I2,
+  customers_address_format_id I4,
   delivery_name C(64),
   delivery_company C(32),
   delivery_street_address C(64),
@@ -655,7 +655,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   delivery_postcode C(10),
   delivery_state C(32),
   delivery_country C(32),
-  delivery_address_format_id I2,
+  delivery_address_format_id I4,
   billing_name C(64),
   billing_company C(32),
   billing_street_address C(64),
@@ -690,8 +690,8 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
 
 BITCOMMERCE_DB_PREFIX.'orders_products' => "
   orders_products_id I4 PRIMARY AUTO,
-  orders_id I4,
-  products_id I4,
+  orders_id I4 NOTNULL,
+  products_id I4 NOTNULL,
   products_model C(32),
   products_name C(64),
   products_price N(15,4),
@@ -703,13 +703,14 @@ BITCOMMERCE_DB_PREFIX.'orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
-  CONSTRAINT ', CONSTRAINT orders_prod_products_id_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT orders_prod_products_id_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
+  			  , CONSTRAINT ord_prod_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   orders_products_attributes_id I4 PRIMARY AUTO,
-  orders_id I4,
-  orders_products_id I4,
+  orders_id I4 NOTNULL,
+  orders_products_id I4 NOTNULL,
   products_options C(32),
   products_options_values C(64),
   options_values_price N(15,4),
@@ -732,19 +733,22 @@ BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   attributes_price_letters_free I2,
   products_options_id INT( 11 ) DEFAULT '0' NOTNULL,
   products_options_values_id INT( 11 ) DEFAULT '0' NOTNULL
+  CONSTRAINT ', CONSTRAINT ord_prod_att_prod_ref FOREIGN KEY (products_id) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
+  			  , CONSTRAINT ord_prod_att_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_dld' => "
   orders_products_download_id I4 PRIMARY AUTO,
-  orders_id I4,
+  orders_id I4 NOTNULL,
   orders_products_id I4,
   orders_products_filename C(255),
   download_maxdays I2,
   download_count I2
+  CONSTRAINT ', CONSTRAINT ord_prod_dld_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_status' => "
-  orders_status_id I4,
+  orders_status_id I4 PRIMARY,
   language_id I4 NOTNULL default '1',
   orders_status_name C(32)
 ",
@@ -752,21 +756,24 @@ BITCOMMERCE_DB_PREFIX.'orders_status' => "
 
 BITCOMMERCE_DB_PREFIX.'orders_status_history' => "
   orders_status_history_id I4 PRIMARY AUTO,
-  orders_id I4,
-  orders_status_id I2,
+  orders_id I4 NOTNULL,
+  orders_status_id I4,
   date_added T,
   customer_notified I1 default '0',
   comments X
+  CONSTRAINT ', CONSTRAINT ord_total_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
+			  , CONSTRAINT ord_stat_hist_stat_ref FOREIGN KEY ( orders_status_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders_status( orders_status_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_total' => "
   orders_total_id I4 PRIMARY AUTO,
-  orders_id I4,
+  orders_id I4 NOTNULL,
   title C(255),
   text C(255),
   value N(15,4),
   class C(32),
   sort_order I4
+  CONSTRAINT ', CONSTRAINT ord_total_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'reviews' => "
