@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.8 2005/08/19 16:37:42 spiderr Exp $
+//  $Id: orders.php,v 1.9 2005/08/22 21:35:25 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -391,7 +391,7 @@
     for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
       echo '          <tr class="dataTableRow">' . "\n" .
            '            <td class="dataTableContent" valign="top" align="right">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
-           '            <td class="dataTableContent" valign="top">' . $order->products[$i]['name'];
+           '            <td class="dataTableContent" valign="top"><a href="'.$gBitProduct->getDisplayUrl( $order->products[$i]['products_id'] ).'">' . $order->products[$i]['name'].'</a>';
 
       if (isset($order->products[$i]['attributes']) && (sizeof($order->products[$i]['attributes']) > 0)) {
         for ($j = 0, $k = sizeof($order->products[$i]['attributes']); $j < $k; $j++) {

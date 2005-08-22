@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.4 2005/08/13 17:06:18 spiderr Exp $
+//  $Id: order.php,v 1.5 2005/08/22 21:35:25 spiderr Exp $
 //
 
   class order {
@@ -89,10 +89,7 @@
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
-      $orders_products = $db->Execute("select orders_products_id, products_name, products_model,
-                                              products_price, products_tax, products_quantity,
-                                              final_price, onetime_charges,
-                                              product_is_free
+      $orders_products = $db->Execute("select *
                                        from " . TABLE_ORDERS_PRODUCTS . "
                                        where orders_id = '" . (int)$order_id . "'");
 
@@ -118,14 +115,14 @@
             $new_qty = (int)$new_qty;
           }
 
-        $this->products[$index] = array('quantity' => $new_qty,
+			$this->products[$index] = array_merge( $orders_products->fields, array('quantity' => $new_qty,
                                         'name' => $orders_products->fields['products_name'],
                                         'model' => $orders_products->fields['products_model'],
                                         'tax' => $orders_products->fields['products_tax'],
                                         'price' => $orders_products->fields['products_price'],
                                         'onetime_charges' => $orders_products->fields['onetime_charges'],
                                         'final_price' => $orders_products->fields['final_price'],
-                                        'product_is_free' => $orders_products->fields['product_is_free']);
+                                        'product_is_free' => $orders_products->fields['product_is_free']) );
 
         $subindex = 0;
         $attributes = $db->Execute("select products_options, products_options_values, options_values_price,
