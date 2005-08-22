@@ -1,31 +1,24 @@
 <?php
-// $Id: header_php.php,v 1.2 2005/08/22 04:38:27 spiderr Exp $
 //
-
-if( !empty( $_REQUEST['user_id'] ) ) {
-	$gQueryUser = new BitPermUser( $_REQUEST['user_id'] );
-} else {
-	$gQueryUser = &$gBitUser;
-}
-
-
-define('NAVBAR_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
-define('HEADING_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
-
+// +----------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce                                       |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2003 The zen-cart developers                           |
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
+// | Portions Copyright (c) 2003 osCommerce                               |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | If you did not receive a copy of the zen-cart license and are unable |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | license@zen-cart.com so we can mail you a copy immediately.          |
+// +----------------------------------------------------------------------+
+// $Id: header_php.php,v 1.3 2005/08/22 08:25:35 spiderr Exp $
+//
   require(DIR_WS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
-
-$listHash['user_id'] = $gQueryUser->mUserId;
-$listHash['thumbnail_size'] = 'small';
-
-/* The cool bitweaver way will have to happen later... - spiderr */
-$listHash['user_id'] = $gQueryUser->mUserId;
-$userProducts = $gBitProduct->getList( $listHash );
-$gBitSmarty->assign( 'listProducts', $userProducts );
-
-$gBitSmarty->assign_by_ref( 'gQueryUser', $gQueryUser );
-
-print $gBitSmarty->fetch( 'bitpackage:bitcommerce/list_products.tpl' );
-
-
 ?>
