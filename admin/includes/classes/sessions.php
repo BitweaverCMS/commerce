@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sessions.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: sessions.php,v 1.2 2005/08/24 08:49:35 lsces Exp $
 //
 /*
   Original source from Web Application Development with PHP (Tobias Ratschiller, Till Gerken)
@@ -41,7 +41,8 @@
 
     var $use_cookies = true;
     var $cookie_lifetime = 0;
-    var $cookie_path = substr(DIR_WS_ADMIN, 0, -1);
+    var $cookie_path = DIR_WS_ADMIN;
+//    var $cookie_path = substr(DIR_WS_ADMIN, 0, -1);
     var $cookie_domain = '';
 
     var $gc_probability = 1;
