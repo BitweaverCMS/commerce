@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.7 2005/08/24 02:47:44 lsces Exp $
+//  $Id: index.php,v 1.8 2005/08/24 13:38:40 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -105,7 +105,7 @@
 </table>
 <table class="data">
 <tr><th colspan="3"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
-  <?php  $orders = $db->Execute("SELECT ot.`text` AS `order_total`, o.* from " . TABLE_ORDERS . " o  INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`) where `class` = 'ot_total' ORDER BY o.`orders_id` DESC", 5);
+  <?php  $orders = $db->Execute("SELECT ot.`text` AS `order_total`, o.*, uu.* from " . TABLE_ORDERS . " o  INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`) where `class` = 'ot_total' ORDER BY o.`orders_id` DESC", 5);
 
   while (!$orders->EOF) {
   	$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
