@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.7 2005/08/24 09:30:59 lsces Exp $
+// $Id: mod_shopping_cart.php,v 1.8 2005/08/24 14:23:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies;
+	global $db, $gBitProduct, $currencies, $gBitUser;
 
 if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
   switch (true) {
