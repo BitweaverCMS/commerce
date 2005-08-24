@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_download.php,v 1.2 2005/08/03 15:35:12 spiderr Exp $
+//  $Id: orders_download.php,v 1.3 2005/08/24 15:28:51 lsces Exp $
 
   // select downloads for current order
-  $orders_download_query = "select * from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " where orders_id='" . $_GET['oID'] . "'";
+  $orders_download_query = "select * from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " where `orders_id`='" . $_GET['oID'] . "'";
   $orders_download = $db->Execute($orders_download_query);
 
 // only display if there are downloads to display

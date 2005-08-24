@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cc.php,v 1.2 2005/08/24 02:53:52 lsces Exp $
+// $Id: cc.php,v 1.3 2005/08/24 15:28:51 lsces Exp $
 //
 
   class cc {
@@ -232,7 +232,7 @@
     function after_order_create($zf_order_id) {
       global $db, $order;
       if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')  {
-        $db->execute("update "  . TABLE_ORDERS . " set cc_cvv ='" . $order->info['cc_cvv'] . "' where orders_id = '" . $zf_order_id ."'");
+        $db->execute("update "  . TABLE_ORDERS . " set cc_cvv ='" . $order->info['cc_cvv'] . "' where `orders_id` = '" . $zf_order_id ."'");
       }
     }
     

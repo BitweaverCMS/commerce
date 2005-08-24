@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.13 2005/08/24 15:06:36 lsces Exp $
+//  $Id: orders.php,v 1.14 2005/08/24 15:28:50 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -49,10 +49,10 @@
           // adjust download_maxdays based on current date
           $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
-                                      where orders_id = '" . $_GET['oID'] . "'");
+                                      where `orders_id` = '" . $_GET['oID'] . "'");
           $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
-          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where orders_id='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
+          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
           $db->Execute($update_downloads_query);
           unset($_GET['download_reset_on']);
 
@@ -62,7 +62,7 @@
       // reset single download to off
         if ($_GET['download_reset_off'] > 0) {
           // adjust download_maxdays based on current date
-          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where orders_id='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
+          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
           unset($_GET['download_reset_off']);
           $db->Execute($update_downloads_query);
 
@@ -84,12 +84,12 @@
         $order_updated = false;
         $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
-                                      where orders_id = '" . (int)$oID . "'");
+                                      where `orders_id` = '" . (int)$oID . "'");
 
         if ( ($check_status->fields['orders_status'] != $status) || zen_not_null($comments)) {
           $db->Execute("update " . TABLE_ORDERS . "
                         set orders_status = '" . zen_db_input($status) . "', `last_modified` = now()
-                        where orders_id = '" . (int)$oID . "'");
+                        where `orders_id` = '" . (int)$oID . "'");
 
           $customer_notified = '0';
           if (isset($_POST['notify']) && ($_POST['notify'] == 'on')) {
@@ -143,7 +143,7 @@
             // adjust download_maxdays based on current date
             $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
-            $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where orders_id='" . (int)$oID . "'";
+            $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . (int)$oID . "'";
             $db->Execute($update_downloads_query);
           }
           $messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
@@ -173,7 +173,7 @@
     $oID = zen_db_prepare_input($_GET['oID']);
 
     $orders = $db->Execute("select orders_id from " . TABLE_ORDERS . "
-                            where orders_id = '" . (int)$oID . "'");
+                            where `orders_id` = '" . (int)$oID . "'");
 
     $order_exists = true;
     if ($orders->RecordCount() <= 0) {
@@ -609,12 +609,12 @@
     $new_fields = ", o.`customers_street_address`, o.`delivery_name`, o.`delivery_street_address`, o.`billing_name`, o.`billing_street_address`, o.`payment_module_code`, o.`shipping_module_code`, o.`ip_address` ";
     if (isset($_GET['cID'])) {
       $cID = zen_db_prepare_input($_GET['cID']);
-      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`customers_id`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.`customers_id` = '" . (int)$cID . "' and o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total' order by orders_id DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`customers_id`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.`customers_id` = '" . (int)$cID . "' and o.`orders_status` = s.`orders_status_id` and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.`class` = 'ot_total' order by orders_id DESC";
     } elseif ($_GET['status'] != '') {
       $status = zen_db_prepare_input($_GET['status']);
-      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and s.orders_status_id = '" . (int)$status . "' and ot.class = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.`orders_status` = s.`orders_status_id` and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and s.`orders_status_id` = '" . (int)$status . "' and ot.`class` = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
     } else {
-      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.`orders_status` = s.`orders_status_id` and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.`class` = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
     }
     $orders_query_numrows = '';
     $orders_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_ORDERS, $orders_query_raw, $orders_query_numrows);
@@ -714,7 +714,7 @@
       }
 
 // indicate if comments exist
-      $orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, customer_notified, comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . $oInfo->orders_id . "' and comments !='" . "'" );
+      $orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments` from " . TABLE_ORDERS_STATUS_HISTORY . " where `orders_id` = '" . $oInfo->orders_id . "' and `comments` !='" . "'" );
       if ($orders_history_query->RecordCount() > 0) {
         $contents[] = array('align' => 'left', 'text' => '<br />' . TABLE_HEADING_COMMENTS);
       }

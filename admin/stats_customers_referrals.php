@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers_referrals.php,v 1.4 2005/08/24 15:06:36 lsces Exp $
+//  $Id: stats_customers_referrals.php,v 1.5 2005/08/24 15:28:50 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -146,7 +146,7 @@
 //    echo $customers_orders->fields['orders_id'] . ' ' . $customers_orders->fields['order_total'] . '<br />';
     $current_orders_id = $customers_orders->fields['orders_id'];
 
-    $orders_total_query = "select * from " . TABLE_ORDERS_TOTAL . " where orders_id='" . $current_orders_id . "'";
+    $orders_total_query = "select * from " . TABLE_ORDERS_TOTAL . " where `orders_id`='" . $current_orders_id . "'";
     $orders_total = $db->Execute($orders_total_query);
 
     $order = new order($customers_orders->fields['orders_id']);

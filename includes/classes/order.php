@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.14 2005/08/24 15:06:38 lsces Exp $
+// $Id: order.php,v 1.15 2005/08/24 15:28:50 lsces Exp $
 //
 
   class order {
@@ -56,13 +56,13 @@
                              coupon_code, cc_type, cc_owner, cc_number, cc_expires, currency, currency_value,
                              date_purchased, orders_status, `last_modified`, order_total, order_tax, ip_address
                       from " . TABLE_ORDERS . "
-                      where orders_id = '" . (int)$order_id . "'";
+                      where `orders_id` = '" . (int)$order_id . "'";
 
       $order = $db->Execute($order_query);
 
       $totals_query = "select title, text, class
                        from " . TABLE_ORDERS_TOTAL . "
-                       where orders_id = '" . (int)$order_id . "'
+                       where `orders_id` = '" . (int)$order_id . "'
                        order by `sort_order`";
 
       $totals = $db->Execute($totals_query);
@@ -76,7 +76,7 @@
 
       $order_total_query = "select text, value
          from " . TABLE_ORDERS_TOTAL . "
-         where orders_id = '" . (int)$order_id . "'
+         where `orders_id` = '" . (int)$order_id . "'
          and class = 'ot_total'";
 
 
@@ -85,7 +85,7 @@
 
       $shipping_method_query = "select title, value
           from " . TABLE_ORDERS_TOTAL . "
-          where orders_id = '" . (int)$order_id . "'
+          where `orders_id` = '" . (int)$order_id . "'
           and class = 'ot_shipping'";
 
 
@@ -159,7 +159,7 @@
                                 from " . TABLE_ORDERS_PRODUCTS . " op
 									LEFT OUTER JOIN  " . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
 									LEFT OUTER JOIN  " . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-                                where orders_id = '" . (int)$order_id . "'";
+                                where `orders_id` = '" . (int)$order_id . "'";
 
       $orders_products = $db->Execute($orders_products_query);
 
@@ -196,7 +196,7 @@
         $subindex = 0;
         $attributes_query = "select products_options_id, products_options_values_id, products_options, products_options_values, options_values_price,
                                     price_prefix from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-                             where orders_id = '" . (int)$order_id . "'
+                             where `orders_id` = '" . (int)$order_id . "'
                              and orders_products_id = '" . (int)$orders_products->fields['orders_products_id'] . "'";
 
         $attributes = $db->Execute($attributes_query);

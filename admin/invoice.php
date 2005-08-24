@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.4 2005/08/24 02:47:43 lsces Exp $
+//  $Id: invoice.php,v 1.5 2005/08/24 15:28:50 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -69,7 +69,7 @@
                                     payment_method, cc_type, cc_owner, cc_number, cc_expires, currency,
                                     currency_value, date_purchased, orders_status, `last_modified`
                              from " . TABLE_ORDERS . "
-                             where orders_id = '" . (int)$oID . "'");
+                             where `orders_id` = '" . (int)$oID . "'");
   $show_customer = 'false';
   if ($order_check->fields['billing_name'] != $order_check->fields['delivery_name']) {
     $show_customer = 'true';

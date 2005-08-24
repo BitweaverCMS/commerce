@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: packingslip.php,v 1.4 2005/08/24 02:47:44 lsces Exp $
+//  $Id: packingslip.php,v 1.5 2005/08/24 15:28:50 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -28,7 +28,7 @@
   $oID = zen_db_prepare_input($_GET['oID']);
   $orders = $db->Execute("select orders_id
                           from " . TABLE_ORDERS . "
-                          where orders_id = '" . (int)$oID . "'");
+                          where `orders_id` = '" . (int)$oID . "'");
 
   include(DIR_WS_CLASSES . 'order.php');
   $order = new order($oID);
@@ -71,7 +71,7 @@
                                     payment_method, cc_type, cc_owner, cc_number, cc_expires, currency,
                                     currency_value, date_purchased, orders_status, `last_modified`
                              from " . TABLE_ORDERS . "
-                             where orders_id = '" . (int)$oID . "'");
+                             where `orders_id` = '" . (int)$oID . "'");
   $show_customer = 'false';
   if ($order_check->fields['billing_name'] != $order_check->fields['delivery_name']) {
     $show_customer = 'true';

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.6 2005/08/24 02:48:11 lsces Exp $
+//  $Id: store_manager.php,v 1.7 2005/08/24 15:28:50 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -124,12 +124,12 @@
       $old_orders_id = zen_db_prepare_input($_POST['old_orders_id']);
       $new_orders_id = zen_db_prepare_input($_POST['new_orders_id']);
 
-      $db->Execute("update " . TABLE_ORDERS . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_TOTAL . " set orders_id='" . $new_orders_id . "' where orders_id='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_TOTAL . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
     break;
 
     case ('locate_configuration'):

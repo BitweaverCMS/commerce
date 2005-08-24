@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
+//  $Id: order.php,v 1.7 2005/08/24 15:28:51 lsces Exp $
 //
 
   class order {
@@ -37,12 +37,12 @@
       global $db;
       $order = $db->Execute("select *
                              from " . TABLE_ORDERS . " o INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
-                             where orders_id = '" . (int)$order_id . "'");
+                             where `orders_id` = '" . (int)$order_id . "'");
 
 
-      $totals = $db->Execute("select title, text, class
+      $totals = $db->Execute("select `title`, `text`, `class`
                               from " . TABLE_ORDERS_TOTAL . "
-                              where orders_id = '" . (int)$order_id . "'
+                              where `orders_id` = '" . (int)$order_id . "'
                               order by `sort_order`");
 
       while (!$totals->EOF) {
@@ -91,7 +91,7 @@
       $index = 0;
       $orders_products = $db->Execute("select *
                                        from " . TABLE_ORDERS_PRODUCTS . "
-                                       where orders_id = '" . (int)$order_id . "'");
+                                       where `orders_id` = '" . (int)$order_id . "'");
 
       while (!$orders_products->EOF) {
 // convert quantity to proper decimals - account history
@@ -125,12 +125,12 @@
                                         'product_is_free' => $orders_products->fields['product_is_free']) );
 
         $subindex = 0;
-        $attributes = $db->Execute("select products_options, products_options_values, options_values_price,
-                                           price_prefix,
-                                           product_attribute_is_free
+        $attributes = $db->Execute("select `products_options`, `products_options_values`, `options_values_price`,
+                                           `price_prefix`,
+                                           `product_attribute_is_free`
                                     from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-                                    where orders_id = '" . (int)$order_id . "'
-                                    and orders_products_id = '" . (int)$orders_products->fields['orders_products_id'] . "'");
+                                    where `orders_id` = '" . (int)$order_id . "'
+                                    and `orders_products_id` = '" . (int)$orders_products->fields['orders_products_id'] . "'");
         if ($attributes->RecordCount()>0) {
           while (!$attributes->EOF) {
             $this->products[$index]['attributes'][$subindex] = array('option' => $attributes->fields['products_options'],

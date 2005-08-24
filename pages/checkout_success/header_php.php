@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 15:06:39 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 15:28:51 lsces Exp $
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {
@@ -81,9 +81,9 @@
 
     $products_array = array();
 
-    $products_query = "select products_id, products_name from " . TABLE_ORDERS_PRODUCTS . "
-                       where orders_id = ?
-                       order by products_name";
+    $products_query = "select `products_id`, `products_name` from " . TABLE_ORDERS_PRODUCTS . "
+                       where `orders_id` = ?
+                       order by `products_name`";
 
     $products = $db->query($products_query, array($zv_orders_id) );
 
