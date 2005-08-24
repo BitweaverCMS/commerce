@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.10 2005/08/24 14:39:17 spiderr Exp $
+// $Id: main_template_vars.php,v 1.11 2005/08/24 15:08:20 lsces Exp $
 //
 
-  $sql = "select count(*) as total
+  $sql = "select count(*) as `total`
           from " . TABLE_PRODUCTS . " p, " .
                    TABLE_PRODUCTS_DESCRIPTION . " pd
           where    p.`products_status` = '1'
