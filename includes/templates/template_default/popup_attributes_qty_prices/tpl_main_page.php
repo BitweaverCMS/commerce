@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.1 2005/07/05 05:59:03 bitweaver Exp $
+// $Id: tpl_main_page.php,v 1.2 2005/08/24 02:54:10 lsces Exp $
 //
 ?>
 <body>
@@ -47,9 +47,9 @@ $show_onetime= 'false';
       $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
                               popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.products_id='" . (int)$_GET['products_id'] . "'
+              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
               and             patrib.options_id = popt.products_options_id
-              and             popt.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
       $products_options_names_lookup = $db->Execute($sql);
@@ -66,10 +66,10 @@ $show_onetime= 'false';
                           pov.products_options_values_name,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.products_id = '" . (int)$_GET['products_id'] . "'
+                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
                 and       pa.options_id = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
                 and       pa.options_values_id = pov.products_options_values_id
-                and       pov.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
         $products_options_lookup = $db->Execute($sql);
@@ -148,9 +148,9 @@ $show_onetime= 'false';
       $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
                               popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.products_id='" . (int)$_GET['products_id'] . "'
+              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
               and             patrib.options_id = popt.products_options_id
-              and             popt.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
       $products_options_names_lookup = $db->Execute($sql);
@@ -167,10 +167,10 @@ $show_onetime= 'false';
                           pov.products_options_values_name,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.products_id = '" . (int)$_GET['products_id'] . "'
+                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
                 and       pa.options_id = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
                 and       pa.options_values_id = pov.products_options_values_id
-                and       pov.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
         $products_options_lookup = $db->Execute($sql);

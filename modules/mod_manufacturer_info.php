@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturer_info.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_manufacturer_info.php,v 1.2 2005/08/24 02:54:29 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -28,7 +28,7 @@
                            left join " . TABLE_MANUFACTURERS_INFO . " mi
                            on (m.manufacturers_id = mi.manufacturers_id
                            and mi.languages_id = '" . (int)$_SESSION['languages_id'] . "'), " . TABLE_PRODUCTS . " p
-                           where p.products_id = '" . (int)$_GET['products_id'] . "'
+                           where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                            and p.manufacturers_id = m.manufacturers_id";
 
     $manufacturer_info_sidebox = $db->Execute($manufacturer_info_sidebox_query);

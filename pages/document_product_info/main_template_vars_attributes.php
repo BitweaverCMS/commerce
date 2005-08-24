@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.2 2005/07/17 20:28:29 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.3 2005/08/24 02:52:59 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -26,9 +26,9 @@
 
     $sql = "select count(*) as total
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-            where    patrib.products_id='" . (int)$_GET['products_id'] . "'
+            where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
             and      patrib.options_id = popt.products_options_id
-            and      popt.language_id = '" . (int)$_SESSION['languages_id'] . "'" .
+            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" .
             " limit 1";
 
     $pr_attr = $db->Execute($sql);
@@ -45,9 +45,9 @@
                               popt.products_options_images_per_row,
                               popt.products_options_images_style
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.products_id='" . (int)$_GET['products_id'] . "'
+              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
               and             patrib.options_id = popt.products_options_id
-              and             popt.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
       $products_options_names = $db->Execute($sql);
@@ -79,10 +79,10 @@
                           pov.products_options_values_name,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.products_id = '" . (int)$_GET['products_id'] . "'
+                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
                 and       pa.options_id = '" . (int)$products_options_names->fields['products_options_id'] . "'
                 and       pa.options_values_id = pov.products_options_values_id
-                and       pov.language_id = '" . (int)$_SESSION['languages_id'] . "' " .
+                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
         $products_options = $db->Execute($sql);
@@ -412,7 +412,7 @@
 // text
           if (($products_options_names->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
             //CLR 030714 Add logic for text option
-//            $products_attribs_query = zen_db_query("select distinct patrib.options_values_price, patrib.price_prefix from " . TABLE_PRODUCTS_ATTRIBUTES . " patrib where patrib.products_id='" . (int)$_GET['products_id'] . "' and patrib.options_id = '" . $products_options_name['products_options_id'] . "'");
+//            $products_attribs_query = zen_db_query("select distinct patrib.options_values_price, patrib.price_prefix from " . TABLE_PRODUCTS_ATTRIBUTES . " patrib where patrib.`products_id`='" . (int)$_GET['products_id'] . "' and patrib.options_id = '" . $products_options_name['products_options_id'] . "'");
 //            $products_attribs_array = zen_db_fetch_array($products_attribs_query);
             if ($_POST['id']) {
                 reset($_POST['id']);

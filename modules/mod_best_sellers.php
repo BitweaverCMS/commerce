@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_best_sellers.php,v 1.2 2005/08/03 13:04:42 spiderr Exp $
+// $Id: mod_best_sellers.php,v 1.3 2005/08/24 02:54:29 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -44,28 +44,28 @@
   if ($show_best_sellers == true) {
 
     if (isset($current_category_id) && ($current_category_id > 0)) {
-      $best_sellers_query = "select distinct p.products_id, pd.products_name, p.products_ordered
+      $best_sellers_query = "select distinct p.`products_id`, pd.products_name, p.products_ordered
                              from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                                     . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c
                              where p.products_status = '1'
                              and p.products_ordered > 0
-                             and p.products_id = pd.products_id
-                             and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                             and p.products_id = p2c.products_id
-                             and p2c.categories_id = c.categories_id
-                             and '" . (int)$current_category_id . "' in (c.categories_id, c.parent_id)
+                             and p.`products_id` = pd.`products_id`
+                             and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                             and p.`products_id` = p2c.`products_id`
+                             and p2c.`categories_id` = c.`categories_id`
+                             and '" . (int)$current_category_id . "' in (c.`categories_id`, c.`parent_id`)
                              order by p.products_ordered desc, pd.products_name
                              limit " . MAX_DISPLAY_BESTSELLERS;
 
       $best_sellers = $db->Execute($best_sellers_query);
 
     } else {
-      $best_sellers_query = "select distinct p.products_id, pd.products_name, p.products_ordered
+      $best_sellers_query = "select distinct p.`products_id`, pd.products_name, p.products_ordered
                              from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                              where p.products_status = '1'
                              and p.products_ordered > 0
-                             and p.products_id = pd.products_id
-                             and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                             and p.`products_id` = pd.`products_id`
+                             and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                              order by p.products_ordered desc, pd.products_name
                              limit " . MAX_DISPLAY_BESTSELLERS;
 

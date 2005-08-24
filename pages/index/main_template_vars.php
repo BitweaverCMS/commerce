@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.5 2005/08/21 13:47:59 spiderr Exp $
+// $Id: main_template_vars.php,v 1.6 2005/08/24 02:53:00 lsces Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -51,13 +51,13 @@
   }
 
   if ($category_depth == 'nested') {
-    $sql = "select cd.categories_name, c.categories_image
+    $sql = "select cd.`categories_name`, c.categories_image
             from   " . TABLE_CATEGORIES . " c, " .
                        TABLE_CATEGORIES_DESCRIPTION . " cd
-            where      c.categories_id = '" . (int)$current_category_id . "'
-            and        cd.categories_id = '" . (int)$current_category_id . "'
-            and        cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-            and        c.categories_status= '1'";
+            where      c.`categories_id` = '" . (int)$current_category_id . "'
+            and        cd.`categories_id` = '" . (int)$current_category_id . "'
+            and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+            and        c.`categories_status`= '1'";
 
     $category = $db->Execute($sql);
 
@@ -68,35 +68,35 @@
       {
         $sql = "select count(*) as total
                 from   " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                where      c.parent_id = '" . (int)$category_links[$i] . "'
-                and        c.categories_id = cd.categories_id
-                and        cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                and        c.categories_status= '1'";
+                where      c.`parent_id` = '" . (int)$category_links[$i] . "'
+                and        c.`categories_id` = cd.`categories_id`
+                and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                and        c.`categories_status`= '1'";
 
         $categories = $db->Execute($sql);
 
         if ($categories->fields['total'] < 1) {
         // do nothing, go through the loop
         } else {
-          $categories_query = "select c.categories_id, cd.categories_name, c.categories_image, c.parent_id
+          $categories_query = "select c.`categories_id`, cd.`categories_name`, c.categories_image, c.`parent_id`
                   from   " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                  where      c.parent_id = '" . (int)$category_links[$i] . "'
-                  and        c.categories_id = cd.categories_id
-                  and        cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                  and        c.categories_status= '1'
-                  order by   sort_order, cd.categories_name";
+                  where      c.`parent_id` = '" . (int)$category_links[$i] . "'
+                  and        c.`categories_id` = cd.`categories_id`
+                  and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                  and        c.`categories_status`= '1'
+                  order by   `sort_order`, cd.`categories_name`";
 
           break; // we've found the deepest category the customer is in
         }
       }
     } else {
-      $categories_query = "select c.categories_id, cd.categories_name, c.categories_image, c.parent_id
+      $categories_query = "select c.`categories_id`, cd.`categories_name`, c.categories_image, c.`parent_id`
                            from   " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                           where      c.parent_id = '" . (int)$current_category_id . "'
-                           and        c.categories_id = cd.categories_id
-                           and        cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                           and        c.categories_status= '1'
-                           order by   sort_order, cd.categories_name";
+                           where      c.`parent_id` = '" . (int)$current_category_id . "'
+                           and        c.`categories_id` = cd.`categories_id`
+                           and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                           and        c.`categories_status`= '1'
+                           order by   `sort_order`, cd.`categories_name`";
     }
     $categories = $db->Execute($categories_query);
     $number_of_categories = $categories->RecordCount();

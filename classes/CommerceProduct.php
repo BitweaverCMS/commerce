@@ -59,8 +59,8 @@ class CommerceProduct extends LibertyAttachable {
 					  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`) $joinSql
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
-						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
-						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
+						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.tax_class_id )
+						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.tax_class_id=txc.tax_class_id )
 						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
@@ -152,7 +152,7 @@ class CommerceProduct extends LibertyAttachable {
 			$joinSql .= " INNER JOIN " . TABLE_SPECIALS . " s ON ( p.`products_id` = s.`products_id` ) ";
 			$whereSql .= " AND s.`status` = '1' ";
 // 		} else {
-// 			$joinSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.products_id = s.products_id AND s.status = '1' ) ";
+// 			$joinSql .= " LEFT JOIN " . TABLE_SPECIALS . " s ON ( p.`products_id` = s.`products_id` AND s.status = '1' ) ";
 		}
 
 		if( empty( $pListHash['thumbnail_size'] ) ) {
@@ -196,7 +196,7 @@ class CommerceProduct extends LibertyAttachable {
 			}
 			if( is_numeric( $pListHash['category_id'] ) ) {
 				$joinSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
-				$whereSql .= " AND c.parent_id=? ";
+				$whereSql .= " AND c.`parent_id`=? ";
 				array_push( $bindVars, $pListHash['category_id'] );
 			}
 		}
@@ -207,13 +207,13 @@ class CommerceProduct extends LibertyAttachable {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
 		}
 
-		$query = "select p.products_id AS hash_key, p.*, pd.`products_name`, tc.`created`, pt.* $selectSql
+		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, tc.`created`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 					$joinSql
-				  where p.products_status = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
+				  where p.`products_status` = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			$ret = $rs->GetAssoc();
 			global $currencies;
@@ -814,12 +814,12 @@ Skip deleting of images for now
 			// don't include READONLY attributes to determin if attributes must be selected to add to cart
 			$query = "select pa.products_attributes_id
 						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id
-						where pa.products_id = ? and po.products_options_type != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+						where pa.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
 		} else {
 			// regardless of READONLY attributes no add to cart buttons
 			$query = "select pa.products_attributes_id
 						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						where pa.products_id = ?";
+						where pa.`products_id` = ?";
 		}
 
 		$attributes = $this->mDb->getOne($query, array( $pProductsId) );

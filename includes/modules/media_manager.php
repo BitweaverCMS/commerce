@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: media_manager.php,v 1.2 2005/07/26 12:31:53 spiderr Exp $
+// $Id: media_manager.php,v 1.3 2005/08/24 02:52:18 lsces Exp $
 //
    global $db;
    $zv_collection_query = "select * from " . TABLE_MEDIA_TO_PRODUCTS . " 
@@ -43,7 +43,7 @@
          while (!$zq_clips->EOF) {
            
            $zf_clip_type_query = "select * from " . TABLE_MEDIA_TYPES . " 
-                                  where type_id = '" . $zq_clips->fields['clip_type'] . "'";
+                                  where `type_id` = '" . $zq_clips->fields['clip_type'] . "'";
 
            $zq_clip_type = $db->Execute($zf_clip_type_query);
 

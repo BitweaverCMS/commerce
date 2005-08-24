@@ -17,33 +17,32 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.4 2005/08/04 07:01:02 spiderr Exp $
+// $Id: upcoming_products.php,v 1.5 2005/08/24 02:52:18 lsces Exp $
 //
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
-    $expected_query = "select p.products_id, pd.products_name, products_date_available as date_expected
+    $expected_query = "select p.`products_id`, pd.`products_name`, `products_date_available` as `date_expected`
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                       where products_date_available >= now()
-                       and p.products_id = pd.products_id
-                       and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                       order by " . EXPECTED_PRODUCTS_FIELD . " " . EXPECTED_PRODUCTS_SORT . "
-                       limit " . MAX_DISPLAY_UPCOMING_PRODUCTS;
-//                       where to_days(products_date_available) >= to_days(now())
+                       where `products_date_available` >= 'NOW'
+                       and p.`products_id` = pd.`products_id`
+                       and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                       order by `products_date_available` " . EXPECTED_PRODUCTS_SORT;
+ //                      order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
+ //                       where to_days(products_date_available) >= to_days(now())
   } else {
-    $expected_query = "select p.products_id, pd.products_name, products_date_available as date_expected
+    $expected_query = "select p.`products_id`, pd.`products_name`, `products_date_available` as `date_expected`
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " .
                               TABLE_CATEGORIES . " c
-                       where p.products_id = p2c.products_id
-                       and p2c.categories_id = c.categories_id
-                       and c.parent_id = '" . (int)$new_products_category_id . "'
-                       and products_date_available >= now()
-                       and p.products_id = pd.products_id
-                       and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                       order by " . EXPECTED_PRODUCTS_FIELD . " " . EXPECTED_PRODUCTS_SORT . "
-                       limit " . MAX_DISPLAY_UPCOMING_PRODUCTS;
+                       where p.`products_id` = p2c.`products_id`
+                       and p2c.`categories_id` = c.`categories_id`
+                       and c.`parent_id` = '" . (int)$new_products_category_id . "'
+                       and `products_date_available` >= 'NOW'
+                       and p.`products_id` = pd.`products_id`
+                       and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                       order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
   }
 
-  $expected = $db->Execute($expected_query);
+  $expected = $db->Execute($expected_query, MAX_DISPLAY_UPCOMING_PRODUCTS);
 
   if ($expected->RecordCount() > 0) {
     require( DIR_FS_MODULES . 'tpl_modules_upcoming_products.php');

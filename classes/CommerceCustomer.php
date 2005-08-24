@@ -298,7 +298,7 @@
 			global $gBitDb;
 			$ret = array();
 			if( is_numeric( $pCountryId ) ) {
-				$query = "SELECT zone_name from " . TABLE_ZONES . " WHERE zone_country_id = ? ORDER BY zone_name";
+				$query = "SELECT `zone_name` from " . TABLE_ZONES . " WHERE `zone_country_id` = ? ORDER BY `zone_name`";
 				if( $rs = $gBitDb->query($query, array( $pCountryId ) ) ) {
 					while (!$rs->EOF) {
 						$ret[] = array('id' => $rs->fields['zone_name'], 'text' => $rs->fields['zone_name']);

@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.6 2005/08/04 17:59:42 spiderr Exp $
+// $Id: meta_tags.php,v 1.7 2005/08/24 02:52:18 lsces Exp $
 //
 
 // Define Primary Section Output
@@ -36,7 +36,7 @@
 
 	$keywords_string_metatags = '';
 // Get all top category names for use with web site keywords
-  $sql = "select cd.categories_name from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.parent_id = '0' and c.categories_id = cd.categories_id and cd.language_id='" . (int)$_SESSION['languages_id'] . "' and c.categories_status='1'";
+  $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`parent_id` = '0' and c.`categories_id` = cd.`categories_id` and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
   $keywords_metatags = $db->Execute($sql);
   while (!$keywords_metatags->EOF) {
     $keywords_string_metatags .= $keywords_metatags->fields['categories_name'] . ' ';
@@ -90,7 +90,7 @@
 
   case 'index':
     if ($category_depth == 'nested') {
-      $sql = "select cd.categories_name from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.categories_id = cd.categories_id and cd.categories_id = '" . (int)$current_category_id . "' and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' and c.categories_status='1'";
+      $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`categories_id` = cd.`categories_id` and cd.`categories_id` = '" . (int)$current_category_id . "' and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
       $category_metatags = $db->Execute($sql);
       if ($category_metatags->EOF) {
         $meta_tags_over_ride = true;
@@ -111,7 +111,7 @@
           define('META_TAG_KEYWORDS', KEYWORDS . ' ' . $manufacturer_metatags->fields['manufacturers_name']);
         } // EOF
    	  } else {
-        $sql = "select cd.categories_name from " . TABLE_CATEGORIES . ' c, ' . TABLE_CATEGORIES_DESCRIPTION . " cd where c.categories_id = cd.categories_id and cd.categories_id = '" . (int)$current_category_id . "' and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' and c.categories_status='1'";
+        $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . ' c, ' . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`categories_id` = cd.`categories_id` and cd.`categories_id` = '" . (int)$current_category_id . "' and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
         $category_metatags = $db->Execute($sql);
         if ($category_metatags->EOF) {
           $meta_tags_over_ride = true;
@@ -156,18 +156,18 @@
 //  case 'product_info':
   case (strstr($_REQUEST['main_page'], 'product_') or strstr($_REQUEST['main_page'], 'document_')):
 /*
-    $sql = "select p.products_id, pd.products_name, pd.products_description, p.products_model, p.products_price, p.products_tax_class_id, p.product_is_free, p.products_price_sorter,
+    $sql = "select p.`products_id`, pd.products_name, pd.products_description, p.products_model, p.products_price, p.products_tax_class_id, p.product_is_free, p.products_price_sorter,
             p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status, p.metatags_price_status, p.metatags_title_tagline_status,
-            mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.products_status = '1' and p.products_id = '" . (int)$_REQUEST['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+            mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.products_status = '1' and p.`products_id` = '" . (int)$_REQUEST['products_id'] . "' and pd.`products_id` = p.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and mtpd.`products_id` = p.`products_id` and mtpd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 */
 
     $sql= "select pd.products_name, pd.products_description, p.products_model, p.products_price_sorter, p.products_tax_class_id,
                                       p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status,
-                                      p.products_id, p.metatags_price_status, p.metatags_title_tagline_status,
+                                      p.`products_id`, p.metatags_price_status, p.metatags_title_tagline_status,
                                       mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description
-                              from " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.products_id = p.products_id and mtpd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                              where p.products_id = '" . (int)$_REQUEST['products_id'] . "'
-                              and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                              from " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.`products_id` = pd.`products_id`) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.`products_id` = p.`products_id` and mtpd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                              where p.`products_id` = '" . (int)$_REQUEST['products_id'] . "'
+                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
     $product_info_metatags = $db->Execute($sql);
     if ($product_info_metatags->EOF) {
@@ -246,7 +246,7 @@
     break;
 
   case 'product_reviews_info_OFF':
-    $sql = "select rd.reviews_text, r.reviews_rating, r.reviews_id, r.customers_name, p.products_id, p.products_price, p.products_tax_class_id, p.products_model, pd.products_name, p.product_is_free from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where r.reviews_id = '" . (int)$_REQUEST['reviews_id'] . "' and r.reviews_id = rd.reviews_id and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "' and r.products_id = p.products_id and p.products_status = '1' and p.products_id = pd.products_id and pd.language_id = '". (int)$_SESSION['languages_id'] . "'";
+    $sql = "select rd.reviews_text, r.reviews_rating, r.reviews_id, r.customers_name, p.`products_id`, p.products_price, p.products_tax_class_id, p.products_model, pd.products_name, p.product_is_free from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where r.reviews_id = '" . (int)$_REQUEST['reviews_id'] . "' and r.reviews_id = rd.reviews_id and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "' and r.`products_id` = p.`products_id` and p.products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '". (int)$_SESSION['languages_id'] . "'";
     $review_metatags = $db->Execute($sql);
     if ($review_metatags->EOF) {
       $meta_tags_over_ride = true;

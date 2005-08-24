@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: categories_tabs.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: categories_tabs.php,v 1.2 2005/08/24 02:52:18 lsces Exp $
 //
 
-  $order_by = " order by c.sort_order, cd.categories_name ";
+  $order_by = " order by c.`sort_order`, cd.`categories_name` ";
 
-  $categories_tab_query = "select c.categories_id, cd.categories_name from " .
+  $categories_tab_query = "select c.`categories_id`, cd.`categories_name` from " .
                           TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                          where c.categories_id=cd.categories_id and c.parent_id= '0' and cd.language_id='" . $_SESSION['languages_id'] . "' and c.categories_status='1'" .
+                          where c.`categories_id`=cd.`categories_id` and c.`parent_id`= '0' and cd.`language_id`='" . $_SESSION['languages_id'] . "' and c.`categories_status`='1'" .
                           $order_by;
   $categories_tab = $db->Execute($categories_tab_query);
 

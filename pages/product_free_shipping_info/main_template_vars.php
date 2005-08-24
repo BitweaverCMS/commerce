@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.3 2005/08/14 19:30:44 spiderr Exp $
+// $Id: main_template_vars.php,v 1.4 2005/08/24 02:53:00 lsces Exp $
 //
 
   $sql = "select count(*) as total
           from " . TABLE_PRODUCTS . " p, " .
                    TABLE_PRODUCTS_DESCRIPTION . " pd
           where    p.products_status = '1'
-          and      p.products_id = '" . (int)$_GET['products_id'] . "'
-          and      pd.products_id = p.products_id
-          and      pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+          and      p.`products_id` = '" . (int)$_GET['products_id'] . "'
+          and      pd.`products_id` = p.`products_id`
+          and      pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
 
   $res = $db->Execute($sql);
@@ -46,7 +46,7 @@
 
     $res = $db->Execute($sql);
 
-    $sql = "select p.products_id, pd.products_name,
+    $sql = "select p.`products_id`, pd.products_name,
                   pd.products_description, p.products_model,
                   p.products_quantity, p.products_image,
                   pd.products_url, p.products_price,
@@ -58,9 +58,9 @@
                   p.products_discount_type, p.products_discount_type_from, p.products_sort_order, p.products_price_sorter
            from   " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
            where  p.products_status = '1'
-           and    p.products_id = '" . (int)$_GET['products_id'] . "'
-           and    pd.products_id = p.products_id
-           and    pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+           and    p.`products_id` = '" . (int)$_GET['products_id'] . "'
+           and    pd.`products_id` = p.`products_id`
+           and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
     $product_info = $db->Execute($sql);
 
@@ -86,7 +86,7 @@
 
     $reviews_query = "select count(*) as count from " . TABLE_REVIEWS . " r, "
                                                        . TABLE_REVIEWS_DESCRIPTION . " rd
-                       where r.products_id = '" . (int)$_GET['products_id'] . "'
+                       where r.`products_id` = '" . (int)$_GET['products_id'] . "'
                        and r.reviews_id = rd.reviews_id
                        and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'" .
                        $review_status;
@@ -103,7 +103,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
     // sort order
     switch(PRODUCT_INFO_PREVIOUS_NEXT_SORT) {
       case (0):
-        $prev_next_order= ' order by LPAD(p.products_id,11,"0")';
+        $prev_next_order= ' order by LPAD(p.`products_id`,11,"0")';
         break;
       case (1):
         $prev_next_order= " order by pd.products_name";
@@ -138,11 +138,11 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
-    $sql = "select p.products_id, p.products_model, p.products_price_sorter, pd.products_name, p.products_sort_order
+    $sql = "select p.`products_id`, p.products_model, p.products_price_sorter, pd.products_name, p.products_sort_order
             from   " . TABLE_PRODUCTS . " p, "
                      . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                      . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
-            where  p.products_status = '1' and p.products_id = pd.products_id and pd.language_id= '" . $_SESSION['languages_id'] . "' and p.products_id = ptc.products_id and ptc.categories_id = '" . $current_category_id . "'" .
+            where  p.products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id`= '" . $_SESSION['languages_id'] . "' and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = '" . $current_category_id . "'" .
             $prev_next_order
             ;
 

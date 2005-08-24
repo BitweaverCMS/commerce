@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id: tpl_main_page.php,v 1.2 2005/08/24 02:54:10 lsces Exp $
 //
 ?>
 <body onload="resize();">
@@ -48,7 +48,7 @@
 
   $cat_ids = split("[,]", $get_result->fields['restrict_to_categories']);
   for ($i = 0; $i < count($cat_ids); $i++) {
-    $result = $db->Execute("SELECT * FROM categories, categories_description WHERE categories.categories_id = categories_description.categories_id and categories_description.language_id = '" . $languages_id . "' and categories.categories_id='" . $cat_ids[$i] . "'");
+    $result = $db->Execute("SELECT * FROM categories, categories_description WHERE categories.`categories_id` = categories_description.`categories_id` and categories_description.`language_id` = '" . $languages_id . "' and categories.`categories_id`='" . $cat_ids[$i] . "'");
     if ($result->RecordCount() > 0) {
     $cats .= '<br>' . $result->fields["categories_name"];
     }
@@ -60,7 +60,7 @@
 
   $pr_ids = split("[,]", $get_result->fields['restrict_to_products']);
   for ($i = 0; $i < count($pr_ids); $i++) {
-    $result = $db->Execute("SELECT * FROM products, products_description WHERE products.products_id = products_description.products_id and products_description.language_id = '" . $languages_id . "'and products.products_id = '" . $pr_ids[$i] . "'");
+    $result = $db->Execute("SELECT * FROM products, products_description WHERE products.`products_id` = products_description.`products_id` and products_description.`language_id` = '" . $languages_id . "'and products.`products_id` = '" . $pr_ids[$i] . "'");
     if ($result->RecordCount() > 0 )  {
       $prods .= '<br>' . $result->fields["products_name"];
     }

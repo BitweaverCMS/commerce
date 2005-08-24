@@ -17,17 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 02:53:00 lsces Exp $
 //
   $_SESSION['navigation']->remove_current_page();
 
   $products_values = $db->Execute("select pd.products_name, p.products_image
                                   from " . TABLE_PRODUCTS . " p
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                                  on p.products_id = pd.products_id
+                                  on p.`products_id` = pd.`products_id`
                                   where p.products_status = '1'
-                                  and p.products_id = '" . $_GET['pID'] . "'
-                                  and pd.language_id = '" . $_SESSION['languages_id'] . "'");
+                                  and p.`products_id` = '" . $_GET['pID'] . "'
+                                  and pd.`language_id` = '" . $_SESSION['languages_id'] . "'");
 
 $products_image = $products_values->fields['products_image'];
 

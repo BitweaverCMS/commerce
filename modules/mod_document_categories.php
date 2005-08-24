@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_document_categories.php,v 1.2 2005/08/04 07:02:10 spiderr Exp $
+// $Id: mod_document_categories.php,v 1.3 2005/08/24 02:54:29 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -26,7 +26,7 @@
     $box_categories_array = array();
 
 // don't build a tree when no categories
-    $check_categories = $db->Execute("select categories_id from " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCT_TYPES . " pt, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc where pt.type_master_type = '3' and ptc.product_type_id = pt.type_id and c.categories_id = ptc.category_id and c.categories_status=1 limit 1");
+    $check_categories = $db->Execute("select categories_id from " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCT_TYPES . " pt, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc where pt.type_master_type = '3' and ptc.`product_type_id` = pt.`type_id` and c.`categories_id` = ptc.`category_id` and c.`categories_status`=1 limit 1");
     if ($check_categories->RecordCount() > 0) {
 		$gBitSmarty->assign( 'sideboxDocumentCategories', $main_category_tree->zen_category_tree('3') );
   		if( empty( $moduleTitle ) ) {

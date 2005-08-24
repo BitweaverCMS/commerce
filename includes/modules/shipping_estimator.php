@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.3 2005/08/24 02:52:18 lsces Exp $
 //
 ?>
 <!-- shipping_estimator //-->
@@ -226,7 +226,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
                   ENTRY_COUNTRY .'</td><td colspan="2" class="main">'. zen_get_country_list('country_id', $selected_country,'style="width=200"') . '</td></tr>' . "\n\n";
 //add state zone_id
         $state_array[] = array('id' => '', 'text' => PULL_DOWN_SHIPPING_ESTIMATOR_SELECT);
-        $state_values = $db->Execute("select zone_name, zone_id from " . TABLE_ZONES . " where zone_country_id = '$selected_country' order by zone_country_id DESC, zone_name");
+        $state_values = $db->Execute("select `zone_name`, `zone_id` from " . TABLE_ZONES . " where `zone_country_id` = '$selected_country' order by `zone_country_id` DESC, `zone_name`");
         while (!$state_values->EOF) {
           $state_array[] = array('id' => $state_values->fields['zone_id'],
                                  'text' => $state_values->fields['zone_name']);

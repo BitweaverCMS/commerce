@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_reviews.php,v 1.2 2005/08/12 19:16:08 spiderr Exp $
+// $Id: tpl_reviews.php,v 1.3 2005/08/24 02:53:00 lsces Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -33,7 +33,7 @@
 // if review must be approved or disabled do not show review
   $review_status = " and r.status = '1'";
 
-  $reviews_query_raw = "select r.reviews_id, rd.reviews_text, r.reviews_rating, r.date_added, p.products_id, pd.products_name, p.products_image, r.customers_name from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.products_id = r.products_id and r.reviews_id = rd.reviews_id and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'" . $review_status . " order by r.reviews_id DESC";
+  $reviews_query_raw = "select r.`reviews_id`, rd.`reviews_text`, r.`reviews_rating`, r.`date_added`, p.`products_id`, pd.products_name, p.products_image, r.customers_name from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.`products_id` = r.`products_id` and r.reviews_id = rd.reviews_id and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'" . $review_status . " order by r.reviews_id DESC";
   $reviews_split = new splitPageResults($reviews_query_raw, MAX_DISPLAY_NEW_REVIEWS);
 
   if ($reviews_split->number_of_rows > 0) {

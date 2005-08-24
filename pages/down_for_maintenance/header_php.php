@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 02:53:01 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
@@ -28,7 +28,7 @@
   if (DOWN_FOR_MAINTENANCE_HEADER_OFF == 'true') $flag_disable_header = true;
 
   if (DOWN_FOR_MAINTENANCE == 'true') {
-    $maintenance_on_at_time = $db->Execute("select last_modified from " . TABLE_CONFIGURATION . " WHERE configuration_key = 'DOWN_FOR_MAINTENANCE'");
+    $maintenance_on_at_time = $db->Execute("select `last_modified` from " . TABLE_CONFIGURATION . " WHERE configuration_key = 'DOWN_FOR_MAINTENANCE'");
     define('TEXT_DATE_TIME', $maintenance_on_at_time->fields['last_modified']);
   }
 

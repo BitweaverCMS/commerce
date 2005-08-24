@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/10 17:31:47 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 02:53:02 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -26,13 +26,13 @@
 
   require(DIR_WS_MODULES . 'require_languages.php');
 
-  $product_info_query = "select p.products_id, p.products_model, p.products_image,
+  $product_info_query = "select p.`products_id`, p.products_model, p.products_image,
                                 p.products_price, p.products_tax_class_id, pd.products_name
                          from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                         where p.products_id = '" . (int)$_GET['products_id'] . "'
+                         where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                          and p.products_status = '1'
-                         and p.products_id = pd.products_id
-                         and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                         and p.`products_id` = pd.`products_id`
+                         and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
   $product_info = $db->Execute($product_info_query);
 
@@ -72,7 +72,7 @@
       }
 
       $sql = "insert into " . TABLE_REVIEWS . "
-                              (products_id, customers_id, customers_name, reviews_rating, date_added, status)
+                              (products_id, customers_id, customers_name, reviews_rating, `date_added`, status)
                      values ('" . (int)$_GET['products_id'] . "', '" . (int)$_SESSION['customer_id'] . "', '" .
                              zen_db_input($customer->fields['customers_firstname']) . ' ' .
                              zen_db_input($customer->fields['customers_lastname']) . "', '" .

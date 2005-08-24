@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_reviews.php,v 1.2 2005/08/12 19:16:07 spiderr Exp $
+// $Id: tpl_product_reviews.php,v 1.3 2005/08/24 02:53:00 lsces Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -51,9 +51,9 @@
   $review_status = " and r.status = '1'";
 
   $reviews_query_raw = "select r.reviews_id, rd.reviews_text,
-                               r.reviews_rating, r.date_added, r.customers_name
+                               r.reviews_rating, r.`date_added`, r.customers_name
                         from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
-                        where r.products_id = '" . (int)$_GET['products_id'] . "'
+                        where r.`products_id` = '" . (int)$_GET['products_id'] . "'
                         and r.reviews_id = rd.reviews_id
                         and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'" .
                         $review_status . "

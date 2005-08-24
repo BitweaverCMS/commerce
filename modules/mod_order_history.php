@@ -17,17 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.3 2005/08/19 17:12:34 spiderr Exp $
+// $Id: mod_order_history.php,v 1.4 2005/08/24 02:54:29 lsces Exp $
 //
 	global $db, $gBitProduct;
 
 	if( $gBitUser->isRegistered() ) {
 		// retreive the last x products purchased
-		$orders_history_query = "select distinct op.products_id, o.date_purchased
+		$orders_history_query = "select distinct op.`products_id`, o.date_purchased
 						from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_PRODUCTS . " p
 						where o.customers_id = ?
 						and o.orders_id = op.orders_id
-						and op.products_id = p.products_id
+						and op.`products_id` = p.`products_id`
 						and p.products_status = '1'
 						order by o.date_purchased desc
 						limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;

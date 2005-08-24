@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart.php,v 1.4 2005/08/19 13:24:31 spiderr Exp $
+// $Id: tpl_shopping_cart.php,v 1.5 2005/08/24 02:52:59 lsces Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -87,13 +87,13 @@
           $attributes = "select popt.products_options_name, poval.products_options_values_name,
                                      pa.options_values_price, pa.price_prefix
                          from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                         where pa.products_id = '" . (int)$products[$i]['id'] . "'
+                         where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
                          and pa.options_id = '" . $option . "'
                          and pa.options_id = popt.products_options_id
                          and pa.options_values_id = '" . $value . "'
                          and pa.options_values_id = poval.products_options_values_id
-                         and popt.language_id = '" . $_SESSION['languages_id'] . "'
-                         and poval.language_id = '" . $_SESSION['languages_id'] . "'" . $options_order_by;
+                         and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
+                         and poval.`language_id` = '" . $_SESSION['languages_id'] . "'" . $options_order_by;
 
           $attributes_values = $db->Execute($attributes);
 

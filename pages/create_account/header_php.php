@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/07/17 20:28:24 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 02:53:00 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $process = false;
@@ -197,10 +197,10 @@
 
       $entry_state_has_zones = ($check->fields['total'] > 0);
       if ($entry_state_has_zones == true) {
-        $zone_query = "select distinct zone_id, zone_name
+        $zone_query = "select `distinct zone_id`, `zone_name`
                        from " . TABLE_ZONES . "
-                       where zone_country_id = '" . (int)$country . "'
-                       and zone_code =  '" . strtoupper(zen_db_input($state)) . "'";
+                       where `zone_country_id` = '" . (int)$country . "'
+                       and `zone_code` =  '" . strtoupper(zen_db_input($state)) . "'";
 
         $zone = $db->Execute($zone_query);
         if ($zone->RecordCount() > 0) {
@@ -209,11 +209,11 @@
 
         } else {
 
-          $zone_query = "select distinct zone_id, zone_name
+          $zone_query = "select distinct `zone_id`, `zone_name`
                          from " . TABLE_ZONES . "
-                         where zone_country_id = '" . (int)$country . "'
-                         and (zone_name like '" . zen_db_input($state) . "%'
-                         or zone_code like '%" . zen_db_input($state) . "%')";
+                         where `zone_country_id` = '" . (int)$country . "'
+                         and (`zone_name` like '" . zen_db_input($state) . "%'
+                         or `zone_code` like '%" . zen_db_input($state) . "%')";
 
           $zone = $db->Execute($zone_query);
 
