@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_expected.php,v 1.4 2005/08/24 12:15:09 lsces Exp $
+//  $Id: products_expected.php,v 1.5 2005/08/24 12:40:51 lsces Exp $
 //
   require('includes/application_top.php');
 
   $db->Execute("update " . TABLE_PRODUCTS . "
-                set products_date_available = ''
-                where to_days(now()) > to_days(products_date_available)");
+                set `products_date_available` = ''
+                where to_days(" . $db->sysTimeStamp . ") > to_days(`products_date_available`)");
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>

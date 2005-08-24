@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_artists.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: record_artists.php,v 1.4 2005/08/24 12:40:51 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -178,7 +178,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $artists_query_raw = "select * from " . TABLE_RECORD_ARTISTS . " order by artists_name";
+  $artists_query_raw = "select * from " . TABLE_RECORD_ARTISTS . " order by `artists_name`";
   $artists_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $artists_query_raw, $artists_query_numrows);
   $artists = $db->Execute($artists_query_raw);
 

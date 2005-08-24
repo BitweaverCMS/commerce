@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.9 2005/08/24 12:15:09 lsces Exp $
+//  $Id: products_price_manager.php,v 1.10 2005/08/24 12:40:51 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -111,24 +111,24 @@
 			$featured_expires_date = ((zen_db_prepare_input($_POST['featured_end']) == '') ? '0001-01-01' : zen_date_raw($_POST['featured_end']));
 
 			$db->query("update " . TABLE_PRODUCTS . " set
-				products_price='" . zen_db_prepare_input($_POST['products_price']) . "',
-				products_tax_class_id=?,
-				products_date_available=?,
-				products_last_modified=now(),
-				products_status='" . zen_db_prepare_input($_POST['products_status']) . "',
-				products_quantity_order_min=?,
-				products_quantity_order_units=?,
-				products_quantity_order_max=?,
-				product_is_free='" . (int)$_POST['product_is_free'] . "',
-				product_is_call='" . (int)$_POST['product_is_call'] . "',
-				products_quantity_mixed='" . (int)$_POST['products_quantity_mixed'] . "',
-				products_priced_by_attribute='" . (int)$_POST['products_priced_by_attribute'] . "',
-				products_discount_type='" . (int)$_POST['products_discount_type'] . "',
-				products_discount_type_from='" . (int)$_POST['products_discount_type_from'] . "',
-				products_price_sorter='" . (int)$_POST['products_price_sorter'] . "',
-				master_categories_id='" . zen_db_prepare_input($master_categories_id) . "',
-				products_mixed_discount_qty='" . zen_db_prepare_input($_POST['products_mixed_discount_quantity']) . "'
-				where products_id='" . $productsId . "'",
+				`products_price`='" . zen_db_prepare_input($_POST['products_price']) . "',
+				`products_tax_class_id`=?,
+				`products_date_available`=?,
+				`products_last_modified`=" . $db->sysTimeStamp . ",
+				`products_status`='" . zen_db_prepare_input($_POST['products_status']) . "',
+				`products_quantity_order_min`=?,
+				`products_quantity_order_units`=?,
+				`products_quantity_order_max`=?,
+				`product_is_free`='" . (int)$_POST['product_is_free'] . "',
+				`product_is_call`='" . (int)$_POST['product_is_call'] . "',
+				`products_quantity_mixed`='" . (int)$_POST['products_quantity_mixed'] . "',
+				`products_priced_by_attribute`='" . (int)$_POST['products_priced_by_attribute'] . "',
+				`products_discount_type`='" . (int)$_POST['products_discount_type'] . "',
+				`products_discount_type_from`='" . (int)$_POST['products_discount_type_from'] . "',
+				`products_price_sorter`='" . (int)$_POST['products_price_sorter'] . "',
+				`master_categories_id`='" . zen_db_prepare_input($master_categories_id) . "',
+				`products_mixed_discount_qty`='" . zen_db_prepare_input($_POST['products_mixed_discount_quantity']) . "'
+				where `products_id`='" . $productsId . "'",
 				array( $_POST['products_tax_class_id'], $products_date_available, $_POST['products_quantity_order_min'], $_POST['products_quantity_order_units'], (int)$_POST['products_quantity_order_max'] ) );
 
 			if ( !empty( $_POST['specials_id'] ) ) {
@@ -144,24 +144,24 @@
 				$specials_price = zen_db_prepare_input($_POST['specials_price']);
 				if (substr($specials_price, -1) == '%') $specials_price = ($products_price - (($specials_price / 100) * $products_price));
 				$db->Execute("update " . TABLE_SPECIALS . " set
-					specials_new_products_price='" . zen_db_input($specials_price) . "',
-					specials_date_available='" . zen_db_input($specials_date_available) . "',
-					specials_last_modified=now(),
-					expires_date='" . zen_db_input($specials_expires_date) . "',
-					status='" . zen_db_input($_POST['special_status']) . "'
-					where products_id='" . $productsId . "'");
+					`specials_new_products_price`='" . zen_db_input($specials_price) . "',
+					`specials_date_available`='" . zen_db_input($specials_date_available) . "',
+					`specials_last_modified`=" . $db->sysTimeStamp . ",
+					`expires_date`='" . zen_db_input($specials_expires_date) . "',
+					`status`='" . zen_db_input($_POST['special_status']) . "'
+					where `products_id` ='" . $productsId . "'");
 			}
 
 			if( !empty( $_POST['featured_id'] ) ) {
 
 			$db->Execute("update " . TABLE_FEATURED . " set
-				featured_date_available='" . zen_db_input($featured_date_available) . "',
-				expires_date='" . zen_db_input($featured_expires_date) . "',
-				featured_last_modified=now(),
-				status='" . zen_db_input($_POST['featured_status']) . "'
-				where products_id='" . $productsId . "'");
+				`featured_date_available`='" . zen_db_input($featured_date_available) . "',
+				`expires_date`='" . zen_db_input($featured_expires_date) . "',
+				`featured_last_modified`=" . $db->sysTimeStamp . ",
+				`status`='" . zen_db_input($_POST['featured_status']) . "'
+				where `products_id` ='" . $productsId . "'");
 			}
-			$db->Execute("delete from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $productsId . "'");
+			$db->Execute("delete from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $productsId . "'");
 			$i=1;
 			$new_id = 0;
 			$discount_cnt = 0;
@@ -169,7 +169,7 @@
 				if ($_POST['discount_qty'][$i] > 0) {
 					$new_id++;
 					$db->Execute("insert into " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
-								(discount_id, products_id, discount_qty, discount_price)
+								(`discount_id`, `products_id`, `discount_qty`, `discount_price`)
 								values ('" . $new_id . "', '" . $productsId . "', '" . $_POST['discount_qty'][$i] . "', '" . $_POST['discount_price'][$i] . "')");
 					$discount_cnt++;
 				} else {
@@ -178,7 +178,7 @@
 			}
 
 			if ($discount_cnt <= 0) {
-			$db->Execute("update " . TABLE_PRODUCTS . " set products_discount_type='0' where products_id='" . $productsId . "'");
+			$db->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
 			}
 
 			// reset products_price_sorter for searches etc.
