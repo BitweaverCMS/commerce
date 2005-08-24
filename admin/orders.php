@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.15 2005/08/24 15:33:17 spiderr Exp $
+//  $Id: orders.php,v 1.16 2005/08/24 15:35:30 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -714,10 +714,12 @@
       }
 
 // indicate if comments exist
-      $orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments` from " . TABLE_ORDERS_STATUS_HISTORY . " where `orders_id` = '" . $oInfo->orders_id . "' and `comments` !='" . "'" );
-      if ($orders_history_query->RecordCount() > 0) {
-        $contents[] = array('align' => 'left', 'text' => '<br />' . TABLE_HEADING_COMMENTS);
-      }
+		if ( !empty($oInfo->orders_id) ) {
+			$orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments` from " . TABLE_ORDERS_STATUS_HISTORY . " where `orders_id` = '" . $oInfo->orders_id . "' and `comments` !='" . "'" );
+			if ($orders_history_query->RecordCount() > 0) {
+				$contents[] = array('align' => 'left', 'text' => '<br />' . TABLE_HEADING_COMMENTS);
+			}
+		}
 
       $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
       $order = new order($oInfo->orders_id);
