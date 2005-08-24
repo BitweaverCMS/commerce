@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_music_genres.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_music_genres.php,v 1.2 2005/08/24 11:52:22 lsces Exp $
 //
 	global $db, $gBitProduct;
 
   $music_genres_query = "select music_genre_id, music_genre_name
                           from " . TABLE_MUSIC_GENRE . "
-                          order by music_genre_name";
+                          order by `music_genre_name`";
 
   $music_genres = $db->Execute($music_genres_query);
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
+//  $Id: downloads_manager.php,v 1.6 2005/08/24 11:51:39 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -143,7 +143,7 @@ function go_option() {
   $order_by = " order by pd.`products_name` ";
 
 // create split page control
-  $products_downloads_query_raw = ("select pad.*, pa.*, pd.*, p.* from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pad.`products_attributes_id` = pa.`products_attributes_id` left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` ='" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS . " p on p.`products_id`= pa.`products_id` " . " where pa.`products_attributes_i`d = pad.`products_attributes_id`" . $search . $order_by);
+  $products_downloads_query_raw = ("select pad.*, pa.*, pd.*, p.* from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pad.`products_attributes_id` = pa.`products_attributes_id` left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` ='" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS . " p on p.`products_id`= pa.`products_id` " . " where pa.`products_attributes_id` = pad.`products_attributes_id`" . $search . $order_by);
   $products_downloads_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_DOWNLOADS_MANAGER, $products_downloads_query_raw, $products_downloads_query_numrows);
   $products_downloads_query = $db->Execute($products_downloads_query_raw);
 

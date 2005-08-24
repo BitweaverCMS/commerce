@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.7 2005/08/24 10:38:22 lsces Exp $
+//  $Id: options_values_manager.php,v 1.8 2005/08/24 11:51:39 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id='" . $_SESSION['languages_id'] . "' limit 1");
+  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` ='" . $_SESSION['languages_id'] . "'", 1);
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
@@ -114,15 +114,15 @@
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
           $db->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        set products_options_values_name = '" . zen_db_input($value_name) . "', products_ov_sort_order = '" . (int)$products_ov_sort_order . "'
-                        where products_options_values_id = '" . zen_db_input($value_id) . "'
-                        and language_id = '" . (int)$languages[$i]['id'] . "'");
+                        set `products_options_values_name` = '" . zen_db_input($value_name) . "', `products_ov_sort_order` = '" . (int)$products_ov_sort_order . "'
+                        where `products_options_values_id` = '" . zen_db_input($value_id) . "'
+                        and `language_id` = '" . (int)$languages[$i]['id'] . "'");
 
         }
 
         $db->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-                      set products_options_id = '" . (int)$option_id . "'
-                      where products_options_values_id = '" . (int)$value_id . "'");
+                      set `products_options_id` = '" . (int)$option_id . "'
+                      where `products_options_values_id` = '" . (int)$value_id . "'");
 
 
 // alert if possible duplicate
@@ -130,12 +130,12 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
-          $check= $db->Execute("select pov.products_options_values_id, pov.products_options_values_name, pov.`language_id`
+          $check= $db->Execute("select pov.`products_options_values_id`, pov.`products_options_values_name`, pov.`language_id`
                                 from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                                left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id
+                                left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.`products_options_values_id` = pov2po.`products_options_values_id`
                                 where pov.`language_id`= '" . $languages[$i]['id'] . "'
-                                and pov.products_options_values_name='" . zen_db_input($value_name) . "'
-                                and pov2po.products_options_id ='" . (int)$option_id .
+                                and pov.`products_options_values_name` ='" . zen_db_input($value_name) . "'
+                                and pov2po.`products_options_id` ='" . (int)$option_id .
                                 "'");
 
           if ($check->RecordCount() > 1 and !empty($value_name)) {
@@ -162,32 +162,32 @@
         $value_id = zen_db_prepare_input($_GET['value_id']);
 
 // remove all attributes from products with value
-        $remove_attributes_query = $db->Execute("select products_attributes_id, options_id, options_values_id from " . TABLE_PRODUCTS_ATTRIBUTES . " where options_values_id ='" . (int)$value_id . "'");
+        $remove_attributes_query = $db->Execute("select `products_attributes_id`, `options_id`, `options_values_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `options_values_id` ='" . (int)$value_id . "'");
         if ($remove_attributes_query->RecordCount() > 0) {
           // clean all tables of option value
           While (!$remove_attributes_query->EOF) {
 
             $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
-                          where products_attributes_id='" . $remove_attributes_query->fields['products_attributes_id'] . "'");
+                          where `products_attributes_id`='" . $remove_attributes_query->fields['products_attributes_id'] . "'");
 
             $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                          where options_values_id='" . $remove_attributes_query->fields['options_values_id'] . "'");
+                          where `options_values_id`='" . $remove_attributes_query->fields['options_values_id'] . "'");
 
             $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                          where products_options_values_id = '" . $remove_attributes_query->fields['options_values_id'] . "'");
+                          where `products_options_values_id` = '" . $remove_attributes_query->fields['options_values_id'] . "'");
 
             $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-                          where products_options_values_id = '" . $remove_attributes_query->fields['options_values_id'] . "'");
+                          where `products_options_values_id` = '" . $remove_attributes_query->fields['options_values_id'] . "'");
 
             $remove_attributes_query->MoveNext();
           }
         } else {
           // remove option value only
           $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        where products_options_values_id = '" . (int)$value_id . "'");
+                        where `products_options_values_id` = '" . (int)$value_id . "'");
 
           $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-                        where products_options_values_id = '" . (int)$value_id . "'");
+                        where `products_options_values_id` = '" . (int)$value_id . "'");
 
         }
         zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, $_SESSION['page_info']));
@@ -243,7 +243,7 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
             while(!$products_only->EOF) {
               $current_products_id = $products_only->fields['products_id'];
               $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(products_id, options_id, options_values_id) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_to . "' and options_values_id='" . $options_values_values_id_to . "' limit 1");
+              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_to . "' and options_values_id='" . $options_values_values_id_to . "'", 1);
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
                 $db->Execute($sql);
@@ -391,7 +391,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_price_letters_free) . "',
                                   '" . zen_db_input($attributes_required) . "')";
 
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "' limit 1");
+              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "'", 1);
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
               // add new attribute
@@ -564,8 +564,8 @@ function go_option() {
   if ($action == 'delete_option_value') { // delete product option value
     $values_values = $db->Execute("select products_options_values_id, products_options_values_name
                                    from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                                   where products_options_values_id = '" . (int)$_GET['value_id'] . "'
-                                   and language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                   where `products_options_values_id` = '" . (int)$_GET['value_id'] . "'
+                                   and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
 ?>
               <tr>
@@ -575,16 +575,16 @@ function go_option() {
                 <td colspan="4"><?php echo zen_black_line(); ?></td>
               </tr>
 <?php
-    $products_values = $db->Execute("select p.`products_id`, pd.products_name, po.products_options_name, pa.options_id
+    $products_values = $db->Execute("select p.`products_id`, pd.`products_name`, po.`products_options_name`, pa.`options_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_ATTRIBUTES . " pa, "
                                      . TABLE_PRODUCTS_OPTIONS . " po, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where pd.`products_id` = p.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               and pa.`products_id` = p.`products_id`
-                              and pa.options_values_id='" . (int)$_GET['value_id'] . "'
-                              and po.products_options_id = pa.options_id
-                              order by pd.products_name");
+                              and pa.`options_values_id`='" . (int)$_GET['value_id'] . "'
+                              and po.`products_options_id` = pa.`options_id`
+                              order by pd.`products_name`");
 
     if ($products_values->RecordCount() > 0) {
 ?>
@@ -738,21 +738,21 @@ function go_option() {
         echo '<form name="values" action="' . zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, 'action=update_value' . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') ) . '" method="post">';
         $inputs = '';
         for ($i = 0, $n = sizeof($languages); $i < $n; $i ++) {
-          $value_name = $db->Execute("select products_options_values_name
+          $value_name = $db->Execute("select` products_options_values_name`
                                       from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                                      where products_options_values_id = '" . (int)$values_values->fields['products_options_values_id'] . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
+                                      where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
           $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . ' value="' . $value_name->fields['products_options_values_name'] . '">&nbsp;<br />';
         }
-          $products_ov_sort_order = $db->Execute("select distinct products_ov_sort_order from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id = '" . (int)$values_values->fields['products_options_values_id'] . "'");
+          $products_ov_sort_order = $db->Execute("select `distinct products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");
           $inputs2 .= '&nbsp;<input type="text" name="products_ov_sort_order" size="4" value="' . $products_ov_sort_order->fields['products_ov_sort_order'] . '">&nbsp;';
 ?>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo $values_values->fields['products_options_values_id']; ?><input type="hidden" name="value_id" value="<?php echo $values_values->fields['products_options_values_id']; ?>">&nbsp;</td>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo "\n"; ?><select name="option_id">
 <?php
-        $options_values = $db->Execute("select products_options_id, products_options_name, products_options_type
+        $options_values = $db->Execute("select `products_options_id`, `products_options_name`, `products_options_type`
                                        from " . TABLE_PRODUCTS_OPTIONS . "
-                                       where `language_id` = '" . (int)$_SESSION['languages_id'] . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_FILE . "'
-                                       order by products_options_name");
+                                       where `language_id` = '" . (int)$_SESSION['languages_id'] . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_FILE . "'
+                                       order by `products_options_name`");
 
         while (!$options_values->EOF) {
           echo "\n" . '<option name="' . $options_values->fields['products_options_name'] . '" value="' . $options_values->fields['products_options_id'] . '"';
@@ -894,7 +894,7 @@ function go_option() {
   $option_to_dropdown.= "\n" . '</select>';
 
   // build dropdown for option_values from
-  $options_values_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . $_SESSION['languages_id'] . "' and products_options_values_id !='0' order by products_options_values_name");
+  $options_values_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_values_id` !='0' order by `products_options_values_name`");
   while(!$options_values_values_from->EOF) {
     $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($options_values_values_from->fields['products_options_values_id'])) . ']';
     $option_values_from_dropdown .= "\n" . '  <option name="' . $options_values_values_from->fields['products_options_values_name'] . '" value="' . $options_values_values_from->fields['products_options_values_id'] . '">' . $options_values_values_from->fields['products_options_values_name'] . $show_option_name . '</option>'; echo zen_draw_hidden_field('option_value_from_filter', $_GET['options_id_from']);

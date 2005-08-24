@@ -17,36 +17,35 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.3 2005/08/24 02:52:59 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.4 2005/08/24 11:52:10 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
 //////////////////////////////////////////////////
 // limit to 1 for larger tables
 
-    $sql = "select count(*) as total
+    $sql = "select count(*) as `total`
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
             where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-            and      patrib.options_id = popt.products_options_id
-            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" .
-            " limit 1";
+            and      patrib.`options_id` = popt.`products_options_id`
+            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $pr_attr = $db->Execute($sql);
+    $pr_attr = $db->Execute($sql, 1);
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
-        $options_order_by= ' order by LPAD(popt.products_options_sort_order,11,"0")';
+        $options_order_by= ' order by LPAD(popt.`products_options_sort_order`,11,"0")';
       } else {
-        $options_order_by= ' order by popt.products_options_name';
+        $options_order_by= ' order by popt.`products_options_name`';
       }
 
-      $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
-                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size,
-                              popt.products_options_images_per_row,
-                              popt.products_options_images_style
+      $sql = "select distinct popt.`products_options_id`, popt.`products_options_name`, popt.`products_options_sort_order`,
+                              popt.`products_options_type`, popt.`products_options_length`, popt.`products_options_comment`, popt.`products_options_size`,
+                              popt.`products_options_images_per_row`,
+                              popt.`products_options_images_style`
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
               where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.options_id = popt.products_options_id
+              and             patrib.`options_id` = popt.`products_options_id`
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
@@ -56,9 +55,9 @@
       $number_of_uploads = 0;
 
       if ( PRODUCTS_OPTIONS_SORT_BY_PRICE =='1' ) {
-        $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pov.products_options_values_name';
+        $order_by= ' order by LPAD(pa.`products_options_sort_order`,11,"0"), pov.`products_options_values_name`';
       } else {
-        $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
+        $order_by= ' order by LPAD(pa.`products_options_sort_order`,11,"0"), pa.`options_values_price`';
       }
 
       $discount_type = zen_get_products_sale_discount_type((int)$_GET['products_id']);
@@ -70,18 +69,18 @@
         $products_options_array = array();
 
 /*
-                          pa.options_values_price, pa.price_prefix,
-                          pa.products_options_sort_order, pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
-                          pa.attributes_default, pa.attributes_discounted, pa.attributes_image
+                          pa.`options_values_price`, pa.`price_prefix`,
+                          pa.`products_options_sort_order`, pa.`product_attribute_is_free`, pa.`products_attributes_wt`, pa.`products_attributes_wt_pfix`,
+                          pa.`attributes_default`, pa.`attributes_discounted`, pa.`attributes_image`
 */
 
-        $sql = "select    pov.products_options_values_id,
-                          pov.products_options_values_name,
+        $sql = "select    pov.`products_options_values_id`,
+                          pov.`products_options_values_name`,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.options_id = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.options_values_id = pov.products_options_values_id
+                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
+                and       pa.`options_values_id` = pov.`products_options_values_id`
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 

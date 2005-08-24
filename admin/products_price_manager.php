@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.7 2005/08/24 09:45:58 lsces Exp $
+//  $Id: products_price_manager.php,v 1.8 2005/08/24 11:51:38 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -47,7 +47,7 @@
 
 // set categories and products if not set
   if ( empty( $productsId ) && $current_category_id != '') {
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
+    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     if ($productsId != '') {
       zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -56,7 +56,7 @@
     if ($productsId == '' and $current_category_id == '') {
       $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
       $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
+      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $productsId = $new_product_query->fields['products_id'];
       $_GET['products_id'] = $productsId;
     }
@@ -74,18 +74,18 @@
   }
 
   if ($action == 'delete_featured') {
-    $delete_featured = $db->Execute("delete from " . TABLE_FEATURED . " where products_id='" . $productsId . "'");
+    $delete_featured = $db->Execute("delete from " . TABLE_FEATURED . " where `products_id`='" . $productsId . "'");
 
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
   if ($action == 'add_discount_qty_id') {
-    $add_id = $db->Execute("select discount_id from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $productsId . "' order by discount_id desc limit 1");
+    $add_id = $db->Execute("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`='" . $productsId . "' order by `discount_id` desc", 1);
     $add_cnt = 1;
     $add_id = $add_id->fields['discount_id'];
     while ($add_cnt <= DISCOUNT_QTY_ADD) {
       $db->Execute("insert into " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
-                    (discount_id, products_id)
+                    (`discount_id`, `products_id`)
                     values ('" . ($add_id + $add_cnt) . "', '" . $productsId . "')");
       $add_cnt++;
     }

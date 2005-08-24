@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_best_sellers.php,v 1.3 2005/08/24 02:54:29 lsces Exp $
+// $Id: mod_best_sellers.php,v 1.4 2005/08/24 11:52:22 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -54,10 +54,9 @@
                              and p.`products_id` = p2c.`products_id`
                              and p2c.`categories_id` = c.`categories_id`
                              and '" . (int)$current_category_id . "' in (c.`categories_id`, c.`parent_id`)
-                             order by p.products_ordered desc, pd.products_name
-                             limit " . MAX_DISPLAY_BESTSELLERS;
+                             order by p.products_ordered desc, pd.products_name";
 
-      $best_sellers = $db->Execute($best_sellers_query);
+      $best_sellers = $db->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
 
     } else {
       $best_sellers_query = "select distinct p.`products_id`, pd.products_name, p.products_ordered
@@ -66,10 +65,9 @@
                              and p.products_ordered > 0
                              and p.`products_id` = pd.`products_id`
                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                             order by p.products_ordered desc, pd.products_name
-                             limit " . MAX_DISPLAY_BESTSELLERS;
+                             order by p.products_ordered desc, pd.products_name";
 
-      $best_sellers = $db->Execute($best_sellers_query);
+      $best_sellers = $db->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
     }
 
     if ($best_sellers->RecordCount() >= MIN_DISPLAY_BESTSELLERS) {

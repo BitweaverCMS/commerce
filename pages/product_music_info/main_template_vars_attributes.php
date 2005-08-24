@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.3 2005/08/24 02:53:00 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.4 2005/08/24 11:52:10 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -27,11 +27,10 @@
     $sql = "select count(*) as total
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
             where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-            and      patrib.options_id = popt.products_options_id
-            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" .
-            " limit 1";
+            and      patrib.`options_id` = popt.`products_options_id`
+            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $pr_attr = $db->Execute($sql);
+    $pr_attr = $db->Execute($sql,1);
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
@@ -40,13 +39,13 @@
         $options_order_by= ' order by popt.products_options_name';
       }
 
-      $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
-                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size,
-                              popt.products_options_images_per_row,
-                              popt.products_options_images_style
+      $sql = "select distinct popt.`products_options_id`, popt.`products_options_name`, popt.`products_options_sort_order`,
+                              popt.`products_options_type`, popt.`products_options_length`, popt.`products_options_comment`, popt.`products_options_size`,
+                              popt.`products_options_images_per_row`,
+                              popt.`products_options_images_style`
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
               where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.options_id = popt.products_options_id
+              and             patrib.`options_id` = popt.`products_options_id`
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
@@ -75,13 +74,13 @@
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
-        $sql = "select    pov.products_options_values_id,
-                          pov.products_options_values_name,
+        $sql = "select    pov.`products_options_values_id`,
+                          pov.`products_options_values_name`,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.options_id = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.options_values_id = pov.products_options_values_id
+                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
+                and       pa.`options_values_id` = pov.`products_options_values_id`
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 

@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.6 2005/08/24 10:38:23 lsces Exp $
+//  $Id: option_values.php,v 1.7 2005/08/24 11:51:39 lsces Exp $
 //
 ?>
 <?php
   require('includes/application_top.php');
 
   // verify option values exist
-  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id != '0' and language_id='" . $_SESSION['languages_id'] . "' limit 1");
+  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` != '0' and `language_id` ='" . $_SESSION['languages_id'] . "'", 1);
   if ($chk_option_values->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
@@ -38,7 +38,7 @@
       foreach($_POST['options_values_new_sort_order'] as $id => $new_sort_order) {
         $row++;
 
-        $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_ov_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where products_options_values_id= $id");
+        $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_ov_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where `products_options_values_id` = $id");
       }
       $messageStack->add_session(SUCCESS_OPTION_VALUES_SORT_ORDER . ' ' . zen_options_name($_GET['options_id']), 'success');
       $_GET['action']='';

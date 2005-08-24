@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_company.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: record_company.php,v 1.4 2005/08/24 11:51:38 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -179,7 +179,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $record_company_query_raw = "select * from " . TABLE_RECORD_COMPANY . " order by record_company_name";
+  $record_company_query_raw = "select * from " . TABLE_RECORD_COMPANY . " order by `record_company_name`";
   $record_company_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $record_company_query_raw, $record_company_query_numrows);
   $record_company = $db->Execute($record_company_query_raw);
 

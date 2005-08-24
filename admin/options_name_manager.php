@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.10 2005/08/24 10:38:23 lsces Exp $
+//  $Id: options_name_manager.php,v 1.11 2005/08/24 11:51:39 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -143,14 +143,14 @@
 // disabled because this could cause trouble if someone changed types unintentionally and deleted all their option values.  Shops with small numbers of values per option should consider uncommenting this.
 //            zen_db_query("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where products_options_id = '" . $_POST['option_id'] . "'");
 // add in a record if none exists when option type is switched
-            $check_type = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where products_options_id='" . $_POST['option_id'] .  "' and products_options_values_id ='0'");
+            $check_type = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $_POST['option_id'] .  "' and `products_options_values_id` ='0'");
             if ($check_type->EOF) {
               $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " values (NULL, '" . $_POST['option_id'] . "', '" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "')");
             }
             break;
           default:
 // if switched from file or text remove 0
-            $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where products_options_id='" . $_POST['option_id'] . "' and products_options_values_id = '" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "'");
+            $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $_POST['option_id'] . "' and `products_options_values_id` = '" . PRODUCTS_OPTIONS_VALUES_TEXT_ID . "'");
             break;
         }
 
@@ -322,7 +322,7 @@
 
 //iii 031103 added to get results from database option type query
   $products_options_types_list = array();
-//  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where language_id='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
+//  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where `language_id` ='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
   $products_options_type_array = $db->Execute("select `products_options_types_id`, `products_options_types_name` from " . TABLE_PRODUCTS_OPTIONS_TYPES . " order by `products_options_types_id`");
   while (!$products_options_type_array->EOF) {
     $products_options_types_list[$products_options_type_array->fields['products_options_types_id']] = $products_options_type_array->fields['products_options_types_name'];

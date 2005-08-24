@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: music_genre.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: music_genre.php,v 1.4 2005/08/24 11:51:39 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -144,7 +144,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $music_genre_query_raw = "select * from " . TABLE_MUSIC_GENRE . " order by music_genre_name";
+  $music_genre_query_raw = "select * from " . TABLE_MUSIC_GENRE . " order by `music_genre_name`";
   $music_genre_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $music_genre_query_raw, $music_genre_query_numrows);
   $music_genre = $db->Execute($music_genre_query_raw);
 

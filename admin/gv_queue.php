@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.3 2005/08/03 17:07:34 spiderr Exp $
+//  $Id: gv_queue.php,v 1.4 2005/08/24 11:51:39 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -29,7 +29,7 @@
   if ($_GET['order'] != '') {
     $gv_check = $db->Execute("select order_id, unique_id
                                   from " . TABLE_COUPON_GV_QUEUE . "
-                                  where order_id = '" . $_GET['order'] . "' and release_flag= 'N' limit 1");
+                                  where order_id = '" . $_GET['order'] . "' and release_flag= 'N'", 1);
 
     $_GET['gid'] = $gv_check->fields['unique_id'];
 

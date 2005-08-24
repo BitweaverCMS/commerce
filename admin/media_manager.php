@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
+//  $Id: media_manager.php,v 1.6 2005/08/24 11:51:38 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -184,7 +184,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $media_query_raw = "select * from " . TABLE_MEDIA_MANAGER . " order by media_name";
+  $media_query_raw = "select * from " . TABLE_MEDIA_MANAGER . " order by `media_name`";
   $media_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $media_query_raw, $media_query_numrows);
   $media = $db->Execute($media_query_raw);
   while (!$media->EOF) {

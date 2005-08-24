@@ -17,23 +17,23 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.10 2005/08/24 10:38:23 lsces Exp $
+//  $Id: attributes_controller.php,v 1.11 2005/08/24 11:51:38 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names, values, products
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where language_id='" . $_SESSION['languages_id'] . "' limit 1");
+  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id`='" . $_SESSION['languages_id'] . "'", 1);
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
-  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where products_options_values_id != '0' and language_id='" . $_SESSION['languages_id'] . "' limit 1");
+  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . "'", 1);
   if ($chk_option_values->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
-  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS . " limit 1");
+  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, 1);
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -507,7 +507,7 @@
 
 //iii 031103 added to get results from database option type query
   $products_options_types_list = array();
-//  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where language_id='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
+//  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where `language_id` ='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
   $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " order by products_options_types_id");
   while (!$products_options_type_array->EOF) {
     $products_options_types_list[$products_options_type_array->fields['products_options_types_id']] = $products_options_type_array->fields['products_options_types_name'];

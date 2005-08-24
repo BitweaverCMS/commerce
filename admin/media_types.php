@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_types.php,v 1.4 2005/08/24 02:47:43 lsces Exp $
+//  $Id: media_types.php,v 1.5 2005/08/24 11:51:38 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -119,7 +119,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $media_type_query_raw = "select * from " . TABLE_MEDIA_TYPES . " order by type_name";
+  $media_type_query_raw = "select * from " . TABLE_MEDIA_TYPES . " order by `type_name`";
   $media_type_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $media_type_query_raw, $media_type_query_numrows);
   $media_type = $db->Execute($media_type_query_raw);
   while (!$media_type->EOF) {

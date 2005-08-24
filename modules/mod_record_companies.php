@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_record_companies.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_record_companies.php,v 1.2 2005/08/24 11:52:22 lsces Exp $
 //
 	global $db, $gBitProduct;
 
   $record_company_query = "select record_company_id, record_company_name
                           from " . TABLE_RECORD_COMPANY . "
-                          order by record_company_name";
+                          order by `record_company_name`";
 
   $record_company = $db->Execute($record_company_query);
 
