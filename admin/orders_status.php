@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.5 2005/08/24 08:44:09 lsces Exp $
+//  $Id: orders_status.php,v 1.6 2005/08/24 10:38:22 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -166,7 +166,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $orders_status_query_raw = "select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where language_id = '" . (int)$_SESSION['languages_id'] . "' order by orders_status_id";
+  $orders_status_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
   $orders_status_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $orders_status_query_raw, $orders_status_query_numrows);
   $orders_status = $db->Execute($orders_status_query_raw);
   while (!$orders_status->EOF) {

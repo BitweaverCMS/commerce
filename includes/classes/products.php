@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products.php,v 1.2 2005/08/24 02:51:13 lsces Exp $
+// $Id: products.php,v 1.3 2005/08/24 10:38:23 lsces Exp $
 //
 
   class products {
@@ -64,9 +64,9 @@
 
     function products_name($zf_product_id) {
       global $db;
-      $zp_product_name_query = "select products_name from " . TABLE_PRODUCTS_DESCRIPTION . "
-                                where language_id = '" . $_SESSION['languages_id'] . "'
-                                and products_id = '" . (int)$zf_product_id . "'";
+      $zp_product_name_query = "select `products_name` from " . TABLE_PRODUCTS_DESCRIPTION . "
+                                where `language_id` = '" . $_SESSION['languages_id'] . "'
+                                and `products_id` = '" . (int)$zf_product_id . "'";
       $zp_product_name = $db->Execute($zp_product_name_query);
       $zp_product_name = $zp_product_name->fields['products_name'];
       return $zp_product_name;

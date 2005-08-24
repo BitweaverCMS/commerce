@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.8 2005/08/24 09:38:29 lsces Exp $
+//  $Id: languages.php,v 1.9 2005/08/24 10:38:23 lsces Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -85,7 +85,7 @@
                               `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`,
                               `products_options_images_per_row`, `products_options_images_style`
                                            from " . TABLE_PRODUCTS_OPTIONS . "
-                                           where language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                           where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
@@ -213,14 +213,14 @@
 		                set `configuration_value` = ''
 						where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
-        $db->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS . " where language_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where language_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_MANUFACTURERS_INFO . " where languages_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_ORDERS_STATUS . " where language_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_LANGUAGES . " where languages_id = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_COUPONS_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_MANUFACTURERS_INFO . " where `languages_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
+        $db->Execute("delete from " . TABLE_COUPONS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
         zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page']));
         break;
       case 'delete':

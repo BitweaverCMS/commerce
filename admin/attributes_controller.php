@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.9 2005/08/24 02:47:44 lsces Exp $
+//  $Id: attributes_controller.php,v 1.10 2005/08/24 10:38:23 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -1578,8 +1578,8 @@ if ($action == '') {
             <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_NAME . '<br />'; ?><select name="options_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
 <?php
     $options_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . "
-                                    where language_id = '" . $_SESSION['languages_id'] . "'
-                                    order by products_options_name");
+                                    where `language_id` = '" . $_SESSION['languages_id'] . "'
+                                    order by `products_options_name`");
 
     while (!$options_values->EOF) {
       echo '<option name="' . $options_values->fields['products_options_name'] . '" value="' . $options_values->fields['products_options_id'] . '">' . $options_values->fields['products_options_name'] . '&nbsp;&nbsp;&nbsp;[' . translate_type_to_name($options_values->fields['products_options_type']) . ']' . '</option>';
@@ -1590,8 +1590,8 @@ if ($action == '') {
             <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_VALUE . '<br />'; ?><select name="values_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
 <?php
     $values_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                                   where language_id = '" . $_SESSION['languages_id'] . "'
-                                   order by products_options_values_name");
+                                   where `language_id` = '" . $_SESSION['languages_id'] . "'
+                                   order by `products_options_values_name`");
     while (!$values_values->EOF) {
       $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($values_values->fields['products_options_values_id'])) . ']';
       echo '<option name="' . $values_values->fields['products_options_values_name'] . '" value="' . $values_values->fields['products_options_values_id'] . '">' . $values_values->fields['products_options_values_name'] . $show_option_name . '</option>';
