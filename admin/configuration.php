@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
+//  $Id: configuration.php,v 1.4 2005/08/24 03:00:21 lsces Exp $
 //
 
 
@@ -51,7 +51,7 @@
                       SET `configuration_value` = 'false', `last_modified` = '" . NOW . "'
                       WHERE `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
-        $configuration_query = 'SEELCT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
+        $configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
                           FROM ' . TABLE_CONFIGURATION;
 
         $configuration = $db->Execute($configuration_query);
