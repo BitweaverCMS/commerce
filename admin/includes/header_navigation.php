@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header_navigation.php,v 1.2 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: header_navigation.php,v 1.3 2005/08/24 12:12:36 spiderr Exp $
 //
 
   require(DIR_WS_BOXES . 'configuration_dhtml.php');
@@ -29,3 +29,4 @@
   require(DIR_WS_BOXES . 'tools_dhtml.php');
 
 ?>
+<div style="clear:both"></div>
