@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_viewed.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: stats_products_viewed.php,v 1.3 2005/08/24 02:48:11 lsces Exp $
 //
   require('includes/application_top.php');
 ?>
@@ -74,7 +74,7 @@
 <?php
   if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS_REPORTS - MAX_DISPLAY_SEARCH_RESULTS_REPORTS;
   $rows = 0;
-  $products_query_raw = "select p.products_id, pd.products_name, pd.products_viewed, l.name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_LANGUAGES . " l where p.products_id = pd.products_id and l.languages_id = pd.language_id order by pd.products_viewed DESC";
+  $products_query_raw = "select p.`products_id`, pd.products_name, pd.products_viewed, l.name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_LANGUAGES . " l where p.`products_id` = pd.`products_id` and l.languages_id = pd.`language_id` order by pd.products_viewed DESC";
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
   $products = $db->Execute($products_query_raw);
   while (!$products->EOF) {

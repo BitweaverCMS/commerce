@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.8 2005/08/12 18:02:06 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.9 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -219,7 +219,7 @@
         // category of products
         $category_to_update = $_POST['category_to_update'];
 // re-write with categories
-        $all_update_products = $db->Execute("select distinct pa.products_id from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on pa.products_id = ptc.products_id where ptc.categories_id ='" . $category_to_update . "' and pa.options_id='" . $_POST['options_id'] . "' and pa.products_id = ptc.products_id");
+        $all_update_products = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on pa.`products_id` = ptc.`products_id` where ptc.`categories_id` ='" . $category_to_update . "' and pa.options_id='" . $_POST['options_id'] . "' and pa.`products_id` = ptc.`products_id`");
         break;
       }
 
@@ -341,7 +341,7 @@ function draw_optiontype_pulldown($name, $default = '') {
   return zen_draw_pull_down_menu($name, $values, $default);
 }
 
-//CLR 030312 add function to translate type_id to name
+//CLR 030312 add function to translate `type_id` to name
 // Translate option_type_values to english string
 //iii 031103 modified to use results of database option type query from above
 function translate_type_to_name($opt_type) {
@@ -432,14 +432,14 @@ function go_option() {
               <tr>
                 <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
 <?php
-    $products = $db->Execute("select p.products_id, pd.products_name, pov.products_options_values_name
+    $products = $db->Execute("select p.`products_id`, pd.products_name, pov.products_options_values_name
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov,
                                    " . TABLE_PRODUCTS_ATTRIBUTES . " pa,
                                    " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                              where pd.products_id = p.products_id
-                              and pov.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                              and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                              and pa.products_id = p.products_id
+                              where pd.`products_id` = p.`products_id`
+                              and pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                              and pa.`products_id` = p.`products_id`
                               and pa.options_id='" . (int)$_GET['option_id'] . "'
                               and pov.products_options_values_id = pa.options_values_id
                               order by pd.products_name");

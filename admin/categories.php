@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.7 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: categories.php,v 1.8 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -391,7 +391,7 @@
             zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $categories_id));
           } else {
             $db->Execute("update " . TABLE_CATEGORIES . "
-                          set parent_id = '" . (int)$new_parent_id . "', last_modified = now()
+                          set parent_id = '" . (int)$new_parent_id . "', `last_modified` = now()
                           where categories_id = '" . (int)$categories_id . "'");
 
 // fix here - if this is a category with subcats it needs to know to loop through
@@ -468,7 +468,7 @@
         $product_type_good = $db->Execute($sql);
         if ($product_type_list->RecordCount() < 1 || $product_type_good->RecordCount() > 0) {
           $url = zen_get_all_get_params();
-          $sql = "select type_handler from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $_GET['product_type'] . "'";
+          $sql = "select `type_handler` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $_GET['product_type'] . "'";
           $handler = $db->Execute($sql);
           zen_redirect(zen_href_link_admin($handler->fields['type_handler'] . '.php', zen_get_all_get_params()));
         } else {
@@ -560,7 +560,7 @@
     $heading = array();
     $contents = array();
 // Make an array of product types
-    $sql = "select type_id, type_name from " . TABLE_PRODUCT_TYPES;
+    $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
     $product_types = $db->Execute($sql);
     while (!$product_types->EOF) {
       $type_array[] = array('id' => $product_types->fields['type_id'], text => $product_types->fields['type_name']);
@@ -681,7 +681,7 @@
         if ($restrict_types->RecordCount() > 0 ) {
           $contents[] = array('text' => '<br />' . TEXT_CATEGORY_HAS_RESTRICTIONS . '<br />');
           while (!$restrict_types->EOF) {
-            $sql = "select type_name from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $restrict_types->fields['product_type_id'] . "'";
+            $sql = "select type_name from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $restrict_types->fields['product_type_id'] . "'";
             $type = $db->Execute($sql);
             $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=remove_type&cPath=' . $cPath . '&cID='.$cInfo->categories_id.'&type_id='.$restrict_types->fields['product_type_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $type->fields['type_name'] . '<br />');
             $restrict_types->MoveNext();

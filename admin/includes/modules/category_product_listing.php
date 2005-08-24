@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.5 2005/08/13 16:36:10 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -80,23 +80,23 @@
     if (isset($_GET['search'])) {
       $search = zen_db_prepare_input($_GET['search']);
 
-      $categories = $db->Execute("select c.categories_id, cd.categories_name, cd.categories_description, c.categories_image,
-                                         c.parent_id, c.sort_order, c.date_added, c.last_modified,
-                                         c.categories_status
+      $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
+                                         c.`parent_id`, c.`sort_order`, c.`date_added`, c.`last_modified`,
+                                         c.`categories_status`
                                   from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                  where c.categories_id = cd.categories_id
-                                  and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                  and cd.categories_name like '%" . zen_db_input($search) . "%'
-                                  order by c.sort_order, cd.categories_name");
+                                  where c.`categories_id` = cd.`categories_id`
+                                  and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                  and cd.`categories_name` like '%" . zen_db_input($search) . "%'
+                                  order by c.`sort_order`, cd.`categories_name`");
     } else {
-      $categories = $db->Execute("select c.categories_id, cd.categories_name, cd.categories_description, c.categories_image,
-                                         c.parent_id, c.sort_order, c.date_added, c.last_modified,
-                                         c.categories_status
+      $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
+                                         c.`parent_id`, c.`sort_order`, c.`date_added`, c.`last_modified`,
+                                         c.`categories_status`
                                   from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                  where c.parent_id = '" . (int)$current_category_id . "'
-                                  and c.categories_id = cd.categories_id
-                                  and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                  order by c.sort_order, cd.categories_name");
+                                  where c.`parent_id` = '" . (int)$current_category_id . "'
+                                  and c.`categories_id` = cd.`categories_id`
+                                  and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                  order by c.`sort_order`, cd.`categories_name`");
     }
     while (!$categories->EOF) {
       $categories_count++;
@@ -165,49 +165,49 @@
 
     switch ($_SESSION['categories_products_sort_order']) {
       case (0):
-        $order_by = " order by p.products_sort_order, pd.products_name";
+        $order_by = " order by p.`products_sort_order`, pd.`products_name`";
         break;
       case (1):
-        $order_by = " order by pd.products_name";
+        $order_by = " order by pd.`products_name`";
         break;
       case (2);
-        $order_by = " order by p.products_model";
+        $order_by = " order by p.`products_model`";
         break;
       }
 
     $products_count = 0;
     if (isset($_GET['search'])) {
-      $products_query_raw = ("select p.products_type, p.products_id, pd.products_name, p.products_quantity,
-                                       p.products_image, p.products_price, p.products_date_added,
-                                       p.products_last_modified, p.products_date_available,
-                                       p.products_status, p2c.categories_id,
-                                       p.products_model,
-                                       p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,
-                                       p.product_is_free, p.product_is_call, p.products_quantity_mixed,
-                                       p.products_quantity_order_max, p.products_sort_order
+      $products_query_raw = ("select p.`products_type`, p.`products_id`, pd.`products_name`, p.`products_quantity`,
+                                       p.`products_image, p.`products_price`, p.`products_date_added`,
+                                       p.`products_last_modified`, p.`products_date_available`,
+                                       p.`products_status`, p2c.`categories_id`,
+                                       p.`products_model`,
+                                       p.`products_quantity_order_min`, p.`products_quantity_order_units`, p.`products_priced_by_attribute`,
+                                       p.`product_is_free`, p.`product_is_call`, p.`products_quantity_mixed`,
+                                       p.`products_quantity_order_max`, p.`products_sort_order`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                                        . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                                where p.products_id = pd.products_id
-                                and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                and p.products_id = p2c.products_id
+                                where p.`products_id` = pd.`products_id`
+                                and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                and p.`products_id` = p2c.`products_id`
                                 and (
-                                pd.products_name like '%" . zen_db_input($_GET['search']) . "%'
-                                or pd.products_description like '%" . zen_db_input($_GET['search']) . "%'
-                                or p.products_model like '%" . zen_db_input($_GET['search']) . "%')" .
+                                pd.`products_name` like '%" . zen_db_input($_GET['search']) . "%'
+                                or pd.`products_description` like '%" . zen_db_input($_GET['search']) . "%'
+                                or p.`products_model` like '%" . zen_db_input($_GET['search']) . "%')" .
                                 $order_by);
     } else {
-      $products_query_raw = ("select p.products_type, p.products_id, pd.products_name, p.products_quantity,
-                                       p.products_image, p.products_price, p.products_date_added,
-                                       p.products_last_modified, p.products_date_available,
-                                       p.products_status, p.products_model,
-                                       p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,
-                                       p.product_is_free, p.product_is_call, p.products_quantity_mixed,
-                                       p.products_quantity_order_max, p.products_sort_order
+      $products_query_raw = ("select p.`products_type`, p.`products_id`, pd.`products_name`, p.`products_quantity`,
+                                       p.`products_image`, p.`products_price`, p.`products_date_added`,
+                                       p.`products_last_modified`, p.`products_date_available`,
+                                       p.`products_status`, p.`products_model`,
+                                       p.`products_quantity_order_min`, p.`products_quantity_order_units`, p.`products_priced_by_attribute`,
+                                       p.`product_is_free`, p.`product_is_call`, p.`products_quantity_mixed`,
+                                       p.`products_quantity_order_max`, p.`products_sort_order`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                                where p.products_id = pd.products_id
-                                and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                and p.products_id = p2c.products_id
-                                and p2c.categories_id = '" . (int)$current_category_id . "'" .
+                                where p.`products_id` = pd.`products_id`
+                                and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                and p.`products_id` = p2c.`products_id`
+                                and p2c.`categories_id` = '" . (int)$current_category_id . "'" .
                                 $order_by);
     }
 // Split Page
@@ -342,9 +342,9 @@ if ($_GET['page'] == '' and $_GET['pID'] != '') {
 
 <form name="newproduct" action="<?php echo zen_href_link_admin(FILENAME_CATEGORIES, '', 'NONSSL'); ?>" method = "get"><?php    echo zen_image_submit('button_new_product.gif', IMAGE_NEW_PRODUCT); ?>
 <?php
-  $sql = "select ptc.product_type_id, pt.type_name from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc, " . TABLE_PRODUCT_TYPES . " pt
-          where ptc.category_id = '" . $current_category_id . "'
-          and pt.type_id = ptc.product_type_id";
+  $sql = "select ptc.`product_type_id`, pt.`type_name` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc, " . TABLE_PRODUCT_TYPES . " pt
+          where ptc.`category_id` = '" . $current_category_id . "'
+          and pt.`type_id` = ptc.`product_type_id`";
   $restrict_types = $db->Execute($sql);
   if ($restrict_types->RecordCount() >0 ) {
     $product_restrict_types_array = array();

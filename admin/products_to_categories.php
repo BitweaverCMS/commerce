@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.5 2005/08/14 19:30:43 spiderr Exp $
+//  $Id: products_to_categories.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -185,8 +185,8 @@ function array_minus_array($a, $b) {
 
 
         // get products to be removed as added linked from
-        $products_to_categories_from_linked = $db->Execute("select ptoc.products_id, p.master_categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc
-                                                            LEFT JOIN " . TABLE_PRODUCTS . " p on ptoc.products_id=p.products_id where ptoc.categories_id='" . $remove_from_linked . "'");
+        $products_to_categories_from_linked = $db->Execute("select ptoc.`products_id`, p.master_categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc
+                                                            LEFT JOIN " . TABLE_PRODUCTS . " p on ptoc.`products_id`=p.`products_id` where ptoc.`categories_id`='" . $remove_from_linked . "'");
 
         while (!$products_to_categories_from_linked->EOF) {
           if ($products_to_categories_from_linked->fields['master_categories_id'] == $remove_to_linked) {
@@ -291,7 +291,7 @@ function array_minus_array($a, $b) {
         // if either category was invalid nothing processes below
         ///////////////////////////////////////////////////////////////
 
-        $reset_master_categories_id = $db->Execute("select p.products_id, p.master_categories_id, ptoc.categories_id from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc on ptoc.products_id= p.products_id and ptoc.categories_id='" . $reset_from_master . "' where ptoc.categories_id='" . $reset_from_master . "'");
+        $reset_master_categories_id = $db->Execute("select p.`products_id`, p.master_categories_id, ptoc.`categories_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc on ptoc.`products_id`= p.`products_id` and ptoc.`categories_id`='" . $reset_from_master . "' where ptoc.`categories_id`='" . $reset_from_master . "'");
 
         while (!$reset_master_categories_id->EOF) {
           $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $reset_from_master . "' where products_id='" . $reset_master_categories_id->fields['products_id'] . "'");
@@ -377,14 +377,14 @@ function array_minus_array($a, $b) {
     }
   }
 
-  $product_to_copy = $db->Execute("select p.products_id, pd.products_name, p.products_price_sorter, p.products_model, p.master_categories_id, p.products_image
+  $product_to_copy = $db->Execute("select p.`products_id`, pd.products_name, p.products_price_sorter, p.products_model, p.master_categories_id, p.products_image
                                   from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd " . "
-                         where p.products_id = '" . $productsId . "'
-                         and p.products_id = pd.products_id
-                         and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                         where p.`products_id` = '" . $productsId . "'
+                         and p.`products_id` = pd.`products_id`
+                         and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
-//  $catagories_query = "select distinct cd.categories_id from " . TABLE_CATEGORIES_DESCRIPTION . " cd left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc on cd.categories_id = ptoc.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
-  $catagories_query = "select distinct ptoc.categories_id, cd.* from " . TABLE_PRODUCTS_TO_CATEGORIES. " ptoc left join " . TABLE_CATEGORIES_DESCRIPTION  . " cd on cd.categories_id = ptoc.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' order by cd.categories_name";
+//  $catagories_query = "select distinct cd.`categories_id` from " . TABLE_CATEGORIES_DESCRIPTION . " cd left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc on cd.`categories_id` = ptoc.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+  $catagories_query = "select distinct ptoc.`categories_id`, cd.* from " . TABLE_PRODUCTS_TO_CATEGORIES. " ptoc left join " . TABLE_CATEGORIES_DESCRIPTION  . " cd on cd.`categories_id` = ptoc.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' order by cd.`categories_name`";
   $categories_list = $db->Execute($catagories_query);
 
 // current products to categories

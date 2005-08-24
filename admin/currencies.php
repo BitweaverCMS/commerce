@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.5 2005/08/04 17:33:40 spiderr Exp $
+//  $Id: currencies.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -60,7 +60,7 @@
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
                         set configuration_value = '" . zen_db_input($code) . "'
-                        where configuration_key = 'DEFAULT_CURRENCY'");
+                        where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency_id));
@@ -82,7 +82,7 @@
         if ($currency->fields['currencies_id'] == $currencies_id) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
                         set configuration_value = ''
-                        where configuration_key = 'DEFAULT_CURRENCY'");
+                        where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
         $db->Execute("delete from " . TABLE_CURRENCIES . "

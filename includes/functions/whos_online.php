@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.4 2005/08/10 12:04:12 spiderr Exp $
+// $Id: whos_online.php,v 1.5 2005/08/24 02:51:32 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -29,9 +29,9 @@
     if( !empty( $_SESSION['customer_id'] ) ) {
       $wo_customer_id = $_SESSION['customer_id'];
 
-      $customer_query = "select customers_firstname, customers_lastname
+      $customer_query = "select `customers_firstname`, `customers_lastname`
                          from " . TABLE_CUSTOMERS . "
-                         where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                         where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $customer = $db->Execute($customer_query);
 
@@ -51,13 +51,13 @@
 
 // remove entries that have expired
     $sql = "delete from " . TABLE_WHOS_ONLINE . "
-            where time_last_click < '" . $xx_mins_ago . "'";
+            where `time_last_click` < '" . $xx_mins_ago . "'";
 
     $db->Execute($sql);
 
-    $stored_customer_query = "select count(*) as count
+    $stored_customer_query = "select count(*) as `count`
                               from " . TABLE_WHOS_ONLINE . "
-                              where session_id = '" . zen_db_input($wo_session_id) . "'";
+                              where `session_id` = '" . zen_db_input($wo_session_id) . "'";
 
     $stored_customer = $db->Execute($stored_customer_query);
 
@@ -67,15 +67,15 @@
 
     if ($stored_customer->fields['count'] > 0) {
       $sql = "update " . TABLE_WHOS_ONLINE . "
-              set customer_id = ?, full_name = ?, ip_address = ?, time_last_click = ?, last_page_url = ?, host_address = ?, user_agent = ?
-              where session_id = ?";
+              set `customer_id` = ?, `full_name` = ?, `ip_address` = ?, `time_last_click` = ?, `last_page_url` = ?, `host_address` = ?, `user_agent` = ?
+              where `session_id` = ?";
 
       $db->query($sql, array( $wo_customer_id, $wo_full_name, $wo_ip_address, $current_time, substr($wo_last_page_url, 0, 255), $_SESSION['customers_host_address'], substr($wo_user_agent, 0, 255), $wo_session_id ) );
 
     } else {
       $sql = "insert into " . TABLE_WHOS_ONLINE . "
-                              (customer_id, full_name, session_id, ip_address, time_entry,
-                               time_last_click, last_page_url, host_address, user_agent)
+                              (`customer_id`, `full_name`, `session_id`, `ip_address`, `time_entry`,
+                               `time_last_click`, `last_page_url`, `host_address`, `user_agent`)
               values ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
        $db->query( $sql, array( $wo_customer_id, $wo_full_name, $wo_session_id, $wo_ip_address, $current_time, $current_time, $wo_last_page_url, $_SESSION['customers_host_address'], $wo_user_agent ) );

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.2 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: coupon_restrict.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -267,7 +267,7 @@
                   <tr>
 <?php
       if (isset($_POST['cPath_prod'])) $current_category_id = $_POST['cPath_prod'];
-      $products = $db->Execute("select p.products_id, pd.products_name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . $_SESSION['languages_id'] . "' and p.products_id = p2c.products_id and p2c.categories_id = '" . $_POST['cPath_prod'] . "' order by pd.products_name");
+      $products = $db->Execute("select p.`products_id`, pd.products_name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . $_POST['cPath_prod'] . "' order by pd.products_name");
       $products_array = array();
       while (!$products->EOF) {
         $products_array[] = array('id'=>$products->fields['products_id'],

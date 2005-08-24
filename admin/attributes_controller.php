@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.8 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.9 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -52,14 +52,14 @@
 
   if ($action == 'new_cat') {
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
 // set categories and products if not set
   if ($productsId == '' and $current_category_id != '') {
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id. "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     if ($productsId != '') {
       zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -68,7 +68,7 @@
     if ($productsId == '' and $current_category_id == '') {
       $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
       $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $productsId = $new_product_query->fields['products_id'];
       $_GET['products_id'] = $productsId;
     }
@@ -526,7 +526,7 @@ function draw_optiontype_pulldown($name, $default = '') {
   return zen_draw_pull_down_menu($name, $values, $default);
 }
 
-//CLR 030312 add function to translate type_id to name
+//CLR 030312 add function to translate `type_id` to name
 // Translate option_type_values to english string
 //iii 031103 modified to use results of database option type query from above
 function translate_type_to_name($opt_type) {
@@ -773,8 +773,8 @@ if ($action == 'attributes_preview') {
           <tr>
             <td class="main">
 <?php
-//            where    patrib.products_id='" . $pInfo->products_id . "'
-//            where    patrib.products_id='" . (int)$_GET['products_id'] . "'
+//            where    patrib.`products_id`='" . $pInfo->products_id . "'
+//            where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
   $check_template = $db->Execute("select template_dir from " . TABLE_TEMPLATE_SELECT);
   echo '<link rel="stylesheet" type="text/css" href="' . DIR_WS_CATALOG_TEMPLATE . $check_template->fields['template_dir'] . '/css/stylesheet.css' . '" />';
 ?>
@@ -956,7 +956,7 @@ if ($action == '') {
             <td colspan="10" class="smallText">
 <?php
   $per_page = MAX_ROW_LISTS_ATTRIBUTES_CONTROLLER;
-  $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id and po.language_id = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.products_id ='" . $productsId . "' order by pd.products_name, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.options_id,11,'0'), LPAD(pa.products_options_sort_order,11,'0')";
+  $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.`products_id` ='" . $productsId . "' order by pd.products_name, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.options_id,11,'0'), LPAD(pa.products_options_sort_order,11,'0')";
   $attribute_query = $db->Execute($attributes);
 
   $attribute_page_start = ($per_page * $_GET['attribute_page']) - $per_page;
@@ -1101,7 +1101,7 @@ if ($action == '') {
 <?php
 // FIX HERE 2
       $values_values = $db->Execute("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
-                                     where pov.language_id ='" . $_SESSION['languages_id'] . "' and povtpo.products_options_id='" . $attributes_values->fields['options_id'] . "'
+                                     where pov.`language_id` ='" . $_SESSION['languages_id'] . "' and povtpo.products_options_id='" . $attributes_values->fields['options_id'] . "'
                                      order by pov.products_options_values_name");
 
       while(!$values_values->EOF) {

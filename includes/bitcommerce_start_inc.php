@@ -95,7 +95,7 @@
 //    echo $configuration->fields['cfgkey'] . '#';
     $configuration->MoveNext();
   }
-  $configuration = $db->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
+  $configuration = $db->Execute('select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT);
 
   while (!$configuration->EOF) {
@@ -149,8 +149,8 @@
 
 	if( $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
 		// Set theme related directories
-		$sql = "SELECT count(*) as total FROM " . TABLE_CUSTOMERS . "
-				WHERE customers_id = '" . zen_db_input( $gBitUser->mUserId ) . "'";
+		$sql = "SELECT count(*) as `total` FROM " . TABLE_CUSTOMERS . "
+				WHERE `customers_id` = '" . zen_db_input( $gBitUser->mUserId ) . "'";
 		$check_user = $db->Execute($sql);
 		if( empty( $check_user['fields']['total'] ) ) {
 			$_REQUEST['action'] = 'process';
@@ -261,10 +261,10 @@
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
     for ($i=0, $n=sizeof($cPath_array); $i<$n; $i++) {
-      $categories_query = "SELECT categories_name
+      $categories_query = "SELECT `categories_name`
                            FROM " . TABLE_CATEGORIES_DESCRIPTION . "
-                           WHERE categories_id = '" . (int)$cPath_array[$i] . "'
-                           and language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                           WHERE `categories_id` = '" . (int)$cPath_array[$i] . "'
+                           and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
       $categories = $db->Execute($categories_query);
 
@@ -278,9 +278,9 @@
 
 // split to add manufacturers_name to the display
   if (isset($_REQUEST['manufacturers_id'])) {
-    $manufacturers_query = "SELECT manufacturers_name
+    $manufacturers_query = "SELECT `manufacturers_name`
                             FROM " . TABLE_MANUFACTURERS . "
-                            WHERE manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
+                            WHERE `manufacturers_id` = '" . (int)$_REQUEST['manufacturers_id'] . "'";
 
     $manufacturers = $db->Execute($manufacturers_query);
 

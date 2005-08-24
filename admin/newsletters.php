@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: newsletters.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -442,7 +442,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-    $newsletters_query_raw = "select newsletters_id, title, length(content) as content_length, length(content_html) as content_html_length, module, date_added, date_sent, status, locked from " . TABLE_NEWSLETTERS . " order by date_added desc";
+    $newsletters_query_raw = "select `newsletters_id`, `title`, length(`content`) as `content_length`, length(`content_html`) as `content_html_length`, `module`, `date_added`, `date_sent`, `status`, `locked` from " . TABLE_NEWSLETTERS . " order by `date_added` desc";
     $newsletters_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $newsletters_query_raw, $newsletters_query_numrows);
     $newsletters = $db->Execute($newsletters_query_raw);
     while (!$newsletters->EOF) {

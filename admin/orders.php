@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.9 2005/08/22 21:35:25 spiderr Exp $
+//  $Id: orders.php,v 1.10 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -88,7 +88,7 @@
 
         if ( ($check_status->fields['orders_status'] != $status) || zen_not_null($comments)) {
           $db->Execute("update " . TABLE_ORDERS . "
-                        set orders_status = '" . zen_db_input($status) . "', last_modified = now()
+                        set orders_status = '" . zen_db_input($status) . "', `last_modified` = now()
                         where orders_id = '" . (int)$oID . "'");
 
           $customer_notified = '0';
@@ -128,7 +128,7 @@
           }
 
           $db->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . "
-                      (orders_id, orders_status_id, date_added, customer_notified, comments)
+                      (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
                       values ('" . (int)$oID . "',
                       '" . zen_db_input($status) . "',
                       now(),
@@ -456,10 +456,10 @@
             <th><?php echo TABLE_HEADING_COMMENTS; ?></th>
           </tr>
 <?php
-    $orders_history = $db->Execute("select orders_status_id, date_added, customer_notified, comments
+    $orders_history = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments`
                                     from " . TABLE_ORDERS_STATUS_HISTORY . "
-                                    where orders_id = '" . zen_db_input($oID) . "'
-                                    order by date_added");
+                                    where `orders_id` = '" . zen_db_input($oID) . "'
+                                    order by `date_added`");
 
     if ($orders_history->RecordCount() > 0) {
       while (!$orders_history->EOF) {
@@ -609,12 +609,12 @@
     $new_fields = ", o.customers_street_address, o.delivery_name, o.delivery_street_address, o.billing_name, o.billing_street_address, o.payment_module_code, o.shipping_module_code, o.ip_address ";
     if (isset($_GET['cID'])) {
       $cID = zen_db_prepare_input($_GET['cID']);
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.customers_id, o.payment_method, o.date_purchased, o.last_modified, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.customers_id = '" . (int)$cID . "' and o.orders_status = s.orders_status_id and s.language_id = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total' order by orders_id DESC";
+      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.customers_id, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.customers_id = '" . (int)$cID . "' and o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total' order by orders_id DESC";
     } elseif ($_GET['status'] != '') {
       $status = zen_db_prepare_input($_GET['status']);
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.last_modified, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.language_id = '" . (int)$_SESSION['languages_id'] . "' and s.orders_status_id = '" . (int)$status . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
+      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and s.orders_status_id = '" . (int)$status . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
     } else {
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.last_modified, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.language_id = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
+      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
     }
     $orders_query_numrows = '';
     $orders_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_ORDERS, $orders_query_raw, $orders_query_numrows);
@@ -703,9 +703,9 @@
         $contents[] = array('text' => TEXT_INFO_IP_ADDRESS . ' ' . $oInfo->ip_address);
 
 // check if order has open gv
-        $gv_check = $db->Execute("select order_id, unique_id
+        $gv_check = $db->Execute("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
-                                  where order_id = '" . $oInfo->orders_id . "' and release_flag='N' limit 1");
+                                  where `order_id` = '" . $oInfo->orders_id . "' and release_flag='N' limit 1");
         if ($gv_check->RecordCount() > 0) {
           $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $oInfo->orders_id) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
           $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
@@ -714,7 +714,7 @@
       }
 
 // indicate if comments exist
-      $orders_history_query = $db->Execute("select orders_status_id, date_added, customer_notified, comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . $oInfo->orders_id . "' and comments !='" . "'" );
+      $orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, customer_notified, comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . $oInfo->orders_id . "' and comments !='" . "'" );
       if ($orders_history_query->RecordCount() > 0) {
         $contents[] = array('align' => 'left', 'text' => '<br />' . TABLE_HEADING_COMMENTS);
       }

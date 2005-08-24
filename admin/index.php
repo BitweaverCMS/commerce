@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.6 2005/08/19 16:37:42 spiderr Exp $
+//  $Id: index.php,v 1.7 2005/08/24 02:47:44 lsces Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -61,29 +61,29 @@
 <!-- header_eof //-->
  <?php
 
-  $customers = $db->Execute("select count(*) as count from " . TABLE_CUSTOMERS);
+  $customers = $db->Execute("select count(*) as `count` from " . TABLE_CUSTOMERS);
 
-  $products = $db->Execute("select count(*) as count from " . TABLE_PRODUCTS . " where products_status = '1'");
+  $products = $db->Execute("select count(*) as `count` from " . TABLE_PRODUCTS . " where `products_status` = '1'");
 
-  $products_off = $db->Execute("select count(*) as count from " . TABLE_PRODUCTS . " where products_status = '0'");
+  $products_off = $db->Execute("select count(*) as `count` from " . TABLE_PRODUCTS . " where `products_status` = '0'");
 
-  $reviews = $db->Execute("select count(*) as count from " . TABLE_REVIEWS);
-  $reviews_pending = $db->Execute("select count(*) as count from " . TABLE_REVIEWS . " where status='0'");
+  $reviews = $db->Execute("select count(*) as `count` from " . TABLE_REVIEWS);
+  $reviews_pending = $db->Execute("select count(*) as `count` from " . TABLE_REVIEWS . " where `status`='0'");
 
-  $newsletters = $db->Execute("select count(*) as count from " . TABLE_CUSTOMERS . " where customers_newsletter = '1'");
+  $newsletters = $db->Execute("select count(*) as `count` from " . TABLE_CUSTOMERS . " where `customers_newsletter` = '1'");
 
-  $counter_query = "select startdate, counter from " . TABLE_COUNTER;
+  $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
   $counter = $db->Execute($counter_query);
   $counter_startdate = $counter->fields['startdate'];
 //  $counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
   $counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
 
-  $specials = $db->Execute("select count(*) as count from " . TABLE_SPECIALS . " where status= '0'");
-  $specials_act = $db->Execute("select count(*) as count from " . TABLE_SPECIALS . " where status= '1'");
-  $featured = $db->Execute("select count(*) as count from " . TABLE_FEATURED . " where status= '0'");
-  $featured_act = $db->Execute("select count(*) as count from " . TABLE_FEATURED . " where status= '1'");
-  $salemaker = $db->Execute("select count(*) as count from " . TABLE_SALEMAKER_SALES . " where sale_status = '0'");
-  $salemaker_act = $db->Execute("select count(*) as count from " . TABLE_SALEMAKER_SALES . " where sale_status = '1'");
+  $specials = $db->Execute("select count(*) as `count` from " . TABLE_SPECIALS . " where `status`= '0'");
+  $specials_act = $db->Execute("select count(*) as `count` from " . TABLE_SPECIALS . " where `status`= '1'");
+  $featured = $db->Execute("select count(*) as `count` from " . TABLE_FEATURED . " where `status`= '0'");
+  $featured_act = $db->Execute("select count(*) as `count` from " . TABLE_FEATURED . " where `status`= '1'");
+  $salemaker = $db->Execute("select count(*) as `count` from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '0'");
+  $salemaker_act = $db->Execute("select count(*) as `count` from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '1'");
 
 
 ?>
@@ -91,10 +91,10 @@
 <table class="data">
    <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
   <?php   $orders_contents = '';
-  $orders_status = $db->Execute("select orders_status_name, orders_status_id from " . TABLE_ORDERS_STATUS . " where language_id = '" . $_SESSION['languages_id'] . "'");
+  $orders_status = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'");
 
   while (!$orders_status->EOF) {
-    $orders_pending = $db->Execute("select count(*) as count from " . TABLE_ORDERS . " where orders_status = '" . $orders_status->fields['orders_status_id'] . "'");
+    $orders_pending = $db->Execute("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status->fields['orders_status_id'] . "'");
 
     $orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status->fields['orders_status_id'], 'NONSSL') . '">' . $orders_status->fields['orders_status_name'] . '</a>:</td><td> ' . $orders_pending->fields['count'] . '</td></tr>';
     $orders_status->MoveNext();
@@ -105,7 +105,7 @@
 </table>
 <table class="data">
 <tr><th colspan="3"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
-  <?php  $orders = $db->Execute("select *, ot.text as order_total from " . TABLE_ORDERS . " o  INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id) where class = 'ot_total' order by o.orders_id DESC limit 5");
+  <?php  $orders = $db->Execute("SELECT ot.`text` AS `order_total`, o.* from " . TABLE_ORDERS . " o  INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`) where `class` = 'ot_total' ORDER BY o.`orders_id` DESC", 5);
 
   while (!$orders->EOF) {
   	$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
@@ -121,7 +121,7 @@
 <div id="coltwo">
 <table class="data">
 <tr><th><?php echo BOX_ENTRY_NEW_CUSTOMERS; ?> </th></tr>
-  <?php  $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname, a.date_account_created, a.customers_info_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.customers_id = a.customers_info_id order by a.date_account_created DESC limit 5");
+  <?php  $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`, a.`date_account_created`, a.`customers_info_id` from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.`customers_id` = a.`customers_info_id` order by a.`date_account_created` DESC", 5);
 
   while (!$customers->EOF) {
     echo '<tr><td><a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, 'search=' . $customers->fields['customers_lastname'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink">'. $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a>' . "\n";

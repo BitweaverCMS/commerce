@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to |
 // | license@zen-cart.com so we can mail you a copy immediately.|
 // +----------------------------------------------------------------------+
-//$Id: admin.php,v 1.3 2005/08/03 15:35:06 spiderr Exp $
+//$Id: admin.php,v 1.4 2005/08/24 02:47:44 lsces Exp $
 //
 
 require('includes/application_top.php');
@@ -79,7 +79,7 @@ if ($error == false) {
 	} elseif ($action == 'save') {
 
 		$db->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
-    $db->Execute("Update " . TABLE_CONFIGURATION . " set configuration_value='" . $_POST['demo_status'] . "' where configuration_key='ADMIN_DEMO'");
+    $db->Execute("Update " . TABLE_CONFIGURATION . " set `configuration_value`='" . $_POST['demo_status'] . "' where `configuration_key`='ADMIN_DEMO'");
 
 	} elseif ($action == 'reset') {
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.5 2005/08/13 16:36:10 spiderr Exp $
+//  $Id: html_output.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
 //
 
 ////
@@ -144,10 +144,10 @@
         $output_string .= '  } else if (' . $country . ' == "' . $countries->fields['zone_country_id'] . '") {' . "\n";
       }
 
-      $states = $db->Execute("select zone_name, zone_id
+      $states = $db->Execute("select `zone_name`, `zone_id`
                               from " . TABLE_ZONES . "
-                              where zone_country_id = '" . $countries->fields['zone_country_id'] . "'
-                              order by zone_name");
+                              where `zone_country_id` = '" . $countries->fields['zone_country_id'] . "'
+                              order by `zone_name`");
 
 
       $num_state = 1;

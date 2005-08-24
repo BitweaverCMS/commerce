@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.10 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: application_top.php,v 1.11 2005/08/24 02:48:59 lsces Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -138,7 +138,7 @@ error_reporting(E_ALL & ~E_NOTICE);
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
 
 // Determine the DATABASE patch level
-  $project_db_info= $db->Execute('select * from ' . TABLE_PROJECT_VERSION . " WHERE project_version_key = 'Zen-Cart Database' ");
+  $project_db_info= $db->Execute('select * from ' . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database' ");
   define('PROJECT_DB_VERSION_MAJOR',$project_db_info->fields['project_version_major']);
   define('PROJECT_DB_VERSION_MINOR',$project_db_info->fields['project_version_minor']);
   define('PROJECT_DB_VERSION_PATCH1',$project_db_info->fields['project_version_patch1']);
@@ -183,14 +183,14 @@ error_reporting(E_ALL & ~E_NOTICE);
   $session_started = true;
 
 // Set theme related directories
-  $template_query = $db->Execute("select template_dir
+  $template_query = $db->Execute("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
-                                  " where template_language = '0'");
+                                  " where `template_language` = '0'");
 
   $template_dir = $template_query->fields['template_dir'];
-  $template_query = $db->Execute("select template_dir
+  $template_query = $db->Execute("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
-                                  " where template_language = '" . $_SESSION['languages_id'] . "'");
+                                  " where `template_language` = '" . $_SESSION['languages_id'] . "'");
 
   if ($template_query->RecordCount() > 0) {
     $template_dir = $template_query->fields['template_dir'];
@@ -323,7 +323,7 @@ error_reporting(E_ALL & ~E_NOTICE);
 // default admin settings
   $admin_security = false;
 
-  $demo_check = $db->Execute("select * from " . TABLE_ADMIN . " where (admin_name='demo' and admin_pass='23ce1aad0e04a3d2334c7aef2f8ade83:58') or (admin_name='Admin' and admin_pass='e30d3c90284b0f42993b99f2c99261ae:c9')");
+  $demo_check = $db->Execute("select * from " . TABLE_ADMIN . " where (`admin_name`='demo' and `admin_pass`='23ce1aad0e04a3d2334c7aef2f8ade83:58') or (`admin_name`='Admin' and `admin_pass`='e30d3c90284b0f42993b99f2c99261ae:c9')");
   if (!$demo_check->EOF) {
     $admin_security = true;
 

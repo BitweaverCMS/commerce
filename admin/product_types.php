@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.4 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: product_types.php,v 1.5 2005/08/24 02:47:43 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -38,15 +38,15 @@
 
         $db->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
                       set configuration_value = '" . zen_db_input($configuration_value) . "',
-                          last_modified = now() where configuration_id = '" . (int)$cID . "'");
+                          `last_modified` = now() where configuration_id = '" . (int)$cID . "'");
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT;
 
         // set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
         if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
         $db->Execute("update " . TABLE_CONFIGURATION . "
-                      set configuration_value = 'false', last_modified = '" . NOW . "'
-                      where configuration_key = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
+                      set configuration_value = 'false', `last_modified` = '" . NOW . "'
+                      where `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_CONFIGURATION;
@@ -91,11 +91,11 @@
           if ($type_image->filename != 'none') {
             $db->Execute("update " . TABLE_PRODUCT_TYPES . "
                           set default_image = '" .  $_POST['img_dir'] . $type_image->filename . "'
-                          where type_id = '" . (int)$type_id . "'");
+                          where `type_id` = '" . (int)$type_id . "'");
           } else {
             $db->Execute("update " . TABLE_PRODUCT_TYPES . "
                           set default_image = ''
-                          where type_id = '" . (int)$type_id . "'");
+                          where `type_id` = '" . (int)$type_id . "'");
           }
         }
 
@@ -113,7 +113,7 @@
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
           $product_type = $db->Execute("select default_image
                                         from " . TABLE_PRODUCT_TYPES . "
-                                        where type_id = '" . (int)$type_id . "'");
+                                        where `type_id` = '" . (int)$type_id . "'");
 
           $image_location = DIR_FS_CATALOG_IMAGES . $product_type->fields['default_image'];
 
@@ -121,7 +121,7 @@
         }
 
         $db->Execute("delete from " . TABLE_PRODUCT_TYPES . "
-                      where type_id = '" . (int)$type_id . "'");
+                      where `type_id` = '" . (int)$type_id . "'");
 //        $db->Execute("delete from " . TABLE_PRODUCT_TYPES_INFO . "
 //                      where manufacturers_id = '" . (int)$manufacturers_id . "'");
 
@@ -177,7 +177,7 @@
 <?php
 if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
   $sql = "select type_name from " . TABLE_PRODUCT_TYPES . "
-          where type_id = '"   . (int)$_GET['ptID'] . "'";
+          where `type_id` = '"   . (int)$_GET['ptID'] . "'";
   $type_name = $db->Execute($sql);
 
 
@@ -207,7 +207,7 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
   $configuration = $db->Execute("select configuration_id, configuration_title, configuration_value, configuration_key,
                                         use_function from " . TABLE_PRODUCT_TYPE_LAYOUT . "
                                         where product_type_id = '" . (int)$_GET['ptID'] . "'
-                                        order by sort_order");
+                                        order by `sort_order`");
   while (!$configuration->EOF) {
     if (zen_not_null($configuration->fields['use_function'])) {
       $use_function = $configuration->fields['use_function'];
@@ -226,10 +226,10 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
     }
 
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $configuration->fields['configuration_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
-      $cfg_extra = $db->Execute("select configuration_key, configuration_description, date_added,
-                                        last_modified, use_function, set_function
+      $cfg_extra = $db->Execute("select `configuration_key`, `configuration_description`, `date_added`,
+                                        `last_modified`, `use_function`, `set_function`
                                  from " . TABLE_PRODUCT_TYPE_LAYOUT . "
-                                 where configuration_id = '" . (int)$configuration->fields['configuration_id'] . "'");
+                                 where `configuration_id` = '" . (int)$configuration->fields['configuration_id'] . "'");
       $cInfo_array = array_merge($configuration->fields, $cfg_extra->fields);
       $cInfo = new objectInfo($cInfo_array);
     }
@@ -394,7 +394,7 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
       $contents[] = array('text' => '<br />' . zen_info_image($ptInfo->default_image, $ptInfo->type_name));
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_HANDLER . '<br>' . zen_draw_input_field('handler', $ptInfo->type_handler, zen_set_field_length(TABLE_PRODUCT_TYPES, 'type_handler')));
        $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_ALLOW_ADD_CART . '<br>' . zen_draw_checkbox_field('catalog_add_to_cart', $ptInfo->allow_add_to_cart, ($ptInfo->allow_add_to_cart == 'Y' ? true : false)));
-       $sql = "select type_id, type_name from " . TABLE_PRODUCT_TYPES;
+       $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
        $product_type_list = $db->Execute($sql);
        while (!$product_type_list->EOF) {
          $product_type_array[] = array('text' => $product_type_list->fields['type_name'], 'id' => $product_type_list->fields['type_id']);

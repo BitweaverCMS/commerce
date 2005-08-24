@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.8 2005/08/12 16:59:37 spiderr Exp $
+// $Id: currencies.php,v 1.9 2005/08/24 02:51:13 lsces Exp $
 //
 
 ////
@@ -31,9 +31,9 @@
       global $db;
 	  BitBase::BitBase();
       $this->currencies = array();
-      $currencies_query = "select code, title, symbol_left, symbol_right, decimal_point,
-                                  thousands_point, decimal_places, value
-                          from " . TABLE_CURRENCIES;
+      $currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`,
+                                  `thousands_point`, `decimal_places`, `value`
+                          FROM " . TABLE_CURRENCIES;
 
       $currencies = $db->Execute($currencies_query);
 

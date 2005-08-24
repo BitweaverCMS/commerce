@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.3 2005/08/12 18:02:06 spiderr Exp $
+//  $Id: invoice.php,v 1.4 2005/08/24 02:47:43 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -67,7 +67,7 @@
                                     billing_street_address, billing_suburb, billing_city, billing_postcode,
                                     billing_state, billing_country, billing_address_format_id,
                                     payment_method, cc_type, cc_owner, cc_number, cc_expires, currency,
-                                    currency_value, date_purchased, orders_status, last_modified
+                                    currency_value, date_purchased, orders_status, `last_modified`
                              from " . TABLE_ORDERS . "
                              where orders_id = '" . (int)$oID . "'");
   $show_customer = 'false';

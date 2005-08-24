@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: prod_cat_header_code.php,v 1.3 2005/08/03 17:07:55 spiderr Exp $
+//  $Id: prod_cat_header_code.php,v 1.4 2005/08/24 02:48:58 lsces Exp $
 //
   
   $currencies = new currencies();
@@ -33,7 +33,7 @@
 
   function zen_reset_page() {
     global $db, $current_category_id;
-    $look_up = $db->Execute("select p.products_id, pd.products_name, p.products_model, p.products_quantity, p.products_image, p.products_price, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute, p.product_is_free, p.product_is_call, p.products_quantity_mixed, p.product_is_always_free_ship, p.products_quantity_order_max from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and p.products_id = p2c.products_id and p2c.categories_id = '" . $current_category_id . "' order by pd.products_name");
+    $look_up = $db->Execute("select p.`products_id`, pd.products_name, p.products_model, p.products_quantity, p.products_image, p.products_price, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute, p.product_is_free, p.product_is_call, p.products_quantity_mixed, p.product_is_always_free_ship, p.products_quantity_order_max from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . $current_category_id . "' order by pd.products_name");
     while (!$look_up->EOF) {
       $look_count ++;
       if ($look_up->fields['products_id']== $_GET['pID']) {

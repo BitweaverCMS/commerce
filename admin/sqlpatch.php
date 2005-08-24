@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: sqlpatch.php,v 1.4 2005/08/24 02:48:11 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -537,7 +537,7 @@ $linebreak = '
      //[4]=blah blah
     $title = $values[1];
     $key  =  $values[3];
-    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "configuration where configuration_key='".$key."'";
+    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "configuration where `configuration_key`='".$key."'";
     $result = $db->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_CONFIG_KEY_ALREADY_EXISTS,$key);
   }
@@ -548,7 +548,7 @@ $linebreak = '
     $values=explode("'",$line);
     $title = $values[1];
     $key  =  $values[3];
-    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "product_type_layout where configuration_key='".$key."'";
+    $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "product_type_layout where `configuration_key`='".$key."'";
     $result = $db->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_PRODUCT_TYPE_LAYOUT_KEY_ALREADY_EXISTS,$key);
   }

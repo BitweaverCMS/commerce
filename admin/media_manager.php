@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.4 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: media_manager.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -57,7 +57,7 @@
           $clip_name = zen_db_prepare_input($clip_name['name']);
           if ($clip_name) {
             $media_type = $_POST['media_type'];
-            $ext = $db->Execute("select type_ext from " . TABLE_MEDIA_TYPES . " where type_id = '" . $_POST['media_type'] . "'");
+            $ext = $db->Execute("select type_ext from " . TABLE_MEDIA_TYPES . " where `type_id` = '" . $_POST['media_type'] . "'");
             if (ereg($ext->fields['type_ext'], $clip_name)) {
 
               if ($media_upload = new upload('clip_filename')) {
@@ -68,7 +68,7 @@
                 if ($media_upload->filename != 'none' && $media_upload->filename != '') {
 
                   $db->Execute("insert into " . TABLE_MEDIA_CLIPS . "
-                                (media_id, clip_type, clip_filename, date_added) values (
+                                (`media_id`, `clip_type`, `clip_filename`, `date_added`) values (
                                  '" . $_GET['mID'] . "',
                                  '" . $media_type . "',
                                  '" . $media_upload_filename . "', now())");
@@ -263,7 +263,7 @@
       }
       $contents[] = array('text' => '<br />' . TEXT_ADD_MEDIA_CLIP . zen_draw_file_field('clip_filename'));
       $contents[] = array('text' => TEXT_MEDIA_CLIP_DIR . ' ' . zen_draw_pull_down_menu('media_dir', $dir_info));
-      $media_type_query = "select type_id, type_name, type_ext from " . TABLE_MEDIA_TYPES;
+      $media_type_query = "select `type_id`, `type_name`, type_ext from " . TABLE_MEDIA_TYPES;
       $media_types = $db->Execute($media_type_query);
       while (!$media_types->EOF) {
         $media_types_array[] = array('id' => $media_types->fields['type_id'], 'text' => $media_types->fields['type_name'] . ' (' . $media_types->fields['type_ext'] . ')');
@@ -294,7 +294,7 @@
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'products':
-      $new_product_query = $db->Execute("select ptc.*, pd.products_name from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+      $new_product_query = $db->Execute("select ptc.*, pd.products_name from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
       $heading[] = array('text' => '<b>' . TEXT_HEADING_ASSIGN_MEDIA_COLLECTION . '</b>');
       $contents[] = array('text' => TEXT_PRODUCTS_INTRO . '<br /><br />');
       $contents[] = array('text' => zen_draw_form('new_category', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .

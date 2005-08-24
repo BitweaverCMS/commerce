@@ -27,10 +27,10 @@
     if ($process == true) {
       if ($entry_state_has_zones == true) {
         $zones_array = array();
-        $zones_query = "select zone_name
+        $zones_query = "select `zone_name`
                         from " . TABLE_ZONES . "
-                        where zone_country_id = '" . (int)$country . "'
-                        order by zone_name";
+                        where `zone_country_id` = '" . (int)$country . "'
+                        order by `zone_name`";
 
         $zones_values = $db->Execute($zones_query);
 

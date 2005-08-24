@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.2 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: products_previous_next.php,v 1.3 2005/08/24 02:48:58 lsces Exp $
 //
 
 /////
@@ -32,7 +32,7 @@
     // sort order
     switch(PRODUCT_INFO_PREVIOUS_NEXT_SORT) {
       case (0):
-        $prev_next_order= ' order by LPAD(p.products_id,11,"0")';
+        $prev_next_order= ' order by LPAD(p.`products_id`,11,"0")';
         break;
       case (1):
         $prev_next_order= " order by pd.products_name";
@@ -67,11 +67,11 @@
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
-    $sql = "select p.products_id, pd.products_name
+    $sql = "select p.`products_id`, pd.products_name
             from   " . TABLE_PRODUCTS . " p, "
                      . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                      . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
-            where  p.products_id = pd.products_id and pd.language_id= '" . $_SESSION['languages_id'] . "' and p.products_id = ptc.products_id and ptc.categories_id = '" . $current_category_id . "'" .
+            where  p.`products_id` = pd.`products_id` and pd.`language_id`= '" . $_SESSION['languages_id'] . "' and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = '" . $current_category_id . "'" .
             $prev_next_order
             ;
 

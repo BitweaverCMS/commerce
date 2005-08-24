@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.2 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: configuration.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
 //
 
 
@@ -37,22 +37,22 @@
         $configuration_value = zen_db_prepare_input($_POST['configuration_value']);
         $cID = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("update " . TABLE_CONFIGURATION . "
-                      set configuration_value = '" . zen_db_input($configuration_value) . "',
-                          last_modified = now() where configuration_id = '" . (int)$cID . "'");
-        $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
-                          from ' . TABLE_CONFIGURATION;
+        $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+					SET `configuration_value` = '" . zen_db_input($configuration_value) . "',
+					`last_modified` = 'NOW' WHERE `configuration_id` = '" . (int)$cID . "'");
+		$configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` as `cfgvalue`
+                          FROM ' . TABLE_CONFIGURATION;
 
         $configuration = $db->Execute($configuration_query);
 
         // set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
         if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
-        $db->Execute("update " . TABLE_CONFIGURATION . "
-                      set configuration_value = 'false', last_modified = '" . NOW . "'
-                      where configuration_key = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
+        $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+                      SET `configuration_value` = 'false', `last_modified` = '" . NOW . "'
+                      WHERE `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
-        $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
-                          from ' . TABLE_CONFIGURATION;
+        $configuration_query = 'SEELCT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
+                          FROM ' . TABLE_CONFIGURATION;
 
         $configuration = $db->Execute($configuration_query);
 
@@ -63,9 +63,9 @@
 
   $gID = (isset($_GET['gID'])) ? $_GET['gID'] : 1;
   $_GET['gID'] = $gID;
-  $cfg_group = $db->Execute("select configuration_group_title
-                             from " . TABLE_CONFIGURATION_GROUP . "
-                             where configuration_group_id = '" . (int)$gID . "'");
+  $cfg_group = $db->Execute("SELECT `configuration_group_title`
+                             FROM " . TABLE_CONFIGURATION_GROUP . "
+                             WHERE `configuration_group_id` = '" . (int)$gID . "'");
 
 if ($gID == 7) {
         $shipping_errors = '';
@@ -135,10 +135,10 @@ if ($gID == 7) {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $configuration = $db->Execute("select configuration_id, configuration_title, configuration_value, configuration_key,
-                                        use_function from " . TABLE_CONFIGURATION . "
-                                        where configuration_group_id = '" . (int)$gID . "'
-                                        order by sort_order");
+  $configuration = $db->Execute("SELECT `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
+                                        `use_function` FROM " . TABLE_CONFIGURATION . "
+                                        WHERE `configuration_group_id` = '" . (int)$gID . "'
+                                        ORDER BY `sort_order`");
   while (!$configuration->EOF) {
     if (zen_not_null($configuration->fields['use_function'])) {
       $use_function = $configuration->fields['use_function'];
@@ -157,10 +157,10 @@ if ($gID == 7) {
     }
 
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $configuration->fields['configuration_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
-      $cfg_extra = $db->Execute("select configuration_key, configuration_description, date_added,
-                                        last_modified, use_function, set_function
-                                 from " . TABLE_CONFIGURATION . "
-                                 where configuration_id = '" . (int)$configuration->fields['configuration_id'] . "'");
+      $cfg_extra = $db->Execute("SELECT `configuration_key`, `configuration_description`, `date_added`,
+                                        `last_modified`, `use_function`, `set_function`
+                                 FROM " . TABLE_CONFIGURATION . "
+                                 WHERE `configuration_id` = '" . (int)$configuration->fields['configuration_id'] . "'");
       $cInfo_array = array_merge($configuration->fields, $cfg_extra->fields);
       $cInfo = new objectInfo($cInfo_array);
     }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.7 2005/08/03 17:07:32 spiderr Exp $
+//  $Id: customers.php,v 1.8 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -150,16 +150,16 @@
           } else {
             $zone_id = 0;
             $entry_state_error = false;
-            $check_value = $db->Execute("select count(*) as total
+            $check_value = $db->Execute("select count(*) as `total`
                                          from " . TABLE_ZONES . "
-                                         where zone_country_id = '" . (int)$entry_country_id . "'");
+                                         where `zone_country_id` = '" . (int)$entry_country_id . "'");
 
             $entry_state_has_zones = ($check_value->fields['total'] > 0);
             if ($entry_state_has_zones == true) {
-              $zone_query = $db->Execute("select zone_id
+              $zone_query = $db->Execute("select `zone_id
                                           from " . TABLE_ZONES . "
-                                          where zone_country_id = '" . (int)$entry_country_id . "'
-                                          and zone_name = '" . zen_db_input($entry_state) . "'");
+                                          where `zone_country_id` = '" . (int)$entry_country_id . "'
+                                          and `zone_name` = '" . zen_db_input($entry_state) . "'");
 
               if ($zone_query->RecordCount() > 0) {
                 $entry_zone_id = $zone_query->fields['zone_id'];
@@ -183,10 +183,10 @@
         $entry_telephone_error = false;
       }
 
-      $check_email = $db->Execute("select customers_email_address
+      $check_email = $db->Execute("select `customers_email_address`
                                    from " . TABLE_CUSTOMERS . "
-                                   where customers_email_address = '" . zen_db_input($customers_email_address) . "'
-                                   and customers_id != '" . (int)$customers_id . "'");
+                                   where `customers_email_address` = '" . zen_db_input($customers_email_address) . "'
+                                   and `customers_id` != '" . (int)$customers_id . "'");
 
       if ($check_email->RecordCount() > 0) {
         $error = true;
@@ -695,10 +695,10 @@ function check_form() {
       if ($entry_state_error == true) {
         if ($entry_state_has_zones == true) {
           $zones_array = array();
-          $zones_values = $db->Execute("select zone_name
+          $zones_values = $db->Execute("select `zone_name`
                                         from " . TABLE_ZONES . "
-                                        where zone_country_id = '" . zen_db_input($cInfo->entry_country_id) . "'
-                                        order by zone_name");
+                                        where `zone_country_id` = '" . zen_db_input($cInfo->entry_country_id) . "'
+                                        order by `zone_name`");
 
           while (!$zones_values->EOF) {
             $zones_array[] = array('id' => $zones_values->fields['zone_name'], 'text' => $zones_values->fields['zone_name']);

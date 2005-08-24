@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.5 2005/08/14 19:30:42 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -40,14 +40,14 @@
 
   if ($action == 'new_cat') {
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
     $productsId = $new_product_query->fields['products_id'];
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
 // set categories and products if not set
   if ( empty( $productsId ) && $current_category_id != '') {
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
     $productsId = $new_product_query->fields['products_id'];
     if ($productsId != '') {
       zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -56,7 +56,7 @@
     if ($productsId == '' and $current_category_id == '') {
       $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
       $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' where ptc.categories_id='" . $current_category_id . "' order by pd.products_name");
+      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.products_name");
       $productsId = $new_product_query->fields['products_id'];
       $_GET['products_id'] = $productsId;
     }
@@ -303,7 +303,7 @@ if ($_GET['products_id'] != '') {
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
   echo zen_get_products_display_price($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
-  $not_for_cart = $db->Execute("select p.products_id from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.products_type= pt.type_id where pt.allow_add_to_cart = 'N'");
+  $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.allow_add_to_cart = 'N'");
   while (!$not_for_cart->EOF) {
     $not_for_cart_array[] = $not_for_cart->fields['products_id'];
     $not_for_cart->MoveNext();
@@ -379,12 +379,12 @@ if ($productsId == '') {
 
 <?php
 // featured information
-      $product = $db->Execute("select p.products_id,
+      $product = $db->Execute("select p.`products_id`,
                                       f.featured_id, f.expires_date, f.featured_date_available, f.status
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_FEATURED . " f
-                               where p.products_id = f.products_id
-                               and f.products_id = '" . $_GET['products_id'] . "'");
+                               where p.`products_id` = f.`products_id`
+                               and f.`products_id` = '" . $_GET['products_id'] . "'");
 
 
       if ($product->RecordCount() > 0) {
@@ -392,19 +392,19 @@ if ($productsId == '') {
       }
 
 // specials information
-      $product = $db->Execute("select p.products_id,
+      $product = $db->Execute("select p.`products_id`,
                                       s.specials_id, s.specials_new_products_price, s.expires_date, s.specials_date_available, s.status
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_SPECIALS . " s
-                               where p.products_id = s.products_id
-                               and s.products_id = '" . $_GET['products_id'] . "'");
+                               where p.`products_id` = s.`products_id`
+                               and s.`products_id` = '" . $_GET['products_id'] . "'");
 
       if ($product->RecordCount() > 0) {
         $sInfo = new objectInfo($product->fields);
       }
 
 // products information
-      $product = $db->Execute("select p.products_id, p.products_model,
+      $product = $db->Execute("select p.`products_id`, p.products_model,
                                       p.products_price, p.products_date_available,
                                       p.products_tax_class_id,
                                       p.products_quantity_order_min, products_quantity_order_units, p.products_quantity_order_max,
@@ -414,9 +414,9 @@ if ($productsId == '') {
                                       p.master_categories_id, p.products_mixed_discount_qty
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_PRODUCTS_DESCRIPTION . " pd
-                               where p.products_id = '" . $_GET['products_id'] . "'
-                               and p.products_id = pd.products_id
-                               and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                               where p.`products_id` = '" . $_GET['products_id'] . "'
+                               and p.`products_id` = pd.`products_id`
+                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
 
       if ($product->RecordCount() > 0) {
@@ -491,8 +491,8 @@ if ($productsId == '') {
 
 // tax class id
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("select tax_class_id, tax_class_title
-                                     from " . TABLE_TAX_CLASS . " order by tax_class_title");
+    $tax_class = $db->Execute("select `tax_class_id`, `tax_class_title`
+                                     from " . TABLE_TAX_CLASS . " order by `tax_class_title`");
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],
                                  'text' => $tax_class->fields['tax_class_title']);

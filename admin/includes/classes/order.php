@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.5 2005/08/22 21:35:25 spiderr Exp $
+//  $Id: order.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
 //
 
   class order {
@@ -43,7 +43,7 @@
       $totals = $db->Execute("select title, text, class
                               from " . TABLE_ORDERS_TOTAL . "
                               where orders_id = '" . (int)$order_id . "'
-                              order by sort_order");
+                              order by `sort_order`");
 
       while (!$totals->EOF) {
         $this->totals[] = array('title' => $totals->fields['title'],

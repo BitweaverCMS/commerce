@@ -390,8 +390,8 @@
 
   function zen_get_languages() {
     global $db;
-    $languages = $db->Execute("SELECT languages_id, name, code, image, directory
-                               FROM " . TABLE_LANGUAGES . " ORDER BY sort_order");
+    $languages = $db->Execute("SELECT `languages_id`, `name`, `code`, `image`, `directory`
+                               FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`");
 
     while (!$languages->EOF) {
       $languages_array[] = array('id' => $languages->fields['languages_id'],
@@ -427,13 +427,13 @@
 // computes products_price + option groups lowest attributes price of each group when on
   function zen_get_products_base_price($products_id) {
     global $db;
-      $product_check = $db->Execute("select products_price, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'");
+      $product_check = $db->Execute("select `products_price`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'");
 
 // is there a products_price to add to attributes
       $products_price = $product_check->fields['products_price'];
 
       // do not select display only attributes and attributes_price_base_inc is true
-      $product_att_query = $db->Execute("select options_id, price_prefix, options_values_price, attributes_display_only, attributes_price_base_inc from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id = '" . (int)$products_id . "' and attributes_display_only != '1' and attributes_price_base_inc='1'". " order by options_id, price_prefix, options_values_price");
+      $product_att_query = $db->Execute("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
 
       $the_options_id= 'x';
       $the_base_price= 0;
@@ -499,7 +499,7 @@
     }
 
     // $new_fields = ', product_is_free, product_is_call, product_is_showroom_only';
-    $product_check = $db->Execute("select products_tax_class_id, products_price, products_priced_by_attribute, product_is_free, product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);
@@ -598,7 +598,7 @@
     global $db;
     $the_free_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->Execute("select product_is_free from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+      $product_check = $db->Execute("select `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
       if ($product_check->fields['product_is_free'] == '1') {
         $the_free_price = true;
 	  }
@@ -612,7 +612,7 @@
     global $db;
     $the_call_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->Execute("select product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+      $product_check = $db->Execute("select `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
       if ($product_check->fields['product_is_call'] == '1') {
         $the_call_price = true;
       }
@@ -624,7 +624,7 @@
 // Is the product priced by attributes?
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $db;
-    $product_check = $db->Execute("select products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+    $product_check = $db->Execute("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
     if ($product_check->fields['products_priced_by_attribute'] == '1') {
       $the_products_priced_by_attribute = true;
     } else {
@@ -639,7 +639,7 @@
   function zen_get_products_quantity_order_min($product_id) {
     global $db;
 
-    $the_products_quantity_order_min = $db->Execute("select products_id, products_quantity_order_min from " . TABLE_PRODUCTS . " where products_id = '" . $product_id . "'");
+    $the_products_quantity_order_min = $db->Execute("select `products_i`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
     return $the_products_quantity_order_min->fields['products_quantity_order_min'];
   }
 
@@ -650,7 +650,7 @@
   function zen_get_products_quantity_order_units($product_id) {
     global $db;
 
-    $the_products_quantity_order_units = $db->Execute("select products_id, products_quantity_order_units from " . TABLE_PRODUCTS . " where products_id = '" . $product_id . "'");
+    $the_products_quantity_order_units = $db->Execute("select `products_id`, `products_quantity_order_units` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
     return $the_products_quantity_order_units->fields['products_quantity_order_units'];
   }
 
@@ -660,7 +660,7 @@
   function zen_get_products_quantity_order_max($product_id) {
     global $db;
 
-    $the_products_quantity_order_max = $db->Execute("select products_id, products_quantity_order_max from " . TABLE_PRODUCTS . " where products_id = '" . (int)$product_id . "'");
+    $the_products_quantity_order_max = $db->Execute("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
     return $the_products_quantity_order_max->fields['products_quantity_order_max'];
   }
 
@@ -670,7 +670,7 @@
     global $db;
     global $cart;
 
-    $product_discounts = $db->Execute("select products_price, products_quantity_mixed, product_is_free from " . TABLE_PRODUCTS . " where products_id = '" . $product_id . "'");
+    $product_discounts = $db->Execute("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
 
     if ($product_discounts->fields['products_quantity_mixed']) {
       if ($new_qty = $_SESSION['cart']->count_contents_qty($product_id)) {
@@ -687,7 +687,7 @@
   function zen_get_products_qty_box_status($product_id) {
     global $db;
 
-    $the_products_qty_box_status = $db->Execute("select products_id, products_qty_box_status  from " . TABLE_PRODUCTS . " where products_id = '" . (int)$product_id . "'");
+    $the_products_qty_box_status = $db->Execute("select `products_id`, `products_qty_box_status`  from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
     return $the_products_qty_box_status->fields['products_qty_box_status'];
   }
 
@@ -697,7 +697,7 @@
   function zen_get_products_quantity_mixed($product_id) {
     global $db;
 
-    $the_products_quantity_mixed = $db->Execute("select products_id, products_quantity_mixed from " . TABLE_PRODUCTS . " where products_id = '" . $product_id . "'");
+    $the_products_quantity_mixed = $db->Execute("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
     if ($the_products_quantity_mixed->fields['products_quantity_mixed'] == '1') {
       $look_up = true;
     } else {
@@ -757,7 +757,7 @@ If a special exist * 10+9
     $sale_exists = 'false';
     $sale_maker_discount = '';
     $sale_maker_special_condition = '';
-    $salemaker_sales = $db->Execute("select sale_id, sale_status, sale_name, sale_categories_all, sale_deduction_value, sale_deduction_type, sale_pricerange_from, sale_pricerange_to, sale_specials_condition, sale_categories_selected, sale_date_start, sale_date_end, sale_date_added, sale_date_last_modified, sale_date_status_change from " . TABLE_SALEMAKER_SALES . " where sale_status='1'");
+    $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
     while (!$salemaker_sales->EOF) {
       $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
   	  while (list($key,$value) = each($categories)) {
@@ -843,7 +843,7 @@ If a special exist * 10+9
 
     $product_id = (int)$product_id;
 
-    $discounts_qty_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $product_id . "' and discount_qty != 0");
+    $discounts_qty_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` = '" . $product_id . "' and `discount_qty` != 0");
 //echo 'zen_get_discount_qty: ' . $product_id . ' - ' . $check_qty . '<br />';
     if ($discounts_qty_query->RecordCount() > 0 and $check_qty > 0) {
       return true;
@@ -1165,7 +1165,7 @@ If a special exist * 10+9
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
     global $db, $currencies;
-    $product_check = $db->Execute("select products_tax_class_id, products_price, products_priced_by_attribute, product_is_free, product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'" . " limit 1");
+    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);
@@ -1245,7 +1245,7 @@ If a special exist * 10+9
     global $cart;
 
     if ($pre_selected == '' or $attribute != $pre_selected->fields["products_attributes_id"]) {
-      $pre_selected = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.products_attributes_id= '" . $attribute . "'");
+      $pre_selected = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
     } else {
       // use existing select
     }
@@ -1287,7 +1287,7 @@ If a special exist * 10+9
     global $cart;
 
     if ($pre_selected_onetime == '' or $attribute != $pre_selected_onetime->fields["products_attributes_id"]) {
-      $pre_selected_onetime = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.products_attributes_id= '" . $attribute . "'");
+      $pre_selected_onetime = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
     } else {
       // use existing select
     }
@@ -1314,8 +1314,8 @@ If a special exist * 10+9
 // get attributes type
   function zen_get_attributes_type($check_attribute) {
     global $db;
-    $check_options_id_query = $db->Execute("select options_id from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_attributes_id='" . $check_attribute . "'");
-    $check_type_query = $db->Execute("select products_options_type from " . TABLE_PRODUCTS_OPTIONS . " where products_options_id='" . $check_options_id_query->fields['options_id'] . "'");
+    $check_options_id_query = $db->Execute("select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` ='" . $check_attribute . "'");
+    $check_type_query = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $check_options_id_query->fields['options_id'] . "'");
     return $check_type_query->fields['products_options_type'];
   }
 
@@ -1399,7 +1399,7 @@ If a special exist * 10+9
 //get specials price or sale price
   function zen_get_products_special_price($product_id, $specials_price_only=false) {
     global $db;
-    $product = $db->Execute("select products_price, products_model, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id = '" . (int)$product_id . "'");
+    $product = $db->Execute("select `products_price`, `products_model`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
 
     if ($product->RecordCount() > 0) {
 //  	  $product_price = $product->fields['products_price'];
@@ -1408,7 +1408,7 @@ If a special exist * 10+9
   	  return false;
     }
 
-    $specials = $db->Execute("select specials_new_products_price from " . TABLE_SPECIALS . " where products_id = '" . (int)$product_id . "' and status='1'");
+    $specials = $db->Execute("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and `status` ='1'");
     if ($specials->RecordCount() > 0) {
 //      if ($product->fields['products_priced_by_attribute'] == 1) {
     	  $special_price = $specials->fields['specials_new_products_price'];
@@ -1438,10 +1438,10 @@ If a special exist * 10+9
 //      $product_to_categories = $db->Execute("select categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id = '" . (int)$product_id . "'");
 //      $category = $product_to_categories->fields['categories_id'];
 
-      $product_to_categories = $db->Execute("select master_categories_id from " . TABLE_PRODUCTS . " where products_id = '" . $product_id . "'");
+      $product_to_categories = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
       $category = $product_to_categories->fields['master_categories_id'];
 
-      $sale = $db->query("select sale_specials_condition, sale_deduction_value, sale_deduction_type from " . TABLE_SALEMAKER_SALES . " where sale_categories_all like '%," . $category . ",%' and sale_status = '1' and (sale_date_start <= now() or sale_date_start = '0001-01-01') and (sale_date_end >= now() or sale_date_end = '0001-01-01') and (sale_pricerange_from <= ? or sale_pricerange_from = '0') and (sale_pricerange_to >= ? or sale_pricerange_to = '0')", array($product_price, $product_price) );
+      $sale = $db->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
       if ($sale->RecordCount() < 1) {
          return $special_price;
       }
@@ -1503,7 +1503,7 @@ If a special exist * 10+9
     if( !($products_price_sorter = zen_get_products_actual_price($product_id) ) ) {
 		$products_price_sorter = NULL;
 	}
-    $db->query("update " . TABLE_PRODUCTS . " set products_price_sorter=? WHERE products_id=?", array( $products_price_sorter, $product_id ) );
+    $db->query("update " . TABLE_PRODUCTS . " set `products_price_sorter` = ? WHERE `products_id` = ?", array( $products_price_sorter, $product_id ) );
   }
 
 
@@ -1512,9 +1512,9 @@ If a special exist * 10+9
 // TABLES: categories
   function zen_has_category_subcategories($category_id) {
     global $db;
-    $child_category_query = "select count(*) as count
+    $child_category_query = "select count(*) as `count`
                              from " . TABLE_CATEGORIES . "
-                             where parent_id = '" . (int)$category_id . "'";
+                             where `parent_id` = '" . (int)$category_id . "'";
 
     $child_category = $db->Execute($child_category_query);
 

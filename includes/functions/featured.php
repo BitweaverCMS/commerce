@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: featured.php,v 1.2 2005/08/24 02:51:32 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -28,8 +28,8 @@
   function zen_set_featured_status($featured_id, $status) {
     global $db;
     $sql = "update " . TABLE_FEATURED . "
-            set status = '" . $status . "', date_status_change = now()
-            where featured_id = '" . (int)$featured_id . "'";
+            set `status` = '" . $status . "', `date_status_change` = 'NOW'
+            where `featured_id` = '" . (int)$featured_id . "'";
 
     return $db->Execute($sql);
    }
@@ -38,11 +38,11 @@
 // Auto expire products on featured
   function zen_expire_featured() {
     global $db;
-    $featured_query = "select featured_id
+    $featured_query = "select `featured_id`
                        from " . TABLE_FEATURED . "
-                       where status = '1'
-                       and ((now() >= expires_date and expires_date != '0001-01-01')
-                       or (now() < featured_date_available and featured_date_available != '0001-01-01'))";
+                       where `status` = '1'
+                       and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
+                       or ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01'))";
 
     $featured = $db->Execute($featured_query);
 
@@ -59,12 +59,12 @@
   function zen_start_featured() {
     global $db;
 
-    $featured_query = "select featured_id
+    $featured_query = "select `featured_id`
                        from " . TABLE_FEATURED . "
-                       where status = '0'
-                       and (((featured_date_available <= now() and featured_date_available != '0001-01-01') and (expires_date >= now()))
-                       or ((featured_date_available <= now() and featured_date_available != '0001-01-01') and (expires_date = '0001-01-01'))
-                       or (featured_date_available = '0001-01-01' and expires_date >= now()))
+                       where `status` = '0'
+                       and (((`featured_date_available` <= 'NOW' and `featured_date_available` != '0001-01-01') and (`expires_date` >= 'NOW'))
+                       or ((`featured_date_available` <= 'NOW' and `featured_date_available` != '0001-01-01') and (`expires_date` = '0001-01-01'))
+                       or (`featured_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
     $featured = $db->Execute($featured_query);
@@ -77,10 +77,10 @@
     }
 
 // turn off featured if not active yet
-    $featured_query = "select featured_id
+    $featured_query = "select `featured_id`
                        from " . TABLE_FEATURED . "
-                       where status = '1'
-                       and (now() < featured_date_available and featured_date_available != '0001-01-01')
+                       where `status` = '1'
+                       and ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01')
                        ";
 
     $featured = $db->Execute($featured_query);

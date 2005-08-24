@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: manufacturers.php,v 1.4 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -178,14 +178,14 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $manufacturers_query_raw = "select manufacturers_id, manufacturers_name, manufacturers_image, date_added, last_modified from " . TABLE_MANUFACTURERS . " order by manufacturers_name";
+  $manufacturers_query_raw = "select `manufacturers_id`, `manufacturers_name`, `manufacturers_image`, `date_added`, `last_modified` from " . TABLE_MANUFACTURERS . " order by `manufacturers_name`";
   $manufacturers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $manufacturers_query_raw, $manufacturers_query_numrows);
   $manufacturers = $db->Execute($manufacturers_query_raw);
   while (!$manufacturers->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $manufacturers->fields['manufacturers_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
-      $manufacturer_products = $db->Execute("select count(*) as products_count
+      $manufacturer_products = $db->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
-                                             where manufacturers_id = '" . (int)$manufacturers->fields['manufacturers_id'] . "'");
+                                             where `manufacturers_id` = '" . (int)$manufacturers->fields['manufacturers_id'] . "'");
 
       $mInfo_array = array_merge($manufacturers->fields, $manufacturer_products->fields);
       $mInfo = new objectInfo($mInfo_array);

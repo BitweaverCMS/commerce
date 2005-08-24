@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.3 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: orders_status.php,v 1.4 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -59,7 +59,7 @@
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
                         set configuration_value = '" . zen_db_input($orders_status_id) . "'
-                        where configuration_key = 'DEFAULT_ORDERS_STATUS_ID'");
+                        where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&oID=' . $orders_status_id));
@@ -73,14 +73,14 @@
         }
         $oID = zen_db_prepare_input($_GET['oID']);
 
-        $orders_status = $db->Execute("select configuration_value
+        $orders_status = $db->Execute("select`configuration_value`
                                        from " . TABLE_CONFIGURATION . "
-                                       where configuration_key = 'DEFAULT_ORDERS_STATUS_ID'");
+                                       where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 
         if ($orders_status->fields['configuration_value'] == $oID) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
                         set configuration_value = ''
-                        where configuration_key = 'DEFAULT_ORDERS_STATUS_ID'");
+                        where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
 
         $db->Execute("delete from " . TABLE_ORDERS_STATUS . "

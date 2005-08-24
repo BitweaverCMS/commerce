@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_previous_orders.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
+// $Id: blk_previous_orders.php,v 1.3 2005/08/24 02:50:50 lsces Exp $
 //
   $orders_query = "select o.orders_id, o.date_purchased, o.delivery_name,
                           o.delivery_country, o.billing_name, o.billing_country,
@@ -28,7 +28,7 @@
                    and    o.orders_id = ot.orders_id
                    and    ot.class = 'ot_total'
                    and    o.orders_status = s.orders_status_id
-                   and    s.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                   and    s.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                    order by orders_id desc limit 3";
 
   $orders = $db->Execute($orders_query);

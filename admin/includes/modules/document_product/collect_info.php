@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.4 2005/08/14 19:30:43 spiderr Exp $
+//  $Id: collect_info.php,v 1.5 2005/08/24 02:48:58 lsces Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -55,23 +55,23 @@
     $pInfo = new objectInfo($parameters);
 
     if (isset($_GET['pID']) && empty($_POST)) {
-      $product = $db->Execute("select pd.products_name, pd.products_description, pd.products_url,
-                                      p.products_id, p.products_quantity, p.products_model,
-                                      p.products_image, p.products_price, p.products_virtual, p.products_weight,
-                                      p.products_date_added, p.products_last_modified,
-                                      date_format(p.products_date_available, '%Y-%m-%d') as
-                                      products_date_available, p.products_status, p.products_tax_class_id,
-                                      p.manufacturers_id,
-                                      p.products_quantity_order_min, p.products_quantity_order_units, p.products_priced_by_attribute,
-                                      p.product_is_free, p.product_is_call, p.products_quantity_mixed,
-                                      p.product_is_always_free_ship, p.products_qty_box_status, p.products_quantity_order_max,
-                                      p.products_sort_order,
-                                      p.products_discount_type, p.products_discount_type_from,
-                                      p.products_price_sorter, p.master_categories_id
+      $product = $db->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
+                                      p.`products_id`, p.`products_quantity`, p.`products_model`,
+                                      p.products_image`, p.`products_price`, p.`products_virtual`, p.`products_weight`,
+                                      p.products_date_added`, p.`products_last_modified`,
+                                      ".$db->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
+                                      `products_date_available`, p.`products_status`, p.`products_tax_class_id`,
+                                      p.`manufacturers_id`,
+                                      p.`products_quantity_order_min`, p.`products_quantity_order_units`, p.`products_priced_by_attribute`,
+                                      p.`product_is_free`, p.`product_is_call`, p.`products_quantity_mixed`,
+                                      p.`product_is_always_free_ship`, p.`products_qty_box_status`, p.`products_quantity_order_max`,
+                                      p.`products_sort_order`,
+                                      p.`products_discount_type`, p.`products_discount_type_from`,
+                                      p.`products_price_sorter`, p.`master_categories_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                              where p.products_id = '" . (int)$_GET['pID'] . "'
-                              and p.products_id = pd.products_id
-                              and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                              where p.`products_id` = '" . (int)$_GET['pID'] . "'
+                              and p.`products_id` = pd.`products_id`
+                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
       $pInfo->objectInfo($product->fields);
     } elseif (zen_not_null($_POST)) {
@@ -82,8 +82,8 @@
     }
 
     $manufacturers_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $manufacturers = $db->Execute("select manufacturers_id, manufacturers_name
-                                   from " . TABLE_MANUFACTURERS . " order by manufacturers_name");
+    $manufacturers = $db->Execute("select `manufacturers_id`, `manufacturers_name`
+                                   from " . TABLE_MANUFACTURERS . " order by `manufacturers_name`");
     while (!$manufacturers->EOF) {
       $manufacturers_array[] = array('id' => $manufacturers->fields['manufacturers_id'],
                                      'text' => $manufacturers->fields['manufacturers_name']);
@@ -91,8 +91,8 @@
     }
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("select tax_class_id, tax_class_title
-                                     from " . TABLE_TAX_CLASS . " order by tax_class_title");
+    $tax_class = $db->Execute("select `tax_class_id`, `tax_class_title`
+                                     from " . TABLE_TAX_CLASS . " order by `tax_class_title`");
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],
                                  'text' => $tax_class->fields['tax_class_title']);

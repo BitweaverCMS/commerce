@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_types.php,v 1.3 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: media_types.php,v 1.4 2005/08/24 02:47:43 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -60,7 +60,7 @@
         $type_id = zen_db_prepare_input($_GET['mID']);
 
         $db->Execute("delete from " . TABLE_MEDIA_TYPES . "
-                      where type_id = '" . (int)$type_id . "'");
+                      where `type_id` = '" . (int)$type_id . "'");
 
 
         zen_redirect(zen_href_link_admin(FILENAME_MEDIA_TYPES, 'page=' . $_GET['page']));

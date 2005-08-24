@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: category_tree.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: category_tree.php,v 1.2 2005/08/24 02:51:13 lsces Exp $
 //
 
   class category_tree {
@@ -32,23 +32,23 @@
       }
       $this->tree = array();
       if ($product_type == 'all') {
-        $categories_query = "select c.categories_id, cd.categories_name, c.parent_id
+        $categories_query = "select c.`categories_id`, cd.`categories_name`, c.`parent_id`
                              from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                             where c.parent_id = '0'
-                             and c.categories_id = cd.categories_id
-                             and cd.language_id='" . (int)$_SESSION['languages_id'] . "'
-                             and c.categories_status= '1'
-                             order by sort_order, cd.categories_name";
+                             where c.`parent_id` = '0'
+                             and c.`categories_id` = cd.`categories_id`
+                             and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
+                             and c.`categories_status`= '1'
+                             order by `sort_order`, cd.`categories_name`";
       } else {
-        $categories_query = "select ptc.category_id as categories_id, cd.categories_name, c.parent_id
+        $categories_query = "select ptc.`category_id` as `categories_id`, cd.`categories_name`, c.`parent_id`
                              from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
-                             where c.parent_id = '0'
-                             and ptc.category_id = cd.categories_id
-                             and ptc.product_type_id = '" . $master_type . "'
-                             and c.categories_id = ptc.category_id
-                             and cd.language_id='" . (int)$_SESSION['languages_id'] ."'
-                             and c.categories_status= '1'
-                             order by sort_order, cd.categories_name";
+                             where c.`parent_id` = '0'
+                             and ptc.`category_id` = cd.`categories_id`
+                             and ptc.`product_type_id` = '" . $master_type . "'
+                             and c.`categories_id` = ptc.`category_id`
+                             and cd.`language_id`='" . (int)$_SESSION['languages_id'] ."'
+                             and c.`categories_status`= '1'
+                             order by `sort_order`, cd.`categories_name`";
       }
       $categories = $db->Execute($categories_query, '', true, 150);
       while (!$categories->EOF)  {
@@ -76,33 +76,33 @@
           unset($parent_id);
           unset($first_id);
       if ($product_type == 'all') {
-          $categories_query = "select c.categories_id, cd.categories_name, c.parent_id
+          $categories_query = "select c.`categories_id`, cd.`categories_name`, c.`parent_id`
                                from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                               where c.parent_id = '" . (int)$value . "'
-                               and c.categories_id = cd.categories_id
-                               and cd.language_id='" . (int)$_SESSION['languages_id'] . "'
-                               and c.categories_status= '1'
-                               order by sort_order, cd.categories_name";
+                               where c.`parent_id` = '" . (int)$value . "'
+                               and c.`categories_id` = cd.`categories_id`
+                               and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
+                               and c.`categories_status`= '1'
+                               order by `sort_order`, cd.`categories_name`";
      } else {
 /*
-          $categories_query = "select ptc.category_id as categories, cd.categories_name, c.parent_id
+          $categories_query = "select ptc.`category_id` as categories, cd.`categories_name`, c.`parent_id`
                                from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
-                               where c.parent_id = '" . (int)$value . "'
-                               and ptc.category_id = cd.categories_id
-                             and ptc.product_type_id = '" . $master_type . "'
-                               and cd.language_id='" . (int)$_SESSION['languages_id'] . "'
-                               and c.categories_status= '1'
-                               order by sort_order, cd.categories_name";
+                               where c.`parent_id` = '" . (int)$value . "'
+                               and ptc.`category_id` = cd.`categories_id`
+                             and ptc.`product_type_id` = '" . $master_type . "'
+                               and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
+                               and c.`categories_status`= '1'
+                               order by `sort_order`, cd.`categories_name`";
 */
-        $categories_query = "select ptc.category_id as categories_id, cd.categories_name, c.parent_id
+        $categories_query = "select ptc.`category_id` as categories_id, cd.`categories_name`, c.`parent_id`
                              from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
-                             where c.parent_id = '" . (int)$value . "'
-                             and ptc.category_id = cd.categories_id
-                             and ptc.product_type_id = '" . $master_type . "'
-                             and c.categories_id = ptc.category_id
-                             and cd.language_id='" . (int)$_SESSION['languages_id'] ."'
-                             and c.categories_status= '1'
-                             order by sort_order, cd.categories_name";
+                             where c.`parent_id` = '" . (int)$value . "'
+                             and ptc.`category_id` = cd.`categories_id`
+                             and ptc.`product_type_id` = '" . $master_type . "'
+                             and c.`categories_id` = ptc.`category_id`
+                             and cd.`language_id`='" . (int)$_SESSION['languages_id'] ."'
+                             and c.`categories_status`= '1'
+                             order by `sort_order`, cd.`categories_name`";
 
      }
 

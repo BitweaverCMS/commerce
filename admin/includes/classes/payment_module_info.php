@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: payment_module_info.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: payment_module_info.php,v 1.2 2005/08/24 02:48:58 lsces Exp $
 //
 
 
@@ -33,7 +33,7 @@
         $key_value = $db->Execute("select configuration_title, configuration_value,
                                           configuration_description
                                    from " . TABLE_CONFIGURATION . "
-                                   where configuration_key = '" . $pmInfo_array[$i] . "'");
+                                   where `configuration_key` = '" . $pmInfo_array[$i] . "'");
 
         $this->keys[$pmInfo_array[$i]]['title'] = $key_value->fields['configuration_title'];
         $this->keys[$pmInfo_array[$i]]['value'] = $key_value->fields['configuration_value'];

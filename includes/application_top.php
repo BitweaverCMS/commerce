@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.18 2005/08/19 13:24:30 spiderr Exp $
+// $Id: application_top.php,v 1.19 2005/08/24 02:50:27 lsces Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -102,17 +102,17 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
   require(DIR_WS_CLASSES . 'email.php');
 
 // Set theme related directories
-  $sql = "SELECT template_dir
+  $sql = "SELECT `template_dir`
           FROM " . TABLE_TEMPLATE_SELECT .
-         " WHERE template_language = '0'";
+         " WHERE `template_language` = '0'";
 
   $template_query = $db->Execute($sql);
 
   $template_dir = $template_query->fields['template_dir'];
 
-  $sql = "SELECT template_dir
+  $sql = "SELECT `template_dir`
           FROM " . TABLE_TEMPLATE_SELECT .
-         " WHERE template_language = '" . $_SESSION['languages_id'] . "'";
+         " WHERE `template_language` = '" . $_SESSION['languages_id'] . "'";
 
   $template_query = $db->Execute($sql);
 
@@ -584,9 +584,9 @@ case 'wishlist_add_cart': reset ($lvnr);
                                  while (list($key,$elem) =each ($lvnr))
                                        {
                                         (list($key1,$elem1) =each ($lvanz));
-                                        $db->Execute("update " . TABLE_WISHLIST . " SET products_quantity=$elem1 WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_id=$elem");
-                                        $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_quantity='999'");
-                                        $products_in_wishlist = $db->Execute("SELECT * FROM " . TABLE_WISHLIST . " WHERE customers_id= '" . $_SESSION['customer_id'] . "' AND products_id = $elem AND products_quantity <> '0'");
+                                        $db->Execute("update " . TABLE_WISHLIST . " SET `products_quantity`=$elem1 WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id`=$elem");
+                                        $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_quantity`='999'");
+                                        $products_in_wishlist = $db->Execute("SELECT * FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id` = $elem AND `products_quantity` <> '0'");
 
                                         while (!$products_in_wishlist->EOF)
                                               {
@@ -601,7 +601,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 // remove item FROM the wishlist
 ///// CHANGES TO case 'remove_wishlist' BY DREAMSCAPE /////
       case 'remove_wishlist' :
-                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $HTTP_GET_VARS['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $HTTP_GET_VARS['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
                             zen_redirect(zen_href_link(FILENAME_WISHLIST));
                              break;
     }

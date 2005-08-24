@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.5 2005/08/19 16:37:42 spiderr Exp $
+//  $Id: modules.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -73,10 +73,10 @@
           }
 // EOF: UPS USPS
           $db->Execute("update " . TABLE_CONFIGURATION . "
-                    set configuration_value = '" . $value . "'
-            where configuration_key = '" . $key . "'");
+                    set `configuration_value` = '" . $value . "'
+            where `configuration_key` = '" . $key . "'");
         }
-        $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
+        $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                           from ' . TABLE_CONFIGURATION;
 
         $configuration = $db->Execute($configuration_query);
@@ -88,7 +88,7 @@
         $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
         $class = basename($_GET['module']);
         if (file_exists($module_directory . $class . $file_extension)) {
-    $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
+    $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                                 from ' . TABLE_CONFIGURATION;
 
           $configuration = $db->Execute($configuration_query);
@@ -203,10 +203,10 @@
         $module_keys = $module->keys();
         $keys_extra = array();
         for ($j=0, $k=sizeof($module_keys); $j<$k; $j++) {
-          $key_value = $db->Execute("select configuration_title, configuration_value, configuration_key,
-                                        configuration_description, use_function, set_function
+          $key_value = $db->Execute("select `configuration_title`, `configuration_value`, `configuration_key`,
+                                        `configuration_description`, `use_function`, `set_function`
                      from " . TABLE_CONFIGURATION . "
-                   where configuration_key = '" . $module_keys[$j] . "'");
+                   where `configuration_key` = '" . $module_keys[$j] . "'");
 
           $keys_extra[$module_keys[$j]]['title'] = $key_value->fields['configuration_title'];
           $keys_extra[$module_keys[$j]]['value'] = $key_value->fields['configuration_value'];
@@ -231,8 +231,8 @@
                 <td class="dataTableContent"><?php echo $module->code; ?></td>
                 <td class="dataTableContent" align="right"><?php if (is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
 <?php
-  if ($set == 'payment') {
-    $orders_status_name = $db->query("select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where orders_status_id=? and language_id=? ", array( $module->order_status, $_SESSION['languages_id'] ) );
+  if ($set == 'payment' and !empty($module->order_status)) {
+		$orders_status_name = $db->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );
 ?>
                 <td class="dataTableContent" align="left">&nbsp;&nbsp;&nbsp;<?php echo (is_numeric($module->sort_order) ? (($orders_status_name->fields['orders_status_id'] < 1) ? TEXT_DEFAULT : $orders_status_name->fields['orders_status_name']) : ''); ?>&nbsp;&nbsp;&nbsp;</td>
 <?php } ?>
@@ -242,20 +242,20 @@
     }
   }
   ksort($installed_modules);
-  $check = $db->Execute("select configuration_value
+  $check = $db->Execute("select `configuration_value`
                          from " . TABLE_CONFIGURATION . "
-             where configuration_key = '" . $module_key . "'");
+             where `configuration_key` = '" . $module_key . "'");
 
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
       $db->Execute("update " . TABLE_CONFIGURATION . "
-                  set configuration_value = '" . implode(';', $installed_modules) . "', last_modified = now()
-          where configuration_key = '" . $module_key . "'");
+                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = now()
+          where `configuration_key` = '" . $module_key . "'");
     }
   } else {
     $db->Execute("insert into " . TABLE_CONFIGURATION . "
-                (configuration_title, configuration_key, configuration_value,
-                 configuration_description, configuration_group_id, sort_order, date_added)
+                (`configuration_title`, `configuration_key`, `configuration_value`,
+                 `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`)
                 values ('Installed Modules', '" . $module_key . "', '" . implode(';', $installed_modules) . "',
                         'This is automatically updated. No need to edit.', '6', '0', now())");
   }

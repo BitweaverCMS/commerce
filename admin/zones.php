@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: zones.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: zones.php,v 1.3 2005/08/24 02:48:11 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -31,7 +31,7 @@
         $zone_name = zen_db_prepare_input($_POST['zone_name']);
 
         $db->Execute("insert into " . TABLE_ZONES . "
-                    (zone_country_id, zone_code, zone_name)
+                    (`zone_country_id`, `zone_code`, `zone_name`)
                     values ('" . (int)$zone_country_id . "',
                             '" . zen_db_input($zone_code) . "',
                             '" . zen_db_input($zone_name) . "')");
@@ -45,10 +45,10 @@
         $zone_name = zen_db_prepare_input($_POST['zone_name']);
 
         $db->Execute("update " . TABLE_ZONES . "
-                      set zone_country_id = '" . (int)$zone_country_id . "',
-                          zone_code = '" . zen_db_input($zone_code) . "',
-                          zone_name = '" . zen_db_input($zone_name) . "'
-                      where zone_id = '" . (int)$zone_id . "'");
+                      set `zone_country_id` = '" . (int)$zone_country_id . "',
+                          `zone_code` = '" . zen_db_input($zone_code) . "',
+                          `zone_name` = '" . zen_db_input($zone_name) . "'
+                      where `zone_id` = '" . (int)$zone_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_ZONES, 'page=' . $_GET['page'] . '&cID=' . $zone_id));
         break;

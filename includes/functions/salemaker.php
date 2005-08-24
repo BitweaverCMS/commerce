@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: salemaker.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: salemaker.php,v 1.2 2005/08/24 02:51:32 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -28,8 +28,8 @@
   function zen_set_salemaker_status($sale_id, $status) {
     global $db;
     $sql = "update " . TABLE_SALEMAKER_SALES . "
-            set sale_status = '" . $status . "', sale_date_status_change = now()
-            where sale_id = '" . (int)$sale_id . "'";
+            set `sale_status` = '" . $status . "', `sale_date_status_change` = 'NOW'
+            where `sale_id` = '" . (int)$sale_id . "'";
 
     return $db->Execute($sql);
    }
@@ -39,11 +39,11 @@
   function zen_expire_salemaker() {
     global $db;
 
-    $salemaker_query = "select sale_id
+    $salemaker_query = "select `sale_id`
                        from " . TABLE_SALEMAKER_SALES . "
-                       where sale_status = '1'
-                       and ((now() >= sale_date_end and sale_date_end != '0001-01-01')
-                       or (now() < sale_date_start and sale_date_start != '0001-01-01'))";
+                       where `sale_status` = '1'
+                       and (('NOW' >= `sale_date_end` and `sale_date_end` != '0001-01-01')
+                       or ('NOW' < `sale_date_start` and `sale_date_start` != '0001-01-01'))";
 
     $salemaker = $db->Execute($salemaker_query);
 
@@ -61,12 +61,12 @@
   function zen_start_salemaker() {
     global $db;
 
-    $salemaker_query = "select sale_id
+    $salemaker_query = "select `sale_id`
                        from " . TABLE_SALEMAKER_SALES . "
-                       where sale_status = '0'
-                       and (((sale_date_start <= now() and sale_date_start != '0001-01-01') and (sale_date_end >= now()))
-                       or ((sale_date_start <= now() and sale_date_start != '0001-01-01') and (sale_date_end = '0001-01-01'))
-                       or (sale_date_start = '0001-01-01' and sale_date_end >= now()))
+                       where `sale_status` = '0'
+                       and (((`sale_date_start` <= 'NOW' and `sale_date_start` != '0001-01-01') and (`sale_date_end` >= 'NOW'))
+                       or ((`sale_date_start` <= 'NOW' and `sale_date_start` != '0001-01-01') and (`sale_date_end` = '0001-01-01'))
+                       or (`sale_date_start` = '0001-01-01' and `sale_date_end` >= 'NOW'))
                        ";
 
     $salemaker = $db->Execute($salemaker_query);
@@ -80,10 +80,10 @@
     }
 
 // turn off salemaker sales if not active yet
-    $salemaker_query = "select sale_id
+    $salemaker_query = "select `sale_id`
                        from " . TABLE_SALEMAKER_SALES . "
-                       where sale_status = '1'
-                       and (now() < sale_date_start and sale_date_start != '0001-01-01')
+                       where `sale_status` = '1'
+                       and ('NOW' < `sale_date_start` and `sale_date_start` != '0001-01-01')
                        ";
 
     $salemaker = $db->Execute($salemaker_query);

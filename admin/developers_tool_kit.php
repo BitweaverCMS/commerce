@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: developers_tool_kit.php,v 1.5 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: developers_tool_kit.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -167,9 +167,9 @@
       $found = 'false';
       $zv_files_group = $_POST['zv_files'];
 
-      $check_configure = $db->Execute("select * from " . TABLE_CONFIGURATION . " where configuration_key='" . $_POST['configuration_key'] . "'");
+      $check_configure = $db->Execute("select * from " . TABLE_CONFIGURATION . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
       if ($check_configure->RecordCount() < 1) {
-        $check_configure = $db->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where configuration_key='" . $_POST['configuration_key'] . "'");
+        $check_configure = $db->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
         if ($check_configure->RecordCount() < 1) {
           // build filenames to search
           switch ($zv_files_group) {
@@ -502,7 +502,7 @@ if ($show_configuration_info == 'true') {
           </tr>
 <?php
   if ($show_products_type_layout == 'true') {
-    $check_configure_group = $db->Execute("select * from " . TABLE_PRODUCT_TYPES . " where type_id='" . $check_configure->fields['product_type_id'] . "'");
+    $check_configure_group = $db->Execute("select * from " . TABLE_PRODUCT_TYPES . " where `type_id`='" . $check_configure->fields['product_type_id'] . "'");
   } else {
     $check_configure_group = $db->Execute("select * from " . TABLE_CONFIGURATION_GROUP . " where configuration_group_id='" . $check_configure->fields['configuration_group_id'] . "'");
   }

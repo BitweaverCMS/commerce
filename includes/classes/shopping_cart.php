@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.13 2005/08/19 13:24:30 spiderr Exp $
+// $Id: shopping_cart.php,v 1.14 2005/08/24 02:51:13 lsces Exp $
 //
 
   class shoppingCart {
@@ -992,7 +992,7 @@ if ((int)$products_id != $products_id) {
               $virtual_check_query = "select count(*) as total
                                       from " . TABLE_PRODUCTS_ATTRIBUTES . " pa, "
                                              . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                      where pa.products_id = '" . (int)$products_id . "'
+                                      where pa.`products_id` = '" . (int)$products_id . "'
                                       and pa.options_values_id = '" . (int)$value . "'
                                       and pa.products_attributes_id = pad.products_attributes_id";
 

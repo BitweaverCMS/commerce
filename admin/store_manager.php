@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.5 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: store_manager.php,v 1.6 2005/08/24 02:48:11 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -39,10 +39,10 @@
 
 // update all products in catalog
     case ('update_all_products_attributes_sort_order'):
-      $all_products_attributes= $db->Execute("select p.products_id, pa.products_attributes_id from " .
+      $all_products_attributes= $db->Execute("select p.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS . " p, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
-      where p.products_id= pa.products_id"
+      where p.`products_id`= pa.`products_id`"
       );
       while (!$all_products_attributes->EOF) {
         $count++;
@@ -268,9 +268,9 @@
       $found = 'false';
       $language_files_group = $_POST['language_files'];
 
-      $check_configure = $db->Execute("select * from " . TABLE_CONFIGURATION . " where configuration_key='" . $_POST['configuration_key'] . "'");
+      $check_configure = $db->Execute("select * from " . TABLE_CONFIGURATION . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
       if ($check_configure->RecordCount() < 1) {
-        $check_configure = $db->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where configuration_key='" . $_POST['configuration_key'] . "'");
+        $check_configure = $db->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
         if ($check_configure->RecordCount() < 1) {
 
         } else {
@@ -360,7 +360,7 @@ if ($show_configuration_info == 'true') {
           </tr>
 <?php
   if ($show_products_type_layout == 'true') {
-    $check_configure_group = $db->Execute("select * from " . TABLE_PRODUCT_TYPES . " where type_id='" . $check_configure->fields['product_type_id'] . "'");
+    $check_configure_group = $db->Execute("select * from " . TABLE_PRODUCT_TYPES . " where `type_id`='" . $check_configure->fields['product_type_id'] . "'");
   } else {
     $check_configure_group = $db->Execute("select * from " . TABLE_CONFIGURATION_GROUP . " where configuration_group_id='" . $check_configure->fields['configuration_group_id'] . "'");
   }

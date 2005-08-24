@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.3 2005/08/20 13:19:13 spiderr Exp $
+// $Id: blk_account_history.php,v 1.4 2005/08/24 02:50:50 lsces Exp $
 //
   $orders_total = zen_count_customer_orders();
 
@@ -30,7 +30,7 @@
                           and        o.orders_id = ot.orders_id
                           and        ot.class = 'ot_total'
                           and        o.orders_status = s.orders_status_id
-                          and        s.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                          and        s.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                           order by   orders_id DESC";
 
     $history_split = new splitPageResults($history_query_raw, MAX_DISPLAY_ORDER_HISTORY);

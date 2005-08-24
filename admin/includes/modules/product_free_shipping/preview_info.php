@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.3 2005/08/03 15:35:13 spiderr Exp $
+//  $Id: preview_info.php,v 1.4 2005/08/24 02:48:59 lsces Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -26,7 +26,7 @@
       $products_description = $_POST['products_description'];
       $products_url = $_POST['products_url'];
     } else {
-      $products = $db->Execute("select p.products_id, pd.language_id, pd.products_name,
+      $products = $db->Execute("select p.`products_id`, pd.`language_id`, pd.products_name,
                                       pd.products_description, pd.products_url, p.products_quantity,
                                       p.products_model, p.products_image, p.products_price, p.products_virtual,
                                       p.products_weight, p.products_date_added, p.products_last_modified,
@@ -36,8 +36,8 @@
                                       p.product_is_always_free_ship, p.products_qty_box_status, p.products_quantity_order_max,
                     p.products_sort_order
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                               where p.products_id = pd.products_id
-                               and p.products_id = '" . (int)$_GET['pID'] . "'");
+                               where p.`products_id` = pd.`products_id`
+                               and p.`products_id` = '" . (int)$_GET['pID'] . "'");
 
       $pInfo = new objectInfo($product->fields);
       $products_image_name = $pInfo->products_image;

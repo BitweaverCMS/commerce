@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.3 2005/08/19 13:24:30 spiderr Exp $
+// $Id: functions_categories.php,v 1.4 2005/08/24 02:51:32 lsces Exp $
 //
 //
 ////
@@ -108,18 +108,18 @@
 
     // show based on status
     if ($status_setting != '') {
-      $zc_status = " c.categories_status='" . $status_setting . "' and ";
+      $zc_status = " c.`categories_status`='" . $status_setting . "' and ";
     } else {
       $zc_status = '';
     }
 
-    $categories_query = "select c.categories_id, cd.categories_name, c.categories_status
+    $categories_query = "select c.`categories_id`, cd.`categories_name`, c.`categories_status`
                          from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                          where " . $zc_status . "
                          parent_id = '" . (int)$parent_id . "'
-                         and c.categories_id = cd.categories_id
-                         and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                         order by sort_order, cd.categories_name";
+                         and c.`categories_id` = cd.`categories_id`
+                         and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                         order by `sort_order`, cd.`categories_name`";
 
     $categories = $db->Execute($categories_query);
 
@@ -185,11 +185,11 @@
     global $db;
     $cPath = '';
 
-    $category_query = "select p2c.categories_id
+    $category_query = "select p2c.`categories_id`
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                       where p.products_id = '" . (int)$products_id . "'
+                       where p.`products_id` = '" . (int)$products_id . "'
                        and p.products_status = '1'
-                       and p.products_id = p2c.products_id limit 1";
+                       and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);
 
@@ -295,10 +295,10 @@
 
     $select_string .= '>';
 
-    $products = $db->Execute("select p.products_id, pd.products_name, p.products_price
+    $products = $db->Execute("select p.`products_id`, pd.products_name, p.products_price
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                              where p.products_id = pd.products_id
-                              and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                              where p.`products_id` = pd.`products_id`
+                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               order by products_name");
 
     while (!$products->EOF) {
@@ -333,12 +333,12 @@
 
     $new_fields=', p.products_model';
 
-    $products = $db->Execute("select distinct p.products_id, pd.products_name, p.products_price" . $new_fields ."
+    $products = $db->Execute("select distinct p.`products_id`, pd.products_name, p.products_price" . $new_fields ."
                               from " . TABLE_PRODUCTS . " p, " .
                                        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                        TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
-                              where p.products_id= pa.products_id and p.products_id = pd.products_id
-                              and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                              where p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id`
+                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               order by products_name");
 
     while (!$products->EOF) {
@@ -372,13 +372,13 @@
 
     $select_string .= '>';
 
-    $categories = $db->Execute("select distinct c.categories_id, cd.categories_name " ."
+    $categories = $db->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
                                 from " . TABLE_CATEGORIES . " c, " .
                                          TABLE_CATEGORIES_DESCRIPTION . " cd, " .
                                          TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " ."
-                                where ptoc.categories_id = c.categories_id
-                                and c.categories_id = cd.categories_id
-                                and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                                where ptoc.`categories_id` = c.`categories_id`
+                                and c.`categories_id` = cd.`categories_id`
+                                and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 order by categories_name");
 
     while (!$categories->EOF) {
@@ -410,15 +410,15 @@
 
     $select_string .= '>';
 
-    $categories = $db->Execute("select distinct c.categories_id, cd.categories_name " ."
+    $categories = $db->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
                                 from " . TABLE_CATEGORIES . " c, " .
                                          TABLE_CATEGORIES_DESCRIPTION . " cd, " .
                                          TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
                                          TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
-                                where pa.products_id= ptoc.products_id
-                                and ptoc.categories_id= c.categories_id
-                                and c.categories_id = cd.categories_id
-                                and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                                where pa.`products_id`= ptoc.`products_id`
+                                and ptoc.`categories_id`= c.`categories_id`
+                                and c.`categories_id` = cd.`categories_id`
+                                and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 order by categories_name");
 
     while (!$categories->EOF) {

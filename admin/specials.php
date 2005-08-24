@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.5 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: specials.php,v 1.6 2005/08/24 02:48:11 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -208,13 +208,13 @@
     if ( ($action == 'edit') && isset($_GET['sID']) ) {
       $form_action = 'update';
 
-      $product = $db->Execute("select p.products_id, pd.products_name, p.products_price, p.products_priced_by_attribute,
+      $product = $db->Execute("select p.`products_id`, pd.products_name, p.products_price, p.products_priced_by_attribute,
                                       s.specials_new_products_price, s.expires_date, s.specials_date_available
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_SPECIALS . " s
-                               where p.products_id = pd.products_id
-                               and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                               and p.products_id = s.products_id
+                               where p.`products_id` = pd.`products_id`
+                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                               and p.`products_id` = s.`products_id`
                                and s.specials_id = '" . (int)$_GET['sID'] . "'");
 
       $sInfo = new objectInfo($product->fields);
@@ -229,9 +229,9 @@
 // create an array of products on special, which will be excluded from the pull down menu of products
 // (when creating a new product on special)
       $specials_array = array();
-      $specials = $db->Execute("select p.products_id, p.products_model
+      $specials = $db->Execute("select p.`products_id`, p.products_model
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
-                                where s.products_id = p.products_id");
+                                where s.`products_id` = p.`products_id`");
 
       while (!$specials->EOF) {
         $specials_array[] = $specials->fields['products_id'];
@@ -239,7 +239,7 @@
       }
 
 // never include Gift Vouchers for specials
-      $gift_vouchers = $db->Execute("select distinct p.products_id, p.products_model
+      $gift_vouchers = $db->Execute("select distinct p.`products_id`, p.products_model
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
                                 where UPPER( p.products_model ) like '%GIFT%'");
 
@@ -251,7 +251,7 @@
       }
 
 // do not include things that cannot go in the cart
-      $not_for_cart = $db->Execute("select p.products_id from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.products_type= pt.type_id where pt.allow_add_to_cart = 'N'");
+      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.allow_add_to_cart = 'N'");
 
       while (!$not_for_cart->EOF) {
         $specials_array[] = $not_for_cart->fields['products_id'];
@@ -324,7 +324,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
 
 // create split page control
 
-    $specials_query_raw = "select p.products_id, pd.products_name, p.products_model, p.products_price, p.products_priced_by_attribute, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status, s.specials_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' and p.products_id = s.products_id" . $search . $order_by;
+    $specials_query_raw = "select p.`products_id`, pd.products_name, p.products_model, p.products_price, p.products_priced_by_attribute, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status, s.specials_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
     $specials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $specials_query_raw, $specials_query_numrows);
     $specials = $db->Execute($specials_query_raw);
     while (!$specials->EOF) {

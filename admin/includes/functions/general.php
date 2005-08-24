@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.14 2005/08/20 13:19:13 spiderr Exp $
+//  $Id: general.php,v 1.15 2005/08/24 02:48:58 lsces Exp $
 //
 
 ////
@@ -174,20 +174,20 @@
     if ( (sizeof($category_tree_array) < 1) && ($exclude != '0') ) $category_tree_array[] = array('id' => '0', 'text' => TEXT_TOP);
 
     if ($include_itself) {
-      $category = $db->Execute("SELECT cd.categories_name
+      $category = $db->Execute("SELECT cd.`categories_name`
                                 FROM " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                WHERE cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                and cd.categories_id = '" . (int)$parent_id . "'");
+                                WHERE cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                and cd.`categories_id` = '" . (int)$parent_id . "'");
 
       $category_tree_array[] = array('id' => $parent_id, 'text' => $category->fields['categories_name']);
     }
 
-    $categories = $db->Execute("SELECT c.categories_id, cd.categories_name, c.parent_id
+    $categories = $db->Execute("SELECT c.`categories_id`, cd.`categories_name`, c.`parent_id`
                                 FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                WHERE c.categories_id = cd.categories_id
-                                and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                and c.parent_id = '" . (int)$parent_id . "'
-                                ORDER BY c.sort_order, cd.categories_name");
+                                WHERE c.`categories_id` = cd.`categories_id`
+                                and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                and c.`parent_id` = '" . (int)$parent_id . "'
+                                ORDER BY c.`sort_order`, cd.`categories_name`");
 
     while (!$categories->EOF) {
       if ($category_has_products == true and zen_products_in_category_count($categories->fields['categories_id'], '', false, true) >= 1) {
@@ -223,17 +223,17 @@
 
     if ($show_current_category) {
 // only show $current_categories_id
-      $products = $db->Execute("SELECT p.products_id, pd.products_name, p.products_price, p.products_model, ptc.categories_id
-                                FROM " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.products_id = pd.products_id )
-                                	LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on ptc.products_id = p.products_id
-                                WHERE pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                and ptc.categories_id = '" . $current_category_id . "'
+      $products = $db->Execute("SELECT p.`products_id`, pd.products_name, p.products_price, p.products_model, ptc.`categories_id`
+                                FROM " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
+                                	LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on ptc.`products_id` = p.`products_id`
+                                WHERE pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                and ptc.`categories_id` = '" . $current_category_id . "'
                                 ORDER BY products_name");
     } else {
-      $products = $db->Execute("SELECT p.products_id, pd.products_name, p.products_price, p.products_model
+      $products = $db->Execute("SELECT p.`products_id`, pd.products_name, p.products_price, p.products_model
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                                WHERE p.products_id = pd.products_id
-                                and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                                WHERE p.`products_id` = pd.`products_id`
+                                and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 ORDER BY products_name");
     }
 
@@ -308,9 +308,9 @@
   function zen_tax_classes_pull_down($parameters, $selected = '') {
     global $db;
     $select_string = '<SELECT ' . $parameters . '>';
-    $classes = $db->Execute("SELECT tax_class_id, tax_class_title
+    $classes = $db->Execute("SELECT `tax_class_id`, `tax_class_title`
                              FROM " . TABLE_TAX_CLASS . "
-                             ORDER BY tax_class_title");
+                             ORDER BY `tax_class_title`");
 
     while (!$classes->EOF) {
       $select_string .= '<option value="' . $classes->fields['tax_class_id'] . '"';
@@ -327,9 +327,9 @@
   function zen_geo_zones_pull_down($parameters, $selected = '') {
     global $db;
     $select_string = '<SELECT ' . $parameters . '>';
-    $zones = $db->Execute("SELECT geo_zone_id, geo_zone_name
+    $zones = $db->Execute("SELECT `geo_zone_id`, `geo_zone_name`
                                  FROM " . TABLE_GEO_ZONES . "
-                                 ORDER BY geo_zone_name");
+                                 ORDER BY `geo_zone_name`");
 
     while (!$zones->EOF) {
       $select_string .= '<option value="' . $zones->fields['geo_zone_id'] . '"';
@@ -345,9 +345,9 @@
 
   function zen_get_geo_zone_name($geo_zone_id) {
     global $db;
-    $zones = $db->Execute("SELECT geo_zone_name
+    $zones = $db->Execute("SELECT `geo_zone_name`
                            FROM " . TABLE_GEO_ZONES . "
-                           WHERE geo_zone_id = '" . (int)$geo_zone_id . "'");
+                           WHERE `geo_zone_id` = '" . (int)$geo_zone_id . "'");
 
     if ($zones->RecordCount() < 1) {
       $geo_zone_name = $geo_zone_id;
@@ -535,14 +535,14 @@
 
       $products = $db->Execute("SELECT count(*) as total
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                                WHERE p.products_id = p2c.products_id
-                                and p2c.categories_id = '" . (int)$categories_id . "'" . $limit_count);
+                                WHERE p.`products_id` = p2c.`products_id`
+                                and p2c.`categories_id` = '" . (int)$categories_id . "'" . $limit_count);
     } else {
       $products = $db->Execute("SELECT count(*) as total
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                                WHERE p.products_id = p2c.products_id
+                                WHERE p.`products_id` = p2c.`products_id`
                                 and p.products_status = '1'
-                                and p2c.categories_id = '" . (int)$categories_id . "'" . $limit_count);
+                                and p2c.`categories_id` = '" . (int)$categories_id . "'" . $limit_count);
 
     }
 
@@ -612,10 +612,10 @@
   function zen_get_country_zones($country_id) {
     global $db;
     $zones_array = array();
-    $zones = $db->Execute("SELECT zone_id, zone_name
+    $zones = $db->Execute("SELECT `zone_id`, `zone_name`
                            FROM " . TABLE_ZONES . "
-                           WHERE zone_country_id = '" . (int)$country_id . "'
-                           ORDER BY zone_name");
+                           WHERE `zone_country_id` = '" . (int)$country_id . "'
+                           ORDER BY `zone_name`");
 
     while (!$zones->EOF) {
       $zones_array[] = array('id' => $zones->fields['zone_id'],
@@ -675,7 +675,7 @@
   function zen_cfg_select_coupon_id($coupon_id, $key = '') {
     global $db;
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
-    $coupons = $db->execute("SELECT cd.coupon_name, c.coupon_id FROM " . TABLE_COUPONS ." c, ". TABLE_COUPONS_DESCRIPTION . " cd WHERE cd.coupon_id = c.coupon_id and cd.language_id = '" . $_SESSION['languages_id'] . "'");
+    $coupons = $db->execute("SELECT cd.coupon_name, c.coupon_id FROM " . TABLE_COUPONS ." c, ". TABLE_COUPONS_DESCRIPTION . " cd WHERE cd.coupon_id = c.coupon_id and cd.`language_id` = '" . $_SESSION['languages_id'] . "'");
     $coupon_array[] = array('id' => '0',
                               'text' => 'None');
 
@@ -717,9 +717,9 @@
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("SELECT tax_class_id, tax_class_title
+    $tax_class = $db->Execute("SELECT `tax_class_id`, `tax_class_title`
                                FROM " . TABLE_TAX_CLASS . "
-                               ORDER BY tax_class_title");
+                               ORDER BY `tax_class_title`");
 
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],
@@ -749,9 +749,9 @@
 
   function zen_cfg_get_zone_name($zone_id) {
     global $db;
-    $zone = $db->Execute("SELECT zone_name
+    $zone = $db->Execute("SELECT `zone_name`
                           FROM " . TABLE_ZONES . "
-                          WHERE zone_id = '" . (int)$zone_id . "'");
+                          WHERE `zone_id` = '" . (int)$zone_id . "'");
 
     if ($zone->RecordCount() < 1) {
       return $zone_id;
@@ -767,8 +767,8 @@
     global $db;
     if ($status == '1') {
       return $db->Execute("update " . TABLE_PRODUCTS . "
-                           set products_status = '1', products_last_modified = now()
-                           WHERE products_id = '" . (int)$products_id . "'");
+                           set `products_status` = '1', `products_last_modified` = 'NOW'
+                           WHERE `products_id` = '" . (int)$products_id . "'");
 
     } elseif ($status == '0') {
       return $db->Execute("update " . TABLE_PRODUCTS . "
@@ -869,11 +869,11 @@
         if ($categories->fields['categories_id'] == '0') {
           $categories_array[$index][] = array('id' => '0', 'text' => TEXT_TOP);
         } else {
-          $category = $db->Execute("SELECT cd.categories_name, c.parent_id
+          $category = $db->Execute("SELECT cd.`categories_name`, c.`parent_id`
                                     FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                    WHERE c.categories_id = '" . (int)$categories->fields['categories_id'] . "'
-                                    and c.categories_id = cd.categories_id
-                                    and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                    WHERE c.`categories_id` = '" . (int)$categories->fields['categories_id'] . "'
+                                    and c.`categories_id` = cd.`categories_id`
+                                    and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           $categories_array[$index][] = array('id' => $categories->fields['categories_id'], 'text' => $category->fields['categories_name']);
           if ( (zen_not_null($category->fields['parent_id'])) && ($category->fields['parent_id'] != '0') ) $categories_array = zen_generate_category_path($category->fields['parent_id'], 'category', $categories_array, $index);
@@ -883,11 +883,11 @@
         $categories->MoveNext();
       }
     } elseif ($from == 'category') {
-      $category = $db->Execute("SELECT cd.categories_name, c.parent_id
+      $category = $db->Execute("SELECT cd.`categories_name`, c.`parent_id`
                                 FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                WHERE c.categories_id = '" . (int)$id . "'
-                                and c.categories_id = cd.categories_id
-                                and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                WHERE c.`categories_id` = '" . (int)$id . "'
+                                and c.`categories_id` = cd.`categories_id`
+                                and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
       $categories_array[$index][] = array('id' => $id, 'text' => $category->fields['categories_name']);
       if ( (zen_not_null($category->fields['parent_id'])) && ($category->fields['parent_id'] != '0') ) $categories_array = zen_generate_category_path($category->fields['parent_id'], 'category', $categories_array, $index);
@@ -1192,9 +1192,9 @@
     if ($tax_class_id == '0') {
       return TEXT_NONE;
     } else {
-      $classes = $db->Execute("SELECT tax_class_title
+      $classes = $db->Execute("SELECT `tax_class_title`
                                FROM " . TABLE_TAX_CLASS . "
-                               WHERE tax_class_id = '" . (int)$tax_class_id . "'");
+                               WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
       return $classes->fields['tax_class_title'];
     }
@@ -1272,7 +1272,7 @@
     global $db;
     $tax = $db->Execute("SELECT SUM(tax_rate) as tax_rate
                          FROM " . TABLE_TAX_RATES . "
-                         WHERE tax_class_id = '" . (int)$class_id . "'
+                         WHERE `tax_class_id` = '" . (int)$class_id . "'
                          group by tax_priority");
 
     if ($tax->RecordCount() > 0) {
@@ -1302,9 +1302,9 @@
     if ($zone_class_id == '0') {
       return TEXT_NONE;
     } else {
-      $classes = $db->Execute("SELECT geo_zone_name
+      $classes = $db->Execute("SELECT `geo_zone_name`
                                FROM " . TABLE_GEO_ZONES . "
-                               WHERE geo_zone_id = '" . (int)$zone_class_id . "'");
+                               WHERE `geo_zone_id` = '" . (int)$zone_class_id . "'");
 
       return $classes->fields['geo_zone_name'];
     }
@@ -1316,9 +1316,9 @@
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
     $zone_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $zone_class = $db->Execute("SELECT geo_zone_id, geo_zone_name
+    $zone_class = $db->Execute("SELECT `geo_zone_id`, `geo_zone_name`
                                 FROM " . TABLE_GEO_ZONES . "
-                                ORDER BY geo_zone_name");
+                                ORDER BY `geo_zone_name`");
 
     while (!$zone_class->EOF) {
       $zone_class_array[] = array('id' => $zone_class->fields['geo_zone_id'],
@@ -1735,7 +1735,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_delete_products_attributes($delete_product_id) {
     global $db;
     // delete associated downloads
-    $products_delete_from= $db->Execute("SELECT pa.products_id, pad.products_attributes_id FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad  WHERE pa.products_id='" . $delete_product_id . "' and pad.products_attributes_id= pa.products_attributes_id");
+    $products_delete_from= $db->Execute("SELECT pa.`products_id`, pad.products_attributes_id FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad  WHERE pa.`products_id`='" . $delete_product_id . "' and pad.products_attributes_id= pa.products_attributes_id");
     while (!$products_delete_from->EOF) {
       $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE products_attributes_id = '" . $products_delete_from['products_attributes_id'] . "'");
       $products_delete_from->MoveNext();
@@ -1749,7 +1749,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Set Product Attributes Sort Order to Products Option Value Sort Order
   function zen_update_attributes_products_option_values_sort_order($products_id) {
     global $db;
-    $attributes_sort_order = $db->Execute("SELECT distinct pa.products_attributes_id, pa.options_id, pa.options_values_id, pa.products_options_sort_order, pov.products_ov_sort_order FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.products_id = '" . $products_id . "' and pa.options_values_id = pov.products_options_values_id");
+    $attributes_sort_order = $db->Execute("SELECT distinct pa.products_attributes_id, pa.options_id, pa.options_values_id, pa.products_options_sort_order, pov.products_ov_sort_order FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.`products_id` = '" . $products_id . "' and pa.options_values_id = pov.products_options_values_id");
     while (!$attributes_sort_order->EOF) {
       $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set products_options_sort_order = '" . $attributes_sort_order->fields['products_ov_sort_order'] . "' WHERE products_id = '" . $products_id . "' and products_attributes_id = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
       $attributes_sort_order->MoveNext();
@@ -1780,7 +1780,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     if (DOWNLOAD_ENABLED == 'true') {
       $download_display_query_raw ="SELECT pa.products_attributes_id, pad.products_attributes_filename
                                     FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                    WHERE pa.products_id='" . $products_id . "' and pad.products_attributes_id= pa.products_attributes_id";
+                                    WHERE pa.`products_id`='" . $products_id . "' and pad.products_attributes_id= pa.products_attributes_id";
       $download_display = $db->Execute($download_display_query_raw);
       if ($check_valid == true) {
         $valid_downloads = '';
@@ -1873,7 +1873,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_get_handler_from_type($product_type) {
     global $db;
 
-    $sql = "SELECT type_handler FROM " . TABLE_PRODUCT_TYPES . " WHERE type_id = '" . $product_type . "'";
+    $sql = "SELECT `type_handler` FROM " . TABLE_PRODUCT_TYPES . " WHERE `type_id` = '" . $product_type . "'";
     $handler = $db->Execute($sql);
 	return $handler->fields['type_handler'];
   }
@@ -1969,14 +1969,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
         case ('products'):
         $cat_products_query = "SELECT count(*) as total
                            FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                           WHERE p.products_id = p2c.products_id
-                           and p2c.categories_id = '" . (int)$category_id . "'";
+                           WHERE p.`products_id` = p2c.`products_id`
+                           and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
         case ('products_active'):
-        $cat_products_query = "SELECT p.products_id
+        $cat_products_query = "SELECT p.`products_id`
                            FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                           WHERE p.products_id = p2c.products_id
-                           and p2c.categories_id = '" . (int)$category_id . "'";
+                           WHERE p.`products_id` = p2c.`products_id`
+                           and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
       }
 
@@ -1985,16 +1985,16 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
         case ('products'):
           $cat_products_query = "SELECT count(*) as total
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                             WHERE p.products_id = p2c.products_id
+                             WHERE p.`products_id` = p2c.`products_id`
                              and p.products_status = '1'
-                             and p2c.categories_id = '" . (int)$category_id . "'";
+                             and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
         case ('products_active'):
-          $cat_products_query = "SELECT p.products_id
+          $cat_products_query = "SELECT p.`products_id`
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                             WHERE p.products_id = p2c.products_id
+                             WHERE p.`products_id` = p2c.`products_id`
                              and p.products_status = '1'
-                             and p2c.categories_id = '" . (int)$category_id . "'";
+                             and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
       }
 
@@ -2054,12 +2054,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $master_category_array = array();
 
-    $master_categories_query = $db->Execute("SELECT ptc.products_id, cd.categories_name, cd.categories_id
+    $master_categories_query = $db->Execute("SELECT ptc.`products_id`, cd.`categories_name`, cd.`categories_id`
                                     FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
                                     left join " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                    on cd.categories_id = ptc.categories_id
-                                    WHERE ptc.products_id='" . $product_id . "'
-                                    and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
+                                    on cd.`categories_id` = ptc.`categories_id`
+                                    WHERE ptc.`products_id`='" . $product_id . "'
+                                    and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                     ");
 
     $master_category_array[] = array('id' => '0', 'text' => TEXT_INFO_SET_MASTER_CATEGORIES_ID);
@@ -2354,11 +2354,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $new_fields=', p.products_model';
 
-    $products = $db->Execute("SELECT distinct p.products_id, pd.products_name, p.products_price" . $new_fields .
+    $products = $db->Execute("SELECT distinct p.`products_id`, pd.products_name, p.products_price" . $new_fields .
         " FROM " . TABLE_PRODUCTS . " p, " .
         TABLE_PRODUCTS_DESCRIPTION . " pd, " .
         TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE p.products_id= pa.products_id and p.products_id = pd.products_id and pd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY products_name");
+        " WHERE p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY products_name");
 
     while (!$products->EOF) {
       if (!in_array($products->fields['products_id'], $exclude)) {
@@ -2390,11 +2390,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $select_string .= '>';
 
-    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
+    $categories = $db->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
         " FROM " . TABLE_CATEGORIES . " c, " .
         TABLE_CATEGORIES_DESCRIPTION . " cd, " .
         TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " .
-        " WHERE ptoc.categories_id = c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
+        " WHERE ptoc.`categories_id` = c.`categories_id` and c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
 
     while (!$categories->EOF) {
       if (!in_array($categories->fields['categories_id'], $exclude)) {
@@ -2433,12 +2433,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $select_string .= '>';
 
-    $categories = $db->Execute("SELECT distinct c.categories_id, cd.categories_name " .
+    $categories = $db->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
         " FROM " . TABLE_CATEGORIES . " c, " .
         TABLE_CATEGORIES_DESCRIPTION . " cd, " .
         TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
         TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE pa.products_id= ptoc.products_id and ptoc.categories_id= c.categories_id and c.categories_id = cd.categories_id and cd.language_id = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
+        " WHERE pa.`products_id`= ptoc.`products_id` and ptoc.`categories_id`= c.`categories_id` and c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
     while (!$categories->EOF) {
       if (!in_array($categories->fields['categories_id'], $exclude)) {
         $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . '</option>';
@@ -2474,11 +2474,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     global $db;
     $cPath = '';
 
-    $category_query = "SELECT p2c.categories_id
+    $category_query = "SELECT p2c.`categories_id`
                        FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                       WHERE p.products_id = '" . (int)$products_id . "' " .
+                       WHERE p.`products_id` = '" . (int)$products_id . "' " .
                        ($status_override == '1' ? " and p.products_status = '1' " : '') . "
-                       and p.products_id = p2c.products_id limit 1";
+                       and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);
 
@@ -2525,12 +2525,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     if (!is_array($categories_array)) $categories_array = array();
 
-    $categories_query = "SELECT c.categories_id, cd.categories_name
+    $categories_query = "SELECT c.`categories_id`, cd.`categories_name`
                          FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                          WHERE parent_id = '" . (int)$parent_id . "'
-                         and c.categories_id = cd.categories_id
-                         and cd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                         ORDER BY sort_order, cd.categories_name";
+                         and c.`categories_id` = cd.`categories_id`
+                         and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                         ORDER BY `sort_order`, cd.`categories_name`";
 
     $categories = $db->Execute($categories_query);
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.4 2005/08/03 17:07:44 spiderr Exp $
+//  $Id: option_values.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
 //
 ?>
 <?php
@@ -53,11 +53,11 @@
       break;
 // update by category
     case ('update_categories_attributes'):
-      $all_products_attributes= $db->Execute("select ptoc.products_id, pa.products_attributes_id from " .
+      $all_products_attributes= $db->Execute("select ptoc.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
-      where ptoc.categories_id = '" . $_POST['categories_update_id'] . "' and
-      pa.products_id = ptoc.products_id"
+      where ptoc.`categories_id` = '" . $_POST['categories_update_id'] . "' and
+      pa.`products_id` = ptoc.`products_id`"
       );
       while (!$all_products_attributes->EOF) {
         $count++;
@@ -71,10 +71,10 @@
       break;
 // update all products in catalog
     case ('update_all_products_attributes_sort_order'):
-      $all_products_attributes= $db->Execute("select p.products_id, pa.products_attributes_id from " .
+      $all_products_attributes= $db->Execute("select p.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS . " p, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
-      where p.products_id= pa.products_id"
+      where p.`products_id`= pa.`products_id`"
       );
       while (!$all_products_attributes->EOF) {
         $count++;
@@ -165,7 +165,7 @@ if ($_GET['options_id']=='') {
 <?php
     echo '    <tr class="dataTableHeadingRow"><td class="dataTableHeadingContent">Option ID</td><td class="dataTableHeadingContent">Option Value Name</td><td class="dataTableHeadingContent">Sort Order</td></tr><tr>';
 
-    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.products_options_values_id = pov.products_options_values_id and povtpo.products_options_id='" . $_GET['options_id'] . "' and pov.language_id = '" . $_SESSION['languages_id'] . "' ORDER BY pov.products_ov_sort_order, pov.products_options_values_id");
+    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.products_options_values_id = pov.products_options_values_id and povtpo.products_options_id='" . $_GET['options_id'] . "' and pov.`language_id` = '" . $_SESSION['languages_id'] . "' ORDER BY pov.products_ov_sort_order, pov.products_options_values_id");
 
     if (!$row->EOF) {
        $option_values_exist = true;

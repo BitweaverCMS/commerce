@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: reviews.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -41,7 +41,7 @@
 
         $db->Execute("update " . TABLE_REVIEWS . "
                       set reviews_rating = '" . zen_db_input($reviews_rating) . "',
-                      last_modified = now() where reviews_id = '" . (int)$reviews_id . "'");
+                      `last_modified` = now() where reviews_id = '" . (int)$reviews_id . "'");
 
         $db->Execute("update " . TABLE_REVIEWS_DESCRIPTION . "
                       set reviews_text = '" . zen_db_input($reviews_text) . "'
@@ -135,19 +135,19 @@
   if ($action == 'edit') {
     $rID = zen_db_prepare_input($_GET['rID']);
 
-    $reviews = $db->Execute("select r.reviews_id, r.products_id, r.customers_name, r.date_added,
-                                    r.last_modified, r.reviews_read, rd.reviews_text, r.reviews_rating
+    $reviews = $db->Execute("select r.reviews_id, r.`products_id`, r.customers_name, r.`date_added`,
+                                    r.`last_modified`, r.reviews_read, rd.reviews_text, r.reviews_rating
                              from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                              where r.reviews_id = '" . (int)$rID . "' and r.reviews_id = rd.reviews_id");
 
-    $products = $db->Execute("select products_image
+    $products = $db->Execute("select `products_image`
                               from " . TABLE_PRODUCTS . "
-                              where products_id = '" . (int)$reviews->fields['products_id'] . "'");
+                              where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
-    $products_name = $db->Execute("select products_name
+    $products_name = $db->Execute("select `products_name`
                                    from " . TABLE_PRODUCTS_DESCRIPTION . "
-                                   where products_id = '" . (int)$reviews->fields['products_id'] . "'
-                                   and language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                   where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
+                                   and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
     $rInfo_array = array_merge($reviews->fields, $products->fields, $products_name->fields);
     $rInfo = new objectInfo($rInfo_array);
@@ -189,21 +189,21 @@
     } else {
       $rID = zen_db_prepare_input($_GET['rID']);
 
-      $reviews = $db->Execute("select r.reviews_id, r.products_id, r.customers_name, r.date_added,
-                                      r.last_modified, r.reviews_read, rd.reviews_text,
-                                      r.reviews_rating
+      $reviews = $db->Execute("select r.`reviews_id`, r.`products_id`, r.`customers_name`, r.`date_added`,
+                                      r.`last_modified`, r.`reviews_read`, rd.`reviews_text`,
+                                      r.`reviews_rating`
                                from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
-                               where r.reviews_id = '" . (int)$rID . "'
-                               and r.reviews_id = rd.reviews_id");
+                               where r.`reviews_id` = '" . (int)$rID . "'
+                               and r.`reviews_id` = rd.`reviews_id`");
 
-      $products = $db->Execute("select products_image
+      $products = $db->Execute("select `products_image`
                                 from " . TABLE_PRODUCTS . "
-                                where products_id = '" . (int)$reviews->fields['products_id'] . "'");
+                                where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
-      $products_name = $db->Execute("select products_name
+      $products_name = $db->Execute("select `products_name`
                                      from " . TABLE_PRODUCTS_DESCRIPTION . "
-                                     where products_id = '" . (int)$reviews->fields['products_id'] . "'
-                                     and language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                     where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
+                                     and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
       $rInfo_array = array_merge($reviews->fields, $products->fields, $products_name->fields);
       $rInfo = new objectInfo($rInfo_array);
@@ -284,32 +284,32 @@
 
     $order_by = " order by pd.products_name";
 
-    $reviews_query_raw = ("select r.*, rd.*, pd.*, p.* from " . TABLE_REVIEWS . " r left join " . TABLE_REVIEWS_DESCRIPTION . " rd on r.reviews_id = rd.reviews_id left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on r.products_id = pd.products_id and pd.language_id ='" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS . " p on p.products_id= r.products_id " . " where r.products_id = p.products_id " . $search . $order_by);
+    $reviews_query_raw = ("select r.*, rd.*, pd.*, p.* from " . TABLE_REVIEWS . " r left join " . TABLE_REVIEWS_DESCRIPTION . " rd on r.`reviews_id` = rd.`reviews_id` left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on r.`products_id` = pd.`products_id` and pd.`language_id` ='" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS . " p on p.`products_id`= r.`products_id` " . " where r.`products_id` = p.`products_id` " . $search . $order_by);
 
-//    $reviews_query_raw = "select reviews_id, products_id, date_added, last_modified, reviews_rating, status from " . TABLE_REVIEWS . " order by date_added DESC";
+//    $reviews_query_raw = "select `reviews_id`, `products_id`, `date_added`, `last_modified`, `reviews_rating`, `status` from " . TABLE_REVIEWS . " order by `date_added` DESC";
     $reviews_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $reviews_query_raw, $reviews_query_numrows);
     $reviews = $db->Execute($reviews_query_raw);
     while (!$reviews->EOF) {
       if ((!isset($_GET['rID']) || (isset($_GET['rID']) && ($_GET['rID'] == $reviews->fields['reviews_id']))) && !isset($rInfo)) {
-        $reviews_text = $db->Execute("select r.reviews_read, r.customers_name,
-                                             length(rd.reviews_text) as reviews_text_size
+        $reviews_text = $db->Execute("select r.`reviews_read`, r.`customers_name`,
+                                             length(rd.`reviews_text`) as `reviews_text_size`
                                       from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
-                                      where r.reviews_id = '" . (int)$reviews->fields['reviews_id'] . "'
-                                      and r.reviews_id = rd.reviews_id");
+                                      where r.`reviews_id` = '" . (int)$reviews->fields['reviews_id'] . "'
+                                      and r.`reviews_id` = rd.`reviews_id`");
 
-        $products_image = $db->Execute("select products_image
+        $products_image = $db->Execute("select `products_image`
                                         from " . TABLE_PRODUCTS . "
-                                        where products_id = '" . (int)$reviews->fields['products_id'] . "'");
+                                        where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
 
-        $products_name = $db->Execute("select products_name
+        $products_name = $db->Execute("select `products_name`
                                        from " . TABLE_PRODUCTS_DESCRIPTION . "
-                                       where products_id = '" . (int)$reviews->fields['products_id'] . "'
-                                       and language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                       where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
+                                       and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
-        $reviews_average = $db->Execute("select (avg(reviews_rating) / 5 * 100) as average_rating
+        $reviews_average = $db->Execute("select (avg(`reviews_rating`) / 5 * 100) as average_rating
                                          from " . TABLE_REVIEWS . "
-                                         where products_id = '" . (int)$reviews->fields['products_id'] . "'");
+                                         where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
         $review_info = array_merge($reviews_text->fields, $reviews_average->fields, $products_name->fields);
         $rInfo_array = array_merge($reviews->fields, $review_info, $products_image->fields);

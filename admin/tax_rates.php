@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.3 2005/08/11 17:30:56 spiderr Exp $
+//  $Id: tax_rates.php,v 1.4 2005/08/24 02:48:11 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -33,7 +33,7 @@
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
         $db->Execute("insert into " . TABLE_TAX_RATES . "
-                    (tax_zone_id, tax_class_id, tax_rate, tax_description, tax_priority, date_added)
+                    (`tax_zone_id`, `tax_class_id`, `tax_rate`, `tax_description`, `tax_priority`, `date_added`)
                     values ('" . (int)$tax_zone_id . "',
                             '" . (int)$tax_class_id . "',
                             '" . zen_db_input($tax_rate) . "',
@@ -52,13 +52,13 @@
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
         $db->Execute("update " . TABLE_TAX_RATES . "
-                      set tax_rates_id = '" . (int)$tax_rates_id . "',
-                          tax_zone_id = '" . (int)$tax_zone_id . "',
-                          tax_class_id = '" . (int)$tax_class_id . "',
-                          tax_rate = '" . zen_db_input($tax_rate) . "',
-                          tax_description = '" . zen_db_input($tax_description) . "',
-                          tax_priority = '" . (int)zen_db_input($tax_priority) . "',
-                          last_modified = now() where tax_rates_id = '" . (int)$tax_rates_id . "'");
+                      set `tax_rates_id` = '" . (int)$tax_rates_id . "',
+                          `tax_zone_id` = '" . (int)$tax_zone_id . "',
+                          `tax_class_id` = '" . (int)$tax_class_id . "',
+                          `tax_rate`= '" . zen_db_input($tax_rate) . "',
+                          `tax_description` = '" . zen_db_input($tax_description) . "',
+                          `tax_priority` = '" . (int)zen_db_input($tax_priority) . "',
+                          `last_modified` = now() where tax_rates_id = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;
@@ -72,7 +72,7 @@
         $tax_rates_id = zen_db_prepare_input($_GET['tID']);
 
         $db->Execute("delete from " . TABLE_TAX_RATES . "
-                      where tax_rates_id = '" . (int)$tax_rates_id . "'");
+                      where `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
         break;
@@ -132,7 +132,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $rates_query_raw = "select r.tax_rates_id, z.geo_zone_id, z.geo_zone_name, tc.tax_class_title, tc.tax_class_id, r.tax_priority, r.tax_rate, r.tax_description, r.date_added, r.last_modified from " . TABLE_TAX_CLASS . " tc, " . TABLE_TAX_RATES . " r left join " . TABLE_GEO_ZONES . " z on r.tax_zone_id = z.geo_zone_id where r.tax_class_id = tc.tax_class_id";
+  $rates_query_raw = "select r.`tax_rates_id`, z.`geo_zone_id`, z.`geo_zone_name`, tc.`tax_class_title`, tc.`tax_class_id`, r.`tax_priority`, r.`tax_rate`, r.`tax_description`, r.`date_added`, r.`last_modified` from " . TABLE_TAX_CLASS . " tc, " . TABLE_TAX_RATES . " r left join " . TABLE_GEO_ZONES . " z on r.`tax_zone_id` = z.`geo_zone_id` where r.`tax_class_id` = tc.`tax_class_id`";
   $rates_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $rates_query_raw, $rates_query_numrows);
   $rates = $db->Execute($rates_query_raw);
   while (!$rates->EOF) {

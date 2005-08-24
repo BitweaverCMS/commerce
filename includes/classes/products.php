@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: products.php,v 1.2 2005/08/24 02:51:13 lsces Exp $
 //
 
   class products {
@@ -34,9 +34,9 @@
       $zp_products_query = "select ptc.*, pd.products_name
                             from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
                             left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                            on ptc.products_id = pd.products_id
-                            and pd.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                            where ptc.categories_id='" . $zf_category_id . "'
+                            on ptc.`products_id` = pd.`products_id`
+                            and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                            where ptc.`categories_id`='" . $zf_category_id . "'
                             order by pd.products_name";
 
       $zp_products = $db->Execute($zp_products_query);
@@ -79,7 +79,7 @@
 	  function get_handler($type) {
       global $db;
 
-      $sql = "select type_handler from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $type . "'";
+      $sql = "select `type_handler` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $type . "'";
       $handler = $db->Execute($sql);
 	    return $handler->fields['type_handler'];
 	  }
@@ -90,7 +90,7 @@
       $sql = "select products_type from " . TABLE_PRODUCTS . " where products_id='" . $zf_product_id . "'";
       $type_lookup = $db->Execute($sql);
 
-      $sql = "select allow_add_to_cart from " . TABLE_PRODUCT_TYPES . " where type_id = '" . $type_lookup->fields['products_type'] . "'";
+      $sql = "select allow_add_to_cart from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $type_lookup->fields['products_type'] . "'";
       $allow_add_to_cart = $db->Execute($sql);
 
 	    return $allow_add_to_cart->fields['allow_add_to_cart'];

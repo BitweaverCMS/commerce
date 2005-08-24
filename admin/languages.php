@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.5 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: languages.php,v 1.6 2005/08/24 02:47:43 lsces Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -35,7 +35,7 @@
         } else {
 
           $db->Execute("insert into " . TABLE_LANGUAGES . "
-                        (name, code, image, directory, sort_order)
+                        (name, code, image, directory, `sort_order`)
                         values ('" . zen_db_input($name) . "', '" . zen_db_input($code) . "',
                                 '" . zen_db_input($image) . "', '" . zen_db_input($directory) . "',
                                 '" . zen_db_input($sort_order) . "')");
@@ -44,12 +44,12 @@
 
 // create additional categories_description records
 
-          $categories = $db->Execute("select c.categories_id, cd.categories_name,
+          $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`,
                                     categories_description
                                       from " . TABLE_CATEGORIES . " c
                                       left join " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                                      on c.categories_id = cd.categories_id
-                                      where cd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                      on c.`categories_id` = cd.`categories_id`
+                                      where cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$categories->EOF) {
             $db->Execute("insert into " . TABLE_CATEGORIES_DESCRIPTION . "
@@ -62,12 +62,12 @@
           }
 
 // create additional products_description records
-          $products = $db->Execute("select p.products_id, pd.products_name, pd.products_description,
+          $products = $db->Execute("select p.`products_id`, pd.products_name, pd.products_description,
                                            pd.products_url
                                     from " . TABLE_PRODUCTS . " p
                                     left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                                    on p.products_id = pd.products_id
-                                    where pd.language_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                    on p.`products_id` = pd.`products_id`
+                                    where pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
@@ -152,7 +152,7 @@
           if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
             $db->Execute("update " . TABLE_CONFIGURATION . "
        	                set configuration_value = '" . zen_db_input($code) . "'
-			where configuration_key = 'DEFAULT_LANGUAGE'");
+			where `configuration_key` = 'DEFAULT_LANGUAGE'");
           }
 
 // create additional coupons_description records
@@ -186,13 +186,13 @@
         $db->Execute("update " . TABLE_LANGUAGES . "
 		              set name = '" . zen_db_input($name) . "', code = '" . zen_db_input($code) . "',
 					  image = '" . zen_db_input($image) . "', directory = '" . zen_db_input($directory) . "',
-					  sort_order = '" . zen_db_input($sort_order) . "'
+					  `sort_order` = '" . zen_db_input($sort_order) . "'
 					  where languages_id = '" . (int)$lID . "'");
 
         if ($_POST['default'] == 'on') {
           $db->Execute("update " . TABLE_CONFIGURATION . "
 		                set configuration_value = '" . zen_db_input($code) . "'
-						where configuration_key = 'DEFAULT_LANGUAGE'");
+						where `configuration_key` = 'DEFAULT_LANGUAGE'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page'] . '&lID=' . $_GET['lID']));
         break;
@@ -211,7 +211,7 @@
         if ($lng->fields['languages_id'] == $lID) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
 		                set configuration_value = ''
-						where configuration_key = 'DEFAULT_CURRENCY'");
+						where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
         $db->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
         $db->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
@@ -285,7 +285,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $languages_query_raw = "select languages_id, name, code, image, directory, sort_order from " . TABLE_LANGUAGES . " order by sort_order";
+  $languages_query_raw = "select languages_id, name, code, image, directory, `sort_order` from " . TABLE_LANGUAGES . " order by `sort_order`";
   $languages_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $languages_query_raw, $languages_query_numrows);
   $languages = $db->Execute($languages_query_raw);
   while (!$languages->EOF) {

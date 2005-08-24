@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: specials.php,v 1.2 2005/08/24 02:51:32 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -39,11 +39,11 @@
   function zen_expire_specials() {
     global $db;
 
-    $specials_query = "select specials_id, products_id
+    $specials_query = "select `specials_id`, `products_id`
                        from " . TABLE_SPECIALS . "
-                       where status = '1'
-                       and ((now() >= expires_date and expires_date != '0001-01-01')
-                       or (now() < specials_date_available and specials_date_available != '0001-01-01'))";
+                       where `status` = '1'
+                       and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
+                       or ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01'))";
 
     $specials = $db->Execute($specials_query);
 
@@ -62,12 +62,12 @@
     global $db;
 
 // turn on special if active
-    $specials_query = "select specials_id, products_id
+    $specials_query = "select `specials_id`, `products_id`
                        from " . TABLE_SPECIALS . "
-                       where status = '0'
-                       and (((specials_date_available <= now() and specials_date_available != '0001-01-01') and (expires_date >= now()))
-                       or ((specials_date_available <= now() and specials_date_available != '0001-01-01') and (expires_date = '0001-01-01'))
-                       or (specials_date_available = '0001-01-01' and expires_date >= now()))
+                       where `status` = '0'
+                       and (((`specials_date_available` <= 'NOW' and `specials_date_available` != '0001-01-01') and (`expires_date` >= 'NOW'))
+                       or ((`specials_date_available` <= 'NOW' and `specials_date_available` != '0001-01-01') and (`expires_date` = '0001-01-01'))
+                       or (`specials_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
     $specials = $db->Execute($specials_query);
@@ -81,10 +81,10 @@
     }
 
 // turn off special if not active yet
-    $specials_query = "select specials_id, products_id
+    $specials_query = "select `specials_id`, `products_id`
                        from " . TABLE_SPECIALS . "
-                       where status = '1'
-                       and (now() < specials_date_available and specials_date_available != '0001-01-01')
+                       where `status` = '1'
+                       and ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01')
                        ";
 
     $specials = $db->Execute($specials_query);

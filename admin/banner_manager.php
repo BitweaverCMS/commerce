@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.5 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: banner_manager.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -487,7 +487,7 @@ function popupImageWindow(url) {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-    $banners_query_raw = "select banners_id, banners_title, banners_image, banners_group, status, expires_date, expires_impressions, date_status_change, date_scheduled, date_added, banners_open_new_windows, banners_on_ssl, banners_sort_order from " . TABLE_BANNERS . " order by banners_title, banners_group";
+    $banners_query_raw = "select `banners_id`, `banners_title`, `banners_image`, `banners_group`, `status`, `expires_date`, `expires_impressions`, `date_status_change`, `date_scheduled`, `date_added`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order` from " . TABLE_BANNERS . " order by `banners_title`, `banners_group`";
     $banners_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $banners_query_raw, $banners_query_numrows);
     $banners = $db->Execute($banners_query_raw);
     while (!$banners->EOF) {

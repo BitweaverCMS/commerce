@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.3 2005/08/03 17:07:54 spiderr Exp $
+//  $Id: whos_online.php,v 1.4 2005/08/24 02:48:11 lsces Exp $
 //
 
 // highlight bots
@@ -33,14 +33,14 @@ function zen_check_bot($checking) {
 // host for current ip
 function zen_check_quantity($which) {
   global $db;
-  $which_query = $db->Execute("select sesskey, value
+  $which_query = $db->Execute("select `sesskey`, `value`
                                    from " . TABLE_SESSIONS . "
-                                   where sesskey= '" . $which . "'");
+                                   where `sesskey`= '" . $which . "'");
 
 
-  $who_query = $db->Execute("select session_id, time_entry, time_last_click, host_address, user_agent
+  $who_query = $db->Execute("select `session_id`, `time_entry`, `time_last_click`, `host_address`, `user_agent`
                                  from " . TABLE_WHOS_ONLINE . "
-                                 where session_id='" . $which . "'");
+                                 where `session_id`='" . $which . "'");
 
   // longer than 2 minutes light color
   $xx_mins_ago_long = (time() - WHOIS_TIMER_INACTIVE);
@@ -81,9 +81,9 @@ function zen_check_minutes($the_time_last_click) {
 
 // remove entries that have expired
   $db->Execute("delete from " . TABLE_WHOS_ONLINE . "
-                where time_last_click < '" . $xx_mins_ago . "'
-                or (time_entry=time_last_click
-                and time_last_click < '" . $xx_mins_ago_dead . "')");
+                where `time_last_click` < '" . $xx_mins_ago . "'
+                or (`time_entry`=`time_last_click`
+                and `time_last_click` < '" . $xx_mins_ago_dead . "')");
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -200,8 +200,8 @@ function zen_check_minutes($the_time_last_click) {
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_LAST_PAGE_URL; ?>&nbsp;</td>
               </tr>
 <?php
-  $whos_online = $db->Execute("select customer_id, full_name, ip_address, time_entry, time_last_click,
-                                      last_page_url, session_id, host_address, user_agent
+  $whos_online = $db->Execute("select `customer_id`, `full_name`, `ip_address`, `time_entry`, `time_last_click`,
+                                      `last_page_url`, `session_id`, `host_address`, `user_agent`
                                from " . TABLE_WHOS_ONLINE . "
                                order by $order");
 

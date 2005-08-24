@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.2 2005/08/03 15:35:13 spiderr Exp $
+//  $Id: product_notification.php,v 1.3 2005/08/24 02:48:58 lsces Exp $
 //
 
   class product_notification {
@@ -34,10 +34,10 @@
       global $_GET, $db;
 
       $products_array = array();
-      $products = $db->Execute("select pd.products_id, pd.products_name
+      $products = $db->Execute("select pd.`products_id`, pd.products_name
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                                where pd.language_id = '" . $_SESSION['languages_id'] . "'
-                                and pd.products_id = p.products_id
+                                where pd.`language_id` = '" . $_SESSION['languages_id'] . "'
+                                and pd.`products_id` = p.`products_id`
                                 and p.products_status = '1'
                                 order by pd.products_name");
 
@@ -239,7 +239,7 @@ function selectAll(FormName, SelectBox) {
                                                   c.customers_lastname, c.customers_email_address
                                   from " . TABLE_CUSTOMERS . " c, " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
                                   where c.customers_id = pn.customers_id
-                                  and pn.products_id in (" . $ids . ")");
+                                  and pn.`products_id` in (" . $ids . ")");
 
         while (!$products->EOF) {
           $audience[$products->fields['customers_id']] = array('firstname' => $products->fields['customers_firstname'],

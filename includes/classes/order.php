@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.12 2005/08/19 13:24:30 spiderr Exp $
+// $Id: order.php,v 1.13 2005/08/24 02:51:13 lsces Exp $
 //
 
   class order {
@@ -54,7 +54,7 @@
                              billing_state, billing_country, billing_address_format_id,
                              payment_method, payment_module_code, shipping_method, shipping_module_code,
                              coupon_code, cc_type, cc_owner, cc_number, cc_expires, currency, currency_value,
-                             date_purchased, orders_status, last_modified, order_total, order_tax, ip_address
+                             date_purchased, orders_status, `last_modified`, order_total, order_tax, ip_address
                       from " . TABLE_ORDERS . "
                       where orders_id = '" . (int)$order_id . "'";
 
@@ -63,7 +63,7 @@
       $totals_query = "select title, text, class
                        from " . TABLE_ORDERS_TOTAL . "
                        where orders_id = '" . (int)$order_id . "'
-                       order by sort_order";
+                       order by `sort_order`";
 
       $totals = $db->Execute($totals_query);
 
@@ -426,13 +426,13 @@
                                  from " . TABLE_PRODUCTS_OPTIONS . " popt,
                                       " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval,
                                       " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                                 where pa.products_id = '" . (int)$products[$i]['id'] . "'
+                                 where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
                                  and pa.options_id = '" . (int)$option . "'
                                  and pa.options_id = popt.products_options_id
                                  and pa.options_values_id = '" . (int)$value . "'
                                  and pa.options_values_id = poval.products_options_values_id
-                                 and popt.language_id = '" . (int)$_SESSION['languages_id'] . "'
-                                 and poval.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                                 and popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                                 and poval.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
             $attributes = $db->Execute($attributes_query);
 
@@ -597,10 +597,10 @@
             $stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
                             FROM " . TABLE_PRODUCTS . " p
                             LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                             ON p.products_id=pa.products_id
+                             ON p.`products_id`=pa.`products_id`
                             LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                              ON pa.products_attributes_id=pad.products_attributes_id
-                            WHERE p.products_id = '" . zen_get_prid($this->products[$i]['id']) . "'";
+                            WHERE p.`products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'";
 
 // Will work with only one option for downloadable products
 // otherwise, we have to build the query dynamically with a loop
@@ -692,13 +692,13 @@
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                 on pa.products_attributes_id=pad.products_attributes_id
-                               where pa.products_id = '" . zen_db_input($this->products[$i]['id']) . "'
+                               where pa.`products_id` = '" . zen_db_input($this->products[$i]['id']) . "'
                                 and pa.options_id = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
                                 and pa.options_id = popt.products_options_id
                                 and pa.options_values_id = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
                                 and pa.options_values_id = poval.products_options_values_id
-                                and popt.language_id = '" . $_SESSION['languages_id'] . "'
-                                and poval.language_id = '" . $_SESSION['languages_id'] . "'";
+                                and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
+                                and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
 
              $attributes_values = $db->Execute($attributes_query);
            } else {
@@ -712,7 +712,7 @@
                                pa.attributes_price_words, pa.attributes_price_words_free,
                                pa.attributes_price_letters, pa.attributes_price_letters_free
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                               where pa.products_id = '" . $this->products[$i]['id'] . "' and pa.options_id = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.options_id = popt.products_options_id and pa.options_values_id = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.options_values_id = poval.products_options_values_id and popt.language_id = '" . $_SESSION['languages_id'] . "' and poval.language_id = '" . $_SESSION['languages_id'] . "'");
+                               where pa.`products_id` = '" . $this->products[$i]['id'] . "' and pa.options_id = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.options_id = popt.products_options_id and pa.options_values_id = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.options_values_id = poval.products_options_values_id and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
            }
 
 //clr 030714 update insert query.  changing to use values form $order->products for products_options_values.

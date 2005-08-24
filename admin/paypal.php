@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.2 2005/08/03 15:35:08 spiderr Exp $
+//  $Id: paypal.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -103,11 +103,11 @@ echo zen_draw_form('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING_PAYME
       case 'Pending':
       case 'Completed':
       default:
-        $ipn_query_raw = "select p.zen_order_id, p.paypal_ipn_id, p.txn_type, p.payment_type, p.payment_status, p.pending_reason, p.mc_currency, p.payer_status, p.mc_currency, p.date_added, p.mc_gross from " . TABLE_PAYPAL . " as p, " .TABLE_ORDERS . " as o  where o.orders_id = p.zen_order_id " . $ipn_search . " order by o.orders_id DESC";
+        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p`.mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " as p, " .TABLE_ORDERS . " as o  where o.`orders_id` = p.`zen_order_id` " . $ipn_search . " order by o.`orders_id` DESC";
       break;
     }
   } else {
-        $ipn_query_raw = "select p.zen_order_id, p.paypal_ipn_id, p.txn_type, p.payment_type, p.payment_status, p.pending_reason, p.mc_currency, p.payer_status, p.mc_currency, p.date_added, p.mc_gross from " . TABLE_PAYPAL . " as p left join " .TABLE_ORDERS . " as o on o.orders_id = p.zen_order_id order by p.paypal_ipn_id DESC";
+        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p.`mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " as p left join " .TABLE_ORDERS . " as o on o.`orders_id` = p.`zen_order_id` order by p.`paypal_ipn_id` DESC";
   }
   $ipn_split = new splitPageResults($HTTP_GET_VARS['page'], MAX_DISPLAY_SEARCH_RESULTS, $ipn_query_raw, $ipn_query_numrows);
   $ipn_trans = $db->Execute($ipn_query_raw);
