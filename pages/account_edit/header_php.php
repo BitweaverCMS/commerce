@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 16:47:31 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -113,15 +113,15 @@
       $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
 
       $sql = "update " . TABLE_CUSTOMERS_INFO . "
-              set        date_account_last_modified = now()
-              where      customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+              set        `date_account_last_modified` = " . $db->mDb->sysTimeStamp . "
+              where      `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $db->Execute($sql);
 
       $sql_data_array = array('entry_firstname' => $firstname,
                               'entry_lastname' => $lastname);
 
-      $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "' and address_book_id = '" . (int)$_SESSION['customer_default_address_id'] . "'");
+      $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "`customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `address_book_id` = '" . (int)$_SESSION['customer_default_address_id'] . "'");
 
 // reset the session variables
       $_SESSION['customer_first_name'] = $firstname;
@@ -132,11 +132,11 @@
     }
   }
 
-  $account_query = "select customers_gender, customers_firstname, customers_lastname,
-                           customers_dob, customers_email_address, customers_telephone,
-                           customers_fax, customers_email_format, customers_referral
+  $account_query = "select `customers_gender`, `customers_firstname`, `customers_lastname`,
+                           `customers_dob`, `customers_email_address`, `customers_telephone`,
+                           `customers_fax`, `customers_email_format`, `customers_referral`
                     from   " . TABLE_CUSTOMERS . "
-                    where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                    where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $account = $db->Execute($account_query);
   if (ACCOUNT_GENDER == 'true') {

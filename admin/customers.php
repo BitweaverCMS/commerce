@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.9 2005/08/24 15:06:36 lsces Exp $
+//  $Id: customers.php,v 1.10 2005/08/24 16:47:31 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -975,7 +975,7 @@ if ($processed == true) {
     $search = '';
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-//      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%'";
+//      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.`customers_firstname` like '%" . $keywords . "%' or c.`customers_email_address` like '%" . $keywords . "%'";
       $search = "where c.`customers_lastname` like '%" . $keywords . "%' or c.`customers_firstname` like '%" . $keywords . "%' or c.`customers_email_address` like '%" . $keywords . "%' or c.`customers_telephone` like '%" . $keywords . "%' or a.`entry_company` like '%" . $keywords . "%' or a.`entry_street_address` like '%" . $keywords . "%' or a.`entry_city` like '%" . $keywords . "%' or a.`entry_postcode` like '%" . $keywords . "%'";
     }
     $new_fields=', c.`customers_telephone`, a.`entry_company`, a.`entry_street_address`, a.`entry_city`, a.`entry_postcode`, c.`customers_authorization`, c.`customers_referral`';

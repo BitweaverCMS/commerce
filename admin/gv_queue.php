@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
+//  $Id: gv_queue.php,v 1.6 2005/08/24 16:47:31 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -33,7 +33,7 @@
 
     $_GET['gid'] = $gv_check->fields['unique_id'];
 
-    $gv_page = $db->Execute("select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.`customers_id` and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id");
+    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')" . " order by gv.`order_id`, gv.`unique_id`");
     $page_cnt=1;
     while (!$gv_page->EOF) {
       if ($gv_page->fields['order_id'] == $_GET['order']) {
@@ -168,7 +168,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $gv_query_raw = "select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.`customers_id` and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id";
+  $gv_query_raw = "select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')" . " order by gv.`order_id`, gv.`unique_id`";
   $gv_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $gv_query_raw, $gv_query_numrows);
   $gv_list = $db->Execute($gv_query_raw);
   while (!$gv_list->EOF) {

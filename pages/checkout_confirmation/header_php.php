@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 15:06:41 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 16:47:31 lsces Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -105,18 +105,18 @@
 
 // update customers_referral with $_SESSION['gv_id']
   if ($_SESSION['cc_id']) {
-    $discount_coupon_query = "select coupon_code
+    $discount_coupon_query = "select `coupon_code`
                  from " . TABLE_COUPONS . "
-                 where coupon_id = '" . $_SESSION['cc_id'] . "'";
+                 where `coupon_id` = '" . $_SESSION['cc_id'] . "'";
 
     $discount_coupon = $db->Execute($discount_coupon_query);
 
-    $customers_referral_query = "select customers_referral from " . TABLE_CUSTOMERS . " where `customers_id`='" . $_SESSION['customer_id'] . "'";
+    $customers_referral_query = "select `customers_referral` from " . TABLE_CUSTOMERS . " where `customers_id`='" . $_SESSION['customer_id'] . "'";
     $customers_referral = $db->Execute($customers_referral_query);
 
 // only use discount coupon if set by coupon
     if ($customers_referral->fields['customers_referral'] == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
-      $db->Execute("update " . TABLE_CUSTOMERS . " set customers_referral='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id`='" . $_SESSION['customer_id'] . "'");
+      $db->Execute("update " . TABLE_CUSTOMERS . " set `customers_referral` ='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id` ='" . $_SESSION['customer_id'] . "'");
     } else {
       // do not update referral was added before
     }

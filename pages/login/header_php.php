@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 15:06:41 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 16:47:31 lsces Exp $
 //
 // redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled (or the session has not started)
   if ($session_started == false) {
@@ -39,11 +39,11 @@
     }
 
 // Check if email exists
-    $check_customer_query = "select customers_id, customers_firstname, customers_password,
-                                    customers_email_address, customers_default_address_id,
-                                    customers_authorization, customers_referral
+    $check_customer_query = "select `customers_id`, `customers_firstname`, `customers_password`,
+                                    `customers_email_address`, `customers_default_address_id`,
+                                    `customers_authorization`, `customers_referral`
                              from " . TABLE_CUSTOMERS . "
-                             where customers_email_address = '" . zen_db_input($email_address) . "'";
+                             where `customers_email_address` = '" . zen_db_input($email_address) . "'";
 
     $check_customer = $db->Execute($check_customer_query);
 
@@ -73,9 +73,9 @@
         $_SESSION['customer_zone_id'] = $check_country->fields['entry_zone_id'];
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
-                set date_of_last_logon = now(),
-                    number_of_logons = number_of_logons+1
-                where customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+                set `date_of_last_logon` = " . $db->mDb->sysTimeStamp . ",
+                    `number_of_logons` = `number_of_logons`+1
+                where `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
         $db->Execute($sql);
 

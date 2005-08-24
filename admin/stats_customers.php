@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
+//  $Id: stats_customers.php,v 1.6 2005/08/24 16:47:31 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -76,11 +76,11 @@
               </tr>
 <?php
   if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS_REPORTS - MAX_DISPLAY_SEARCH_RESULTS_REPORTS;
-  $customers_query_raw = "select c.`customers_id`, c.customers_firstname, c.customers_lastname, sum(op.`products_quantity` * op.final_price)+sum(op.onetime_charges)  as ordersum from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and o.`orders_id` = op.`orders_id` group by c.customers_firstname, c.customers_lastname order by ordersum DESC";
+  $customers_query_raw = "select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`, sum(op.`products_quantity` * op.`final_price`)+sum(op.`onetime_charges`)  as `ordersum` from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and o.`orders_id` = op.`orders_id` group by c.`customers_id`, c.`customers_firstname`, c.`customers_lastname` order by 4 DESC";
   $customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $customers_query_raw, $customers_query_numrows);
 // fix counted customers
-  $customers_query_m = $db->Execute("select customers_id
-                                           from " . TABLE_ORDERS . " group by customers_id");
+  $customers_query_m = $db->Execute("select `customers_id`
+                                           from " . TABLE_ORDERS . " group by `customers_id`");
 
   $customers_query_numrows = $customers_query_m->RecordCount();
 
