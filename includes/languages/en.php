@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.3 2005/08/21 20:56:07 spiderr Exp $
+// $Id: en.php,v 1.4 2005/08/24 22:04:29 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -574,63 +574,63 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
 
 ///////////////////////////////////////////////////////////
 // include email extras
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_EMAIL_EXTRAS)) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_EMAIL_EXTRAS)) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_EMAIL_EXTRAS);
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_EMAIL_EXTRAS);
 
 // include template specific header defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_HEADER)) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_HEADER)) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_HEADER);
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_HEADER);
 
 // include template specific button name defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_BUTTON_NAMES)) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_BUTTON_NAMES)) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_BUTTON_NAMES);
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_BUTTON_NAMES);
 
 // include template specific icon name defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_ICON_NAMES)) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_ICON_NAMES)) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_ICON_NAMES);
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_ICON_NAMES);
 
 // include template specific other image name defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_OTHER_IMAGES_NAMES)) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_OTHER_IMAGES_NAMES)) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_OTHER_IMAGES_NAMES);
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_OTHER_IMAGES_NAMES);
 
 // credit cards
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . FILENAME_CREDIT_CARDS);
+  require(DIR_WS_LANGUAGES . 'en/' . FILENAME_CREDIT_CARDS);
 
 // include template specific whos_online sidebox defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/' . FILENAME_WHOS_ONLINE . '.php')) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_WHOS_ONLINE . '.php')) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . FILENAME_WHOS_ONLINE . '.php');
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_WHOS_ONLINE . '.php');
 
 // include template specific meta tags defines
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/meta_tags.php')) {
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/meta_tags.php')) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . 'meta_tags.php');
+  require(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . 'meta_tags.php');
 
 // END OF EXTERNAL LANGUAGE LINKS
 ?>

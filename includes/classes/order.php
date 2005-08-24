@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.15 2005/08/24 15:28:50 lsces Exp $
+// $Id: order.php,v 1.16 2005/08/24 22:04:29 spiderr Exp $
 //
 
   class order {
@@ -220,50 +220,52 @@
     }
 
     function cart() {
-      global $db, $currencies;
+      global $db, $currencies, $gBitUser;
 
       $this->content_type = $_SESSION['cart']->get_content_type();
 
-      $customer_address_query = "select c.`customers_firstname`, c.`customers_lastname`, c.`customers_telephone`,
-                                        c.`customers_email_address`, ab.`entry_company`, ab.`entry_street_address`,
-                                        ab.`entry_suburb`, ab.`entry_postcode`, ab.`entry_city`, ab.`entry_zone_id`,
-                                        z.`zone_name`, co.`countries_id`, co.`countries_name`,
-                                        co.`countries_iso_code_2`, co.`countries_iso_code_3`,
-                                        co.`address_format_id`, ab.`entry_state`
-                                 from " . TABLE_CUSTOMERS . " c, " . TABLE_ADDRESS_BOOK . " ab
-                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-                                 left join " . TABLE_COUNTRIES . " co on (ab.`entry_country_id` = co.`countries_id`)
-                                 where c.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                                 and ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                                 and c.`customers_default_address_id` = ab.`address_book_id`";
+		if( $gBitUser->isRegistered() ) {
+			  $customer_address_query = "select c.`customers_firstname`, c.`customers_lastname`, c.`customers_telephone`,
+												c.`customers_email_address`, ab.`entry_company`, ab.`entry_street_address`,
+												ab.`entry_suburb`, ab.`entry_postcode`, ab.`entry_city`, ab.`entry_zone_id`,
+												z.`zone_name`, co.`countries_id`, co.`countries_name`,
+												co.`countries_iso_code_2`, co.`countries_iso_code_3`,
+												co.`address_format_id`, ab.`entry_state`
+										 from " . TABLE_CUSTOMERS . " c, " . TABLE_ADDRESS_BOOK . " ab
+										 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+										 left join " . TABLE_COUNTRIES . " co on (ab.`entry_country_id` = co.`countries_id`)
+										 where c.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+										 and ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+										 and c.`customers_default_address_id` = ab.`address_book_id`";
 
-      $customer_address = $db->Execute($customer_address_query);
+			  $customer_address = $db->Execute($customer_address_query);
 
-      $shipping_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
-                                        ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
-                                        ab.`entry_city, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
-                                        c.`countries_id`, c.countries_name`, c.`countries_iso_code_2`,
-                                        c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-                                 from " . TABLE_ADDRESS_BOOK . " ab
-                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-                                 left join " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                                 and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
+			  $shipping_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
+												ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
+												ab.`entry_city, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
+												c.`countries_id`, c.countries_name`, c.`countries_iso_code_2`,
+												c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
+										 from " . TABLE_ADDRESS_BOOK . " ab
+										 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+										 left join " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
+										 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+										 and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
 
-      $shipping_address = $db->Execute($shipping_address_query);
+			  $shipping_address = $db->Execute($shipping_address_query);
 
-      $billing_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
-                                       ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
-                                       ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
-                                       c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
-                                       c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-                                from " . TABLE_ADDRESS_BOOK . " ab
-                                left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-                                left join " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-                                where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                                and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
+			  $billing_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
+											   ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
+											   ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
+											   c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
+											   c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
+										from " . TABLE_ADDRESS_BOOK . " ab
+										left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+										left join " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
+										where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+										and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
 
-      $billing_address = $db->Execute($billing_address_query);
+			  $billing_address = $db->Execute($billing_address_query);
+		}
 //STORE_PRODUCT_TAX_BASIS
 
       switch (STORE_PRODUCT_TAX_BASIS) {
