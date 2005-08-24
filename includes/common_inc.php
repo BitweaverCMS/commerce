@@ -639,7 +639,7 @@
   function zen_get_products_quantity_order_min($product_id) {
     global $db;
 
-    $the_products_quantity_order_min = $db->Execute("select `products_i`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    $the_products_quantity_order_min = $db->Execute("select `products_id`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
     return $the_products_quantity_order_min->fields['products_quantity_order_min'];
   }
 
@@ -1441,7 +1441,7 @@ If a special exist * 10+9
       $product_to_categories = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
       $category = $product_to_categories->fields['master_categories_id'];
 
-      $sale = $db->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
+      $sale = $db->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
       if ($sale->RecordCount() < 1) {
          return $special_price;
       }
