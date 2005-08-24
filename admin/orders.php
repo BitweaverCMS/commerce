@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.14 2005/08/24 15:28:50 lsces Exp $
+//  $Id: orders.php,v 1.15 2005/08/24 15:33:17 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -29,7 +29,7 @@
   $orders_status_array = array();
   $orders_status = $db->Execute("select `orders_status_id`, `orders_status_name`
                                  from " . TABLE_ORDERS_STATUS . "
-                                 where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
+                                 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
 
 
   while (!$orders_status->EOF) {
