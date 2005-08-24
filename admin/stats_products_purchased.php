@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_purchased.php,v 1.4 2005/08/24 02:48:11 lsces Exp $
+//  $Id: stats_products_purchased.php,v 1.5 2005/08/24 12:15:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -77,10 +77,10 @@
 // The following OLD query only considers the "products_ordered" value from the products table.
 // The new query subsequent to this uses real order info from the orders_products table.
 // Thus this older query is somewhat deprecated
-//  $products_query_raw = "select p.`products_id`, p.products_ordered, pd.products_name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and p.products_ordered > 0 group by pd.`products_id` order by p.products_ordered DESC, pd.products_name";
+//  $products_query_raw = "select p.`products_id`, p.products_ordered, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and p.products_ordered > 0 group by pd.`products_id` order by p.products_ordered DESC, pd.`products_name`";
 
 // NOTE: The following is much more accurate in output content
-$products_query_raw = "select sum(op.products_quantity) as products_ordered, op.products_name, p.`products_id`, pd.`language_id`, o.orders_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, ".TABLE_ORDERS." o, ".TABLE_ORDERS_PRODUCTS." op where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and o.orders_id = op.orders_id and op.`products_id` = p.`products_id` group by op.products_name, p.`products_id`, pd.`language_id`, o.orders_id ORDER BY products_ordered DESC";
+$products_query_raw = "select sum(op.`products_quantity`) as products_ordered, op.`products_name`, p.`products_id`, pd.`language_id`, o.orders_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, ".TABLE_ORDERS." o, ".TABLE_ORDERS_PRODUCTS." op where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and o.orders_id = op.orders_id and op.`products_id` = p.`products_id` group by op.`products_name`, p.`products_id`, pd.`language_id`, o.orders_id ORDER BY products_ordered DESC";
 
   $offset = splitPageResults::splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);

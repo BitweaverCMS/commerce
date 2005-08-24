@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
+//  $Id: featured.php,v 1.6 2005/08/24 12:15:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -162,7 +162,7 @@
     if ( ($action == 'edit') && isset($_GET['fID']) ) {
       $form_action = 'update';
 
-      $product = $db->Execute("select p.`products_id`, pd.products_name, p.products_price, p.products_priced_by_attribute,
+      $product = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
                                       f.expires_date, f.featured_date_available
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_FEATURED . " f
@@ -183,7 +183,7 @@
 // create an array of featured products, which will be excluded from the pull down menu of products
 // (when creating a new featured product)
       $featured_array = array();
-      $featured = $db->Execute("select p.`products_id`, p.products_model
+      $featured = $db->Execute("select p.`products_id`, p.`products_model`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_FEATURED . " f
                                 where f.`products_id` = p.`products_id`");
 
@@ -250,14 +250,14 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
   $search = '';
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
     $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-    $search = " and (pd.products_name like '%" . $keywords . "%' or pd.products_description like '%" . $keywords . "%' or p.products_model like '%" . $keywords . "%')";
+    $search = " and (pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%')";
   }
 
 // order of display
-  $order_by = " order by pd.products_name ";
+  $order_by = " order by pd.`products_name` ";
 
 // create split page control
-    $featured_query_raw = "select p.`products_id`, pd.products_name, p.products_model, p.products_price, p.products_priced_by_attribute, f.featured_id, f.featured_date_added, f.featured_last_modified, f.expires_date, f.date_status_change, f.status, f.featured_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_FEATURED . " f, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = f.`products_id`"  . $search . $order_by;
+    $featured_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, f.featured_id, f.featured_date_added, f.featured_last_modified, f.expires_date, f.date_status_change, f.status, f.featured_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_FEATURED . " f, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = f.`products_id`"  . $search . $order_by;
     $featured_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_FEATURED_ADMIN, $featured_query_raw, $featured_query_numrows);
     $featured = $db->Execute($featured_query_raw);
     while (!$featured->EOF) {

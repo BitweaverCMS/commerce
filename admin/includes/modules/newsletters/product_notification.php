@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.3 2005/08/24 02:48:58 lsces Exp $
+//  $Id: product_notification.php,v 1.4 2005/08/24 12:16:09 lsces Exp $
 //
 
   class product_notification {
@@ -34,12 +34,12 @@
       global $_GET, $db;
 
       $products_array = array();
-      $products = $db->Execute("select pd.`products_id`, pd.products_name
+      $products = $db->Execute("select pd.`products_id`, pd.`products_name`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                 where pd.`language_id` = '" . $_SESSION['languages_id'] . "'
                                 and pd.`products_id` = p.`products_id`
-                                and p.products_status = '1'
-                                order by pd.products_name");
+                                and p.`products_status = '1'
+                                order by pd.`products_name`");
 
       while (!$products->EOF) {
         $products_array[] = array('id' => $products->fields['products_id'],

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.3 2005/07/26 12:31:53 spiderr Exp $
+// $Id: downloads.php,v 1.4 2005/08/24 12:17:01 lsces Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
@@ -34,7 +34,7 @@
 
 // Now get all downloadable products in that order
   $downloads_query = "select ".$db->SQLDate('Y-m-d', 'o.date_purchased')." as date_purchased_day,
-                             opd.download_maxdays, op.products_name, opd.orders_products_download_id,
+                             opd.download_maxdays, op.`products_name`, opd.orders_products_download_id,
                              opd.orders_products_filename, opd.download_count, opd.download_maxdays
                       from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, "
                              . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd

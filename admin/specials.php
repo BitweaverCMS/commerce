@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.6 2005/08/24 02:48:11 lsces Exp $
+//  $Id: specials.php,v 1.7 2005/08/24 12:15:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -208,7 +208,7 @@
     if ( ($action == 'edit') && isset($_GET['sID']) ) {
       $form_action = 'update';
 
-      $product = $db->Execute("select p.`products_id`, pd.products_name, p.products_price, p.products_priced_by_attribute,
+      $product = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
                                       s.specials_new_products_price, s.expires_date, s.specials_date_available
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_SPECIALS . " s
@@ -229,7 +229,7 @@
 // create an array of products on special, which will be excluded from the pull down menu of products
 // (when creating a new product on special)
       $specials_array = array();
-      $specials = $db->Execute("select p.`products_id`, p.products_model
+      $specials = $db->Execute("select p.`products_id`, p.`products_model`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
                                 where s.`products_id` = p.`products_id`");
 
@@ -239,9 +239,9 @@
       }
 
 // never include Gift Vouchers for specials
-      $gift_vouchers = $db->Execute("select distinct p.`products_id`, p.products_model
+      $gift_vouchers = $db->Execute("select distinct p.`products_id`, p.`products_model`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
-                                where UPPER( p.products_model ) like '%GIFT%'");
+                                where UPPER( p.`products_model` ) like '%GIFT%'");
 
       while (!$gift_vouchers->EOF) {
         if(substr($gift_vouchers->fields['products_model'], 0, 4) == 'GIFT') {
@@ -316,15 +316,15 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
   $search = '';
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
     $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-    $search = " and (pd.products_name like '%" . $keywords . "%' or pd.products_description like '%" . $keywords . "%' or p.products_model like '%" . $keywords . "%')";
+    $search = " and (pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%')";
   }
 
 // order of display
-  $order_by = " order by pd.products_name ";
+  $order_by = " order by pd.`products_name` ";
 
 // create split page control
 
-    $specials_query_raw = "select p.`products_id`, pd.products_name, p.products_model, p.products_price, p.products_priced_by_attribute, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status, s.specials_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
+    $specials_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status, s.specials_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
     $specials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $specials_query_raw, $specials_query_numrows);
     $specials = $db->Execute($specials_query_raw);
     while (!$specials->EOF) {

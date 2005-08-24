@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.8 2005/08/24 02:53:00 lsces Exp $
+// $Id: main_template_vars.php,v 1.9 2005/08/24 12:17:01 lsces Exp $
 //
 
   $sql = "select count(*) as total
           from " . TABLE_PRODUCTS . " p, " .
                    TABLE_PRODUCTS_DESCRIPTION . " pd
-          where    p.products_status = '1'
+          where    p.`products_status = '1'
           and      p.`products_id` = '" . (int)$_GET['products_id'] . "'
           and      pd.`products_id` = p.`products_id`
           and      pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
@@ -46,18 +46,18 @@
 
     $res = $db->Execute($sql);
 
-    $sql = "select p.`products_id`, pd.products_name,
-                  pd.products_description, p.products_model,
-                  p.products_quantity, p.products_image,
-                  pd.products_url, p.products_price,
-                  p.products_tax_class_id, p.products_date_added,
-                  p.products_date_available, p.manufacturers_id, p.products_quantity,
-                  p.products_weight, p.products_priced_by_attribute, p.product_is_free,
-                  p.products_qty_box_status,
-                  p.products_quantity_order_max,
-                  p.products_discount_type, p.products_discount_type_from, p.products_sort_order, p.products_price_sorter, m.manufacturers_name
-           from   " . TABLE_PRODUCTS . " p LEFT OUTER JOIN " . TABLE_MANUFACTURERS ." m ON (p.manufacturers_id=m.manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd
-           where  p.products_status = '1'
+    $sql = "select p.`products_id`, pd.`products_name`,
+                  pd.`products_description`, p.`products_model`,
+                  p.`products_quantity`, p.`products_image`,
+                  pd.`products_url`, p.`products_price`,
+                  p.`products_tax_class_id`, p.`products_date_added`,
+                  p.`products_date_available`, p.`manufacturers_id`, p.`products_quantity`,
+                  p.`products_weight`, p.`products_priced_by_attribute`, p.`product_is_free`,
+                  p.`products_qty_box_status`,
+                  p.`products_quantity_order_max`,
+                  p.`products_discount_type`, p.`products_discount_type_from`, p.`products_sort_order`, p.`products_price_sorter`, m.manufacturers_name
+           from   " . TABLE_PRODUCTS . " p LEFT OUTER JOIN " . TABLE_MANUFACTURERS ." m ON (p.`manufacturers_id`=m.`manufacturers_id`), " . TABLE_PRODUCTS_DESCRIPTION . " pd
+           where  p.`products_status = '1'
            and    p.`products_id` = '" . (int)$_GET['products_id'] . "'
            and    pd.`products_id` = p.`products_id`
            and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
@@ -87,8 +87,8 @@
     $reviews_query = "select count(*) as count from " . TABLE_REVIEWS . " r, "
                                                        . TABLE_REVIEWS_DESCRIPTION . " rd
                        where r.`products_id` = '" . (int)$_GET['products_id'] . "'
-                       and r.reviews_id = rd.reviews_id
-                       and rd.languages_id = '" . (int)$_SESSION['languages_id'] . "'" .
+                       and r.`reviews_id` = rd.`reviews_id`
+                       and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
                        $review_status;
 
     $reviews = $db->Execute($reviews_query);

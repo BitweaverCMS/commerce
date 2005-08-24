@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.1 2005/07/30 15:08:15 spiderr Exp $
+// $Id: mod_manufacturers.php,v 1.2 2005/08/24 12:17:29 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -37,13 +37,13 @@ if ($show_manufacturers) {
 
 // only check products if requested - this may slow down the processing of the manufacturers sidebox
   if (PRODUCTS_MANUFACTURERS_STATUS == '1') {
-    $manufacturer_sidebox_query = "select distinct m.manufacturers_id, m.manufacturers_name
+    $manufacturer_sidebox_query = "select distinct m.`manufacturers_id`, m.manufacturers_name
                             from " . TABLE_MANUFACTURERS . " m
-                            left join " . TABLE_PRODUCTS . " p on m.manufacturers_id = p.manufacturers_id
-                            where m.manufacturers_id = p.manufacturers_id and p.products_status= '1'
+                            left join " . TABLE_PRODUCTS . " p on m.`manufacturers_id` = p.`manufacturers_id`
+                            where m.`manufacturers_id` = p.`manufacturers_id` and p.`products_status= '1'
                             order by manufacturers_name";
   } else {
-    $manufacturer_sidebox_query = "select m.manufacturers_id, m.manufacturers_name
+    $manufacturer_sidebox_query = "select m.`manufacturers_id`, m.manufacturers_name
                             from " . TABLE_MANUFACTURERS . " m
                             order by manufacturers_name";
   }

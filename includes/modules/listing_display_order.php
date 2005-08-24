@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: listing_display_order.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: listing_display_order.php,v 1.2 2005/08/24 12:17:01 lsces Exp $
 //
 ?>
 <?php
@@ -56,28 +56,28 @@ echo zen_draw_hidden_field('main_page', $_GET['main_page']);
       $_GET['disp_order'] = $disp_order_default;
       $disp_order = $disp_order_default;
     case ($_GET['disp_order'] == 1):
-      $order_by = " order by pd.products_name";
+      $order_by = " order by pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 2):
-      $order_by = " order by pd.products_name DESC";
+      $order_by = " order by pd.`products_name` DESC";
       break;
     case ($_GET['disp_order'] == 3):
-      $order_by = " order by p.products_price_sorter, pd.products_name";
+      $order_by = " order by p.`products_price_sorter`, pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 4):
-      $order_by = " order by p.products_price_sorter DESC, pd.products_name";
+      $order_by = " order by p.`products_price_sorter` DESC, pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 5):
-      $order_by = " order by p.products_model";
+      $order_by = " order by p.`products_model`";
       break;
     case ($_GET['disp_order'] == 6):
-      $order_by = " order by p.products_date_added DESC, pd.products_name";
+      $order_by = " order by p.`products_date_added` DESC, pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 7):
-      $order_by = " order by p.products_date_added, pd.products_name";
+      $order_by = " order by p.`products_date_added`, pd.`products_name`";
       break;
     default:
-      $order_by = " order by p.products_sort_order";
+      $order_by = " order by p.`products_sort_order`";
       break;
   }
 ?>

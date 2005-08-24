@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.3 2005/08/24 02:47:44 lsces Exp $
+//  $Id: reviews.php,v 1.4 2005/08/24 12:15:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -135,10 +135,10 @@
   if ($action == 'edit') {
     $rID = zen_db_prepare_input($_GET['rID']);
 
-    $reviews = $db->Execute("select r.reviews_id, r.`products_id`, r.customers_name, r.`date_added`,
+    $reviews = $db->Execute("select r.`reviews_id`, r.`products_id`, r.customers_name, r.`date_added`,
                                     r.`last_modified`, r.reviews_read, rd.reviews_text, r.reviews_rating
                              from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
-                             where r.reviews_id = '" . (int)$rID . "' and r.reviews_id = rd.reviews_id");
+                             where r.`reviews_id` = '" . (int)$rID . "' and r.`reviews_id` = rd.`reviews_id`");
 
     $products = $db->Execute("select `products_image`
                               from " . TABLE_PRODUCTS . "
@@ -277,12 +277,12 @@
     $search = '';
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-      $search = " and r.customers_name like '%" . $keywords . "%' or rd.reviews_text like '%" . $keywords . "%' or pd.products_name like '%" . $keywords . "%' or pd.products_description like '%" . $keywords . "%' or p.products_model like '%" . $keywords . "%'";
+      $search = " and r.customers_name like '%" . $keywords . "%' or rd.reviews_text like '%" . $keywords . "%' or pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%'";
     }
 
     if ($status_filter !='' && $status_filter >0) $search .= " and r.status=" . ((int)$status_filter-1) . " ";
 
-    $order_by = " order by pd.products_name";
+    $order_by = " order by pd.`products_name`";
 
     $reviews_query_raw = ("select r.*, rd.*, pd.*, p.* from " . TABLE_REVIEWS . " r left join " . TABLE_REVIEWS_DESCRIPTION . " rd on r.`reviews_id` = rd.`reviews_id` left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on r.`products_id` = pd.`products_id` and pd.`language_id` ='" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS . " p on p.`products_id`= r.`products_id` " . " where r.`products_id` = p.`products_id` " . $search . $order_by);
 

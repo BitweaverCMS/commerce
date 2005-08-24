@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products.php,v 1.3 2005/08/24 10:38:23 lsces Exp $
+// $Id: products.php,v 1.4 2005/08/24 12:17:46 lsces Exp $
 //
 
   class products {
@@ -31,13 +31,13 @@
       global $db;
       $za_products_array = array();
       // get top level products
-      $zp_products_query = "select ptc.*, pd.products_name
+      $zp_products_query = "select ptc.*, pd.`products_name`
                             from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
                             left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                             on ptc.`products_id` = pd.`products_id`
                             and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                             where ptc.`categories_id`='" . $zf_category_id . "'
-                            order by pd.products_name";
+                            order by pd.`products_name`";
 
       $zp_products = $db->Execute($zp_products_query);
       while (!$zp_products->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.3 2005/08/24 02:48:58 lsces Exp $
+//  $Id: products_previous_next.php,v 1.4 2005/08/24 12:16:09 lsces Exp $
 //
 
 /////
@@ -35,22 +35,22 @@
         $prev_next_order= ' order by LPAD(p.`products_id`,11,"0")';
         break;
       case (1):
-        $prev_next_order= " order by pd.products_name";
+        $prev_next_order= " order by pd.`products_name`";
         break;
       case (2):
-        $prev_next_order= " order by p.products_model";
+        $prev_next_order= " order by p.`products_model`";
         break;
       case (3):
-        $prev_next_order= " order by p.products_price, pd.products_name";
+        $prev_next_order= " order by p.`products_price`, pd.`products_name`";
         break;
       case (4):
-        $prev_next_order= " order by p.products_price, p.products_model";
+        $prev_next_order= " order by p.`products_price`, p.`products_model`";
         break;
       case (5):
-        $prev_next_order= " order by pd.products_name, p.products_model";
+        $prev_next_order= " order by pd.`products_name`, p.`products_model`";
         break;
       default:
-        $prev_next_order= " order by pd.products_name";
+        $prev_next_order= " order by pd.`products_name`";
         break;
       }
 
@@ -67,7 +67,7 @@
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
-    $sql = "select p.`products_id`, pd.products_name
+    $sql = "select p.`products_id`, pd.`products_name`
             from   " . TABLE_PRODUCTS . " p, "
                      . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                      . TABLE_PRODUCTS_TO_CATEGORIES . " ptc

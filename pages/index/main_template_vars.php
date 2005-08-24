@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.6 2005/08/24 02:53:00 lsces Exp $
+// $Id: main_template_vars.php,v 1.7 2005/08/24 12:17:02 lsces Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -141,22 +141,22 @@
       switch ($column_list[$i])
       {
         case 'PRODUCT_LIST_MODEL':
-          $select_column_list .= 'p.products_model, ';
+          $select_column_list .= 'p.`products_model`, ';
           break;
         case 'PRODUCT_LIST_NAME':
-          $select_column_list .= 'pd.products_name, ';
+          $select_column_list .= 'pd.`products_name`, ';
           break;
         case 'PRODUCT_LIST_MANUFACTURER':
           $select_column_list .= 'm.manufacturers_name, ';
           break;
         case 'PRODUCT_LIST_QUANTITY':
-          $select_column_list .= 'p.products_quantity, ';
+          $select_column_list .= 'p.`products_quantity`, ';
           break;
         case 'PRODUCT_LIST_IMAGE':
-          $select_column_list .= 'p.products_image, ';
+          $select_column_list .= 'p.`products_image`, ';
           break;
         case 'PRODUCT_LIST_WEIGHT':
-          $select_column_list .= 'p.products_weight, ';
+          $select_column_list .= 'p.`products_weight`, ';
           break;
       }
     }

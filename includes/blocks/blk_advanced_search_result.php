@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.3 2005/08/24 02:50:50 lsces Exp $
+// $Id: blk_advanced_search_result.php,v 1.4 2005/08/24 12:16:41 lsces Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -53,19 +53,19 @@
 
     switch ($column_list[$col]) {
       case 'PRODUCT_LIST_MODEL':
-        $select_column_list .= 'p.products_model';
+        $select_column_list .= 'p.`products_model`';
         break;
       case 'PRODUCT_LIST_MANUFACTURER':
         $select_column_list .= 'm.manufacturers_name';
         break;
       case 'PRODUCT_LIST_QUANTITY':
-        $select_column_list .= 'p.products_quantity';
+        $select_column_list .= 'p.`products_quantity`';
         break;
       case 'PRODUCT_LIST_IMAGE':
-        $select_column_list .= 'p.products_image';
+        $select_column_list .= 'p.`products_image`';
         break;
       case 'PRODUCT_LIST_WEIGHT':
-        $select_column_list .= 'p.products_weight';
+        $select_column_list .= 'p.`products_weight`';
         break;
     }
   }
@@ -74,8 +74,8 @@
     $select_column_list .= ', ';
   }
 
-//  $select_str = "select distinct " . $select_column_list . " m.manufacturers_id, p.`products_id`, pd.products_name, p.products_price, p.products_tax_class_id, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.products_price) as final_price ";
-  $select_str = "select " . $select_column_list . " m.manufacturers_id, p.`products_id`, pd.products_name, p.products_price, p.products_tax_class_id, p.products_price_sorter ";
+//  $select_str = "select distinct " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.`products_price`) as final_price ";
+  $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`products_price_sorter` ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
     $select_str .= ", SUM(tr.tax_rate) as tax_rate ";
@@ -89,12 +89,12 @@
       $_SESSION['customer_country_id'] = STORE_COUNTRY;
       $_SESSIOn['customer_zone_id'] = STORE_ZONE;
     }
-    $from_str .= " left join " . TABLE_TAX_RATES . " tr on p.products_tax_class_id = tr.tax_class_id left join " . TABLE_ZONES_TO_GEO_ZONES . " gz on tr.tax_zone_id = gz.geo_zone_id and (gz.zone_country_id is null or gz.zone_country_id = '0' or gz.zone_country_id = '" . $_SESSION['customer_country_id'] . "') and (gz.zone_id is null or gz.zone_id = '0' or gz.zone_id = '" . $_SESSION['customer_zone_id'] . "')";
+    $from_str .= " left join " . TABLE_TAX_RATES . " tr on p.`products_tax_class_id` = tr.tax_class_id left join " . TABLE_ZONES_TO_GEO_ZONES . " gz on tr.tax_zone_id = gz.geo_zone_id and (gz.zone_country_id is null or gz.zone_country_id = '0' or gz.zone_country_id = '" . $_SESSION['customer_country_id'] . "') and (gz.zone_id is null or gz.zone_id = '0' or gz.zone_id = '" . $_SESSION['customer_zone_id'] . "')";
   }
 
   $from_str .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON( p.`products_id` = p2c.`products_id` ) LEFT JOIN  " . TABLE_CATEGORIES . " c ON( p2c.`categories_id`=c.`categories_id` ) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.`products_id`= p.`products_id` and mtpd.`language_id` = '" . $_SESSION['languages_id'] . "', " . TABLE_PRODUCTS_DESCRIPTION . " pd ";
 
-  $where_str = " where p.products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' ";
+  $where_str = " where p.`products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' ";
 
   if (isset($_GET['categories_id']) && zen_not_null($_GET['categories_id'])) {
     if ($_GET['inc_subcat'] == '1') {
@@ -111,7 +111,7 @@
   }
 
   if (isset($_GET['manufacturers_id']) && zen_not_null($_GET['manufacturers_id'])) {
-    $where_str .= " and m.manufacturers_id = '" . $_GET['manufacturers_id'] . "'";
+    $where_str .= " and m.`manufacturers_id` = '" . $_GET['manufacturers_id'] . "'";
   }
 
   if (isset($_GET['keyword']) && zen_not_null($_GET['keyword'])) {
@@ -126,11 +126,11 @@
             $where_str .= " " . $search_keywords[$i] . " ";
             break;
           default:
-            $where_str .= "(lower( pd.`products_name` ) like '%" . addslashes( strtolower( $search_keywords[$i]) ) . "%' or p.products_model like '%" . addslashes($search_keywords[$i]) . "%' or m.manufacturers_name like '%" . addslashes($search_keywords[$i]) . "%'";
+            $where_str .= "(lower( pd.`products_name` ) like '%" . addslashes( strtolower( $search_keywords[$i]) ) . "%' or p.`products_model` like '%" . addslashes($search_keywords[$i]) . "%' or m.manufacturers_name like '%" . addslashes($search_keywords[$i]) . "%'";
 // search meta tags
             $where_str .= " or (mtpd.metatags_keywords like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_keywords !='')";
             $where_str .= " or (mtpd.metatags_description like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_description !='')";
-            if (isset($_GET['search_in_description']) && ($_GET['search_in_description'] == '1')) $where_str .= " or pd.products_description like '%" . addslashes($search_keywords[$i]) . "%'";
+            if (isset($_GET['search_in_description']) && ($_GET['search_in_description'] == '1')) $where_str .= " or pd.`products_description` like '%" . addslashes($search_keywords[$i]) . "%'";
               $where_str .= ')';
             break;
         }
@@ -140,11 +140,11 @@
   }
 
   if (isset($_GET['dfrom']) && zen_not_null($_GET['dfrom']) && ($_GET['dfrom'] != DOB_FORMAT_STRING)) {
-    $where_str .= " and p.products_date_added >= '" . zen_date_raw($dfrom) . "'";
+    $where_str .= " and p.`products_date_added` >= '" . zen_date_raw($dfrom) . "'";
   }
 
   if (isset($_GET['dto']) && zen_not_null($_GET['dto']) && ($_GET['dto'] != DOB_FORMAT_STRING)) {
-    $where_str .= " and p.products_date_added <= '" . zen_date_raw($dto) . "'";
+    $where_str .= " and p.`products_date_added` <= '" . zen_date_raw($dto) . "'";
   }
 
   $rate = $currencies->get_value($_SESSION['currency']);
@@ -154,15 +154,15 @@
   }
 
   if (DISPLAY_PRICE_WITH_TAX == 'true') {
-//    if ($pfrom) $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.products_price) * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) >= " . $pfrom . ")";
-//    if ($pto)   $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.products_price) * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) <= " . $pto . ")";
-    if ($pfrom) $where_str .= " and (p.products_price_sorter * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) >= " . $pfrom . ")";
-    if ($pto)   $where_str .= " and (p.products_price_sorter * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) <= " . $pto . ")";
+//    if ($pfrom) $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.`products_price`) * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) >= " . $pfrom . ")";
+//    if ($pto)   $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.`products_price`) * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) <= " . $pto . ")";
+    if ($pfrom) $where_str .= " and (p.`products_price_sorter` * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) >= " . $pfrom . ")";
+    if ($pto)   $where_str .= " and (p.`products_price_sorter` * if(gz.geo_zone_id is null, 1, 1 + (tr.tax_rate / 100)) <= " . $pto . ")";
   } else {
-//    if ($pfrom) $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.products_price) >= " . $pfrom . ")";
-//    if ($pto)   $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.products_price) <= " . $pto . ")";
-    if ($pfrom) $where_str .= " and (p.products_price_sorter >= " . $pfrom . ")";
-    if ($pto)   $where_str .= " and (p.products_price_sorter <= " . $pto . ")";
+//    if ($pfrom) $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.`products_price`) >= " . $pfrom . ")";
+//    if ($pto)   $where_str .= " and (IF(s.status = '1', s.specials_new_products_price, p.`products_price`) <= " . $pto . ")";
+    if ($pfrom) $where_str .= " and (p.`products_price_sorter` >= " . $pfrom . ")";
+    if ($pto)   $where_str .= " and (p.`products_price_sorter` <= " . $pto . ")";
   }
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
@@ -178,13 +178,13 @@
     for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
       if ($column_list[$col] == 'PRODUCT_LIST_NAME') {
         $_GET['sort'] = $col+1 . 'a';
-        $order_str = ' order by pd.products_name';
+        $order_str = ' order by pd.`products_name`';
         break;
         } else {
 // sort by products_sort_order when PRODUCT_LISTING_DEFAULT_SORT_ORDER ia left blank
 // for reverse, descending order use:
-//       $listing_sql .= " order by p.products_sort_order desc, pd.products_name";
-          $order_str .= " order by p.products_sort_order, pd.products_name";
+//       $listing_sql .= " order by p.`products_sort_order` desc, pd.`products_name`";
+          $order_str .= " order by p.`products_sort_order`, pd.`products_name`";
           break;
         }
     }
@@ -198,26 +198,26 @@
     $order_str = ' order by ';
     switch ($column_list[$sort_col-1]) {
       case 'PRODUCT_LIST_MODEL':
-        $order_str .= "p.products_model " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
+        $order_str .= "p.`products_model` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
       case 'PRODUCT_LIST_NAME':
-        $order_str .= "pd.products_name " . ($sort_order == 'd' ? "desc" : "");
+        $order_str .= "pd.`products_name` " . ($sort_order == 'd' ? "desc" : "");
         break;
       case 'PRODUCT_LIST_MANUFACTURER':
-        $order_str .= "m.manufacturers_name " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
+        $order_str .= "m.manufacturers_name " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
       case 'PRODUCT_LIST_QUANTITY':
-        $order_str .= "p.products_quantity " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
+        $order_str .= "p.`products_quantity` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
       case 'PRODUCT_LIST_IMAGE':
-        $order_str .= "pd.products_name";
+        $order_str .= "pd.`products_name`";
         break;
       case 'PRODUCT_LIST_WEIGHT':
-        $order_str .= "p.products_weight " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
+        $order_str .= "p.`products_weight` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
       case 'PRODUCT_LIST_PRICE':
-//        $order_str .= "final_price " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-        $order_str .= "p.products_price_sorter " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
+//        $order_str .= "final_price " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
+        $order_str .= "p.`products_price_sorter` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
     }
   }

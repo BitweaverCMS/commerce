@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: define_queries.php,v 1.3 2005/07/14 04:55:13 spiderr Exp $
+// $Id: define_queries.php,v 1.4 2005/08/24 12:17:46 lsces Exp $
 //
 DEFINE('SQL_CC_ENABLED', "select configuration_key from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%CC_ENABLED%' and configuration_value= '1'");
 DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_CATEGORY%' and configuration_value > 0 order by configuration_value");
@@ -25,7 +25,7 @@ DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select configuration_key, configur
 DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
 DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set banners_shown = banners_shown +1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
 DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set banners_clicked = banners_clicked + 1 where banners_id = '%s' and date_format(banners_history_date, '%%Y%%m%%d') = date_format(now(), '%%Y%%m%%d')");
-DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.products_image 
+DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.`products_image` 
                      from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, " 
                             . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p 
                      where opa.products_id = ? 
@@ -33,7 +33,7 @@ DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.products_image
                      and opb.products_id != ? 
                      and opb.products_id = p.products_id 
                      and opb.orders_id = o.orders_id 
-                     and p.products_status = '1' 
+                     and p.`products_status = '1' 
                      group by p.products_id  
                      order by o.date_purchased desc" 
                      );

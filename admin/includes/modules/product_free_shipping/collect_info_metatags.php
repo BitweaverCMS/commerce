@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info_metatags.php,v 1.3 2005/08/24 02:48:59 lsces Exp $
+//  $Id: collect_info_metatags.php,v 1.4 2005/08/24 12:16:09 lsces Exp $
 //
 
     $parameters = array(
@@ -40,7 +40,7 @@
 // check if new meta tags or existing
     $check_meta_tags_description = $db->Execute("select products_id from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where products_id='" . (int)$_GET['pID'] . "'");
     if ($check_meta_tags_description->RecordCount() <= 0) {
-      $product = $db->Execute("select pd.products_name, p.products_model, p.products_price_sorter,
+      $product = $db->Execute("select pd.`products_name`, p.`products_model`, p.`products_price_sorter`,
                                       p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status,
                                       p.`products_id`, p.metatags_price_status, p.metatags_title_tagline_status
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -48,7 +48,7 @@
                               and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
     } else {
-      $product = $db->Execute("select pd.products_name, p.products_model, p.products_price_sorter,
+      $product = $db->Execute("select pd.`products_name`, p.`products_model`, p.`products_price_sorter`,
                                       p.metatags_title_status, p.metatags_products_name_status, p.metatags_model_status,
                                       p.`products_id`, p.metatags_price_status, p.metatags_title_tagline_status,
                                       mtpd.metatags_title, mtpd.metatags_keywords, mtpd.metatags_description

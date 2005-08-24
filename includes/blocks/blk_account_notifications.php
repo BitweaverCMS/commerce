@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_notifications.php,v 1.3 2005/08/24 02:50:50 lsces Exp $
+// $Id: blk_account_notifications.php,v 1.4 2005/08/24 12:16:41 lsces Exp $
 //
   $counter = 0;
-  $products_query = "select pd.`products_id`, pd.products_name
+  $products_query = "select pd.`products_id`, pd.`products_name`
                      from   " . TABLE_PRODUCTS_DESCRIPTION . " pd,
                             " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
                      where  pn.customers_id = '" . (int)$_SESSION['customer_id'] . "'
                      and    pn.`products_id` = pd.`products_id`
                      and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                     order by pd.products_name";
+                     order by pd.`products_name`";
 
   $products = $db->Execute($products_query);
   while (!$products->EOF) {

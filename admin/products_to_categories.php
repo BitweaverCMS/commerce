@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.7 2005/08/24 11:51:39 lsces Exp $
+//  $Id: products_to_categories.php,v 1.8 2005/08/24 12:15:09 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -377,7 +377,7 @@ function array_minus_array($a, $b) {
     }
   }
 
-  $product_to_copy = $db->Execute("select p.`products_id`, pd.products_name, p.products_price_sorter, p.products_model, p.master_categories_id, p.products_image
+  $product_to_copy = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price_sorter`, p.`products_model`, p.master_categories_id, p.`products_image`
                                   from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd " . "
                          where p.`products_id` = '" . $productsId . "'
                          and p.`products_id` = pd.`products_id`

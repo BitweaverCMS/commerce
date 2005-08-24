@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.17 2005/08/24 09:36:28 lsces Exp $
+//  $Id: general.php,v 1.18 2005/08/24 12:15:30 lsces Exp $
 //
 
 ////
@@ -223,18 +223,18 @@
 
     if ($show_current_category) {
 // only show $current_categories_id
-      $products = $db->Execute("SELECT p.`products_id`, pd.products_name, p.products_price, p.products_model, ptc.`categories_id`
+      $products = $db->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`, ptc.`categories_id`
                                 FROM " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
                                 	LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on ptc.`products_id` = p.`products_id`
                                 WHERE pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 and ptc.`categories_id` = '" . $current_category_id . "'
-                                ORDER BY products_name");
+                                ORDER BY `products_name`");
     } else {
-      $products = $db->Execute("SELECT p.`products_id`, pd.products_name, p.products_price, p.products_model
+      $products = $db->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                 WHERE p.`products_id` = pd.`products_id`
                                 and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                                ORDER BY products_name");
+                                ORDER BY `products_name`");
     }
 
     while (!$products->EOF) {
@@ -541,7 +541,7 @@
       $products = $db->Execute("SELECT count(*) as total
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
-                                and p.products_status = '1'
+                                and p.`products_status = '1'
                                 and p2c.`categories_id` = '" . (int)$categories_id . "'" . $limit_count);
 
     }
@@ -1986,14 +1986,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           $cat_products_query = "SELECT count(*) as total
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                              WHERE p.`products_id` = p2c.`products_id`
-                             and p.products_status = '1'
+                             and p.`products_status = '1'
                              and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
         case ('products_active'):
           $cat_products_query = "SELECT p.`products_id`
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                              WHERE p.`products_id` = p2c.`products_id`
-                             and p.products_status = '1'
+                             and p.`products_status = '1'
                              and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
       }
@@ -2352,13 +2352,13 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $select_string .= '>';
 
-    $new_fields=', p.products_model';
+    $new_fields=', p.`products_model`';
 
-    $products = $db->Execute("SELECT distinct p.`products_id`, pd.products_name, p.products_price" . $new_fields .
+    $products = $db->Execute("SELECT distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields .
         " FROM " . TABLE_PRODUCTS . " p, " .
         TABLE_PRODUCTS_DESCRIPTION . " pd, " .
         TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY products_name");
+        " WHERE p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `products_name`");
 
     while (!$products->EOF) {
       if (!in_array($products->fields['products_id'], $exclude)) {
@@ -2477,7 +2477,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     $category_query = "SELECT p2c.`categories_id`
                        FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                        WHERE p.`products_id` = '" . (int)$products_id . "' " .
-                       ($status_override == '1' ? " and p.products_status = '1' " : '') . "
+                       ($status_override == '1' ? " and p.`products_status = '1' " : '') . "
                        and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);

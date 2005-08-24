@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.6 2005/08/24 02:48:57 lsces Exp $
+//  $Id: collect_info.php,v 1.7 2005/08/24 12:16:09 lsces Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -59,7 +59,7 @@
                                       p.`products_id`, p.`products_quantity`, p.`products_model`,
                                       p.`products_image`, p.`products_price`, p.`products_virtual`, p.`products_weight`,
                                       p.`products_date_added`, p.`products_last_modified`,
-                                      ".$db->mDb->SQLDate('Y-m-d','p.products_date_available')." as
+                                      ".$db->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
                                       `products_date_available`, p.`products_status`, p.`products_tax_class_id`,
                                       pe.`artists_id`, pe.`record_company_id`,pe.`music_genre_id`,
                                       p.`products_quantity_order_min`, p.`products_quantity_order_units`, p.`products_priced_by_attribute`,
@@ -208,8 +208,8 @@ function doRound(x, places) {
 }
 
 function getTaxRate() {
-  var selected_value = document.forms["new_product"].products_tax_class_id.selectedIndex;
-  var parameterVal = document.forms["new_product"].products_tax_class_id[selected_value].value;
+  var selected_value = document.forms["new_product"].`products_tax_class_id`.selectedIndex;
+  var parameterVal = document.forms["new_product"].`products_tax_class_id`[selected_value].value;
 
   if ( (parameterVal > 0) && (tax_rates[parameterVal] > 0) ) {
     return tax_rates[parameterVal];
@@ -220,24 +220,24 @@ function getTaxRate() {
 
 function updateGross() {
   var taxRate = getTaxRate();
-  var grossValue = document.forms["new_product"].products_price.value;
+  var grossValue = document.forms["new_product"].`products_price`.value;
 
   if (taxRate > 0) {
     grossValue = grossValue * ((taxRate / 100) + 1);
   }
 
-  document.forms["new_product"].products_price_gross.value = doRound(grossValue, 4);
+  document.forms["new_product"].`products_price`_gross.value = doRound(grossValue, 4);
 }
 
 function updateNet() {
   var taxRate = getTaxRate();
-  var netValue = document.forms["new_product"].products_price_gross.value;
+  var netValue = document.forms["new_product"].`products_price`_gross.value;
 
   if (taxRate > 0) {
     netValue = netValue / ((taxRate / 100) + 1);
   }
 
-  document.forms["new_product"].products_price.value = doRound(netValue, 4);
+  document.forms["new_product"].`products_price`.value = doRound(netValue, 4);
 }
 //--></script>
     <?php

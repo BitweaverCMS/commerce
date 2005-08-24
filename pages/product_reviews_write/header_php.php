@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 02:53:02 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 12:17:01 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -26,11 +26,11 @@
 
   require(DIR_WS_MODULES . 'require_languages.php');
 
-  $product_info_query = "select p.`products_id`, p.products_model, p.products_image,
-                                p.products_price, p.products_tax_class_id, pd.products_name
+  $product_info_query = "select p.`products_id`, p.`products_model`, p.`products_image`,
+                                p.`products_price`, p.`products_tax_class_id`, pd.`products_name`
                          from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                          where p.`products_id` = '" . (int)$_GET['products_id'] . "'
-                         and p.products_status = '1'
+                         and p.`products_status = '1'
                          and p.`products_id` = pd.`products_id`
                          and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 

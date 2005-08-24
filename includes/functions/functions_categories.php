@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.4 2005/08/24 02:51:32 lsces Exp $
+// $Id: functions_categories.php,v 1.5 2005/08/24 12:17:46 lsces Exp $
 //
 //
 ////
@@ -75,7 +75,7 @@
 	$selectSql=''; $joinSql=''; $whereSql='';
 	$gBitProduct->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
     if ($include_inactive == true) {
-		$whereSql .= " and p.products_status = '1' ";
+		$whereSql .= " and p.`products_status = '1' ";
     }
       $products_query = "select count(*) as `total`
                          from " . TABLE_PRODUCTS . " p
@@ -188,7 +188,7 @@
     $category_query = "select p2c.`categories_id`
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                        where p.`products_id` = '" . (int)$products_id . "'
-                       and p.products_status = '1'
+                       and p.`products_status = '1'
                        and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);
@@ -295,7 +295,7 @@
 
     $select_string .= '>';
 
-    $products = $db->Execute("select p.`products_id`, pd.products_name, p.products_price
+    $products = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
@@ -331,9 +331,9 @@
 
     $select_string .= '>';
 
-    $new_fields=', p.products_model';
+    $new_fields=', p.`products_model`';
 
-    $products = $db->Execute("select distinct p.`products_id`, pd.products_name, p.products_price" . $new_fields ."
+    $products = $db->Execute("select distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields ."
                               from " . TABLE_PRODUCTS . " p, " .
                                        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                        TABLE_PRODUCTS_ATTRIBUTES . " pa " ."

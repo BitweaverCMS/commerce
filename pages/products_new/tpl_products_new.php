@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_new.php,v 1.4 2005/08/24 02:53:02 lsces Exp $
+// $Id: tpl_products_new.php,v 1.5 2005/08/24 12:17:02 lsces Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -36,9 +36,9 @@
 
 //define('SHOW_NEW_PRODUCTS_LIMIT','30');
 	if( SHOW_NEW_PRODUCTS_LIMIT == '1' ) {
-		$display_limit = " and ".$db->mDb->SQLDate( 'Ym', 'p.products_date_added' )." >= ".$db->mDb->SQLDate( 'Ym' );
+		$display_limit = " and ".$db->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$db->mDb->SQLDate( 'Ym' );
 	} elseif( SHOW_NEW_PRODUCTS_LIMIT > 0 ) {
-		$display_limit = ' and '.$db->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.products_date_added' ).' > NOW()';
+		$display_limit = ' and '.$db->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.`products_date_added`' ).' > NOW()';
 	}
 	$products_new_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_image`, p.`products_price`, p.`products_tax_class_id`, p.`products_date_added`, m.`manufacturers_name`, p.`products_model`, p.`products_quantity`, p.`products_weight` from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m on (p.`manufacturers_id` = m.`manufacturers_id`), " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . $display_limit . $order_by;
 

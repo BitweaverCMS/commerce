@@ -175,16 +175,16 @@ class CommerceProduct extends LibertyAttachable {
 
 		if( !empty( $pListHash['freshness'] ) ) {
 			if ( $pListHash['freshness'] == '1' ) {
-				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.products_date_added' )." >= ".$this->mDb->SQLDate( 'Ym' );
+				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$this->mDb->SQLDate( 'Ym' );
 			} else {
-				$whereSql .= ' and '.$this->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.products_date_added' ).' > NOW()';
+				$whereSql .= ' and '.$this->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.`products_date_added`' ).' > NOW()';
 			}
 		}
 
 		if( !empty( $pListHash['reviews'] ) ) {
 			$selectSql .= ' , r.`reviews_rating`, rd.`reviews_text` ';
 			$joinSql .= " INNER JOIN " . TABLE_REVIEWS . " r  ON ( p.`products_id` = r.`products_id` ) INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON ( r.`reviews_id` = rd.`reviews_id` ) ";
-			$whereSql .= " AND r.`status` = '1' AND rd.languages_id = ? ";
+			$whereSql .= " AND r.`status` = '1' AND rd.`languages_id` = ? ";
 			array_push( $bindVars, (int)$_SESSION['languages_id'] );
 		}
 
