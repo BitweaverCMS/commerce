@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: countries.php,v 1.2 2005/08/03 15:35:06 spiderr Exp $
+//  $Id: countries.php,v 1.3 2005/08/24 03:22:48 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -33,7 +33,7 @@
         $address_format_id = zen_db_prepare_input($_POST['address_format_id']);
 
         $db->Execute("insert into " . TABLE_COUNTRIES . "
-                    (countries_name, countries_iso_code_2, countries_iso_code_3, address_format_id)
+                    (`countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id`)
                     values ('" . zen_db_input($countries_name) . "',
                             '" . zen_db_input($countries_iso_code_2) . "',
                             '" . zen_db_input($countries_iso_code_3) . "',
@@ -49,11 +49,11 @@
         $address_format_id = zen_db_prepare_input($_POST['address_format_id']);
 
         $db->Execute("update " . TABLE_COUNTRIES . "
-                      set countries_name = '" . zen_db_input($countries_name) . "',
-                          countries_iso_code_2 = '" . zen_db_input($countries_iso_code_2) . "',
-                          countries_iso_code_3 = '" . zen_db_input($countries_iso_code_3) . "',
-                          address_format_id = '" . (int)$address_format_id . "'
-                      where countries_id = '" . (int)$countries_id . "'");
+                      set `countries_name` = '" . zen_db_input($countries_name) . "',
+                          `countries_iso_code_2` = '" . zen_db_input($countries_iso_code_2) . "',
+                          `countries_iso_code_3` = '" . zen_db_input($countries_iso_code_3) . "',
+                          `address_format_id` = '" . (int)$address_format_id . "'
+                      where `countries_id` = '" . (int)$countries_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_COUNTRIES, 'page=' . $_GET['page'] . '&cID=' . $countries_id));
         break;
@@ -67,7 +67,7 @@
         $countries_id = zen_db_prepare_input($_GET['cID']);
 
         $db->Execute("delete from " . TABLE_COUNTRIES . "
-                      where countries_id = '" . (int)$countries_id . "'");
+                      where `countries_id` = '" . (int)$countries_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_COUNTRIES, 'page=' . $_GET['page']));
         break;
@@ -125,7 +125,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $countries_query_raw = "select countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, address_format_id from " . TABLE_COUNTRIES . " order by countries_name";
+  $countries_query_raw = "select `countries_id`, `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id` from " . TABLE_COUNTRIES . " order by `countries_name`";
   $countries_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $countries_query_raw, $countries_query_numrows);
   $countries = $db->Execute($countries_query_raw);
   while (!$countries->EOF) {
