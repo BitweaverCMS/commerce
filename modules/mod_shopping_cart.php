@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.6 2005/08/19 17:12:34 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.7 2005/08/24 09:30:59 lsces Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -77,9 +77,9 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
     $content .= '</table>';
 
   if ($_SESSION['customer_id']) {
-    $gv_query = "select amount
+    $gv_query = "select `amount`
                  from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
+                 where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 
     $gv_result = $db->Execute($gv_query);
 
@@ -92,7 +92,7 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
   if( !empty( $_SESSION['gv_id'] ) ) {
     $gv_query = "select coupon_amount
                  from " . TABLE_COUPONS . "
-                 where coupon_id = '" . $_SESSION['gv_id'] . "'";
+                 where `coupon_id` = '" . $_SESSION['gv_id'] . "'";
 
     $coupon = $db->Execute($gv_query);
     $content .= zen_draw_separator();

@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.2 2005/08/24 08:45:57 lsces Exp $
+//  $Id: languages.php,v 1.3 2005/08/24 09:34:45 lsces Exp $
 //
 
   function zen_get_languages_directory($code) {
     global $db;
-    $language = $db->Execute("select languages_id, directory 
+    $language = $db->Execute("select `languages_id`, `directory` 
                               from " . TABLE_LANGUAGES . " 
                               where `code` = '" . zen_db_input($code) . "'");
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: zones.php,v 1.3 2005/08/24 02:48:11 lsces Exp $
+//  $Id: zones.php,v 1.4 2005/08/24 09:38:29 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -61,7 +61,7 @@
         }
         $zone_id = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("delete from " . TABLE_ZONES . " where zone_id = '" . (int)$zone_id . "'");
+        $db->Execute("delete from " . TABLE_ZONES . " where `zone_id` = '" . (int)$zone_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_ZONES, 'page=' . $_GET['page']));
         break;
@@ -119,7 +119,7 @@
                       <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
                     </tr>
                     <?php
-  $zones_query_raw = "select z.zone_id, c.countries_id, c.countries_name, z.zone_name, z.zone_code, z.zone_country_id from " . TABLE_ZONES . " z, " . TABLE_COUNTRIES . " c where z.zone_country_id = c.countries_id order by c.countries_name, z.zone_name";
+  $zones_query_raw = "select z.`zone_id`, c.`countries_id`, c.`countries_name`, z.`zone_name`, z.`zone_code`, z.`zone_country_id` from " . TABLE_ZONES . " z, " . TABLE_COUNTRIES . " c where z.`zone_country_id` = c.`countries_id` order by c.`countries_name`, z.`zone_name`";
   $zones_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
   $zones = $db->Execute($zones_query_raw);
   while (!$zones->EOF) {

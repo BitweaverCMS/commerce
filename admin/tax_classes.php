@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_classes.php,v 1.3 2005/08/24 02:48:11 lsces Exp $
+//  $Id: tax_classes.php,v 1.4 2005/08/24 09:38:29 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -33,7 +33,7 @@
                     (tax_`class_title`, `tax_class_description`, `date_added`)
                     values ('" . zen_db_input($tax_class_title) . "',
                             '" . zen_db_input($tax_class_description) . "',
-                            now())");
+                            " . $dB->sysTimeStamp . ")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES));
         break;
@@ -46,7 +46,7 @@
                       set `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_class_title` = '" . zen_db_input($tax_class_title) . "',
                           `tax_class_description` = '" . zen_db_input($tax_class_description) . "',
-                          `last_modified` = now()
+                          `last_modified` = " . $dB->sysTimeStamp . "
                       where `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page'] . '&tID=' . $tax_class_id));
@@ -118,7 +118,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $classes_query_raw = "select `tax_class_id`, `tax_class_title`, `tax_class_description, `last_modified`, `date_added` from " . TABLE_TAX_CLASS . " order by `tax_class_title`";
+  $classes_query_raw = "select `tax_class_id`, `tax_class_title`, `tax_class_description`, `last_modified`, `date_added` from " . TABLE_TAX_CLASS . " order by `tax_class_title`";
   $classes_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $classes_query_raw, $classes_query_numrows);
   $classes = $db->Execute($classes_query_raw);
   while (!$classes->EOF) {

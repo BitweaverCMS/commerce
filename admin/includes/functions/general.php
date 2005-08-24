@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.16 2005/08/24 08:45:57 lsces Exp $
+//  $Id: general.php,v 1.17 2005/08/24 09:36:28 lsces Exp $
 //
 
 ////
@@ -42,9 +42,9 @@
 
   function zen_customers_name($customers_id) {
     global $db;
-    $customers_values = $db->Execute("SELECT customers_firstname, customers_lastname
+    $customers_values = $db->Execute("SELECT `customers_firstname`,` customers_lastname`
                                FROM " . TABLE_CUSTOMERS . "
-                               WHERE customers_id = '" . (int)$customers_id . "'");
+                               WHERE `customers_id` = '" . (int)$customers_id . "'");
 
     return $customers_values->fields['customers_firstname'] . ' ' . $customers_values->fields['customers_lastname'];
   }
@@ -64,13 +64,13 @@
         $cPath_new = $current_category_id;
       } else {
         $cPath_new = '';
-        $last_category = $db->Execute("SELECT parent_id
+        $last_category = $db->Execute("SELECT `parent_id`
                                        FROM " . TABLE_CATEGORIES . "
-                                       WHERE categories_id = '" . (int)$cPath_array[(sizeof($cPath_array)-1)] . "'");
+                                       WHERE `categories_id` = '" . (int)$cPath_array[(sizeof($cPath_array)-1)] . "'");
 
-        $current_category = $db->Execute("SELECT parent_id
+        $current_category = $db->Execute("SELECT `parent_id`
                                           FROM " . TABLE_CATEGORIES . "
-                                           WHERE categories_id = '" . (int)$current_category_id . "'");
+                                           WHERE `categories_id` = '" . (int)$current_category_id . "'");
 
         if ($last_category->fields['parent_id'] == $current_category->fields['parent_id']) {
           for ($i = 0, $n = sizeof($cPath_array) - 1; $i < $n; $i++) {

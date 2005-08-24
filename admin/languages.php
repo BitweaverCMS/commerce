@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.7 2005/08/24 08:44:09 lsces Exp $
+//  $Id: languages.php,v 1.8 2005/08/24 09:38:29 lsces Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -35,7 +35,7 @@
         } else {
 
           $db->Execute("insert into " . TABLE_LANGUAGES . "
-                        (name, code, image, directory, `sort_order`)
+                        (`name`, `code`, `image`, `directory`, `sort_order`)
                         values ('" . zen_db_input($name) . "', '" . zen_db_input($code) . "',
                                 '" . zen_db_input($image) . "', '" . zen_db_input($directory) . "',
                                 '" . zen_db_input($sort_order) . "')");
@@ -45,7 +45,7 @@
 // create additional categories_description records
 
           $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`,
-                                    categories_description
+                                    `categories_description`
                                       from " . TABLE_CATEGORIES . " c
                                       left join " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                       on c.`categories_id` = cd.`categories_id`
@@ -53,8 +53,8 @@
 
           while (!$categories->EOF) {
             $db->Execute("insert into " . TABLE_CATEGORIES_DESCRIPTION . "
-                          (categories_id, language_id, categories_name,
-                          categories_description)
+                          (`categories_id`, `language_id`, `categories_name`,
+                          `categories_description`)
                           values ('" . (int)$categories->fields['categories_id'] . "', '" . (int)$insert_id . "',
                                   '" . zen_db_input($categories->fields['categories_name']) . "',
                                   '" . zen_db_input($categories->fields['categories_description']) . "')");
@@ -62,8 +62,8 @@
           }
 
 // create additional products_description records
-          $products = $db->Execute("select p.`products_id`, pd.products_name, pd.products_description,
-                                           pd.products_url
+          $products = $db->Execute("select p.`products_id`, pd.`products_name`, pd.`products_description`,
+                                           pd.`products_url`
                                     from " . TABLE_PRODUCTS . " p
                                     left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                     on p.`products_id` = pd.`products_id`
@@ -71,7 +71,7 @@
 
           while (!$products->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
-                        (products_id, language_id, products_name, products_description, products_url)
+                        (`products_id`, `language_id`, `products_name`, `products_description`, `products_url`)
                         values ('" . (int)$products->fields['products_id'] . "',
                                 '" . (int)$insert_id . "',
                                 '" . zen_db_input($products->fields['products_name']) . "',
@@ -81,16 +81,16 @@
           }
 
 // create additional products_options records
-          $products_options = $db->Execute("select products_options_id, products_options_name,
-                              products_options_sort_order, products_options_type, products_options_length, products_options_comment, products_options_size,
-                              products_options_images_per_row, products_options_images_style
+          $products_options = $db->Execute("select `products_options_id`, `products_options_name`,
+                              `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`,
+                              `products_options_images_per_row`, `products_options_images_style`
                                            from " . TABLE_PRODUCTS_OPTIONS . "
                                            where language_id = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
-		                    (products_options_id, language_id, products_options_name,
-		                    products_options_sort_order, products_options_type, products_options_length, products_options_comment, products_options_size, products_options_images_per_row, products_options_images_style)
+		                    (`products_options_id`, `language_id`, `products_options_name`,
+		                    `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`, `products_options_images_per_row`, `products_options_images_style`)
       						      values ('" . (int)$products_options->fields['products_options_id'] . "',
 						                    '" . (int)$insert_id . "',
 						                    '" . zen_db_input($products_options->fields['products_options_name']) . "',
@@ -106,14 +106,14 @@
           }
 
 // create additional products_options_values records
-          $products_options_values = $db->Execute("select products_options_values_id,
-		                                                products_options_values_name, products_ov_sort_order
+          $products_options_values = $db->Execute("select `products_options_values_id`,
+		                                                `products_options_values_name`, `products_ov_sort_order`
 						   from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-						   where language_id = '" . (int)$_SESSION['languages_id'] . "'");
+						   where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options_values->EOF) {
             $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        (products_options_values_id, language_id, products_options_values_name, products_ov_sort_order)
+                        (`products_options_values_id`, `language_id`, `products_options_values_name`, `products_ov_sort_order`)
 				                values ('" . (int)$products_options_values->fields['products_options_values_id'] . "',
 						                    '" . (int)$insert_id . "', '" . zen_db_input($products_options_values->fields['products_options_values_name']) . "', '" . zen_db_input($products_options_values->fields['products_ov_sort_order']) . "')");
 
@@ -121,15 +121,15 @@
           }
 
 // create additional manufacturers_info records
-          $manufacturers = $db->Execute("select m.manufacturers_id, mi.manufacturers_url
+          $manufacturers = $db->Execute("select m.`manufacturers_id`, mi.`manufacturers_url`
 		                               from " . TABLE_MANUFACTURERS . " m
 						   left join " . TABLE_MANUFACTURERS_INFO . " mi
-						   on m.manufacturers_id = mi.manufacturers_id
-						   where mi.languages_id = '" . (int)$_SESSION['languages_id'] . "'");
+						   on m.`manufacturers_id` = mi.`manufacturers_id`
+						   where mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$manufacturers->EOF) {
             $db->Execute("insert into " . TABLE_MANUFACTURERS_INFO . "
-		                    (manufacturers_id, languages_id, manufacturers_url)
+		                    (`manufacturers_id`, `languages_id`, `manufacturers_url`)
 					              values ('" . $manufacturers->fields['manufacturers_id'] . "', '" . (int)$insert_id . "',
 					                      '" . zen_db_input($manufacturers->fields['manufacturers_url']) . "')");
 
@@ -137,13 +137,13 @@
           }
 
 // create additional orders_status records
-          $orders_status = $db->Execute("select orders_status_id, orders_status_name
+          $orders_status = $db->Execute("select `orders_status_id`, `orders_status_name`
 		                               from " . TABLE_ORDERS_STATUS . "
-					   where language_id = '" . (int)$_SESSION['languages_id'] . "'");
+					   where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$orders_status->EOF) {
             $db->Execute("insert into " . TABLE_ORDERS_STATUS . "
-		                      (orders_status_id, language_id, orders_status_name)
+		                      (`orders_status_id`, `language_id`, `orders_status_name`)
 					                values ('" . (int)$orders_status->fields['orders_status_id'] . "',
 				                          '" . (int)$insert_id . "',
 				                          '" . zen_db_input($orders_status->fields['orders_status_name']) . "')");
@@ -156,15 +156,15 @@
           }
 
 // create additional coupons_description records
-          $coupons = $db->Execute("select c.coupon_id, cd.coupon_name, cd.coupon_description
+          $coupons = $db->Execute("select c.`coupon_id`, cd.`coupon_name`, cd.`coupon_description`
                                     from " . TABLE_COUPONS . " c
                                     left join " . TABLE_COUPONS_DESCRIPTION . " cd
-                                    on c.coupon_id = cd.coupon_id
-                                    where cd.coupon_id = '" . (int)$_SESSION['languages_id'] . "'");
+                                    on c.`coupon_id` = cd.`coupon_id`
+                                    where cd.`coupon_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$coupons->EOF) {
             $db->Execute("insert into " . TABLE_COUPONS_DESCRIPTION . "
-                        (coupon_id, language_id, coupon_name, coupon_description)
+                        (`coupon_id`, language_id, `coupon_name`, `coupon_description`)
                         values ('" . (int)$coupons->fields['coupon_id'] . "',
                                 '" . (int)$insert_id . "',
                                 '" . zen_db_input($coupons->fields['coupon_name']) . "',
@@ -204,7 +204,7 @@
           zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page']));
         }
         $lID = zen_db_prepare_input($_GET['lID']);
-        $lng = $db->Execute("select languages_id
+        $lng = $db->Execute("select `languages_id`
 		                     from " . TABLE_LANGUAGES . "
 							 where `code` = `" . DEFAULT_CURRENCY . "'");
 
@@ -225,7 +225,7 @@
         break;
       case 'delete':
         $lID = zen_db_prepare_input($_GET['lID']);
-        $lng = $db->Execute("select code from " . TABLE_LANGUAGES . " where languages_id = '" . (int)$lID . "'");
+        $lng = $db->Execute("select `code` from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
         $remove_language = true;
         if ($lng->fields['code'] == DEFAULT_LANGUAGE) {
           $remove_language = false;
@@ -285,7 +285,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $languages_query_raw = "select languages_id, name, code, image, directory, `sort_order` from " . TABLE_LANGUAGES . " order by `sort_order`";
+  $languages_query_raw = "select `languages_id`, `name`, `code`, `image`, `directory`, `sort_order` from " . TABLE_LANGUAGES . " order by `sort_order`";
   $languages_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $languages_query_raw, $languages_query_numrows);
   $languages = $db->Execute($languages_query_raw);
   while (!$languages->EOF) {
