@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sessions.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: sessions.php,v 1.2 2005/08/24 15:06:39 lsces Exp $
 //
 
   if (STORE_SESSIONS == 'db') {
@@ -53,13 +53,13 @@
       $expiry = time() + $SESS_LIFE;
       $value = $val;
 
-      $total = $db->Execute("select count(*) as total 
+      $total = $db->Execute("select count(*) as `total` 
                              from " . TABLE_SESSIONS . " 
-                             where sesskey = '" . zen_db_input($key) . "'");
+                             where `sesskey` = '" . zen_db_input($key) . "'");
 
       if ($total->fields['total'] > 0) {
         return $db->Execute("update " . TABLE_SESSIONS . " 
-                             set expiry = '" . zen_db_input($expiry) . "', 
+                             set `expiry` = '" . zen_db_input($expiry) . "', 
                                  value = '" . zen_db_input($value) . "' 
                              where sesskey = '" . zen_db_input($key) . "'");
       } else {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.19 2005/08/24 13:19:13 lsces Exp $
+//  $Id: general.php,v 1.20 2005/08/24 15:06:39 lsces Exp $
 //
 
 ////
@@ -287,9 +287,9 @@
 
   function zen_get_country_name_cfg() {
     global $db;
-    $country = $db->Execute("SELECT countries_name
+    $country = $db->Execute("SELECT `countries_name`
                              FROM " . TABLE_COUNTRIES . "
-                             WHERE countries_id = '" . (int)$country_id . "'");
+                             WHERE `countries_id` = '" . (int)$country_id . "'");
 
     if ($country->RecordCount() < 1) {
       return $country_id;
@@ -533,12 +533,12 @@
 
     if ($include_deactivated) {
 
-      $products = $db->Execute("SELECT count(*) as total
+      $products = $db->Execute("SELECT count(*) as `total`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
                                 and p2c.`categories_id` = '" . (int)$categories_id . "'" . $limit_count);
     } else {
-      $products = $db->Execute("SELECT count(*) as total
+      $products = $db->Execute("SELECT count(*) as `total`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
                                 and p.`products_status = '1'
@@ -593,9 +593,9 @@
       $countries_array[] = array('id' => '',
                                  'text' => $default);
     }
-    $countries = $db->Execute("SELECT countries_id, countries_name
+    $countries = $db->Execute("SELECT `countries_id`, `countries_name`
                                FROM " . TABLE_COUNTRIES . "
-                               ORDER BY countries_name");
+                               ORDER BY `countries_name`");
 
     while (!$countries->EOF) {
       $countries_array[] = array('id' => $countries->fields['countries_id'],
@@ -931,13 +931,13 @@
 
   function zen_remove_category($category_id) {
     global $db;
-    $category_image = $db->Execute("SELECT categories_image
+    $category_image = $db->Execute("SELECT `categories_image`
                                     FROM " . TABLE_CATEGORIES . "
-                                    WHERE categories_id = '" . (int)$category_id . "'");
+                                    WHERE `categories_id` = '" . (int)$category_id . "'");
 
-    $duplicate_image = $db->query("SELECT count(*) as total
+    $duplicate_image = $db->query("SELECT count(*) as `total`
                                      FROM " . TABLE_CATEGORIES . "
-                                     WHERE categories_image = ?", array( $category_image->fields['categories_image'] ) );
+                                     WHERE `categories_image` = ?", array( $category_image->fields['categories_image'] ) );
     if ($duplicate_image->fields['total'] < 2) {
       if (file_exists(DIR_FS_CATALOG_IMAGES . $category_image->fields['categories_image'])) {
         @unlink(DIR_FS_CATALOG_IMAGES . $category_image->fields['categories_image']);
@@ -958,13 +958,13 @@
 
   function zen_remove_product($product_id, $ptc = 'true') {
     global $db;
-    $product_image = $db->Execute("SELECT products_image
+    $product_image = $db->Execute("SELECT `products_image`
                                    FROM " . TABLE_PRODUCTS . "
-                                   WHERE products_id = '" . (int)$product_id . "'");
+                                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $duplicate_image = $db->Execute("SELECT count(*) as total
+    $duplicate_image = $db->Execute("SELECT count(*) as `total`
                                      FROM " . TABLE_PRODUCTS . "
-                                     WHERE products_image = '" . zen_db_input($product_image->fields['products_image']) . "'");
+                                     WHERE `products_image` = '" . zen_db_input($product_image->fields['products_image']) . "'");
 
     if ($duplicate_image->fields['total'] < 2 and $product_image->fields['products_image'] != '') {
       $products_image = $product_image->fields['products_image'];
@@ -1967,7 +1967,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     if ($include_inactive == true) {
       switch ($counts_what) {
         case ('products'):
-        $cat_products_query = "SELECT count(*) as total
+        $cat_products_query = "SELECT count(*) as `total`
                            FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                            WHERE p.`products_id` = p2c.`products_id`
                            and p2c.`categories_id` = '" . (int)$category_id . "'";
@@ -1983,7 +1983,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     } else {
       switch ($counts_what) {
         case ('products'):
-          $cat_products_query = "SELECT count(*) as total
+          $cat_products_query = "SELECT count(*) as `total`
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                              WHERE p.`products_id` = p2c.`products_id`
                              and p.`products_status = '1'

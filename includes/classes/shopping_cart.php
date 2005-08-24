@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.14 2005/08/24 02:51:13 lsces Exp $
+// $Id: shopping_cart.php,v 1.15 2005/08/24 15:06:38 lsces Exp $
 //
 
   class shoppingCart {
@@ -40,7 +40,7 @@
           $qty = $this->contents[$products_id]['quantity'];
           $product_query = "select products_id
                             from " . TABLE_CUSTOMERS_BASKET . "
-                            where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                            where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                             and products_id = '" . zen_db_input($products_id) . "'";
 
           $product = $db->Execute($product_query);
@@ -77,7 +77,7 @@
           } else {
             $sql = "update " . TABLE_CUSTOMERS_BASKET . "
                     set customers_basket_quantity = '" . $qty . "'
-                    where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                    where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and products_id = '" . zen_db_input($products_id) . "'";
 
             $db->Execute($sql);
@@ -91,7 +91,7 @@
 
       $products_query = "select products_id, customers_basket_quantity
                          from " . TABLE_CUSTOMERS_BASKET . "
-                         where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                         where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $products = $db->Execute($products_query);
 
@@ -101,13 +101,13 @@
 // set contents in sort order
 
         //CLR 020606 update query to pull attribute value_text. This is needed for text attributes.
-//        $attributes_query = zen_db_query("select products_options_id, products_options_value_id, products_options_value_text from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where customers_id = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products['products_id']) . "'");
+//        $attributes_query = zen_db_query("select products_options_id, products_options_value_id, products_options_value_text from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products['products_id']) . "'");
 
         $order_by = ' order by LPAD(products_options_sort_order,11,"0")';
 
         $attributes = $db->Execute("select products_options_id, products_options_value_id, products_options_value_text
                              from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                             where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                             where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                              and products_id = '" . zen_db_input($products->fields['products_id']) . "' " . $order_by);
 
         while (!$attributes->EOF) {
@@ -141,7 +141,7 @@
         $sql = "delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
         $db->query($sql, array( $gBitUser->mUserId ) );
 
-        $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where customers_id = ?";
+        $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = ?";
         $db->query($sql, array( $gBitUser->mUserId ) );
       }
 
@@ -250,7 +250,7 @@
       if ($_SESSION['customer_id']) {
         $sql = "update " . TABLE_CUSTOMERS_BASKET . "
                 set customers_basket_quantity = '" . $quantity . "'
-                where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and products_id = '" . zen_db_input($products_id) . "'";
 
         $db->Execute($sql);
@@ -288,7 +288,7 @@
 // update database
             //CLR 020606 update db insert to include attribute value_text. This is needed for text attributes.
             //CLR 030228 add zen_db_input() processing
-//          if (zen_session_is_registered('customer_id')) zen_db_query("update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " set products_options_value_id = '" . (int)$value . "', products_options_value_text = '" . zen_db_input($attr_value) . "' where customers_id = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "' and products_options_id = '" . (int)$option . "'");
+//          if (zen_session_is_registered('customer_id')) zen_db_query("update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " set products_options_value_id = '" . (int)$value . "', products_options_value_text = '" . zen_db_input($attr_value) . "' where `customers_id` = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "' and products_options_id = '" . (int)$option . "'");
 
             if ($attr_value) {
               $attr_value = zen_db_input($attr_value);
@@ -299,7 +299,7 @@
                 $products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $opt);
                 $sql = "update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                         set products_options_value_id = '" . $val . "'
-                        where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                        where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                         and products_id = '" . zen_db_input($products_id) . "'
                         and products_options_id = '" . (int)$option.'_chk'.$val . "'";
 
@@ -309,7 +309,7 @@
               if ($_SESSION['customer_id']) {
                 $sql = "update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                         set products_options_value_id = '" . $value . "', products_options_value_text = '" . $attr_value . "'
-                        where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                        where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                         and products_id = '" . zen_db_input($products_id) . "'
                         and products_options_id = '" . (int)$option . "'";
 
@@ -331,13 +331,13 @@
 // remove from database
           if ($_SESSION['customer_id']) {
             $sql = "delete from " . TABLE_CUSTOMERS_BASKET . "
-                    where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                    where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and products_id = '" . $key . "'";
 
             $db->Execute($sql);
 
             $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                    where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                    where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and products_id = '" . $key . "'";
 
             $db->Execute($sql);
@@ -384,18 +384,18 @@
 // remove from database
       if ($_SESSION['customer_id']) {
 
-//        zen_db_query("delete from " . TABLE_CUSTOMERS_BASKET . " where customers_id = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "'");
+//        zen_db_query("delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "'");
 
         $sql = "delete from " . TABLE_CUSTOMERS_BASKET . "
-                where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and products_id = '" . zen_db_input($products_id) . "'";
 
         $db->Execute($sql);
 
-//        zen_db_query("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where customers_id = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "'");
+//        zen_db_query("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$customer_id . "' and products_id = '" . zen_db_input($products_id) . "'");
 
         $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                where customers_id = '" . (int)$_SESSION['customer_id'] . "'
+                where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and products_id = '" . zen_db_input($products_id) . "'";
 
         $db->Execute($sql);
@@ -989,7 +989,7 @@ if ((int)$products_id != $products_id) {
           if (isset($this->contents[$products_id]['attributes'])) {
             reset($this->contents[$products_id]['attributes']);
             while (list(, $value) = each($this->contents[$products_id]['attributes'])) {
-              $virtual_check_query = "select count(*) as total
+              $virtual_check_query = "select count(*) as `total`
                                       from " . TABLE_PRODUCTS_ATTRIBUTES . " pa, "
                                              . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                       where pa.`products_id` = '" . (int)$products_id . "'

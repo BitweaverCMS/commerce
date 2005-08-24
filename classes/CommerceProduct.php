@@ -490,9 +490,9 @@ class CommerceProduct extends LibertyAttachable {
 /*
 Skip deleting of images for now
 				if( !empty( $this->mInfo['products_image'] ) ) {
-					$duplicate_image = $this->mDb->GetOne("SELECT count(*) as total
+					$duplicate_image = $this->mDb->GetOne("SELECT count(*) as `total`
                                      FROM " . TABLE_PRODUCTS . "
-                                     WHERE products_image = ?", array( $this->mInfo['products_image'] ) );
+                                     WHERE `products_image` = ?", array( $this->mInfo['products_image'] ) );
 					if ($duplicate_image < 2 ) {
 						$products_image = $product_image->fields['products_image'];
 						$products_image_extention = substr($products_image, strrpos($products_image, '.'));

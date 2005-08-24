@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.8 2005/08/24 02:47:44 lsces Exp $
+//  $Id: customers.php,v 1.9 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -34,9 +34,9 @@
     switch ($action) {
       case 'status':
         if ($_GET['current'] == CUSTOMERS_APPROVAL_AUTHORIZATION) {
-          $sql = "update " . TABLE_CUSTOMERS . " set customers_authorization=0 where customers_id='" . $_GET['cID'] . "'";
+          $sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`=0 where `customers_id`='" . $_GET['cID'] . "'";
         } else {
-          $sql = "update " . TABLE_CUSTOMERS . " set customers_authorization='" . CUSTOMERS_APPROVAL_AUTHORIZATION . "' where customers_id='" . $_GET['cID'] . "'";
+          $sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`='" . CUSTOMERS_APPROVAL_AUTHORIZATION . "' where `customers_id`='" . $_GET['cID'] . "'";
         }
         $db->Execute($sql);
         $action = '';
@@ -215,8 +215,8 @@
         $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "'");
 
         $db->Execute("update " . TABLE_CUSTOMERS_INFO . "
-                      set date_account_last_modified = now()
-                      where customers_info_id = '" . (int)$customers_id . "'");
+                      set `date_account_last_modified` = " . $db->mDb->sysTimeStamp . "
+                      where `customers_info_id` = '" . (int)$customers_id . "'");
 
         if ($entry_zone_id > 0) $entry_state = '';
 
@@ -262,56 +262,56 @@
         if (isset($_POST['delete_reviews']) && ($_POST['delete_reviews'] == 'on')) {
           $reviews = $db->Execute("select reviews_id
                                    from " . TABLE_REVIEWS . "
-                                   where customers_id = '" . (int)$customers_id . "'");
+                                   where `customers_id` = '" . (int)$customers_id . "'");
 
           while (!$reviews->EOF) {
             $dbExecute("delete from " . TABLE_REVIEWS_DESCRIPTION . "
-                        where reviews_id = '" . (int)$reviews['reviews_id'] . "'");
+                        where `reviews_id` = '" . (int)$reviews['reviews_id'] . "'");
             $reviews->MoveNext();
           }
 
           $db->Execute("delete from " . TABLE_REVIEWS . "
-                        where customers_id = '" . (int)$customers_id . "'");
+                        where `customers_id` = '" . (int)$customers_id . "'");
         } else {
           $db->Execute("update " . TABLE_REVIEWS . "
-                        set customers_id = null
-                        where customers_id = '" . (int)$customers_id . "'");
+                        set `customers_id` = null
+                        where `customers_id` = '" . (int)$customers_id . "'");
         }
 
         $db->Execute("delete from " . TABLE_ADDRESS_BOOK . "
-                      where customers_id = '" . (int)$customers_id . "'");
+                      where `customers_id` = '" . (int)$customers_id . "'");
 
         $db->Execute("delete from " . TABLE_CUSTOMERS . "
-                      where customers_id = '" . (int)$customers_id . "'");
+                      where `customers_id` = '" . (int)$customers_id . "'");
 
         $db->Execute("delete from " . TABLE_CUSTOMERS_INFO . "
                       where customers_info_id = '" . (int)$customers_id . "'");
 
         $db->Execute("delete from " . TABLE_CUSTOMERS_BASKET . "
-                      where customers_id = '" . (int)$customers_id . "'");
+                      where `customers_id` = '" . (int)$customers_id . "'");
 
         $db->Execute("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                      where customers_id = '" . (int)$customers_id . "'");
+                      where `customers_id` = '" . (int)$customers_id . "'");
 
         $db->Execute("delete from " . TABLE_WHOS_ONLINE . "
-                      where customer_id = '" . (int)$customers_id . "'");
+                      where `customer_id` = '" . (int)$customers_id . "'");
 
 
         zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')), 'NONSSL'));
         break;
       default:
-        $customers = $db->Execute("select c.customers_id, c.customers_gender, c.customers_firstname,
-                                          c.customers_lastname, c.customers_dob, c.customers_email_address,
-                                          a.entry_company, a.entry_street_address, a.entry_suburb,
-                                          a.entry_postcode, a.entry_city, a.entry_state, a.entry_zone_id,
-                                          a.entry_country_id, c.customers_telephone, c.customers_fax,
-                                          c.customers_newsletter, c.customers_default_address_id,
-                                          c.customers_email_format, c.customers_group_pricing,
-                                          c.customers_authorization, c.customers_referral
+        $customers = $db->Execute("select c.`customers_id`, c.`customers_gender`, c.`customers_firstname`,
+                                          c.`customers_lastname`, c.`customers_dob`, c.`customers_email_address`,
+                                          a.`entry_company`, a.`entry_street_address`, a.`entry_suburb`,
+                                          a.`entry_postcode`, a.`entry_city`, a.`entry_state`, a.`entry_zone_id`,
+                                          a.`entry_country_id`, c.`customers_telephone`, c.`customers_fax`,
+                                          c.`customers_newsletter`, c.`customers_default_address_id`,
+                                          c.`customers_email_format`, c.`customers_group_pricing`,
+                                          c.`customers_authorization`, c.`customers_referral`
                                   from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a
-                                  on c.customers_default_address_id = a.address_book_id
-                                  where a.customers_id = c.customers_id
-                                  and c.customers_id = '" . (int)$_GET['cID'] . "'");
+                                  on c.`customers_default_address_id` = a.`address_book_id`
+                                  where a.`customers_id` = c.`customers_id`
+                                  and c.`customers_id` = '" . (int)$_GET['cID'] . "'");
 
         $cInfo = new objectInfo($customers->fields);
     }
@@ -819,14 +819,14 @@ if ($processed == true) {
 <?php
   if ($processed == true) {
     if ($cInfo->customers_group_pricing) {
-      $group_query = $db->Execute("select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where group_id = '" . $cInfo->customers_group_pricing . "'");
+      $group_query = $db->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = '" . $cInfo->customers_group_pricing . "'");
       echo $group_query->fields['group_name'].'&nbsp;'.$group_query->fields['group_percentage'].'%';
     } else {
       echo ENTRY_NONE;
     }
     echo zen_draw_hidden_field('customers_newsletter');
   } else {
-    $group_array_query = $db->execute("select group_id, group_name, group_percentage from " . TABLE_GROUP_PRICING);
+    $group_array_query = $db->Execute("select `group_id`, `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING);
     $group_array[] = array('id'=>0, 'text'=>TEXT_NONE);
     while (!$group_array_query->EOF) {
       $group_array[] = array('id'=>$group_array_query->fields['group_id'], 'text'=>$group_array_query->fields['group_name'].'&nbsp;'.$group_array_query->fields['group_percentage'].'%');
@@ -883,46 +883,46 @@ if ($processed == true) {
 // Sort Listing
           switch ($_GET['list_order']) {
               case "id-asc":
-              $disp_order = "ci.date_account_created";
+              $disp_order = "ci.`date_account_created`";
               break;
               case "firstname":
-              $disp_order = "c.customers_firstname";
+              $disp_order = "c.`customers_firstname`";
               break;
               case "firstname-desc":
-              $disp_order = "c.customers_firstname DESC";
+              $disp_order = "c.`customers_firstname` DESC";
               break;
               case "group-asc":
-              $disp_order = "c.customers_group_pricing";
+              $disp_order = "c.`customers_group_pricing`";
               break;
               case "group-desc":
-              $disp_order = "c.customers_group_pricing DESC";
+              $disp_order = "c.`customers_group_pricing` DESC";
               break;
               case "lastname":
-              $disp_order = "c.customers_lastname, c.customers_firstname";
+              $disp_order = "c.`customers_lastname`, c.`customers_firstname`";
               break;
               case "lastname-desc":
-              $disp_order = "c.customers_lastname DESC, c.customers_firstname";
+              $disp_order = "c.`customers_lastname` DESC, c.`customers_firstname`";
               break;
               case "company":
-              $disp_order = "a.entry_company";
+              $disp_order = "a.`entry_company`";
               break;
               case "company-desc":
-              $disp_order = "a.entry_company DESC";
+              $disp_order = "a.`entry_company` DESC";
               break;
               case "login-asc":
-              $disp_order = "ci.date_of_last_logon";
+              $disp_order = "ci.`date_of_last_logon`";
               break;
               case "login-desc":
-              $disp_order = "ci.date_of_last_logon DESC";
+              $disp_order = "ci.`date_of_last_logon` DESC";
               break;
               case "approval-asc":
-              $disp_order = "c.customers_authorization";
+              $disp_order = "c.`customers_authorization`";
               break;
               case "approval-desc":
-              $disp_order = "c.customers_authorization DESC";
+              $disp_order = "c.`customers_authorization` DESC";
               break;
               default:
-              $disp_order = "ci.date_account_created DESC";
+              $disp_order = "ci.`date_account_created` DESC";
           }
 ?>
              <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -976,10 +976,10 @@ if ($processed == true) {
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
 //      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%'";
-      $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%' or c.customers_telephone like '%" . $keywords . "%' or a.entry_company like '%" . $keywords . "%' or a.entry_street_address like '%" . $keywords . "%' or a.entry_city like '%" . $keywords . "%' or a.entry_postcode like '%" . $keywords . "%'";
+      $search = "where c.`customers_lastname` like '%" . $keywords . "%' or c.`customers_firstname` like '%" . $keywords . "%' or c.`customers_email_address` like '%" . $keywords . "%' or c.`customers_telephone` like '%" . $keywords . "%' or a.`entry_company` like '%" . $keywords . "%' or a.`entry_street_address` like '%" . $keywords . "%' or a.`entry_city` like '%" . $keywords . "%' or a.`entry_postcode` like '%" . $keywords . "%'";
     }
-    $new_fields=', c.customers_telephone, a.entry_company, a.entry_street_address, a.entry_city, a.entry_postcode, c.customers_authorization, c.customers_referral';
-    $customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_group_pricing, a.entry_country_id, a.entry_company, ci.date_of_last_logon, ci.date_account_created " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.customers_id= ci.customers_info_id left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by $disp_order";
+    $new_fields=', c.`customers_telephone`, a.`entry_company`, a.`entry_street_address`, a.`entry_city`, a.`entry_postcode`, c.`customers_authorization`, c.`customers_referral`';
+    $customers_query_raw = "select c.`customers_id`, c.`customers_lastname`, c.`customers_firstname`, c.`customers_email_address`, c.`customers_group_pricing`, a.`entry_country_id`, a.`entry_company`, ci.`date_of_last_logon`, ci.`date_account_created` " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.`customers_id`= ci.`customers_info_id` left join " . TABLE_ADDRESS_BOOK . " a on c.`customers_id` = a.`customers_id` and c.`customers_default_address_id` = a.`address_book_id` " . $search . " order by $disp_order";
 
 // Split Page
 // reset page when page is unknown
@@ -1004,34 +1004,41 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
     $customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $customers_query_raw, $customers_query_numrows);
     $customers = $db->Execute($customers_query_raw);
     while (!$customers->EOF) {
-      $info = $db->Execute("select date_account_created,
-                                   date_account_last_modified,
-                                   date_of_last_logon as date_last_logon,
-                                   number_of_logons
+      $info = $db->Execute("select `date_account_created`,
+                                   `date_account_last_modified`,
+                                   `date_of_last_logon` as `date_last_logon`,
+                                   `number_of_logons`
                             from " . TABLE_CUSTOMERS_INFO . "
-                            where customers_info_id = '" . $customers->fields['customers_id'] . "'");
+                            where `customers_info_id` = '" . $customers->fields['customers_id'] . "'");
 
       if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $customers->fields['customers_id']))) && !isset($cInfo)) {
-        $country = $db->Execute("select countries_name
+        $country = $db->Execute("select `countries_name`
                                  from " . TABLE_COUNTRIES . "
-                                 where countries_id = '" . (int)$customers->fields['entry_country_id'] . "'");
+                                 where `countries_id` = '" . (int)$customers->fields['entry_country_id'] . "'");
 
-        $reviews = $db->Execute("select count(*) as number_of_reviews
-                                 from " . TABLE_REVIEWS . " where customers_id = '" . (int)$customers->fields['customers_id'] . "'");
+        $reviews = $db->Execute("select count(*) as `number_of_reviews`
+                                 from " . TABLE_REVIEWS . " where `customers_id` = '" . (int)$customers->fields['customers_id'] . "'");
 
-        $customer_info = array_merge($country->fields, $info->fields, $reviews->fields);
+		$cInfo_array = $customers->fields;
+		if ( !empty( $country->fields ) )
+			$cInfo_array = array_merge($cInfo_array, $country->fields);
+		if ( !empty( $info->fields ) )
+			$cInfo_array = array_merge($cInfo_array, $info->fields);
+		if ( !empty( $reviews->fields ) )
+        	$cInfo_array = array_merge($cInfo_array, $reviews->fields);
 
-        $cInfo_array = array_merge($customers->fields, $customer_info);
         $cInfo = new objectInfo($cInfo_array);
       }
 
-        $group_query = $db->query( "select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where group_id = ?", array( $customers->fields['customers_group_pricing'] ) );
+		if ( !empty($customers->fields['customers_group_pricing']) ) {
+			$group_query = $db->query( "select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = ?", array( $customers->fields['customers_group_pricing'] ) );
 
-        if ($group_query->RecordCount() < 1) {
-          $group_name_entry = TEXT_NONE;
-        } else {
-          $group_name_entry = $group_query->fields['group_name'];
-        }
+			if ($group_query->RecordCount() < 1) {
+				$group_name_entry = TEXT_NONE;
+			} else {
+				$group_name_entry = $group_query->fields['group_name'];
+			}
+		} else $group_name_entry = TEXT_NONE;
 
       if (isset($cInfo) && is_object($cInfo) && ($customers->fields['customers_id'] == $cInfo->customers_id)) {
         echo '          <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '\'">' . "\n";
@@ -1086,7 +1093,7 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
       break;
     default:
       if (isset($cInfo) && is_object($cInfo)) {
-        $customers_orders = $db->Execute("select orders_id, date_purchased, order_total, currency, currency_value from " . TABLE_ORDERS . " where customers_id='" . $cInfo->customers_id . "' order by date_purchased desc");
+        $customers_orders = $db->Execute("select `orders_id`, `date_purchased`, `order_total`, `currency`, `currency_value` from " . TABLE_ORDERS . " where `customers_id`='" . $cInfo->customers_id . "' order by `date_purchased` desc");
 
         $heading[] = array('text' => '<b>' . TABLE_HEADING_ID . $cInfo->customers_id . ' ' . $cInfo->customers_firstname . ' ' . $cInfo->customers_lastname . '</b>');
 

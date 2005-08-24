@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/10 17:31:46 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:36 lsces Exp $
 //
   require('includes/classes/http_client.php');
 
@@ -34,7 +34,7 @@
 
   $gv_query = "select amount
                from " . TABLE_COUPON_GV_CUSTOMER . "
-               where customer_id = '" . $_SESSION['customer_id'] . "'";
+               where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 
   $gv_result = $db->Execute($gv_query);
 
@@ -89,13 +89,13 @@
       $_GET['action'] = 'complete';
       $gv_query="update " . TABLE_COUPON_GV_CUSTOMER . "
                  set amount = '" .  $new_amount . "'
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
+                 where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 
       $db->Execute($gv_query);
 
       $gv_query="select customers_firstname, customers_lastname
                  from " . TABLE_CUSTOMERS . "
-                 where customers_id = '" . $_SESSION['customer_id'] . "'";
+                 where `customers_id` = '" . $_SESSION['customer_id'] . "'";
 
       $gv_customer=$db->Execute($gv_query);
       $gv_query="insert into " . TABLE_COUPONS . "
@@ -164,7 +164,7 @@
         if ($_SESSION['customer_id']) {
           $account_query = "select customers_firstname, customers_lastname, customers_email_address
                             from " . TABLE_CUSTOMERS . "
-                            where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                            where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
           $account = $db->Execute($account_query);
         }
@@ -177,7 +177,7 @@
       // do a fresh calculation after sending an email
       $gv_query = "select amount
                    from " . TABLE_COUPON_GV_CUSTOMER . "
-                   where customer_id = '" . $_SESSION['customer_id'] . "'";
+                   where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 
       $gv_result = $db->Execute($gv_query);
     }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/17 20:28:29 lsces Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:41 lsces Exp $
 //
 // redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled (or the session has not started)
   if ($session_started == false) {
@@ -58,10 +58,10 @@
           zen_session_recreate();
         }
 
-        $check_country_query = "select entry_country_id, entry_zone_id
+        $check_country_query = "select `entry_country_id`, `entry_zone_id`
                                 from " . TABLE_ADDRESS_BOOK . "
-                                where customers_id = '" . (int)$check_customer->fields['customers_id'] . "'
-                                and address_book_id = '" . (int)$check_customer->fields['customers_default_address_id'] . "'";
+                                where `customers_id` = '" . (int)$check_customer->fields['customers_id'] . "'
+                                and `address_book_id` = '" . (int)$check_customer->fields['customers_default_address_id'] . "'";
 
         $check_country = $db->Execute($check_country_query);
 

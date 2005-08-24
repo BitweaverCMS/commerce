@@ -8,9 +8,9 @@ class Bitcart
 		global $db;
 		$ret = NULL;
 		if( is_numeric( $pManufacturersId ) ) {
-			$sql = "SELECT COUNT(*) as total
+			$sql = "SELECT COUNT(*) as `total`
 					FROM " . TABLE_MANUFACTURERS . "
-					WHERE manufacturers_id = '" . zen_db_input( $pManufacturersId ) . "'";
+					WHERE `manufacturers_id` = '" . zen_db_input( $pManufacturersId ) . "'";
 			$rs = $db->Execute($sql);
 			$ret = !empty( $rs['fields']['total'] );
 		}

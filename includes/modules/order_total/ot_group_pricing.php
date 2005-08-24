@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_group_pricing.php,v 1.2 2005/08/24 02:52:59 lsces Exp $
+// $Id: ot_group_pricing.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
 //
 
   class ot_group_pricing {
@@ -39,10 +39,10 @@
 
     function process() {
       global $db, $order, $currencies;
-      $group_query = $db->Execute("select customers_group_pricing from " . TABLE_CUSTOMERS . " where customers_id = '" . $_SESSION['customer_id'] . "'");
+      $group_query = $db->Execute("select customers_group_pricing from " . TABLE_CUSTOMERS . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       if ($group_query->fields['customers_group_pricing'] != '0') {
-        $group_discount = $db->Execute("select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where
-                                        group_id = '" . $group_query->fields['customers_group_pricing'] . "'");
+        $group_discount = $db->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where
+                                        `group_id` = '" . $group_query->fields['customers_group_pricing'] . "'");
         $order_total = $this->get_order_total();
         $gift_vouchers = $_SESSION['cart']->gv_only();
         $discount = ($order_total - $gift_vouchers) * $group_discount->fields['group_percentage'] / 100;
@@ -117,10 +117,10 @@
       global $order, $db;
       if ($this->include_shipping == 'false') $order_total -= $order->info['shipping_cost'];
       if ($this->include_tax == 'false') $order_total -= $order->info['tax'];
-      $group_query = $db->Execute("select customers_group_pricing from " . TABLE_CUSTOMERS . " where customers_id = '" . $_SESSION['customer_id'] . "'");
+      $group_query = $db->Execute("select customers_group_pricing from " . TABLE_CUSTOMERS . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       if ($group_query->fields['customers_group_pricing'] != '0') {
-        $group_discount = $db->Execute("select group_name, group_percentage from " . TABLE_GROUP_PRICING . " where
-                                        group_id = '" . $group_query->fields['customers_group_pricing'] . "'");
+        $group_discount = $db->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where
+                                        `group_id` = '" . $group_query->fields['customers_group_pricing'] . "'");
         $order_total = $this->get_order_total();
         $discount = $order_total * $group_discount->fields['group_percentage'] / 100;
         $od_amount = zen_round($discount, 2);

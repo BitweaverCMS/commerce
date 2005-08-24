@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: delete_product_confirm.php,v 1.2 2005/08/03 15:35:12 spiderr Exp $
+//  $Id: delete_product_confirm.php,v 1.3 2005/08/24 15:06:38 lsces Exp $
 //
 //
         // demo active test
@@ -32,13 +32,13 @@
 
           for ($i=0, $n=sizeof($product_categories); $i<$n; $i++) {
             $db->Execute("delete from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                          where products_id = '" . (int)$product_id . "'
-                          and categories_id = '" . (int)$product_categories[$i] . "'");
+                          where `products_id` = '" . (int)$product_id . "'
+                          and `categories_id` = '" . (int)$product_categories[$i] . "'");
           }
 
-          $product_categories = $db->Execute("select count(*) as total
+          $product_categories = $db->Execute("select count(*) as `total`
                                               from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                              where products_id = '" . (int)$product_id . "'");
+                                              where `products_id` = '" . (int)$product_id . "'");
 
           if ($product_categories->fields['total'] == '0') {
             zen_remove_product($product_id);

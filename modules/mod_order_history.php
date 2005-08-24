@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.5 2005/08/24 12:17:29 lsces Exp $
+// $Id: mod_order_history.php,v 1.6 2005/08/24 15:06:39 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -25,8 +25,8 @@
 		// retreive the last x products purchased
 		$orders_history_query = "select distinct op.`products_id`, o.date_purchased
 						from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_PRODUCTS . " p
-						where o.customers_id = ?
-						and o.orders_id = op.orders_id
+						where o.`customers_id` = ?
+						and o.`orders_id` = op.`orders_id`
 						and op.`products_id` = p.`products_id`
 						and p.`products_status = '1'
 						order by o.date_purchased desc

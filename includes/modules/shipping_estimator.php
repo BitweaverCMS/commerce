@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.3 2005/08/24 02:52:18 lsces Exp $
+// $Id: shipping_estimator.php,v 1.4 2005/08/24 15:06:36 lsces Exp $
 //
 ?>
 <!-- shipping_estimator //-->
@@ -206,7 +206,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
     if ($_SESSION['customer_id']) {
       // logged in
       $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $total_count . '</td></tr>';
-      $addresses = $db->execute("select address_book_id, entry_city as city, entry_postcode as postcode, entry_state as state, entry_zone_id as zone_id, entry_country_id as country_id from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . $_SESSION['customer_id'] . "'");
+      $addresses = $db->Execute("select `address_book_id`, `entry_city` as `city`, `entry_postcode` as `postcode`, `entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_country_id` as `country_id` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       // only display addresses if more than 1
       if ($addresses->RecordCount() > 1){
         while (!$addresses->EOF) {

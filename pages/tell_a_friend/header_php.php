@@ -18,7 +18,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.2 2005/07/30 16:26:25 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
 
 //
 	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
@@ -99,9 +99,9 @@
 // send additional emails
       if (SEND_EXTRA_TELL_A_FRIEND_EMAILS_TO_STATUS == '1' and SEND_EXTRA_TELL_A_FRIEND_EMAILS_TO !='') {
         if ($_SESSION['customer_id']) {
-          $account_query = "select customers_firstname, customers_lastname, customers_email_address
+          $account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                             from " . TABLE_CUSTOMERS . "
-                            where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                            where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
           $account = $db->Execute($account_query);
         }
@@ -117,9 +117,9 @@
       zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
     }
   } elseif ($_SESSION['customer_id']) {
-    $account_query = "select customers_firstname, customers_lastname, customers_email_address
+    $account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                       from " . TABLE_CUSTOMERS . "
-                      where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                      where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
     $account = $db->Execute($account_query);
 

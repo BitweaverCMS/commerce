@@ -145,9 +145,9 @@
 				$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 				if (ACCOUNT_STATE == 'true') {
 					$zone_id = 0;
-					$check_query = "select count(*) as total
+					$check_query = "select count(*) as `total`
 									from " . TABLE_ZONES . "
-									where zone_country_id = ?";
+									where `zone_country_id` = ?";
 
 					;
 
@@ -268,7 +268,7 @@
 		function isAddressOwner( $pAddressId ) {
 			$ret = FALSE;
 			if( is_numeric( $pAddressId ) ) {
-				$query = "select count(*) as total from " . TABLE_ADDRESS_BOOK . "
+				$query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . "
 						  where `customers_id` = ? and `address_book_id` = ?";
 				$ret = $this->mDb->getOne( $query, array( $this->mCustomerId, $pAddressId ) );
 			}
@@ -279,13 +279,13 @@
 			global $db;
 			$ret = NULL;
 			if( is_numeric( $pCustomerId ) ) {
-				$query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
-									entry_company as company, entry_street_address as street_address,
-									entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
-									entry_state as state, entry_zone_id as zone_id,
-									entry_country_id as country_id, c.*
-							from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.entry_country_id=c.countries_id )
-							where customers_id = ?";
+				$query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
+									`entry_company` as `company`, `entry_street_address` as `street_address`,
+									`entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
+									`entry_state` as `state`, `entry_zone_id` as `zone_id`,
+									`entry_country_id` as `country_id`, c.*
+							from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.`entry_country_id`=c.`countries_id` )
+							where `customers_id` = ?";
 
 				if( $rs = $db->query( $query, array( $pCustomerId ) ) ) {
 					$ret = $rs->GetRows();

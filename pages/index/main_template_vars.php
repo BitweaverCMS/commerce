@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.7 2005/08/24 12:17:02 lsces Exp $
+// $Id: main_template_vars.php,v 1.8 2005/08/24 15:06:37 lsces Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -66,7 +66,7 @@
       $category_links = array_reverse($cPath_array);
       for($i=0, $n=sizeof($category_links); $i<$n; $i++)
       {
-        $sql = "select count(*) as total
+        $sql = "select count(*) as `total`
                 from   " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                 where      c.`parent_id` = '" . (int)$category_links[$i] . "'
                 and        c.`categories_id` = cd.`categories_id`

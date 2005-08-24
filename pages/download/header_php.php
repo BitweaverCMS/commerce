@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 15:06:39 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
 
@@ -37,7 +37,7 @@
   }
 
 // Check that order_id, customer_id and filename match
-  $downloads = $db->Execute("select date_format(o.date_purchased, '%Y-%m-%d') as date_purchased_day, opd.download_maxdays, opd.download_count, opd.download_maxdays, opd.orders_products_filename from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd where o.customers_id = '" . $_SESSION['customer_id'] . "' and o.orders_id = '" . (int)$_GET['order'] . "' and o.orders_id = op.orders_id and op.orders_products_id = opd.orders_products_id and opd.orders_products_download_id = '" . (int)$_GET['id'] . "' and opd.orders_products_filename != ''");
+  $downloads = $db->Execute("select date_format(o.`date_purchased`, '%Y-%m-%d') as `date_purchased_day`, opd.`download_maxdays`, opd.`download_count`, opd.`download_maxdays`, opd.`orders_products_filename` from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd where o.`customers_id` = '" . $_SESSION['customer_id'] . "' and o.`orders_id` = '" . (int)$_GET['order'] . "' and o.`orders_id` = op.`orders_id` and op.`orders_products_id` = opd.`orders_products_id` and opd.`orders_products_download_id` = '" . (int)$_GET['id'] . "' and opd.`orders_products_filename` != ''");
   if ($downloads->RecordCount() <= 0 ) die;
 // MySQL 3.22 does not have INTERVAL
   list($dt_year, $dt_month, $dt_day) = explode('-', $downloads->fields['date_purchased_day']);

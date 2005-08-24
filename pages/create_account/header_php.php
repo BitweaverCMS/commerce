@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/08/24 02:53:00 lsces Exp $
+// $Id: header_php.php,v 1.6 2005/08/24 15:06:39 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   $process = false;
@@ -118,9 +118,9 @@
 
       $messageStack->add('create_account', ENTRY_EMAIL_ADDRESS_CHECK_ERROR);
     } else {
-      $check_email_query = "select count(*) as total
+      $check_email_query = "select count(*) as `total`
                             from " . TABLE_CUSTOMERS . "
-                            where customers_email_address = '" . zen_db_input($email_address) . "'";
+                            where `customers_email_address` = '" . zen_db_input($email_address) . "'";
 
       $check_email = $db->Execute($check_email_query);
 
@@ -189,9 +189,9 @@
 
     if (ACCOUNT_STATE == 'true') {
       $zone_id = 0;
-      $check_query = "select count(*) as total
+      $check_query = "select count(*) as `total`
                       from " . TABLE_ZONES . "
-                      where zone_country_id = '" . (int)$country . "'";
+                      where `zone_country_id` = '" . (int)$country . "'";
 
       $check = $db->Execute($check_query);
 
@@ -301,8 +301,8 @@
       $address_id = $db->Insert_ID();
 
       $sql = "update " . TABLE_CUSTOMERS . "
-              set customers_default_address_id = '" . (int)$address_id . "'
-              where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+              set `customers_default_address_id` = '" . (int)$address_id . "'
+              where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $db->Execute($sql);
 
@@ -319,7 +319,7 @@
 //        require($sniffer->phpBB['phpbb_path'] . 'config.php');
         $db_phpbb = new queryFactory();
         $db_phpbb->connect($sniffer->phpBB['dbhost'], $sniffer->phpBB['dbuser'], $sniffer->phpBB['dbpasswd'], $sniffer->phpBB['dbname'], USE_PCONNECT, false);
-        $sql = "select max(user_id) as total from " . $sniffer->phpBB['users_table'];
+        $sql = "select max(user_id) as `total` from " . $sniffer->phpBB['users_table'];
         $phpbb_users = $db_phpbb->Execute($sql);
         $user_id = ($phpbb_users->fields['total'] + 1);
         $sql = "insert into " . $sniffer->phpBB['users_table'] . "
@@ -328,11 +328,11 @@
                 ('" . (int)$user_id . "', '" . $nick . "', '" . md5($_POST['password']) . "', '" . $email_address . "', '" . time() ."')";
 
         $db_phpbb->Execute($sql);
-        $sql = "INSERT INTO " . $sniffer->phpBB['groups_table'] . " (group_name, group_description, group_single_user, group_moderator)
+        $sql = "INSERT INTO " . $sniffer->phpBB['groups_table'] . " (`group_name`, `group_description`, `group_single_user`, `group_moderator`)
 				VALUES ('', 'Personal User', 1, 0)";
         $db_phpbb->Execute($sql);
 		$group_id = $db_phpbb->Insert_ID();
-        $sql = "INSERT INTO " . $sniffer->phpBB['user_group_table'] . " (user_id, group_id, user_pending)
+        $sql = "INSERT INTO " . $sniffer->phpBB['user_group_table'] . " (`user_id`, `group_id`, `user_pending`)
 				VALUES ($user_id, $group_id, 0)";
         $db_phpbb->Execute($sql);
 	$db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false);
@@ -425,9 +425,9 @@
 // send additional emails
       if (SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_STATUS == '1' and SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO !='') {
         if ($_SESSION['customer_id']) {
-          $account_query = "select customers_firstname, customers_lastname, customers_email_address
+          $account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                             from " . TABLE_CUSTOMERS . "
-                            where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                            where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
           $account = $db->Execute($account_query);
         }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_success.php,v 1.2 2005/08/20 13:19:13 spiderr Exp $
+// $Id: tpl_checkout_success.php,v 1.3 2005/08/24 15:06:39 lsces Exp $
 //
 ?>
 <?php echo zen_draw_form('order', zen_href_link(FILENAME_CHECKOUT_SUCCESS, 'action=update', 'SSL')); ?>
@@ -65,8 +65,8 @@
     <td align="center"><h3><?php echo TEXT_THANKS_FOR_SHOPPING; ?></h3></td>
   </tr>
 <?php
-  $gv_query="select amount from " . TABLE_COUPON_GV_CUSTOMER . "
-             where customer_id='".$_SESSION['customer_id'] . "'";
+  $gv_query="select `amount` from " . TABLE_COUPON_GV_CUSTOMER . "
+             where `customer_id`='".$_SESSION['customer_id'] . "'";
 
   $gv_result = $db->Execute($gv_query);
 

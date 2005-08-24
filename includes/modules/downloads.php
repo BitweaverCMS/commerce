@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.4 2005/08/24 12:17:01 lsces Exp $
+// $Id: downloads.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
-    $orders_lookup_query = "select orders_id
+    $orders_lookup_query = "select `orders_id`
                      from " . TABLE_ORDERS . "
-                     where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                     order by orders_id desc limit 1";
+                     where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                     order by `orders_id` desc";
 
-    $orders_lookup = $db->Execute($orders_lookup_query);
+    $orders_lookup = $db->Execute($orders_lookup_query, 1);
     $last_order = $orders_lookup->fields['orders_id'];
   } else {
     $last_order = $_GET['order_id'];
@@ -38,11 +38,11 @@
                              opd.orders_products_filename, opd.download_count, opd.download_maxdays
                       from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, "
                              . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
-                      where o.customers_id = ?
+                      where o.`customers_id` = ?
 	                      and (o.orders_status >= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS . "'
     	                  and o.orders_status <= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS_END . "')
-        	              and o.orders_id = ?
-            	          and o.orders_id = op.orders_id
+        	              and o.`orders_id` = ?
+            	          and o.`orders_id` = op.`orders_id`
                 	      and op.orders_products_id = opd.orders_products_id
                     	  and opd.orders_products_filename != ''";
 
@@ -121,9 +121,9 @@
 ?>
 <?php
 // If there is a download in the order and they cannot get it, tell customer about download rules
-  $downloads_check_query = $db->query("select o.orders_id, opd.orders_products_download_id
+  $downloads_check_query = $db->query("select o.`orders_id`, opd.orders_products_download_id
 				                       from " .  TABLE_ORDERS . " o, " .  TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
-                				       where o.orders_id = opd.orders_id and o.orders_id = ? and opd.orders_products_filename != '' ", array( $last_order ) );
+                				       where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
 
 if ($downloads_check_query->RecordCount() > 0 and $downloads->RecordCount() < 1) {
 ?>

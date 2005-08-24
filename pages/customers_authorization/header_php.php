@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 15:06:37 lsces Exp $
 //
 
-  $sql = "select customers_authorization from " . TABLE_CUSTOMERS . " where customers_id ='" . $_SESSION['customer_id'] . "'";
+  $sql = "select `customers_authorization` from " . TABLE_CUSTOMERS . " where `customers_id` ='" . $_SESSION['customer_id'] . "'";
   $check_customer = $db->Execute($sql);
 
   $_SESSION['customers_authorization'] = $check_customer->fields['customers_authorization'];

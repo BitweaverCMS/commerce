@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/08 06:12:59 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:40 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
   }
-  $gv_query = "select amount
+  $gv_query = "select `amount`
                from " . TABLE_COUPON_GV_CUSTOMER . "
-               where customer_id = '" . $_SESSION['customer_id'] . "'";
+               where `customer_id` = '" . $_SESSION['customer_id'] . "'";
   $gv_result = $db->Execute($gv_query);
 
   if ($gv_result->fields['amount'] > 0 ) {
@@ -36,9 +36,9 @@
   require(DIR_WS_MODULES . 'require_languages.php');
 // only show when there is a GV balance
   if ($_SESSION['customer_id']) {
-    $gv_query = "select amount
+    $gv_query = "select `amount`
                  from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
+                 where `customer_id` = '" . $_SESSION['customer_id'] . "'";
     $gv_result = $db->Execute($gv_query);
 
     if ($gv_result->fields['amount'] > 0 ) {

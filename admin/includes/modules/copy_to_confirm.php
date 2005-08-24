@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.4 2005/08/03 15:35:12 spiderr Exp $
+//  $Id: copy_to_confirm.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -28,13 +28,13 @@
 
           if ($_POST['copy_as'] == 'link') {
             if ($categories_id != $current_category_id) {
-              $check = $db->Execute("select count(*) as total
+              $check = $db->Execute("select count(*) as `total`
                                      from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                     where products_id = '" . (int)$products_id . "'
-                                     and categories_id = '" . (int)$categories_id . "'");
+                                     where `products_id` = '" . (int)$products_id . "'
+                                     and `categories_id` = '" . (int)$categories_id . "'");
               if ($check->fields['total'] < '1') {
                 $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                          (products_id, categories_id)
+                                          (`products_id`, `categories_id`)
                               values ('" . (int)$products_id . "', '" . (int)$categories_id . "')");
               }
             } else {

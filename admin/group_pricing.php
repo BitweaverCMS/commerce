@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.4 2005/08/03 15:35:07 spiderr Exp $
+//  $Id: group_pricing.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -54,10 +54,10 @@
           zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
         }
         $group_id = zen_db_prepare_input($_GET['gID']);
-        $db->Execute("delete from " . TABLE_GROUP_PRICING . " where group_id = '" . (int)$group_id . "'");
+        $db->Execute("delete from " . TABLE_GROUP_PRICING . " where `group_id` = '" . (int)$group_id . "'");
         $customers_query = $db->Execute("select customers_id from " . TABLE_CUSTOMERS . " where customers_group_pricing = '" . (int)$group_id . "'");
         while (!$customers_query->EOF) {
-          $db->Execute("update " . TABLE_CUSTOMERS ." set customers_group_pricing = '0'");
+          $db->Execute("update " . TABLE_CUSTOMERS ." set `customers_group_pricing` = '0'");
           $customers_query->MoveNext();
         }
         zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));

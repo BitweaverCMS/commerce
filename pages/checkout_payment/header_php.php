@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/07/15 19:57:42 spiderr Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 15:06:40 lsces Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -58,9 +58,9 @@
     $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
   } else {
 // verify the selected billing address
-    $check_address_query = "select count(*) as total from " . TABLE_ADDRESS_BOOK . "
-                            where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                            and address_book_id = '" . (int)$_SESSION['billto'] . "'";
+    $check_address_query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . "
+                            where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                            and `address_book_id` = '" . (int)$_SESSION['billto'] . "'";
 
     $check_address = $db->Execute($check_address_query);
 

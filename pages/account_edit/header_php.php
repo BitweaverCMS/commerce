@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/07/17 20:28:27 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -79,10 +79,10 @@
       $messageStack->add('account_edit', ENTRY_EMAIL_ADDRESS_CHECK_ERROR);
     }
 
-    $check_email_query = "select count(*) as total
+    $check_email_query = "select count(*) as `total`
                           from   " . TABLE_CUSTOMERS . "
-                          where      customers_email_address = '" . zen_db_input($email_address) . "'
-                          and        customers_id != '" . (int)$_SESSION['customer_id'] . "'";
+                          where      `customers_email_address` = '" . zen_db_input($email_address) . "'
+                          and        `customers_id` != '" . (int)$_SESSION['customer_id'] . "'";
 
     $check_email = $db->Execute($check_email_query);
 

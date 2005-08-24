@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 12:17:01 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 15:06:38 lsces Exp $
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 
@@ -39,7 +39,7 @@
 // if review must be approved or disabled do not show review
     $review_status = " and r.status = '1'";
 
-    $review_info_check_query = "select count(*) as total
+    $review_info_check_query = "select count(*) as `total`
                            from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                            where r.`reviews_id` = '" . (int)$_GET['reviews_id'] . "'
                            and r.`products_id` = '" . (int)$_GET['products_id'] . "'

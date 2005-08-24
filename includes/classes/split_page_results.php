@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: split_page_results.php,v 1.4 2005/07/26 12:31:52 spiderr Exp $
+// $Id: split_page_results.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
 //
 
   class splitPageResults {
@@ -63,7 +63,7 @@
         $count_string = zen_db_input($count_key);
       }
 
-      $count_query = "select count(" . $count_string . ") as total " .
+      $count_query = "select count(" . $count_string . ") as `total` " .
                                    substr($searchQuery, $pos_from, ($pos_to - $pos_from));
       $count = $db->Execute($count_query);
 

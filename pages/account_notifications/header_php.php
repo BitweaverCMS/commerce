@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/15 19:14:58 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:41 lsces Exp $
 //
   if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
@@ -59,10 +59,10 @@
 				}
 			}
 			if (count($products_parsed) > 0) {
-				$check_query = "select count(*) as total
+				$check_query = "select count(*) as `total`
 								from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
-								where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
-								and    products_id not in (" . implode(',', $products_parsed) . ")";
+								where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+								and    `products_id` not in (" . implode(',', $products_parsed) . ")";
 
 				$check = $db->Execute($check_query);
 
@@ -75,9 +75,9 @@
 				}
 			}
 		} else {
-			$check_query = "select count(*) as total
+			$check_query = "select count(*) as `total`
 							from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
-							where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+							where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 
 			$check = $db->Execute($check_query);
@@ -96,9 +96,9 @@
 		zen_redirect(zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));
 	}
 
-  $products_check_query = "select count(*) as total
+  $products_check_query = "select count(*) as `total`
                            from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                           where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                           where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $products_check = $db->Execute($products_check_query);
   if ($products_check->fields['total'] > 0) $flag_products_check = true;

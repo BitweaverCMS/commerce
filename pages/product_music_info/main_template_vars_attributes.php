@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.4 2005/08/24 11:52:10 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
 //////////////////////////////////////////////////
 // limit to 1 for larger tables
 
-    $sql = "select count(*) as total
+    $sql = "select count(*) as `total`
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
             where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
             and      patrib.`options_id` = popt.`products_options_id`

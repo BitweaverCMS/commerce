@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.6 2005/08/03 17:07:30 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.7 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -355,9 +355,9 @@ function check_form(form_name) {
       } else {
         echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cc_list->fields['coupon_id'] . '&action=voucherreport&uid=' . $cc_list->fields['unique_id']) . '\'">' . "\n";
       }
-$customer = $db->Execute("select customers_firstname, customers_lastname
+$customer = $db->Execute("select `customers_firstname`, `customers_lastname`
                           from " . TABLE_CUSTOMERS . "
-                          where customers_id = '" . $cc_list->fields['customer_id'] . "'");
+                          where `customers_id` = '" . $cc_list->fields['customer_id'] . "'");
 
 ?>
                 <td class="dataTableContent"><?php echo $cc_list->fields['customer_id']; ?></td>

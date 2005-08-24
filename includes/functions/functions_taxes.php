@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_taxes.php,v 1.5 2005/08/24 02:51:32 lsces Exp $
+// $Id: functions_taxes.php,v 1.6 2005/08/24 15:06:37 lsces Exp $
 //
 //
 ////
@@ -167,38 +167,38 @@
     switch (STORE_PRODUCT_TAX_BASIS) {
 
       case 'Shipping':
-        $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id
+        $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
                                 from " . TABLE_ADDRESS_BOOK . " ab
-                                left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
-                                where ab.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                                and ab.address_book_id = '" . (int)$_SESSION['sendto'] . "'";
+                                left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+                                where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                                and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
         $tax_address_result = $db->Execute($tax_address_query);
       break;
       case 'Billing':
 
-        $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id
+        $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
                                 from " . TABLE_ADDRESS_BOOK . " ab
-                                left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
-                                where ab.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                                and ab.address_book_id = '" . (int)$_SESSION['billto'] . "'";
+                                left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+                                where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                                and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
         $tax_address_result = $db->Execute($tax_address_query);
       break;
       case 'Store':
-        $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id
+        $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
                                 from " . TABLE_ADDRESS_BOOK . " ab
-                                left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
-                                where ab.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                                and ab.address_book_id = '" . (int)$_SESSION['billto'] . "'";
+                                left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+                                where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                                and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
         $tax_address_result = $db->Execute($tax_address_query);
 
         if ($tax_address_result ->fields['entry_zone_id'] == STORE_ZONE) {
 
         } else {
-          $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id
+          $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
                                   from " . TABLE_ADDRESS_BOOK . " ab
-                                  left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
-                                  where ab.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                                  and ab.address_book_id = '" . (int)$_SESSION['sendto'] . "'";
+                                  left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+                                  where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                                  and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
         $tax_address_result = $db->Execute($tax_address_query);
        }
      }

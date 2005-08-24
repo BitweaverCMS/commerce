@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.12 2005/08/24 11:51:39 lsces Exp $
+//  $Id: orders.php,v 1.13 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -517,9 +517,9 @@
       </tr>
 <?php
 // check if order has open gv
-        $gv_check = $db->Execute("select order_id, unique_id
+        $gv_check = $db->Execute("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
-                                  where order_id = '" . $_GET['oID'] . "' and release_flag='N'", 1);
+                                  where `order_id` = '" . $_GET['oID'] . "' and `release_flag`='N'", 1);
         if ($gv_check->RecordCount() > 0) {
           $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_GET['oID']) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
           echo '      <tr><td align="right"><table width="225"><tr>';
@@ -564,28 +564,28 @@
 // Sort Listing
           switch ($_GET['list_order']) {
               case "id-asc":
-              $disp_order = "c.customers_id";
+              $disp_order = "c.`customers_id`";
               break;
               case "firstname":
-              $disp_order = "c.customers_firstname";
+              $disp_order = "c.`customers_firstname`";
               break;
               case "firstname-desc":
-              $disp_order = "c.customers_firstname DESC";
+              $disp_order = "c.`customers_firstname` DESC";
               break;
               case "lastname":
-              $disp_order = "c.customers_lastname, c.customers_firstname";
+              $disp_order = "c.`customers_lastname`, c.`customers_firstname`";
               break;
               case "lastname-desc":
-              $disp_order = "c.customers_lastname DESC, c.customers_firstname";
+              $disp_order = "c.`customers_lastname` DESC, c.`customers_firstname`";
               break;
               case "company":
-              $disp_order = "a.entry_company";
+              $disp_order = "a.`entry_company`";
               break;
               case "company-desc":
-              $disp_order = "a.entry_company DESC";
+              $disp_order = "a.`entry_company` DESC";
               break;
               default:
-              $disp_order = "c.customers_id DESC";
+              $disp_order = "c.`customers_id` DESC";
           }
 ?>
                 <th align="center"><?php echo TABLE_HEADING_ORDERS_ID; ?></th>
@@ -602,19 +602,19 @@
   $search = '';
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
     $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-    $search = " and (o.customers_city like '%" . $keywords . "%' or o.customers_postcode like '%" . $keywords . "%' or o.date_purchased like '%" . $keywords . "%' or o.billing_name like '%" . $keywords . "%' or o.billing_company like '%" . $keywords . "%' or o.billing_street_address like '%" . $keywords . "%' or o.delivery_city like '%" . $keywords . "%' or o.delivery_postcode like '%" . $keywords . "%' or o.delivery_name like '%" . $keywords . "%' or o.delivery_company like '%" . $keywords . "%' or o.delivery_street_address like '%" . $keywords . "%' or o.billing_city like '%" . $keywords . "%' or o.billing_postcode like '%" . $keywords . "%' or o.customers_email_address like '%" . $keywords . "%' or o.customers_name like '%" . $keywords . "%' or o.customers_company like '%" . $keywords . "%' or o.customers_street_address  like '%" . $keywords . "%' or o.customers_telephone like '%" . $keywords . "%' or o.ip_address  like '%" . $keywords . "%')";
+    $search = " and (o.`customers_city` like '%" . $keywords . "%' or o.`customers_postcode` like '%" . $keywords . "%' or o.`date_purchased` like '%" . $keywords . "%' or o.`billing_name` like '%" . $keywords . "%' or o.`billing_company` like '%" . $keywords . "%' or o.`billing_street_address` like '%" . $keywords . "%' or o.`delivery_city` like '%" . $keywords . "%' or o.`delivery_postcode` like '%" . $keywords . "%' or o.`delivery_name` like '%" . $keywords . "%' or o.`delivery_company` like '%" . $keywords . "%' or o.`delivery_street_address` like '%" . $keywords . "%' or o.`billing_city` like '%" . $keywords . "%' or o.`billing_postcode` like '%" . $keywords . "%' or o.`customers_email_address` like '%" . $keywords . "%' or o.`customers_name` like '%" . $keywords . "%' or o.`customers_company` like '%" . $keywords . "%' or o.`customers_street_address`  like '%" . $keywords . "%' or o.`customers_telephone` like '%" . $keywords . "%' or o.`ip_address`  like '%" . $keywords . "%')";
   }
 ?>
 <?php
-    $new_fields = ", o.customers_street_address, o.delivery_name, o.delivery_street_address, o.billing_name, o.billing_street_address, o.payment_module_code, o.shipping_module_code, o.ip_address ";
+    $new_fields = ", o.`customers_street_address`, o.`delivery_name`, o.`delivery_street_address`, o.`billing_name`, o.`billing_street_address`, o.`payment_module_code`, o.`shipping_module_code`, o.`ip_address` ";
     if (isset($_GET['cID'])) {
       $cID = zen_db_prepare_input($_GET['cID']);
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.customers_id, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.customers_id = '" . (int)$cID . "' and o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total' order by orders_id DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`customers_id`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.`customers_id` = '" . (int)$cID . "' and o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total' order by orders_id DESC";
     } elseif ($_GET['status'] != '') {
       $status = zen_db_prepare_input($_GET['status']);
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and s.orders_status_id = '" . (int)$status . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and s.orders_status_id = '" . (int)$status . "' and ot.class = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
     } else {
-      $orders_query_raw = "select o.orders_id, o.customers_id, o.customers_name, o.payment_method, o.date_purchased, o.`last_modified`, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.orders_id = ot.orders_id), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total'  " . $search . " order by o.orders_id DESC";
+      $orders_query_raw = "select o.`orders_id`, o.`customers_id`, o.`customers_name`, o.`payment_method`, o.`date_purchased`, o.`last_modified`, o.`currency`, o.`currency_value`, s.`orders_status_name`, ot.`text` as `order_total`" . $new_fields . " from " . TABLE_ORDERS . " o left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`), " . TABLE_ORDERS_STATUS . " s where o.orders_status = s.orders_status_id and s.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and ot.class = 'ot_total'  " . $search . " order by o.`orders_id` DESC";
     }
     $orders_query_numrows = '';
     $orders_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_ORDERS, $orders_query_raw, $orders_query_numrows);

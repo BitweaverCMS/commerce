@@ -17,21 +17,21 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_previous_orders.php,v 1.3 2005/08/24 02:50:50 lsces Exp $
+// $Id: blk_previous_orders.php,v 1.4 2005/08/24 15:06:38 lsces Exp $
 //
-  $orders_query = "select o.orders_id, o.date_purchased, o.delivery_name,
-                          o.delivery_country, o.billing_name, o.billing_country,
-                          ot.text as order_total, s.orders_status_name
+  $orders_query = "select o.`orders_id`, o.`date_purchased`, o.`delivery_name`,
+                          o.`delivery_country`, o.`billing_name`, o.`billing_country`,
+                          ot.`text` as `order_total`, s.`orders_status_name`
                    from   " . TABLE_ORDERS . " o, " . TABLE_ORDERS_TOTAL . "  ot, " .
                               TABLE_ORDERS_STATUS . " s
-                   where  o.customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                   and    o.orders_id = ot.orders_id
-                   and    ot.class = 'ot_total'
-                   and    o.orders_status = s.orders_status_id
+                   where  o.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                   and    o.`orders_id` = ot.`orders_id`
+                   and    ot.`class` = 'ot_total'
+                   and    o.`orders_status` = s.`orders_status_id`
                    and    s.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                   order by orders_id desc limit 3";
+                   order by `orders_id` desc";
 
-  $orders = $db->Execute($orders_query);
+  $orders = $db->Execute($orders_query, 3);
 
   while (!$orders->EOF) {
     if (zen_not_null($orders->fields['delivery_name'])) {

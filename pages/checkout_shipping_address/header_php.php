@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/07/10 17:31:45 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 15:06:40 lsces Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -114,9 +114,9 @@
 
       if (ACCOUNT_STATE == 'true') {
         $zone_id = 0;
-        $check_query = "select count(*) as total
+        $check_query = "select count(*) as `total`
                         from " . TABLE_ZONES . "
-                        where zone_country_id = '" . (int)$country . "'";
+                        where `zone_country_id` = '" . (int)$country . "'";
 
         $check = $db->Execute($check_query);
 
@@ -174,7 +174,7 @@
           }
         }
 
-        $sql = "select * from " . TABLE_ADDRESS_BOOK . " where customers_id = '-1'";
+        $sql = "select * from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '-1'";
         $rs = $db->Execute($sql);
         $sql_data_array['customers_id'] = (int)$_SESSION['customer_id'];
 //        $insertSQL = $db->GetInsertSQL($rs, $sql_data_array);
@@ -201,10 +201,10 @@
 
       $_SESSION['sendto'] = $_POST['address'];
 
-      $check_address_query = "select count(*) as total
+      $check_address_query = "select count(*) as `total`
                               from " . TABLE_ADDRESS_BOOK . "
-                              where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                              and address_book_id = '" . (int)$_SESSION['sendto'] . "'";
+                              where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                              and `address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
 
       $check_address = $db->Execute($check_address_query);
 

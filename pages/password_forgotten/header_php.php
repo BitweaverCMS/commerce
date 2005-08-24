@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 15:06:38 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
 
@@ -36,8 +36,8 @@
       $crypted_password = zen_encrypt_password($new_password);
 
       $sql = "update " . TABLE_CUSTOMERS . "
-              set customers_password = '" . zen_db_input($crypted_password) . "'
-              where customers_id = '" . (int)$check_customer->fields['customers_id'] . "'";
+              set `customers_password` = '" . zen_db_input($crypted_password) . "'
+              where `customers_id` = '" . (int)$check_customer->fields['customers_id'] . "'";
 
       $db->Execute($sql);
 

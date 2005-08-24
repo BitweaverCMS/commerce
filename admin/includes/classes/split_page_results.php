@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: split_page_results.php,v 1.3 2005/08/03 15:35:10 spiderr Exp $
+//  $Id: split_page_results.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
 //
 
   class splitPageResults {
@@ -37,7 +37,7 @@
       $pos_order_by = strpos($sql_query, ' order by', $pos_from);
       if (($pos_order_by < $pos_to) && ($pos_order_by != false)) $pos_to = $pos_order_by;
 
-      $reviews_count = $db->Execute("select count(*) as total " .
+      $reviews_count = $db->Execute("select count(*) as `total` " .
                                             substr($sql_query, $pos_from, ($pos_to - $pos_from)));
 
       $query_num_rows = $reviews_count->fields['total'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping_address.php,v 1.3 2005/08/20 13:19:13 spiderr Exp $
+// $Id: checkout_shipping_address.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
 //
 	if ($messageStack->size('checkout_address') > 0) {
 		$gBitSmarty->assign( 'errors', $messageStack->output('checkout_address') );
@@ -34,7 +34,7 @@
 										entry_state as state, entry_zone_id as zone_id,
 										entry_country_id as country_id
 								from " . TABLE_ADDRESS_BOOK . "
-								where customers_id = ?";
+								where `customers_id` = ?";
 
 			if( $rs = $db->query( $addresses_query, array( $_SESSION['customer_id'] ) ) ) {
 				$gBitSmarty->assign( 'addresses', $rs->GetRows() );

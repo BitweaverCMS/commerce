@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_customers.php,v 1.2 2005/07/10 17:31:44 spiderr Exp $
+// $Id: functions_customers.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
 //
 //
 ////
@@ -134,7 +134,7 @@
                              entry_state as state, entry_zone_id as zone_id,
                              entry_country_id as country_id
                       from " . TABLE_ADDRESS_BOOK . "
-                      where customers_id = '" . (int)$customers_id . "'
+                      where `customers_id` = '" . (int)$customers_id . "'
                       and address_book_id = '" . (int)$address_id . "'";
 
     $address = $db->Execute($address_query);
@@ -160,9 +160,9 @@
       }
     }
 
-    $orders_check_query = "select count(*) as total
+    $orders_check_query = "select count(*) as `total`
                            from " . TABLE_ORDERS . "
-                           where customers_id = '" . (int)$id . "'";
+                           where `customers_id` = '" . (int)$id . "'";
 
     $orders_check = $db->Execute($orders_check_query);
 
@@ -186,9 +186,9 @@
       }
     }
 
-    $addresses_query = "select count(*) as total
+    $addresses_query = "select count(*) as `total`
                         from " . TABLE_ADDRESS_BOOK . "
-                        where customers_id = '" . (int)$id . "'";
+                        where `customers_id` = '" . (int)$id . "'";
 
     $addresses = $db->Execute($addresses_query);
 

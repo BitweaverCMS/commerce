@@ -17,21 +17,21 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 15:06:41 lsces Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
   
   if ($_SESSION['customer_id']) {
-    $gv_query = "select amount
+    $gv_query = "select `amount`
                  from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where customer_id = '" . $_SESSION['customer_id'] . "'";
+                 where `customer_id` = '" . $_SESSION['customer_id'] . "'";
     $gv_result = $db->Execute($gv_query);
     if ($gv_result->fields['amount'] > 0 ) $has_gv_balance = true;
   }
   if ($_SESSION['gv_id']) {
-    $gv_query = "select coupon_amount
+    $gv_query = "select `coupon_amount`
                  from " . TABLE_COUPONS . "
-                 where coupon_id = '" . $_SESSION['gv_id'] . "'";
+                 where `coupon_id` = '" . $_SESSION['gv_id'] . "'";
 
     $coupon = $db->Execute($gv_query);
   }

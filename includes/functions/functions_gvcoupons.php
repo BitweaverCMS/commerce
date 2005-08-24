@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_gvcoupons.php,v 1.1 2005/07/05 05:59:00 bitweaver Exp $
+// $Id: functions_gvcoupons.php,v 1.2 2005/08/24 15:06:37 lsces Exp $
 //
 //
 ////
@@ -26,7 +26,7 @@
     global $db;
     $customer_gv_query = "select amount
                           from " . TABLE_COUPON_GV_CUSTOMER . "
-                          where customer_id = '" . $c_id . "'";
+                          where `customer_id` = '" . $c_id . "'";
 
     $customer_gv = $db->Execute($customer_gv_query);
     $coupon_gv_query = "select coupon_amount
@@ -39,7 +39,7 @@
 
       $new_gv_amount = $customer_gv->fields['amount'] + $coupon_gv->fields['coupon_amount'];
       $gv_query = "update " . TABLE_COUPON_GV_CUSTOMER . "
-                   set amount = '" . $new_gv_amount . "' where customer_id = '" . $c_id . "'";
+                   set amount = '" . $new_gv_amount . "' where `customer_id` = '" . $c_id . "'";
 
       $db->Execute($gv_query);
 
@@ -56,7 +56,7 @@
     function zen_user_has_gv_account($c_id) {
       global $db;
       if ($_SESSION['customer_id']) {
-        $gv_result = $db->Execute("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where customer_id = '" . $c_id . "'");
+        $gv_result = $db->Execute("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $c_id . "'");
         if ($gv_result->RecordCount() > 0) {
           if ($gv_result->fields['amount'] > 0) {
             return $gv_result->fields['amount'];

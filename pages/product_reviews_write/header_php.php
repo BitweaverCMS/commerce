@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 12:17:01 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -40,9 +40,9 @@
     zen_redirect(zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params(array('action'))));
   }
 
-  $customer_query = "select customers_firstname, customers_lastname, customers_email_address 
+  $customer_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                      from " . TABLE_CUSTOMERS . "
-                     where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                     where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 
   $customer = $db->Execute($customer_query);

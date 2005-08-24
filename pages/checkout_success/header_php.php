@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/07/26 12:31:54 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 15:06:39 lsces Exp $
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {
@@ -65,15 +65,15 @@
   $breadcrumb->add(NAVBAR_TITLE_1);
   $breadcrumb->add(NAVBAR_TITLE_2);
 
-  $orders_query = "select orders_id from " . TABLE_ORDERS . "
-                   where customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                   order by date_purchased desc limit 1";
+  $orders_query = "select `orders_id` from " . TABLE_ORDERS . "
+                   where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                   order by `date_purchased` desc";
 
-  $orders = $db->Execute($orders_query);
+  $orders = $db->Execute($orders_query, 1);
   $zv_orders_id = $orders->fields['orders_id'];
 
-  $global_query = "select global_product_notifications from " . TABLE_CUSTOMERS_INFO . "
-                   where customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+  $global_query = "select `global_product_notification`s from " . TABLE_CUSTOMERS_INFO . "
+                   where `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $global = $db->Execute($global_query);
 

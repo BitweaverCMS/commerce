@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.6 2005/08/19 18:52:03 spiderr Exp $
+// $Id: header_php.php,v 1.7 2005/08/24 15:06:41 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -73,10 +73,10 @@
 
       zen_redirect(zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL'));
     } else {
-      $check_query = "select count(*) as total
+      $check_query = "select count(*) as `total`
                       from " . TABLE_ADDRESS_BOOK . "
-                      where address_book_id = '" . (int)$_GET['delete'] . "'
-                      and customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                      where `address_book_id` = '" . (int)$_GET['delete'] . "'
+                      and `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $check = $db->Execute($check_query);
 

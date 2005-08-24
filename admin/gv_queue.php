@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.4 2005/08/24 11:51:39 lsces Exp $
+//  $Id: gv_queue.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -33,7 +33,7 @@
 
     $_GET['gid'] = $gv_check->fields['unique_id'];
 
-    $gv_page = $db->Execute("select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.customers_id and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id");
+    $gv_page = $db->Execute("select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.`customers_id` and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id");
     $page_cnt=1;
     while (!$gv_page->EOF) {
       if ($gv_page->fields['order_id'] == $_GET['order']) {
@@ -62,9 +62,9 @@
 
 	// Begin composing email content
 //      //Let's build a message object using the email class
-      $mail = $db->Execute("select customers_firstname, customers_lastname, customers_email_address
+      $mail = $db->Execute("select `customers_firstname`, `customers_lastname`, `customers_email_address`
                            from " . TABLE_CUSTOMERS . "
-                           where customers_id = '" . $gv_resulta->fields['customer_id'] . "'");
+                           where `customers_id` = '" . $gv_resulta->fields['customer_id'] . "'");
 
       $message  = TEXT_REDEEM_GV_MESSAGE_HEADER . "\n" . HTTP_CATALOG_SERVER . DIR_WS_CATALOG . "\n\n" . TEXT_REDEEM_GV_MESSAGE_RELEASED;
       $message .= sprintf(TEXT_REDEEM_GV_MESSAGE_AMOUNT, $currencies->format($gv_amount)) . "\n\n";
@@ -89,9 +89,9 @@
 
 
       $gv_amount=$gv_resulta->fields['amount'];
-      $gv_result=$db->Execute("select amount
+      $gv_result=$db->Execute("select `amount`
                                from " . TABLE_COUPON_GV_CUSTOMER . "
-                               where customer_id='" . $gv_resulta->fields['customer_id'] . "'");
+                               where `customer_id`='" . $gv_resulta->fields['customer_id'] . "'");
 
       $customer_gv=false;
       $total_gv_amount=0;
@@ -102,16 +102,16 @@
       $total_gv_amount=$total_gv_amount+$gv_amount;
       if ($customer_gv) {
         $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . "
-                      set amount='" . $total_gv_amount . "'
-                      where customer_id='" . $gv_resulta->fields['customer_id'] . "'");
+                      set `amount`='" . $total_gv_amount . "'
+                      where `customer_id`='" . $gv_resulta->fields['customer_id'] . "'");
       } else {
         $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . "
-                    (customer_id, amount)
+                    (`customer_id`, `amount`)
                     values ('" . $gv_resulta->fields['customer_id']. "', '" . $total_gv_amount . "')");
       }
         $db->Execute("update " . TABLE_COUPON_GV_QUEUE . "
-                      set release_flag= 'Y'
-                      where unique_id='" . $_GET['gid'] . "'");
+                      set `release_flag`= 'Y'
+                      where `unique_id`='" . $_GET['gid'] . "'");
       }
     }
   }
@@ -168,7 +168,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $gv_query_raw = "select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.customers_id and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id";
+  $gv_query_raw = "select c.customers_firstname, c.customers_lastname, gv.unique_id, gv.date_created, gv.amount, gv.order_id from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.customer_id = c.`customers_id` and gv.release_flag = 'N')" . " order by gv.order_id, gv.unique_id";
   $gv_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $gv_query_raw, $gv_query_numrows);
   $gv_list = $db->Execute($gv_query_raw);
   while (!$gv_list->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers_referrals.php,v 1.3 2005/08/03 17:07:53 spiderr Exp $
+//  $Id: stats_customers_referrals.php,v 1.4 2005/08/24 15:06:36 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -132,9 +132,9 @@
 //  $sd = $_GET['start_date'];
 //  $ed = $_GET['end_date'];
   if ($_GET['referral_code'] == '0') {
-    $customers_orders_query = "select c.customers_id, c.customers_referral, o.orders_id, o.date_purchased, o.order_total, o.coupon_code from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS . " o where c.customers_id = o.customers_id and c.customers_referral= '' and (o.date_purchased >= '" . $sd . "' and o.date_purchased <= '" . $ed . "') order by o.date_purchased, o.orders_id";
+    $customers_orders_query = "select c.`customers_id`, c.customers_referral, o.`orders_id`, o.date_purchased, o.order_total, o.coupon_code from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and c.customers_referral= '' and (o.date_purchased >= '" . $sd . "' and o.date_purchased <= '" . $ed . "') order by o.date_purchased, o.`orders_id`";
   } else {
-    $customers_orders_query = "select c.customers_id, c.customers_referral, o.orders_id, o.date_purchased, o.order_total, o.coupon_code from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS . " o where c.customers_id = o.customers_id and c.customers_referral='" . $_GET['referral_code'] . "' and (o.date_purchased >= '" . $sd . "' and o.date_purchased <= '" . $ed . "') order by o.date_purchased, o.orders_id";
+    $customers_orders_query = "select c.`customers_id`, c.customers_referral, o.`orders_id`, o.date_purchased, o.order_total, o.coupon_code from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and c.customers_referral='" . $_GET['referral_code'] . "' and (o.date_purchased >= '" . $sd . "' and o.date_purchased <= '" . $ed . "') order by o.date_purchased, o.`orders_id`";
   }
   $customers_orders = $db->Execute($customers_orders_query);
 ?>

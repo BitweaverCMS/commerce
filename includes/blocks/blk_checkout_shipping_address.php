@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_checkout_shipping_address.php,v 1.2 2005/08/04 07:29:20 spiderr Exp $
+// $Id: blk_checkout_shipping_address.php,v 1.3 2005/08/24 15:06:38 lsces Exp $
 //
       $radio_buttons = 0;
 
@@ -27,7 +27,7 @@
                                  entry_state as state, entry_zone_id as zone_id,
                                  entry_country_id as country_id
                           from " . TABLE_ADDRESS_BOOK . "
-                          where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                          where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $addresses = $db->Execute($addresses_query);
 

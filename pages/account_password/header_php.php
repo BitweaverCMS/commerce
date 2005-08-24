@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/17 20:28:28 lsces Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -48,19 +48,19 @@
     }
 
     if ($error == false) {
-      $check_customer_query = "select customers_password, customers_nick
+      $check_customer_query = "select `customers_password`, `customers_nick`
                                from   " . TABLE_CUSTOMERS . "
-                               where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                               where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $check_customer = $db->Execute($check_customer_query);
 
       if (zen_validate_password($password_current, $check_customer->fields['customers_password'])) {
         $nickname = $check_customer->fields['customers_nick'];
-        $db->Execute("update " . TABLE_CUSTOMERS . " set customers_password = '" . zen_encrypt_password($password_new) . "' where customers_id = '" . (int)$_SESSION['customer_id'] . "'");
+        $db->Execute("update " . TABLE_CUSTOMERS . " set customers_password = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
-                set    date_account_last_modified = now()
-                where   customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+                set    `date_account_last_modified` = " . $db-mDb->sysTimeStamp . "
+                where   `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
         $db->Execute($sql);
 

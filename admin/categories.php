@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.8 2005/08/24 02:47:44 lsces Exp $
+//  $Id: categories.php,v 1.9 2005/08/24 15:06:36 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -291,10 +291,10 @@
             }
             $category_ids = substr($category_ids, 0, -2);
 
-            $check = $db->Execute("select count(*) as total
+            $check = $db->Execute("select count(*) as `total`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                         where products_id = '" . (int)$key . "'
-                                         and categories_id not in (" . $category_ids . ")");
+                                         where `products_id` = '" . (int)$key . "'
+                                         and `categories_id` not in (" . $category_ids . ")");
             if ($check->fields['total'] < '1') {
               $products_delete[$key] = $key;
             }

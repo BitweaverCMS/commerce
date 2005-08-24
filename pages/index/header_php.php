@@ -17,24 +17,24 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/08 06:13:01 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
 //
 
 // the following cPath references come from application_top.php
   $category_depth = 'top';
   if (isset($cPath) && zen_not_null($cPath)) {
-    $categories_products_query = "select count(*) as total
+    $categories_products_query = "select count(*) as `total`
                                   from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                  where   categories_id = '" . (int)$current_category_id . "'";
+                                  where   `categories_id` = '" . (int)$current_category_id . "'";
 
     $categories_products = $db->Execute($categories_products_query);
 
     if ($categories_products->fields['total'] > 0) {
       $category_depth = 'products'; // display products
     } else {
-      $category_parent_query = "select count(*) as total
+      $category_parent_query = "select count(*) as `total`
                                 from   " . TABLE_CATEGORIES . "
-                                where  parent_id = '" . (int)$current_category_id . "'";
+                                where  `parent_id` = '" . (int)$current_category_id . "'";
 
       $category_parent = $db->Execute($category_parent_query);
 

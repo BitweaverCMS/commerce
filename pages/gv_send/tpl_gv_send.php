@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_gv_send.php,v 1.1 2005/08/04 07:01:35 spiderr Exp $
+// $Id: tpl_gv_send.php,v 1.2 2005/08/24 15:06:36 lsces Exp $
 //
 //echo 'Local Customer GV = ' . $local_customer_gv . '<br />';
 //echo 'Base Customer GV = ' . $base_customer_gv . '<br />';
@@ -58,9 +58,9 @@
   if ($_GET['action'] == 'send' && !$error) {
     // validate entries
       $gv_amount = (double) $gv_amount;
-      $gv_query = "select customers_firstname, customers_lastname
+      $gv_query = "select `customers_firstname`, `customers_lastname`
                    from " . TABLE_CUSTOMERS . "
-                   where customers_id = '" . $_SESSION['customer_id'] . "'";
+                   where `customers_id` = '" . $_SESSION['customer_id'] . "'";
 
       $gv_result = $db->Execute($gv_query);
 

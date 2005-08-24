@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.4 2005/08/24 12:16:09 lsces Exp $
+//  $Id: product_notification.php,v 1.5 2005/08/24 15:06:37 lsces Exp $
 //
 
   class product_notification {
@@ -206,10 +206,10 @@ function selectAll(FormName, SelectBox) {
       $audience = array();
 
       if (isset($_POST['global']) && ($_POST['global'] == 'true')) {
-        $products = $db->Execute("select distinct pn.customers_id, c.customers_firstname,
-                                                  c.customers_lastname, c.customers_email_address
+        $products = $db->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
+                                                  c.`customers_lastname`, c.`customers_email_address`
                                   from " . TABLE_CUSTOMERS . " c, " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
-                                  where c.customers_id = pn.customers_id");
+                                  where c.`customers_id` = pn.`customers_id`");
 
         while (!$products->EOF) {
           $audience[$products->fields['customers_id']] = array('firstname' => $products->fields['customers_firstname'],
@@ -218,11 +218,11 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname,
-                                          c.customers_email_address
+        $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
+                                          c.`customers_email_address`
                                    from " . TABLE_CUSTOMERS . " c, " . TABLE_CUSTOMERS_INFO . " ci
-                                   where c.customers_id = ci.customers_info_id
-                                   and ci.global_product_notifications = '1'");
+                                   where c.`customers_id` = ci.`customers_info_id`
+                                   and ci.`global_product_notifications` = '1'");
 
         while (!$customers->EOF) {
           $audience[$customers->fields['customers_id']] = array('firstname' => $customers->fields['customers_firstname'],
@@ -235,10 +235,10 @@ function selectAll(FormName, SelectBox) {
 
         $ids = implode(',', $chosen);
 
-        $products = $db->Execute("select distinct pn.customers_id, c.customers_firstname,
-                                                  c.customers_lastname, c.customers_email_address
+        $products = $db->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
+                                                  c.`customers_lastname`, c.`customers_email_address`
                                   from " . TABLE_CUSTOMERS . " c, " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
-                                  where c.customers_id = pn.customers_id
+                                  where c.`customers_id` = pn.`customers_id`
                                   and pn.`products_id` in (" . $ids . ")");
 
         while (!$products->EOF) {
@@ -248,11 +248,11 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select c.customers_id, c.customers_firstname, c.customers_lastname,
-                                          c.customers_email_address
+        $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
+                                          c.`customers_email_address`
                                    from " . TABLE_CUSTOMERS . " c, " . TABLE_CUSTOMERS_INFO . " ci
-                                   where c.customers_id = ci.customers_info_id
-                                   and ci.global_product_notifications = '1'");
+                                   where c.`customers_id` = ci.`customers_info_id`
+                                   and ci.`global_product_notifications` = '1'");
 
         while (!$customers->EOF) {
           $audience[$customers->fields['customers_id']] = array('firstname' => $customers->fields['customers_firstname'],
