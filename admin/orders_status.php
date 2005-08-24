@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.4 2005/08/24 02:47:44 lsces Exp $
+//  $Id: orders_status.php,v 1.5 2005/08/24 08:44:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -58,7 +58,7 @@
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set configuration_value = '" . zen_db_input($orders_status_id) . "'
+                        set `configuration_value` = '" . zen_db_input($orders_status_id) . "'
                         where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
 
@@ -79,7 +79,7 @@
 
         if ($orders_status->fields['configuration_value'] == $oID) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set configuration_value = ''
+                        set `configuration_value` = ''
                         where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
 

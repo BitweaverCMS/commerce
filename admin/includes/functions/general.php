@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.15 2005/08/24 02:48:58 lsces Exp $
+//  $Id: general.php,v 1.16 2005/08/24 08:45:57 lsces Exp $
 //
 
 ////
@@ -836,7 +836,7 @@
   function zen_get_system_information() {
     global $db, $_SERVER;
 
-    $db_query = $db->Execute("SELECT now() as datetime");
+//    $db_query = $db->Execute("SELECT now() as datetime");
     list($system, $host, $kernel) = preg_split('/[\s,]+/', @exec('uname -a'), 5);
 
 
@@ -1414,9 +1414,9 @@
     $good_result = 0;
     while ($good_result == 0) {
       $id1=substr($ccid, $random_start,$length);
-      $query = $db->Execute("SELECT coupon_code
+      $query = $db->Execute("SELECT `coupon_code`
                              FROM " . TABLE_COUPONS . "
-                             WHERE coupon_code = '" . $id1 . "'");
+                             WHERE `coupon_code` = " . $id1 . "'");
 
       if ($query->RecordCount() < 1 ) $good_result = 1;
     }

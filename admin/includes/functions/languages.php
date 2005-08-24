@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.1 2005/07/05 06:00:01 bitweaver Exp $
+//  $Id: languages.php,v 1.2 2005/08/24 08:45:57 lsces Exp $
 //
 
   function zen_get_languages_directory($code) {
     global $db;
     $language = $db->Execute("select languages_id, directory 
                               from " . TABLE_LANGUAGES . " 
-                              where code = '" . zen_db_input($code) . "'");
+                              where `code` = '" . zen_db_input($code) . "'");
 
     if ($language->RecordCount() > 0) {
       $_SESSION['languages_id'] = $language->fields['languages_id'];

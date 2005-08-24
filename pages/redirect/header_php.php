@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/08/24 08:45:57 lsces Exp $
 //
 
   switch ($_GET['action']) {
@@ -66,7 +66,7 @@
                                         from " . TABLE_MANUFACTURERS_INFO . " mi, " . TABLE_LANGUAGES . " l 
                                         where mi.manufacturers_id = '" . (int)$_GET['manufacturers_id'] . "' 
                                         and mi.languages_id = l.languages_id 
-                                        and l.code = '" . DEFAULT_LANGUAGE . "'");
+                                        and l.`code` = " . DEFAULT_LANGUAGE . "'");
 
           if ($manufacturer->RecordCount > 0) {
 

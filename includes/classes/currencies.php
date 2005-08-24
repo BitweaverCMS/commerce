@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.9 2005/08/24 02:51:13 lsces Exp $
+// $Id: currencies.php,v 1.10 2005/08/24 08:45:57 lsces Exp $
 //
 
 ////
@@ -136,7 +136,7 @@
 			$pParamHash['currency_store']['title'] = trim( $pParamHash['title'] );
 		}
 		$pParamHash['currency_store']['value'] = ( !empty( $pParamHash['value'] ) ? $pParamHash['value'] : 1 );
-		$pParamHash['currency_store']['last_updated'] = 'now()';
+		$pParamHash['currency_store']['last_updated'] = $this->mDb->sysTimeStamp;
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -153,7 +153,7 @@
 	}
 
 	function currencyExists( $code ) {
-		return $this->mDb->getOne( "select currencies_id from " . TABLE_CURRENCIES . " where code = ?", array( $code ) );
+		return $this->mDb->getOne( "select `currencies_id` from " . TABLE_CURRENCIES . " where `code` = ?", array( $code ) );
 	}
 
 	function bulkImport( $pBulkString ) {

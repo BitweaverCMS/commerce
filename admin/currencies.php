@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
+//  $Id: currencies.php,v 1.7 2005/08/24 08:44:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -59,7 +59,7 @@
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set configuration_value = '" . zen_db_input($code) . "'
+                        set `configuration_value` = '" . zen_db_input($code) . "'
                         where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
@@ -74,19 +74,19 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("select currencies_id
+        $currency = $db->Execute("select `currencies_id`
                                   from " . TABLE_CURRENCIES . "
-                                  where code = '" . DEFAULT_CURRENCY . "'");
+                                  where `code` = '" . DEFAULT_CURRENCY . "'");
 
 
         if ($currency->fields['currencies_id'] == $currencies_id) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set configuration_value = ''
+                        set `configuration_value` = ''
                         where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
         $db->Execute("delete from " . TABLE_CURRENCIES . "
-                      where currencies_id = '" . (int)$currencies_id . "'");
+                      where `currencies_id` = '" . (int)$currencies_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
         break;
@@ -96,7 +96,7 @@
       case 'update':
         $server_used = CURRENCY_SERVER_PRIMARY;
 
-        $currency = $db->Execute("select currencies_id, code, title from " . TABLE_CURRENCIES);
+        $currency = $db->Execute("select `currencies_id`, `code`, `title` from " . TABLE_CURRENCIES);
         while (!$currency->EOF) {
           $quote_function = 'quote_' . CURRENCY_SERVER_PRIMARY . '_currency';
           $rate = $quote_function($currency->fields['code']);
@@ -112,8 +112,8 @@
 
           if (zen_not_null($rate)) {
             $db->Execute("update " . TABLE_CURRENCIES . "
-                          set value = '" . $rate . "', last_updated = now()
-                          where currencies_id = '" . (int)$currency->fields['currencies_id'] . "'");
+                          set `value` = '" . $rate . "', `last_updated` = 'NOW'
+                          where `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
 
             $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
           } else {
@@ -133,9 +133,9 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("select code
+        $currency = $db->Execute("select `code`
                                   from " . TABLE_CURRENCIES . "
-                                  where currencies_id = '" . (int)$currencies_id . "'");
+                                  where `currencies_id` = '" . (int)$currencies_id . "'");
 
         $remove_currency = true;
         if ($currency->fields['code'] == DEFAULT_CURRENCY) {
@@ -198,7 +198,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $currency_query_raw = "select currencies_id, title, code, symbol_left, symbol_right, decimal_point, thousands_point, decimal_places, last_updated, value from " . TABLE_CURRENCIES . " order by title";
+  $currency_query_raw = "select `currencies_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `last_updated`, `value` from " . TABLE_CURRENCIES . " order by `title`";
   $currency_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $currency_query_raw, $currency_query_numrows);
   $currency = $db->Execute($currency_query_raw);
   while (!$currency->EOF) {

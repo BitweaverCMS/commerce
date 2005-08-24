@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.5 2005/08/24 02:47:43 lsces Exp $
+//  $Id: product_types.php,v 1.6 2005/08/24 08:44:09 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -37,7 +37,7 @@
         $cID = zen_db_prepare_input($_GET['cID']);
 
         $db->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
-                      set configuration_value = '" . zen_db_input($configuration_value) . "',
+                      set `configuration_value` = '" . zen_db_input($configuration_value) . "',
                           `last_modified` = now() where configuration_id = '" . (int)$cID . "'");
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT;
@@ -45,7 +45,7 @@
         // set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
         if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
         $db->Execute("update " . TABLE_CONFIGURATION . "
-                      set configuration_value = 'false', `last_modified` = '" . NOW . "'
+                      set `configuration_value` = 'false', `last_modified` = '" . NOW . "'
                       where `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
@@ -90,11 +90,11 @@
           // remove image from database if none
           if ($type_image->filename != 'none') {
             $db->Execute("update " . TABLE_PRODUCT_TYPES . "
-                          set default_image = '" .  $_POST['img_dir'] . $type_image->filename . "'
+                          set `default_image` = '" .  $_POST['img_dir'] . $type_image->filename . "'
                           where `type_id` = '" . (int)$type_id . "'");
           } else {
             $db->Execute("update " . TABLE_PRODUCT_TYPES . "
-                          set default_image = ''
+                          set `default_image` = ''
                           where `type_id` = '" . (int)$type_id . "'");
           }
         }
@@ -126,9 +126,9 @@
 //                      where manufacturers_id = '" . (int)$manufacturers_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $db->Execute("select `products_id`
                                     from " . TABLE_PRODUCTS . "
-                                    where products_type = '" . (int)$type_id . "'");
+                                    where `products_type` = '" . (int)$type_id . "'");
 
           while (!$products->EOF) {
             zen_remove_product($products->fields['products_id']);
@@ -136,8 +136,8 @@
           }
         } else {
           $db->Execute("update " . TABLE_PRODUCTS . "
-                        set products_type = '1'
-                        where products_type = '" . (int)$type_id . "'");
+                        set `products_type` = '1'
+                        where `products_type` = '" . (int)$type_id . "'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page']));
@@ -204,9 +204,9 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $configuration = $db->Execute("select configuration_id, configuration_title, configuration_value, configuration_key,
-                                        use_function from " . TABLE_PRODUCT_TYPE_LAYOUT . "
-                                        where product_type_id = '" . (int)$_GET['ptID'] . "'
+  $configuration = $db->Execute("select `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
+                                        `use_function` from " . TABLE_PRODUCT_TYPE_LAYOUT . "
+                                        where `product_type_id` = '" . (int)$_GET['ptID'] . "'
                                         order by `sort_order`");
   while (!$configuration->EOF) {
     if (zen_not_null($configuration->fields['use_function'])) {

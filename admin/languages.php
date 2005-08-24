@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.6 2005/08/24 02:47:43 lsces Exp $
+//  $Id: languages.php,v 1.7 2005/08/24 08:44:09 lsces Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -29,7 +29,7 @@
         $image = zen_db_prepare_input($_POST['image']);
         $directory = zen_db_prepare_input($_POST['directory']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
-        $check = $db->Execute("select * from " . TABLE_LANGUAGES . " where code = '" . $code . "'");
+        $check = $db->Execute("select * from " . TABLE_LANGUAGES . " where `code` = '" . $code . "'");
         if ($check->RecordCount() > 0) {
           $messageStack->add(ERROR_DUPLICATE_LANGUAGE_CODE, 'error');
         } else {
@@ -151,7 +151,7 @@
           }
           if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
             $db->Execute("update " . TABLE_CONFIGURATION . "
-       	                set configuration_value = '" . zen_db_input($code) . "'
+       	                set `configuration_value` = '" . zen_db_input($code) . "'
 			where `configuration_key` = 'DEFAULT_LANGUAGE'");
           }
 
@@ -184,14 +184,14 @@
         $directory = zen_db_prepare_input($_POST['directory']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
         $db->Execute("update " . TABLE_LANGUAGES . "
-		              set name = '" . zen_db_input($name) . "', code = '" . zen_db_input($code) . "',
+		              set name = '" . zen_db_input($name) . "', `code` = `" . zen_db_input($code) . "',
 					  image = '" . zen_db_input($image) . "', directory = '" . zen_db_input($directory) . "',
 					  `sort_order` = '" . zen_db_input($sort_order) . "'
 					  where languages_id = '" . (int)$lID . "'");
 
         if ($_POST['default'] == 'on') {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-		                set configuration_value = '" . zen_db_input($code) . "'
+		                set `configuration_value` = '" . zen_db_input($code) . "'
 						where `configuration_key` = 'DEFAULT_LANGUAGE'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page'] . '&lID=' . $_GET['lID']));
@@ -206,11 +206,11 @@
         $lID = zen_db_prepare_input($_GET['lID']);
         $lng = $db->Execute("select languages_id
 		                     from " . TABLE_LANGUAGES . "
-							 where code = '" . DEFAULT_CURRENCY . "'");
+							 where `code` = `" . DEFAULT_CURRENCY . "'");
 
         if ($lng->fields['languages_id'] == $lID) {
           $db->Execute("update " . TABLE_CONFIGURATION . "
-		                set configuration_value = ''
+		                set `configuration_value` = ''
 						where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
         $db->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where language_id = '" . (int)$lID . "'");
