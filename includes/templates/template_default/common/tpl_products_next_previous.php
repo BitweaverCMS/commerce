@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.6 2005/08/24 12:17:45 lsces Exp $
+// $Id: tpl_products_next_previous.php,v 1.7 2005/08/24 13:41:02 spiderr Exp $
 //
   /*
 
@@ -75,7 +75,7 @@
 
 			$sql = "select p.`products_id`, p.`products_model`, p.`products_price_sorter`, pd.`products_name`, p.`products_sort_order`
 					from   " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
-					where  p.`products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id`= ? and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = ?
+					where  p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id`= ? and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = ?
 					$prev_next_order ";
 
 			$products_ids = $db->query( $sql, array( $_SESSION['languages_id'], $current_category_id ) );
