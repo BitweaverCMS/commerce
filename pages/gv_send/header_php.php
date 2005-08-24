@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 15:06:36 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 17:00:57 lsces Exp $
 //
   require('includes/classes/http_client.php');
 
@@ -88,18 +88,18 @@
     } else {
       $_GET['action'] = 'complete';
       $gv_query="update " . TABLE_COUPON_GV_CUSTOMER . "
-                 set amount = '" .  $new_amount . "'
+                 set `amount` = '" .  $new_amount . "'
                  where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 
       $db->Execute($gv_query);
 
-      $gv_query="select customers_firstname, customers_lastname
+      $gv_query="select `customers_firstname`, `customers_lastname`
                  from " . TABLE_CUSTOMERS . "
                  where `customers_id` = '" . $_SESSION['customer_id'] . "'";
 
       $gv_customer=$db->Execute($gv_query);
       $gv_query="insert into " . TABLE_COUPONS . "
-                 (coupon_type, coupon_code, date_created, coupon_amount)
+                 (`coupon_type`, `coupon_code`, `date_created`, `coupon_amount`)
                  values ('G', '" . $id1 . "', NOW(), '" . $currencies->value($_POST['amount'], true, DEFAULT_CURRENCY) . "')";
 
       $gv = $db->Execute($gv_query);
@@ -107,7 +107,7 @@
       $insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
       $gv_query="insert into " . TABLE_COUPON_EMAIL_TRACK . "
-                        (coupon_id, customer_id_sent, sent_firstname, sent_lastname, emailed_to, date_sent)
+                        (`coupon_id`, `customer_id_sent`, `sent_firstname`, `sent_lastname`, `emailed_to`, `date_sent`)
                  values ('" . $insert_id . "' ,'" . $_SESSION['customer_id'] . "', '" .
                          $gv_customer->fields['customers_firstname'] . "', '" .
                          $gv_customer->fields['customers_lastname'] . "', '" .
@@ -162,7 +162,7 @@
 // send additional emails
       if (SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_STATUS == '1' and SEND_EXTRA_GV_CUSTOMER_EMAILS_TO !='') {
         if ($_SESSION['customer_id']) {
-          $account_query = "select customers_firstname, customers_lastname, customers_email_address
+          $account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                             from " . TABLE_CUSTOMERS . "
                             where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
@@ -175,7 +175,7 @@
       }
 
       // do a fresh calculation after sending an email
-      $gv_query = "select amount
+      $gv_query = "select `amount`
                    from " . TABLE_COUPON_GV_CUSTOMER . "
                    where `customer_id` = '" . $_SESSION['customer_id'] . "'";
 

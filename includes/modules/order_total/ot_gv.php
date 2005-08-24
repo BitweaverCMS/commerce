@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
+// $Id: ot_gv.php,v 1.5 2005/08/24 17:00:57 lsces Exp $
 //
 
   class ot_gv {
@@ -122,13 +122,13 @@
           }
           $total_gv_amount = $total_gv_amount + $gv_order_amount;
           if ($customer_gv) {
-            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set amount = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
           } else {
-            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
+            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
           }
         } else {
          // GV_QUEUE is true - so queue the gv for release by store owner
-          $db->Execute("insert into " . TABLE_COUPON_GV_QUEUE . " (customer_id, order_id, amount, date_created, ipaddr) values ('" . $_SESSION['customer_id'] . "', '" . $insert_id . "', '" . $gv_order_amount . "', NOW(), '" . $_SERVER['REMOTE_ADDR'] . "')");
+          $db->Execute("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ('" . $_SESSION['customer_id'] . "', '" . $insert_id . "', '" . $gv_order_amount . "', NOW(), '" . $_SERVER['REMOTE_ADDR'] . "')");
         }
       }
     }
@@ -150,10 +150,10 @@
     function apply_credit() {
       global $db, $order;
       if ($_SESSION['cot_gv'] != 0) {
-        $gv_result = $db->Execute("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+        $gv_result = $db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
         $gv_payment_amount = $this->deduction;
         $gv_amount = $gv_result->fields['amount'] - $gv_payment_amount;
-        $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set amount = '" . $gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+        $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
       }
       $_SESSION['cot_gv'] = false;
       return $gv_payment_amount;
@@ -164,7 +164,7 @@
       global $db, $currencies;
       if (!$_POST['cot_gv']) $_SESSION['cot_gv'] = '0.00';
       if ($_POST['gv_redeem_code']) {
-        $gv_result = $db->Execute("select coupon_id, coupon_type, coupon_amount from " . TABLE_COUPONS . " where coupon_code = '" . $_POST['gv_redeem_code'] . "'");
+        $gv_result = $db->Execute("select `coupon_id`, `coupon_type`, `coupon_amount` from " . TABLE_COUPONS . " where `coupon_code` = '" . $_POST['gv_redeem_code'] . "'");
         if ($gv_result->RecordCount() > 0) {
           $redeem_query = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
           if ( ($redeem_query->RecordCount() > 0) && ($gv_result->fields['coupon_type'] == 'G')  ) {
@@ -181,7 +181,7 @@
           // date
           // redemption flag
           // now update customer account with gv_amount
-          $gv_amount_result=$db->Execute("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+          $gv_amount_result=$db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
           $customer_gv = false;
           $total_gv_amount = $gv_amount;;
           if ($gv_amount_result->RecordCount() > 0) {
@@ -192,10 +192,10 @@
           $db->Execute("insert into  " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, customer_id, redeem_date, redeem_ip) values ('" . $gv_result->fields['coupon_id'] . "', '" . $_SESSION['customer_id'] . "', now(),'" . $_SERVER['REMOTE_ADDR'] . "')");
           if ($customer_gv) {
             // already has gv_amount so update
-            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set amount = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
           } else {
             // no gv_amount so insert
-            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
+            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
           }
           zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
        }
@@ -257,7 +257,7 @@
 
     function user_has_gv_account($c_id) {
       global $db;
-      $gv_result = $db->Execute("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $c_id . "'");
+      $gv_result = $db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $c_id . "'");
       if ($gv_result->RecordCount() > 0) {
 //        if ($gv_result->fields['amount'] > 0) {
           return $gv_result->fields['amount'];
