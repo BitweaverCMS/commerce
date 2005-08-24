@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.6 2005/08/24 15:06:39 lsces Exp $
+// $Id: mod_order_history.php,v 1.7 2005/08/24 15:31:18 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -28,7 +28,7 @@
 						where o.`customers_id` = ?
 						and o.`orders_id` = op.`orders_id`
 						and op.`products_id` = p.`products_id`
-						and p.`products_status = '1'
+						and p.`products_status` = '1'
 						order by o.date_purchased desc
 						limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;
 

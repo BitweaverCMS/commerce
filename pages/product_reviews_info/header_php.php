@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 15:06:38 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 15:31:17 spiderr Exp $
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 
@@ -71,7 +71,7 @@
                    and r.`reviews_id` = rd.`reviews_id`
                    and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'
                    and r.`products_id` = p.`products_id`
-                   and p.`products_status = '1'
+                   and p.`products_status` = '1'
                    and p.`products_id` = pd.`products_id`
                    and pd.`language_id` = '". (int)$_SESSION['languages_id'] . "'" .
                    $review_status;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.20 2005/08/24 15:06:39 lsces Exp $
+//  $Id: general.php,v 1.21 2005/08/24 15:31:16 spiderr Exp $
 //
 
 ////
@@ -541,7 +541,7 @@
       $products = $db->Execute("SELECT count(*) as `total`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
-                                and p.`products_status = '1'
+                                and p.`products_status` = '1'
                                 and p2c.`categories_id` = '" . (int)$categories_id . "'" . $limit_count);
 
     }
@@ -1986,14 +1986,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           $cat_products_query = "SELECT count(*) as `total`
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                              WHERE p.`products_id` = p2c.`products_id`
-                             and p.`products_status = '1'
+                             and p.`products_status` = '1'
                              and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
         case ('products_active'):
           $cat_products_query = "SELECT p.`products_id`
                              FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                              WHERE p.`products_id` = p2c.`products_id`
-                             and p.`products_status = '1'
+                             and p.`products_status` = '1'
                              and p2c.`categories_id` = '" . (int)$category_id . "'";
         break;
       }
@@ -2477,7 +2477,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     $category_query = "SELECT p2c.`categories_id`
                        FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                        WHERE p.`products_id` = '" . (int)$products_id . "' " .
-                       ($status_override == '1' ? " and p.`products_status = '1' " : '') . "
+                       ($status_override == '1' ? " and p.`products_status` = '1' " : '') . "
                        and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);

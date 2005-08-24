@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.9 2005/08/24 12:17:01 lsces Exp $
+// $Id: specials_index.php,v 1.10 2005/08/24 15:31:16 spiderr Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -34,7 +34,7 @@
                            from " . TABLE_PRODUCTS . " p
                            left join " . TABLE_SPECIALS . " s on p.`products_id` = s.`products_id`
                            left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on p.`products_id` = pd.`products_id`
-                           where p.`products_id` = s.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status = '1' and s.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+                           where p.`products_id` = s.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status` = '1' and s.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
   } else {
     $specials_index_query = "select p.`products_id`, p.`products_image`, pd.`products_name`
                            from " . TABLE_PRODUCTS . " p
@@ -45,7 +45,7 @@
                            where p.`products_id` = p2c.`products_id`
                            and p2c.`categories_id` = c.`categories_id`
                            and c.`parent_id` = '" . (int)$new_products_category_id . "'
-                           and p.`products_id` = s.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status = '1' and s.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+                           and p.`products_id` = s.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status` = '1' and s.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
   }
   $specials_index = $db->query($specials_index_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);

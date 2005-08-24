@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 12:17:02 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/08/24 15:31:17 spiderr Exp $
 //
   $_SESSION['navigation']->remove_current_page();
 /*
@@ -25,7 +25,7 @@
                                   from " . TABLE_PRODUCTS . " p
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                   on p.`products_id` = pd.`products_id`
-                                  where p.`products_status = '1'
+                                  where p.`products_status` = '1'
                                   and p.`products_id` = '" . $_GET['pID'] . "'
                                   and pd.`language_id` = '" . $_SESSION['languages_id'] . "'");
 

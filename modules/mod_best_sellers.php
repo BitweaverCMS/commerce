@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_best_sellers.php,v 1.5 2005/08/24 12:17:29 lsces Exp $
+// $Id: mod_best_sellers.php,v 1.6 2005/08/24 15:31:18 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -47,7 +47,7 @@
       $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
                              from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                                     . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c
-                             where p.`products_status = '1'
+                             where p.`products_status` = '1'
                              and p.products_ordered > 0
                              and p.`products_id` = pd.`products_id`
                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
@@ -61,7 +61,7 @@
     } else {
       $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
                              from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                             where p.`products_status = '1'
+                             where p.`products_status` = '1'
                              and p.products_ordered > 0
                              and p.`products_id` = pd.`products_id`
                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'

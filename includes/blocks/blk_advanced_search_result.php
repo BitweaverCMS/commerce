@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.4 2005/08/24 12:16:41 lsces Exp $
+// $Id: blk_advanced_search_result.php,v 1.5 2005/08/24 15:31:16 spiderr Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -94,7 +94,7 @@
 
   $from_str .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON( p.`products_id` = p2c.`products_id` ) LEFT JOIN  " . TABLE_CATEGORIES . " c ON( p2c.`categories_id`=c.`categories_id` ) left join " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd on mtpd.`products_id`= p.`products_id` and mtpd.`language_id` = '" . $_SESSION['languages_id'] . "', " . TABLE_PRODUCTS_DESCRIPTION . " pd ";
 
-  $where_str = " where p.`products_status = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' ";
+  $where_str = " where p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' ";
 
   if (isset($_GET['categories_id']) && zen_not_null($_GET['categories_id'])) {
     if ($_GET['inc_subcat'] == '1') {

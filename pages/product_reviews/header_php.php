@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 12:17:00 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/08/24 15:31:17 spiderr Exp $
 //
   $review_query_raw = "select p.`products_id`, p.`products_price`,
                           p.`products_tax_class_id`, p.`products_image`, p.`products_model`, pd.`products_name`
                    from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                    where p.`products_id` = '" . (int)$_GET['products_id'] . "'
-                   and p.`products_status = '1'
+                   and p.`products_status` = '1'
                    and p.`products_id` = pd.`products_id`
                    and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_featured_products.php,v 1.5 2005/08/24 12:17:02 lsces Exp $
+// $Id: tpl_featured_products.php,v 1.6 2005/08/24 15:31:17 spiderr Exp $
 //
 ?>
 
@@ -38,7 +38,7 @@
   				INNER JOIN  " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
 				left join " . TABLE_MANUFACTURERS . " m on (p.`manufacturers_id` = m.`manufacturers_id`)
                 left join " . TABLE_FEATURED . " f on p.`products_id` = f.`products_id`
-			where p.`products_status = '1' and p.`products_id` = f.`products_id` and f.status = '1'
+			where p.`products_status` = '1' and p.`products_id` = f.`products_id` and f.status = '1'
                                   and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . $order_by;
 
   $featured_products_split = new splitPageResults($featured_products_query_raw, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS);

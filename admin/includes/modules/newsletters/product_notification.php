@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.5 2005/08/24 15:06:37 lsces Exp $
+//  $Id: product_notification.php,v 1.6 2005/08/24 15:31:16 spiderr Exp $
 //
 
   class product_notification {
@@ -38,7 +38,7 @@
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                 where pd.`language_id` = '" . $_SESSION['languages_id'] . "'
                                 and pd.`products_id` = p.`products_id`
-                                and p.`products_status = '1'
+                                and p.`products_status` = '1'
                                 order by pd.`products_name`");
 
       while (!$products->EOF) {

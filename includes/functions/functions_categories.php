@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.5 2005/08/24 12:17:46 lsces Exp $
+// $Id: functions_categories.php,v 1.6 2005/08/24 15:31:16 spiderr Exp $
 //
 //
 ////
@@ -75,7 +75,7 @@
 	$selectSql=''; $joinSql=''; $whereSql='';
 	$gBitProduct->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
     if ($include_inactive == true) {
-		$whereSql .= " and p.`products_status = '1' ";
+		$whereSql .= " and p.`products_status` = '1' ";
     }
       $products_query = "select count(*) as `total`
                          from " . TABLE_PRODUCTS . " p
@@ -188,7 +188,7 @@
     $category_query = "select p2c.`categories_id`
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                        where p.`products_id` = '" . (int)$products_id . "'
-                       and p.`products_status = '1'
+                       and p.`products_status` = '1'
                        and p.`products_id` = p2c.`products_id` limit 1";
 
     $category = $db->Execute($category_query);

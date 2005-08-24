@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: define_queries.php,v 1.4 2005/08/24 12:17:46 lsces Exp $
+// $Id: define_queries.php,v 1.5 2005/08/24 15:31:16 spiderr Exp $
 //
 DEFINE('SQL_CC_ENABLED', "select configuration_key from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%CC_ENABLED%' and configuration_value= '1'");
 DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_key LIKE '%SHOW_PRODUCT_INFO_CATEGORY%' and configuration_value > 0 order by configuration_value");
@@ -33,7 +33,7 @@ DEFINE('SQL_ALSO_PURCHASED', "select p.products_id, p.`products_image`
                      and opb.products_id != ? 
                      and opb.products_id = p.products_id 
                      and opb.orders_id = o.orders_id 
-                     and p.`products_status = '1' 
+                     and p.`products_status` = '1' 
                      group by p.products_id  
                      order by o.date_purchased desc" 
                      );

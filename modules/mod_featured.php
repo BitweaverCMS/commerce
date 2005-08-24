@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_featured.php,v 1.5 2005/08/24 12:17:29 lsces Exp $
+// $Id: mod_featured.php,v 1.6 2005/08/24 15:31:18 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -25,7 +25,7 @@
                            from " . TABLE_PRODUCTS . " p
                            left join " . TABLE_FEATURED . " f on p.`products_id` = f.`products_id`
                            left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on p.`products_id` = pd.`products_id`
-                           where p.`products_id` = f.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status = '1' and f.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+                           where p.`products_id` = f.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status` = '1' and f.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                            order by pd.`products_name` desc";
 
    	$listHash['max_records'] = 1; // ? MAX_RANDOM_SELECT_FEATURED_PRODUCTS;
