@@ -1942,9 +1942,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (4, 'File')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (5, 'Read Only')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_values` (`products_options_values_id`, `language_id`, `products_options_values_name`) VALUES (0, 1, 'TEXT')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_rates` VALUES (1, 1, 1, 1, 7.0, 'FL TAX 7.0%', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."geo_zones` (`geo_zone_id`, `geo_zone_name`, `geo_zone_description`,`date_added`) VALUES (1,'Florida', 'Florida local sales tax zone', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones_to_geo_zones` (`association_id`, `zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (1,223,18,1,'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_class` (tax_class_id, `tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES (1, 'Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (223,'AL', 'Alabama')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (223,'AK', 'Alaska')",
@@ -2128,8 +2126,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (195,'Zamora', 'Zamora')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (195,'Zaragoza', 'Zaragoza')",
 
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Quantity in Stock', 'SHOW_PRODUCT_LIBERTY_INFO_QUANTITY', '1', 'Display Quantity in Stock on Product Info 0= off 1= on', '6', '6', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
-
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_rates` VALUES (1, 1, 1, 1, 7.0, 'FL TAX 7.0%', 'NOW', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones_to_geo_zones` (`association_id`, `zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (1,223,18,1,'NOW')",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Model Number', 'SHOW_PRODUCT_INFO_MODEL', '1', 'Display Model Number on Product Info 0= off 1= on', '1', '1', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."product_type_layout` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `product_type_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Weight', 'SHOW_PRODUCT_INFO_WEIGHT', '1', 'Display Weight on Product Info 0= off 1= on', '1', '2', 'zen_cfg_select_drop_down(array(array(''id''=>''1'', ''text''=>''True''), array(''id''=>''0'', ''text''=>''False'')), ', 'NOW')",
