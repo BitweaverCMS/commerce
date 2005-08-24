@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.6 2005/08/24 08:44:09 lsces Exp $
+//  $Id: product_types.php,v 1.7 2005/08/24 09:45:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -332,9 +332,9 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
   $product_types = $db->Execute($product_types_query_raw);
   while (!$product_types->EOF) {
     if ((!isset($_GET['ptID']) || (isset($_GET['ptID']) && ($_GET['ptID'] == $product_types->fields['type_id']))) && !isset($ptInfo) && (substr($action, 0, 3) != 'new')) {
-      $product_type_products = $db->Execute("select count(*) as products_count
+      $product_type_products = $db->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
-                                             where products_type = '" . (int)$product_types->fields['type_id'] . "'");
+                                             where `products_type` = '" . (int)$product_types->fields['type_id'] . "'");
 
       $ptInfo_array = array_merge($product_types->fields, $product_type_products->fields);
 

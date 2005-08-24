@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
+//  $Id: products_price_manager.php,v 1.7 2005/08/24 09:45:58 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify products exist
-  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS . " limit 1");
+  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, 1);
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -65,7 +65,7 @@
   require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
   if ($action == 'delete_special') {
-    $delete_special = $db->Execute("delete from " . TABLE_SPECIALS . " where products_id='" . $productsId . "'");
+    $delete_special = $db->Execute("delete from " . TABLE_SPECIALS . " where `products_id`='" . $productsId . "'");
 
     // reset products_price_sorter for searches etc.
     zen_update_products_price_sorter($productsId);
