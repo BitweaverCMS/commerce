@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.5 2005/08/03 17:07:52 spiderr Exp $
+//  $Id: salemaker.php,v 1.6 2005/08/24 13:19:13 lsces Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -110,7 +110,7 @@ define('AUTOCHECK', 'False');
       case 'copyconfirm':
         $newname = zen_db_prepare_input($_POST['newname']);
         if (zen_not_null($newname)) {
-          $salemaker_sales = $db->Execute("select * from " . TABLE_SALEMAKER_SALES . " where sale_id = '" . zen_db_input($_GET['sID']) . "'");
+          $salemaker_sales = $db->Execute("select * from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . zen_db_input($_GET['sID']) . "'");
           if ($salemaker_sales->RecordCount() > 0) {
             $salemaker_sales->fields['sale_id'] = 'null';
             $salemaker_sales->fields['sale_name'] = $newname;
@@ -138,7 +138,7 @@ define('AUTOCHECK', 'False');
         // update prices for products in sale
         zen_update_salemaker_product_prices($sale_id);
 
-        $db->Execute("delete from " . TABLE_SALEMAKER_SALES . " where sale_id = '" . (int)$sale_id . "'");
+        $db->Execute("delete from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$sale_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page']));
         break;
@@ -287,7 +287,7 @@ function SetCategories() {
     if ( ($action == 'edit') && ($_GET['sID']) ) {
 	  $form_action = 'update';
 
-      $salemaker_sales = $db->Execute("select sale_id, sale_status, sale_name, sale_deduction_value, sale_deduction_type, sale_pricerange_from, sale_pricerange_to, sale_specials_condition, sale_categories_selected, sale_categories_all, sale_date_start, sale_date_end, sale_date_added, sale_date_last_modified, sale_date_status_change from " . TABLE_SALEMAKER_SALES . " where sale_id = '" . (int)$_GET['sID'] . "'");
+      $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_categories_all`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$_GET['sID'] . "'");
 
       $sInfo = new objectInfo($salemaker_sales->fields);
     } else {
@@ -454,7 +454,7 @@ echo '</table></tr>';
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-    $salemaker_sales_query_raw = "select sale_id, sale_status, sale_name, sale_deduction_value, sale_deduction_type, sale_pricerange_from, sale_pricerange_to, sale_specials_condition, sale_categories_selected, sale_categories_all, sale_date_start, sale_date_end, sale_date_added, sale_date_last_modified, sale_date_status_change from " . TABLE_SALEMAKER_SALES . " order by sale_name";
+    $salemaker_sales_query_raw = "select `sale_id`, `sale_status`, `sale_name`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_categories_all`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " order by `sale_name`";
     $salemaker_sales_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $salemaker_sales_query_raw, $salemaker_sales_query_numrows);
     $salemaker_sales = $db->Execute($salemaker_sales_query_raw);
     while (!$salemaker_sales->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_popup.php,v 1.2 2005/07/08 06:18:39 spiderr Exp $
+//  $Id: salemaker_popup.php,v 1.3 2005/08/24 13:19:13 lsces Exp $
 //
 
   require("includes/application_top.php");
@@ -51,7 +51,7 @@
               </tr>
 <?php
 //print_r($_GET);
-  $salemaker_sales_query_raw = "select sale_id, sale_status, sale_name, sale_categories_all, sale_deduction_value, sale_deduction_type, sale_pricerange_from, sale_pricerange_to, sale_specials_condition, sale_categories_selected, sale_date_start, sale_date_end, sale_date_added, sale_date_last_modified, sale_date_status_change from " . TABLE_SALEMAKER_SALES . " order by sale_name";
+  $salemaker_sales_query_raw = "select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " order by `sale_name`";
   $salemaker_sales = $db->Execute($salemaker_sales_query_raw);
   while (!$salemaker_sales->EOF) {
     $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);

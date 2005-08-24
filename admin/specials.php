@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.7 2005/08/24 12:15:09 lsces Exp $
+//  $Id: specials.php,v 1.8 2005/08/24 13:19:13 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -209,13 +209,13 @@
       $form_action = 'update';
 
       $product = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
-                                      s.specials_new_products_price, s.expires_date, s.specials_date_available
+                                      s.`specials_new_products_price`, s.`expires_date`, s.`specials_date_available`
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_SPECIALS . " s
                                where p.`products_id` = pd.`products_id`
                                and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                and p.`products_id` = s.`products_id`
-                               and s.specials_id = '" . (int)$_GET['sID'] . "'");
+                               and s.`specials_id` = '" . (int)$_GET['sID'] . "'");
 
       $sInfo = new objectInfo($product->fields);
 
@@ -324,14 +324,14 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
 
 // create split page control
 
-    $specials_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status, s.specials_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
+    $specials_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, s.`specials_id`, s.`specials_new_products_price`, s.`specials_date_added`, s.`specials_last_modified`, s.`expires_date`, s.`date_status_change`, s.`status`, s.`specials_date_available` from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
     $specials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $specials_query_raw, $specials_query_numrows);
     $specials = $db->Execute($specials_query_raw);
     while (!$specials->EOF) {
       if ((!isset($_GET['sID']) || (isset($_GET['sID']) && ($_GET['sID'] == $specials->fields['specials_id']))) && !isset($sInfo)) {
-        $products = $db->Execute("select products_image
+        $products = $db->Execute("select `products_image`
                                   from " . TABLE_PRODUCTS . "
-                                  where products_id = '" . (int)$specials->fields['products_id'] . "'");
+                                  where `products_id` = '" . (int)$specials->fields['products_id'] . "'");
 
         $sInfo_array = array_merge($specials->fields, $products->fields);
         $sInfo = new objectInfo($sInfo_array);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.18 2005/08/24 12:15:30 lsces Exp $
+//  $Id: general.php,v 1.19 2005/08/24 13:19:13 lsces Exp $
 //
 
 ////
@@ -2239,12 +2239,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // update salemaker product prices per category per product
   function zen_update_salemaker_product_prices($salemaker_id) {
     global $db;
-    $zv_categories = $db->Execute("SELECT sale_categories_selected FROM " . TABLE_SALEMAKER_SALES . " WHERE sale_id = '" . $salemaker_id . "'");
+    $zv_categories = $db->Execute("SELECT `sale_categories_selected` FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_id` = '" . $salemaker_id . "'");
 
     $za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
     $n = sizeof($za_salemaker_categories);
     for ($i=0; $i<$n; $i++) {
-      $update_products_price = $db->Execute("SELECT products_id FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE categories_id='" . $za_salemaker_categories[$i] . "'");
+      $update_products_price = $db->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
       while (!$update_products_price->EOF) {
         zen_update_products_price_sorter($update_products_price->fields['products_id']);
         $update_products_price->MoveNext();
@@ -2257,7 +2257,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_has_product_discounts($look_up) {
     global $db;
 
-    $check_discount_query = "SELECT products_id FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id='" . $look_up . "'";
+    $check_discount_query = "SELECT `products_id` FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id`='" . $look_up . "'";
     $check_discount = $db->Execute($check_discount_query);
 
     if ($check_discount->RecordCount() > 0) {
@@ -2272,12 +2272,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_copy_discounts_to_product($copy_from, $copy_to) {
     global $db;
 
-    $check_discount_type_query = "SELECT products_discount_type, products_discount_type_from, products_mixed_discount_quantity FROM " . TABLE_PRODUCTS . " WHERE products_id='" . $copy_from . "'";
+    $check_discount_type_query = "SELECT `products_discount_type`, `products_discount_type_from`, `products_mixed_discount_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id`='" . $copy_from . "'";
     $check_discount_type = $db->Execute($check_discount_type_query);
 
-    $db->query("update " . TABLE_PRODUCTS . " set products_discount_type=?, products_discount_type_from=?, products_mixed_discount_quantity=? WHERE products_id=?", array( $check_discount_type->fields['products_discount_type'], $check_discount_type->fields['products_discount_type_from'], $check_discount_type->fields['products_mixed_discount_quantity'], $copy_to ) );
+    $db->query("update " . TABLE_PRODUCTS . " set `products_discount_type`=?, `products_discount_type_from`=?, `products_mixed_discount_quantity`=? WHERE products_id=?", array( $check_discount_type->fields['products_discount_type'], $check_discount_type->fields['products_discount_type_from'], $check_discount_type->fields['products_mixed_discount_quantity'], $copy_to ) );
 
-    $check_discount_query = "SELECT * FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id='" . $copy_from . "' ORDER BY discount_id";
+    $check_discount_query = "SELECT * FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id='" . $copy_from . "' ORDER BY `discount_id`";
     $check_discount = $db->Execute($check_discount_query);
     $cnt_discount=1;
     while (!$check_discount->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.11 2005/08/24 12:54:55 lsces Exp $
+//  $Id: products_price_manager.php,v 1.12 2005/08/24 13:19:13 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -380,7 +380,7 @@ if ($productsId == '') {
 <?php
 // featured information
       $product = $db->Execute("select p.`products_id`,
-                                      f.featured_id, f.expires_date, f.featured_date_available, f.status
+                                      f.`featured_id`, f.`expires_date`, f.`featured_date_available`, f.`status`
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_FEATURED . " f
                                where p.`products_id` = f.`products_id`
@@ -393,7 +393,7 @@ if ($productsId == '') {
 
 // specials information
       $product = $db->Execute("select p.`products_id`,
-                                      s.specials_id, s.specials_new_products_price, s.expires_date, s.specials_date_available, s.status
+                                      s.`specials_id`, s.`specials_new_products_price`, s.`expires_date`, s.`specials_date_available`, s.`status`
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_SPECIALS . " s
                                where p.`products_id` = s.`products_id`

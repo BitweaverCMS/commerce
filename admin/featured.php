@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.6 2005/08/24 12:15:09 lsces Exp $
+//  $Id: featured.php,v 1.7 2005/08/24 13:19:13 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -163,13 +163,13 @@
       $form_action = 'update';
 
       $product = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
-                                      f.expires_date, f.featured_date_available
+                                      f.`expires_date`, f.`featured_date_available`
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_FEATURED . " f
                                where p.`products_id` = pd.`products_id`
                                and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                and p.`products_id` = f.`products_id`
-                               and f.featured_id = '" . (int)$_GET['fID'] . "'");
+                               and f.`featured_id` = '" . (int)$_GET['fID'] . "'");
 
       $fInfo = new objectInfo($product->fields);
 
@@ -257,14 +257,14 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
   $order_by = " order by pd.`products_name` ";
 
 // create split page control
-    $featured_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, f.featured_id, f.featured_date_added, f.featured_last_modified, f.expires_date, f.date_status_change, f.status, f.featured_date_available from " . TABLE_PRODUCTS . " p, " . TABLE_FEATURED . " f, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = f.`products_id`"  . $search . $order_by;
+    $featured_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, f.`featured_id`, f.`featured_date_added`, f.`featured_last_modified`, f.`expires_date`, f.`date_status_change`, f.`status`, f.`featured_date_available` from " . TABLE_PRODUCTS . " p, " . TABLE_FEATURED . " f, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = f.`products_id`"  . $search . $order_by;
     $featured_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_FEATURED_ADMIN, $featured_query_raw, $featured_query_numrows);
     $featured = $db->Execute($featured_query_raw);
     while (!$featured->EOF) {
       if ((!isset($_GET['fID']) || (isset($_GET['fID']) && ($_GET['fID'] == $featured->fields['featured_id']))) && !isset($fInfo)) {
-        $products = $db->Execute("select products_image
+        $products = $db->Execute("select `products_image`
                                   from " . TABLE_PRODUCTS . "
-                                  where products_id = '" . (int)$featured->fields['products_id'] . "'");
+                                  where `products_id` = '" . (int)$featured->fields['products_id'] . "'");
 
         $fInfo_array = array_merge($featured->fields, $products->fields);
         $fInfo = new objectInfo($fInfo_array);
