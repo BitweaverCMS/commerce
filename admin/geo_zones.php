@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.6 2005/08/24 09:38:29 lsces Exp $
+//  $Id: geo_zones.php,v 1.7 2005/08/24 12:54:55 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -36,7 +36,7 @@
                     values ('" . (int)$zone_country_id . "',
                             '" . (int)$zone_id . "',
                             '" . (int)$zID . "',
-                            " . $dB->sysTimeStamp . ")");
+                            " . $dB->mDb->sysTimeStamp . ")");
 
         $new_subzone_id = zen_db_insert_id( TABLE_ZONES_TO_GEO_ZONES, 'association_id' );
 
@@ -52,7 +52,7 @@
                       set `geo_zone_id` = '" . (int)$zID . "',
                           `zone_country_id` = '" . (int)$zone_country_id . "',
                           `zone_id` = " . (zen_not_null($zone_id) ? "'" . (int)$zone_id . "'" : 'null') . ",
-                          `last_modified` = " . $dB->sysTimeStamp . "
+                          `last_modified` = " . $dB->mDb->sysTimeStamp . "
 					where `association_id` = '" . (int)$sID . "'");
 
 
@@ -87,7 +87,7 @@
                     (`geo_zone_name`, `geo_zone_description`, `date_added`)
                     values ('" . zen_db_input($geo_zone_name) . "',
                             '" . zen_db_input($geo_zone_description) . "',
-                            " . $dB->sysTimeStamp . ")");
+                            " . $dB->mDb->sysTimeStamp . ")");
 
         $new_zone_id = zen_db_insert_id( TABLE_GEO_ZONES, 'geo_zone_id' );
 
@@ -101,7 +101,7 @@
         $db->Execute("update " . TABLE_GEO_ZONES . "
                       set `geo_zone_name` = '" . zen_db_input($geo_zone_name) . "',
                           `geo_zone_description` = '" . zen_db_input($geo_zone_description) . "',
-                          `last_modified` = " . $dB->sysTimeStamp . " where `geo_zone_id` = '" . (int)$zID . "'");
+                          `last_modified` = " . $dB->mDb->sysTimeStamp . " where `geo_zone_id` = '" . (int)$zID . "'");
 
 
         zen_redirect(zen_href_link_admin(FILENAME_GEO_ZONES, 'zpage=' . $_GET['zpage'] . '&zID=' . $_GET['zID']));

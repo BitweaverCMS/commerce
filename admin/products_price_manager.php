@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.10 2005/08/24 12:40:51 lsces Exp $
+//  $Id: products_price_manager.php,v 1.11 2005/08/24 12:54:55 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -114,7 +114,7 @@
 				`products_price`='" . zen_db_prepare_input($_POST['products_price']) . "',
 				`products_tax_class_id`=?,
 				`products_date_available`=?,
-				`products_last_modified`=" . $db->sysTimeStamp . ",
+				`products_last_modified`=" . $db->mDb->sysTimeStamp . ",
 				`products_status`='" . zen_db_prepare_input($_POST['products_status']) . "',
 				`products_quantity_order_min`=?,
 				`products_quantity_order_units`=?,
@@ -146,7 +146,7 @@
 				$db->Execute("update " . TABLE_SPECIALS . " set
 					`specials_new_products_price`='" . zen_db_input($specials_price) . "',
 					`specials_date_available`='" . zen_db_input($specials_date_available) . "',
-					`specials_last_modified`=" . $db->sysTimeStamp . ",
+					`specials_last_modified`=" . $db->mDb->sysTimeStamp . ",
 					`expires_date`='" . zen_db_input($specials_expires_date) . "',
 					`status`='" . zen_db_input($_POST['special_status']) . "'
 					where `products_id` ='" . $productsId . "'");
@@ -157,7 +157,7 @@
 			$db->Execute("update " . TABLE_FEATURED . " set
 				`featured_date_available`='" . zen_db_input($featured_date_available) . "',
 				`expires_date`='" . zen_db_input($featured_expires_date) . "',
-				`featured_last_modified`=" . $db->sysTimeStamp . ",
+				`featured_last_modified`=" . $db->mDb->sysTimeStamp . ",
 				`status`='" . zen_db_input($_POST['featured_status']) . "'
 				where `products_id` ='" . $productsId . "'");
 			}

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_classes.php,v 1.4 2005/08/24 09:38:29 lsces Exp $
+//  $Id: tax_classes.php,v 1.5 2005/08/24 12:54:55 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -33,7 +33,7 @@
                     (tax_`class_title`, `tax_class_description`, `date_added`)
                     values ('" . zen_db_input($tax_class_title) . "',
                             '" . zen_db_input($tax_class_description) . "',
-                            " . $dB->sysTimeStamp . ")");
+                            " . $dB->mDb->sysTimeStamp . ")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES));
         break;
@@ -46,7 +46,7 @@
                       set `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_class_title` = '" . zen_db_input($tax_class_title) . "',
                           `tax_class_description` = '" . zen_db_input($tax_class_description) . "',
-                          `last_modified` = " . $dB->sysTimeStamp . "
+                          `last_modified` = " . $dB->mDb->sysTimeStamp . "
                       where `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page'] . '&tID=' . $tax_class_id));
