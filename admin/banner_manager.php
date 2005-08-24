@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.6 2005/08/24 02:47:44 lsces Exp $
+//  $Id: banner_manager.php,v 1.7 2005/08/24 03:18:28 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -141,15 +141,15 @@
                             ((strlen($day) == 1) ? '0' . $day : $day);
 
             $db->Execute("update " . TABLE_BANNERS . "
-                          set expires_date = '" . zen_db_input($expires_date) . "',
-                              expires_impressions = null
-                          where banners_id = '" . (int)$banners_id . "'");
+                          set `expires_date` = '" . zen_db_input($expires_date) . "',
+                              `expires_impressions` = null
+                          where `banners_id` = '" . (int)$banners_id . "'");
 
           } elseif (zen_not_null($expires_impressions)) {
             $db->Execute("update " . TABLE_BANNERS . "
-                          set expires_impressions = '" . zen_db_input($expires_impressions) . "',
-                              expires_date = null
-                          where banners_id = '" . (int)$banners_id . "'");
+                          set `expires_impressions` = '" . zen_db_input($expires_impressions) . "',
+                              `expires_date` = null
+                          where `banners_id` = '" . (int)$banners_id . "'");
           }
 
 
@@ -161,12 +161,12 @@
                               ((strlen($day) == 1) ? '0' . $day : $day);
 
             $db->Execute("update " . TABLE_BANNERS . "
-                          set date_scheduled = '" . zen_db_input($date_scheduled) . "'
-                          where banners_id = '" . (int)$banners_id . "'");
+                          set `date_scheduled` = '" . zen_db_input($date_scheduled) . "'
+                          where `banners_id` = '" . (int)$banners_id . "'");
           } else {
             $db->Execute("update " . TABLE_BANNERS . "
-                          set date_scheduled = null
-                          where banners_id = '" . (int)$banners_id . "'");
+                          set `date_scheduled` = null
+                          where `banners_id` = '" . (int)$banners_id . "'");
           }
 
           zen_redirect(zen_href_link_admin(FILENAME_BANNER_MANAGER, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'bID=' . $banners_id));
@@ -178,9 +178,9 @@
         $banners_id = zen_db_prepare_input($_GET['bID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $banner = $db->Execute("select banners_image
+          $banner = $db->Execute("select `banners_image`
                                  from " . TABLE_BANNERS . "
-                                 where banners_id = '" . (int)$banners_id . "'");
+                                 where `banners_id` = '" . (int)$banners_id . "'");
 
           if (is_file(DIR_FS_CATALOG_IMAGES . $banner->fields['banners_image'])) {
             if (is_writeable(DIR_FS_CATALOG_IMAGES . $banner->fields['banners_image'])) {
@@ -194,9 +194,9 @@
         }
 
         $db->Execute("delete from " . TABLE_BANNERS . "
-                      where banners_id = '" . (int)$banners_id . "'");
+                      where `banners_id` = '" . (int)$banners_id . "'");
         $db->Execute("delete from " . TABLE_BANNERS_HISTORY . "
-                      where banners_id = '" . (int)$banners_id . "'");
+                      where `banners_id` = '" . (int)$banners_id . "'");
 
         if (function_exists('imagecreate') && zen_not_null($banner_extension)) {
           if (is_file(DIR_WS_IMAGES . 'graphs/banner_infobox-' . $banners_id . '.' . $banner_extension)) {
@@ -326,13 +326,13 @@ function popupImageWindow(url) {
 
       $bID = zen_db_prepare_input($_GET['bID']);
 
-      $banner = $db->Execute("select banners_title, banners_url, banners_image, banners_group,
-                                     banners_html_text, status,
-                                     date_format(date_scheduled, '%d/%m/%Y') as date_scheduled,
-                                     date_format(expires_date, '%d/%m/%Y') as expires_date,
-                                     expires_impressions, date_status_change, banners_open_new_windows, banners_on_ssl, banners_sort_order
+      $banner = $db->Execute("select `banners_title`, `banners_url`, `banners_image`, `banners_group`,
+                                     `banners_html_text`, `status`,
+                                     date_format(`date_scheduled`, '%d/%m/%Y') as `date_scheduled`,
+                                     date_format(`expires_date`, '%d/%m/%Y') as `expires_date`,
+                                     `expires_impressions`, `date_status_change`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`
                                      from " . TABLE_BANNERS . "
-                                     where banners_id = '" . (int)$bID . "'");
+                                     where `banners_id` = '" . (int)$bID . "'");
 
       $bInfo->objectInfo($banner->fields);
     } elseif (zen_not_null($_POST)) {
@@ -359,9 +359,9 @@ function popupImageWindow(url) {
     }
 
     $groups_array = array();
-    $groups = $db->Execute("select distinct banners_group
+    $groups = $db->Execute("select distinct `banners_group`
                             from " . TABLE_BANNERS . "
-                            order by banners_group");
+                            order by `banners_group`");
     while (!$groups->EOF) {
       $groups_array[] = array('id' => $groups->fields['banners_group'], 'text' => $groups->fields['banners_group']);
       $groups->MoveNext();
@@ -491,10 +491,10 @@ function popupImageWindow(url) {
     $banners_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $banners_query_raw, $banners_query_numrows);
     $banners = $db->Execute($banners_query_raw);
     while (!$banners->EOF) {
-      $info = $db->Execute("select sum(banners_shown) as banners_shown,
-                                   sum(banners_clicked) as banners_clicked
+      $info = $db->Execute("select sum(`banners_shown`) as `banners_shown`,
+                                   sum(`banners_clicked`) as `banners_clicked`
                             from " . TABLE_BANNERS_HISTORY . "
-                            where banners_id = '" . (int)$banners->fields['banners_id'] . "'");
+                            where `banners_id` = '" . (int)$banners->fields['banners_id'] . "'");
 
       if ((!isset($_GET['bID']) || (isset($_GET['bID']) && ($_GET['bID'] == $banners->fields['banners_id']))) && !isset($bInfo) && (substr($action, 0, 3) != 'new')) {
         $bInfo_array = array_merge($banners->fields, $info->fields);
