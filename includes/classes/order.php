@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.16 2005/08/24 22:04:29 spiderr Exp $
+// $Id: order.php,v 1.17 2005/08/24 22:42:10 spiderr Exp $
 //
 
   class order {
@@ -242,8 +242,8 @@
 
 			  $shipping_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
 												ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
-												ab.`entry_city, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
-												c.`countries_id`, c.countries_name`, c.`countries_iso_code_2`,
+												ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
+												c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
 												c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
 										 from " . TABLE_ADDRESS_BOOK . " ab
 										 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
