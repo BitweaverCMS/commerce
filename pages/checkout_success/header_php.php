@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/08/24 15:28:51 lsces Exp $
+// $Id: header_php.php,v 1.6 2005/08/25 23:43:24 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {
@@ -72,7 +72,7 @@
   $orders = $db->Execute($orders_query, 1);
   $zv_orders_id = $orders->fields['orders_id'];
 
-  $global_query = "select `global_product_notification`s from " . TABLE_CUSTOMERS_INFO . "
+  $global_query = "select `global_product_notifications` from " . TABLE_CUSTOMERS_INFO . "
                    where `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $global = $db->Execute($global_query);
