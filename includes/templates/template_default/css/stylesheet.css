@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: stylesheet.css,v 1.7 2005/07/30 03:01:59 spiderr Exp $
+// $Id: stylesheet.css,v 1.8 2005/08/28 18:13:25 squareing Exp $
 */
 .centershop {
 	padding: 0px;
@@ -178,12 +178,14 @@ TD.productListing-data {
 
 /*center main section
 -----------------------------------*/
+/* deactivate some stuff which interferes with the bitweaver styling
 TD.pageHeading, DIV.pageHeading, h1 {
   font-size: 16px;
   font-weight: bold;
   color: #9a9a9a;
   padding-top: 11px;
 }
+*/
 
 .center_column {
   padding: 8px;
@@ -283,14 +285,18 @@ TD.fieldValue {
   font-size: 12px;
 }
 
+/* deactivate some stuff which interferes with the bitweaver styling
 CHECKBOX, INPUT, RADIO, SELECT {
   font-size: 11px;
 }
+*/
 
+/* deactivate some stuff which interferes with the bitweaver styling
 TEXTAREA {
   width: 100%;
   font-size: 11px;
 }
+*/
 
 .greetUser {
    font-weight: bold;
