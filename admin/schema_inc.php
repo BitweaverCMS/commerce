@@ -117,7 +117,7 @@ BITCOMMERCE_DB_PREFIX.'banners' => "
   status I1 NOTNULL default '1',
   banners_open_new_windows I1 NOTNULL default '1',
   banners_on_ssl I1 NOTNULL default '1',
-  banners_sort_order INT( 11 ) DEFAULT '0' NOTNULL
+  banners_sort_order I2 DEFAULT '0' NOTNULL
 ",
 
 BITCOMMERCE_DB_PREFIX.'banners_history' => "
@@ -684,7 +684,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   currency_value N(14,6),
   order_total N(14,2),
   order_tax N(14,2),
-  paypal_ipn_id INT( 11 ) DEFAULT '0' NOTNULL,
+  paypal_ipn_id I4,
   ip_address C(15)
   CONSTRAINT ', CONSTRAINT orders_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
 ",
