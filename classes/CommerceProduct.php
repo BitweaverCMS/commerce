@@ -5,6 +5,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
 define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 
 class CommerceProduct extends LibertyAttachable {
+	var $mProductsId;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
 		LibertyAttachable::LibertyAttachable();
@@ -31,8 +32,9 @@ class CommerceProduct extends LibertyAttachable {
 			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
-				$this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] );
+				if( $this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
 					$this->mInfo['display_link'] = $this->mContent->getDisplayLink( $this->mContent->getTitle(), $this->mContent->mInfo );
+				}
 			}
 		}
 		return( count( $this->mInfo ) );
@@ -309,7 +311,7 @@ class CommerceProduct extends LibertyAttachable {
 			);
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
-		if( count( $pParamHash['products_name'] ) ) {
+		if( is_array( $pParamHash['products_name'] ) ) {
 			$pParamHash['title'] = current( $pParamHash['products_name'] );
 		}
 
@@ -362,9 +364,15 @@ class CommerceProduct extends LibertyAttachable {
 			for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 				$language_id = $languages[$i]['id'];
 
-				$bindVars = array('products_name' => zen_db_prepare_input($pParamHash['products_name'][$language_id]),
-								  'products_description' => zen_db_prepare_input($pParamHash['products_description'][$language_id]),
-								  'products_url' => zen_db_prepare_input($pParamHash['products_url'][$language_id]));
+				if( !empty( $pParamHash['products_name'][$language_id] ) ) {
+					$bindVars['products_name'] = zen_db_prepare_input($pParamHash['products_name'][$language_id]);
+				}
+				if( !empty( $pParamHash['products_description'][$language_id] ) ) {
+					$bindVars['products_description'] = zen_db_prepare_input($pParamHash['products_description'][$language_id]);
+				}
+				if( !empty( $pParamHash['products_url'][$language_id] ) ) {
+					$bindVars['products_url'] = zen_db_prepare_input($pParamHash['products_url'][$language_id]);
+				}
 
 				if ($action == 'insert_product') {
 					$bindVars['products_id'] = $this->mProductsId;
@@ -539,6 +547,8 @@ Skip deleting of images for now
 				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE products_id = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE products_id = ?", array( $this->mProductsId ));
+
+				LibertyAttachable::expunge();
 
 				$this->mInfo = array();
 				unset( $this->mContent );
@@ -841,6 +851,7 @@ Skip deleting of images for now
 	}
 
 }
+
 
 
 ?>
