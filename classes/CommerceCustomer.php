@@ -24,7 +24,7 @@
 		}
 
 		function syncBitUser( $pInfo ) {
-			global $db;
+			global $gBitDb;
 			// bitcommerce customers table to bitweaver users_users table
 			$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
 /* Fields in TABLE_CUSTOMERS:
@@ -42,7 +42,7 @@
 'customers_authorization'
 'customers_referral'
 */
-			$rs = $db->query( "SELECT * FROM ".TABLE_CUSTOMERS." WHERE `customers_id`=?", array( $pInfo['user_id'] ) );
+			$rs = $gBitDb->query( "SELECT * FROM ".TABLE_CUSTOMERS." WHERE `customers_id`=?", array( $pInfo['user_id'] ) );
 			if( $rs && !$rs->EOF ) {
 				foreach ( $syncFields AS $custKey=>$userKey ) {
 					if( isset( $pInfo[$userKey] ) && ( $pInfo[$userKey] != $rs->fields[$custKey] ) ) {
@@ -50,11 +50,11 @@
 					}
 				}
 				if( !empty( $resyncHash ) ) {
-					$db->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'name'=>'customers_id', 'value'=>$rs->fields['customers_id'] ) );
+					$gBitDb->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'name'=>'customers_id', 'value'=>$rs->fields['customers_id'] ) );
 				}
 			} else {
 				$custHash = array( 'customers_id' => $pInfo['user_id'], 'customers_nick' => $pInfo['login'], 'customers_email_address' => $pInfo['email'] );
-				$db->associateInsert( TABLE_CUSTOMERS, $custHash );
+				$gBitDb->associateInsert( TABLE_CUSTOMERS, $custHash );
 			}
 		}
 
@@ -276,7 +276,7 @@
 		}
 
 		function getAddresses( $pCustomerId ) {
-			global $db;
+			global $gBitDb;
 			$ret = NULL;
 			if( is_numeric( $pCustomerId ) ) {
 				$query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
@@ -287,7 +287,7 @@
 							from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.`entry_country_id`=c.`countries_id` )
 							where `customers_id` = ?";
 
-				if( $rs = $db->query( $query, array( $pCustomerId ) ) ) {
+				if( $rs = $gBitDb->query( $query, array( $pCustomerId ) ) ) {
 					$ret = $rs->GetRows();
 				}
 			}

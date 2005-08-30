@@ -80,13 +80,13 @@
 
 
 // Load db classes
-  global $gBitDb;
-  $db = $gBitDb;
+  global $gBitDb, $gBitSmarty;
+  $db = &$gBitDb;
 
 
 
 
-  $configuration = $db->Query('SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
+  $configuration = $gBitDb->Query('SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
                                  FROM ' . TABLE_CONFIGURATION );
 
   while (!$configuration->EOF) {
@@ -95,7 +95,7 @@
 //    echo $configuration->fields['cfgkey'] . '#';
     $configuration->MoveNext();
   }
-  $configuration = $db->Execute('select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
+  $configuration = $gBitDb->Execute('select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT);
 
   while (!$configuration->EOF) {
@@ -151,7 +151,7 @@
 		// Set theme related directories
 		$sql = "SELECT count(*) as `total` FROM " . TABLE_CUSTOMERS . "
 				WHERE `customers_id` = '" . zen_db_input( $gBitUser->mUserId ) . "'";
-		$check_user = $db->Execute($sql);
+		$check_user = $gBitDb->Execute($sql);
 		if( empty( $check_user['fields']['total'] ) ) {
 			$_REQUEST['action'] = 'process';
 			$email_format = zen_db_prepare_input( $gBitUser->mInfo['email'] );
@@ -266,7 +266,7 @@
                            WHERE `categories_id` = '" . (int)$cPath_array[$i] . "'
                            and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-      $categories = $db->Execute($categories_query);
+      $categories = $gBitDb->Execute($categories_query);
 
       if ($categories->RecordCount() > 0) {
         $breadcrumb->add($categories->fields['categories_name'], zen_href_link(FILENAME_DEFAULT, 'cPath=' . implode('_', array_slice($cPath_array, 0, ($i+1)))));
@@ -282,7 +282,7 @@
                             FROM " . TABLE_MANUFACTURERS . "
                             WHERE `manufacturers_id` = '" . (int)$_REQUEST['manufacturers_id'] . "'";
 
-    $manufacturers = $db->Execute($manufacturers_query);
+    $manufacturers = $gBitDb->Execute($manufacturers_query);
 
     if ($manufacturers->RecordCount() > 0) {
       $breadcrumb->add($manufacturers->fields['manufacturers_name'], zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $_REQUEST['manufacturers_id']));
@@ -318,7 +318,7 @@
 		}
 	}
 
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+ 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
 	$gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
 

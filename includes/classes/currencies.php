@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.10 2005/08/24 08:45:57 lsces Exp $
+// $Id: currencies.php,v 1.11 2005/08/30 16:37:37 spiderr Exp $
 //
 
 ////
@@ -28,14 +28,14 @@
 
 // class constructor
     function currencies() {
-      global $db;
+      global $gBitDb;
 	  BitBase::BitBase();
       $this->currencies = array();
       $currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`,
                                   `thousands_point`, `decimal_places`, `value`
                           FROM " . TABLE_CURRENCIES;
 
-      $currencies = $db->Execute($currencies_query);
+      $currencies = $gBitDb->Execute($currencies_query);
 
       while (!$currencies->EOF) {
         $this->currencies[$currencies->fields['code']] = array('title' => $currencies->fields['title'],
