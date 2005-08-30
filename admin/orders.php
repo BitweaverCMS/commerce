@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.16 2005/08/24 15:35:30 lsces Exp $
+//  $Id: orders.php,v 1.17 2005/08/30 16:38:23 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -316,6 +316,27 @@
       </tr>
       <tr>
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
+      </tr>
+      <tr>
+	  	<td>
+
+
+<?php
+
+	// scan fulfillment modules
+	$fulfillDir = DIR_WS_MODULES . 'fulfillment/';
+	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+		while( $ffFile = readdir( $fulfillHandle ) ) {
+			if( is_file( $fulfillDir.$ffFile ) ) {
+				include( $fulfillDir.$ffFile );
+			}
+		}
+	}
+
+
+?>
+
+		</td>
       </tr>
       <tr>
         <td class="main"><strong><?php echo ENTRY_ORDER_ID . $oID; ?></strong></td>
