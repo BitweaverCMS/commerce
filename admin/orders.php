@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.17 2005/08/30 16:38:23 spiderr Exp $
+//  $Id: orders.php,v 1.18 2005/08/31 22:36:58 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -254,7 +254,7 @@
     if ($order->info['payment_module_code']) {
       if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php')) {
         require(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php');
-		$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/' . $order->info['payment_module_code'] . '.php';
+		$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $order->info['payment_module_code'] . '.php';
 		if( file_exists( $langFile ) ) {
 			require( $langFile );
 		}

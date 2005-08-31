@@ -7,7 +7,7 @@
 		</div>
 
 		<div class="body">
-			{form name='checkout_address' }
+			{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				{if !$gBitUser->isRegistered()}
 					{include file="bitpackage:bitcommerce/register_customer.tpl"}

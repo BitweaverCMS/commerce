@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.2 2005/08/14 19:30:43 spiderr Exp $
+//  $Id: en.php,v 1.3 2005/08/31 22:36:58 spiderr Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -51,13 +51,13 @@ define('HTML_PARAMS','dir="ltr" lang="en"');
 define('CHARSET', 'iso-8859-1');
 
 // include template specific meta tags defines
-  if (file_exists(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/meta_tags.php')) {
+  if (file_exists(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $template_dir . '/meta_tags.php')) {
     $template_dir_select = $template_dir . '/';
   } else {
     $template_dir_select = '';
   }
-  require(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . 'meta_tags.php');
-//die(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir_select . 'meta_tags.php');
+  require(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $template_dir_select . 'meta_tags.php');
+//die(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $template_dir_select . 'meta_tags.php');
 
 // meta tags
 define('ICON_METATAGS_ON', 'Meta Tags Defined');
@@ -621,8 +621,8 @@ define('TEXT_SHOW_OPTION_NAMES_VALUES_COPIER_OFF', 'Display Global Features - OF
 
 ///////////////////////////////////////////////////////////
 // include additional files:
-  require(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . FILENAME_EMAIL_EXTRAS);
-  include(zen_get_file_directory(DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/', FILENAME_OTHER_IMAGES_NAMES, 'false'));
+  require(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . FILENAME_EMAIL_EXTRAS);
+  include(zen_get_file_directory(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/', FILENAME_OTHER_IMAGES_NAMES, 'false'));
 
 
 ?>

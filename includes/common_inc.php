@@ -287,12 +287,12 @@
 ////
 // Output a function button in the selected language
   function zen_image_button($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base, $gBitLanguage;
+    global $template, $current_page_base, $gBitCustomer;
 // return '<span class="button">'.$alt.'</span>';
 	if( $template ) {
-	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitLanguage->getLanguage() . '/') . $image, $alt, '', '', $parameters);
+	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 	} else {
-      return zen_image(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $params);
+      return zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $params);
     }
   }
 
@@ -301,12 +301,12 @@
 // The HTML form submit button wrapper function
 // Outputs a button in the selected language
   function zen_image_submit($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base, $gBitLanguage;
+    global $template, $current_page_base, $gBitCustomer;
 
 	if( $template ) {
-		$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitLanguage->getLanguage() . '/') . $image);
+		$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
 	} else {
-      $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/images/buttons/' . $image);
+      $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image);
     }
     $image_submit = '<input type="image" src="'.$imgSrc. '" alt="' . zen_output_string($alt) . '"';
 

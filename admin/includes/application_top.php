@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.11 2005/08/24 02:48:59 lsces Exp $
+//  $Id: application_top.php,v 1.12 2005/08/31 22:36:58 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -203,16 +203,16 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 
 // include the language translations
-  require_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '.php');
+  require_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '.php');
   $current_page = basename($PHP_SELF);
-  if (file_exists(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $current_page)) {
-    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $current_page);
+  if (file_exists(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page)) {
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page);
   }
 
-  if ($za_dir = @dir(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions')) {
+  if ($za_dir = @dir(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions')) {
     while ($zv_file = $za_dir->read()) {
       if (strstr($zv_file, '.php')) {
-        require_once(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/extra_definitions/' . $zv_file);
+        require_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/' . $zv_file);
       }
     }
   }

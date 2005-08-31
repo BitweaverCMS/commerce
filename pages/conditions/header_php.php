@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/07/08 06:13:00 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/08/31 22:36:59 spiderr Exp $
 //
   require(DIR_WS_MODULES . 'require_languages.php');
 
 // include template specific file name defines
-  $define_conditions = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/html_includes/', FILENAME_DEFINE_CONDITIONS, 'false');
+  $define_conditions = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CONDITIONS, 'false');
 
   $breadcrumb->add(NAVBAR_TITLE);
 ?>

@@ -115,7 +115,7 @@
       $lng->set_language(DEFAULT_LANGUAGE);
     }
 
-//    if( $lng->load( $gBitLanguage->getLanguage() ) ) {
+//    if( $lng->load( $gBitCustomer->getLanguage() ) ) {
 //      $_SESSION['languages_id'] = $lng->mInfo['languages_id'];
 //	} else {
       $_SESSION['languages_id'] = 1;

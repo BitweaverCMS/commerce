@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: define_pages_editor.php,v 1.1 2005/07/08 05:56:40 spiderr Exp $
+// $Id: define_pages_editor.php,v 1.2 2005/08/31 22:36:58 spiderr Exp $
 //
 
 define('HEADING_TITLE', 'Define Pages Editor for: ');
@@ -44,5 +44,5 @@ define('ERROR_FILE_NOT_WRITEABLE', 'Error: I can not write to this file. Please 
 define('TEXT_INFO_SELECT_FILE', 'Select a file to edit ...');
 define('TEXT_INFO_EDITING', 'Editing file:');
 
-define('TEXT_INFO_CAUTION','Note: you should always edit the files located in your current template override directory, Example: /languages/' . $gBitLanguage->getLanguage() . '/html_includes/' . $template_dir . '<br />Be sure to make backups after changing your files.');
+define('TEXT_INFO_CAUTION','Note: you should always edit the files located in your current template override directory, Example: /languages/' . $gBitCustomer->getLanguage() . '/html_includes/' . $template_dir . '<br />Be sure to make backups after changing your files.');
 ?>

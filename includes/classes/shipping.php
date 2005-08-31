@@ -17,7 +17,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
+// $Id: shipping.php,v 1.3 2005/08/31 22:36:59 spiderr Exp $
 //
 
   class shipping {
@@ -25,7 +25,7 @@
 
 // class constructor
     function shipping($module = '') {
-      global $PHP_SELF, $gBitLanguage;
+      global $PHP_SELF, $gBitCustomer;
 
       if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
         $this->modules = explode(';', MODULE_SHIPPING_INSTALLED);
@@ -43,8 +43,8 @@
         }
 
         for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
-//          include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/shipping/' . $include_modules[$i]['file']);
-          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false'));
+//          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/' . $include_modules[$i]['file']);
+          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false'));
           include(DIR_WS_MODULES . 'shipping/' . $include_modules[$i]['file']);
 
           $GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class'];

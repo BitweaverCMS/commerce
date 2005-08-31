@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.7 2005/08/24 15:28:50 lsces Exp $
+//  $Id: store_manager.php,v 1.8 2005/08/31 22:36:58 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -147,17 +147,17 @@
               break;
             case (1): // all english.php files
               $check_directory = array();
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $template_dir . '/' . $gBitLanguage->getLanguage() . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/' . $template_dir . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/extra_definitions/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/extra_definitions/' . $template_dir . '/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/payment/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/shipping/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/order_total/';
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage(). '/modules/product_types/';
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $template_dir . '/' . $gBitCustomer->getLanguage() . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $template_dir . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/extra_definitions/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/extra_definitions/' . $template_dir . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/modules/payment/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/modules/shipping/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/modules/order_total/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage(). '/modules/product_types/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/';
               break;
             case (2): // all catalog /language/*.php
               $check_directory = array();
@@ -165,7 +165,7 @@
               break;
             case (3): // all catalog /language/english/*.php
               $check_directory = array();
-              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitLanguage->getLanguage() . '/';
+              $check_directory[] = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/';
               break;
             case (4): // all admin /language/*.php
               $check_directory = array();
@@ -174,7 +174,7 @@
             case (5): // all admin /language/english/*.php
               // set directories and files names
               $check_directory = array();
-              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
+              $check_directory[] = DIR_FS_ADMIN . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
               break;
             } // eof: switch
 

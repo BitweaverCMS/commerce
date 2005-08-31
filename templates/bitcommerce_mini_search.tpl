@@ -1,4 +1,4 @@
-{form name="quick_find" ipackage="bitcommerce" ifile="search.php" method="get"}
+{form name="quick_find" ipackage="bitcommerce" action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=quick_find" method="get"}
 	<input name="main_page" value="advanced_search_result"  type="hidden">
 	<input name="search_in_description" value="1"  type="hidden">
 	<div class="row">

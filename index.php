@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.12 2005/08/19 13:24:25 spiderr Exp $
+// $Id: index.php,v 1.13 2005/08/31 22:36:58 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -52,7 +52,7 @@ ob_start();
   $code_page_directory = DIR_WS_MODULES . 'pages/' . $current_page_base;
   $page_directory = $code_page_directory;
 
-  $language_page_directory = DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/';
+  $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
 
 // load all files in the page directory starting with 'header_php'
 

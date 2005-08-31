@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.3 2005/08/19 17:16:57 spiderr Exp $
+// $Id: payment.php,v 1.4 2005/08/31 22:36:59 spiderr Exp $
 //
 
   class payment {
@@ -25,7 +25,7 @@
 
 // class constructor
     function payment($module = '') {
-      global $PHP_SELF, $payment, $gBitLanguage, $credit_covers;
+      global $PHP_SELF, $payment, $gBitCustomer, $credit_covers;
 
       if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
         $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
@@ -61,8 +61,8 @@
         }
 
         for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
-//          include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/' . $include_modules[$i]['file']);
-			$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false');
+//          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $include_modules[$i]['file']);
+			$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false');
 			if( file_exists( $langFile ) ) {
 				include( $langFile );
 			}

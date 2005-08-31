@@ -309,5 +309,10 @@
 			return( $ret );
 		}
 
+		function getLanguage() {
+			// no multi lang support for now...
+			return 'en';
+		}
+
 	}
 ?>

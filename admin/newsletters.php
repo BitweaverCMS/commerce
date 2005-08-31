@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.5 2005/08/24 02:47:44 lsces Exp $
+//  $Id: newsletters.php,v 1.6 2005/08/31 22:36:58 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -356,7 +356,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
@@ -374,7 +374,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
@@ -392,7 +392,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html, $_POST['audience_selected']);

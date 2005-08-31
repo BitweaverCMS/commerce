@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order_total.php,v 1.2 2005/07/08 06:12:27 spiderr Exp $
+// $Id: order_total.php,v 1.3 2005/08/31 22:36:59 spiderr Exp $
 //
 
   class order_total {
@@ -25,15 +25,15 @@
 
 // class constructor
     function order_total() {
-	  global $gBitLanguage;
+	  global $gBitCustomer;
 
       if (defined('MODULE_ORDER_TOTAL_INSTALLED') && zen_not_null(MODULE_ORDER_TOTAL_INSTALLED)) {
         $this->modules = explode(';', MODULE_ORDER_TOTAL_INSTALLED);
 
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
-//          include(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/order_total/' . $value);
-          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitLanguage->getLanguage() . '/modules/order_total/', $value, 'false'));
+//          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/' . $value);
+          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $value, 'false'));
           include(DIR_WS_MODULES . 'order_total/' . $value);
 
           $class = substr($value, 0, strrpos($value, '.'));
