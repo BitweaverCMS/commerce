@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_currencies.php,v 1.3 2005/08/02 15:35:45 spiderr Exp $
+// $Id: mod_currencies.php,v 1.4 2005/09/01 13:01:45 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -44,7 +44,9 @@
 				}
 			}
 
-			$gBitSmarty->assign( 'sideboxCurrenciesPulldown', zen_draw_pull_down_menu('currency', $currencies_array, $_SESSION['currency'], 'onchange="this.form.submit();" style="width: 100%"') );
+			$defaultCurrency = !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+
+			$gBitSmarty->assign( 'sideboxCurrenciesPulldown', zen_draw_pull_down_menu('currency', $currencies_array, $defaultCurrency, 'onchange="this.form.submit();" style="width: 100%"') );
 			if( empty( $moduleTitle ) ) {
 				$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
 			}
