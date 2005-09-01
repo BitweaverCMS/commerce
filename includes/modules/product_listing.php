@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.11 2005/08/24 02:52:18 lsces Exp $
+// $Id: product_listing.php,v 1.12 2005/09/01 14:03:25 spiderr Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
@@ -25,7 +25,7 @@
   if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0 and $show_submit == 'true' and $listing_split->number_of_rows > 0) {
     // bof: multiple products
     $how_many = 0;
-    echo zen_draw_form('multiple_products_cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=multiple_products_add_product'), 'post', 'enctype="multipart/form-data"');
+    echo zen_draw_form('multiple_products_cart_quantity', zen_href_link($gBitProduct->getInfoPage(), zen_get_all_get_params(array('action')) . 'action=multiple_products_add_product'), 'post', 'enctype="multipart/form-data"');
   }
 
   $zc_col_count_description = 0;
@@ -78,6 +78,7 @@
   }
 
   if ($listing_split->number_of_rows > 0) {
+	$extra_row = 0;
     $rows = 0;
 	$offset = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
     $listing = $db->query( $listing_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_LISTING, $offset );

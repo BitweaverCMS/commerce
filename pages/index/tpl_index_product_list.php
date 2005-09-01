@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_product_list.php,v 1.1 2005/08/04 07:01:36 spiderr Exp $
+// $Id: tpl_index_product_list.php,v 1.2 2005/09/01 14:03:25 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <td class="pageHeading"><h1><?php echo $breadcrumb->last(); ?></h1></td>
 <?php
-  if ($do_filter_list) {
+  if( !empty( $do_filter_list ) ) {
   $form = zen_draw_form('filter', zen_href_link(FILENAME_DEFAULT), 'get') . TEXT_SHOW;
 ?>
     <td align="right" valign="bottom" class="main"><?php echo $form ?>

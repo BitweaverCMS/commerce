@@ -241,6 +241,7 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getInfoPage() {
+		$ret = NULL;
 		if( !empty( $this->mInfo['info_page'] ) ) {
   			$ret = $this->mInfo['info_page'];
 		}
