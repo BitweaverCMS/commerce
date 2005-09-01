@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.7 2005/08/31 22:36:58 spiderr Exp $
+//  $Id: modules.php,v 1.8 2005/09/01 22:01:08 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -72,9 +72,7 @@
             $value = ereg_replace (", --none--", "", $value);
           }
 // EOF: UPS USPS
-          $db->Execute("update " . TABLE_CONFIGURATION . "
-                    set `configuration_value` = '" . $value . "'
-            where `configuration_key` = '" . $key . "'");
+          $db->query("update " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = ?", array( $value, $key ) );
         }
         $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                           from ' . TABLE_CONFIGURATION;

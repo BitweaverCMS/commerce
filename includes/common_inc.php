@@ -1507,6 +1507,59 @@ If a special exist * 10+9
   }
 
 
+
+////
+// enable shipping
+  function zen_get_shipping_enabled($shipping_module) {
+    global $PHP_SELF, $cart, $order;
+
+    // for admin always true if installed
+    if (strstr($PHP_SELF, FILENAME_MODULES)) {
+      return true;
+    }
+
+    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1');
+    $check_cart_cnt = $_SESSION['cart']->count_contents();
+    $check_cart_weight = $_SESSION['cart']->show_weight();
+
+    switch(true) {
+      // for admin always true if installed
+      case (strstr($PHP_SELF, FILENAME_MODULES)):
+        return true;
+        break;
+      // Free Shipping when 0 weight - enable freeshipper - ORDER_WEIGHT_ZERO_STATUS must be on
+      case (ORDER_WEIGHT_ZERO_STATUS == '1' and ($check_cart_weight == 0 and $shipping_module == 'freeshipper')):
+        return true;
+        break;
+      // Free Shipping when 0 weight - disable everyone - ORDER_WEIGHT_ZERO_STATUS must be on
+      case (ORDER_WEIGHT_ZERO_STATUS == '1' and ($check_cart_weight == 0 and $shipping_module != 'freeshipper')):
+        return false;
+        break;
+      // Always free shipping only true - enable freeshipper
+      case (($check_cart_free == $check_cart_cnt) and $shipping_module == 'freeshipper'):
+        return true;
+        break;
+      // Always free shipping only true - disable everyone
+      case (($check_cart_free == $check_cart_cnt) and $shipping_module != 'freeshipper'):
+        return false;
+        break;
+      // Always free shipping only is false - disable freeshipper
+      case (($check_cart_free != $check_cart_cnt) and $shipping_module == 'freeshipper'):
+        return false;
+        break;
+      default:
+        return true;
+        break;
+    }
+  }
+
+
+
+
+
+
+
+
 ////
 // Return true if the category has subcategories
 // TABLES: categories

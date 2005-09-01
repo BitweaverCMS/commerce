@@ -107,6 +107,9 @@
 											<br/>
 										{/section}
 									{/if}
+									{if $quotes[ix].note}
+										<p class="note">{$quotes[ix].note}</p>
+									{/if}
 								{/forminput}
 							</div>
 						{/section}

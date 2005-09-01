@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freeshipper.php,v 1.3 2005/08/24 02:53:52 lsces Exp $
+// $Id: freeshipper.php,v 1.4 2005/09/01 22:01:11 spiderr Exp $
 //
   class freeshipper {
     var $code, $title, $description, $icon, $enabled;
@@ -25,7 +25,6 @@
 // class constructor
     function freeshipper() {
       global $order, $db;
-
       $this->code = 'freeshipper';
       $this->title = MODULE_SHIPPING_FREESHIPPER_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_FREESHIPPER_TEXT_DESCRIPTION;

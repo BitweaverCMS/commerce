@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.22 2005/09/01 14:03:24 spiderr Exp $
+// $Id: application_top.php,v 1.23 2005/09/01 22:01:09 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
 // if( defined( 'IS_LIVE' ) ) {
-//  	error_reporting(E_ALL & ~E_NOTICE);
+  	error_reporting(E_ALL & ~E_NOTICE);
 // }
 
   @ini_set("arg_separator.output","&");
@@ -519,7 +519,7 @@ function clean_input( &$pArray ) {
                                     }
                                     $_SESSION['cart']->add_cart($prodId, $_SESSION['cart']->get_quantity($prodId)+($new_qty));
                                   }
-                                  if ($adjust_max == 'true') {
+                                  if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
                                     $messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
                                   }
                                 }

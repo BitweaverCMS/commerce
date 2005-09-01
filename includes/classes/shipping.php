@@ -17,7 +17,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping.php,v 1.3 2005/08/31 22:36:59 spiderr Exp $
+// $Id: shipping.php,v 1.4 2005/09/01 22:01:09 spiderr Exp $
 //
 
   class shipping {
@@ -44,10 +44,13 @@
 
         for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
 //          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/' . $include_modules[$i]['file']);
-          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false'));
-          include(DIR_WS_MODULES . 'shipping/' . $include_modules[$i]['file']);
+			$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false');
+			if( file_exists( $langFile ) ) {
+				include( $langFile );
+			}
+			include(DIR_WS_MODULES . 'shipping/' . $include_modules[$i]['file']);
 
-          $GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class'];
+			$GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class'];
         }
       }
     }
