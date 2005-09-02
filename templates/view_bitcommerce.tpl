@@ -1,5 +1,3 @@
-<div class="contain bitcart">
-
-{$bitcommerceCenter}
-
+<div class="display bitcart">
+	{$bitcommerceCenter}
 </div>
