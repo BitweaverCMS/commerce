@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.4 2005/08/12 07:03:22 spiderr Exp $
+// $Id: language.php,v 1.5 2005/09/10 13:46:52 spiderr Exp $
 //
 
   class language {
     var $languages, $catalog_languages, $browser_languages, $language;
 
     function language($lng = '') {
-      global $db;
+      global $gBitDb;
       $this->languages = array('ar' => array('ar([-_][[:alpha:]]{2})?|arabic', 'arabic', 'ar'),
                                'bg-win1251' => array('bg|bulgarian', 'bulgarian-win1251', 'bg'),
                                'bg-koi8r' => array('bg|bulgarian', 'bulgarian-koi8', 'bg'),
@@ -74,7 +74,7 @@
                           FROM " . TABLE_LANGUAGES . "
                           ORDER BY `sort_order`";
 
-      $languages = $db->Query($languages_query);
+      $languages = $gBitDb->Query($languages_query);
 
       while (!$languages->EOF) {
         $this->catalog_languages[$languages->fields['code']] = array('id' => $languages->fields['languages_id'],
@@ -98,8 +98,8 @@
     }
 
 	function load( $pLangCode ) {
-	  global $db;
-	  if( $rs = $db->query( "SELECT * FROM " . TABLE_LANGUAGES . " WHERE `code`=?", array( $pLangCode ) ) ) {
+	  global $gBitDb;
+	  if( $rs = $gBitDb->query( "SELECT * FROM " . TABLE_LANGUAGES . " WHERE `code`=?", array( $pLangCode ) ) ) {
 	  	$this->mInfo  = $rs->fields;
 	  }
 	  return( count( $this->mInfo ) );
