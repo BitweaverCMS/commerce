@@ -67,7 +67,7 @@ BITCOMMERCE_DB_PREFIX.'address_book' => "
   entry_company C(128),
   entry_firstname C(64),
   entry_lastname C(64),
-  entry_street_address C(6250),
+  entry_street_address C(250),
   entry_suburb C(64),
   entry_postcode C(10),
   entry_city C(64),
