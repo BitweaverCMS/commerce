@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.5 2005/08/24 17:00:57 lsces Exp $
+// $Id: ot_gv.php,v 1.6 2005/09/13 13:18:34 spiderr Exp $
 //
 
   class ot_gv {
@@ -25,7 +25,7 @@
 
     function ot_gv() {
 //      echo '#' . $_SESSION['cot_gv'] . '#';
-      global $currencies;
+      global $currencies, $order;
       $this->code = 'ot_gv';
       $this->title = MODULE_ORDER_TOTAL_GV_TITLE;
       $this->header = MODULE_ORDER_TOTAL_GV_HEADER;
@@ -39,8 +39,12 @@
       $this->tax_class  = MODULE_ORDER_TOTAL_GV_TAX_CLASS;
       $this->show_redeem_box = MODULE_ORDER_TOTAL_GV_REDEEM_BOX;
       $this->credit_class = true;
-      if (!zen_not_null(ltrim($_SESSION['cot_gv'], ' 0')) || $_SESSION['cot_gv'] == '0') $_SESSION['cot_gv'] = '0.00';
-      $this->checkbox = $this->user_prompt . '<input type="textfield" size="6" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '">' . ($this->user_has_gv_account($_SESSION['customer_id']) > 0 ? '<br />' . MODULE_ORDER_TOTAL_GV_USER_BALANCE . $currencies->format($this->user_has_gv_account($_SESSION['customer_id'])) : '');
+	  $gvAmount = $currencies->format( $this->user_has_gv_account( $_SESSION['customer_id'] ) );
+		if (!zen_not_null(ltrim($_SESSION['cot_gv'], ' 0')) || $_SESSION['cot_gv'] == '0') {
+			$_SESSION['cot_gv'] = preg_replace( '/[^\d\.]/', '', $gvAmount );
+		}
+vd( $_SESSION['cot_gv'] );
+      $this->checkbox = $this->user_prompt . '<input type="textfield" size="6" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '">' . ($this->user_has_gv_account($_SESSION['customer_id']) > 0 ? '<br />' . MODULE_ORDER_TOTAL_GV_USER_BALANCE . $gvAmount : '');
       $this->output = array();
     }
 
@@ -74,7 +78,7 @@
     function pre_confirmation_check($order_total) {
       global $order;
       // clean out negative values and strip common currency symbols
-      $_SESSION['cot_gv'] = str_replace(array('$','%','#','€','£','¥','ƒ'), '', $_SESSION['cot_gv']);
+      $_SESSION['cot_gv'] = str_replace(array('$','%','#','','','',''), '', $_SESSION['cot_gv']);
       $_SESSION['cot_gv'] = abs($_SESSION['cot_gv']);
 
       if ($_SESSION['cot_gv'] > 0) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.22 2005/09/01 22:01:08 spiderr Exp $
+//  $Id: general.php,v 1.23 2005/09/13 13:18:34 spiderr Exp $
 //
 
 ////
@@ -1414,9 +1414,9 @@
     $good_result = 0;
     while ($good_result == 0) {
       $id1=substr($ccid, $random_start,$length);
-      $query = $db->Execute("SELECT `coupon_code`
+      $query = $db->query("SELECT `coupon_code`
                              FROM " . TABLE_COUPONS . "
-                             WHERE `coupon_code` = " . $id1 . "'");
+                             WHERE `coupon_code` = ?", array( $id1 ) );
 
       if ($query->RecordCount() < 1 ) $good_result = 1;
     }
