@@ -133,7 +133,8 @@ class CommerceProduct extends LibertyAttachable {
 				$pJoinSql   .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (p.`content_id`=tcs.`content_id`)
 								LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` ) ";
 			if( !$this->isOwner() && !$gBitUser->isAdmin() ) {
-				$pWhereSql .= ' AND tcs.`security_id` IS NULL ';
+				// this is an ineleganct solution to mash $gBitUser->mUserId in there, but other things were painful.
+				$pWhereSql .= ' AND (tcs.`security_id` IS NULL OR ts.`user_id`= \''.$gBitUser->mUserId.'\' )';
 			}
 		}
 	}
@@ -206,7 +207,7 @@ class CommerceProduct extends LibertyAttachable {
 		$joinSql .= ' AND pd.`language_id`=?';
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql );
+			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
 		}
 
 		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, tc.`created`, pt.* $selectSql
