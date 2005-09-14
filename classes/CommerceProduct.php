@@ -23,9 +23,10 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function load() {
+		global $gBitUser;
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->mInfo['content_id'];
-			if( !$this->isAvailable() ) {
+			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'bit_p_commerce_admin' ) ) {
 				$this->mInfo = array();
 				unset( $this->mContent );
 				unset( $this->mProductsId );
