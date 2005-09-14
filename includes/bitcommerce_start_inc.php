@@ -298,6 +298,12 @@
 			if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
 				$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 			}
+			$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+			global $gContent;
+			if( empty( $gContent ) ) {
+				$gContent = &$gBitProduct;
+				$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
+			}
 		}
 	} else {
 		$gBitProduct = new CommerceProduct();
@@ -308,14 +314,6 @@
 	}
 	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
 		$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
-	}
-	if( $gBitProduct->isAvailable() ) {
-		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
-		global $gContent;
-		if( empty( $gContent ) ) {
-			$gContent = &$gBitProduct;
-			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
-		}
 	}
 
  	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
