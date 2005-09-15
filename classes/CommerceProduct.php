@@ -143,6 +143,9 @@ class CommerceProduct extends LibertyAttachable {
 
 	function getList( &$pListHash ) {
 		global $gBitSystem;
+	  	if( empty( $pListHash['sort_mode'] ) ) {
+			$pListHash['sort_mode'] = 'products_date_added_desc';
+		}
 		BitBase::prepGetList( $pListHash );
 		$bindVars = array();
 		$selectSql = '';
@@ -212,11 +215,21 @@ class CommerceProduct extends LibertyAttachable {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
 		}
 
-		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, tc.`created`, pt.* $selectSql
+		$countQuery = "select COUNT( p.`products_id` )
 				  from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
+					$joinSql
+				  where p.`products_status` = '1' $whereSql ";
+		$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
+
+		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, tc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
+				  from " . TABLE_PRODUCTS . " p
+				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
+				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
+					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
+				  	INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`)
 					$joinSql
 				  where p.`products_status` = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
@@ -239,6 +252,12 @@ class CommerceProduct extends LibertyAttachable {
 				$ret[$productId]['display_price'] = zen_get_products_display_price( $productId );
 			}
 		}
+
+		$pListHash['total_pages'] = ceil( $pListHash['total_count'] / $pListHash['max_records'] );
+		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : MAX_DISPLAY_PRODUCTS_NEW);
+		$pListHash['offset'] = $ret['offset'] + 1;
+		$pListHash['block_pages'] = 5;
+		$pListHash['start_block'] = floor( $pListHash['page'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
 
 		return( $ret );
 	}

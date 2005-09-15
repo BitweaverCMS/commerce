@@ -17,113 +17,27 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_new.php,v 1.5 2005/08/24 12:17:02 lsces Exp $
+// $Id: tpl_products_new.php,v 1.6 2005/09/15 01:22:04 spiderr Exp $
 //
-?>
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-  </tr>
-  <tr>
-    <td class="pageHeading" colspan="2"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
-<?php
-// display order dropdown
-  $disp_order_default = PRODUCT_NEW_LIST_SORT_DEFAULT;
-  include(DIR_WS_MODULES . 'listing_display_order.php');
-?>
-<?php
   $products_new_array = array();
 
-//define('SHOW_NEW_PRODUCTS_LIMIT','30');
-	if( SHOW_NEW_PRODUCTS_LIMIT == '1' ) {
-		$display_limit = " and ".$db->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$db->mDb->SQLDate( 'Ym' );
-	} elseif( SHOW_NEW_PRODUCTS_LIMIT > 0 ) {
-		$display_limit = ' and '.$db->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.`products_date_added`' ).' > NOW()';
-	}
-	$products_new_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_image`, p.`products_price`, p.`products_tax_class_id`, p.`products_date_added`, m.`manufacturers_name`, p.`products_model`, p.`products_quantity`, p.`products_weight` from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m on (p.`manufacturers_id` = m.`manufacturers_id`), " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . $display_limit . $order_by;
-
-  $products_new_split = new splitPageResults($products_new_query_raw, MAX_DISPLAY_PRODUCTS_NEW);
-
-?>
-<?php
   $show_submit = zen_run_normal();
 
-  if (PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART > 0 and $show_submit == 'true' and $products_new_split->number_of_rows > 0) {
-    // bof: multiple products
-// check how many rows
-	$offset = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-    $check_products_all = $db->query($products_new_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_NEW, $offset );
-    $how_many = 0;
-    while (!$check_products_all->EOF) {
-      if (zen_has_product_attributes($check_products_all->fields['products_id'])) {
-      } else {
-        $how_many++;
-      }
-      $check_products_all->MoveNext();
-    }
-    if ( (($how_many > 0 and $show_submit == 'true' and $products_new_split->number_of_rows > 0) and (PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART == 1 or  PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART == 3)) ) {
-      $show_top_submit_button = 'true';
-    } else {
-      $show_top_submit_button = 'false';
-    }
-    if ( (($how_many > 0 and $show_submit == 'true' and $products_new_split->number_of_rows > 0) and (PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART >= 2)) ) {
-      $show_bottom_submit_button = 'true';
-    } else {
-      $show_bottom_submit_button = 'false';
-    }
+  	$listHash['sort_mode'] = !empty( $_REQUEST['sort_mode'] ) ? $_REQUEST['sort_mode'] : 'products_date_added_desc';
+	$listHash['page'] = !empty( $_REQUEST['page'] ) && is_numeric( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1;
+	// check how many rows
+	$listHash['thumbnail_size'] = 'small';
+	$listHash['max_records'] = MAX_DISPLAY_PRODUCTS_NEW;
+	$listHash['offset'] = $listHash['max_records'] * ($listHash['page'] - 1);
+	if( SHOW_NEW_PRODUCTS_LIMIT > 0 ) {
+		$pListHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
+	}
+	$productsList = $gBitProduct->getList( $listHash );
 
-    if ($show_top_submit_button == 'true' or $show_bottom_submit_button == 'true') {
-      echo zen_draw_form('multiple_products_cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=multiple_products_add_product'), 'post', 'enctype="multipart/form-data"');
-    }
-  }
+	$gBitSmarty->assign( 'listTitle', tra( 'New Products' ) );
+	$gBitSmarty->assign( 'listInfo', $listHash );
+	$gBitSmarty->assign( 'listProducts', $productsList );
+
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/list_products.tpl' );
+
 ?>
-<?php
-  if ($show_top_submit_button == 'true') {
-// only show when there is something to submit
-?>
-  <tr>
-    <td align="right" colspan="2"><input type="submit" align="absmiddle" value="<?php echo SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART; ?>" id="submit1" name="submit1" Class="SubmitBtn"></td>
-  </tr>
-<?php
-  } // PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART > 0
-?>
-<?php
-  if (($products_new_split->number_of_rows > 0) && ((PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3'))) {
-?>
-  <tr>
-    <td class="pageresults"><?php echo $products_new_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_NEW); ?></td>
-    <td align="right" class="pageresults"><?php echo TEXT_RESULT_PAGE . ' ' . $products_new_split->display_links(MAX_DISPLAY_PAGE_LINKS, zen_get_all_get_params(array('page', 'info', 'x', 'y', 'main_page'))); ?></td>
-  </tr>
-<?php
-  }
-?>
-  <tr>
-    <td class="main" colspan="2"><?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_NEW_LISTING)); ?></td>
-  </tr>
-<?php
-  if (($products_new_split->number_of_rows > 0) && ((PREV_NEXT_BAR_LOCATION == '2') || (PREV_NEXT_BAR_LOCATION == '3'))) {
-?>
-  <tr>
-    <td class="pageresults"><?php echo $products_new_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_NEW); ?></td>
-    <td align="right" class="pageresults"><?php echo TEXT_RESULT_PAGE . ' ' . $products_new_split->display_links(MAX_DISPLAY_PAGE_LINKS, zen_get_all_get_params(array('page', 'info', 'x', 'y', 'main_page'))); ?></td>
-  </tr>
-<?php
-  }
-?>
-<?php
-  if ($show_bottom_submit_button == 'true') {
-// only show when there is something to submit
-?>
-  <tr>
-    <td align="right" colspan="2"><input type="submit" align="absmiddle" value="<?php echo SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART; ?>" id="submit1" name="submit1" Class="SubmitBtn"></td>
-  </tr>
-<?php
-  } // PRODUCT_NEW_LISTING_MULTIPLE_ADD_TO_CART > 0
-?>
-<?php
-// only end form if form is created
-    if ($show_top_submit_button = 'true' or $show_bottom_submit_button = 'true') {
-?>
-</form>
-<?php } // end if form is made ?>
-</table>

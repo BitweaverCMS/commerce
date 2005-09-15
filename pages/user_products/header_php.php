@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.1 2005/08/22 04:43:05 spiderr Exp $
+// $Id: header_php.php,v 1.2 2005/09/15 01:22:04 spiderr Exp $
 //
 
 if( !empty( $_REQUEST['user_id'] ) ) {
@@ -22,6 +22,8 @@ $listHash['thumbnail_size'] = 'small';
 $listHash['user_id'] = $gQueryUser->mUserId;
 $userProducts = $gBitProduct->getList( $listHash );
 $gBitSmarty->assign( 'listProducts', $userProducts );
+$gBitSmarty->assign( 'listTitle', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( TRUE ) );
+$gBitSmarty->assign( 'listInfo', $listHash );
 
 $gBitSmarty->assign_by_ref( 'gQueryUser', $gQueryUser );
 
