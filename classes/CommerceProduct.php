@@ -254,7 +254,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		$pListHash['total_pages'] = ceil( $pListHash['total_count'] / $pListHash['max_records'] );
-		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : MAX_DISPLAY_PRODUCTS_NEW);
+		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $ret['offset'] + 1;
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['page'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
