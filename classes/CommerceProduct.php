@@ -20,6 +20,7 @@ class CommerceProduct extends LibertyAttachable {
 		$this->mProductsId = $pProductsId;
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
+		$this->mAdminContentPerm = 'bit_p_commerce_admin';
 	}
 
 	function load() {
