@@ -15,13 +15,11 @@ if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'com_' );
 }
 
-if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
-	// include shopping cart class
+// include shopping cart class
 // 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
-	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
-		'content_expunge_function' => 'bitcommerce_expunge',
-	) );
-}
+$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
+	'content_expunge_function' => 'bitcommerce_expunge',
+) );
 
 function bitcommerce_expunge ( &$pObject ) {
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
