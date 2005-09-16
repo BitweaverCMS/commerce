@@ -1,7 +1,7 @@
 <?php
 global $gBitSystem;
 
-$gBitSystem->registerPackage( 'bitcommerce', dirname( __FILE__ ).'/' );
+$gBitSystem->registerPackage( 'bitcommerce', dirname( __FILE__ ).'/', TRUE, LIBERTY_SERVICE_COMMERCE );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	$gBitSystem->registerAppMenu( 'bitcommerce', 'Shopping', BITCOMMERCE_PKG_URL.'index.php', 'bitpackage:bitcommerce/menu_bitcommerce.tpl' );
 }
@@ -17,7 +17,7 @@ if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 
 // include shopping cart class
 // 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
-if( !empty( $gLibertySystem ) ) {
+if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
 		'content_expunge_function' => 'bitcommerce_expunge',
 	) );
