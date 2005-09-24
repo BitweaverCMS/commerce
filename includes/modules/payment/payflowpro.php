@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.4 2005/08/24 02:53:52 lsces Exp $
+// $Id: payflowpro.php,v 1.5 2005/09/24 13:40:27 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -243,70 +243,51 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 ////////////////////////////////////////////////////
 
     function before_process() {
-      global $_GET, $messageStack, $gDebug, $_POST, $response, $db, $order;
+		global $_GET, $messageStack, $gDebug, $_POST, $response, $db, $order;
 
-      $order->info['cc_number'] = $_POST['cc_number'];
-      $order->info['cc_expires'] = $_POST['cc_expires'];
-      $order->info['cc_type'] = $_POST['cc_type'];
-      $order->info['cc_owner'] = $_POST['cc_owner'];
-      $order->info['cc_cvv'] = $_POST['cc_cvv'];
-	  // Calculate the next expected order id
-	  $last_order_id = $db->Execute("select * from " . TABLE_ORDERS . " order by orders_id desc limit 1");
-	  $new_order_id = $last_order_id->fields['orders_id'];
-	  $new_order_id = ($new_order_id + 1);
+		$order->info['cc_number'] = $_POST['cc_number'];
+		$order->info['cc_expires'] = $_POST['cc_expires'];
+		$order->info['cc_type'] = $_POST['cc_type'];
+		$order->info['cc_owner'] = $_POST['cc_owner'];
+		$order->info['cc_cvv'] = $_POST['cc_cvv'];
+		// Calculate the next expected order id
+		$last_order_id = $db->Execute("select * from " . TABLE_ORDERS . " order by orders_id desc limit 1");
+		$new_order_id = $last_order_id->fields['orders_id'];
+		$new_order_id = ($new_order_id + 1);
 
+		 $parmList .= "TRXTYPE=" . ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S');
+		 $parmList .= "&TENDER=C";
+		 $parmList .= "&PWD=" . MODULE_PAYMENT_PAYFLOWPRO_PWD;
+		 $parmList .= "&USER=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
+		 $parmList .= "&VENDOR=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
+		 $parmList .= "&PARTNER=" . MODULE_PAYMENT_PAYFLOWPRO_PARTNER;
 
-   if (MODULE_PAYMENT_PAYFLOWPRO_SERVEROS=='Windows') { // for Windows servers only
-			 $objCOM = new COM("PFProCOMControl.PFProCOMControl.1");
+		 $parmList .= "&ZIP=".$order->customer['postcode'];
+		 $parmList .= "&COMMENT1=" . 'CustID:' . $_SESSION['customer_id'] . ' OrderID:' . $new_order_id . ' Email:'. $order->customer['email_address'];
+		 $parmList .= "&COMMENT2=" . 'ZenSessName:' . zen_session_name() . ' ZenSessID:' . zen_session_id() ;
+		 if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') $parmList .= ' -- PHP/COM Test Transaction --';
+		 $parmList .= "&ACCT=" . $order->info['cc_number'];
+		 $parmList .= "&EXPDATE=" . $order->info['cc_expires'];
+		 $parmList .= "&CVV2=" . $order->info['cc_cvv'];
+		 $parmList .= "&AMT=" . number_format($order->info['total'], 2,'.','');
+		 $parmList .= "&NAME=" . $order->billing['firstname'] . ' ' . $order->billing['lastname'];
+		 $parmList .= "&STREET=" . $order->customer['street_address'];
 
-			 $parmList .= "TRXTYPE=" . ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S');
-			 $parmList .= "&TENDER=C";
-			 $parmList .= "&PWD=" . MODULE_PAYMENT_PAYFLOWPRO_PWD;
-			 $parmList .= "&USER=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
-			 $parmList .= "&VENDOR=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
-			 $parmList .= "&PARTNER=" . MODULE_PAYMENT_PAYFLOWPRO_PARTNER;
+	     if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
+	       $url="test-payflow.verisign.com";
+	     } else {
+	       $url="payflow.verisign.com";
+	     }
 
-			 $parmList .= "&ZIP=".$order->customer['postcode'];
-			 $parmList .= "&COMMENT1=" . 'CustID:' . $_SESSION['customer_id'] . ' OrderID:' . $new_order_id . ' Email:'. $order->customer['email_address'];
-			 $parmList .= "&COMMENT2=" . 'ZenSessName:' . zen_session_name() . ' ZenSessID:' . zen_session_id() ;
-			 if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') $parmList .= ' -- PHP/COM Test Transaction --';
-			 $parmList .= "&ACCT=" . $order->info['cc_number'];
-			 $parmList .= "&EXPDATE=" . $order->info['cc_expires'];
-			 $parmList .= "&CVV2=" . $order->info['cc_cvv'];
-			 $parmList .= "&AMT=" . number_format($order->info['total'], 2,'.','');
-			 $parmList .= "&NAME=" . $order->billing['firstname'] . ' ' . $order->billing['lastname'];
-			 $parmList .= "&STREET=" . $order->customer['street_address'];
+		if (MODULE_PAYMENT_PAYFLOWPRO_SERVEROS=='Windows') { // for Windows servers only
+			$objCOM = new COM("PFProCOMControl.PFProCOMControl.1");
+			$ctx1 = $objCOM->CreateContext($url, 443, 30, "", 0, "", "");
+			$result = $objCOM->SubmitTransaction($ctx1, $parmList, strlen($parmList));
+			$objCOM->DestroyContext($ctx1);
 
-			  if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
-			    $url="test-payflow.verisign.com";
-			  } else {
-			    $url="payflow.verisign.com";
-			  }
+	    } else {  // end Windows version
 
-			 $ctx1 = $objCOM->CreateContext($url, 443, 30, "", 0, "", "");
-			 $result = $objCOM->SubmitTransaction($ctx1, $parmList, strlen($parmList));
-			 $objCOM->DestroyContext($ctx1);
-
-    } else {  // end Windows version
-
-			 $parmList .= "TRXTYPE=" . ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S');
-			 $parmList .= "&TENDER=C";
-			 $parmList .= "&USER=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
-			 $parmList .= "&VENDOR=" . MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
-			 $parmList .= "&PARTNER=" . MODULE_PAYMENT_PAYFLOWPRO_PARTNER;
-			 $parmList .= "&PWD=" . MODULE_PAYMENT_PAYFLOWPRO_PWD;
-
-			 $parmList .= "&ZIP=".$order->customer['postcode'];
-			 $parmList .= "&COMMENT1=" . 'CustID:' . $_SESSION['customer_id'] . ' OrderID:' . $new_order_id . ' Email:'. $order->customer['email_address'];
-			 $parmList .= "&COMMENT2=" . 'ZenSessName:' . zen_session_name() . ' ZenSessID:' . zen_session_id() ;
-			 if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') $parmList .= ' -- PHP/COM Test Transaction --';
-			 $parmList .= "&ACCT=" . $order->info['cc_number'];
-			 $parmList .= "&EXPDATE=" . $order->info['cc_expires'];
-			 $parmList .= "&CVV2=" . $order->info['cc_cvv'];
-			 $parmList .= "&AMT=" . number_format($order->info['total'], 2,'.','');
-			 $parmList .= "&NAME=" . $order->billing['firstname'] . ' ' . $order->billing['lastname'];
-			 $parmList .= "&STREET=" . $order->customer['street_address'];
-		         $parmList = str_replace('"','~',$parmList);
+		    $parmList = str_replace('"','~',$parmList);
 
 		   // The following method requires that the "pfpro" components be compiled into PHP on your server.
 		   // Detailed information on the compiling process is contained here:  http://www.php.net/manual/en/ref.pfpro.php
@@ -326,78 +307,72 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 	                 AMT=> number_format($order->info['total'], 2,'.',''),
 	                 NAME=> $order->billing['firstname'] . ' ' . $order->billing['lastname'],
 	                 STREET => $order->customer['street_address']
-	                 );
+				);
+			putenv("LD_LIBRARY_PATH=".getenv("LD_LIBRARY_PATH").":".DIR_FS_CATALOG."includes/modules/payment/payflowpro");
+			putenv("PFPRO_CERT_PATH=".MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH);
+			$resultcodes=exec(DIR_FS_CATALOG.'includes/modules/payment/payflowpro/pfpro '.$url. ' 443 "'.$parmList.'" 30  2>&1', $output, $return_value);
 
-	     if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
-	       $url="test-payflow.verisign.com";
-	     } else {
-	       $url="payflow.verisign.com";
-	     }
+			$resultStrings  = explode( '&', $resultcodes );
+			$codeHash = array();
+			foreach( $resultStrings as $s ) {
+				list($key, $val) = explode( '=', $s, 2 );
+				$codeHash[$key] = $val;
+			}
 
-				putenv("LD_LIBRARY_PATH=".getenv("LD_LIBRARY_PATH").":".DIR_FS_CATALOG."includes/modules/payment/payflowpro");
-				putenv("PFPRO_CERT_PATH=".MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH);
-				$resultcodes=exec(DIR_FS_CATALOG.'includes/modules/payment/payflowpro/pfpro '.$url. ' 443 "'.$parmList.'" 30  2>&1', $output, $return_value);
-
-				$resultStrings  = explode( '&', $resultcodes );
-				$codeHash = array();
-				foreach( $resultStrings as $s ) {
-					list($key, $val) = explode( '=', $s, 2 );
-					$codeHash[$key] = $val;
-				}
-
-	//debug code
-	if( $gDebug ){
-					echo "calling exec " . (DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30  2>&1')."<BR>\n";
-					echo "RESULTS:<BR>\n";
-					print_r($resultcodes);
-					echo "<BR>\n";
-					exit;
-	}
-
+			//debug code
+			if( $gDebug ){
+				echo "calling exec " . (DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30  2>&1')."<BR>\n";
+				echo "RESULTS:<BR>\n";
+				print_r($resultcodes);
+				echo "<BR>\n";
+				exit;
+			}
 
 				//$debug='ON';
-				list($strA, $strB) = split ('[|]', $resultcodes);
-				if ($debug=='ON') $messageStack->add_session("valueA: " . $strA,'error');
-				if ($debug=='ON') $messageStack->add_session("valueB: " . $strB,'error');
-				if ($debug=='ON' || (zen_not_null($return_value) && $return_value!='0')) $messageStack->add_session('Result code: '.$return_value, 'caution');
-				if ($debug=='ON') foreach($output as $key=>$value) {$messageStack->add_session("$key => $value<br />",'caution'); }
-				exec("exit(0)");
+			list($strA, $strB) = split ('[|]', $resultcodes);
+			if ($debug=='ON') $messageStack->add_session("valueA: " . $strA,'error');
+			if ($debug=='ON') $messageStack->add_session("valueB: " . $strB,'error');
+			if ($debug=='ON' || (zen_not_null($return_value) && $return_value!='0')) $messageStack->add_session('Result code: '.$return_value, 'caution');
+			if ($debug=='ON') foreach($output as $key=>$value) {$messageStack->add_session("$key => $value<br />",'caution'); }
+			exec("exit(0)");
 
-				$return = '&'.$output[0].'&';
+			$return = '&'.$output[0].'&';
 
-				# Check result
-				if(preg_match("/PNREF=(.*)&/U",$return,$out))
-					$this->pnref = $out[1];
+			# Check result
+			if( isset( $codeHash['PNREF'] ) ) {
+				$this->pnref = $codeHash['PNREF'];
+			}
 
-				if(preg_match("/RESULT=(.*)&/U",$return,$out))
-					$this->result = $out[1];
+			if( isset( $codeHash['RESULT'] ) ) {
+				$this->result = $codeHash['RESULT'];
+			}
 
-				while (list ($key, $val) = each ($output)) {
+			while (list ($key, $val) = each ($output)) {
 				$result_list .= $key.'='.urlencode($val).'&';
-				}
+			}
 
-					$this->result_list = $result_list;
+			$this->result_list = $result_list;
 
-		//replace middle CC num with XXXX
+			//replace middle CC num with XXXX
 	        $order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
 
 
-				 $message .= DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30 ';
-				 $message .= $url ."\n";
-				 $message .= $this->result ."\n";
-				 $message .= $result_list ."\n";
-				 $message .= $this->pnref ."\n";
-				 $message .= $return ."\n";
-				if ($debug=='ON') {
-				 	zen_mail(STORE_NAME.'payflow pro debug - pre pfpro_process()', EMAIL_FROM, 'payflow pro debug codes' , $message, STORE_NAME, EMAIL_FROM);
-				}
+			$message .= DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30 ';
+			$message .= $url ."\n";
+			$message .= $this->result ."\n";
+			$message .= $result_list ."\n";
+			$message .= $this->pnref ."\n";
+			$message .= $return ."\n";
+			if ($debug=='ON') {
+				zen_mail(STORE_NAME.'payflow pro debug - pre pfpro_process()', EMAIL_FROM, 'payflow pro debug codes' , $message, STORE_NAME, EMAIL_FROM);
+			}
 
-			    //if ($result['RESULT'] != "0")
-			    if ($this->result != "0") {
-					$db->Execute("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values (NULL,'" .$this->pnref. "', '". $this->result . "','-','failed for cust_id: ". $gBitUser->mUserId." - ".$order->customer['email_address'].":".$codeHash['RESPMSG']."','".number_format($order->info['total'], 2,'.','')."',now() )");
-			    	$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$codeHash['RESPMSG'],'error');
- 			    	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
-				}
+			//if ($result['RESULT'] != "0")
+			if ($this->result != "0") {
+				$db->Execute("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values (NULL,'" .$this->pnref. "', '". $this->result . "','-','failed for cust_id: ". $gBitUser->mUserId." - ".$order->customer['email_address'].":".$codeHash['RESPMSG']."','".number_format($order->info['total'], 2,'.','')."',now() )");
+				$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$codeHash['RESPMSG'],'error');
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
+			}
 		}//End of if Not Windows (else)
 }
 
