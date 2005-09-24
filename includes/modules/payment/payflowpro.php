@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.5 2005/09/24 13:40:27 spiderr Exp $
+// $Id: payflowpro.php,v 1.6 2005/09/24 15:54:27 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -334,7 +334,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 			if ($debug=='ON') $messageStack->add_session("valueB: " . $strB,'error');
 			if ($debug=='ON' || (zen_not_null($return_value) && $return_value!='0')) $messageStack->add_session('Result code: '.$return_value, 'caution');
 			if ($debug=='ON') foreach($output as $key=>$value) {$messageStack->add_session("$key => $value<br />",'caution'); }
-			exec("exit(0)");
+			exec("exit");
 
 			$return = '&'.$output[0].'&';
 
