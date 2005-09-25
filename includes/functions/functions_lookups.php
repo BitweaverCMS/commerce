@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.9 2005/08/24 02:51:32 lsces Exp $
+// $Id: functions_lookups.php,v 1.10 2005/09/25 01:06:52 spiderr Exp $
 //
 //
 /**
@@ -570,11 +570,11 @@
   function zen_get_products_allow_add_to_cart($lookup) {
     global $db;
 
-    $sql = "select `products_type` from " . TABLE_PRODUCTS . " where `products_id`='" . $lookup . "'";
-    $type_lookup = $db->Execute($sql);
+    $sql = "select `products_type` from " . TABLE_PRODUCTS . " where `products_id`=?";
+    $type_lookup = $db->query($sql, array( $lookup ) );
 
-    $sql = "select `allow_add_to_cart` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $type_lookup->fields['products_type'] . "'";
-    $allow_add_to_cart = $db->Execute($sql);
+    $sql = "select `allow_add_to_cart` from " . TABLE_PRODUCT_TYPES . " where `type_id` = ?";
+    $allow_add_to_cart = $db->query( $sql, array( $type_lookup->fields['products_type'] ) );
 
     return $allow_add_to_cart->fields['allow_add_to_cart'];
   }

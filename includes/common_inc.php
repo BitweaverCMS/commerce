@@ -639,7 +639,7 @@
   function zen_get_products_quantity_order_min($product_id) {
     global $db;
 
-    $the_products_quantity_order_min = $db->Execute("select `products_id`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    $the_products_quantity_order_min = $db->query("select `products_id`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_min->fields['products_quantity_order_min'];
   }
 
@@ -650,7 +650,7 @@
   function zen_get_products_quantity_order_units($product_id) {
     global $db;
 
-    $the_products_quantity_order_units = $db->Execute("select `products_id`, `products_quantity_order_units` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    $the_products_quantity_order_units = $db->query( "select `products_id`, `products_quantity_order_units` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_units->fields['products_quantity_order_units'];
   }
 
@@ -660,7 +660,7 @@
   function zen_get_products_quantity_order_max($product_id) {
     global $db;
 
-    $the_products_quantity_order_max = $db->Execute("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    $the_products_quantity_order_max = $db->query("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_max->fields['products_quantity_order_max'];
   }
 

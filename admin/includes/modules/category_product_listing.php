@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
+//  $Id: category_product_listing.php,v 1.7 2005/09/25 01:06:51 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -178,7 +178,7 @@
     $products_count = 0;
     if (isset($_GET['search'])) {
       $products_query_raw = ("select p.`products_type`, p.`products_id`, pd.`products_name`, p.`products_quantity`,
-                                       p.`products_image, p.`products_price`, p.`products_date_added`,
+                                       p.`products_image`, p.`products_price`, p.`products_date_added`,
                                        p.`products_last_modified`, p.`products_date_available`,
                                        p.`products_status`, p2c.`categories_id`,
                                        p.`products_model`,

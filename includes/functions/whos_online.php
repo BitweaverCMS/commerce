@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.5 2005/08/24 02:51:32 lsces Exp $
+// $Id: whos_online.php,v 1.6 2005/09/25 01:06:52 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -44,7 +44,7 @@
     $wo_session_id = zen_session_id();
     $wo_ip_address = $_SERVER['REMOTE_ADDR'];
     $wo_last_page_url = $_SERVER['REQUEST_URI'];
-    $wo_user_agent = zen_db_prepare_input($_SERVER['HTTP_USER_AGENT']);
+    $wo_user_agent = (!empty( $_SERVER['HTTP_USER_AGENT'] ) ? zen_db_prepare_input($_SERVER['HTTP_USER_AGENT']) : '-');
 
     $current_time = time();
     $xx_mins_ago = ($current_time - 900);
