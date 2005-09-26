@@ -70,7 +70,11 @@
 				$newUser = new BitPermUser();
 				if( $newUser->register( $_REQUEST ) ) {
 					$newUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
+					$newUser->load();
 					$_REQUEST['customers_id'] = $gBitUser->mUserId;
+					$this->mCustomerId = $gBitUser->mUserId;
+					$this->load();
+					$this->syncBitUser( $newUser->mInfo );
 					$gBitUser = $newUser;
 				} else {
 					$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
