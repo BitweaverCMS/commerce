@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.10 2005/08/24 15:52:50 spiderr Exp $
+//  $Id: index.php,v 1.11 2005/09/27 22:33:51 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -57,7 +57,7 @@
 </head>
 <body onload="init()">
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
  <?php
 
@@ -179,5 +179,5 @@ following copyright announcement. //-->
 
 <?php require('includes/application_bottom.php'); ?>
 <!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->

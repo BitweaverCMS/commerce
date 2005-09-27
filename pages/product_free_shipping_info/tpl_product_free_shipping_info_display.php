@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_product_free_shipping_info_display.php,v 1.1 2005/08/04 07:01:57 spiderr Exp $
+// $Id: tpl_product_free_shipping_info_display.php,v 1.2 2005/09/27 22:33:57 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -79,7 +79,7 @@ if ($debug_on == '1') {
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
   if (zen_not_null($products_image)) {
-    require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+    require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
   } else {
     echo '&nbsp;';
   }
@@ -215,7 +215,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
 <?php
   if ($products_discount_type != 0) {
     echo '<tr><td colspan="2">';
-      require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_DISCOUNT_PRICES));
+      require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_DISCOUNT_PRICES));
     echo '</td></tr>';
   }
 ?>
@@ -226,7 +226,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
   </tr>
 <?php } ?>
 
-<?php require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
+<?php require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">

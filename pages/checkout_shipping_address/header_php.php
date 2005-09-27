@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 15:06:40 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/09/27 22:33:54 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -30,9 +30,9 @@
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
   }
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
-  require(DIR_WS_CLASSES . 'order.php');
+  require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 
 // if the order contains only virtual products, forward the customer to the billing page as

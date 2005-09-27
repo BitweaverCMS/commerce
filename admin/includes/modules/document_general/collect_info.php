@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.6 2005/08/24 12:16:09 lsces Exp $
+//  $Id: collect_info.php,v 1.7 2005/09/27 22:33:52 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -280,7 +280,7 @@ echo zen_draw_hidden_field('products_quantity_order_units', 1);
                 <td class="main" width="100%">
         <?php if (is_null($_SESSION['html_editor_preference_status'])) echo TEXT_HTML_EDITOR_NOT_DEFINED; ?>
         <?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") {
-//          if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") require(DIR_WS_INCLUDES.'fckeditor.php');
+//          if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") require(DIR_FS_INCLUDES.'fckeditor.php');
           $oFCKeditor = new FCKeditor ;
           $oFCKeditor->Value = (isset($products_description[$languages[$i]['id']])) ? stripslashes($products_description[$languages[$i]['id']]) : zen_get_products_description($pInfo->products_id, $languages[$i]['id']) ;
           $oFCKeditor->CreateFCKeditor( 'products_description[' . $languages[$i]['id'] . ']', '99%', '230' ) ;  //instanceName, width, height (px or %)

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 15:06:40 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/09/27 22:33:53 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -33,7 +33,7 @@
 	  $customer_gv_balance = $currencies->format($gv_result->fields['amount']);
   }
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 // only show when there is a GV balance
   if ($_SESSION['customer_id']) {
     $gv_query = "select `amount`

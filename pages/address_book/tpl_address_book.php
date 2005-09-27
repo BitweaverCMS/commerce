@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_address_book.php,v 1.2 2005/08/19 18:51:01 spiderr Exp $
+// $Id: tpl_address_book.php,v 1.3 2005/09/27 22:33:53 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -57,7 +57,7 @@
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo ADDRESS_BOOK_TITLE; ?></td>
   </tr>
-    <?php require(DIR_WS_BLOCKS . 'blk_address_book.php'); ?>
+    <?php require(DIR_FS_BLOCKS . 'blk_address_book.php'); ?>
   <tr>
    <td class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
 <?php

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.23 2005/09/01 22:01:09 spiderr Exp $
+// $Id: application_top.php,v 1.24 2005/09/27 22:33:52 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -98,8 +98,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
   }
 
 // include the mail classes
-  require(DIR_WS_CLASSES . 'mime.php');
-  require(DIR_WS_CLASSES . 'email.php');
+  require(DIR_FS_CLASSES . 'mime.php');
+  require(DIR_FS_CLASSES . 'email.php');
 
 // Set theme related directories
   $sql = "SELECT `template_dir`
@@ -125,7 +125,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
   define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_TEMPLATE . 'images/');
   define('DIR_WS_TEMPLATE_ICONS', DIR_WS_TEMPLATE_IMAGES . 'icons/');
 
-  require(DIR_WS_CLASSES . 'template_func.php');
+  require(DIR_FS_CLASSES . 'template_func.php');
   $template = new template_func(DIR_WS_TEMPLATE);
 
 // include the language translations
@@ -138,14 +138,14 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
     $template_dir_SELECT = '';
   }
 
-$langFile = DIR_WS_LANGUAGES . $template_dir_SELECT . $gBitCustomer->getLanguage() . '.php';
+$langFile = DIR_FS_LANGUAGES . $template_dir_SELECT . $gBitCustomer->getLanguage() . '.php';
 if( !file_exists( $langFile ) ) {
-	$langFile = DIR_WS_LANGUAGES . $template_dir_SELECT . 'en.php';
+	$langFile = DIR_FS_LANGUAGES . $template_dir_SELECT . 'en.php';
 }
 require( $langFile );
 
 // include the extra language translations
-  include(DIR_WS_MODULES . 'extra_definitions.php');
+  include(DIR_FS_MODULES . 'extra_definitions.php');
 
 // currency
   if( empty( $_SESSION['currency'] ) || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
@@ -294,10 +294,10 @@ function clean_input( &$pArray ) {
     }
 
 // infobox
-  require(DIR_WS_CLASSES . 'boxes.php');
+  require_once(DIR_FS_CLASSES . 'boxes.php');
 
 // initialize the message stack for output messages
-  require(DIR_WS_CLASSES . 'message_stack.php');
+  require_once(DIR_FS_CLASSES . 'message_stack.php');
   $messageStack = new messageStack;
 
 
@@ -423,7 +423,7 @@ function clean_input( &$pArray ) {
 // iii 030813 added: File uploading: save uploaded files with unique file names
           $real_ids = !empty( $_REQUEST['id'] ) ? $_REQUEST['id'] : 0;
           if( !empty( $_REQUEST['number_of_uploads'] ) ) {
-            require(DIR_WS_CLASSES . 'upload.php');
+            require_once(DIR_FS_CLASSES . 'upload.php');
             for ($i = 1, $n = $_REQUEST['number_of_uploads']; $i <= $n; $i++) {
               if (zen_not_null($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]]) and ($_FILES['id']['tmp_name'][TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] != 'none')) {
                 $products_options_file = new upload('id');
@@ -611,20 +611,20 @@ case 'wishlist_add_cart': reset ($lvnr);
   }
 
 // include the who's online functions
-  require(DIR_WS_FUNCTIONS . 'whos_online.php');
+  require_once(DIR_FS_FUNCTIONS . 'whos_online.php');
   zen_update_whos_online();
 
 // include the password crypto functions
-  require(DIR_WS_FUNCTIONS . 'password_funcs.php');
+  require_once(DIR_FS_FUNCTIONS . 'password_funcs.php');
 
 // include validation functions (right now only email address)
-  require(DIR_WS_FUNCTIONS . 'validations.php');
+  require_once(DIR_FS_FUNCTIONS . 'validations.php');
 
 // split-page-results
-  require(DIR_WS_CLASSES . 'split_page_results.php');
+  require_once(DIR_FS_CLASSES . 'split_page_results.php');
 
 // auto activate and expire banners
-  require(DIR_WS_FUNCTIONS . 'banner.php');
+  require_once(DIR_FS_FUNCTIONS . 'banner.php');
   zen_activate_banners();
   zen_expire_banners();
 
@@ -632,17 +632,17 @@ case 'wishlist_add_cart': reset ($lvnr);
 // this is processed in the admin for dates that expire as being worked on
   if( !empty( $_SESSION['update_expirations'] ) && $_SESSION['update_expirations'] != 'true') {
     // auto expire special products
-      require(DIR_WS_FUNCTIONS . 'specials.php');
+      require_once(DIR_FS_FUNCTIONS . 'specials.php');
       zen_start_specials();
       zen_expire_specials();
 
     // auto expire featured products
-      require(DIR_WS_FUNCTIONS . 'featured.php');
+      require_once(DIR_FS_FUNCTIONS . 'featured.php');
       zen_start_featured();
       zen_expire_featured();
 
     // auto expire salemaker sales
-      require(DIR_WS_FUNCTIONS . 'salemaker.php');
+      require_once(DIR_FS_FUNCTIONS . 'salemaker.php');
       zen_start_salemaker();
       zen_expire_salemaker();
 

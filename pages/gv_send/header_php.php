@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 17:00:57 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/09/27 22:33:56 spiderr Exp $
 //
   require('includes/classes/http_client.php');
 
@@ -27,7 +27,7 @@
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
   }
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
   if (($_POST['back_x']) || ($_POST['back_y'])) {
   }

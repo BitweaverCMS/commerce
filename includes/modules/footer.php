@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: footer.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: footer.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
 
-  require(DIR_WS_INCLUDES . 'counter.php');
+  require(DIR_FS_INCLUDES . 'counter.php');
   $time_start = explode(' ', PAGE_PARSE_START_TIME);
   $time_end = explode(' ', microtime());
   $parse_time = number_format(($time_end[1] + $time_end[0] - ($time_start[1] + $time_start[0])), 3);

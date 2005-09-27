@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: alt_nav.php,v 1.1 2005/07/05 05:59:55 bitweaver Exp $
+//  $Id: alt_nav.php,v 1.2 2005/09/27 22:33:51 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -47,20 +47,20 @@
 </head>
 <body onload="init()">
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 <?php
 
-  require(DIR_WS_BOXES . 'configuration_dhtml.php');
-  require(DIR_WS_BOXES . 'catalog_dhtml.php');
-  require(DIR_WS_BOXES . 'modules_dhtml.php');
-  require(DIR_WS_BOXES . 'customers_dhtml.php');
-  require(DIR_WS_BOXES . 'taxes_dhtml.php');
-  require(DIR_WS_BOXES . 'localization_dhtml.php');
-  require(DIR_WS_BOXES . 'reports_dhtml.php');
-  require(DIR_WS_BOXES . 'tools_dhtml.php');
-  require(DIR_WS_BOXES . 'gv_admin_dhtml.php');
-  require(DIR_WS_BOXES . 'extras_dhtml.php');
+  require(DIR_FS_BOXES . 'configuration_dhtml.php');
+  require(DIR_FS_BOXES . 'catalog_dhtml.php');
+  require(DIR_FS_BOXES . 'modules_dhtml.php');
+  require(DIR_FS_BOXES . 'customers_dhtml.php');
+  require(DIR_FS_BOXES . 'taxes_dhtml.php');
+  require(DIR_FS_BOXES . 'localization_dhtml.php');
+  require(DIR_FS_BOXES . 'reports_dhtml.php');
+  require(DIR_FS_BOXES . 'tools_dhtml.php');
+  require(DIR_FS_BOXES . 'gv_admin_dhtml.php');
+  require(DIR_FS_BOXES . 'extras_dhtml.php');
 
 ?>
 </body>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account.php,v 1.1 2005/08/04 07:01:02 spiderr Exp $
+// $Id: tpl_account.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
 // Variables passed to this page from header_php.php
 //
@@ -48,7 +48,7 @@
   <tr>
     <td class="plainBox" colspan="2">
       <table border="0" width="100%" cellspacing="2" cellpadding="2">
-	<?php require(DIR_WS_BLOCKS . 'blk_previous_orders.php'); ?>
+	<?php require(DIR_FS_BLOCKS . 'blk_previous_orders.php'); ?>
       </table>
     </td>
   </tr>

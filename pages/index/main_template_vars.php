@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.8 2005/08/24 15:06:37 lsces Exp $
+// $Id: main_template_vars.php,v 1.9 2005/09/27 22:33:56 spiderr Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -164,9 +164,9 @@
 //
 if (isset($_REQUEST['typefilter'])) {
 //die('here1');
-  require(DIR_WS_INCLUDES . 'index_filters/' . $_REQUEST['typefilter'] . '_filter.php');
+  require(DIR_FS_INCLUDES . 'index_filters/' . $_REQUEST['typefilter'] . '_filter.php');
 } else {
-  require(DIR_WS_INCLUDES . 'index_filters/default_filter.php');
+  require(DIR_FS_INCLUDES . 'index_filters/default_filter.php');
 }
 //die('here2');
 

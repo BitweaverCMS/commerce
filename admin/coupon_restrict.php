@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.4 2005/08/24 12:15:09 lsces Exp $
+//  $Id: coupon_restrict.php,v 1.5 2005/09/27 22:33:51 spiderr Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -87,7 +87,7 @@
 <body onload="init()">
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 <!-- body //-->
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -310,9 +310,9 @@
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 <br>
 </body>
 </html>
-<?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.7 2005/08/24 15:31:17 spiderr Exp $
+// $Id: main_template_vars.php,v 1.8 2005/09/27 22:33:55 spiderr Exp $
 //
   $sql = "select count(*) as `total`
           from " . TABLE_PRODUCTS . " p, " .
@@ -78,7 +78,7 @@
     }
 
 // get attributes
-    require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_attributes.php');
+    require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_attributes.php');
 
 // if review must be approved or disabled do not show review
     $review_status = " and r.status = '1'";
@@ -251,7 +251,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
     if ($za_dir = @dir(DIR_WS_TEMPLATE . $current_page_base. '/extra_main_template_vars')) {
       while ($zv_file = $za_dir->read()) {
         if (strstr($zv_file, '*.php') ) {
-          require(DIR_WS_TEMPLATE . $current_page_base . '/extra_main_template_vars/' . $zv_file);
+          require(DIR_FS_TEMPLATE . $current_page_base . '/extra_main_template_vars/' . $zv_file);
         }
       }
     }
@@ -263,5 +263,5 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
 		require( DIR_FS_PAGES . $current_page_base . '/' . $tpl_page_body);
 	}
 
-  require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_ALSO_PURCHASED_PRODUCTS));
+  require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_ALSO_PURCHASED_PRODUCTS));
 ?>

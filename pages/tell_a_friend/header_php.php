@@ -18,7 +18,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
+// $Id: header_php.php,v 1.4 2005/09/27 22:33:58 spiderr Exp $
 
 //
 	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
@@ -31,7 +31,7 @@
 		zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
 	}
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
   if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
     $error = false;

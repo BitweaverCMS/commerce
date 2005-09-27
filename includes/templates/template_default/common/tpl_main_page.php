@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.7 2005/08/12 07:03:22 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.8 2005/09/27 22:33:53 spiderr Exp $
 //
 
 	$header_template = 'tpl_header.php';
@@ -43,6 +43,6 @@
 
 
 <div id="footer">
-<?php require(DIR_WS_MODULES . 'footer.php'); ?>
+<?php require(DIR_FS_MODULES . 'footer.php'); ?>
 </div> <!-- end footer -->
 

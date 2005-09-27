@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ipn_application_top.php,v 1.3 2005/08/31 22:37:00 spiderr Exp $
+// $Id: ipn_application_top.php,v 1.4 2005/09/27 22:33:53 spiderr Exp $
 //
 
 // start the timer for the page parse time log
@@ -47,7 +47,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
   };
 
 // Define the project version  (must come after DB class is loaded)
-  require(DIR_WS_INCLUDES . 'version.php');
+  require(DIR_FS_INCLUDES . 'version.php');
 
 // set the type of request (secure or not)
   $request_type = ($_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
@@ -56,26 +56,26 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
   if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 
 // include the list of project filenames
-  require(DIR_WS_INCLUDES . 'filenames.php');
+  require(DIR_FS_INCLUDES . 'filenames.php');
 
 // include the list of project database tables
-  require(DIR_WS_INCLUDES . 'database_tables.php');
+  require(DIR_FS_INCLUDES . 'database_tables.php');
 
 // include the list of compatibility issues
-  require(DIR_WS_FUNCTIONS . 'compatibility.php');
+  require(DIR_FS_FUNCTIONS . 'compatibility.php');
 
 // include the list of extra database tables and filenames
 //  include(DIR_WS_MODULES . 'extra_datafiles.php');
   if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_datafiles')) {
     while ($zv_file = $za_dir->read()) {
       if (strstr($zv_file, '.php')) {
-        require(DIR_WS_INCLUDES . 'extra_datafiles/' . $zv_file);
+        require(DIR_FS_INCLUDES . 'extra_datafiles/' . $zv_file);
       }
     }
   }
 
 // include the cache class
-  require(DIR_WS_CLASSES . 'cache.php');
+  require(DIR_FS_CLASSES . 'cache.php');
   $zc_cache = new cache;
 
   $configuration = $db->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
@@ -94,9 +94,9 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.1. Got past Configuration Load ' . $PHP_SELF);
 
 // define general functions used application-wide
-  require(DIR_WS_FUNCTIONS . 'functions_general.php');
-  require(DIR_WS_FUNCTIONS . 'html_output.php');
-  require(DIR_WS_FUNCTIONS . 'functions_email.php');
+  require(DIR_FS_FUNCTIONS . 'functions_general.php');
+  require(DIR_FS_FUNCTIONS . 'html_output.php');
+  require(DIR_FS_FUNCTIONS . 'functions_email.php');
 
 // load extra functions
   include(DIR_WS_MODULES . 'extra_functions.php');
@@ -110,14 +110,14 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 
 
 // include shopping cart class
-  require(DIR_WS_CLASSES . 'shopping_cart.php');
+  require(DIR_FS_CLASSES . 'shopping_cart.php');
 
 
 // include navigation history class
-  require(DIR_WS_CLASSES . 'navigation_history.php');
+  require(DIR_FS_CLASSES . 'navigation_history.php');
 
 // define how the session functions will be used
-  require(DIR_WS_FUNCTIONS . 'sessions.php');
+  require(DIR_FS_FUNCTIONS . 'sessions.php');
 
 // set the session name and save path
   zen_session_name('zenid');
@@ -181,17 +181,17 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 
 
 // include currencies class and create an instance
-  require(DIR_WS_CLASSES . 'currencies.php');
+  require(DIR_FS_CLASSES . 'currencies.php');
   $currencies = new currencies();
 
 // include the mail classes
-  require(DIR_WS_CLASSES . 'mime.php');
-  require(DIR_WS_CLASSES . 'email.php');
+  require(DIR_FS_CLASSES . 'mime.php');
+  require(DIR_FS_CLASSES . 'email.php');
 
 // set the language
   if (!$gBitCustomer->getLanguage() || isset($_GET['language'])) {
 
-    require(DIR_WS_CLASSES . 'language.php');
+    require(DIR_FS_CLASSES . 'language.php');
 
     $lng = new language();
 
@@ -231,7 +231,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_TEMPLATE . 'images/');
   define('DIR_WS_TEMPLATE_ICONS', DIR_WS_TEMPLATE_IMAGES . 'icons/');
 
-  require(DIR_WS_CLASSES . 'template_func.php');
+  require(DIR_FS_CLASSES . 'template_func.php');
   $template = new template_func(DIR_WS_TEMPLATE);
 
 // include the language translations
@@ -267,48 +267,48 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   }
   $_SESSION['navigation']->add_current_page();
 // infobox
-  require(DIR_WS_CLASSES . 'boxes.php');
+  require(DIR_FS_CLASSES . 'boxes.php');
 
 // initialize the message stack for output messages
-  require(DIR_WS_CLASSES . 'message_stack.php');
+  require(DIR_FS_CLASSES . 'message_stack.php');
   $messageStack = new messageStack;
 
 // include the who's online functions
-  require(DIR_WS_FUNCTIONS . 'whos_online.php');
+  require(DIR_FS_FUNCTIONS . 'whos_online.php');
   zen_update_whos_online();
 
 // include the password crypto functions
-  require(DIR_WS_FUNCTIONS . 'password_funcs.php');
+  require(DIR_FS_FUNCTIONS . 'password_funcs.php');
 
 // include validation functions (right now only email address)
-  require(DIR_WS_FUNCTIONS . 'validations.php');
+  require(DIR_FS_FUNCTIONS . 'validations.php');
 
 // split-page-results
-  require(DIR_WS_CLASSES . 'split_page_results.php');
+  require(DIR_FS_CLASSES . 'split_page_results.php');
 
 // auto activate and expire banners
-  require(DIR_WS_FUNCTIONS . 'banner.php');
+  require(DIR_FS_FUNCTIONS . 'banner.php');
   zen_activate_banners();
   zen_expire_banners();
 
 // auto expire special products
-  require(DIR_WS_FUNCTIONS . 'specials.php');
+  require(DIR_FS_FUNCTIONS . 'specials.php');
   zen_start_specials();
   zen_expire_specials();
 
 // auto expire featured products
-  require(DIR_WS_FUNCTIONS . 'featured.php');
+  require(DIR_FS_FUNCTIONS . 'featured.php');
   zen_start_featured();
   zen_expire_featured();
 
 // auto expire salemaker sales
-  require(DIR_WS_FUNCTIONS . 'salemaker.php');
+  require(DIR_FS_FUNCTIONS . 'salemaker.php');
   zen_start_salemaker();
   zen_expire_salemaker();
 
 
 // include the breadcrumb class and start the breadcrumb trail
-  require(DIR_WS_CLASSES . 'breadcrumb.php');
+  require(DIR_FS_CLASSES . 'breadcrumb.php');
   $breadcrumb = new breadcrumb;
 
   $breadcrumb->add(HEADER_TITLE_CATALOG, zen_href_link(FILENAME_DEFAULT));

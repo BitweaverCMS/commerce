@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_history.php,v 1.1 2005/08/04 07:01:03 spiderr Exp $
+// $Id: tpl_account_history.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -26,7 +26,7 @@
   </tr>
   <tr>
     <td class="main">
-	<?php require(DIR_WS_BLOCKS . 'blk_account_history.php'); ?>
+	<?php require(DIR_FS_BLOCKS . 'blk_account_history.php'); ?>
     </td>
   </tr>
 <?php

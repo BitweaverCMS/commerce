@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.5 2005/08/31 22:36:59 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.6 2005/09/27 22:33:53 spiderr Exp $
 //
 ?>
 <!-- shipping_estimator //-->
@@ -64,7 +64,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
       // set shipping to null ! multipickjup changes address to store address...
       $shipping='';
       // include the order class (uses the sendto !)
-      require(DIR_WS_CLASSES . 'order.php');
+      require(DIR_FS_CLASSES . 'order.php');
       $order = new order;
     }else{
 // user not logged in !
@@ -110,7 +110,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
 // weight and count needed for shipping !
     $total_weight = $_SESSION['cart']->show_weight();
     $total_count = $_SESSION['cart']->count_contents();
-    require(DIR_WS_CLASSES . 'shipping.php');
+    require(DIR_FS_CLASSES . 'shipping.php');
     $shipping_modules = new shipping;
     $quotes = $shipping_modules->quote();
     $order->info['subtotal'] = $_SESSION['cart']->show_total();

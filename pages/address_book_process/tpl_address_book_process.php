@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_address_book_process.php,v 1.1 2005/08/04 07:01:23 spiderr Exp $
+// $Id: tpl_address_book_process.php,v 1.2 2005/09/27 22:33:54 spiderr Exp $
 //
 ?>
 <?php if (!isset($_GET['delete'])) echo zen_draw_form('addressbook', zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, (isset($_GET['edit']) ? 'edit=' . $_GET['edit'] : ''), 'SSL'), 'post', 'onsubmit="return check_form(addressbook);"'); ?>
@@ -55,7 +55,7 @@
   } else {
 ?>
     <tr>
-      <td class="plainBox" colspan="2"><?php require(DIR_WS_MODULES . 'address_book_details.php'); ?></td>
+      <td class="plainBox" colspan="2"><?php require(DIR_FS_MODULES . 'address_book_details.php'); ?></td>
     </tr>
 <?php
     if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {

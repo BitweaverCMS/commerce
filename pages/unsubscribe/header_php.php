@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2005/07/05 05:59:11 bitweaver Exp $
+// $Id: header_php.php,v 1.2 2005/09/27 22:33:58 spiderr Exp $
 //
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
 //present the option to unsubscribe, with a confirm button/link
   if (isset($_GET['unsubscribe_address'])) {

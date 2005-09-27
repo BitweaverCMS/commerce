@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.13 2005/08/31 22:36:58 spiderr Exp $
+// $Id: index.php,v 1.14 2005/09/27 22:33:50 spiderr Exp $
 //
 
 // {{{ TIKI_MOD
@@ -49,7 +49,7 @@ ob_start();
 
   $current_page = $_REQUEST['main_page'];
   $current_page_base = $current_page;
-  $code_page_directory = DIR_WS_MODULES . 'pages/' . $current_page_base;
+  $code_page_directory = DIR_FS_PAGES . $current_page_base;
   $page_directory = $code_page_directory;
 
   $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
@@ -78,9 +78,9 @@ ob_start();
 			// Read the "on_load" scripts for the individual page, and from the site-wide template settings
 			// NOTE: on_load_*.js files must contain just the raw code to be inserted in the <body> tag in the on_load="" parameter.
 			// Looking in "/includes/modules/pages" for files named "on_load_*.js"
-			$directory_array = $template->get_template_part(DIR_WS_MODULES . 'pages/' . $current_page_base, '/^on_load_/', '.js');
+			$directory_array = $template->get_template_part(DIR_FS_PAGES . $current_page_base, '/^on_load_/', '.js');
 			while(list ($key, $value) = each($directory_array)) {
-				$onload_file = DIR_WS_MODULES . 'pages/' . $current_page_base . '/' . $value;
+				$onload_file = DIR_FS_PAGES . $current_page_base . '/' . $value;
 				$read_contents='';
 				$lines = @file($onload_file);
 				foreach($lines as $line) {
@@ -117,7 +117,7 @@ ob_start();
 	}
 
 
-require(DIR_WS_INCLUDES . 'application_bottom.php');
+require(DIR_FS_INCLUDES . 'application_bottom.php');
 
 // {{{ TIKI_MOD
 
@@ -132,7 +132,7 @@ if (COLUMN_LEFT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custome
 }
 if( !empty( $flag_disable_left ) ) {
 ob_start();
-	require(DIR_WS_MODULES . 'column_left.php');
+	require(DIR_FS_MODULES . 'column_left.php');
 	$gBitSmarty->assign_by_ref( 'bitcommerceLeft', ob_get_contents() );
 ob_end_clean();
 }
@@ -145,7 +145,7 @@ if (COLUMN_RIGHT_STATUS == 0 or (CUSTOMERS_APPROVAL == '1' and $_SESSION['custom
 
 if( !empty( $flag_disable_right ) ) {
 ob_start();
-	require(DIR_WS_MODULES . 'column_right.php');
+	require(DIR_FS_MODULES . 'column_right.php');
 	$sideBar = ob_get_contents();
 	$gBitSmarty->assign_by_ref( 'bitcommerceRight', $sideBar );
 ob_end_clean();

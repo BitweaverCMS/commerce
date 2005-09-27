@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_shopping_cart.php,v 1.5 2005/08/24 02:52:59 lsces Exp $
+// $Id: tpl_shopping_cart.php,v 1.6 2005/09/27 22:33:58 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -279,7 +279,7 @@
 ?>
   <tr>
     <td colspan="3"><br />
-      <?php require(DIR_WS_MODULES . 'shipping_estimator.php'); ?>
+      <?php require(DIR_FS_MODULES . 'shipping_estimator.php'); ?>
     </td>
   </tr>
 <?php

@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header_navigation.php,v 1.3 2005/08/24 12:12:36 spiderr Exp $
+//  $Id: header_navigation.php,v 1.4 2005/09/27 22:33:52 spiderr Exp $
 //
 
-  require(DIR_WS_BOXES . 'configuration_dhtml.php');
-  require(DIR_WS_BOXES . 'catalog_dhtml.php');
-  require(DIR_WS_BOXES . 'modules_dhtml.php');
-  require(DIR_WS_BOXES . 'customers_dhtml.php');
-  require(DIR_WS_BOXES . 'taxes_dhtml.php');
-  require(DIR_WS_BOXES . 'reports_dhtml.php');
-  require(DIR_WS_BOXES . 'tools_dhtml.php');
+  require(DIR_FS_BOXES . 'configuration_dhtml.php');
+  require(DIR_FS_BOXES . 'catalog_dhtml.php');
+  require(DIR_FS_BOXES . 'modules_dhtml.php');
+  require(DIR_FS_BOXES . 'customers_dhtml.php');
+  require(DIR_FS_BOXES . 'taxes_dhtml.php');
+  require(DIR_FS_BOXES . 'reports_dhtml.php');
+  require(DIR_FS_BOXES . 'tools_dhtml.php');
 
 ?>
 <div style="clear:both"></div>

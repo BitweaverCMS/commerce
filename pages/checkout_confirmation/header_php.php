@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/08/24 16:47:31 lsces Exp $
+// $Id: header_php.php,v 1.5 2005/09/27 22:33:54 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -52,16 +52,16 @@
   }
 //echo $messageStack->size('checkout_payment');
 
-  require(DIR_WS_CLASSES . 'order.php');
+  require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 
-  require(DIR_WS_CLASSES . 'order_total.php');
+  require(DIR_FS_CLASSES . 'order_total.php');
   $order_total_modules = new order_total;
   $order_total_modules->collect_posts();
   $order_total_modules->pre_confirmation_check();
 
 // load the selected payment module
-  require(DIR_WS_CLASSES . 'payment.php');
+  require(DIR_FS_CLASSES . 'payment.php');
 
   if ($credit_covers) {
     unset($_SESSION['payment']);
@@ -86,7 +86,7 @@
   }
 
 // load the selected shipping module
-  require(DIR_WS_CLASSES . 'shipping.php');
+  require(DIR_FS_CLASSES . 'shipping.php');
   $shipping_modules = new shipping($_SESSION['shipping']);
 
 // Stock Check
@@ -122,7 +122,7 @@
     }
   }
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
   $breadcrumb->add(NAVBAR_TITLE_2);
 ?>

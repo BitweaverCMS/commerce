@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.7 2005/08/20 13:19:13 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.8 2005/09/27 22:33:58 spiderr Exp $
 //
-  require(DIR_WS_CLASSES . 'http_client.php');
+  require(DIR_FS_CLASSES . 'http_client.php');
 
 	define( 'META_TAG_TITLE', tra( 'Step 1 of 3 - Delivery Information' ) );
 
@@ -74,7 +74,7 @@
 	}
 
 //vd( $_SESSION );
-  require(DIR_WS_CLASSES . 'order.php');
+  require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 $gBitSmarty->assign_by_ref( 'order', $order );
 
@@ -95,7 +95,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
   $total_count = $_SESSION['cart']->count_contents();
 
 // load all enabled shipping modules
-  require(DIR_WS_CLASSES . 'shipping.php');
+  require(DIR_FS_CLASSES . 'shipping.php');
   $shipping_modules = new shipping;
 
   if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {
@@ -125,7 +125,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
     $free_shipping = false;
   }
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
 	// process the selected shipping method
 	if( !empty( $_REQUEST['submit_address'] ) ) {

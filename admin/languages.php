@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.9 2005/08/24 10:38:23 lsces Exp $
+//  $Id: languages.php,v 1.10 2005/09/27 22:33:51 spiderr Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -260,7 +260,7 @@
 </head>
 <body onload="init()">
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 <!-- body //-->
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -391,5 +391,5 @@
 </table>
 <!-- body_eof //-->
 <!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->

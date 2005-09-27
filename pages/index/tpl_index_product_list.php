@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_product_list.php,v 1.2 2005/09/01 14:03:25 spiderr Exp $
+// $Id: tpl_index_product_list.php,v 1.3 2005/09/27 22:33:56 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -100,7 +100,7 @@ while (!$show_display_category->EOF) {
 
 <?php
   if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_NEW_PRODUCTS') {
-    require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
+    require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
   }
 ?>
 
@@ -140,7 +140,7 @@ if ($error_categories == false and $show_display_category->RecordCount() > 0) {
 
 <?php
     if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_NEW_PRODUCTS') {
-      require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
+      require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
     }
 ?>
 

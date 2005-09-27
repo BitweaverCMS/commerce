@@ -762,7 +762,7 @@ BITCOMMERCE_DB_PREFIX.'orders_status_history' => "
   date_added T,
   customer_notified I1 default '0',
   comments X
-  CONSTRAINT ', CONSTRAINT ord_total_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
+  CONSTRAINT ', CONSTRAINT ord_stat_hist_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
 			  , CONSTRAINT ord_stat_hist_stat_ref FOREIGN KEY ( orders_status_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders_status( orders_status_id )'
 ",
 

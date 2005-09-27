@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
+// $Id: blk_account_history.php,v 1.6 2005/09/27 22:33:52 spiderr Exp $
 //
   $orders_total = zen_count_customer_orders();
 
@@ -49,7 +49,7 @@
         $order_type = TEXT_ORDER_BILLED_TO;
         $order_name = $history->fields['billing_name'];
       }
-      require(DIR_WS_BLOCKS . 'tpl_block_account_history.php');
+      require(DIR_FS_BLOCKS . 'tpl_block_account_history.php');
       $history->MoveNext();
     }
   } else {

@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping_address.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
+// $Id: checkout_shipping_address.php,v 1.5 2005/09/27 22:33:58 spiderr Exp $
 //
 	if ($messageStack->size('checkout_address') > 0) {
 		$gBitSmarty->assign( 'errors', $messageStack->output('checkout_address') );
 	}
 
 	if ($process == false) {
-//		require(DIR_WS_MODULES . 'checkout_new_address.php');
+//		require(DIR_FS_MODULES . 'checkout_new_address.php');
 
 		if ($addresses_count > 1) {
 

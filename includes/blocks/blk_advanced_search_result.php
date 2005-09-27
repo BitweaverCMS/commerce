@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.5 2005/08/24 15:31:16 spiderr Exp $
+// $Id: blk_advanced_search_result.php,v 1.6 2005/09/27 22:33:52 spiderr Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -222,5 +222,5 @@
     }
   }
   $listing_sql = $select_str . $from_str . $where_str . $order_str;
-  require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING));
+  require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING));
 ?>

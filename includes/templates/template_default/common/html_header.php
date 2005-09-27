@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_header.php,v 1.4 2005/07/26 12:31:54 spiderr Exp $
+// $Id: html_header.php,v 1.5 2005/09/27 22:33:53 spiderr Exp $
 //
 // TODO
 // cvs block
 // stylesheets
 
-require(DIR_WS_MODULES . 'meta_tags.php');
+require(DIR_FS_MODULES . 'meta_tags.php');
 
   $directory_array = $template->get_template_part($template->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/common/', '/^jscript_/', '.js');
 

@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: ipn_main_handler.php,v 1.2 2005/07/05 16:44:02 spiderr Exp $
+//  $Id: ipn_main_handler.php,v 1.3 2005/09/27 22:33:50 spiderr Exp $
 //
 DEFINE('MODULE_PAYMENT_PAYPAL_DOMAIN', 'www.paypal.com');
 DEFINE('MODULE_PAYMENT_PAYPAL_HANDLER', '/cgi-bin/webscr');
@@ -84,14 +84,14 @@ if(!$fp) {
   $info = implode(",",$info); 
 }
 
-require(DIR_WS_CLASSES . 'shipping.php');
-require(DIR_WS_CLASSES . 'payment.php');
+require(DIR_FS_CLASSES . 'shipping.php');
+require(DIR_FS_CLASSES . 'payment.php');
 $payment_modules = new payment($_SESSION['payment']);
 $shipping_modules = new shipping($_SESSION['shipping']);
-require(DIR_WS_CLASSES . 'order.php');
+require(DIR_FS_CLASSES . 'order.php');
 $order = new order();
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '7.1 Started Order ' . $_SESSION['payment'] );
-require(DIR_WS_CLASSES . 'order_total.php');
+require(DIR_FS_CLASSES . 'order_total.php');
 $order_total_modules = new order_total();
 $order_totals = $order_total_modules->process();
 

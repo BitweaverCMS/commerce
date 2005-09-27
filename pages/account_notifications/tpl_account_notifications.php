@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_account_notifications.php,v 1.1 2005/08/04 07:01:22 spiderr Exp $
+// $Id: tpl_account_notifications.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('account_notifications', zen_href_link(FILENAME_ACCOUNT_NOTIFICATIONS, '', 'SSL')) . zen_draw_hidden_field('action', 'process'); ?>
@@ -68,7 +68,7 @@
           <td colspan="2"><?php echo NOTIFICATIONS_DESCRIPTION; ?></td>
         </tr>
 <?php
-      require(DIR_WS_BLOCKS . 'blk_account_notifications.php');
+      require(DIR_FS_BLOCKS . 'blk_account_notifications.php');
     } else {
 ?>
         <tr>

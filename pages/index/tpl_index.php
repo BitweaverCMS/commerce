@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index.php,v 1.2 2005/09/01 22:01:10 spiderr Exp $
+// $Id: tpl_index.php,v 1.3 2005/09/27 22:33:56 spiderr Exp $
 //
 ?>
     <h1><?php echo HEADING_TITLE; ?></h1>
@@ -44,7 +44,7 @@ while (!$show_display_category->EOF) {
 			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX));
 		}
 		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MAIN_NEW_PRODUCTS') {
-			require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
+			require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
 		}
 		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MAIN_UPCOMING') {
 			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS));

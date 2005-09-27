@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: column_single.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id: column_single.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
   // Check if there are boxes for the column
   $column_single_display= $db->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where (layout_box_location=0 or layout_box_location=1) and layout_box_status_single=1 and layout_template ='" . $template_dir . "'" . ' order by LPAD(layout_box_sort_order_single,11,"0")');
@@ -36,10 +36,10 @@
     }
     if ( file_exists(DIR_WS_MODULES . 'sideboxes/' . $template_dir . '/' . $column_single_display->fields['layout_box_name']) ) {
       $box_id = zen_get_box_id($column_single_display->fields['layout_box_name']);
-      require(DIR_WS_MODULES . 'sideboxes/' . $template_dir . '/' . $column_single_display->fields['layout_box_name']);
+      require(DIR_FS_MODULES . 'sideboxes/' . $template_dir . '/' . $column_single_display->fields['layout_box_name']);
     } else {
       $box_id = zen_get_box_id($column_single_display->fields['layout_box_name']);
-      require(DIR_WS_MODULES . 'sideboxes/' . $column_single_display->fields['layout_box_name']);
+      require(DIR_FS_MODULES . 'sideboxes/' . $column_single_display->fields['layout_box_name']);
     }
    } // file_exists
    $column_single_display->MoveNext();

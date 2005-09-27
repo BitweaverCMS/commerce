@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.6 2005/08/24 11:51:39 lsces Exp $
+//  $Id: downloads_manager.php,v 1.7 2005/09/27 22:33:51 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -72,7 +72,7 @@ function go_option() {
 <!-- <body onload="init()"> -->
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="init()">
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -278,8 +278,8 @@ function go_option() {
 </table>
 <!-- body_text_eof //-->
 <!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 </body>
 </html>
-<?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>  
+<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>  

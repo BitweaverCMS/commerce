@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.1 2005/08/19 17:16:57 spiderr Exp $
+// $Id: checkout_process.php,v 1.2 2005/09/27 22:33:54 spiderr Exp $
 //
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
 // if the customer is not logged on, redirect them to the time out page
   if (!$_SESSION['customer_id']) {
@@ -33,16 +33,16 @@
   }
 
 // load selected payment module
-  require(DIR_WS_CLASSES . 'payment.php');
+  require(DIR_FS_CLASSES . 'payment.php');
   $payment_modules = new payment($_SESSION['payment']);
 // load the selected shipping module
-  require(DIR_WS_CLASSES . 'shipping.php');
+  require(DIR_FS_CLASSES . 'shipping.php');
   $shipping_modules = new shipping($_SESSION['shipping']);
 
-  require(DIR_WS_CLASSES . 'order.php');
+  require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 
-  require(DIR_WS_CLASSES . 'order_total.php');
+  require(DIR_FS_CLASSES . 'order_total.php');
   $order_total_modules = new order_total;
   $order_totals = $order_total_modules->pre_confirmation_check();
   $order_totals = $order_total_modules->process();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_checkout_payment_address.php,v 1.1 2005/08/04 07:01:26 spiderr Exp $
+// $Id: tpl_checkout_payment_address.php,v 1.2 2005/09/27 22:33:54 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
@@ -75,7 +75,7 @@ if ($messageStack->size('checkout_address') > 0) {
 	<td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
 </tr>
 <?php
-		require(DIR_WS_BLOCKS . 'blk_checkout_payment_address.php');
+		require(DIR_FS_BLOCKS . 'blk_checkout_payment_address.php');
 	}
 
 ?>

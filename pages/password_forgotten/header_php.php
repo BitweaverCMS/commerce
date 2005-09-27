@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/08/24 15:06:38 lsces Exp $
+// $Id: header_php.php,v 1.3 2005/09/27 22:33:56 spiderr Exp $
 //
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
   if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
     $email_address = zen_db_prepare_input($_POST['email_address']);

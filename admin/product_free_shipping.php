@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_free_shipping.php,v 1.3 2005/08/11 04:36:37 spiderr Exp $
+//  $Id: product_free_shipping.php,v 1.4 2005/09/27 22:33:51 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  require(DIR_WS_MODULES . 'prod_cat_header_code.php');
+  require(DIR_FS_MODULES . 'prod_cat_header_code.php');
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
 
@@ -40,53 +40,53 @@
 
       case 'delete_product_confirm':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/delete_product_confirm.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/delete_product_confirm.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/delete_product_confirm.php');
          } else {
-          require(DIR_WS_MODULES . 'delete_product_confirm.php');
+          require(DIR_FS_MODULES . 'delete_product_confirm.php');
          }
         break;
       case 'move_product_confirm':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/move_product_confirm.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/move_product_confirm.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/move_product_confirm.php');
          } else {
-          require(DIR_WS_MODULES . 'move_product_confirm.php');
+          require(DIR_FS_MODULES . 'move_product_confirm.php');
          }
         break;
       case 'insert_product_meta_tags':
       case 'update_product_meta_tags':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/update_product_meta_tags.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/update_product_meta_tags.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/update_product_meta_tags.php');
          } else {
-          require(DIR_WS_MODULES . 'update_product_meta_tags.php');
+          require(DIR_FS_MODULES . 'update_product_meta_tags.php');
          }
         break;
       case 'insert_product':
       case 'update_product':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/update_product.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/update_product.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/update_product.php');
          } else {
-          require(DIR_WS_MODULES . 'update_product.php');
+          require(DIR_FS_MODULES . 'update_product.php');
          }
         break;
       case 'copy_to_confirm':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/copy_to_confirm.php');
          } else {
-          require(DIR_WS_MODULES . 'copy_to_confirm.php');
+          require(DIR_FS_MODULES . 'copy_to_confirm.php');
          }
         break;
       case 'new_product_preview_meta_tags':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview_meta_tags.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview_meta_tags.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview_meta_tags.php');
          } else {
-          require(DIR_WS_MODULES . 'new_product_preview_meta_tags.php');
+          require(DIR_FS_MODULES . 'new_product_preview_meta_tags.php');
          }
         break;
       case 'new_product_preview':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/new_product_preview.php');
          } else {
-          require(DIR_WS_MODULES . 'new_product_preview.php');
+          require(DIR_FS_MODULES . 'new_product_preview.php');
          }
         break;
 
@@ -129,7 +129,7 @@ if (typeof _editor_url == "string") HTMLArea.replaceAll();
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="init()">
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
-<?php require(DIR_WS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -141,21 +141,21 @@ if (typeof _editor_url == "string") HTMLArea.replaceAll();
   if ($action == 'new_product' or $action == 'new_product_meta_tags') {
 
     if ($action == 'new_product_meta_tags') {
-      require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/collect_info_metatags.php');
+      require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/collect_info_metatags.php');
     } else {
-      require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/collect_info.php');
+      require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/collect_info.php');
     }
 
   } elseif ($action == 'new_product_preview' or $action == 'new_product_preview_meta_tags') {
     if ($action == 'new_product_preview_meta_tags') {
-      require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/preview_info_meta_tags.php');
+      require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/preview_info_meta_tags.php');
     } else {
-      require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/preview_info.php');
+      require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/preview_info.php');
     }
 
   } else {
 
-  require(DIR_WS_MODULES . 'category_product_listing.php');
+  require(DIR_FS_MODULES . 'category_product_listing.php');
 
     $heading = array();
     $contents = array();
@@ -221,16 +221,16 @@ if (typeof _editor_url == "string") HTMLArea.replaceAll();
         break;
       case 'delete_product':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_delete_product.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_delete_product.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_delete_product.php');
          } else {
-          require(DIR_WS_MODULES . 'sidebox_delete_product.php');
+          require(DIR_FS_MODULES . 'sidebox_delete_product.php');
          }
         break;
       case 'move_product':
         if (file_exists(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_move_product.php')) {
-          require(DIR_WS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_move_product.php');
+          require(DIR_FS_MODULES . $zc_products->get_handler($product_type) . '/sidebox_move_product.php');
          } else {
-          require(DIR_WS_MODULES . 'sidebox_move_product.php');
+          require(DIR_FS_MODULES . 'sidebox_move_product.php');
          }
         break;
       case 'copy_to':
@@ -353,9 +353,9 @@ if ($products_query_numrows > 0) {
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 <br />
 </body>
 </html>
-<?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>

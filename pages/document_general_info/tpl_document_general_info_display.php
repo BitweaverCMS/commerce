@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_document_general_info_display.php,v 1.1 2005/08/04 07:01:31 spiderr Exp $
+// $Id: tpl_document_general_info_display.php,v 1.2 2005/09/27 22:33:55 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -79,7 +79,7 @@ if ($debug_on == '1') {
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
   if (zen_not_null($products_image)) {
-    require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+    require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
   } else {
     echo '&nbsp;';
   }
@@ -165,7 +165,7 @@ if ($options_attributes_image[$i] != '') {
   </tr>
 <?php } ?>
 
-<?php require(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
+<?php require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">

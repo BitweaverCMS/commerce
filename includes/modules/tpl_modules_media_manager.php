@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_media_manager.php,v 1.1 2005/08/04 07:24:06 spiderr Exp $
+// $Id: tpl_modules_media_manager.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
 //
-  require(DIR_WS_MODULES . 'media_manager.php');
+  require(DIR_FS_MODULES . 'media_manager.php');
   if ($zv_product_has_media) {
 ?>
   <tr>

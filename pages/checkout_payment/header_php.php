@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/08/24 15:06:40 lsces Exp $
+// $Id: header_php.php,v 1.6 2005/09/27 22:33:54 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -70,9 +70,9 @@
     }
   }
 
-  require(DIR_WS_CLASSES . 'order.php');
+  require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
-  require(DIR_WS_CLASSES . 'order_total.php');
+  require(DIR_FS_CLASSES . 'order_total.php');
   $order_total_modules = new order_total;
 
 	// if the no billing address, try to get one by default
@@ -96,14 +96,14 @@
   $total_count = $_SESSION['cart']->count_contents();
 
 // load all enabled payment modules
-  require(DIR_WS_CLASSES . 'payment.php');
+  require(DIR_FS_CLASSES . 'payment.php');
   $payment_modules = new payment;
 
 // Load the selected shipping module(needed to calculate tax correctly)
-  require(DIR_WS_CLASSES . 'shipping.php');
+  require(DIR_FS_CLASSES . 'shipping.php');
   $shipping_modules = new shipping($_SESSION['shipping']);
 
-  require(DIR_WS_MODULES . 'require_languages.php');
+  require(DIR_FS_MODULES . 'require_languages.php');
 
   if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {
     $messageStack->add('checkout_payment', $error['error'], 'error');

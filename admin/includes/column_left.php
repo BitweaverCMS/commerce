@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: column_left.php,v 1.1 2005/07/05 06:00:00 bitweaver Exp $
+//  $Id: column_left.php,v 1.2 2005/09/27 22:33:52 spiderr Exp $
 //
 
-  require(DIR_WS_BOXES . 'configuration.php');
-  require(DIR_WS_BOXES . 'catalog.php');
-  require(DIR_WS_BOXES . 'modules.php');
-  require(DIR_WS_BOXES . 'customers.php');
-  require(DIR_WS_BOXES . 'taxes.php');
-  require(DIR_WS_BOXES . 'localization.php');
-  require(DIR_WS_BOXES . 'reports.php');
-  require(DIR_WS_BOXES . 'tools.php');
+  require(DIR_FS_BOXES . 'configuration.php');
+  require(DIR_FS_BOXES . 'catalog.php');
+  require(DIR_FS_BOXES . 'modules.php');
+  require(DIR_FS_BOXES . 'customers.php');
+  require(DIR_FS_BOXES . 'taxes.php');
+  require(DIR_FS_BOXES . 'localization.php');
+  require(DIR_FS_BOXES . 'reports.php');
+  require(DIR_FS_BOXES . 'tools.php');
 ?>

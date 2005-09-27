@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_index_categories.php,v 1.1 2005/08/04 07:01:36 spiderr Exp $
+// $Id: tpl_index_categories.php,v 1.2 2005/09/27 22:33:56 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -71,7 +71,7 @@ if ($show_welcome == 'true') {
 <?php } // categories_description ?>
 <tr>
 <?php
-  require(DIR_WS_MODULES . 'pages/index/category_row.php');
+  require(DIR_FS_MODULES . 'pages/index/category_row.php');
 ?>
 </tr>
 </table>
@@ -90,7 +90,7 @@ while (!$show_display_category->EOF) {
 <?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_SPECIALS_PRODUCTS') { ?>
 <?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX)); ?><?php } ?>
 <?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_NEW_PRODUCTS') { ?>
-<?php require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS)); ?><?php } ?>
+<?php require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS)); ?><?php } ?>
 <?php if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_CATEGORY_UPCOMING') { ?>
 <?php include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS)); ?><?php } ?>
 <?php

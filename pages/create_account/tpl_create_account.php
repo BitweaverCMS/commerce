@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_create_account.php,v 1.1 2005/08/04 07:01:30 spiderr Exp $
+// $Id: tpl_create_account.php,v 1.2 2005/09/27 22:33:55 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('create_account', zen_href_link(FILENAME_CREATE_ACCOUNT, '', 'SSL'), 'post', 'onsubmit="return check_form(create_account);"') . zen_draw_hidden_field('action', 'process'); ?>
@@ -131,7 +131,7 @@
     <td class="plainBoxHeading"><?php echo CATEGORY_ADDRESS; ?></td>
   </tr>
   <tr>
-    <td class="plainBox"><?php require(DIR_WS_BLOCKS . 'blk_address_format_us.php'); ?></td>
+    <td class="plainBox"><?php require(DIR_FS_BLOCKS . 'blk_address_format_us.php'); ?></td>
   </tr>
   <tr>
     <td class="plainBoxHeading"><?php echo CATEGORY_CONTACT; ?></td>

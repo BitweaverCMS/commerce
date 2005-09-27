@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/08/19 17:16:57 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/09/27 22:33:54 spiderr Exp $
 //
 
   require( 'checkout_process.php' );
@@ -37,5 +37,5 @@
 
   zen_redirect(zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
 
-  require(DIR_WS_INCLUDES . 'application_bottom.php');
+  require(DIR_FS_INCLUDES . 'application_bottom.php');
 ?>
