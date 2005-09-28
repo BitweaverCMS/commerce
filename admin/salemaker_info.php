@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_info.php,v 1.4 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: salemaker_info.php,v 1.5 2005/09/28 22:38:58 spiderr Exp $
 //
   require("includes/application_top.php");
 
-  require(DIR_FS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . FILENAME_SALEMAKER_INFO . '.php');
+  require(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . FILENAME_SALEMAKER_INFO . '.php');
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -41,5 +41,5 @@
 </body>
 </html>
 <?php
-  require(DIR_FS_INCLUDES . 'application_bottom.php');
+  require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php');
 ?>

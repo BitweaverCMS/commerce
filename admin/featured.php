@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.8 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: featured.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -122,7 +122,7 @@
 <body onload="init()">
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
-<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -369,8 +369,8 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

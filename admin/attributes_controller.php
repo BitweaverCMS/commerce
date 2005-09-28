@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.13 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.14 2005/09/28 22:38:57 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -74,7 +74,7 @@
     }
   }
 
-  require(DIR_FS_MODULES . FILENAME_PREV_NEXT);
+  require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
   if (zen_not_null($action)) {
     $_SESSION['page_info'] = '';
@@ -572,7 +572,7 @@ function popupWindow(url) {
 <!-- <body onload="init()"> -->
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="init()">
 <!-- header //-->
-<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -855,7 +855,7 @@ if ($action == 'attributes_preview') {
 ?>
       <tr>
         <td colspan="2"><table>
-          <?php require(DIR_FS_MODULES . FILENAME_PREV_NEXT_DISPLAY); ?>
+          <?php require(DIR_WS_MODULES . FILENAME_PREV_NEXT_DISPLAY); ?>
         </table></td>
       </tr>
 
@@ -1847,8 +1847,8 @@ $off_overwrite = false;
 </table>
 <!-- body_text_eof //-->
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

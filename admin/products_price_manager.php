@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.13 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.14 2005/09/28 22:38:57 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -62,7 +62,7 @@
     }
   }
 
-  require(DIR_FS_MODULES . FILENAME_PREV_NEXT);
+  require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
   if ($action == 'delete_special') {
     $delete_special = $db->Execute("delete from " . TABLE_SPECIALS . " where `products_id`='" . $productsId . "'");
@@ -249,7 +249,7 @@
 <body onload="init()">
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
-<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -281,7 +281,7 @@
 
 <?php
   if ($action != 'edit_update') {
-    require(DIR_FS_MODULES . FILENAME_PREV_NEXT_DISPLAY);
+    require(DIR_WS_MODULES . FILENAME_PREV_NEXT_DISPLAY);
 ?>
 
       <tr><form name="set_products_id_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=set_products_id') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_id', $_GET['products_id']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
@@ -407,11 +407,11 @@ if ($productsId == '') {
       $product = $db->Execute("select p.`products_id`, p.`products_model`,
                                       p.`products_price`, p.`products_date_available`,
                                       p.`products_tax_class_id`,
-                                      p.`products_quantity`_order_min, products_quantity_order_units, p.`products_quantity_order_max`,
-                                      p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed, p.`products_priced_by_attribute`, p.`products_status,
+                                      p.`products_quantity_order_min`, products_quantity_order_units, p.`products_quantity_order_max`,
+                                      p.`product_is_free`, p.product_is_call, p.`products_quantity_mixed`, p.`products_priced_by_attribute`, p.`products_status`,
                                       p.`products_discount_type`, p.`products_discount_type_from`, p.`products_price_sorter`,
                                       pd.`products_name`,
-                                      p.master_categories_id, p.products_mixed_discount_qty
+                                      p.`master_categories_id`, p.`products_mixed_discount_qty`
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_PRODUCTS_DESCRIPTION . " pd
                                where p.`products_id` = '" . $_GET['products_id'] . "'
@@ -944,8 +944,8 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

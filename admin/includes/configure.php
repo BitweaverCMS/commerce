@@ -45,7 +45,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_FS_CATALOG_BLOCKS', DIR_FS_CATALOG . 'includes/blocks/');
   define('DIR_FS_CATALOG_BOXES', DIR_FS_CATALOG . 'includes/boxes/');
   define('DIR_FS_BACKUP', DIR_FS_ADMIN . 'backups/');
-  define('DIR_FS_FILE_MANAGER_ROOT', '/a1/viovio/live/commerce'); // path to starting directory of the file manager
+  define('DIR_FS_FILE_MANAGER_ROOT', BITCOMMERCE_PKG_PATH); // path to starting directory of the file manager
+
+  define('DIR_FS_ADMIN_INCLUDES', 'includes/');
 
   mkdir_p( DIR_FS_CATALOG_IMAGES );
 /*
@@ -74,7 +76,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
   define('DIR_WS_ICONS', DIR_WS_IMAGES . 'icons/');
   define('DIR_WS_CATALOG_IMAGES', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'images/');
   define('DIR_WS_CATALOG_TEMPLATE', HTTP_CATALOG_SERVER . DIR_WS_CATALOG . 'includes/templates/');
-  define('DIR_WS_INCLUDES', 'includes/');
   define('DIR_WS_BOXES', DIR_WS_INCLUDES . 'boxes/');
   define('DIR_WS_FUNCTIONS', DIR_WS_INCLUDES . 'functions/');
   define('DIR_WS_CLASSES', DIR_WS_INCLUDES . 'classes/');

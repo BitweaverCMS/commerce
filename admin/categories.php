@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.10 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: categories.php,v 1.11 2005/09/28 22:38:57 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  require(DIR_FS_MODULES . 'prod_cat_header_code.php');
+  require(DIR_WS_MODULES . 'prod_cat_header_code.php');
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
 
@@ -509,13 +509,13 @@
   }
   // -->
 </script>
-<?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") require(DIR_FS_INCLUDES.'fckeditor.php'); ?>
-<?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA")  require(DIR_FS_INCLUDES.'htmlarea.php'); ?>
+<?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") require(DIR_FS_ADMIN_INCLUDES.'fckeditor.php'); ?>
+<?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA")  require(DIR_FS_ADMIN_INCLUDES.'htmlarea.php'); ?>
 </head>
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="init()">
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
-<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -555,7 +555,7 @@
 <!-- body_text //-->
     <td width="100%" valign="top">
 <?php
-    require(DIR_FS_MODULES . 'category_product_listing.php');
+    require(DIR_WS_MODULES . 'category_product_listing.php');
 
     $heading = array();
     $contents = array();
@@ -864,9 +864,9 @@ if ($products_query_numrows > 0) {
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 <br />
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.19 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: orders.php,v 1.20 2005/09/28 22:38:57 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -210,7 +210,7 @@
 <body onload="init()">
 <!-- header //-->
 <?php
-  require(DIR_FS_INCLUDES . 'header.php');
+  require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 ?>
 <!-- header_eof //-->
 
@@ -462,7 +462,7 @@
 
 <?php
   // show downloads
-  require(DIR_FS_MODULES . 'orders_download.php');
+  require(DIR_WS_MODULES . 'orders_download.php');
 ?>
 
       <tr>
@@ -787,9 +787,9 @@
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 <br />
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

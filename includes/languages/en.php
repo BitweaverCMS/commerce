@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.5 2005/09/27 22:33:52 spiderr Exp $
+// $Id: en.php,v 1.6 2005/09/28 22:38:59 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -579,7 +579,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_EMAIL_EXTRAS);
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_EMAIL_EXTRAS);
 
 // include template specific header defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_HEADER)) {
@@ -587,7 +587,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_HEADER);
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_HEADER);
 
 // include template specific button name defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_BUTTON_NAMES)) {
@@ -595,7 +595,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_BUTTON_NAMES);
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_BUTTON_NAMES);
 
 // include template specific icon name defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_ICON_NAMES)) {
@@ -603,7 +603,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_ICON_NAMES);
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_ICON_NAMES);
 
 // include template specific other image name defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_OTHER_IMAGES_NAMES)) {
@@ -611,10 +611,10 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_OTHER_IMAGES_NAMES);
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_OTHER_IMAGES_NAMES);
 
 // credit cards
-  require_once(DIR_FS_LANGUAGES . 'en/' . FILENAME_CREDIT_CARDS);
+  require_once(DIR_WS_LANGUAGES . 'en/' . FILENAME_CREDIT_CARDS);
 
 // include template specific whos_online sidebox defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_WHOS_ONLINE . '.php')) {
@@ -622,7 +622,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_WHOS_ONLINE . '.php');
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_WHOS_ONLINE . '.php');
 
 // include template specific meta tags defines
   if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/meta_tags.php')) {
@@ -630,7 +630,7 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   } else {
     $template_dir_select = '';
   }
-  require_once(DIR_FS_LANGUAGES . 'en/' . $template_dir_select . 'meta_tags.php');
+  require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . 'meta_tags.php');
 
 // END OF EXTERNAL LANGUAGE LINKS
 ?>

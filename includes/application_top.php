@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.24 2005/09/27 22:33:52 spiderr Exp $
+// $Id: application_top.php,v 1.25 2005/09/28 22:38:59 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -138,9 +138,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
     $template_dir_SELECT = '';
   }
 
-$langFile = DIR_FS_LANGUAGES . $template_dir_SELECT . $gBitCustomer->getLanguage() . '.php';
+$langFile = DIR_WS_LANGUAGES . $template_dir_SELECT . $gBitCustomer->getLanguage() . '.php';
 if( !file_exists( $langFile ) ) {
-	$langFile = DIR_FS_LANGUAGES . $template_dir_SELECT . 'en.php';
+	$langFile = DIR_WS_LANGUAGES . $template_dir_SELECT . 'en.php';
 }
 require( $langFile );
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.4 2005/09/27 22:33:51 spiderr Exp $
+//  $Id: option_name.php,v 1.5 2005/09/28 22:38:57 spiderr Exp $
 //
 ?>
 <?php
@@ -81,7 +81,7 @@ if ($_GET['action'] == "update_sort_order") {
 </head>
 <body onload="init()" marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
 <!-- header //-->
-<?php require(DIR_FS_INCLUDES . 'header.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
 <!-- body //-->
@@ -175,8 +175,8 @@ if ($_GET['action'] == "update_sort_order") {
 <!-- body_eof //-->
 
 <!-- footer //-->
-<?php require(DIR_FS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
 </body>
 </html>
-<?php require(DIR_FS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
