@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.9 2005/09/27 22:33:56 spiderr Exp $
+// $Id: main_template_vars.php,v 1.10 2005/10/06 21:48:24 spiderr Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -103,7 +103,7 @@
     $new_products_category_id = $current_category_id;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-    $tpl_page_body = 'tpl_index_categories.php';
+    $tpl_page_body = 'index_categories.php';
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //  } elseif ($category_depth == 'products' || isset($_REQUEST['manufacturers_id']) || isset($_REQUEST['music_genre_id'])) {
@@ -172,11 +172,11 @@ if (isset($_REQUEST['typefilter'])) {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  $tpl_page_body = 'tpl_index_product_list.php';
+  $tpl_page_body = 'index_product_list.php';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   } else {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    $tpl_page_body = 'tpl_index.php';
+    $tpl_page_body = 'index.php';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   }
 
