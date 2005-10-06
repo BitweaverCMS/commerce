@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.9 2005/10/06 19:50:06 spiderr Exp $
+// $Id: main_template_vars.php,v 1.10 2005/10/06 22:05:51 spiderr Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -37,7 +37,7 @@
 
   } else {
 
-    $tpl_page_body = '/tpl_product_music_info_display.php';
+    $tpl_page_body = '/product_music_info_display.php';
 
     $sql = "select * from " . TABLE_PRODUCT_MUSIC_EXTRA . "
             where products_id = '" . (int)$_GET['products_id'] . "'";

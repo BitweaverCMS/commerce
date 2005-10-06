@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.13 2005/10/06 19:50:06 spiderr Exp $
+// $Id: main_template_vars.php,v 1.14 2005/10/06 22:05:51 spiderr Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -37,7 +37,7 @@
 
   } else {
 
-    $tpl_page_body = 'tpl_product_info_display.php';
+    $tpl_page_body = 'product_info_display.php';
 
     $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . "
             set        products_viewed = products_viewed+1
