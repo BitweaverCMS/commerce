@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment_address.php,v 1.1 2005/10/06 19:38:27 spiderr Exp $
+// $Id: checkout_payment_address.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
@@ -56,7 +56,7 @@ if ($messageStack->size('checkout_address') > 0) {
 <tr>
 	<td class="plainBox" colspan="3">
 <fieldset>
-		<?php require( BITCOMMERCE_PKG_PATH.'templates/address_new.php'); ?>
+		<?php require( BITCOMMERCE_PKG_PATH.'pages/address_new/address_new.php'); ?>
 </fieldset>
 	</td>
 </tr>

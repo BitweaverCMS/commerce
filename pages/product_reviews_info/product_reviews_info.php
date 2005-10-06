@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_reviews_info.php,v 1.1 2005/10/06 19:38:30 spiderr Exp $
+// $Id: product_reviews_info.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -28,7 +28,7 @@
     <td align="center" valign="top" class="smallText">
       <?php
         if (zen_not_null($products_image)) {
-          require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+          require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images.php');
         }
 
         // more info in place of buy now

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.12 2005/09/27 22:33:57 spiderr Exp $
+// $Id: main_template_vars.php,v 1.13 2005/10/06 19:50:06 spiderr Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -79,7 +79,7 @@
     }
 
 // get attributes
-    require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_attributes.php');
+    require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_attributes.php');
 
 // if review must be approved or disabled do not show review
     $review_status = " and r.status = '1'";

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_music_info_display.php,v 1.1 2005/10/06 19:38:30 spiderr Exp $
+// $Id: product_music_info_display.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -85,7 +85,7 @@ if ($debug_on == '1') {
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
   if (zen_not_null($products_image)) {
-    require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images.php');
+    require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images.php');
   } else {
     echo '&nbsp;';
   }
@@ -237,7 +237,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
 <?php } ?>
 
 <?php require($template->get_template_dir('/tpl_modules_media_manager.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_modules_media_manager.php'); ?>
-<?php require(DIR_FS_MODULES . 'pages/' . $current_page_base . '/main_template_vars_images_additional.php'); ?>
+<?php require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images_additional.php'); ?>
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">

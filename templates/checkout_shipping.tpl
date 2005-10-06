@@ -13,7 +13,7 @@
 					{include file="bitpackage:bitcommerce/register_customer.tpl"}
 				{/if}
 
-				{php} require BITCOMMERCE_PKG_PATH."templates/address_new.php"; {/php}
+				{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
 
 				{if count( $addresses )}
 					<h3>{tr}...Or Choose From Your Address Book Entries{/tr}</h3>
