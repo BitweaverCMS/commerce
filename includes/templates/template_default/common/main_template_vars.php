@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.2 2005/08/04 07:02:05 spiderr Exp $
+// $Id: main_template_vars.php,v 1.3 2005/10/06 19:33:29 spiderr Exp $
 //
   if (file_exists(DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars.php')) {
     $body_code = DIR_WS_MODULES . 'pages/' . $current_page_base . '/main_template_vars.php';
   } else {
-    $body_code = DIR_FS_PAGES . $current_page_base . '/tpl_' . $_GET['main_page'] . '.php';
+    $body_code = DIR_FS_PAGES . $current_page_base . '/' . $_REQUEST['main_page'] . '.php';
   }
 ?>
