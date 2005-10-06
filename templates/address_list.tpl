@@ -14,8 +14,6 @@
 					{assign var=address value=$addresses[ix]}
 					{include file="bitpackage:bitcommerce/address_display.tpl"}
 				</fieldset>
-			</li>
-		</ul>
 			{/forminput}
 		</div>
 	{/section}
