@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_coupon_help.php,v 1.1 2005/07/08 06:12:30 spiderr Exp $
+// $Id: popup_coupon_help.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('HEADING_COUPON_HELP', 'Discount Coupon Help');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.7 2005/08/12 21:00:02 spiderr Exp $
+// $Id: featured_products.php,v 1.8 2005/10/06 21:01:49 spiderr Exp $
 //
 
 

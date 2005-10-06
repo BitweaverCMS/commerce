@@ -21,8 +21,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.6 2005/09/27 22:33:53 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.7 2005/10/06 21:01:49 spiderr Exp $
 //
+
+global $gBitDb, $order, $currencies;
+
 ?>
 <!-- shipping_estimator //-->
 <script language="javascript" type="text/javascript">
@@ -206,7 +209,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
     if ($_SESSION['customer_id']) {
       // logged in
       $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $total_count . '</td></tr>';
-      $addresses = $db->Execute("select `address_book_id`, `entry_city` as `city`, `entry_postcode` as `postcode`, `entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_country_id` as `country_id` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
+      $addresses = $gBitDb->Execute("select `address_book_id`, `entry_city` as `city`, `entry_postcode` as `postcode`, `entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_country_id` as `country_id` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       // only display addresses if more than 1
       if ($addresses->RecordCount() > 1){
         while (!$addresses->EOF) {
@@ -226,7 +229,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
                   ENTRY_COUNTRY .'</td><td colspan="2" class="main">'. zen_get_country_list('country_id', $selected_country,'style="width=200"') . '</td></tr>' . "\n\n";
 //add state zone_id
         $state_array[] = array('id' => '', 'text' => PULL_DOWN_SHIPPING_ESTIMATOR_SELECT);
-        $state_values = $db->Execute("select `zone_name`, `zone_id` from " . TABLE_ZONES . " where `zone_country_id` = '$selected_country' order by `zone_country_id` DESC, `zone_name`");
+        $state_values = $gBitDb->Execute("select `zone_name`, `zone_id` from " . TABLE_ZONES . " where `zone_country_id` = '$selected_country' order by `zone_country_id` DESC, `zone_name`");
         while (!$state_values->EOF) {
           $state_array[] = array('id' => $state_values->fields['zone_id'],
                                  'text' => $state_values->fields['zone_name']);

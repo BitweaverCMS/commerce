@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: supersaver.php,v 1.1 2005/09/01 22:01:10 spiderr Exp $
+// $Id: supersaver.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('MODULE_SHIPPING_SUPERSAVER_TEXT_TITLE', 'SuperSaver Shipping!');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: table.php,v 1.1 2005/07/08 06:12:34 spiderr Exp $
+// $Id: table.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('MODULE_SHIPPING_TABLE_TEXT_TITLE', 'Table Rate');

@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: http_client.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: http_client.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class httpClient {

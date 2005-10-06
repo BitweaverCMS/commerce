@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: audience.php,v 1.4 2005/08/31 22:36:58 spiderr Exp $
+//  $Id: audience.php,v 1.5 2005/10/06 21:01:45 spiderr Exp $
 //
 // This should be turned into a class...
 

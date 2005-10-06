@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.3 2005/09/27 22:33:58 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/10/06 21:01:56 spiderr Exp $
 //
 
 if( !empty( $_REQUEST['user_id'] ) ) {

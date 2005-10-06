@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.13 2005/08/12 23:42:39 spiderr Exp $
+// $Id: new_products.php,v 1.14 2005/10/06 21:01:49 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 

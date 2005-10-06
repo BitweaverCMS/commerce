@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_product_notifications.php,v 1.2 2005/07/30 15:59:40 spiderr Exp $
+// $Id: mod_product_notifications.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
 //
 	global $db, $gBitProduct;
 

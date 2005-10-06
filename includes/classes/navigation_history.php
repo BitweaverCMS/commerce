@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: navigation_history.php,v 1.2 2005/08/02 15:35:43 spiderr Exp $
+// $Id: navigation_history.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class navigationHistory {

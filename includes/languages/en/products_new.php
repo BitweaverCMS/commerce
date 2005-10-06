@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_new.php,v 1.2 2005/08/21 20:58:42 spiderr Exp $
+// $Id: products_new.php,v 1.3 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('NAVBAR_TITLE', 'New Products');

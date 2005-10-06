@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sidebox_move_product.php,v 1.2 2005/08/03 15:35:12 spiderr Exp $
+//  $Id: sidebox_move_product.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
         $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_MOVE_PRODUCT . '</b>');
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.1 2005/07/08 05:56:40 spiderr Exp $
+//  $Id: option_name.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
 //
   define('HEADING_TITLE', 'Option Name Sort Order');
   define('TEXT_EDIT_ALL', 'Editing All Option Names');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: document_general.php,v 1.5 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: document_general.php,v 1.6 2005/10/06 21:01:43 spiderr Exp $
 //
 
   require('includes/application_top.php');

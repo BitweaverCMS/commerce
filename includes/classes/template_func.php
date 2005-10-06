@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: template_func.php,v 1.3 2005/08/04 07:01:00 spiderr Exp $
+// $Id: template_func.php,v 1.4 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class template_func {

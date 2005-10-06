@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: extra_definitions.php,v 1.3 2005/08/31 22:36:59 spiderr Exp $
+// $Id: extra_definitions.php,v 1.4 2005/10/06 21:01:49 spiderr Exp $
 //
 
 // Set current template

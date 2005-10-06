@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: jscript_main.php,v 1.1 2005/07/05 05:59:12 bitweaver Exp $
+// $Id: jscript_main.php,v 1.2 2005/10/06 21:01:55 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>

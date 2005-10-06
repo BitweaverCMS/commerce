@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletter.php,v 1.2 2005/08/03 15:35:13 spiderr Exp $
+//  $Id: newsletter.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class newsletter {

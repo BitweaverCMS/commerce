@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: dist-configure.php,v 1.2 2005/07/26 12:31:51 spiderr Exp $
+// $Id: dist-configure.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
 
 // Define the webserver and path parameters

@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sniffer.php,v 1.2 2005/07/05 16:44:05 spiderr Exp $
+// $Id: sniffer.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
 /**
  * Sniffer Class.

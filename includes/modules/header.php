@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header.php,v 1.1 2005/07/05 05:59:09 bitweaver Exp $
+// $Id: header.php,v 1.2 2005/10/06 21:01:49 spiderr Exp $
 //
 
 // check if the 'install' directory exists, and warn of its existence

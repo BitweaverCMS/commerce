@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: music_type_filenames.php,v 1.1 2005/07/05 06:00:04 bitweaver Exp $
+//  $Id: music_type_filenames.php,v 1.2 2005/10/06 21:01:45 spiderr Exp $
 //
 
   define('FILENAME_RECORD_ARTISTS', 'record_artists');

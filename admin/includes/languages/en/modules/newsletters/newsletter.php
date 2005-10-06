@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletter.php,v 1.1 2005/07/08 06:03:10 spiderr Exp $
+//  $Id: newsletter.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
 //
 
 define('TEXT_COUNT_CUSTOMERS', 'Customers receiving newsletter: %s');

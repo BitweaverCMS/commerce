@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: phplot.php,v 1.1 2005/07/05 06:00:02 bitweaver Exp $
+//  $Id: phplot.php,v 1.2 2005/10/06 21:01:44 spiderr Exp $
 
 /*
   PHPLOT 4.4.6 Copyright (c) 1998-2001 Afan Ottenheimer

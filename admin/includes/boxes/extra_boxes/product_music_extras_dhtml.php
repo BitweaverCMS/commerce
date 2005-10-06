@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_music_extras_dhtml.php,v 1.2 2005/08/03 15:35:10 spiderr Exp $
+//  $Id: product_music_extras_dhtml.php,v 1.3 2005/10/06 21:01:44 spiderr Exp $
 //
   $za_contents[] = array('text' => BOX_CATALOG_RECORD_ARTISTS, 'link' => zen_href_link_admin(FILENAME_RECORD_ARTISTS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_RECORD_COMPANY, 'link' => zen_href_link_admin(FILENAME_RECORD_COMPANY, '', 'NONSSL'));

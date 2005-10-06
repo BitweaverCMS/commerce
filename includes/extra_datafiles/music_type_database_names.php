@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: music_type_database_names.php,v 1.3 2005/07/26 12:31:52 spiderr Exp $
+// $Id: music_type_database_names.php,v 1.4 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('TABLE_RECORD_ARTISTS', '`'.BITCOMMERCE_DB_PREFIX . 'record_artists`');

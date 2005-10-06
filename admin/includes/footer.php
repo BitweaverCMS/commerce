@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: footer.php,v 1.2 2005/08/13 16:36:09 spiderr Exp $
+//  $Id: footer.php,v 1.3 2005/10/06 21:01:44 spiderr Exp $
 //
 
 $gBitSmarty->assign_by_ref( 'bitcommerceAdmin', ob_get_contents() );

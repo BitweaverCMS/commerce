@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.15 2005/10/06 19:53:38 spiderr Exp $
+// $Id: index.php,v 1.16 2005/10/06 21:01:41 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -26,6 +26,10 @@
 	require_once('../bit_setup_inc.php');
 
 	require_once('includes/application_top.php');
+
+	global $gCommercePopupTemplate;
+
+
 // We need to buffer output
 ob_start();
 
@@ -112,7 +116,10 @@ ob_start();
 $gBitSmarty->assign_by_ref( 'bitcommerceCenter', ob_get_contents() );
 ob_end_clean();
 
-global $gTikiSystem;
-$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl' );
+if( !empty( $gCommercePopupTemplate ) ) {
+	$gBitSmarty->display( $gCommercePopupTemplate );
+} else {
+	$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl' );
+}
 
 ?>

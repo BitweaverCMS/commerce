@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_bottom.php,v 1.2 2005/07/16 15:17:38 spiderr Exp $
+// $Id: application_bottom.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
 //
 
 // close session (store variables)
@@ -28,9 +28,12 @@
   // $db->close();
 
 	global $gBitSystem;
-	$title = META_TAG_TITLE;
 	if( empty( $title ) ) {
-		$title = ucfirst( BITCOMMERCE_PKG_DIR );
+		if( defined( 'META_TAG_TITLE' ) ) {
+			$title = META_TAG_TITLE;
+		} elseif( empty( $title ) ) {
+			$title = ucfirst( BITCOMMERCE_PKG_DIR );
+		}
 	}
 	$gBitSystem->setBrowserTitle( $title );
 

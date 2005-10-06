@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.1 2005/07/08 06:12:34 spiderr Exp $
+// $Id: ups.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
 //
 
 define('MODULE_SHIPPING_UPS_TEXT_TITLE', 'United Parcel Service');

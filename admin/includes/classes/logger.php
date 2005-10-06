@@ -18,7 +18,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-//  $Id: logger.php,v 1.1 2005/07/05 06:00:03 bitweaver Exp $
+//  $Id: logger.php,v 1.2 2005/10/06 21:01:44 spiderr Exp $
 //
 
   class logger {

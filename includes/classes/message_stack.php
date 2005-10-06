@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: message_stack.php,v 1.4 2005/08/19 18:51:00 spiderr Exp $
+// $Id: message_stack.php,v 1.5 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class messageStack extends tableBox {

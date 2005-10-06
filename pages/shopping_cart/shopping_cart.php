@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.1 2005/10/06 19:38:31 spiderr Exp $
+// $Id: shopping_cart.php,v 1.2 2005/10/06 21:01:55 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -270,7 +270,7 @@
 ?>
   <tr>
     <td colspan="3"><br />
-       <?php echo '<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_SHIPPING_ESTIMATOR,'&style=popup&no_force=1&no_modules=1') . '\')">' . zen_image_button(BUTTON_IMAGE_SHIPPING_ESTIMATOR, BUTTON_SHIPPING_ESTIMATOR_ALT) . '</a>'; ?>
+       <?php echo '<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_SHIPPING_ESTIMATOR,'&site_style=basic') . '\')">' . zen_image_button(BUTTON_IMAGE_SHIPPING_ESTIMATOR, BUTTON_SHIPPING_ESTIMATOR_ALT) . '</a>'; ?>
     </td>
   </tr>
 <?php

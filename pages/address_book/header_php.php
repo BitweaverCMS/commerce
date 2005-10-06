@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
+// $Id: header_php.php,v 1.3 2005/10/06 21:01:50 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();

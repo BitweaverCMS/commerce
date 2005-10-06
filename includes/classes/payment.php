@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.4 2005/08/31 22:36:59 spiderr Exp $
+// $Id: payment.php,v 1.5 2005/10/06 21:01:47 spiderr Exp $
 //
 
   class payment {

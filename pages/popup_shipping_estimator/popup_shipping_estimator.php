@@ -17,23 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_shipping_estimator.php,v 1.1 2005/10/06 19:38:29 spiderr Exp $
+// $Id: popup_shipping_estimator.php,v 1.2 2005/10/06 21:01:53 spiderr Exp $
 //
-bt();
-?>
 
-<body onload="resize();">
-<table width="96%" border="0" cellpadding="2" cellspacing ="2" align="center" class="popupshippingestimator">
-  <tr>
-    <td class="main" align="right"><?php echo '<a href="javascript:window.close()">' . TEXT_CURRENT_CLOSE_WINDOW . '</a>'; ?></td>
-  </tr>
-  <tr>
-    <td>
-      <?php require(DIR_FS_MODULES . 'shipping_estimator.php'); ?>
-    </td>
-  </tr>
-  <tr>
-    <td class="main" align="right"><?php echo '<a href="javascript:window.close()">' . TEXT_CURRENT_CLOSE_WINDOW . '</a>'; ?></td>
-  </tr>
-</table>
-</body>
+global $gCommercePopupTemplate;
+$gCommercePopupTemplate = 'bitpackage:bitcommerce/popup_shipping_estimator.tpl';
+$title = "Shipping Estimate";
+
+?>

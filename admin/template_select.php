@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: template_select.php,v 1.5 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: template_select.php,v 1.6 2005/10/06 21:01:43 spiderr Exp $
 //
   require('includes/application_top.php');
 // get an array of template info
