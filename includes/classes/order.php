@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.17 2005/08/24 22:42:10 spiderr Exp $
+// $Id: order.php,v 1.18 2005/10/08 20:37:33 spiderr Exp $
 //
 
   class order {
@@ -240,9 +240,7 @@
 
 			  $customer_address = $db->Execute($customer_address_query);
 
-			  $shipping_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
-												ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
-												ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
+			  $shipping_address_query = "select ab.*, z.`zone_name`, ab.`entry_country_id`,
 												c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
 												c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
 										 from " . TABLE_ADDRESS_BOOK . " ab
@@ -253,9 +251,7 @@
 
 			  $shipping_address = $db->Execute($shipping_address_query);
 
-			  $billing_address_query = "select ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_company`,
-											   ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`,
-											   ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, ab.`entry_country_id`,
+			  $billing_address_query = "select ab.*, z.`zone_name`, ab.`entry_country_id`,
 											   c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
 											   c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
 										from " . TABLE_ADDRESS_BOOK . " ab
@@ -388,6 +384,7 @@
                               'zone_id' => $shipping_address->fields['entry_zone_id'],
                               'country' => array('id' => $shipping_address->fields['countries_id'], 'title' => $shipping_address->fields['countries_name'], 'iso_code_2' => $shipping_address->fields['countries_iso_code_2'], 'iso_code_3' => $shipping_address->fields['countries_iso_code_3']),
                               'country_id' => $shipping_address->fields['entry_country_id'],
+                              'telephone' => $shipping_address->fields['entry_telephone'],
                               'format_id' => $shipping_address->fields['address_format_id']);
 
       $this->billing = array('firstname' => $billing_address->fields['entry_firstname'],
@@ -401,6 +398,7 @@
                              'zone_id' => $billing_address->fields['entry_zone_id'],
                              'country' => array('id' => $billing_address->fields['countries_id'], 'title' => $billing_address->fields['countries_name'], 'iso_code_2' => $billing_address->fields['countries_iso_code_2'], 'iso_code_3' => $billing_address->fields['countries_iso_code_3']),
                              'country_id' => $billing_address->fields['entry_country_id'],
+                             'telephone' => $billing_address->fields['entry_telephone'],
                              'format_id' => $billing_address->fields['address_format_id']);
 
       $index = 0;

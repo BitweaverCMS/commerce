@@ -8,5 +8,6 @@
 		{$address.suburb}<br/>
 	{/if}
 	{$address.city}, {$address.state} {$address.postcode}<br/>
-	{$address.countries_iso_code_3}
+	{$address.country.iso_code_3}<br/>
+	{$address.telephone}
 </div>
