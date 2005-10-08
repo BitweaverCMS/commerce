@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.2 2005/10/06 21:01:51 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.3 2005/10/08 20:24:58 spiderr Exp $
 //
   require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -73,7 +73,6 @@
 			$_SESSION['shipping'] = '';
 	}
 
-//vd( $_SESSION );
   require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 $gBitSmarty->assign_by_ref( 'order', $order );
@@ -134,6 +133,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			}
 		}
 		if( empty( $_REQUEST['address'] ) || (zen_not_null( $_REQUEST['firstname'] ) && zen_not_null( $_REQUEST['lastname'] ) && zen_not_null( $_REQUEST['street_address'] )) ) {
+			unset( $_REQUEST['address'] );
 			if( $gBitUser->isRegistered() ) {
 				$_REQUEST['customers_id'] = $gBitUser->mUserId;
 			}
@@ -146,6 +146,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			}
 		} elseif( !empty( $_REQUEST['address'] ) ) {
 			$_SESSION['shipping'] = $_REQUEST['address'];
+
 			$reset_shipping = false;
 			if( !empty( $_SESSION['sendto'] ) && $_SESSION['sendto'] != $_REQUEST['address'] && !empty( $_SESSION['shipping'] ) ) {
 				$reset_shipping = true;
@@ -161,9 +162,11 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 					$gBitCustomer->setDefaultAddress( $_REQUEST['address'] );
 				}
 				$_SESSION['sendto'] = $_REQUEST['address'];
-// 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
 				$_SESSION['sendto'] = '';
+			}
+			if ($reset_shipping == true) {
+ 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			}
 		} elseif( !empty( $_SESSION['customer_default_address_id'] ) ) {
 			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];

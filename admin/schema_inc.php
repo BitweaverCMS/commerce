@@ -73,7 +73,8 @@ BITCOMMERCE_DB_PREFIX.'address_book' => "
   entry_city C(64),
   entry_state C(64),
   entry_country_id I4,
-  entry_zone_id I4
+  entry_zone_id I4,
+  entry_telephone C(32)
   CONSTRAINT ', CONSTRAINT addr_book_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
   			  , CONSTRAINT addr_book_zone_ref FOREIGN KEY ( entry_zone_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."zones( zone_id )
   			  , CONSTRAINT addr_book_country_ref FOREIGN KEY ( entry_country_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."countries( countries_id )'

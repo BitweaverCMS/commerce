@@ -66,7 +66,7 @@
 {/if}
 <div class="row">
 	{formfeedback error=$errors.postcode}
-	{formlabel label="Post Code:" for=""}
+	{formlabel label="Postal Code" for=""}
 	{forminput}
 		<input type="text" maxlength="255" name="postcode" value="{$address.entry_postcode|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
 	{/forminput}
@@ -78,6 +78,13 @@
 		{$countryPullDown}<acronym title="{tr}Required{/tr}">*</acronym>
 	{/forminput}
 
+</div>
+<div class="row">
+	{formfeedback error=$errors.telephone}
+	{formlabel label="Telephone" for=""}
+	{forminput}
+		<input type="text" maxlength="32" name="telephone" value="{$address.entry_telephone|escape:"htmlall"}" />
+	{/forminput}
 </div>
 {if $primaryCheck}
 <div class="row">

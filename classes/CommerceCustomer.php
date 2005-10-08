@@ -131,6 +131,14 @@
 				$pParamHash['address_store']['entry_city'] = $pParamHash['city'];
 			}
 
+			if( !empty( $pParamHash['telephone'] ) && strlen( $pParamHash['telephone'] ) < ENTRY_TELEPHONE_MIN_LENGTH ) {
+				$errorHash['telephone'] = tra( 'Your City must contain a minimum of ' . ENTRY_TELEPHONE_MIN_LENGTH . ' characters.' );
+			} elseif( !empty( $pParamHash['telephone'] ) ) {
+				$pParamHash['address_store']['entry_telephone'] = $pParamHash['telephone'];
+			} else {
+				$pParamHash['address_store']['entry_telephone'] = NULL;
+			}
+
 			if( ACCOUNT_GENDER == 'true' && !empty( $pParamHash['gender'] ) ) {
 				$pParamHash['address_store']['entry_gender'] = $pParamHash['gender'];
 			}
