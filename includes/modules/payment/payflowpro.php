@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.6 2005/09/24 15:54:27 spiderr Exp $
+// $Id: payflowpro.php,v 1.7 2005/10/09 04:45:09 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -62,11 +62,11 @@
 
 // class methods
     function update_payflowpro_status() {
-      global $order, $db;
+      global $order, $gBitDb;
 
       if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_PAYFLOWPRO_ZONE > 0) ) {
         $check_flag = false;
-        $check = $db->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYFLOWPRO_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYFLOWPRO_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -243,7 +243,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 ////////////////////////////////////////////////////
 
     function before_process() {
-		global $_GET, $messageStack, $gDebug, $_POST, $response, $db, $order;
+		global $_GET, $messageStack, $gDebug, $_POST, $response, $gBitDb, $gBitUser, $order;
 
 		$order->info['cc_number'] = $_POST['cc_number'];
 		$order->info['cc_expires'] = $_POST['cc_expires'];
@@ -251,7 +251,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		$order->info['cc_owner'] = $_POST['cc_owner'];
 		$order->info['cc_cvv'] = $_POST['cc_cvv'];
 		// Calculate the next expected order id
-		$last_order_id = $db->Execute("select * from " . TABLE_ORDERS . " order by orders_id desc limit 1");
+		$last_order_id = $gBitDb->Execute("select * from " . TABLE_ORDERS . " order by orders_id desc limit 1");
 		$new_order_id = $last_order_id->fields['orders_id'];
 		$new_order_id = ($new_order_id + 1);
 
@@ -353,8 +353,10 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 
 			$this->result_list = $result_list;
 
-			//replace middle CC num with XXXX
-	        $order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
+			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
+				//replace middle CC num with XXXX
+				$order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
+			}
 
 
 			$message .= DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30 ';
@@ -366,10 +368,10 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 			if ($debug=='ON') {
 				zen_mail(STORE_NAME.'payflow pro debug - pre pfpro_process()', EMAIL_FROM, 'payflow pro debug codes' , $message, STORE_NAME, EMAIL_FROM);
 			}
-
 			//if ($result['RESULT'] != "0")
 			if ($this->result != "0") {
-				$db->Execute("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values (NULL,'" .$this->pnref. "', '". $this->result . "','-','failed for cust_id: ". $gBitUser->mUserId." - ".$order->customer['email_address'].":".$codeHash['RESPMSG']."','".number_format($order->info['total'], 2,'.','')."',now() )");
+				$gBitDb->RollbackTrans();
+				$gBitDb->query( "insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( NULL, ?, ?, ?, '-', ?, ?, now() )", array(  $gBitUser->mUserId, $this->pnref, $this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$codeHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
 				$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$codeHash['RESPMSG'],'error');
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
 			}
@@ -416,9 +418,9 @@ function placeholder_for_so_call(){
 
 
 	function after_process() {
-		global $insert_id, $order, $db, $result;
-		$db->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . " (comments, orders_id, orders_status_id, `date_added`) values ('Credit Card processed', '". (int)$insert_id . "','1', now() )");
-		$db->Execute("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ('". (int)$insert_id . "','" .$this->pnref. "', '". $this->result . "','-', 'success for cust_id:".$order->customer['email_address'].":".urldecode( $this->result_list )."','".number_format($order->info['total'], 2,'.','')."',now() )");
+		global $insert_id, $order, $gBitDb, $gBitUser, $result;
+		$gBitDb->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . " (comments, orders_id, orders_status_id, `date_added`) values ('Credit Card processed', '". (int)$insert_id . "','1', now() )");
+		$gBitDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, now() )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->result_list ), number_format( $order->info['total'], 2, '.', '' ) ) );
 		return false;
 	}
 
@@ -443,9 +445,9 @@ function placeholder_for_so_call(){
 
 
     function check() {
-      global $db;
+      global $gBitDb;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYFLOWPRO_STATUS'");
+        $check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYFLOWPRO_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;
@@ -457,18 +459,19 @@ function placeholder_for_so_call(){
 ////////////////////////////////////////////////////
 
  function install() {
-  global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PartnerId', 'VeriSign Your partner ID is provided to you by the authorized VeriSign Reseller who signed you up for the PayFlow service. If you signed up yourself, use <em>VeriSign</em>.', '6', '6', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Payment Zone', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '8', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Host Server OS', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'Linux/Unix', 'Choose your server OS. <br>To use <strong>Linux/Unix</strong>, you need to compile the --with-pfpro support into PHP from the Verisign SDK.<br />To use <strong>Windows</strong>, you need to install the COM objects from the Verisign SDK.', '6', '10', 'zen_cfg_select_option(array(\'Linux/Unix\', \'Windows\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Certificate Path', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH', '" . DIR_FS_CATALOG . "includes/modules/payment/payflowpro', 'What is the full path to your PFPRO CERT files?<br />Sometimes is: /usr/local/payflowpro/certs<br />but depends on your host.', '6', '11', now())");
+  global $gBitDb;
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PartnerId', 'VeriSign Your partner ID is provided to you by the authorized VeriSign Reseller who signed you up for the PayFlow service. If you signed up yourself, use <em>VeriSign</em>.', '6', '6', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Payment Zone', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '8', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Host Server OS', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'Linux/Unix', 'Choose your server OS. <br>To use <strong>Linux/Unix</strong>, you need to compile the --with-pfpro support into PHP from the Verisign SDK.<br />To use <strong>Windows</strong>, you need to install the COM objects from the Verisign SDK.', '6', '11', 'zen_cfg_select_option(array(\'Linux/Unix\', \'Windows\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Certificate Path', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH', '" . DIR_FS_CATALOG . "includes/modules/payment/payflowpro', 'What is the full path to your PFPRO CERT files?<br />Sometimes is: /usr/local/payflowpro/certs<br />but depends on your host.', '6', '12', now())");
     }
 
 ////////////////////////////////////////////////////
@@ -477,14 +480,14 @@ function placeholder_for_so_call(){
 ////////////////////////////////////////////////////
 
     function remove() {
-     global $db;
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in ('" . implode("', '", $this->keys()) . "')");
+     global $gBitDb;
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in ('" . implode("', '", $this->keys()) . "')");
     }
 ////////////////////////////////////////////////////
 // Create our Key - > Value Arrays
 ////////////////////////////////////////////////////
     function keys() {
-      return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH');
+      return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH');
 
 
     }

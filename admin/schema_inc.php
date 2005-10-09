@@ -657,6 +657,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   delivery_postcode C(10),
   delivery_state C(64),
   delivery_country C(64),
+  delivery_telephone C(32),
   delivery_address_format_id I4,
   billing_name C(128),
   billing_company C(128),
@@ -666,6 +667,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   billing_postcode C(10),
   billing_state C(64),
   billing_country C(64),
+  billing_telephone C(32),
   billing_address_format_id I2,
   payment_method C(128),
   payment_module_code C(32),
@@ -1031,14 +1033,16 @@ BITCOMMERCE_DB_PREFIX.'paypal_pment_stat_his' => "
 ",
 
 BITCOMMERCE_DB_PREFIX.'pubs_credit_card_log' => "
-  orders_id I4 NOTNULL ,
+  orders_id I4 ,
+  customers_id I4 NOTNULL ,
   ref_id C(64) NOTNULL ,
   trans_result C(250) NOTNULL,
   trans_auth_code C(30) NOTNULL,
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
-  CONSTRAINT ', CONSTRAINT pubs_cc_log_order_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  CONSTRAINT ', CONSTRAINT pubs_cc_log_order_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
+  			  , CONSTRAINT pubs_cc_log_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
 ",
 
 );
