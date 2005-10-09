@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.19 2005/10/09 04:51:02 spiderr Exp $
+// $Id: order.php,v 1.20 2005/10/09 19:47:31 spiderr Exp $
 //
 
   class order {
@@ -209,7 +209,7 @@
     }
 
     function cart() {
-      global $db, $currencies, $gBitUser;
+      global $db, $currencies, $gBitUser, $gBitCustomer;
 
       $this->content_type = $_SESSION['cart']->get_content_type();
 
@@ -256,7 +256,7 @@
       switch (STORE_PRODUCT_TAX_BASIS) {
         case 'Shipping':
 
-          $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
+          $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`, ab.`entry_state`
                                 from " . TABLE_ADDRESS_BOOK . " ab
                                 left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
@@ -265,7 +265,7 @@
         break;
         case 'Billing':
 
-          $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
+          $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`, ab.`entry_state`
                                 from " . TABLE_ADDRESS_BOOK . " ab
                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
@@ -275,13 +275,13 @@
         case 'Store':
           if ($billing_address->fields['entry_zone_id'] == STORE_ZONE) {
 
-            $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
+            $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`, ab.`entry_state`
                                   from " . TABLE_ADDRESS_BOOK . " ab
                                   left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                   where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                   and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
           } else {
-            $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id
+            $tax_address_query = "select ab.entry_country_id, ab.entry_zone_id, ab.`entry_state`
                                   from " . TABLE_ADDRESS_BOOK . " ab
                                   left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                   where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
@@ -289,6 +289,14 @@
           }
           $tax_address = $db->Execute($tax_address_query);
      }
+
+	if( !empty( $tax_address->fields['entry_country_id'] ) && empty( $tax_address->fields['entry_zone_id'] ) ) {
+		if( $gBitCustomer->getZoneCount( $tax_address->fields['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $tax_address->fields['entry_state'], $tax_address->fields['entry_country_id'] )) ) {
+			$tax_address->fields['entry_zone_id'] = $zoneId;
+		}
+		// maybe we have some newly updated zones and outdated address_book entries
+	}
+
 
 
       $class =& $_SESSION['payment'];
@@ -396,6 +404,8 @@
         $this->products[$index] = $products[$i];
         $this->products[$index]['final_price'] = $products[$i]['price'] + $_SESSION['cart']->attributes_price($products[$i]['id']);
         $this->products[$index]['onetime_charges'] = $_SESSION['cart']->attributes_price_onetime_charges($products[$i]['id'], $products[$i]['quantity']);
+        $this->products[$index]['tax'] = zen_get_tax_rate( $products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
+        $this->products[$index]['tax_description'] = zen_get_tax_description( $products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
 
         if ($products[$i]['attributes']) {
           $subindex = 0;

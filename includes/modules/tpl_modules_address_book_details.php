@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_address_book_details.php,v 1.3 2005/08/24 02:52:18 lsces Exp $
+// $Id: tpl_modules_address_book_details.php,v 1.4 2005/10/09 19:47:32 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -29,7 +29,7 @@
     if (isset($gender)) {
       $male = ($gender == 'm') ? true : false;
     } else {
-      $male = ($entry->fields['entry_gender'] == 'm') ? true : false;
+      $male = ($entry['entry_gender'] == 'm') ? true : false;
     }
     $female = !$male;
 ?>
@@ -42,11 +42,11 @@
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_FIRST_NAME; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('firstname', $entry->fields['entry_firstname']) . '&nbsp;' . (zen_not_null(ENTRY_FIRST_NAME_TEXT) ? '<span class="inputRequirement">' . ENTRY_FIRST_NAME_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('firstname', $entry['entry_firstname']) . '&nbsp;' . (zen_not_null(ENTRY_FIRST_NAME_TEXT) ? '<span class="inputRequirement">' . ENTRY_FIRST_NAME_TEXT . '</span>': ''); ?></td>
   </tr>
   <tr>
     <td class="main"><?php echo ENTRY_LAST_NAME; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('lastname', $entry->fields['entry_lastname']) . '&nbsp;' . (zen_not_null(ENTRY_LAST_NAME_TEXT) ? '<span class="inputRequirement">' . ENTRY_LAST_NAME_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('lastname', $entry['entry_lastname']) . '&nbsp;' . (zen_not_null(ENTRY_LAST_NAME_TEXT) ? '<span class="inputRequirement">' . ENTRY_LAST_NAME_TEXT . '</span>': ''); ?></td>
   </tr>
   <tr>
     <td colspan="2" height="10px"></td>
@@ -56,7 +56,7 @@
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_COMPANY; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('company', $entry->fields['entry_company']) . '&nbsp;' . (zen_not_null(ENTRY_COMPANY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COMPANY_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('company', $entry['entry_company']) . '&nbsp;' . (zen_not_null(ENTRY_COMPANY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COMPANY_TEXT . '</span>': ''); ?></td>
   </tr>
   <tr>
     <td colspan="2" height="10px"></td>
@@ -66,21 +66,21 @@
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_STREET_ADDRESS; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('street_address', $entry->fields['entry_street_address']) . '&nbsp;' . (zen_not_null(ENTRY_STREET_ADDRESS_TEXT) ? '<span class="inputRequirement">' . ENTRY_STREET_ADDRESS_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('street_address', $entry['entry_street_address']) . '&nbsp;' . (zen_not_null(ENTRY_STREET_ADDRESS_TEXT) ? '<span class="inputRequirement">' . ENTRY_STREET_ADDRESS_TEXT . '</span>': ''); ?></td>
   </tr>
 <?php
   if (ACCOUNT_SUBURB == 'true') {
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_SUBURB; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('suburb', $entry->fields['entry_suburb']) . '&nbsp;' . (zen_not_null(ENTRY_SUBURB_TEXT) ? '<span class="inputRequirement">' . ENTRY_SUBURB_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('suburb', $entry['entry_suburb']) . '&nbsp;' . (zen_not_null(ENTRY_SUBURB_TEXT) ? '<span class="inputRequirement">' . ENTRY_SUBURB_TEXT . '</span>': ''); ?></td>
   </tr>
 <?php
   }
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_CITY; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('city', $entry->fields['entry_city']) . '&nbsp;' . (zen_not_null(ENTRY_CITY_TEXT) ? '<span class="inputRequirement">' . ENTRY_CITY_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('city', $entry['entry_city']) . '&nbsp;' . (zen_not_null(ENTRY_CITY_TEXT) ? '<span class="inputRequirement">' . ENTRY_CITY_TEXT . '</span>': ''); ?></td>
   </tr>
 <?php
   if (ACCOUNT_STATE == 'true') {
@@ -106,7 +106,7 @@
         echo zen_draw_input_field('state');
       }
     } else {
-      echo zen_draw_input_field('state', zen_get_zone_name($entry->fields['entry_country_id'], $entry->fields['entry_zone_id'], $entry->fields['entry_state']));
+      echo zen_draw_input_field('state', zen_get_zone_name($entry['entry_country_id'], $entry['entry_zone_id'], $entry['entry_state']));
     }
 
     if (zen_not_null(ENTRY_STATE_TEXT)) echo '&nbsp;<span class="inputRequirement">' . ENTRY_STATE_TEXT . '</span>';
@@ -118,11 +118,15 @@
 ?>
   <tr>
     <td class="main"><?php echo ENTRY_POST_CODE; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('postcode', $entry->fields['entry_postcode']) . '&nbsp;' . (zen_not_null(ENTRY_POST_CODE_TEXT) ? '<span class="inputRequirement">' . ENTRY_POST_CODE_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('postcode', $entry['entry_postcode']) . '&nbsp;' . (zen_not_null(ENTRY_POST_CODE_TEXT) ? '<span class="inputRequirement">' . ENTRY_POST_CODE_TEXT . '</span>': ''); ?></td>
   </tr>
   <tr>
     <td class="main"><?php echo ENTRY_COUNTRY; ?></td>
-    <td class="main"><?php echo zen_get_country_list('country_id', $entry->fields['entry_country_id']) . '&nbsp;' . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?></td>
+    <td class="main"><?php echo zen_get_country_list('country_id', $entry['entry_country_id']) . '&nbsp;' . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="inputRequirement">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?></td>
+  </tr>
+  <tr>
+    <td class="main"><?php echo tra( 'Telephone' ); ?></td>
+    <td class="main"><?php echo zen_draw_input_field('telephone', $entry['entry_telephone']) ?></td>
   </tr>
 <?php
   if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {

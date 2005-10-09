@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/09/27 22:33:54 spiderr Exp $
+// $Id: header_php.php,v 1.9 2005/10/09 19:47:32 spiderr Exp $
 //
+
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
@@ -52,18 +53,8 @@
   }
 
   if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
-    $entry_query = "select entry_gender, entry_company, entry_firstname, entry_lastname,
-                           entry_street_address, entry_suburb, entry_postcode, entry_city,
-                           entry_state, entry_zone_id, entry_country_id
-                    from   " . TABLE_ADDRESS_BOOK . "
-                    where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                    and    address_book_id = '" . (int)$_GET['edit'] . "'";
-
-    $entry = $db->Execute($entry_query);
-
-    if ($entry->RecordCount()<=0) {
+	if( !($entry = $gBitCustomer->getAddress( $_GET['edit'] )) ) {
       $messageStack->add_session('addressbook', ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY);
-
       zen_redirect(zen_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL'));
     }
 

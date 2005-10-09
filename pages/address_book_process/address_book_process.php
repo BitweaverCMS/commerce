@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_book_process.php,v 1.1 2005/10/06 19:38:26 spiderr Exp $
+// $Id: address_book_process.php,v 1.2 2005/10/09 19:47:32 spiderr Exp $
 //
+
 ?>
 <?php if (!isset($_GET['delete'])) echo zen_draw_form('addressbook', zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, (isset($_GET['edit']) ? 'edit=' . $_GET['edit'] : ''), 'SSL'), 'post', 'onsubmit="return check_form(addressbook);"'); ?>
   <table border="0" width="100%" cellspacing="2" cellpadding="2">

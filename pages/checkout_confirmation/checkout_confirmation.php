@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.1 2005/10/06 19:38:27 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.2 2005/10/09 19:47:32 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -106,7 +106,7 @@
 
     echo '        </td>' . "\n";
 
-    if ( !empty( $order->info['tax_groups'] ) ) {
+    if ( !empty( $order->info['tax_groups'] ) && sizeof($order->info['tax_groups']) > 1) {
 		echo '            <td class="main" valign="top" align="right">';
 		if( !empty( $order->products[$i]['tax'] ) ) {
 			echo zen_display_tax_value($order->products[$i]['tax']) . '%';

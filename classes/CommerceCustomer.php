@@ -156,20 +156,10 @@
 			} else {
 				$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 				if (ACCOUNT_STATE == 'true') {
-					$zone_id = 0;
-					$check_query = "select count(*) as `total`
-									from " . TABLE_ZONES . "
-									where `zone_country_id` = ?";
-
-					;
-
-					if( $check = $this->mDb->query( $check_query , array( $pParamHash['country_id'] ) ) ) {
-						$zone_query = "select distinct zone_id from " . TABLE_ZONES . "
-									   where zone_country_id = ? and (zone_name like ? OR zone_code like ?)";
-
-						if ( $rs = $this->mDb->query($zone_query, array( $pParamHash['country_id'], strtoupper( $pParamHash['state'] ), strtoupper( $pParamHash['state'] ) ) ) ) {
+					if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
+						if( $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 							$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
-							$pParamHash['address_store']['entry_zone_id'] = $rs->fields['zone_id'];
+							$pParamHash['address_store']['entry_zone_id'] = $zoneId;
 						} else {
 							$errorHash['state'] = tra( 'Please select a state from the States pull down menu.' );
 						}
@@ -319,6 +309,18 @@
 				}
 			}
 			return( $ret );
+		}
+
+		function getZoneCount( $pCountryId ) {
+			$query = "SELECT count(*) as `total` from " . TABLE_ZONES . " WHERE `zone_country_id` = ?";
+			return( $this->mDb->getOne( $query, array( $pCountryId ) ) );
+		}
+
+		function getZoneId( $pZone, $pCountryId ) {
+			$zone_query =  "SELECT distinct `zone_id`
+							FROM " . TABLE_ZONES . "
+							WHERE `zone_country_id` = ? AND (UPPER(`zone_name`) = ? OR UPPER(`zone_code`) = ?)";
+			return( $this->mDb->getOne($zone_query, array( $pCountryId, strtoupper( $pZone ), strtoupper( $pZone ) ) ) );
 		}
 
 		function getLanguage() {
