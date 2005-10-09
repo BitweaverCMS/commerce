@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.18 2005/10/08 20:37:33 spiderr Exp $
+// $Id: order.php,v 1.19 2005/10/09 04:51:02 spiderr Exp $
 //
 
   class order {
@@ -43,18 +43,7 @@
 
       $order_id = zen_db_prepare_input($order_id);
 
-      $order_query = "select customers_id, customers_name, customers_company,
-                             customers_street_address, customers_suburb, customers_city,
-                             customers_postcode, customers_state, customers_country,
-                             customers_telephone, customers_email_address, customers_address_format_id,
-                             delivery_name, delivery_company, delivery_street_address, delivery_suburb,
-                             delivery_city, delivery_postcode, delivery_state, delivery_country,
-                             delivery_address_format_id, billing_name, billing_company,
-                             billing_street_address, billing_suburb, billing_city, billing_postcode,
-                             billing_state, billing_country, billing_address_format_id,
-                             payment_method, payment_module_code, shipping_method, shipping_module_code,
-                             coupon_code, cc_type, cc_owner, cc_number, cc_expires, currency, currency_value,
-                             date_purchased, orders_status, `last_modified`, order_total, order_tax, ip_address
+      $order_query = "select *
                       from " . TABLE_ORDERS . "
                       where `orders_id` = '" . (int)$order_id . "'";
 
@@ -517,6 +506,7 @@
 							'delivery_postcode' => $this->delivery['postcode'],
 							'delivery_state' => $this->delivery['state'],
 							'delivery_country' => $this->delivery['country']['title'],
+							'delivery_telephone' => $this->delivery['telephone'],
 							'delivery_address_format_id' => $this->delivery['format_id'],
 							'billing_name' => $this->billing['firstname'] . ' ' . $this->billing['lastname'],
 							'billing_company' => $this->billing['company'],
@@ -526,6 +516,7 @@
 							'billing_postcode' => $this->billing['postcode'],
 							'billing_state' => $this->billing['state'],
 							'billing_country' => $this->billing['country']['title'],
+							'billing_telephone' => $this->billing['telephone'],
 							'billing_address_format_id' => $this->billing['format_id'],
 							'payment_method' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_METHOD_GV : $this->info['payment_method']),
 							'payment_module_code' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_MODULE_GV : $this->info['payment_module_code']),
