@@ -115,7 +115,7 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
-		if( empty( $pMixed ) && !empty( $this->mProductsId ) ) {
+		if( empty( $pMixed ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
 
