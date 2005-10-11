@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: time_out.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id: time_out.php,v 1.3 2005/10/11 03:50:11 spiderr Exp $
 //
 
 define('NAVBAR_TITLE', 'Login Time Out');
@@ -27,7 +27,7 @@ define('TEXT_INFORMATION', 'We\'re sorry but for your protection,
   due to the long delay while either checking out,
   or on a secure page, the session has timed out.<br /><br />
   If you were placing an order, please
-  <a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '">Login</a>
+  <a href="' . FILENAME_LOGIN . '">Login</a>
   and your Shopping Cart will be restored. You may then go back to the Checkout and complete your final purchases.<br /><br />
   If you had completed an order and wish to review it' .
   (DOWNLOAD_ENABLED == 'true' ? ', or had a download and wish to retrieve it' : '') . ',

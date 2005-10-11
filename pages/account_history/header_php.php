@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/10/11 03:50:11 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+    zen_redirect(FILENAME_LOGIN);
   }
 
   require(DIR_FS_MODULES . 'require_languages.php');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/09/27 22:33:56 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/10/11 03:50:14 spiderr Exp $
 //
   require(DIR_FS_MODULES . 'require_languages.php');
 
@@ -49,12 +49,12 @@
 
       $messageStack->add_session('login', SUCCESS_PASSWORD_SENT, 'success');
 
-      zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+      zen_redirect(FILENAME_LOGIN);
     } else {
       $messageStack->add('password_forgotten', TEXT_NO_EMAIL_ADDRESS_FOUND);
     }
   }
 
-  $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+  $breadcrumb->add(NAVBAR_TITLE_1, FILENAME_LOGIN);
   $breadcrumb->add(NAVBAR_TITLE_2);
 ?>

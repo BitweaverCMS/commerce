@@ -18,12 +18,12 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.4 2005/09/27 22:33:58 spiderr Exp $
+// $Id: header_php.php,v 1.5 2005/10/11 03:50:14 spiderr Exp $
 
 //
 	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
 		$_SESSION['navigation']->set_snapshot();
-		zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+		zen_redirect(FILENAME_LOGIN);
 	}
 
 	$valid_product = false;

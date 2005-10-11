@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/09/27 22:33:54 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/10/11 03:50:12 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -27,7 +27,7 @@
 // if the customer is not logged on, redirect them to the login page
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
-    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+    zen_redirect(FILENAME_LOGIN);
   }
 
 // avoid hack attempts during the checkout procedure by checking the internal cartID

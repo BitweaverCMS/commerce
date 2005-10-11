@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.7 2005/10/06 21:01:48 spiderr Exp $
+// $Id: en.php,v 1.8 2005/10/11 03:50:11 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -516,11 +516,11 @@ define('TEXT_ATTRIBUTES_QTY_PRICES_ONETIME_HELP', 'Option Quantity Discounts One
 
 // Shipping Estimator
   define('CART_SHIPPING_OPTIONS', 'Shipping Estimate:');
-  define('CART_SHIPPING_OPTIONS_LOGIN', 'Please <a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '"><u>Log In</u></a>, to display your personal shipping costs.');
+  define('CART_SHIPPING_OPTIONS_LOGIN', 'Please <a href="' . FILENAME_LOGIN . '"><u>Log In</u></a>, to display your personal shipping costs.');
   define('CART_SHIPPING_METHOD_TEXT','Shipping Methods:');
   define('CART_SHIPPING_METHOD_RATES','Rates:');
   define('CART_SHIPPING_METHOD_TO','Ship to: ');
-  define('CART_SHIPPING_METHOD_TO_NOLOGIN', 'Ship to: <a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '"><u>Log In</u></a>');
+  define('CART_SHIPPING_METHOD_TO_NOLOGIN', 'Ship to: <a href="' . FILENAME_LOGIN . '"><u>Log In</u></a>');
   define('CART_SHIPPING_METHOD_FREE_TEXT','Free Shipping');
   define('CART_SHIPPING_METHOD_ALL_DOWNLOADS','- Downloads');
   define('CART_SHIPPING_METHOD_RECALCULATE','Recalculate');

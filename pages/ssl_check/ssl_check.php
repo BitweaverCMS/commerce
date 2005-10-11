@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ssl_check.php,v 1.1 2005/10/06 19:38:31 spiderr Exp $
+// $Id: ssl_check.php,v 1.2 2005/10/11 03:50:14 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -55,6 +55,6 @@
     </td>
   </tr>
   <tr>
-    <td align="right" class="main" colspan="2"><?php echo '<a href="' . zen_href_link(FILENAME_LOGIN) . '">' . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
+    <td align="right" class="main" colspan="2"><?php echo '<a href="' . FILENAME_LOGIN . '">' . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
   </tr>
 </table>

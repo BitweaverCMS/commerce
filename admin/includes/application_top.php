@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.12 2005/08/31 22:36:58 spiderr Exp $
+//  $Id: application_top.php,v 1.13 2005/10/11 03:50:10 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -334,10 +334,6 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 // include the password crypto functions
   require_once(DIR_WS_FUNCTIONS . 'password_funcs.php');
-
-  if ((basename($PHP_SELF) == FILENAME_LOGIN . '.php') and (substr_count(dirname($PHP_SELF),'//') > 0 or substr_count(dirname($PHP_SELF),'.php') > 0)) {
-    zen_redirect(zen_href_link_admin(FILENAME_LOGIN, '', 'SSL'));
-  }
 
   // audience functions are for newsletter and mass-email audience-selection queries
   require_once(DIR_WS_FUNCTIONS.'audience.php');

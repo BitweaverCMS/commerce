@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.18 2005/09/25 01:06:52 spiderr Exp $
+// $Id: functions_general.php,v 1.19 2005/10/11 03:50:11 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -37,6 +37,9 @@
  * @param string The url to redirect to
 */
   function zen_redirect($url) {
+  	if( $url == FILENAME_LOGIN ) {
+		$_SESSION['loginfrom'] = $_SERVER['REQUEST_URI'];
+	}
     if ( (ENABLE_SSL == true) && !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
       if (substr($url, 0, strlen(HTTP_SERVER)) == HTTP_SERVER) { // NONSSL url
         $url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
@@ -934,7 +937,7 @@
       switch (true) {
         case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
         // customer must be logged in to browse
-        $login_for_price = '<a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '">' .  TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE . '</a>';
+        $login_for_price = '<a href="' . FILENAME_LOGIN . '">' .  TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE . '</a>';
         return $login_for_price;
         break;
         case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
@@ -943,7 +946,7 @@
           return TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE;
         } else {
           // customer may browse but no prices
-          $login_for_price = '<a href="' . zen_href_link(FILENAME_LOGIN, '', 'SSL') . '">' .  TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE . '</a>';
+          $login_for_price = '<a href="' . FILENAME_LOGIN . '">' .  TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE . '</a>';
         }
         return $login_for_price;
         break;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.25 2005/09/28 22:38:59 spiderr Exp $
+// $Id: application_top.php,v 1.26 2005/10/11 03:50:10 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -80,7 +80,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
 
     if ($_SESSION['SESSION_USER_AGENT'] != $http_user_agent) {
       zen_session_destroy();
-      zen_redirect(zen_href_link(FILENAME_LOGIN));
+      zen_redirect(FILENAME_LOGIN);
     }
   }
 
@@ -93,7 +93,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
 
     if ($_SESSION['SESSION_IP_ADDRESS'] != $ip_address) {
       zen_session_destroy();
-      zen_redirect(zen_href_link(FILENAME_LOGIN));
+      zen_redirect(FILENAME_LOGIN);
     }
   }
 
@@ -233,7 +233,7 @@ function clean_input( &$pArray ) {
           $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+        zen_redirect(FILENAME_LOGIN);
       }
       break;
     case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
@@ -263,7 +263,7 @@ function clean_input( &$pArray ) {
           $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+        zen_redirect(FILENAME_LOGIN);
       }
       break;
     case (CUSTOMERS_APPROVAL_AUTHORIZATION == '2' and $_SESSION['customer_id'] == ''):
@@ -274,7 +274,7 @@ function clean_input( &$pArray ) {
           $_REQUEST['set_session_login'] = 'true';
           $_SESSION['navigation']->set_snapshot();
         }
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+        zen_redirect(FILENAME_LOGIN);
       }
 */
       break;
@@ -547,7 +547,7 @@ function clean_input( &$pArray ) {
 				zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'notify', 'main_page'))));
 			} else {
 				$_SESSION['navigation']->set_snapshot();
-				zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+				zen_redirect(FILENAME_LOGIN);
 			}
 			break;
 		case 'notify_remove' :
@@ -556,7 +556,7 @@ function clean_input( &$pArray ) {
 				zen_redirect(zen_href_link($_REQUEST['main_page'], zen_get_all_get_params(array('action', 'main_page'))));
 			} else {
 				$_SESSION['navigation']->set_snapshot();
-				zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+				zen_redirect(FILENAME_LOGIN);
 			}
 			break;
       case 'cust_order' :     if ($_SESSION['customer_id'] && isset($_REQUEST['pid'])) {
