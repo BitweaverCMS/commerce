@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: orders.php,v 1.3 2005/10/11 18:35:26 spiderr Exp $
 //
 
-define('HEADING_TITLE', 'Orders');
+define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 define('HEADING_TITLE_SEARCH', 'Order ID:');
 define('HEADING_TITLE_STATUS', 'Status:');
 
