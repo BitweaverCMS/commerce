@@ -1185,6 +1185,7 @@ $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 	'dependencies' => '',
 ) );
 
+$gBitInstaller->makePackageHomeable( BITCOMMERCE_PKG_NAME );
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
