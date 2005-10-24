@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.11 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: modules.php,v 1.12 2005/10/24 20:55:17 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -26,10 +26,6 @@
   if (zen_not_null($set)) {
     switch ($set) {
       case 'shipping':
-        $module_type = 'shipping';
-        $module_directory = DIR_FS_CATALOG_MODULES . 'shipping/';
-        $module_key = 'MODULE_SHIPPING_INSTALLED';
-        define('HEADING_TITLE', HEADING_TITLE_MODULES_SHIPPING);
         $shipping_errors = '';
         if (zen_get_configuration_key_value('SHIPPING_ORIGIN_ZIP') == 'NONE' or zen_get_configuration_key_value('SHIPPING_ORIGIN_ZIP') == '') {
           $shipping_errors .= '<br />' . ERROR_SHIPPING_ORIGIN_ZIP;
@@ -43,19 +39,11 @@
         if ($shipping_errors != '') {
           $messageStack->add(ERROR_SHIPPING_CONFIGURATION . $shipping_errors, 'caution');
         }
-        break;
-      case 'ordertotal':
-        $module_type = 'order_total';
-        $module_directory = DIR_FS_CATALOG_MODULES . 'order_total/';
-        $module_key = 'MODULE_ORDER_TOTAL_INSTALLED';
-        define('HEADING_TITLE', HEADING_TITLE_MODULES_ORDER_TOTAL);
-        break;
-      case 'payment':
       default:
-        $module_type = 'payment';
-        $module_directory = DIR_FS_CATALOG_MODULES . 'payment/';
-        $module_key = 'MODULE_PAYMENT_INSTALLED';
-        define('HEADING_TITLE', HEADING_TITLE_MODULES_PAYMENT);
+		$module_type = $set;
+		$module_directory = DIR_FS_CATALOG_MODULES . "$set/";
+		$module_key = 'MODULE_'.strtoupper($set).'_INSTALLED';
+		define('HEADING_TITLE', tra( ucfirst( str_replace( '_', ' ', $set ) ) ) );
         break;
     }
   }
@@ -85,12 +73,18 @@
       case 'remove':
         $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
         $class = basename($_GET['module']);
-        if (file_exists($module_directory . $class . $file_extension)) {
+        if( file_exists( $module_directory . $class . $file_extension ) ) {
+	        $moduleFile = $module_directory . $class . $file_extension;
+	    } elseif( file_exists($module_directory . $class . '/' . $class . $file_extension) ) {
+	        $moduleFile = $module_directory . $class . '/' . $class . $file_extension;
+	    }
+
+        if ( !empty( $moduleFile ) ) {
     $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                                 from ' . TABLE_CONFIGURATION;
 
           $configuration = $db->Execute($configuration_query);
-          include($module_directory . $class . $file_extension);
+          include( $moduleFile );
           $module = new $class;
           if ($action == 'install') {
             $module->install();
@@ -165,25 +159,25 @@
   $directory_array = array();
   if ($dir = @dir($module_directory)) {
     while ($file = $dir->read()) {
-      if (!is_dir($module_directory . $file)) {
-        if (substr($file, strrpos($file, '.')) == $file_extension) {
-          $directory_array[] = $file;
-        }
+      if (!is_dir($module_directory . $file) && (substr($file, strrpos($file, '.')) == $file_extension) ) {
+	   	$class = substr( $file, 0, strrpos($file, '.') );
+		$directory_array[$class] = $file;
+      } elseif( file_exists( $module_directory.$file.'/'.$file.'.php' )  ) {
+          $directory_array[$file] = $file.'/'.$file.'.php';
       }
     }
-    sort($directory_array);
+    asort($directory_array);
     $dir->close();
   }
 
   $installed_modules = array();
-  for ($i=0, $n=sizeof($directory_array); $i<$n; $i++) {
-    $file = $directory_array[$i];
+  foreach ( $directory_array as $class=>$file ) {
 	$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/' . $module_type . '/' . $file;
 	if( file_exists( $langFile ) ) {
 	    include( $langFile );
 	}
     include($module_directory . $file);
-    $class = substr($file, 0, strrpos($file, '.'));
+
     if (zen_class_exists($class)) {
       $module = new $class;
       if ($module->check() > 0) {
@@ -233,7 +227,7 @@
 		$orders_status_name = $db->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );
 ?>
                 <td class="dataTableContent" align="left">&nbsp;&nbsp;&nbsp;<?php echo (is_numeric($module->sort_order) ? (($orders_status_name->fields['orders_status_id'] < 1) ? TEXT_DEFAULT : $orders_status_name->fields['orders_status_name']) : ''); ?>&nbsp;&nbsp;&nbsp;</td>
-<?php 
+<?php
 	} else {
 ?>
 				<td class="dataTableContent" align="left">&nbsp;</td>

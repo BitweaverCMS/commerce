@@ -4,9 +4,9 @@
 // |zen-cart Open Source E-commerce                                       |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |   
-// | http://www.zen-cart.com/index.php                                    |   
-// |                                                                      |   
+// |                                                                      |
+// | http://www.zen-cart.com/index.php                                    |
+// |                                                                      |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
@@ -17,21 +17,28 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules_dhtml.php,v 1.5 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: modules_dhtml.php,v 1.6 2005/10/24 20:55:17 spiderr Exp $
 //
-  $za_contents = array();
-  $za_heading = array();
-  $za_heading = array('text' => BOX_HEADING_MODULES, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_MODULES_PAYMENT, 'link' => zen_href_link_admin(FILENAME_MODULES, 'set=payment', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_MODULES_SHIPPING, 'link' => zen_href_link_admin(FILENAME_MODULES, 'set=shipping', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_MODULES_ORDER_TOTAL, 'link' => zen_href_link_admin(FILENAME_MODULES, 'set=ordertotal',  'NONSSL'));
-if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
-  while ($zv_file = $za_dir->read()) {
-    if (preg_match('/modules_dhtml.php$/', $zv_file)) {
-      require(DIR_WS_BOXES . 'extra_boxes/' . $zv_file);
-    }
-  }
-}
+	$za_contents = array();
+	$za_heading = array();
+	$za_heading = array('text' => BOX_HEADING_MODULES, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
+
+	$dir = opendir( DIR_FS_MODULES );
+	while( $file = readdir( $dir ) ) {
+		if( is_dir( DIR_FS_MODULES.$file ) && $file != 'CVS' && $file[0] != '.' ) {
+			$za_contents[$file] = array('text' => tra( ucwords( str_replace( '_', ' ', $file ) ) ), 'link' => zen_href_link_admin(FILENAME_MODULES, 'set='.$file, 'NONSSL'));
+		}
+	}
+	closedir( $dir );
+	arsort( $za_contents );
+
+	if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
+		while ($zv_file = $za_dir->read()) {
+			if (preg_match('/modules_dhtml.php$/', $zv_file)) {
+				require(DIR_WS_BOXES . 'extra_boxes/' . $zv_file);
+			}
+		}
+	}
 ?>
 <!-- modules //-->
 <?php
