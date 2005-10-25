@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.14 2005/10/06 21:01:49 spiderr Exp $
+// $Id: new_products.php,v 1.15 2005/10/25 02:28:20 spiderr Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
+	$listHash = array();
 	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
-  	$listHash['num_rows'] = MAX_DISPLAY_PRODUCTS_LISTING;
-	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_LISTING * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+  	$listHash['max_records'] = MAX_DISPLAY_PRODUCTS_NEW;
+	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 	$listHash['sort_mode'] = 'products_date_added_desc';
 	if ( !empty( $new_products_category_id ) ) {
 		$listHash['category_id'] = $new_products_category_id;
