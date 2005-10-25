@@ -388,13 +388,13 @@ class CommerceProduct extends LibertyAttachable {
 				$language_id = $languages[$i]['id'];
 
 				if( !empty( $pParamHash['products_name'][$language_id] ) ) {
-					$bindVars['products_name'] = zen_db_prepare_input($pParamHash['products_name'][$language_id]);
+					$bindVars['products_name'] = substr( zen_db_prepare_input($pParamHash['products_name'][$language_id]), 0, 64 );
 				}
 				if( !empty( $pParamHash['products_description'][$language_id] ) ) {
 					$bindVars['products_description'] = zen_db_prepare_input($pParamHash['products_description'][$language_id]);
 				}
 				if( !empty( $pParamHash['products_url'][$language_id] ) ) {
-					$bindVars['products_url'] = zen_db_prepare_input($pParamHash['products_url'][$language_id]);
+					$bindVars['products_url'] = substr( zen_db_prepare_input($pParamHash['products_url'][$language_id]), 0, 255 );
 				}
 
 				if ($action == 'insert_product') {
