@@ -17,28 +17,61 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.20 2005/10/09 19:47:31 spiderr Exp $
+// $Id: order.php,v 1.21 2005/10/27 22:16:49 spiderr Exp $
 //
 
-  class order {
+require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
+
+class order extends BitBase {
+  	var $mOrdersId;
     var $info, $totals, $products, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
         $products_ordered, $products_ordered_email;
 
     function order($order_id = '') {
-      $this->info = array();
-      $this->totals = array();
-      $this->products = array();
-      $this->customer = array();
-      $this->delivery = array();
+    	BitBase::BitBase();
+		$this->mOrdersId = $order_id;
+		$this->info = array();
+		$this->totals = array();
+		$this->products = array();
+		$this->customer = array();
+		$this->delivery = array();
 
-      if (zen_not_null($order_id)) {
-        $this->query($order_id);
-      } else {
-        $this->cart();
-      }
+		if (zen_not_null($order_id)) {
+			$this->load($order_id);
+		} else {
+			$this->cart();
+		}
     }
 
-    function query($order_id) {
+	function getList( $pListHash ) {
+		global $gBitDb;
+		$bindVars = array();
+		$whereSql = '';
+
+		if( !empty( $pListHash['orders_status_id'] ) ) {
+			$whereSql = ' AND `orders_status`=? ';
+			$bindVars[] = $pListHash['orders_status_id'];
+		}
+
+		if( empty( $pListHash['sort_mode'] ) ) {
+			$pListHash['sort_mode'] = 'o.orders_id_desc';
+		}
+		if( empty( $pListHash['max_records'] ) ) {
+			$pListHash['max_records'] = -1;
+		}
+
+		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.*
+				  FROM " . TABLE_ORDERS . " o
+				  	INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`)
+				  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
+				  	LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
+				  WHERE `class` = 'ot_total' $whereSql
+				  ORDER BY ".$gBitDb->convert_sortmode( $pListHash['sort_mode'] );
+
+		return( $gBitDb->GetAssoc( $query, $bindVars, $pListHash['max_records'] ) );
+	}
+
+    function load($order_id) {
       global $db;
 
       $order_id = zen_db_prepare_input($order_id);
@@ -99,11 +132,12 @@
                           'cc_number' => $order->fields['cc_number'],
                           'cc_expires' => $order->fields['cc_expires'],
                           'date_purchased' => $order->fields['date_purchased'],
+                          'orders_status_id' => $order->fields['orders_status'],
                           'orders_status' => $order_status->fields['orders_status_name'],
                           'last_modified' => $order->fields['last_modified'],
                           'total' => $order->fields['order_total'],
                           'tax' => $order->fields['order_tax'],
-                          'ip_address' => $orders->fields['ip_address']
+                          'ip_address' => $order->fields['ip_address']
                           );
 
       $this->customer = array('id' => $order->fields['customers_id'],
@@ -127,6 +161,7 @@
                               'postcode' => $order->fields['delivery_postcode'],
                               'state' => $order->fields['delivery_state'],
                               'country' => $order->fields['delivery_country'],
+                              'telephone' => $order->fields['delivery_telephone'],
                               'format_id' => $order->fields['delivery_address_format_id']);
 
       if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
@@ -141,6 +176,7 @@
                              'postcode' => $order->fields['billing_postcode'],
                              'state' => $order->fields['billing_state'],
                              'country' => $order->fields['billing_country'],
+                             'telephone' => $order->fields['billing_telephone'],
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
@@ -179,7 +215,7 @@
 		$this->products[$index]['id'] = $orders_products->fields['products_id'];
 		$this->products[$index]['name'] = $orders_products->fields['products_name'];
 		$this->products[$index]['model'] = $orders_products->fields['products_model'];
-		$this->products[$index]['tax'] = $orders_products->fields['tax_rate'];
+		$this->products[$index]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
 		$this->products[$index]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
@@ -901,5 +937,111 @@
       }
     }
 
-  }
+	function getStatus() {
+		$ret = NULL;
+		if( !empty( $this->info['orders_status_id'] ) ) {
+			$ret = $this->info['orders_status_id'];
+		}
+		return $ret;
+	}
+
+	function updateStatus( $pParamHash ) {
+
+		$order_updated = false;
+
+		$status = zen_db_prepare_input($pParamHash['status']);
+		$comments = zen_db_prepare_input($pParamHash['comments']);
+
+		$statusChanged = ($this->getStatus() != $status);
+
+		if ( $statusChanged || !empty( $comments ) ) {
+			$this->mDb->StartTrans();
+			$this->mDb->query( "update " . TABLE_ORDERS . "
+								set orders_status = ?, `last_modified` = now()
+								where `orders_id` = ?", array( $status, $this->mOrdersId ) );
+
+			$this->info['orders_status_id'] = $status;
+			$this->info['orders_status'] = zen_get_order_status_name( $status );
+
+			$customer_notified = '0';
+			if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
+				$notify_comments = '';
+				if( isset($pParamHash['notify_comments']) && ( $pParamHash['notify_comments'] == 'on' ) && zen_not_null( $comments ) ) {
+					$notify_comments = $comments . "\n\n";
+				}
+
+				//send emails
+				$message = STORE_NAME . "\n" . EMAIL_SEPARATOR . "\n" .
+					EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n\n" .
+					EMAIL_TEXT_INVOICE_URL . ' ' . $this->getDisplayLink() . "\n\n" .
+					EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
+					strip_tags($notify_comments) ;
+				if( $statusChanged ) {
+					$message .= str_replace( "\n",' ', EMAIL_TEXT_STATUS_UPDATED ) . $this->info['orders_status'] . "\n\n";
+				}
+				$message .= EMAIL_TEXT_STATUS_PLEASE_REPLY;
+
+				$html_msg['EMAIL_CUSTOMERS_NAME']    = $this->customer['name'];
+				$html_msg['EMAIL_TEXT_ORDER_NUMBER'] = EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId;
+				$html_msg['EMAIL_TEXT_INVOICE_URL']  = $this->getDisplayLink();
+				$html_msg['EMAIL_TEXT_DATE_ORDERED'] = EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long( $this->info['date_purchased'] );
+				$html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = $notify_comments;
+				if( $statusChanged ) {
+					$html_msg['EMAIL_TEXT_STATUS_UPDATED'] = str_replace( "\n", ' ', EMAIL_TEXT_STATUS_UPDATED);
+					$html_msg['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
+				}
+				$html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = str_replace( "\n", '', EMAIL_TEXT_STATUS_PLEASE_REPLY );
+
+				zen_mail( $this->customer['name'], $this->customer['email_address'], EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
+
+				$customer_notified = '1';
+				//send extra emails
+				if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
+					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status_extra');
+				}
+			}
+
+			$this->mDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . "
+						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
+						values ( ?, ?, now(), ?, ? )", array( $this->mOrdersId, $status, $customer_notified, $comments ) );
+
+			$this->mDb->CompleteTrans();
+			$order_updated = true;
+		}
+		return $order_updated;
+	}
+
+	function isValid() {
+		return( !empty( $this->mOrdersId ) && is_numeric( $this->mOrdersId ) );
+	}
+
+	function getDisplayLink() {
+		$ret = '';
+		if( $this->isValid() ) {
+			$ret = '<a href="' .$this->getDisplayUrl() .'">'.str_replace( ':','',tra( 'Detailed Invoice:' ) ).( $this->isvalid() ? ' #'.$this->mOrdersId : '' ).'</a>';
+		}
+		return $ret;
+	}
+
+	function getDisplayUrl( $page = '', $parameters = '', $connection = 'NONSSL') {
+		if (ENABLE_SSL_CATALOG == 'true') {
+			$link = HTTPS_CATALOG_SERVER . DIR_WS_HTTPS_CATALOG;
+		} else {
+			$link = HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
+		}
+
+		if( $this->isValid() ) {
+			$link .= 'index.php?main_page=account_history_info&'.$this->mOrdersId;
+		} else {
+			$link .= 'index.php?main_page=account_history_info';
+		}
+
+		while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
+
+		return $link;
+	}
+
+
+
+}
 ?>

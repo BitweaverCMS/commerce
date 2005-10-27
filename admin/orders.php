@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.21 2005/10/09 20:30:20 spiderr Exp $
+//  $Id: orders.php,v 1.22 2005/10/27 22:16:49 spiderr Exp $
 //
 
   require('includes/application_top.php');
+  require_once( DIR_FS_CLASSES.'order.php');
 
 
   $currencies = new currencies();
@@ -40,6 +41,15 @@
   }
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
+
+	if( !empty( $_GET['oID'] ) && is_numeric( $_GET['oID'] ) ) {
+		$oID = zen_db_prepare_input($_GET['oID']);
+		if( $order_exists = $db->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
+		    $order = new order($oID);
+		} else {
+			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
+		}
+	}
 
   if (zen_not_null($action)) {
     switch ($action) {
@@ -71,74 +81,13 @@
         }
       break;
       case 'update_order':
-        // demo active test
-        if (zen_admin_demo()) {
-          $_GET['action']= '';
-          $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-          zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
-        }
-        $oID = zen_db_prepare_input($_GET['oID']);
-        $status = zen_db_prepare_input($_POST['status']);
-        $comments = zen_db_prepare_input($_POST['comments']);
-
-        $order_updated = false;
-        $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
-                                      date_purchased from " . TABLE_ORDERS . "
-                                      where `orders_id` = '" . (int)$oID . "'");
-
-        if ( ($check_status->fields['orders_status'] != $status) || zen_not_null($comments)) {
-          $db->Execute("update " . TABLE_ORDERS . "
-                        set orders_status = '" . zen_db_input($status) . "', `last_modified` = now()
-                        where `orders_id` = '" . (int)$oID . "'");
-
-          $customer_notified = '0';
-          if (isset($_POST['notify']) && ($_POST['notify'] == 'on')) {
-            $notify_comments = '';
-            if (isset($_POST['notify_comments']) && ($_POST['notify_comments'] == 'on') && zen_not_null($comments)) {
-              $notify_comments = EMAIL_TEXT_COMMENTS_UPDATE . $comments . "\n\n";
-            }
-
-
-//send emails
-      $message = STORE_NAME . "\n" . EMAIL_SEPARATOR . "\n" .
-      EMAIL_TEXT_ORDER_NUMBER . ' ' . $oID . "\n\n" .
-      EMAIL_TEXT_INVOICE_URL . ' ' . zen_catalog_href_link(FILENAME_CATALOG_ACCOUNT_HISTORY_INFO, 'order_id=' . $oID, 'SSL') . "\n\n" .
-      EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long($check_status->fields['date_purchased']) . "\n\n" .
-      strip_tags($notify_comments) .
-      EMAIL_TEXT_STATUS_UPDATED . sprintf(EMAIL_TEXT_STATUS_LABEL, $orders_status_array[$status] ) .
-      EMAIL_TEXT_STATUS_PLEASE_REPLY;
-
-      $html_msg['EMAIL_CUSTOMERS_NAME']    = $check_status->fields['customers_name'];
-      $html_msg['EMAIL_TEXT_ORDER_NUMBER'] = EMAIL_TEXT_ORDER_NUMBER . ' ' . $oID;
-      $html_msg['EMAIL_TEXT_INVOICE_URL']  = '<a href="' . zen_catalog_href_link(FILENAME_CATALOG_ACCOUNT_HISTORY_INFO, 'order_id=' . $oID, 'SSL') .'">'.str_replace(':','',EMAIL_TEXT_INVOICE_URL).'</a>';
-      $html_msg['EMAIL_TEXT_DATE_ORDERED'] = EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long($check_status->fields['date_purchased']);
-      $html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = $notify_comments;
-      $html_msg['EMAIL_TEXT_STATUS_UPDATED'] = str_replace('\n','', EMAIL_TEXT_STATUS_UPDATED);
-      $html_msg['EMAIL_TEXT_STATUS_LABEL'] = str_replace('\n','', sprintf(EMAIL_TEXT_STATUS_LABEL, $orders_status_array[$status] ));
-      $html_msg['EMAIL_TEXT_NEW_STATUS'] = $orders_status_array[$status];
-      $html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = str_replace('\n','', EMAIL_TEXT_STATUS_PLEASE_REPLY);
-
-            zen_mail($check_status->fields['customers_name'], $check_status->fields['customers_email_address'], EMAIL_TEXT_SUBJECT . ' #' . $oID, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
-
-            $customer_notified = '1';
-//send extra emails
-            if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
-              zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $oID, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status_extra');
-            }
-          }
-
-          $db->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . "
-                      (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
-                      values ('" . (int)$oID . "',
-                      '" . zen_db_input($status) . "',
-                      now(),
-                      '" . zen_db_input($customer_notified) . "',
-                      '" . zen_db_input($comments)  . "')");
-
-          $order_updated = true;
-        }
-
-        if ($order_updated == true) {
+		// demo active test
+		if (zen_admin_demo()) {
+			$_GET['action']= '';
+			$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
+			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
+		}
+        if( $order->updateStatus( $_REQUEST ) ) {
          if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
             // adjust download_maxdays based on current date
             $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
@@ -160,8 +109,6 @@
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
           zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
         }
-        $oID = zen_db_prepare_input($_GET['oID']);
-
         zen_remove_order($oID, $_POST['restock']);
 
         zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
@@ -169,20 +116,6 @@
     }
   }
 
-  if (($action == 'edit') && isset($_GET['oID'])) {
-    $oID = zen_db_prepare_input($_GET['oID']);
-
-    $orders = $db->Execute("select orders_id from " . TABLE_ORDERS . "
-                            where `orders_id` = '" . (int)$oID . "'");
-
-    $order_exists = true;
-    if ($orders->RecordCount() <= 0) {
-      $order_exists = false;
-      $messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
-    }
-  }
-
-  include(DIR_WS_CLASSES . 'order.php');
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -250,7 +183,6 @@
 
 <?php
   if (($action == 'edit') && ($order_exists == true)) {
-    $order = new order($oID);
     if ($order->info['payment_module_code']) {
       if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php')) {
         require(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php');
@@ -522,7 +454,7 @@
           <tr>
             <td><table border="0" cellspacing="0" cellpadding="2">
               <tr>
-                <td class="main"><strong><?php echo ENTRY_STATUS; ?></strong> <?php echo zen_draw_pull_down_menu('status', $orders_statuses, $order->info['orders_status']); ?></td>
+                <td class="main"><strong><?php echo ENTRY_STATUS; ?></strong> <?php echo zen_draw_pull_down_menu('status', $orders_statuses, $order->getStatus() ); ?></td>
               </tr>
               <tr>
                 <td class="main"><strong><?php echo ENTRY_NOTIFY_CUSTOMER; ?></strong> <?php echo zen_draw_checkbox_field('notify', '', false); ?></td>
