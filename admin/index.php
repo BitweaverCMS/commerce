@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.12 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: index.php,v 1.13 2005/10/27 22:17:57 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -105,15 +105,18 @@
 </table>
 <table class="data">
 <tr><th colspan="4"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
-  <?php  $orders = $db->Execute("SELECT ot.`text` AS `order_total`, o.*, uu.*, os.* from " . TABLE_ORDERS . " o INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`) left join " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`) where `class` = 'ot_total' ORDER BY o.`orders_id` DESC", 50);
+  <?php
+	require_once( DIR_FS_CLASSES.'order.php' );
 
-  while (!$orders->EOF) {
-  	$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orders->fields['orders_id'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
-    echo '<tr><td>'. $orderAnchor . $orders->fields['orders_id'] . ' - '. $gBitUser->getDisplayName( FALSE, $orders->fields ) . '</a> ' . '</td><td>' . $orders->fields['order_total'] . '</td><td align="right">' . "\n";
-    echo zen_date_short($orders->fields['date_purchased']);
-    echo '</td><td>'.$orders->fields['orders_status_name'].'</td></tr>' . "\n";
-    $orders->MoveNext();
-  }
+	$listHash = array( 'max_records' => '50' );
+	$orders = order::getList( $listHash );
+
+	foreach( array_keys( $orders ) as $orderId ) {
+		$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orderId . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
+		echo '<tr><td>' . $orderAnchor . $orderId . ' - '. $gBitUser->getDisplayName( FALSE, $orders[$orderId] ) . '</a> ' . '</td><td>' . $orders[$orderId]['order_total'] . '</td><td align="right">' . "\n";
+		echo zen_date_short( $orders[$orderId]['date_purchased'] );
+		echo '</td><td>'.$orders[$orderId]['orders_status_name'].'</td></tr>' . "\n";
+	}
 ?>
 </table>
 </div>

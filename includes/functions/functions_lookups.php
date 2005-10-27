@@ -17,9 +17,25 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.10 2005/09/25 01:06:52 spiderr Exp $
+// $Id: functions_lookups.php,v 1.11 2005/10/27 22:17:57 spiderr Exp $
 //
 //
+  function zen_get_order_status_name($order_status_id, $language_id = '') {
+    global $db;
+
+    if ($order_status_id < 1) return TEXT_DEFAULT;
+
+    if (!is_numeric($language_id)) $language_id = $_SESSION['languages_id'];
+
+    $status = $db->Execute("SELECT orders_status_name
+                            FROM " . TABLE_ORDERS_STATUS . "
+                            WHERE orders_status_id = '" . (int)$order_status_id . "'
+                            and language_id = '" . (int)$language_id . "'");
+
+    return $status->fields['orders_status_name'] . ' [' . (int)$order_status_id . ']';
+  }
+
+
 /**
  * Returns an array with countries
  *
@@ -30,24 +46,26 @@
     global $db;
     $countries_array = array();
     if (zen_not_null($countries_id)) {
+    	if( is_numeric( $countries_id ) ) {
+    		$whereSql = ' WHERE `countries_id` = ? ';
+    	} else {
+    		$countries_id = strtoupper( $countries_id );
+    		$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
+    	}
       if ($with_iso_codes == true) {
         $countries = "select `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`
                       from " . TABLE_COUNTRIES . "
-                      where `countries_id` = '" . (int)$countries_id . "'
+					  $whereSql
                       order by `countries_name`";
-
-        $countries_values = $db->Execute($countries);
-
+        $countries_values = $db->query( $countries, array( $countries_id ) );
         $countries_array = array('countries_name' => $countries_values->fields['countries_name'],
                                  'countries_iso_code_2' => $countries_values->fields['countries_iso_code_2'],
                                  'countries_iso_code_3' => $countries_values->fields['countries_iso_code_3']);
       } else {
         $countries = "select `countries_name`
                       from " . TABLE_COUNTRIES . "
-                      where `countries_id` = '" . (int)$countries_id . "'";
-
-        $countries_values = $db->Execute($countries);
-
+                      $whereSql ";
+        $countries_values = $db->query( $countries, array( $countries_id ) );
         $countries_array = array('countries_name' => $countries_values->fields['countries_name']);
       }
     } else {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.24 2005/10/24 20:55:17 spiderr Exp $
+//  $Id: general.php,v 1.25 2005/10/27 22:17:57 spiderr Exp $
 //
 
 ////
@@ -107,43 +107,6 @@
     }
 
     return $get_url;
-  }
-
-
-  function zen_date_long($raw_date) {
-    if ( ($raw_date == '0001-01-01 00:00:00') || ($raw_date == '') ) return false;
-
-    $year = (int)substr($raw_date, 0, 4);
-    $month = (int)substr($raw_date, 5, 2);
-    $day = (int)substr($raw_date, 8, 2);
-    $hour = (int)substr($raw_date, 11, 2);
-    $minute = (int)substr($raw_date, 14, 2);
-    $second = (int)substr($raw_date, 17, 2);
-
-    return strftime(DATE_FORMAT_LONG, mktime($hour, $minute, $second, $month, $day, $year));
-  }
-
-
-////
-// Output a raw date string in the selected locale date format
-// $raw_date needs to be in this format: YYYY-MM-DD HH:MM:SS
-// NOTE: Includes a workaround for dates before 01/01/1970 that fail on windows servers
-  function zen_date_short($raw_date) {
-    if ( ($raw_date == '0001-01-01 00:00:00') || ($raw_date == '') ) return false;
-
-    $year = substr($raw_date, 0, 4);
-    $month = (int)substr($raw_date, 5, 2);
-    $day = (int)substr($raw_date, 8, 2);
-    $hour = (int)substr($raw_date, 11, 2);
-    $minute = (int)substr($raw_date, 14, 2);
-    $second = (int)substr($raw_date, 17, 2);
-
-    if (@date('Y', mktime($hour, $minute, $second, $month, $day, $year)) == $year) {
-      return date(DATE_FORMAT, mktime($hour, $minute, $second, $month, $day, $year));
-    } else {
-      return ereg_replace('2037' . '$', $year, date(DATE_FORMAT, mktime($hour, $minute, $second, $month, $day, 2037)));
-    }
-
   }
 
 
@@ -1348,21 +1311,6 @@
     }
 
     return zen_draw_pull_down_menu($name, $statuses_array, $order_status_id);
-  }
-
-  function zen_get_order_status_name($order_status_id, $language_id = '') {
-    global $db;
-
-    if ($order_status_id < 1) return TEXT_DEFAULT;
-
-    if (!is_numeric($language_id)) $language_id = $_SESSION['languages_id'];
-
-    $status = $db->Execute("SELECT orders_status_name
-                            FROM " . TABLE_ORDERS_STATUS . "
-                            WHERE orders_status_id = '" . (int)$order_status_id . "'
-                            and language_id = '" . (int)$language_id . "'");
-
-    return $status->fields['orders_status_name'] . ' [' . (int)$order_status_id . ']';
   }
 
 ////
