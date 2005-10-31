@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.6 2005/10/31 16:20:01 lsces Exp $
+//  $Id: copy_to_confirm.php,v 1.7 2005/10/31 21:19:23 lsces Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -57,7 +57,7 @@
                                        `products_weight`, `products_status`, `products_tax_class_id`,
                                        `manufacturers_id`,
                                        `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
-                                       `product_is_free, product_is_call`, `products_quantity_mixed`,
+                                       `product_is_free`, `product_is_call`, `products_quantity_mixed`,
                                        `product_is_always_free_ship`, `products_qty_box_status`, `products_quantity_order_max`, `products_sort_order`,
                                        `products_price_sorter`, `master_categories_id`
                                        )
