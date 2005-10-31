@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.12 2005/10/31 22:53:09 lsces Exp $
+//  $Id: options_values_manager.php,v 1.13 2005/10/31 23:46:32 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -206,9 +206,9 @@
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.options_id='" . $options_id_from . "' and pa.options_values_id='" . $options_values_values_id_from . "')");
+        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
       } else {
-        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.options_id='" . $options_id_from . "' and pa.options_values_id='" . $options_values_values_id_from . "'");
+        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
       }
 
 /*
@@ -285,12 +285,12 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select distinct ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.options_id='" . $options_id_to . "')");
+        $products_only = $db->Execute("select distinct ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_to . "')");
       } else {
-        $products_only = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.options_id='" . $options_id_to . "'");
+        $products_only = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_to . "'");
       }
 
-      $products_attributes_defaults = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`products_id` = '" . $copy_from_products_id . "' and options_id='" . $options_id_from . "' and pa.options_values_id='" . $options_values_values_id_from . "'");
+      $products_attributes_defaults = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`products_id` = '" . $copy_from_products_id . "' and `options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
 
       $options_id = zen_db_prepare_input($options_id_from);
       $values_id = zen_db_prepare_input($options_values_values_id_from);
@@ -440,9 +440,9 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.options_id='" . $options_id_from . "' and pa.options_values_id='" . $options_values_values_id_from . "')");
+        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
       } else {
-        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.options_id='" . $options_id_from . "' and pa.options_values_id='" . $options_values_values_id_from . "'");
+        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
       }
 
       if ($_POST['copy_to_categories_id'] == '') {

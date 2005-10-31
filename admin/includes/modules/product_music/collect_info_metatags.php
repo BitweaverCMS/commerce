@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info_metatags.php,v 1.5 2005/10/31 16:19:59 lsces Exp $
+//  $Id: collect_info_metatags.php,v 1.6 2005/10/31 23:46:32 lsces Exp $
 //
 
     $parameters = array(
@@ -49,7 +49,7 @@
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
     } else {
       $product = $db->Execute("select pd.`products_name`, p.`products_model`, p.`products_price_sorter`,
-                                      p.metatags_title_status, p.`metatags_products_name_status`, p.`metatags_model_status`,
+                                      p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
                                       mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd

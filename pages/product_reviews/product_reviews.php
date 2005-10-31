@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_reviews.php,v 1.1 2005/10/06 19:38:30 spiderr Exp $
+// $Id: product_reviews.php,v 1.2 2005/10/31 23:46:33 lsces Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -48,7 +48,7 @@
     <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
 <?php
-  $review_status = " and r.status = '1'";
+  $review_status = " and r.`status` = '1'";
 
   $reviews_query_raw = "select r.`reviews_id`, rd.reviews_text,
                                r.reviews_rating, r.`date_added`, r.customers_name

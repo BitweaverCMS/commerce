@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.13 2005/10/31 22:53:09 lsces Exp $
+// $Id: functions_lookups.php,v 1.14 2005/10/31 23:46:32 lsces Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -253,7 +253,7 @@
     if (PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true') {
       // don't include READONLY attributes to determin if attributes must be selected to add to cart
       $attributes_query = "select pa.`products_attributes_id`
-                           from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id
+                           from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id`
                            where pa.`products_id` = '" . (int)$products_id . "' and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
     } else {
       // regardless of READONLY attributes no add to cart buttons

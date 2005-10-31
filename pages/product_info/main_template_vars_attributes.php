@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.6 2005/10/31 22:53:10 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.7 2005/10/31 23:46:34 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -74,13 +74,13 @@
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
-        $sql = "select    pov.products_options_values_id,
-                          pov.products_options_values_name,
+        $sql = "select    pov.`products_options_values_id`,
+                          pov.`products_options_values_name`,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.options_id = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.options_values_id = pov.products_options_values_id
+                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
+                and       pa.`options_values_id` = pov.`products_options_values_id`
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 

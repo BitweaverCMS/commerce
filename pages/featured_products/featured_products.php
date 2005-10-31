@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: featured_products.php,v 1.2 2005/10/31 23:46:33 lsces Exp $
 //
 ?>
 
@@ -34,7 +34,7 @@
 
   $featured_products_array = array();
 
-  $featured_products_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_image`, p.`products_price`, p.`products_tax_class_id`, p.`products_date_added`, m.manufacturers_name, p.`products_model`, p.`products_quantity`, p.`products_weight` from " . TABLE_PRODUCTS . " p
+  $featured_products_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_image`, p.`products_price`, p.`products_tax_class_id`, p.`products_date_added`, m.`manufacturers_name`, p.`products_model`, p.`products_quantity`, p.`products_weight` from " . TABLE_PRODUCTS . " p
   				INNER JOIN  " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
 				left join " . TABLE_MANUFACTURERS . " m on (p.`manufacturers_id` = m.`manufacturers_id`)
                 left join " . TABLE_FEATURED . " f on p.`products_id` = f.`products_id`

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_attributes_qty_prices.php,v 1.1 2005/10/06 19:38:29 spiderr Exp $
+// $Id: popup_attributes_qty_prices.php,v 1.2 2005/10/31 23:46:34 lsces Exp $
 //
 ?>
 <body>
@@ -62,13 +62,13 @@ $show_onetime= 'false';
           $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
         }
 
-        $sql = "select    pov.products_options_values_id,
-                          pov.products_options_values_name,
+        $sql = "select    pov.`products_options_values_id`,
+                          pov.`products_options_values_name`,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.options_id = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
-                and       pa.options_values_id = pov.products_options_values_id
+                and       pa.`options_id` = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
+                and       pa.`options_values_id` = pov.`products_options_values_id`
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
@@ -163,13 +163,13 @@ $show_onetime= 'false';
           $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
         }
 
-        $sql = "select    pov.products_options_values_id,
-                          pov.products_options_values_name,
+        $sql = "select    pov.`products_options_values_id`,
+                          pov.`products_options_values_name`,
                           pa.*
                 from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.options_id = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
-                and       pa.options_values_id = pov.products_options_values_id
+                and       pa.`options_id` = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
+                and       pa.`options_values_id` = pov.`products_options_values_id`
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 

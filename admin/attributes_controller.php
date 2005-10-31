@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.16 2005/10/31 22:53:09 lsces Exp $
+//  $Id: attributes_controller.php,v 1.17 2005/10/31 23:46:32 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -958,7 +958,7 @@ if ($action == '') {
             <td colspan="10" class="smallText">
 <?php
   $per_page = MAX_ROW_LISTS_ATTRIBUTES_CONTROLLER;
-  $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.`products_id` ='" . $productsId . "' order by pd.`products_name`, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.options_id,11,'0'), LPAD(pa.products_options_sort_order,11,'0')";
+  $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id` and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.`products_id` ='" . $productsId . "' order by pd.`products_name`, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.`options_id`,11,'0'), LPAD(pa.`products_options_sort_order`,11,'0')";
   $attribute_query = $db->Execute($attributes);
 
   $attribute_page_start = ($per_page * $_GET['attribute_page']) - $per_page;

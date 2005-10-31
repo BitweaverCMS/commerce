@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.11 2005/10/31 16:19:57 lsces Exp $
+// $Id: main_template_vars.php,v 1.12 2005/10/31 23:46:32 lsces Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -147,7 +147,7 @@
           $select_column_list .= 'pd.`products_name`, ';
           break;
         case 'PRODUCT_LIST_MANUFACTURER':
-          $select_column_list .= 'm.manufacturers_name, ';
+          $select_column_list .= 'm.`manufacturers_name`, ';
           break;
         case 'PRODUCT_LIST_QUANTITY':
           $select_column_list .= 'p.`products_quantity`, ';

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.6 2005/09/27 22:33:52 spiderr Exp $
+// $Id: blk_advanced_search_result.php,v 1.7 2005/10/31 23:46:32 lsces Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -56,7 +56,7 @@
         $select_column_list .= 'p.`products_model`';
         break;
       case 'PRODUCT_LIST_MANUFACTURER':
-        $select_column_list .= 'm.manufacturers_name';
+        $select_column_list .= 'm.`manufacturers_name`';
         break;
       case 'PRODUCT_LIST_QUANTITY':
         $select_column_list .= 'p.`products_quantity`';
@@ -126,10 +126,10 @@
             $where_str .= " " . $search_keywords[$i] . " ";
             break;
           default:
-            $where_str .= "(lower( pd.`products_name` ) like '%" . addslashes( strtolower( $search_keywords[$i]) ) . "%' or p.`products_model` like '%" . addslashes($search_keywords[$i]) . "%' or m.manufacturers_name like '%" . addslashes($search_keywords[$i]) . "%'";
+            $where_str .= "(lower( pd.`products_name` ) like '%" . addslashes( strtolower( $search_keywords[$i]) ) . "%' or p.`products_model` like '%" . addslashes($search_keywords[$i]) . "%' or m.`manufacturers_name` like '%" . addslashes($search_keywords[$i]) . "%'";
 // search meta tags
-            $where_str .= " or (mtpd.metatags_keywords like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_keywords !='')";
-            $where_str .= " or (mtpd.metatags_description like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.metatags_description !='')";
+            $where_str .= " or (mtpd.`metatags_keywords` like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.`metatags_keywords` !='')";
+            $where_str .= " or (mtpd.`metatags_description` like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.`metatags_description` !='')";
             if (isset($_GET['search_in_description']) && ($_GET['search_in_description'] == '1')) $where_str .= " or pd.`products_description` like '%" . addslashes($search_keywords[$i]) . "%'";
               $where_str .= ')';
             break;
@@ -204,7 +204,7 @@
         $order_str .= "pd.`products_name` " . ($sort_order == 'd' ? "desc" : "");
         break;
       case 'PRODUCT_LIST_MANUFACTURER':
-        $order_str .= "m.manufacturers_name " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
+        $order_str .= "m.`manufacturers_name` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";
         break;
       case 'PRODUCT_LIST_QUANTITY':
         $order_str .= "p.`products_quantity` " . ($sort_order == 'd' ? "desc" : "") . ", pd.`products_name`";

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.11 2005/10/31 16:20:00 lsces Exp $
+// $Id: main_template_vars.php,v 1.12 2005/10/31 23:46:33 lsces Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -82,9 +82,9 @@
     require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_attributes.php');
 
 // if review must be approved or disabled do not show review
-    $review_status = " and r.status = '1'";
+    $review_status = " and r.`status` = '1'";
 
-    $reviews_query = "select count(*) as `count` from " . TABLE_REVIEWS . " r, "
+    $reviews_query = "select COUNT(*) from " . TABLE_REVIEWS . " r, "
                                                        . TABLE_REVIEWS_DESCRIPTION . " rd
                        where r.`products_id` = '" . (int)$_GET['products_id'] . "'
                        and r.`reviews_id` = rd.`reviews_id`

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: reviews.php,v 1.7 2005/10/31 23:46:32 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -277,10 +277,10 @@
     $search = '';
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       $keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-      $search = " and r.customers_name like '%" . $keywords . "%' or rd.reviews_text like '%" . $keywords . "%' or pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%'";
+      $search = " and r.`customers_name` like '%" . $keywords . "%' or rd.`reviews_text` like '%" . $keywords . "%' or pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%'";
     }
 
-    if ($status_filter !='' && $status_filter >0) $search .= " and r.status=" . ((int)$status_filter-1) . " ";
+    if ($status_filter !='' && $status_filter >0) $search .= " and r.`status` =" . ((int)$status_filter-1) . " ";
 
     $order_by = " order by pd.`products_name`";
 

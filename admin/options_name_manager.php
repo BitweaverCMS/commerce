@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.14 2005/10/31 16:19:58 lsces Exp $
+//  $Id: options_name_manager.php,v 1.15 2005/10/31 23:46:32 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -219,7 +219,7 @@
         // category of products
         $category_to_update = $_POST['category_to_update'];
 // re-write with categories
-        $all_update_products = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on pa.`products_id` = ptc.`products_id` where ptc.`categories_id` ='" . $category_to_update . "' and pa.options_id='" . $_POST['options_id'] . "' and pa.`products_id` = ptc.`products_id`");
+        $all_update_products = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on pa.`products_id` = ptc.`products_id` where ptc.`categories_id` ='" . $category_to_update . "' and pa.`options_id` ='" . $_POST['options_id'] . "' and pa.`products_id` = ptc.`products_id`");
         break;
       }
 
@@ -232,7 +232,7 @@
           // action add
           while (!$all_update_products->EOF) {
             // get all option_values
-            $all_options_values = $db->Execute("select `products_options_id`, `products_options_values_id` from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where products_options_id='" . $_POST['options_id'] . "'");
+            $all_options_values = $db->Execute("select `products_options_id`, `products_options_values_id` from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $_POST['options_id'] . "'");
             $updated = 'false';
            while (!$all_options_values->EOF) {
               $check_all_options_values = $db->Execute("select `products_attributes_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $all_update_products->fields['products_id'] . "' and `options_id`='" . $all_options_values->fields['products_options_id'] . "' and `options_values_id`='" . $all_options_values->fields['products_options_values_id'] . "'");

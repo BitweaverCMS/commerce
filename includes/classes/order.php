@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.22 2005/10/31 16:20:01 lsces Exp $
+// $Id: order.php,v 1.23 2005/10/31 23:46:33 lsces Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
@@ -456,16 +456,16 @@ class order extends BitBase {
             }
 */
 
-            $attributes_query = "select popt.products_options_name, poval.products_options_values_name,
-                                        pa.options_values_price, pa.price_prefix
+            $attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
+                                        pa.`options_values_price`, pa.`price_prefix`
                                  from " . TABLE_PRODUCTS_OPTIONS . " popt,
                                       " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval,
                                       " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                  where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
-                                 and pa.options_id = '" . (int)$option . "'
-                                 and pa.options_id = popt.products_options_id
-                                 and pa.options_values_id = '" . (int)$value . "'
-                                 and pa.options_values_id = poval.products_options_values_id
+                                 and pa.`options_id` = '" . (int)$option . "'
+                                 and pa.`options_id` = popt.`products_options_id`
+                                 and pa.`options_values_id` = '" . (int)$value . "'
+                                 and pa.`options_values_id` = poval.`products_options_values_id`
                                  and popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                  and poval.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 

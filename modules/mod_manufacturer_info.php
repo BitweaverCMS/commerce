@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturer_info.php,v 1.3 2005/08/24 12:17:29 lsces Exp $
+// $Id: mod_manufacturer_info.php,v 1.4 2005/10/31 23:46:33 lsces Exp $
 //
 	global $db, $gBitProduct;
 
   if (isset($_GET['products_id'])) {
-    $manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.manufacturers_name, m.manufacturers_image,
-                                  mi.manufacturers_url
+    $manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.`manufacturers_name`, m.`manufacturers_image`,
+                                  mi.`manufacturers_url`
                            from " . TABLE_MANUFACTURERS . " m
                            left join " . TABLE_MANUFACTURERS_INFO . " mi
                            on (m.`manufacturers_id` = mi.`manufacturers_id`

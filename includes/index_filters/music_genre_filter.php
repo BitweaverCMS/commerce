@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: music_genre_filter.php,v 1.5 2005/10/31 16:19:59 lsces Exp $
+// $Id: music_genre_filter.php,v 1.6 2005/10/31 23:46:32 lsces Exp $
 //
 // show the products of a specified music_genre
     if (isset($_GET['music_genre_id']))
@@ -50,7 +50,7 @@
     if (!isset($_GET['sort']) and PRODUCT_LISTING_DEFAULT_SORT_ORDER != '') {
       $_GET['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;
     }
-    $listing_sql = str_replace('m.manufacturers_name', 'm.music_genre_name as manufacturers_name', $listing_sql);
+    $listing_sql = str_replace('m.`manufacturers_name`', 'm.`music_genre_name` as `manufacturers_name`', $listing_sql);
 
     if ( (!isset($_GET['sort'])) || (!ereg('[1-8][ad]', $_GET['sort'])) || (substr($_GET['sort'], 0, 1) > sizeof($column_list)) )
     {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: default_filter.php,v 1.8 2005/10/31 16:19:59 lsces Exp $
+// $Id: default_filter.php,v 1.9 2005/10/31 23:46:32 lsces Exp $
 //
 // show the products of a specified manufacturer
 	$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -118,7 +118,7 @@
       {
         $filterlist_sql = "select distinct c.`categories_id` as `id`, cd.`categories_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where p.`products_status` = '1' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = c.`categories_id` and p2c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "' order by cd.`categories_name`";
       } else {
-        $filterlist_sql= "select distinct m.`manufacturers_id` as `id`, m.manufacturers_name as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_MANUFACTURERS . " m where p.`products_status` = '1' and p.`manufacturers_id` = m.`manufacturers_id` and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.`manufacturers_name`";
+        $filterlist_sql= "select distinct m.`manufacturers_id` as `id`, m.`manufacturers_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_MANUFACTURERS . " m where p.`products_status` = '1' and p.`manufacturers_id` = m.`manufacturers_id` and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.`manufacturers_name`";
       }
       $filterlist = $db->Execute($filterlist_sql);
       if ($filterlist->RecordCount() > 1)
