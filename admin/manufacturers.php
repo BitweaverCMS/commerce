@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.7 2005/10/31 16:19:58 lsces Exp $
+//  $Id: manufacturers.php,v 1.8 2005/10/31 21:37:17 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -45,21 +45,21 @@
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          $db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
+          $db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "`manufacturers_id` = '" . (int)$manufacturers_id . "'");
         }
 
         $manufacturers_image = new upload('manufacturers_image');
         $manufacturers_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
         if ( $manufacturers_image->parse() &&  $manufacturers_image->save()) {
           // remove image from database if none
-          if ($manufacturers_image->filename != 'none') {
+         if ($manufacturers_image->filename != 'none') {
             $db->Execute("update " . TABLE_MANUFACTURERS . "
-                          set manufacturers_image = '" .  $_POST['img_dir'] . $manufacturers_image->filename . "'
-                          where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                          set `manufacturers_image` = '" .  $_POST['img_dir'] . $manufacturers_image->filename . "'
+                          where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
           } else {
             $db->Execute("update " . TABLE_MANUFACTURERS . "
-                          set manufacturers_image = ''
-                          where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                          set `manufacturers_image` = ''
+                          where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
           }
         }
 
@@ -94,9 +94,9 @@
         $manufacturers_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $manufacturer = $db->Execute("select manufacturers_image
+          $manufacturer = $db->Execute("select `manufacturers_image`
                                         from " . TABLE_MANUFACTURERS . "
-                                        where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                                        where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
 
           $image_location = DIR_FS_CATALOG_IMAGES . $manufacturer->fields['manufacturers_image'];
 
@@ -104,9 +104,9 @@
         }
 
         $db->Execute("delete from " . TABLE_MANUFACTURERS . "
-                      where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                      where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
         $db->Execute("delete from " . TABLE_MANUFACTURERS_INFO . "
-                      where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                      where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
           $products = $db->Execute("select products_id
@@ -119,8 +119,8 @@
           }
         } else {
           $db->Execute("update " . TABLE_PRODUCTS . "
-                        set manufacturers_id = ''
-                        where manufacturers_id = '" . (int)$manufacturers_id . "'");
+                        set `manufacturers_id` = ''
+                        where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_MANUFACTURERS, 'page=' . $_GET['page']));
