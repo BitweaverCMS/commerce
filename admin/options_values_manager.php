@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
+//  $Id: options_values_manager.php,v 1.12 2005/10/31 22:53:09 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . 
-		" where `language_id` ='" . $_SESSION['languages_id'] . "'", NULL, 1);
+  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS . 
+		" where `language_id` ='" . $_SESSION['languages_id'] . "'");
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
@@ -244,7 +244,7 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
             while(!$products_only->EOF) {
               $current_products_id = $products_only->fields['products_id'];
               $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(`products_id`, `options_id`, `options_values_id`) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'", NULL, 1);
+              $check_previous = $db->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'");
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
                 $db->Execute($sql);
@@ -392,7 +392,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_price_letters_free) . "',
                                   '" . zen_db_input($attributes_required) . "')";
 
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'", NULL, 1);
+              $check_previous = $db->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
               // add new attribute

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
+//  $Id: products_to_categories.php,v 1.12 2005/10/31 22:53:09 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -50,10 +50,10 @@ function array_minus_array($a, $b) {
           zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_id=' . $productsId));
         }
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
-			" where `categories_id`='" . $copy_from_linked . "'", NULL, 1);
-        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
-			" where `categories_id`='" . $copy_to_linked . "'", NULL, 1);
+        $check_category_from = $db->getOne("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $copy_from_linked . "'");
+        $check_category_to = $db->getOne("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $copy_to_linked . "'");
 
         // check if from is valid category
         if ($check_category_from->RecordCount() < 1) {
@@ -156,10 +156,10 @@ function array_minus_array($a, $b) {
           zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_id=' . $productsId));
         }
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
-			" where `categories_id`='" . $remove_from_linked . "'", NULL, 1);
-        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
-			" where `categories_id`='" . $remove_to_linked . "'", NULL, 1);
+        $check_category_from = $db->getOne("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $remove_from_linked . "'");
+        $check_category_to = $db->getOne("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $remove_to_linked . "'");
 
 
         // check if from is valid category
@@ -276,8 +276,8 @@ function array_minus_array($a, $b) {
         $zv_complete_message_master = '';
         $reset_from_master = $_POST['reset_categories_id_from_master'];
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
-			" where `categories_id`='" . $reset_from_master . "'", NULL, 1);
+        $check_category_from = $db->getOne("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $reset_from_master . "'");
 
         // check if from is valid category
         if ($check_category_from->RecordCount() < 1) {

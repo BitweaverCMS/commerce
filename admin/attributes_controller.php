@@ -17,26 +17,25 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.15 2005/10/31 16:19:58 lsces Exp $
+//  $Id: attributes_controller.php,v 1.16 2005/10/31 22:53:09 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names, values, products
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . 
-		" where `language_id`='" . $_SESSION['languages_id'] . "'", NULL, 1);
+  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS . 
+		" where `language_id`='" . $_SESSION['languages_id'] . "'");
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
-  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . 
-		" where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . 
-		"'", NULL, 1);
+  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . 
+		" where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . "'");
   if ($chk_option_values->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
-  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, NULL, 1);
+  $chk_products = $db->getOne("select * from " . TABLE_PRODUCTS);
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));

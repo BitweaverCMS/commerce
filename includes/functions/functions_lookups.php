@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.12 2005/10/31 16:19:57 lsces Exp $
+// $Id: functions_lookups.php,v 1.13 2005/10/31 22:53:09 lsces Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -158,9 +158,9 @@
 	$ret = FALSE;
 	if( is_numeric( $valid_id ) ) {
 	    global $db;
-    	$check_valid = $db->Execute("select p.`products_id`
+    	$check_valid = $db->getOne("select p.`products_id`
         	                         from " . TABLE_PRODUCTS . " p
-            	                     where `products_id`='" . $valid_id . "'", NULL, 1);
+            	                     where `products_id`='" . $valid_id . "'");
 	    if( !$check_valid->EOF ) {
     	  $ret = true;
 	    }
@@ -262,7 +262,7 @@
                            where pa.`products_id` = '" . (int)$products_id . "'";
     }
 
-    $attributes = $db->Execute($attributes_query, NULL, 1);
+    $attributes = $db->getOne($attributes_query);
 
     if ($attributes->fields['products_attributes_id'] > 0) {
       return true;
@@ -382,11 +382,11 @@
 // return attributes products_options_sort_order - PRODUCTS_ATTRIBUTES
   function zen_get_attributes_sort_order($products_id, $options_id, $options_values_id) {
     global $db;
-      $check = $db->Execute("select `products_options_sort_order`
+      $check = $db->getOne("select `products_options_sort_order`
                              from " . TABLE_PRODUCTS_ATTRIBUTES . "
                              where `products_id` = '" . $products_id . "'
                              and `options_id` = '" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "'", NULL, 1);
+                             and `options_values_id` = '" . $options_values_id . "'");
 
       return $check->fields['products_options_sort_order'];
   }
@@ -395,15 +395,15 @@
 // return attributes products_options_sort_order - PRODUCTS_OPTIONS
   function zen_get_attributes_options_sort_order($products_id, $options_id, $options_values_id) {
     global $db;
-      $check = $db->Execute("select `products_options_sort_order`
+      $check = $db->getOne("select `products_options_sort_order`
                              from " . TABLE_PRODUCTS_OPTIONS . "
-                             where `products_options_id` = '" . $options_id . "'", NULL, 1);
+                             where `products_options_id` = '" . $options_id . "'");
 
-      $check_options_id = $db->Execute("select `products_id`, `options_id`, `options_values_id`, `products_options_sort_order`
+      $check_options_id = $db->getOne("select `products_id`, `options_id`, `options_values_id`, `products_options_sort_order`
                              from " . TABLE_PRODUCTS_ATTRIBUTES . "
                              where `products_id` ='" . $products_id . "'
                              and `options_id` ='" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "'", NULL, 1);
+                             and `options_values_id` = '" . $options_values_id . "'");
 
 
       return $check->fields['products_options_sort_order'] . '.' . str_pad($check_options_id->fields['products_options_sort_order'],5,'0',STR_PAD_LEFT);
@@ -546,7 +546,7 @@
   function zen_get_categories_name_from_product($product_id) {
     global $db;
 
-    $check_products_category= $db->Execute("select `products_id`, `categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id`='" . $product_id . "'", NULL, 1);
+    $check_products_category= $db->getOne("select `products_id`, `categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id`='" . $product_id . "'");
     $the_categories_name= $db->Execute("select `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id`= '" . $check_products_category->fields['categories_id'] . "' and `language_id`= '" . $_SESSION['languages_id'] . "'");
 
     return $the_categories_name->fields['categories_name'];

@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.6 2005/10/31 16:19:58 lsces Exp $
+//  $Id: option_name.php,v 1.7 2005/10/31 22:53:09 lsces Exp $
 //
 ?>
 <?php
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . 
-		" where `language_id` ='" . $_SESSION['languages_id'] . "'", NULL, 1);
+  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS . 
+		" where `language_id` ='" . $_SESSION['languages_id'] . "'");
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));

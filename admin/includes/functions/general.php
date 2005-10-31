@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.26 2005/10/31 16:20:00 lsces Exp $
+//  $Id: general.php,v 1.27 2005/10/31 22:53:09 lsces Exp $
 //
 
 ////
@@ -1442,11 +1442,10 @@
 // Validate Option Name and Option Type Match
   function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
     global $db;
-    $check_options_to_values_query= $db->Execute("SELECT `products_options_id`
+    $check_options_to_values_query= $db->getOne("SELECT `products_options_id`
                                                   FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                                                   WHERE `products_options_id` = '" . $products_options_id . "'
-                                                  and `products_options_values_id` ='" . $products_options_values_id,
-                                                  NULL, 1);
+                                                  and `products_options_values_id` ='" . $products_options_values_id);
 
     if ($check_options_to_values_query->RecordCount() != 1) {
       return false;
@@ -2385,7 +2384,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
                        ($status_override == '1' ? " and p.`products_status` = '1' " : '') . "
                        and p.`products_id` = p2c.`products_id`";
 
-    $category = $db->Execute($category_query, NULL, 1);
+    $category = $db->getOne($category_query);
 
     if ($category->RecordCount() > 0) {
 

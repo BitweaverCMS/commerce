@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_categories.php,v 1.3 2005/10/31 16:20:01 lsces Exp $
+// $Id: mod_categories.php,v 1.4 2005/10/31 22:53:10 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -26,8 +26,8 @@
     $box_categories_array = array();
 
 // don't build a tree when no categories
-    $check_categories = $db->Execute("select `categories_id` from " . TABLE_CATEGORIES . 
-			" where `categories_status` = 1", NULL, 1);
+    $check_categories = $db->getOne("select `categories_id` from " . TABLE_CATEGORIES . 
+			" where `categories_status` = 1");
     if ($check_categories->RecordCount() > 0) {
 		$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
     }

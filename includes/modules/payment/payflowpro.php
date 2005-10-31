@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.8 2005/10/31 16:19:56 lsces Exp $
+// $Id: payflowpro.php,v 1.9 2005/10/31 22:53:09 lsces Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -251,7 +251,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		$order->info['cc_owner'] = $_POST['cc_owner'];
 		$order->info['cc_cvv'] = $_POST['cc_cvv'];
 		// Calculate the next expected order id
-		$last_order_id = $gBitDb->Execute("select * from " . TABLE_ORDERS . " order by `orders_id` desc", NULL, 1);
+		$last_order_id = $gBitDb->getOne("select * from " . TABLE_ORDERS . " order by `orders_id` desc");
 		$new_order_id = $last_order_id->fields['orders_id'];
 		$new_order_id = ($new_order_id + 1);
 

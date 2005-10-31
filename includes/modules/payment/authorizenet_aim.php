@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.4 2005/10/31 16:19:56 lsces Exp $
+// $Id: authorizenet_aim.php,v 1.5 2005/10/31 22:53:09 lsces Exp $
 
 
   class authorizenet_aim {
@@ -248,7 +248,7 @@
 	  $order_time = date("F j, Y, g:i a");
 
 	  // Calculate the next expected order id
-	  $last_order_id = $db->Execute("select * from " . TABLE_ORDERS . " order by `orders_id` desc", NULL, 1);
+	  $last_order_id = $db->getOne("select * from " . TABLE_ORDERS . " order by `orders_id` desc");
 	  $new_order_id = $last_order_id->fields['orders_id'];
 	  $new_order_id = ($new_order_id + 1);
 

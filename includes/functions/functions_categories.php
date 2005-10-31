@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.7 2005/10/31 16:19:57 lsces Exp $
+// $Id: functions_categories.php,v 1.8 2005/10/31 22:53:09 lsces Exp $
 //
 //
 ////
@@ -191,7 +191,7 @@
                        and p.`products_status` = '1'
                        and p.`products_id` = p2c.`products_id`";
 
-    $category = $db->Execute($category_query, NULL, 1);
+    $category = $db->getOne($category_query);
 
     if ($category->RecordCount() > 0) {
 
