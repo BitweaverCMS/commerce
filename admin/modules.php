@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.13 2005/10/31 16:19:58 lsces Exp $
+//  $Id: modules.php,v 1.14 2005/10/31 21:30:50 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -71,6 +71,7 @@
         break;
       case 'install':
       case 'remove':
+$gBitDb->debug();
         $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
         $class = basename($_GET['module']);
         if( file_exists( $module_directory . $class . $file_extension ) ) {
@@ -92,7 +93,6 @@
             $module->remove();
           }
         }
-
         zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL'));
         break;
     }
@@ -151,7 +151,10 @@
   if ($set == 'payment') {
 ?>
                 <td class="dataTableHeadingContent" align="center" width="100"><?php echo TABLE_HEADING_ORDERS_STATUS; ?></td>
-<?php } ?>
+<?php } else { ?>
+                <td class="dataTableHeadingContent" align="center">&nbsp;</td>
+<?php }?>
+
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
@@ -181,12 +184,13 @@
     if (zen_class_exists($class)) {
       $module = new $class;
       if ($module->check() > 0) {
-        if ($module->sort_order > 0) {
+        if( !empty( $module->sort_order ) && empty( $installed_modules[$module->sort_order] ) ) {
           $installed_modules[$module->sort_order] = $file;
         } else {
           $installed_modules[] = $file;
         }
       }
+
       if ((!isset($_GET['module']) || (isset($_GET['module']) && ($_GET['module'] == $class))) && !isset($mInfo)) {
         $module_info = array('code' => $module->code,
                              'title' => $module->title,
