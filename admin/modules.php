@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.14 2005/10/31 21:30:50 spiderr Exp $
+//  $Id: modules.php,v 1.15 2005/10/31 23:00:26 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -251,7 +251,7 @@ $gBitDb->debug();
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
       $db->Execute("update " . TABLE_CONFIGURATION . "
-                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$db->NOW()."
+                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = 'NOW'
           where `configuration_key` = '" . $module_key . "'");
     }
   } else {
