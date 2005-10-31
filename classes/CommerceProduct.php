@@ -56,17 +56,18 @@ class CommerceProduct extends LibertyAttachable {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
 			$this->getServicesSql( 'content_load_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
-			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,tc.*
+			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,tc.*, m.*
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`) $joinSql
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
-						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
-						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
-						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
+// Leave these out for now... and possibly forever. These can produce multiple row returns
+//						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
+//						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
+//						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
 					$ret['products_image_url'] = CommerceProduct::getImageUrl( $ret['products_image'] );
@@ -726,7 +727,7 @@ Skip deleting of images for now
 		}
 
 		// $new_fields = ', product_is_free, product_is_call, product_is_showroom_only';
-		$product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+		$product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
 			" where `products_id` = '" . (int)$pProductsId . "'", NULL, 1);
 
 		$show_display_price = '';
