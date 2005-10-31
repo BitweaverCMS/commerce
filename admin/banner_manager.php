@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: banner_manager.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -116,7 +116,7 @@
                                   'banners_sort_order' => $banners_sort_order);
 
           if ($action == 'insert') {
-            $insert_sql_data = array('date_added' => 'now()',
+            $insert_sql_data = array('date_added' => $db->NOW(),
                                      'status' => '1');
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);

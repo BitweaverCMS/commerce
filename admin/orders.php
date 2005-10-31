@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.22 2005/10/27 22:16:49 spiderr Exp $
+//  $Id: orders.php,v 1.23 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -472,7 +472,7 @@
 // check if order has open gv
         $gv_check = $db->Execute("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
-                                  where `order_id` = '" . $_GET['oID'] . "' and `release_flag`='N'", 1);
+                                  where `order_id` = '" . $_GET['oID'] . "' and `release_flag`='N'", NULL, 1);
         if ($gv_check->RecordCount() > 0) {
           $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_GET['oID']) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
           echo '      <tr><td align="right"><table width="225"><tr>';
@@ -658,7 +658,7 @@
 // check if order has open gv
         $gv_check = $db->Execute("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
-                                  where `order_id` = '" . $oInfo->orders_id . "' and release_flag='N'", 1);
+                                  where `order_id` = '" . $oInfo->orders_id . "' and `release_flag` ='N'", NULL, 1);
         if ($gv_check->RecordCount() > 0) {
           $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $oInfo->orders_id) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
           $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));

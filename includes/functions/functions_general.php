@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.20 2005/10/27 22:17:57 spiderr Exp $
+// $Id: functions_general.php,v 1.21 2005/10/31 16:19:57 lsces Exp $
 //
 /**
  * General Function Repository.
@@ -937,7 +937,7 @@
       return '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' .  TEXT_SHOWCASE_ONLY . '</a>';
     }
 
-    $button_check = $db->query( "select product_is_call, products_quantity from " . TABLE_PRODUCTS . " where products_id = ?", array( $product_id ) );
+    $button_check = $db->query( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     switch (true) {
 // cannot be added to the cart
     case (zen_get_products_allow_add_to_cart($product_id) == 'N'):

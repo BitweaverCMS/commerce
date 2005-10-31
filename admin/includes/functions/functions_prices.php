@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.6 2005/08/24 13:19:13 lsces Exp $
+// $Id: functions_prices.php,v 1.7 2005/10/31 16:20:00 lsces Exp $
 //
 //
 
@@ -144,8 +144,8 @@
   function zen_get_products_discount_price_qty($product_id, $check_qty, $check_amount=0) {
     global $db;
       $product_id = (int)$product_id;
-      $products_query = $db->Execute("select products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id='" . $product_id . "'");
-      $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $product_id . "' and discount_qty <='" . $check_qty . "' order by discount_qty desc");
+      $products_query = $db->Execute("select `products_discount_type`, `products_discount_type_from`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` ='" . $product_id . "'");
+      $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $product_id . "' and `discount_qty` <='" . $check_qty . "' order by `discount_qty` desc");
 
       $display_price = zen_get_products_base_price($product_id);
       $display_specials_price = zen_get_products_special_price($product_id, true);

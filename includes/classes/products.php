@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products.php,v 1.4 2005/08/24 12:17:46 lsces Exp $
+// $Id: products.php,v 1.5 2005/10/31 16:20:01 lsces Exp $
 //
 
   class products {
@@ -50,8 +50,8 @@
         $zp_products->MoveNext();
       }
       if ($zf_recurse) {
-        $zp_categories_query = "select categories_id from " . TABLE_CATEGORIES . "
-                                where parent_id = '"   . $zf_category_id . "'";
+        $zp_categories_query = "select `categories_id` from " . TABLE_CATEGORIES . "
+                                where `parent_id` = '"   . $zf_category_id . "'";
         $zp_categories = $db->Execute($zp_categories_query);
         while (!$zp_categories->EOF) {
           $za_sub_products_array = $this->get_products_in_category($zp_categories->fields['categories_id'], true, $zf_product_ids_only);
@@ -87,10 +87,10 @@
 	  function get_allow_add_to_cart($zf_product_id) {
 	    global $db;
 
-      $sql = "select products_type from " . TABLE_PRODUCTS . " where products_id='" . $zf_product_id . "'";
+      $sql = "select `products_type` from " . TABLE_PRODUCTS . " where `products_id` ='" . $zf_product_id . "'";
       $type_lookup = $db->Execute($sql);
 
-      $sql = "select allow_add_to_cart from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $type_lookup->fields['products_type'] . "'";
+      $sql = "select `allow_add_to_cart` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $type_lookup->fields['products_type'] . "'";
       $allow_add_to_cart = $db->Execute($sql);
 
 	    return $allow_add_to_cart->fields['allow_add_to_cart'];

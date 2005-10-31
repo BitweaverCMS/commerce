@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.13 2005/10/11 03:50:10 spiderr Exp $
+//  $Id: application_top.php,v 1.14 2005/10/31 16:20:00 lsces Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -340,7 +340,7 @@ error_reporting(E_ALL & ~E_NOTICE);
 
   // log page visit into admin activity history
   if (basename($PHP_SELF) != FILENAME_LOGIN . '.php' && basename($PHP_SELF) != FILENAME_DEFAULT . '.php' && isset($_SESSION['admin_id'])) {
-    $sql_data_array = array( 'access_date' => 'now()',
+    $sql_data_array = array( 'access_date' => $db->NOW(),
                              'admin_id' => $gBitUser->mUserId,
                              'page_accessed' =>  basename($PHP_SELF),
                              'page_parameters' => zen_get_all_get_params(),

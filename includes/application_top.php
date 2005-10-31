@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.26 2005/10/11 03:50:10 spiderr Exp $
+// $Id: application_top.php,v 1.27 2005/10/31 16:20:01 lsces Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -563,7 +563,7 @@ function clean_input( &$pArray ) {
                                 if (zen_has_product_attributes($_REQUEST['pid'])) {
                                   zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));
                                 } else {
-                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_REQUEST['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
                                   $_SESSION['cart']->add_cart($_REQUEST['pid'], $_SESSION['cart']->get_quantity($_REQUEST['pid'])+1);
                                 }
                               }
@@ -573,8 +573,8 @@ function clean_input( &$pArray ) {
 
       case 'add_wishlist' :  if (ereg('^[0-9]+$', $_REQUEST['products_id'])) {
                                if  ($_REQUEST['products_id']) {
-                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE products_id = '" . $_REQUEST['products_id'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
-                                 $db->Execute("insert into " . TABLE_WISHLIST . " (customers_id, products_id, products_model, products_name, products_price) values ('" . $_SESSION['customer_id'] . "', '" . $_REQUEST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
+                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['products_id'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
+                                 $db->Execute("insert into " . TABLE_WISHLIST . " (`customers_id`, `products_id`, `products_model`, `products_name`, `products_price`) values ('" . $_SESSION['customer_id'] . "', '" . $_REQUEST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
                                }
                              }
 
@@ -604,7 +604,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 // remove item FROM the wishlist
 ///// CHANGES TO case 'remove_wishlist' BY DREAMSCAPE /////
       case 'remove_wishlist' :
-                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $HTTP_GET_VARS['pid'] . "' and customers_id = '" . $_SESSION['customer_id'] . "'");
+                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $HTTP_GET_VARS['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
                             zen_redirect(zen_href_link(FILENAME_WISHLIST));
                              break;
     }

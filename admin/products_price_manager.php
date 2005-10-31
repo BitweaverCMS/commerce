@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.14 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.15 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify products exist
-  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, 1);
+  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, NULL, 1);
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -80,7 +80,8 @@
   }
 
   if ($action == 'add_discount_qty_id') {
-    $add_id = $db->Execute("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`='" . $productsId . "' order by `discount_id` desc", 1);
+    $add_id = $db->Execute("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . 
+		" where `products_id`='" . $productsId . "' order by `discount_id` desc", NULL, 1);
     $add_cnt = 1;
     $add_id = $add_id->fields['discount_id'];
     while ($add_cnt <= DISCOUNT_QTY_ADD) {
@@ -303,7 +304,7 @@ if ($_GET['products_id'] != '') {
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
   echo zen_get_products_display_price($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
-  $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.allow_add_to_cart = 'N'");
+  $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
   while (!$not_for_cart->EOF) {
     $not_for_cart_array[] = $not_for_cart->fields['products_id'];
     $not_for_cart->MoveNext();
@@ -407,8 +408,8 @@ if ($productsId == '') {
       $product = $db->Execute("select p.`products_id`, p.`products_model`,
                                       p.`products_price`, p.`products_date_available`,
                                       p.`products_tax_class_id`,
-                                      p.`products_quantity_order_min`, products_quantity_order_units, p.`products_quantity_order_max`,
-                                      p.`product_is_free`, p.product_is_call, p.`products_quantity_mixed`, p.`products_priced_by_attribute`, p.`products_status`,
+                                      p.`products_quantity_order_min`, `products_quantity_order_units`, p.`products_quantity_order_max`,
+                                      p.`product_is_free`, p.`product_is_call`, p.`products_quantity_mixed`, p.`products_priced_by_attribute`, p.`products_status`,
                                       p.`products_discount_type`, p.`products_discount_type_from`, p.`products_price_sorter`,
                                       pd.`products_name`,
                                       p.`master_categories_id`, p.`products_mixed_discount_qty`
@@ -522,7 +523,7 @@ var SpecialEndDate = new ctlSpiffyCalendarBox("SpecialEndDate", "new_prices", "s
 <?php
 // auto fix bad or missing products master_categories_id
   if (zen_get_product_is_linked($productsId) == 'false' and $pInfo->master_categories_id != zen_get_products_category_id($productsId)) {
-    $sql = "update " . TABLE_PRODUCTS . " set master_categories_id='" . zen_get_products_category_id($productsId) . "' where products_id='" . $productsId . "'";
+    $sql = "update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . zen_get_products_category_id($productsId) . "' where `products_id` ='" . $productsId . "'";
     $db->Execute($sql);
     $pInfo->master_categories_id = zen_get_products_category_id($productsId);
   }
@@ -746,7 +747,7 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
 <?php
 // fix here
 // discount
-    $discounts_qty = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $productsId . "' order by discount_qty");
+    $discounts_qty = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $productsId . "' order by `discount_qty`");
     $discount_cnt = $discounts_qty->RecordCount();
     $make = 1;
     $i;

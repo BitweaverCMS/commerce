@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_coupon_help.php,v 1.1 2005/10/06 19:38:29 spiderr Exp $
+// $Id: popup_coupon_help.php,v 1.2 2005/10/31 16:19:59 lsces Exp $
 //
 ?>
 <body onload="resize();">
 <?php
-  $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where coupon_id = '" . $_GET['cID'] . "'");
-  $coupon_desc = $db->Execute("select * from " . TABLE_COUPONS_DESCRIPTION . " where coupon_id = '" . $_GET['cID'] . "' and language_id = '" . $_SESSION['languages_id'] . "'");
+  $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where `coupon_id` = '" . $_GET['cID'] . "'");
+  $coupon_desc = $db->Execute("select * from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cID'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
   $text_coupon_help = TEXT_COUPON_HELP_HEADER;
   $text_coupon_help .= sprintf(TEXT_COUPON_HELP_NAME, $coupon_desc->fields['coupon_name']);
   if (zen_not_null($coupon_desc->fields['coupon_description'])) $text_coupon_help .= sprintf(TEXT_COUPON_HELP_DESC, $coupon_desc->fields['coupon_description']);
@@ -44,7 +44,7 @@
   $text_coupon_help .= sprintf(TEXT_COUPON_HELP_DATE, zen_date_short($coupon->fields['coupon_start_date']),zen_date_short($coupon->fields['coupon_expire_date']));
   $text_coupon_help .= '<b>' . TEXT_COUPON_HELP_RESTRICT . '</b>';
   $text_coupon_help .= '<br><br>' .  TEXT_COUPON_HELP_CATEGORIES;
-  $get_result=$db->Execute("select restrict_to_categories from " . TABLE_COUPONS . " where coupon_id='".$_GET['cID']."'");
+  $get_result=$db->Execute("select `restrict_to_categories` from " . TABLE_COUPONS . " where `coupon_id` ='".$_GET['cID']."'");
 
   $cat_ids = split("[,]", $get_result->fields['restrict_to_categories']);
   for ($i = 0; $i < count($cat_ids); $i++) {

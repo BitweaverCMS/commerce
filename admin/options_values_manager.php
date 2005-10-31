@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.10 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` ='" . $_SESSION['languages_id'] . "'", 1);
+  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . 
+		" where `language_id` ='" . $_SESSION['languages_id'] . "'", NULL, 1);
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
@@ -242,8 +243,8 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
             // check existing matching products and add new attributes
             while(!$products_only->EOF) {
               $current_products_id = $products_only->fields['products_id'];
-              $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(products_id, options_id, options_values_id) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_to . "' and options_values_id='" . $options_values_values_id_to . "'", 1);
+              $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(`products_id`, `options_id`, `options_values_id`) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
+              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'", NULL, 1);
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
                 $db->Execute($sql);
@@ -361,7 +362,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
             while(!$products_only->EOF) {
               $current_products_id = $products_only->fields['products_id'];
 
-//              $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(products_id, options_id, options_values_id) values('" . $current_products_id . "', '" . $options_id_from . "', '" . $options_values_values_id_from . "')";
+//              $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(`products_id`, `options_id`, `options_values_id`) values('" . $current_products_id . "', '" . $options_id_from . "', '" . $options_values_values_id_from . "')";
                 $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "
                           values ('',
                                   '" . (int)$current_products_id . "',
@@ -391,7 +392,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_price_letters_free) . "',
                                   '" . zen_db_input($attributes_required) . "')";
 
-              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "'", 1);
+              $check_previous = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'", NULL, 1);
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
               // add new attribute
@@ -405,7 +406,7 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                 } else {
                 // delete old and add new
                 //echo 'delete old and add new: ' . $current_products_id . '<br>';
-                  $db->Execute("DELETE from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "'");
+                  $db->Execute("DELETE from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
                   $db->Execute($sql);
                   $new_attribute++;
                 }
@@ -462,10 +463,10 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
             $current_products_id = $products_only->fields['products_id'];
 
             // check for associated downloads
-            $downloads_remove_query = "select products_attributes_id from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "'";
+            $downloads_remove_query = "select `products_attributes_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and options_id='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'";
             $downloads_remove = $db->Execute($downloads_remove_query);
 
-            $sql = "delete from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $current_products_id . "' and options_id='" . $options_id_from . "' and options_values_id='" . $options_values_values_id_from . "'";
+            $sql = "delete from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'";
             $delete_selected = $db->Execute($sql);
 
             // delete associated downloads
@@ -738,9 +739,9 @@ function go_option() {
         echo '<form name="values" action="' . zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, 'action=update_value' . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') ) . '" method="post">';
         $inputs = '';
         for ($i = 0, $n = sizeof($languages); $i < $n; $i ++) {
-          $value_name = $db->Execute("select` products_options_values_name`
+          $value_name = $db->Execute("select `products_options_values_name`
                                       from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                                      where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
+                                      where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "' and `language_id` = '" . (int)$languages[$i]['id'] . "'");
           $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . ' value="' . $value_name->fields['products_options_values_name'] . '">&nbsp;<br />';
         }
           $products_ov_sort_order = $db->Execute("select `distinct products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");

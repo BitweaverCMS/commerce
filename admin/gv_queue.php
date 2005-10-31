@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.8 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: gv_queue.php,v 1.9 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -27,13 +27,15 @@
 
 // bof: find gv for a particular order and set page
   if ($_GET['order'] != '') {
-    $gv_check = $db->Execute("select order_id, unique_id
+    $gv_check = $db->Execute("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE . "
-                                  where order_id = '" . $_GET['order'] . "' and release_flag= 'N'", 1);
+                                  where `order_id` = '" . $_GET['order'] . "' and `release_flag` = 'N'", NULL, 1);
 
     $_GET['gid'] = $gv_check->fields['unique_id'];
 
-    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')" . " order by gv.`order_id`, gv.`unique_id`");
+    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " 
+		 . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')"
+		 . " order by gv.`order_id`, gv.`unique_id`");
     $page_cnt=1;
     while (!$gv_page->EOF) {
       if ($gv_page->fields['order_id'] == $_GET['order']) {

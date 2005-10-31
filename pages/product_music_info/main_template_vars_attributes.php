@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.6 2005/10/31 16:20:00 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -30,7 +30,7 @@
             and      patrib.`options_id` = popt.`products_options_id`
             and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $pr_attr = $db->Execute($sql,1);
+    $pr_attr = $db->Execute($sql, NULL, 1);
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {

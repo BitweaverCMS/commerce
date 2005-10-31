@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.10 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: products_to_categories.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -50,8 +50,10 @@ function array_minus_array($a, $b) {
           zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_id=' . $productsId));
         }
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $copy_from_linked . "'", 1);
-        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $copy_to_linked . "'", 1);
+        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $copy_from_linked . "'", NULL, 1);
+        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $copy_to_linked . "'", NULL, 1);
 
         // check if from is valid category
         if ($check_category_from->RecordCount() < 1) {
@@ -79,14 +81,14 @@ function array_minus_array($a, $b) {
         ///////////////////////////////////////////////////////////////
 
         // get products to be linked from
-        $products_to_categories_from_linked = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $copy_from_linked . "'");
+        $products_to_categories_from_linked = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $copy_from_linked . "'");
         while (!$products_to_categories_from_linked->EOF) {
           $add_links_array[] = array('products_id' => $products_to_categories_from_linked->fields['products_id']);
           $products_to_categories_from_linked->MoveNext();
         }
 
         // get products already in category to be linked to
-        $products_to_categories_to_linked = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $copy_to_linked . "'");
+        $products_to_categories_to_linked = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $copy_to_linked . "'");
         while (!$products_to_categories_to_linked->EOF) {
           $remove_links_array[] = array('products_id' => $products_to_categories_to_linked->fields['products_id']);
           $products_to_categories_to_linked->MoveNext();
@@ -113,7 +115,7 @@ function array_minus_array($a, $b) {
 //          $cnt_added++;
           $new_product = $make_links_result[$i]['products_id'];
           $sql = "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                  (products_id, categories_id)
+                  (`products_id`, `categories_id`)
                   values ($new_product, $copy_to_linked)";
 
           $db->Execute($sql);
@@ -154,8 +156,10 @@ function array_minus_array($a, $b) {
           zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_id=' . $productsId));
         }
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $remove_from_linked . "'", 1);
-        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $remove_to_linked . "'", 1);
+        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $remove_from_linked . "'", NULL, 1);
+        $check_category_to = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $remove_to_linked . "'", NULL, 1);
 
 
         // check if from is valid category
@@ -213,7 +217,7 @@ function array_minus_array($a, $b) {
         }
 
         // get products already in category to be removed as linked to
-        $products_to_categories_to_linked = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $remove_to_linked . "'");
+        $products_to_categories_to_linked = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $remove_to_linked . "'");
         while (!$products_to_categories_to_linked->EOF) {
           $remove_links_array[] = array('products_id' => $products_to_categories_to_linked->fields['products_id']);
           $products_to_categories_to_linked->MoveNext();
@@ -238,7 +242,7 @@ function array_minus_array($a, $b) {
         for ($i=0, $n=sizeof($make_links_result); $i<$n; $i++) {
 //          $cnt_removed++;
           $remove_product = $make_links_result[$i]['products_id'];
-          $sql = "delete from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id='" . $remove_product . "' and categories_id='" . $remove_to_linked . "'";
+          $sql = "delete from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` ='" . $remove_product . "' and `categories_id` ='" . $remove_to_linked . "'";
           $db->Execute($sql);
         }
 
@@ -272,7 +276,8 @@ function array_minus_array($a, $b) {
         $zv_complete_message_master = '';
         $reset_from_master = $_POST['reset_categories_id_from_master'];
 
-        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $reset_from_master . "'", 1);
+        $check_category_from = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . 
+			" where `categories_id`='" . $reset_from_master . "'", NULL, 1);
 
         // check if from is valid category
         if ($check_category_from->RecordCount() < 1) {
@@ -294,7 +299,7 @@ function array_minus_array($a, $b) {
         $reset_master_categories_id = $db->Execute("select p.`products_id`, p.master_categories_id, ptoc.`categories_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc on ptoc.`products_id`= p.`products_id` and ptoc.`categories_id`='" . $reset_from_master . "' where ptoc.`categories_id`='" . $reset_from_master . "'");
 
         while (!$reset_master_categories_id->EOF) {
-          $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $reset_from_master . "' where products_id='" . $reset_master_categories_id->fields['products_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $reset_from_master . "' where `products_id` ='" . $reset_master_categories_id->fields['products_id'] . "'");
           // reset products_price_sorter for searches etc.
           zen_update_products_price_sorter($reset_master_categories_id->fields['products_id']);
           $reset_master_categories_id->MoveNext();
@@ -305,7 +310,7 @@ function array_minus_array($a, $b) {
         break;
 
       case 'set_master_categories_id':
-        $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $_GET['master_categories_id'] . "' where products_id='" . $productsId . "'");
+        $db->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $_GET['master_categories_id'] . "' where `products_id` ='" . $productsId . "'");
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($productsId);
 
@@ -314,10 +319,10 @@ function array_minus_array($a, $b) {
 
       case 'update_product':
         // get current master_categories_id for product to compare with final results
-        $current_master_categories_id = $db->Execute("select master_categories_id from " . TABLE_PRODUCTS . " where products_id='" . $productsId . "'");
+        $current_master_categories_id = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` ='" . $productsId . "'");
 
         // set the master_categories_id product first
-        $current_master_categories_id = $db->Execute("select master_categories_id from " . TABLE_PRODUCTS . " where products_id='" . $productsId . "'");
+        $current_master_categories_id = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` ='" . $productsId . "'");
         $zv_check_master_categories_id = 'false';
         for ($i=0, $n=sizeof($_POST['categories_add']); $i<$n; $i++) {
           // is current master_categories_id in the list?
@@ -341,7 +346,7 @@ function array_minus_array($a, $b) {
         }
 
         // remove existing products_to_categories for current product
-        $db->Execute("delete from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id='" . $productsId . "'");
+        $db->Execute("delete from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` ='" . $productsId . "'");
 
         // add products to categories in order of master_categories_id first then others
         for ($i=0, $n=sizeof($new_categories_sort_array); $i<$n; $i++) {
@@ -350,16 +355,16 @@ function array_minus_array($a, $b) {
             echo 'I WOULD NOT ADD ' . $new_categories_sort_array[$i] . '<br>';
           } else {
             $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                    (products_id, categories_id)
+                    (`products_id`, `categories_id`)
                     values ($productsId, $new_categories_sort_array[$i])");
           }
         }
 
         // reset master_categories_id in products table
         if ($zv_check_master_categories_id == 'true') {
-          $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id='" . $current_master_categories_id->fields['master_categories_id'] . "' where products_id='" . $productsId . "'");
+          $db->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $current_master_categories_id->fields['master_categories_id'] . "' where `products_id` ='" . $productsId . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS . " set master_categories_id=0 where products_id='" . $productsId . "'");
+          $db->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` =0 where `products_id` ='" . $productsId . "'");
         }
 
         // recalculate price based on new master_categories_id
@@ -388,7 +393,7 @@ function array_minus_array($a, $b) {
   $categories_list = $db->Execute($catagories_query);
 
 // current products to categories
-  $products_list = $db->Execute("select products_id, categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id = '" . $productsId . "'");
+  $products_list = $db->Execute("select `products_id`, `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . $productsId . "'");
 
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">

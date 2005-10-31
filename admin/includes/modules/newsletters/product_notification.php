@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.6 2005/08/24 15:31:16 spiderr Exp $
+//  $Id: product_notification.php,v 1.7 2005/10/31 16:20:00 lsces Exp $
 //
 
   class product_notification {
@@ -137,18 +137,18 @@ function selectAll(FormName, SelectBox) {
 
         $ids = implode(',', $chosen);
 
-        $products = $db->Execute("select distinct customers_id
+        $products = $db->Execute("select distinct `customers_id`
                                   from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-                                  where products_id in (" . $ids . ")");
+                                  where `products_id` in (" . $ids . ")");
 
         while (!$products->EOF) {
           $audience[$products->fields['customers_id']] = '1';
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select customers_info_id
+        $customers = $db->Execute("select `customers_info`_id
                                    from " . TABLE_CUSTOMERS_INFO . "
-                                   where global_product_notifications = '1'");
+                                   where `global_product_notifications` = '1'");
 
         while (!$customers->EOF) {
           $audience[$customers->fields['customers_info_id']] = '1';

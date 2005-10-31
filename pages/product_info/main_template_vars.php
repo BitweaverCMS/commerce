@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.14 2005/10/06 22:05:51 spiderr Exp $
+// $Id: main_template_vars.php,v 1.15 2005/10/31 16:20:01 lsces Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -40,9 +40,9 @@
     $tpl_page_body = 'product_info_display.php';
 
     $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . "
-            set        products_viewed = products_viewed+1
-            where      products_id = '" . (int)$_GET['products_id'] . "'
-            and        language_id = '" . (int)$_SESSION['languages_id'] . "'";
+            set        `products_viewed` = `products_viewed` + 1
+            where      `products_id` = '" . (int)$_GET['products_id'] . "'
+            and        `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
     $res = $db->Execute($sql);
 
@@ -84,7 +84,7 @@
 // if review must be approved or disabled do not show review
     $review_status = " and r.status = '1'";
 
-    $reviews_query = "select count(*) as count from " . TABLE_REVIEWS . " r, "
+    $reviews_query = "select COUNT(*) from " . TABLE_REVIEWS . " r, "
                                                        . TABLE_REVIEWS_DESCRIPTION . " rd
                        where r.`products_id` = '" . (int)$_GET['products_id'] . "'
                        and r.`reviews_id` = rd.`reviews_id`

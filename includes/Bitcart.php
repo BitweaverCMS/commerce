@@ -23,14 +23,14 @@ class Bitcart
 		$sql_data_array['manufacturers_image'] = !empty( $pParamHash['manufacturers_image'] ) ? $pParamHash['manufacturers_image'] : NULL;
 		
 		if( !empty( $pParamHash['manufacturers_id'] ) && $this->manufacturerExists( $pParamHash['manufacturers_id'] ) ) {
-			$sql_data_array['last_modified'] = 'now()';
+			$sql_data_array['last_modified'] = $db->NOW();
 			$manufacturers_id = zen_db_prepare_input($pParamHash['manufacturers_id']);
 			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
 		} else {
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];
 			}
-			$sql_data_array['date_added'] = 'now()';
+			$sql_data_array['date_added'] = $db->NOW();
 			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];

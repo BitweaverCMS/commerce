@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.21 2005/10/27 22:16:49 spiderr Exp $
+// $Id: order.php,v 1.22 2005/10/31 16:20:01 lsces Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
@@ -113,10 +113,10 @@ class order extends BitBase {
 
       $shipping_method = $db->Execute($shipping_method_query);
 
-      $order_status_query = "select orders_status_name
+      $order_status_query = "select `orders_status_name`
                              from " . TABLE_ORDERS_STATUS . "
-                             where orders_status_id = '" . $order->fields['orders_status'] . "'
-                             and language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                             where `orders_status_id` = '" . $order->fields['orders_status'] . "'
+                             and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
       $order_status = $db->Execute($order_status_query);
 
@@ -573,7 +573,7 @@ class order extends BitBase {
 							'cc_owner' => $this->info['cc_owner'],
 							'cc_number' => $this->info['cc_number'],
 							'cc_expires' => $this->info['cc_expires'],
-							'date_purchased' => 'now()',
+							'date_purchased' => $db->NOW(),
 							'orders_status' => $this->info['order_status'],
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
@@ -601,7 +601,7 @@ class order extends BitBase {
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
 		$sql_data_array = array('orders_id' => $insert_id,
 							'orders_status_id' => $this->info['order_status'],
-							'date_added' => 'now()',
+							'date_added' => $db->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments']);
 
@@ -643,11 +643,11 @@ class order extends BitBase {
 // otherwise, we have to build the query dynamically with a loop
             $products_attributes = $this->products[$i]['attributes'];
             if (is_array($products_attributes)) {
-              $stock_query_raw .= " AND pa.options_id = '" . $products_attributes[0]['option_id'] . "' AND pa.options_values_id = '" . $products_attributes[0]['value_id'] . "'";
+              $stock_query_raw .= " AND pa.`options_id` = '" . $products_attributes[0]['option_id'] . "' AND pa.`options_values_id` = '" . $products_attributes[0]['value_id'] . "'";
             }
             $stock_values = $db->Execute($stock_query_raw);
           } else {
-            $stock_values = $db->Execute("select products_quantity from " . TABLE_PRODUCTS . " where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
+            $stock_values = $db->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
           }
 
 
@@ -662,12 +662,12 @@ class order extends BitBase {
 
 //            $this->products[$i]['stock_value'] = $stock_values->fields['products_quantity'];
 
-             $db->Execute("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
+             $db->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 //        if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
             if ($stock_left < 1) {
 // only set status to off when not displaying sold out
               if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-                 $db->Execute("update " . TABLE_PRODUCTS . " set products_status = '0' where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
+                 $db->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
               }
             }
 
@@ -680,8 +680,7 @@ class order extends BitBase {
         }
 
 // Update products_ordered (for bestsellers list)
-//    $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%d', $order->products[$i]['quantity']) . " where products_id = '" . zen_get_prid($order->products[$i]['id']) . "'");
-         $db->Execute("update " . TABLE_PRODUCTS . " set products_ordered = products_ordered + " . sprintf('%f', $this->products[$i]['quantity']) . " where products_id = '" . zen_get_prid($this->products[$i]['id']) . "'");
+ 		$db->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->products[$i]['quantity']) . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 
         $sql_data_array = array('orders_id' => $zf_insert_id,
                             'products_id' => zen_get_prid($this->products[$i]['id']),
@@ -715,41 +714,41 @@ class order extends BitBase {
            $attributes_exist = '1';
            for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
            if (DOWNLOAD_ENABLED == 'true') {
-             $attributes_query = "select popt.products_options_name, poval.products_options_values_name,
-                               pa.options_values_price, pa.price_prefix,
-                               pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
-                               pa.attributes_discounted, pa.attributes_price_base_inc, pa.attributes_price_onetime,
-                               pa.attributes_price_factor, pa.attributes_pf_offset,
-                               pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
-                               pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
-                               pa.attributes_price_words, pa.attributes_price_words_free,
-                               pa.attributes_price_letters, pa.attributes_price_letters_free,
-                               pad.products_attributes_maxdays, pad.products_attributes_maxcount, pad.products_attributes_filename,
-                               pa.product_attribute_is_free, pa.attributes_discounted
+             $attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
+                               pa.`options_values_price`, pa.`price_prefix`,
+                               pa.`product_attribute_is_free`, pa.`products_attributes_wt`, pa.`products_attributes_wt_pfix`,
+                               pa.`attributes_discounted`, pa.`attributes_price_base_inc`, pa.`attributes_price_onetime`,
+                               pa.`attributes_price_factor`, pa.`attributes_pf_offset`,
+                               pa.`attributes_pf_onetime`, pa.`attributes_pf_onetime_offset`,
+                               pa.`attributes_qty_prices`, pa.`attributes_qty_prices_onetime`,
+                               pa.`attributes_price_words`, pa.`attributes_price_words_free`,
+                               pa.`attributes_price_letters`, pa.`attributes_price_letters_free`,
+                               pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`,
+                               pa.`product_attribute_is_free`, pa.`attributes_discounted`
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                on pa.products_attributes_id=pad.products_attributes_id
+                                on pa.`products_attributes_id` = pad.`products_attributes_id`
                                where pa.`products_id` = '" . zen_db_input($this->products[$i]['id']) . "'
-                                and pa.options_id = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
-                                and pa.options_id = popt.products_options_id
-                                and pa.options_values_id = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
-                                and pa.options_values_id = poval.products_options_values_id
+                                and pa.`options_id` = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
+                                and pa.`options_id` = popt.`products_options_id`
+                                and pa.`options_values_id` = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
+                                and pa.`options_values_id` = poval.`products_options_values_id`
                                 and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
                                 and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
 
              $attributes_values = $db->Execute($attributes_query);
            } else {
-             $attributes_values = $db->Execute("select popt.products_options_name, poval.products_options_values_name,
-                               pa.options_values_price, pa.price_prefix,
-                               pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
-                               pa.attributes_discounted, pa.attributes_price_base_inc, pa.attributes_price_onetime,
-                               pa.attributes_price_factor, pa.attributes_pf_offset,
-                               pa.attributes_pf_onetime, pa.attributes_pf_onetime_offset,
-                               pa.attributes_qty_prices, pa.attributes_qty_prices_onetime,
-                               pa.attributes_price_words, pa.attributes_price_words_free,
-                               pa.attributes_price_letters, pa.attributes_price_letters_free
+             $attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`,
+                               pa.`options_values_price`, pa.`price_prefix`,
+                               pa.`product_attribute_is_free`, pa.`products_attributes_wt`, pa.`products_attributes_wt_pfix`,
+                               pa.`attributes_discounted`, pa.`attributes_price_base_inc`, pa.`attributes_price_onetime`,
+                               pa.`attributes_price_factor`, pa.`attributes_pf_offset`,
+                               pa.`attributes_pf_onetime`, pa.`attributes_pf_onetime_offset`,
+                               pa.`attributes_qty_prices`, pa.`attributes_qty_prices_onetime`,
+                               pa.`attributes_price_words`, pa.`attributes_price_words_free`,
+                               pa.`attributes_price_letters`, pa.`attributes_price_letters_free`
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                               where pa.`products_id` = '" . $this->products[$i]['id'] . "' and pa.options_id = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.options_id = popt.products_options_id and pa.options_values_id = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.options_values_id = poval.products_options_values_id and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
+                               where pa.`products_id` = '" . $this->products[$i]['id'] . "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
            }
 
 //clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
@@ -957,7 +956,7 @@ class order extends BitBase {
 		if ( $statusChanged || !empty( $comments ) ) {
 			$this->mDb->StartTrans();
 			$this->mDb->query( "update " . TABLE_ORDERS . "
-								set orders_status = ?, `last_modified` = now()
+								set `orders_status` = ?, `last_modified` = ".$db->NOW()."
 								where `orders_id` = ?", array( $status, $this->mOrdersId ) );
 
 			$this->info['orders_status_id'] = $status;
@@ -1003,7 +1002,7 @@ class order extends BitBase {
 
 			$this->mDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . "
 						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
-						values ( ?, ?, now(), ?, ? )", array( $this->mOrdersId, $status, $customer_notified, $comments ) );
+						values ( ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $db->NOW(), $customer_notified, $comments ) );
 
 			$this->mDb->CompleteTrans();
 			$order_updated = true;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_discount_prices.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: products_discount_prices.php,v 1.4 2005/10/31 16:19:59 lsces Exp $
 //
 
   require(DIR_FS_MODULES . 'require_languages.php');
@@ -77,7 +77,7 @@
   } else {
 // create products discount table
 
-  $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $products_id_current . "' and discount_qty !=0 " . " order by discount_qty");
+  $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $products_id_current . "' and `discount_qty` !=0 " . " order by `discount_qty`");
 
   $discount_col_cnt = DISCOUNT_QUANTITY_PRICES_COLUMN;
 ?>
@@ -117,7 +117,7 @@
       $show_qty = '1';
       break;
     default:
-      $products_discount_query = $db->Execute("select products_quantity_order_min from " . TABLE_PRODUCTS . " where products_id='" . $products_id_current . "'");
+      $products_discount_query = $db->Execute("select `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id_current . "'");
       $show_qty = $products_discount_query->fields['products_quantity_order_min'] . '-' . number_format($products_discounts_query->fields['discount_qty']-1);
       break;
   }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -37,14 +37,14 @@
         $mail_sent_to = $_POST['email_to'];
         }
 
-    $coupon_result = $db->Execute("select coupon_code
+    $coupon_result = $db->Execute("select `coupon_code`
                                    from " . TABLE_COUPONS . "
-                                   where coupon_id = '" . $_GET['cid'] . "'");
+                                   where `coupon_id` = '" . $_GET['cid'] . "'");
 
-    $coupon_name = $db->Execute("select coupon_name, coupon_description
+    $coupon_name = $db->Execute("select `coupon_name`, `coupon_description`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
-                                 where coupon_id = '" . $_GET['cid'] . "'
-                                 and language_id = '" . $_SESSION['languages_id'] . "'");
+                                 where `coupon_id` = '" . $_GET['cid'] . "'
+                                 and `language_id` = '" . $_SESSION['languages_id'] . "'");
 
     // demo active test
     if (zen_admin_demo()) {
@@ -177,8 +177,8 @@
                                 'restrict_to_categories' => zen_db_prepare_input($_POST['coupon_categories']),
                                 'coupon_start_date' => $_POST['coupon_startdate'],
                                 'coupon_expire_date' => $_POST['coupon_finishdate'],
-                                'date_created' => 'now()',
-                                'date_modified' => 'now()');
+                                'date_created' => $db->NOW(),
+                                'date_modified' => $db->NOW());
         $languages = zen_get_languages();
         for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
           $language_id = $languages[$i]['id'];
@@ -191,10 +191,10 @@
           for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
             $language_id = $languages[$i]['id'];
             $db->Execute("update " . TABLE_COUPONS_DESCRIPTION . "
-                          set coupon_name = '" . zen_db_prepare_input($_POST['coupon_name'][$language_id]) . "',
-                          coupon_description = '" . zen_db_prepare_input($_POST['coupon_desc'][$language_id]) . "'
-                          where coupon_id = '" . $_GET['cid'] . "'
-                          and language_id = '" . $language_id . "'");
+                          set `coupon_name` = '" . zen_db_prepare_input($_POST['coupon_name'][$language_id]) . "',
+                          `coupon_description` = '" . zen_db_prepare_input($_POST['coupon_desc'][$language_id]) . "'
+                          where `coupon_id` = '" . $_GET['cid'] . "'
+                          and `language_id` = '" . $language_id . "'");
           }
         } else {
           $db->associateInsert(TABLE_COUPONS, $sql_data_array);
@@ -386,13 +386,13 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     $heading = array();
     $contents = array();
-      $coupon_desc = $db->Execute("select coupon_name
+      $coupon_desc = $db->Execute("select `coupon_name`
                                    from " . TABLE_COUPONS_DESCRIPTION . "
-                                   where coupon_id = '" . $_GET['cid'] . "'
-                                   and language_id = '" . $_SESSION['languages_id'] . "'");
+                                   where `coupon_id` = '" . $_GET['cid'] . "'
+                                   and `language_id` = '" . $_SESSION['languages_id'] . "'");
       $count_customers = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
-                                       where coupon_id = '" . $_GET['cid'] . "'
-                                       and customer_id = '" . $cInfo->customer_id . "'");
+                                       where `coupon_id` = '" . $_GET['cid'] . "'
+                                       and `customer_id` = '" . $cInfo->customer_id . "'");
 
       $heading[] = array('text' => '<b>[' . $_GET['cid'] . ']' . COUPON_NAME . ' ' . $coupon_desc->fields['coupon_name'] . '</b>');
       $contents[] = array('text' => '<b>' . TEXT_REDEMPTIONS . '</b>');
@@ -410,14 +410,14 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     break;
   case 'preview_email':
-    $coupon_result = $db->Execute("select coupon_code
+    $coupon_result = $db->Execute("select `coupon_code`
                                    from " .TABLE_COUPONS . "
-                                   where coupon_id = '" . $_GET['cid'] . "'");
+                                   where `coupon_id` = '" . $_GET['cid'] . "'");
 
-    $coupon_name = $db->Execute("select coupon_name
+    $coupon_name = $db->Execute("select `coupon_name`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
-                                 where coupon_id = '" . $_GET['cid'] . "'
-                                 and language_id = '" . $_SESSION['languages_id'] . "'");
+                                 where `coupon_id` = '" . $_GET['cid'] . "'
+                                 and `language_id` = '" . $_SESSION['languages_id'] . "'");
 
 	$audience_select = get_audience_sql_query($_POST['customers_email_address']);
     $mail_sent_to = $audience_select['query_name'];
@@ -495,13 +495,13 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     break;
   case 'email':
-    $coupon_result = $db->Execute("select coupon_code
+    $coupon_result = $db->Execute("select `coupon_code`
                                    from " . TABLE_COUPONS . "
-                                   where coupon_id = '" . $_GET['cid'] . "'");
-    $coupon_name = $db->Execute("select coupon_name
+                                   where `coupon_id` = '" . $_GET['cid'] . "'");
+    $coupon_name = $db->Execute("select `coupon_name`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
-                                 where coupon_id = '" . $_GET['cid'] . "'
-                                 and language_id = '" . $_SESSION['languages_id'] . "'");
+                                 where `coupon_id` = '" . $_GET['cid'] . "'
+                                 and `language_id` = '" . $_SESSION['languages_id'] . "'");
 ?>
       <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
       <tr>
@@ -727,20 +727,20 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
     $languages = zen_get_languages();
     for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
       $language_id = $languages[$i]['id'];
-      $coupon = $db->Execute("select coupon_name,coupon_description
+      $coupon = $db->Execute("select `coupon_name`, `coupon_description`
                               from " . TABLE_COUPONS_DESCRIPTION . "
-                              where coupon_id = '" .  $_GET['cid'] . "'
-                              and language_id = '" . $language_id . "'");
+                              where `coupon_id` = '" .  $_GET['cid'] . "'
+                              and `language_id` = '" . $language_id . "'");
 
       $_POST['coupon_name'][$language_id] = $coupon->fields['coupon_name'];
       $_POST['coupon_desc'][$language_id] = $coupon->fields['coupon_description'];
     }
 
-    $coupon = $db->Execute("select coupon_code, coupon_amount, coupon_type, coupon_minimum_order,
-                                   coupon_start_date, coupon_expire_date, uses_per_coupon,
-                                   uses_per_user, restrict_to_products, restrict_to_categories
+    $coupon = $db->Execute("select `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_minimum_order`,
+                                   `coupon_start_date`, `coupon_expire_date`, `uses_per_coupon`,
+                                   `uses_per_user`, `restrict_to_products`, `restrict_to_categories`
                             from " . TABLE_COUPONS . "
-                            where coupon_id = '" . $_GET['cid'] . "'");
+                            where `coupon_id` = '" . $_GET['cid'] . "'");
 
     $_POST['coupon_amount'] = $coupon->fields['coupon_amount'];
     if ($coupon->fields['coupon_type']=='P') {
@@ -915,9 +915,9 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     if ($_GET['page'] > 1) $rows = $_GET['page'] * 20 - 20;
     if ($status != '*') {
-      $cc_query_raw = "select coupon_id, coupon_code, coupon_amount, coupon_type, coupon_start_date,coupon_expire_date,uses_per_user,uses_per_coupon,restrict_to_products, restrict_to_categories, date_created,date_modified from " . TABLE_COUPONS ." where coupon_active='" . zen_db_input($status) . "' and coupon_type != 'G'";
+      $cc_query_raw = "select `coupon_id`, `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_start_date`, `coupon_expire_date`, `uses_per_user`, `uses_per_coupon`, `restrict_to_products`, `restrict_to_categories`, `date_created`, `date_modified` from " . TABLE_COUPONS ." where `coupon_active`='" . zen_db_input($status) . "' and `coupon_type` != 'G'";
     } else {
-      $cc_query_raw = "select coupon_id, coupon_code, coupon_amount, coupon_type, coupon_start_date,coupon_expire_date,uses_per_user,uses_per_coupon,restrict_to_products, restrict_to_categories, date_created,date_modified from " . TABLE_COUPONS . " where coupon_type != 'G'";
+      $cc_query_raw = "select `coupon_id`, `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_start_date`, `coupon_expire_date`, `uses_per_user`, `uses_per_coupon`, `restrict_to_products`, `restrict_to_categories`, `date_created`, `date_modified` from " . TABLE_COUPONS . " where `coupon_type` != 'G'";
     }
     $cc_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_DISCOUNT_COUPONS, $cc_query_raw, $cc_query_numrows);
     $cc_list = $db->Execute($cc_query_raw);
@@ -934,10 +934,10 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       } else {
         echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cc_list->fields['coupon_id']) . '\'">' . "\n";
       }
-      $coupon_desc = $db->Execute("select coupon_name
+      $coupon_desc = $db->Execute("select `coupon_name`
                                    from " . TABLE_COUPONS_DESCRIPTION . "
-                                   where coupon_id = '" . $cc_list->fields['coupon_id'] . "'
-                                   and language_id = '" . $_SESSION['languages_id'] . "'");
+                                   where `coupon_id` = '" . $cc_list->fields['coupon_id'] . "'
+                                   and `language_id` = '" . $_SESSION['languages_id'] . "'");
 ?>
                 <td class="dataTableContent"><?php echo $coupon_desc->fields['coupon_name']; ?></td>
                 <td class="dataTableContent" align="center">
@@ -1008,17 +1008,17 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       } else {
         $prod_details = NONE;
 //bof 12-6ke
-$product_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = ? and product_id != '0'", array( $cInfo->coupon_id ) );
+$product_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `product_id` != '0'", array( $cInfo->coupon_id ) );
 		if ($product_query->RecordCount() > 0) $prod_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
         $cat_details = NONE;
 //bof 12-6ke
-$category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = ? and category_id != '0'", array( $cInfo->coupon_id ));
+$category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `category_id` != '0'", array( $cInfo->coupon_id ));
         if ($category_query->RecordCount() > 0) $cat_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
-        $coupon_name = $db->query("select coupon_name
+        $coupon_name = $db->query("select `coupon_name`
                                      from " . TABLE_COUPONS_DESCRIPTION . "
-                                     where coupon_id = ? and language_id = ?", array( $cInfo->coupon_id, $_SESSION['languages_id'] ) );
+                                     where `coupon_id` = ? and `language_id` = ?", array( $cInfo->coupon_id, $_SESSION['languages_id'] ) );
         $uses_coupon = $cInfo->uses_per_coupon;
         $uses_user = $cInfo->uses_per_user;
         if ($uses_coupon == 0 || $uses_coupon == '') $uses_coupon = TEXT_UNLIMITED;

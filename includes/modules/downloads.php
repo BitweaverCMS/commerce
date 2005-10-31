@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.5 2005/08/24 15:06:36 lsces Exp $
+// $Id: downloads.php,v 1.6 2005/10/31 16:19:59 lsces Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
@@ -26,25 +26,25 @@
                      where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                      order by `orders_id` desc";
 
-    $orders_lookup = $db->Execute($orders_lookup_query, 1);
+    $orders_lookup = $db->Execute($orders_lookup_query, NULL, 1);
     $last_order = $orders_lookup->fields['orders_id'];
   } else {
     $last_order = $_GET['order_id'];
   }
 
 // Now get all downloadable products in that order
-  $downloads_query = "select ".$db->SQLDate('Y-m-d', 'o.date_purchased')." as date_purchased_day,
-                             opd.download_maxdays, op.`products_name`, opd.orders_products_download_id,
-                             opd.orders_products_filename, opd.download_count, opd.download_maxdays
+  $downloads_query = "select ".$db->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`,
+                             opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`,
+                             opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
                       from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, "
                              . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
                       where o.`customers_id` = ?
-	                      and (o.orders_status >= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS . "'
-    	                  and o.orders_status <= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS_END . "')
+	                      and (o.`orders_status` >= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS . "'
+    	                  and o.`orders_status` <= '" . DOWNLOADS_CONTROLLER_ORDERS_STATUS_END . "')
         	              and o.`orders_id` = ?
             	          and o.`orders_id` = op.`orders_id`
-                	      and op.orders_products_id = opd.orders_products_id
-                    	  and opd.orders_products_filename != ''";
+                	      and op.`orders_products_id` = opd.`orders_products_id`
+                    	  and opd.`orders_products_filename` != ''";
 
   $downloads = $db->query($downloads_query, array( $_SESSION['customer_id'], $last_order) );
 

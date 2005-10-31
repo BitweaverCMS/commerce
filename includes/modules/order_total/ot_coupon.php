@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.3 2005/08/24 02:52:59 lsces Exp $
+// $Id: ot_coupon.php,v 1.4 2005/10/31 16:20:01 lsces Exp $
 //
 
   class ot_coupon {
@@ -215,8 +215,8 @@ function update_credit_account($i) {
                       $products = $_SESSION['cart']->get_products();
                       for ($i=0; $i<sizeof($products); $i++) {
                         $t_prid = zen_get_prid($products[$i]['id']);
-                        $cc_result = $db->Execute("select products_tax_class_id
-                                                   from " . TABLE_PRODUCTS . " where products_id = '" . $t_prid . "'");
+                        $cc_result = $db->Execute("select `products_tax_class_id`
+                                                   from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
 
                         if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
                           $tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
@@ -244,8 +244,8 @@ function update_credit_account($i) {
                       $products = $_SESSION['cart']->get_products();
                       for ($i=0; $i<sizeof($products); $i++) {
                         $t_prid = zen_get_prid($products[$i]['id']);
-                        $cc_result = $db->Execute("select products_tax_class_id
-                                                   from " . TABLE_PRODUCTS . " where products_id = '" . $t_prid . "'");
+                        $cc_result = $db->Execute("select `products_tax_class_id`
+                                                   from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
 
                         if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
                           $tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
@@ -291,15 +291,15 @@ function update_credit_account($i) {
     $products_id = zen_get_prid($product_id);
  // products price
     $qty = $_SESSION['cart']->contents[$product_id]['quantity'];
-    $product = $db->Execute("select products_id, products_price, products_tax_class_id, products_weight
-                             from " . TABLE_PRODUCTS . " where products_id='" . $products_id . "'");
+    $product = $db->Execute("select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`
+                             from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id . "'");
 
     if ($product->RecordCount() > 0) {
       $prid = $product->fields['products_id'];
       $products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
       $products_price = $product->fields['products_price'];
-      $specials = $db->Execute("select specials_new_products_price
-                                from " . TABLE_SPECIALS . " where products_id = '" . $prid . "' and status = '1'");
+      $specials = $db->Execute("select `specials_new_products_price`
+                                from " . TABLE_SPECIALS . " where `products_id` = '" . $prid . "' and `status` = '1'");
 
       if ($specials->RecordCount() > 0 ) {
         $products_price = $specials->fields['specials_new_products_price'];
@@ -314,11 +314,11 @@ function update_credit_account($i) {
       if (isset($_SESSION['cart']->contents[$product_id]['attributes'])) {
         reset($_SESSION['cart']->contents[$product_id]['attributes']);
         while (list($option, $value) = each($_SESSION['cart']->contents[$product_id]['attributes'])) {
-          $attribute_price = $db->Execute("select options_values_price, price_prefix
+          $attribute_price = $db->Execute("select `options_values_price`, `price_prefix`
                                            from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                           where products_id = '" . $prid . "'
-                                           and options_id = '" . $option . "'
-                                           and options_values_id = '" . $value . "'");
+                                           where `products_id` = '" . $prid . "'
+                                           and `options_id` = '" . $option . "'
+                                           and `options_values_id` = '" . $value . "'");
 
           if ($attribute_price->fields['price_prefix'] == '-') {
             if ($this->include_tax == 'true') {
@@ -342,7 +342,7 @@ function update_credit_account($i) {
     function check() {
       global $db;
       if (!isset($this->check)) {
-        $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_COUPON_STATUS'");
+        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_COUPON_STATUS'");
         $this->check = $check_query->RecordCount();
       }
 
@@ -355,12 +355,12 @@ function update_credit_account($i) {
 
     function install() {
       global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_COUPON_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_COUPON_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', 'NOW')");
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_COUPON_SORT_ORDER', '280', 'Sort order of display.', '6', '2', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'false', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'false', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', 'NOW')");
+      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', 'NOW')");
     }
 
     function remove() {

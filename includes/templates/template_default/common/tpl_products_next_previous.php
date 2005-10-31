@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.7 2005/08/24 13:41:02 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.8 2005/10/31 16:20:01 lsces Exp $
 //
   /*
 
@@ -64,9 +64,9 @@
 			}
 
 			if (!$current_category_id) {
-			$sql = "SELECT categories_id
+			$sql = "SELECT `categories_id`
 					from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-					where  products_id ='" .  (int)$_GET['products_id']
+					where  `products_id` ='" .  (int)$_GET['products_id']
 					. "'";
 
 			$cPath_row = $db->Execute($sql);
@@ -110,9 +110,9 @@
 
 			if ($previous == -1) $previous = $last;
 
-			$sql = "select categories_name
+			$sql = "select `categories_name`
 					from   " . TABLE_CATEGORIES_DESCRIPTION . "
-					where categories_id=? AND language_id =?";
+					where `categories_id` =? AND `language_id` =?";
 
 			$category_name_row = $db->query( $sql, array( $current_category_id, $_SESSION['languages_id'] ) );
 		} // if is_array

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/10/11 03:50:12 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/10/31 16:20:07 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -56,7 +56,7 @@
 
       if (zen_validate_password($password_current, $check_customer->fields['customers_password'])) {
         $nickname = $check_customer->fields['customers_nick'];
-        $db->Execute("update " . TABLE_CUSTOMERS . " set customers_password = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
+        $db->Execute("update " . TABLE_CUSTOMERS . " set `customers_password` = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
                 set    `date_account_last_modified` = " . $db-mDb->sysTimeStamp . "

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/10/11 03:50:12 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/10/31 16:20:01 lsces Exp $
 //
   if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
@@ -68,8 +68,8 @@
 
 				if ($check->fields['total'] > 0) {
 				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-						where       customers_id = '" . (int)$_SESSION['customer_id'] . "'
-						and         products_id not in (" . implode(',', $products_parsed) . ")";
+						where       `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+						and         `products_id` not in (" . implode(',', $products_parsed) . ")";
 
 				$db->Execute($sql);
 				}
@@ -84,7 +84,7 @@
 
 			if ($check->fields['total'] > 0) {
 				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
-						where       customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+						where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 				$db->Execute($sql);
 

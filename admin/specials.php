@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.10 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: specials.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -33,7 +33,7 @@
         zen_set_specials_status($_GET['id'], $_GET['flag']);
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select products_id from " . TABLE_SPECIALS . " where specials_id = '" . $_GET['id'] . "'");
+        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $_GET['id'] . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'sID=' . $_GET['id'], 'NONSSL'));
@@ -47,9 +47,9 @@
         $specials_price = zen_db_prepare_input($_POST['specials_price']);
 
         if (substr($specials_price, -1) == '%') {
-          $new_special_insert = $db->Execute("select products_id, products_price, products_priced_by_attribute
+          $new_special_insert = $db->Execute("select `products_id`, `products_price`, `products_priced_by_attribute`
                                               from " . TABLE_PRODUCTS . "
-                                              where products_id = '" . (int)$products_id . "'");
+                                              where `products_id` = '" . (int)$products_id . "'");
 
 // check if priced by attribute
           if ($new_special_insert->fields['products_priced_by_attribute'] == '1') {
@@ -65,13 +65,13 @@
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
         $db->Execute("insert into " . TABLE_SPECIALS . "
-                    (products_id, specials_new_products_price, specials_date_added, expires_date, status, specials_date_available)
+                    (`products_id`, `specials_new_products_price`, `specials_date_added`, `expires_date`, `status`, `specials_date_available`)
                     values ('" . (int)$products_id . "',
                             '" . zen_db_input($specials_price) . "',
-                            now(),
+                            ".$db->NOW().",
                             '" . zen_db_input($expires_date) . "', '1', '" . zen_db_input($specials_date_available) . "')");
 
-        $new_special = $db->Execute("select specials_id from " . TABLE_SPECIALS . " where products_id='" . (int)$products_id . "'");
+        $new_special = $db->Execute("select `specials_id` from " . TABLE_SPECIALS . " where `products_id` ='" . (int)$products_id . "'");
 
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter((int)$products_id);
@@ -100,14 +100,14 @@
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
         $db->Execute("update " . TABLE_SPECIALS . "
-                      set specials_new_products_price = '" . zen_db_input($specials_price) . "',
-                          specials_last_modified = now(),
-                          expires_date = '" . zen_db_input($expires_date) . "',
-                          specials_date_available = '" . zen_db_input($specials_date_available) . "'
-                      where specials_id = '" . (int)$specials_id . "'");
+                      set `specials_new_products_price` = '" . zen_db_input($specials_price) . "',
+                          `specials_last_modified` = ".$db->NOW().",
+                          `expires_date` = '" . zen_db_input($expires_date) . "',
+                          `specials_date_available` = '" . zen_db_input($specials_date_available) . "'
+                      where `specials_id` = '" . (int)$specials_id . "'");
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select products_id from " . TABLE_SPECIALS . " where specials_id = '" . (int)$specials_id . "'");
+        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . (int)$specials_id . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials_id));
@@ -122,7 +122,7 @@
         $specials_id = zen_db_prepare_input($_GET['sID']);
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select products_id from " . TABLE_SPECIALS . " where specials_id = '" . $specials_id . "'");
+        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $specials_id . "'");
         $update_price_id = $update_price->fields['products_id'];
 
         $db->Execute("delete from " . TABLE_SPECIALS . "
@@ -251,7 +251,7 @@
       }
 
 // do not include things that cannot go in the cart
-      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.allow_add_to_cart = 'N'");
+      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
 
       while (!$not_for_cart->EOF) {
         $specials_array[] = $not_for_cart->fields['products_id'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.13 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.14 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -128,7 +128,7 @@
           $products_options_images_per_row = zen_db_prepare_input($products_options_images_per_row_array[$languages[$i]['id']]);
           $products_options_images_style = zen_db_prepare_input($products_options_images_style_array[$languages[$i]['id']]);
 
-//          zen_db_query("update " . TABLE_PRODUCTS_OPTIONS . " set products_options_name = '" . zen_db_input($option_name) . "', products_options_type = '" . $option_type . "' where products_options_id = '" . (int)$option_id . "' and language_id = '" . (int)$languages[$i]['id'] . "'");
+//          zen_db_query("update " . TABLE_PRODUCTS_OPTIONS . " set products_options_name = '" . zen_db_input($option_name) . "', products_options_type = '" . $option_type . "' where products_options_id = '" . (int)$option_id . "' and `language_id` = '" . (int)$languages[$i]['id'] . "'");
 
           $db->Execute("update " . TABLE_PRODUCTS_OPTIONS . "
                         set `products_options_name` = '" . zen_db_input($option_name) . "', products_options_type = '" . $option_type . "', products_options_length = '" . zen_db_input($products_options_length) . "', products_options_comment = '" . zen_db_input($products_options_comment) . "', products_options_size = '" . zen_db_input($products_options_size) . "', products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "', products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "', products_options_images_per_row = '" . zen_db_input($products_options_images_per_row) . "', products_options_images_style = '" . zen_db_input($products_options_images_style) . "'

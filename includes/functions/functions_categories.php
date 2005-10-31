@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.6 2005/08/24 15:31:16 spiderr Exp $
+// $Id: functions_categories.php,v 1.7 2005/10/31 16:19:57 lsces Exp $
 //
 //
 ////
@@ -31,15 +31,15 @@
         $cPath_new = $current_category_id;
       } else {
         $cPath_new = '';
-        $last_category_query = "select parent_id
+        $last_category_query = "select `parent_id`
                                 from " . TABLE_CATEGORIES . "
-                                where categories_id = '" . (int)$cPath_array[($cp_size-1)] . "'";
+                                where `categories_id` = '" . (int)$cPath_array[($cp_size-1)] . "'";
 
         $last_category = $db->Execute($last_category_query);
 
-        $current_category_query = "select parent_id
+        $current_category_query = "select `parent_id`
                                    from " . TABLE_CATEGORIES . "
-                                   where categories_id = '" . (int)$current_category_id . "'";
+                                   where `categories_id` = '" . (int)$current_category_id . "'";
 
         $current_category = $db->Execute($current_category_query);
 
@@ -84,9 +84,9 @@
     $products = $db->query($products_query, array( $category_id ) );
     $products_count += $products->fields['total'];
 
-    $child_categories_query = "select categories_id
+    $child_categories_query = "select `categories_id`
                                from " . TABLE_CATEGORIES . "
-                               where parent_id = '" . (int)$category_id . "'";
+                               where `parent_id` = '" . (int)$category_id . "'";
 
     $child_categories = $db->Execute($child_categories_query);
 
@@ -116,7 +116,7 @@
     $categories_query = "select c.`categories_id`, cd.`categories_name`, c.`categories_status`
                          from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                          where " . $zc_status . "
-                         parent_id = '" . (int)$parent_id . "'
+                         c.`parent_id` = '" . (int)$parent_id . "'
                          and c.`categories_id` = cd.`categories_id`
                          and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                          order by `sort_order`, cd.`categories_name`";
@@ -141,9 +141,9 @@
 // TABLES: categories
   function zen_get_subcategories(&$subcategories_array, $parent_id = 0) {
     global $db;
-    $subcategories_query = "select categories_id
+    $subcategories_query = "select `categories_id`
                             from " . TABLE_CATEGORIES . "
-                            where parent_id = '" . (int)$parent_id . "'";
+                            where `parent_id` = '" . (int)$parent_id . "'";
 
     $subcategories = $db->Execute($subcategories_query);
 
@@ -162,9 +162,9 @@
 // TABLES: categories
   function zen_get_parent_categories(&$categories, $categories_id) {
     global $db;
-    $parent_categories_query = "select parent_id
+    $parent_categories_query = "select `parent_id`
                                 from " . TABLE_CATEGORIES . "
-                                where categories_id = '" . (int)$categories_id . "'";
+                                where `categories_id` = '" . (int)$categories_id . "'";
 
     $parent_categories = $db->Execute($parent_categories_query);
 
@@ -189,9 +189,9 @@
                        from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                        where p.`products_id` = '" . (int)$products_id . "'
                        and p.`products_status` = '1'
-                       and p.`products_id` = p2c.`products_id` limit 1";
+                       and p.`products_id` = p2c.`products_id`";
 
-    $category = $db->Execute($category_query);
+    $category = $db->Execute($category_query, NULL, 1);
 
     if ($category->RecordCount() > 0) {
 
@@ -230,16 +230,16 @@
   function zen_product_in_category($product_id, $cat_id) {
     global $db;
     $in_cat=false;
-    $category_query_raw = "select categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                           where products_id = '" . (int)$product_id . "'";
+    $category_query_raw = "select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . "
+                           where `products_id` = '" . (int)$product_id . "'";
 
     $category = $db->Execute($category_query_raw);
 
     while (!$category->EOF) {
       if ($category->fields['categories_id'] == $cat_id) $in_cat = true;
       if (!$in_cat) {
-        $parent_categories_query = "select parent_id from " . TABLE_CATEGORIES . "
-                                    where categories_id = '" . $category->fields['categories_id'] . "'";
+        $parent_categories_query = "select `parent_id` from " . TABLE_CATEGORIES . "
+                                    where `categories_id` = '" . $category->fields['categories_id'] . "'";
 
         $parent_categories = $db->Execute($parent_categories_query);
 //echo 'cat='.$category->fields['categories_id'].'#'. $cat_id;
@@ -262,8 +262,8 @@
     if ($cat_id == $parent_cat_id) {
       $in_cat = true;
     } else {
-      $parent_categories_query = "select parent_id from " . TABLE_CATEGORIES . "
-                                  where categories_id = '" . $parent_cat_id . "'";
+      $parent_categories_query = "select `parent_id` from " . TABLE_CATEGORIES . "
+                                  where `categories_id` = '" . $parent_cat_id . "'";
 
       $parent_categories = $db->Execute($parent_categories_query);
 
@@ -299,7 +299,7 @@
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                              order by products_name");
+                              order by `products_name`");
 
     while (!$products->EOF) {
       if (!in_array($products->fields['products_id'], $exclude)) {
@@ -339,7 +339,7 @@
                                        TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
                               where p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                              order by products_name");
+                              order by `products_name`");
 
     while (!$products->EOF) {
       if (!in_array($products->fields['products_id'], $exclude)) {
@@ -440,7 +440,7 @@
 
     $lookup = str_replace('cPath=','',$lookup);
 
-    $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id='" . $lookup . "' and product_type_id='3'";
+    $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` ='" . $lookup . "' and `product_type_id` ='3'";
     $look_up = $db->Execute($sql);
 
     return $look_up->fields['product_type_id'];
@@ -450,10 +450,10 @@
   function zen_get_categories_parent_name($categories_id) {
     global $db;
 
-    $lookup_query = "select parent_id from " . TABLE_CATEGORIES . " where categories_id='" . $categories_id . "'";
+    $lookup_query = "select `parent_id` from " . TABLE_CATEGORIES . " where `categories_id` ='" . $categories_id . "'";
     $lookup = $db->Execute($lookup_query);
 
-    $lookup_query = "select categories_name from " . TABLE_CATEGORIES_DESCRIPTION . " where categories_id='" . $lookup->fields['parent_id'] . "'";
+    $lookup_query = "select `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id` ='" . $lookup->fields['parent_id'] . "'";
     $lookup = $db->Execute($lookup_query);
 
     return $lookup->fields['categories_name'];

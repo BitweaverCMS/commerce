@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.5 2005/08/24 15:06:41 lsces Exp $
+//  $Id: copy_to_confirm.php,v 1.6 2005/10/31 16:19:59 lsces Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -42,25 +42,25 @@
             }
           } elseif ($_POST['copy_as'] == 'duplicate') {
             $old_products_id = (int)$products_id;
-            $product = $db->Execute("select products_type, products_quantity, products_model, products_image,
-                                            products_price, products_virtual, products_date_available, products_weight,
-                                            products_tax_class_id, manufacturers_id,
-                                            products_quantity_order_min, products_quantity_order_units, products_priced_by_attribute,
-                                            product_is_free, product_is_call, products_quantity_mixed,
-                                            product_is_always_free_ship, products_qty_box_status, products_quantity_order_max, products_sort_order,
-                                            products_price_sorter, master_categories_id
+            $product = $db->Execute("select `products_type`, `products_quantity`, `products_model`, `products_image`,
+                                            `products_price`, `products_virtual`, `products_date_available`, `products_weight`,
+                                            `products_tax_class_id`, `manufacturers_id`,
+                                            `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
+                                            `product_is_free`, `product_is_call`, `products_quantity_mixed`,
+                                            `product_is_always_free_ship`, `products_qty_box_status`, `products_quantity_order_max`, `products_sort_order`,
+                                            `products_price_sorter`, `master_categories_id`
                                      from " . TABLE_PRODUCTS . "
-                                     where products_id = '" . (int)$products_id . "'");
+                                     where `products_id` = '" . (int)$products_id . "'");
 
             $db->Execute("insert into " . TABLE_PRODUCTS . "
-                                      (products_type, products_quantity, products_model,products_image,
-                                       products_price, products_virtual, products_date_added, products_date_available,
-                                       products_weight, products_status, products_tax_class_id,
-                                       manufacturers_id,
-                                       products_quantity_order_min, products_quantity_order_units, products_priced_by_attribute,
-                                       product_is_free, product_is_call, products_quantity_mixed,
-                                       product_is_always_free_ship, products_qty_box_status, products_quantity_order_max, products_sort_order,
-                                       products_price_sorter, master_categories_id
+                                      (`products_type`, `products_quantity`, `products_model`, `products_image`,
+                                       `products_price`, `products_virtual`, `products_date_added`, `products_date_available`,
+                                       `products_weight`, `products_status`, `products_tax_class_id`,
+                                       `manufacturers_id`,
+                                       `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
+                                       `product_is_free`, product_is_call`, `products_quantity_mixed`,
+                                       `product_is_always_free_ship`, `products_qty_box_status`, `products_quantity_order_max`, `products_sort_order`,
+                                       `products_price_sorter`, `master_categories_id`
                                        )
                           values ('" . zen_db_input($product->fields['products_type']) . "',
                 '" . zen_db_input($product->fields['products_quantity']) . "',
@@ -90,11 +90,11 @@
             $dup_products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
             if (isset($_POST['copy_media']) && $_POST['copy_media'] == 'on') {
-              $product_media = $db->Execute("select media_id from " . TABLE_MEDIA_TO_PRODUCTS . "
-                                             where product_id = '" . (int)$products_id . "'");
+              $product_media = $db->Execute("select `media_id` from " . TABLE_MEDIA_TO_PRODUCTS . "
+                                             where `product_id` = '" . (int)$products_id . "'");
               while (!$product_media->EOF) {
                 $db->Execute("insert into " . TABLE_MEDIA_TO_PRODUCTS . "
-                              (media_id, product_id)
+                              (`media_id`, `product_id`)
                               values (
                               '" . $product_media->fields['media_id'] . "',
                               '" . $dup_products_id . "')");
@@ -102,10 +102,11 @@
               }
             }
 
-            $music_extra = $db->Execute("select artists_id, record_company_id, music_genre_id from " . TABLE_PRODUCT_MUSIC_EXTRA . "                                                where products_id = '" . (int)$products_id . "'");
+            $music_extra = $db->Execute("select `artists_id`, `record_company_id`, `music_genre_id` from " . TABLE_PRODUCT_MUSIC_EXTRA .
+            		" where `products_id` = '" . (int)$products_id . "'");
 
             $db->Execute("insert into " . TABLE_PRODUCT_MUSIC_EXTRA . "
-                          (products_id, artists_id, record_company_id, music_genre_id)
+                          (`products_id`, `artists_id`, `record_company_id`, `music_genre_id`)
                           values (
                          '" . (int)$dup_products_id . "',
                          '" . zen_db_input($music_extra->fields['artists_id']) . "',
@@ -113,14 +114,14 @@
                          '" . zen_db_input($music_extra->fields['music_genre_id']) . "')");
 
 
-            $description = $db->Execute("select language_id, products_name, products_description,
-                                                             products_url
+            $description = $db->Execute("select `language_id`, `products_name`, `products_description`,
+                                                             `products_url`
                                          from " . TABLE_PRODUCTS_DESCRIPTION . "
-                                         where products_id = '" . (int)$products_id . "'");
+                                         where `products_id` = '" . (int)$products_id . "'");
             while (!$description->EOF) {
               $db->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
-                                        (products_id, language_id, products_name, products_description,
-                                         products_url, products_viewed)
+                                        (`products_id`, `language_id`, `products_name`, `products_description`,
+                                         `products_url`, `products_viewed`)
                             values ('" . (int)$dup_products_id . "',
                                     '" . (int)$description->fields['language_id'] . "',
                                     '" . zen_db_input($description->fields['products_name']) . "',
@@ -130,7 +131,7 @@
             }
 
             $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                      (products_id, categories_id)
+                                      (`products_id`, `categories_id`)
                           values ('" . (int)$dup_products_id . "', '" . (int)$categories_id . "')");
             $products_id = $dup_products_id;
             $description->MoveNext();

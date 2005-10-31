@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.8 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: salemaker.php,v 1.9 2005/10/31 16:19:58 lsces Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -40,8 +40,8 @@ define('AUTOCHECK', 'False');
     switch ($action) {
       case 'setflag':
         $salemaker_data_array = array('sale_status' => zen_db_prepare_input($_GET['flag']),
-	                                  'sale_date_last_modified' => 'now()',
-	                                  'sale_date_status_change' => 'now()');
+	                                  'sale_date_last_modified' => $db->NOW(),
+	                                  'sale_date_status_change' => $db->NOW());
 
         $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_data_array, 'update', "sale_id = '" . zen_db_prepare_input($_GET['sID']) . "'");
 
@@ -90,7 +90,7 @@ define('AUTOCHECK', 'False');
 
         if ($action == 'insert') {
           $salemaker_sales['sale_status'] = 0;
-          $salemaker_sales_data_array['sale_date_added'] = 'now()';
+          $salemaker_sales_data_array['sale_date_added'] = $db->NOW();
           $salemaker_sales_data_array['sale_date_last_modified'] = '0001-01-01';
           $salemaker_sales_data_array['sale_date_status_change'] = '0001-01-01';
           $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
@@ -98,7 +98,7 @@ define('AUTOCHECK', 'False');
           $_POST['sID'] = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' );
 
         } else {
-	        $salemaker_sales_data_array['sale_date_last_modified'] = 'now()';
+	        $salemaker_sales_data_array['sale_date_last_modified'] = $db->NOW();
           $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'update', "sale_id = '" . zen_db_input($_POST['sID']) . "'");
         }
 
@@ -115,7 +115,7 @@ define('AUTOCHECK', 'False');
             $salemaker_sales->fields['sale_id'] = 'null';
             $salemaker_sales->fields['sale_name'] = $newname;
             $salemaker_sales->fields['sale_status'] = 0;
-            $salemaker_sales->fields['sale_date_added'] = 'now()';
+            $salemaker_sales->fields['sale_date_added'] = $db->NOW();
             $salemaker_sales->fields['sale_date_last_modified'] = '0001-01-01';
             $salemaker_sales->fields['sale_date_status_change'] = '0001-01-01';
 
@@ -339,7 +339,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2"
     $categories_array = zen_get_category_tree('0','&nbsp;&nbsp;','0');
     $n = sizeof($categories_array);
     for($i = 0; $i < $n; $i++) {
-      $parents = $db->Execute("select parent_id from " . TABLE_CATEGORIES . " where categories_id = '" . $categories_array[$i]['id'] . "' ");
+      $parents = $db->Execute("select `parent_id` from " . TABLE_CATEGORIES . " where `categories_id` = '" . $categories_array[$i]['id'] . "' ");
       $categories_array[$i]['parent_id'] = $parents->fields['parent_id'];
       $categories_array[$i]['categories_id'] = $categories_array[$i]['id'];
       $categories_array[$i]['path'] = $categories_array[$i]['categories_id'];

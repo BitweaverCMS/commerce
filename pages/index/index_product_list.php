@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_product_list.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: index_product_list.php,v 1.2 2005/10/31 16:19:57 lsces Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -73,7 +73,7 @@
 //// bof: categories error
 if ($error_categories==true) {
   // verify lost category and reset category
-  $check_category = $db->Execute("select categories_id from " . TABLE_CATEGORIES . " where categories_id='" . $current_category_id . "'");
+  $check_category = $db->Execute("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_id` ='" . $current_category_id . "'");
   if ($check_category->RecordCount() == 0) {
     $new_products_category_id = '0';
     $cPath= '';

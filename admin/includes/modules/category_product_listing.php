@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.7 2005/09/25 01:06:51 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.8 2005/10/31 16:20:01 lsces Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -246,9 +246,9 @@ if ($_GET['page'] == '' and $_GET['pID'] != '') {
 
       if ( (!isset($_GET['pID']) && !isset($_GET['cID']) || (isset($_GET['pID']) && ($_GET['pID'] == $products->fields['products_id']))) && !isset($pInfo) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 // find out the rating average from customer reviews
-        $reviews = $db->Execute("select (avg(reviews_rating) / 5 * 100) as average_rating
+        $reviews = $db->Execute("select (avg(`reviews_rating`) / 5 * 100) as `average_rating`
                                  from " . TABLE_REVIEWS . "
-                                 where products_id = '" . (int)$products->fields['products_id'] . "'");
+                                 where `products_id` = '" . (int)$products->fields['products_id'] . "'");
         $pInfo_array = array_merge($products->fields, $reviews->fields);
         $pInfo = new objectInfo($pInfo_array);
       }

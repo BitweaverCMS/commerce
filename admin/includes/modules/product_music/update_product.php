@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.6 2005/10/06 21:01:47 spiderr Exp $
+//  $Id: update_product.php,v 1.7 2005/10/31 16:19:59 lsces Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -74,7 +74,7 @@
             zen_update_products_price_sorter($products_id);
 
             $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                      (products_id, categories_id)
+                                      (`products_id`, `categories_id`)
                           values ('" . (int)$products_id . "', '" . (int)$current_category_id . "')");
 
 
@@ -119,7 +119,7 @@
 
               $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product') {
-              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
             }
           }
 
@@ -141,7 +141,7 @@
 
               $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product_meta_tags') {
-              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
             }
           }
 

@@ -17,23 +17,26 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.14 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.15 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names, values, products
-  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id`='" . $_SESSION['languages_id'] . "'", 1);
+  $chk_option_names = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . 
+		" where `language_id`='" . $_SESSION['languages_id'] . "'", NULL, 1);
   if ($chk_option_names->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
-  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . "'", 1);
+  $chk_option_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . 
+		" where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . 
+		"'", NULL, 1);
   if ($chk_option_values->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
-  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, 1);
+  $chk_products = $db->Execute("select * from " . TABLE_PRODUCTS, NULL, 1);
   if ($chk_products->RecordCount() < 1) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -93,44 +96,44 @@
 //// BOF OF FLAGS
       case 'set_flag_attributes_display_only':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_display_only from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_display_only` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_display_only'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_display_only='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_display_only='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_product_attribute_is_free':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, product_attribute_is_free from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `product_attribute_is_free` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['product_attribute_is_free'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set product_attribute_is_free='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='1' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set product_attribute_is_free='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='0' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_default':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_default from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_default` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_default'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_default='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_default='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_discounted':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_discounted from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_discounted` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_discounted'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_discounted='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_discounted='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
 
         // reset products_price_sorter for searches etc.
@@ -141,11 +144,11 @@
 
       case 'set_flag_attributes_price_base_inc':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_price_base_inc from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_price_base_inc'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_inc='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_price_base_inc='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
 
         // reset products_price_sorter for searches etc.
@@ -156,11 +159,11 @@
 
       case 'set_flag_attributes_required':
         $action='';
-        $new_flag= $db->Execute("select products_attributes_id, products_id, attributes_required from " . TABLE_PRODUCTS_ATTRIBUTES . " where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+        $new_flag= $db->Execute("`select products_attributes_id`, `products_id`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_required'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_required='1' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set attributes_required='0' where products_id='" . $_GET['products_id'] . "' and products_attributes_id='" . $_GET['attributes_id'] . "'");
+          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
@@ -187,9 +190,9 @@
       case 'add_product_attributes':
 // check for duplicate and block them
         $check_duplicate = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                         where products_id ='" . $_POST['products_id'] . "'
-                                         and options_id = '" . $_POST['options_id'] . "'
-                                         and options_values_id = '" . $_POST['values_id'] . "'");
+                                         where `products_id` ='" . $_POST['products_id'] . "'
+                                         and `options_id` = '" . $_POST['options_id'] . "'
+                                         and `options_values_id` = '" . $_POST['values_id'] . "'");
 
         if ($check_duplicate->RecordCount() > 0) {
           // do not add duplicates give a warning
@@ -202,7 +205,7 @@
           } else {
 // iii 030811 added:  For TEXT and FILE option types, ignore option value
 // entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
-        $products_options_array = $db->Execute("select products_options_type from " . TABLE_PRODUCTS_OPTIONS . " where products_options_id = '" . $_POST['options_id'] . "'");
+        $products_options_array = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
         $values_id = zen_db_prepare_input((($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id']);
 
             $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -306,10 +309,10 @@
         break;
       case 'update_product_attribute':
         $check_duplicate = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                         where products_id ='" . $_POST['products_id'] . "'
-                                         and options_id = '" . $_POST['options_id'] . "'
-                                         and options_values_id = '" . $_POST['values_id'] . "'
-                                         and products_attributes_id != '" . $_POST['attribute_id'] . "'");
+                                         where `products_id` ='" . $_POST['products_id'] . "'
+                                         and `options_id` = '" . $_POST['options_id'] . "'
+                                         and `options_values_id` = '" . $_POST['values_id'] . "'
+                                         and `products_attributes_id` != '" . $_POST['attribute_id'] . "'");
 
         if ($check_duplicate->RecordCount() > 0) {
           // do not add duplicates give a warning
@@ -322,7 +325,7 @@
           } else {
             // add the new attribute
 // iii 030811 added:  Enforce rule that TEXT and FILE Options use value PRODUCTS_OPTIONS_VALUES_TEXT_ID
-        $products_options_query = $db->Execute("select products_options_type from " . TABLE_PRODUCTS_OPTIONS . " where products_options_id = '" . $_POST['options_id'] . "'");
+        $products_options_query = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
         switch ($products_options_array->fields['products_options_type']) {
           case PRODUCTS_OPTIONS_TYPE_TEXT:
           case PRODUCTS_OPTIONS_TYPE_FILE:
@@ -389,32 +392,32 @@
                         where products_attributes_id = '" . (int)$attribute_id . "'");
 
             $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . "
-                          set products_id = '" . (int)$products_id . "',
-                              options_id = '" . (int)$options_id . "',
-                              options_values_id = '" . (int)$values_id . "',
-                              options_values_price = '" . zen_db_input($value_price) . "',
-                              price_prefix = '" . zen_db_input($price_prefix) . "',
-                              products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "',
-                              product_attribute_is_free = '" . zen_db_input($product_attribute_is_free) . "',
-                              products_attributes_wt = '" . zen_db_input($products_attributes_wt) . "',
-                              products_attributes_wt_pfix = '" . zen_db_input($products_attributes_wt_pfix) . "',
-                              attributes_display_only = '" . zen_db_input($attributes_display_only) . "',
-                              attributes_default = '" . zen_db_input($attributes_default) . "',
-                              attributes_discounted = '" . zen_db_input($attributes_discounted) . "',
-                              attributes_price_base_inc = '" . zen_db_input($attributes_price_base_inc) . "',
-                              attributes_price_onetime = '" . zen_db_input($attributes_price_onetime) . "',
-                              attributes_price_factor = '" . zen_db_input($attributes_price_factor) . "',
-                              attributes_pf_offset = '" . zen_db_input($attributes_pf_offset) . "',
-                              attributes_pf_onetime = '" . zen_db_input($attributes_pf_onetime) . "',
-                              attributes_pf_onetime_offset = '" . zen_db_input($attributes_pf_onetime_offset) . "',
-                              attributes_qty_prices = '" . zen_db_input($attributes_qty_prices) . "',
-                              attributes_qty_prices_onetime = '" . zen_db_input($attributes_qty_prices_onetime) . "',
-                              attributes_price_words = '" . zen_db_input($attributes_price_words) . "',
-                              attributes_price_words_free = '" . zen_db_input($attributes_price_words_free) . "',
-                              attributes_price_letters = '" . zen_db_input($attributes_price_letters) . "',
-                              attributes_price_letters_free = '" . zen_db_input($attributes_price_letters_free) . "',
-                              attributes_required = '" . zen_db_input($attributes_required) . "'
-                          where products_attributes_id = '" . (int)$attribute_id . "'");
+                          set `products_id` = '" . (int)$products_id . "',
+                              `options_id` = '" . (int)$options_id . "',
+                              `options_values_id` = '" . (int)$values_id . "',
+                              `options_values_price` = '" . zen_db_input($value_price) . "',
+                              `price_prefix` = '" . zen_db_input($price_prefix) . "',
+                              `products_options_sort_order` = '" . zen_db_input($products_options_sort_order) . "',
+                              `product_attribute_is_free` = '" . zen_db_input($product_attribute_is_free) . "',
+                              `products_attributes_wt` = '" . zen_db_input($products_attributes_wt) . "',
+                              `products_attributes_wt_pfix` = '" . zen_db_input($products_attributes_wt_pfix) . "',
+                              `attributes_display_only` = '" . zen_db_input($attributes_display_only) . "',
+                              `attributes_default` = '" . zen_db_input($attributes_default) . "',
+                              `attributes_discounted` = '" . zen_db_input($attributes_discounted) . "',
+                              `attributes_price_base_inc` = '" . zen_db_input($attributes_price_base_inc) . "',
+                              `attributes_price_onetime` = '" . zen_db_input($attributes_price_onetime) . "',
+                              `attributes_price_factor` = '" . zen_db_input($attributes_price_factor) . "',
+                              `attributes_pf_offset` = '" . zen_db_input($attributes_pf_offset) . "',
+                              `attributes_pf_onetime` = '" . zen_db_input($attributes_pf_onetime) . "',
+                              `attributes_pf_onetime_offset` = '" . zen_db_input($attributes_pf_onetime_offset) . "',
+                              `attributes_qty_prices` = '" . zen_db_input($attributes_qty_prices) . "',
+                              `attributes_qty_prices_onetime` = '" . zen_db_input($attributes_qty_prices_onetime) . "',
+                              `attributes_price_words` = '" . zen_db_input($attributes_price_words) . "',
+                              `attributes_price_words_free` = '" . zen_db_input($attributes_price_words_free) . "',
+                              `attributes_price_letters` = '" . zen_db_input($attributes_price_letters) . "',
+                              `attributes_price_letters_free` = '" . zen_db_input($attributes_price_letters_free) . "',
+                              `attributes_required` = '" . zen_db_input($attributes_required) . "'
+                          where `products_attributes_id` = '" . (int)$attribute_id . "'");
 
             if (DOWNLOAD_ENABLED == 'true') {
               $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
@@ -423,10 +426,10 @@
 
               if (zen_not_null($products_attributes_filename)) {
                 $db->Execute("replace into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
-                              set products_attributes_id = '" . (int)$attribute_id . "',
-                                  products_attributes_filename = '" . zen_db_input($products_attributes_filename) . "',
-                                  products_attributes_maxdays = '" . zen_db_input($products_attributes_maxdays) . "',
-                                  products_attributes_maxcount = '" . zen_db_input($products_attributes_maxcount) . "'");
+                              set `products_attributes_id` = '" . (int)$attribute_id . "',
+                                  `products_attributes_filename` = '" . zen_db_input($products_attributes_filename) . "',
+                                  `products_attributes_maxdays` = '" . zen_db_input($products_attributes_maxdays) . "',
+                                  `products_attributes_maxcount` = '" . zen_db_input($products_attributes_maxcount) . "'");
               }
             }
           }
@@ -447,11 +450,11 @@
         $attribute_id = zen_db_prepare_input($_GET['attribute_id']);
 
         $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                      where products_attributes_id = '" . (int)$attribute_id . "'");
+                      where `products_attributes_id` = '" . (int)$attribute_id . "'");
 
 // added for DOWNLOAD_ENABLED. Always try to remove attributes, even if downloads are no longer enabled
         $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
-                      where products_attributes_id = '" . (int)$attribute_id . "'");
+                      where `products_attributes_id` = '" . (int)$attribute_id . "'");
 
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter($productsId);
@@ -491,7 +494,7 @@
       if ($_POST['categories_update_id'] == '') {
         $messageStack->add_session(WARNING_PRODUCT_COPY_TO_CATEGORY_NONE . ' ID#' . $_POST['products_id'], 'warning');
       } else {
-        $copy_to_category = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $_POST['categories_update_id'] . "'");
+        $copy_to_category = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
         while (!$copy_to_category->EOF) {
           zen_copy_products_attributes($_POST['products_id'], $copy_to_category->fields['products_id']);
           $copy_to_category->MoveNext();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: featured.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -44,12 +44,12 @@
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
         $db->Execute("insert into " . TABLE_FEATURED . "
-                    (products_id, featured_date_added, expires_date, status, featured_date_available)
+                    (`products_id`, `featured_date_added`, `expires_date`, `status`, `featured_date_available`)
                     values ('" . (int)$products_id . "',
-                            now(),
+                            ".$db->NOW().",
                             '" . zen_db_input($expires_date) . "', '1', '" . zen_db_input($featured_date_available) . "')");
 
-        $new_featured = $db->Execute("select featured_id from " . TABLE_FEATURED . " where products_id='" . (int)$products_id . "'");
+        $new_featured = $db->Execute("select `featured_id` from " . TABLE_FEATURED . " where `products_id` ='" . (int)$products_id . "'");
         } // nothing selected to add
         if ($_GET['go_back'] == 'ON'){
           zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $products_id));
@@ -64,10 +64,10 @@
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
         $db->Execute("update " . TABLE_FEATURED . "
-                      set featured_last_modified = now(),
-                          expires_date = '" . zen_db_input($expires_date) . "',
-                          featured_date_available = '" . zen_db_input($featured_date_available) . "'
-                      where featured_id = '" . (int)$featured_id . "'");
+                      set `featured_last_modified` = ".$db->NOW().",
+                          `expires_date` = '" . zen_db_input($expires_date) . "',
+                          `featured_date_available` = '" . zen_db_input($featured_date_available) . "'
+                      where `featured_id` = '" . (int)$featured_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page'] . '&fID=' . $featured_id));
         break;
@@ -81,7 +81,7 @@
         $featured_id = zen_db_prepare_input($_GET['fID']);
 
         $db->Execute("delete from " . TABLE_FEATURED . "
-                      where featured_id = '" . (int)$featured_id . "'");
+                      where `featured_id` = '" . (int)$featured_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_FEATURED, 'page=' . $_GET['page']));
         break;
@@ -193,7 +193,7 @@
       }
 
 // do not include things that cannot go in the cart
-      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.allow_add_to_cart = 'N'");
+      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
 
       while (!$not_for_cart->EOF) {
         $featured_array[] = $not_for_cart->fields['products_id'];

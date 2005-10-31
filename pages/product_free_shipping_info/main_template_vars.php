@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.10 2005/10/06 22:05:51 spiderr Exp $
+// $Id: main_template_vars.php,v 1.11 2005/10/31 16:20:00 lsces Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -40,9 +40,9 @@
     $tpl_page_body = '/product_free_shipping_info_display.php';
 
     $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . "
-            set        products_viewed = products_viewed+1
-            where      products_id = '" . (int)$_GET['products_id'] . "'
-            and        language_id = '" . (int)$_SESSION['languages_id'] . "'";
+            set        `products_viewed` = `products_viewed` + 1
+            where      `products_id` = '" . (int)$_GET['products_id'] . "'
+            and        `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
     $res = $db->Execute($sql);
 
@@ -129,9 +129,9 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
     }
 
     if (!$current_category_id) {
-      $sql = "SELECT categories_id
+      $sql = "SELECT `categories_id`
               from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-              where  products_id ='" .  (int)$_GET['products_id']
+              where  `products_id` ='" .  (int)$_GET['products_id']
               . "'";
 
       $cPath_row = $db->Execute($sql);
@@ -178,9 +178,9 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
 
     if ($previous == -1) $previous = $last;
 
-    $sql = "select categories_name
+    $sql = "select `categories_name`
             from   " . TABLE_CATEGORIES_DESCRIPTION . "
-            where  categories_id = $current_category_id AND language_id = '" . $_SESSION['languages_id']
+            where  `categories_id` = $current_category_id AND `language_id` = '" . $_SESSION['languages_id']
             . "'";
 
     $category_name_row = $db->Execute($sql);

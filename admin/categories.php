@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.11 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: categories.php,v 1.12 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -59,9 +59,9 @@
           $categories = zen_get_category_tree($categories_id, '', '0', '', true);
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select products_id
+            $product_ids = $db->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                         where categories_id = '" . (int)$categories[$i]['id'] . "'");
+                                         where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
             while (!$product_ids->EOF) {
               $products[$product_ids->fields['products_id']]['categories'][] = $categories[$i]['id'];
@@ -80,8 +80,8 @@
               $products_status = '1';
             }
 
-              $sql = "update " . TABLE_CATEGORIES . " set categories_status='" . $categories_status . "'
-                      where categories_id='" . $categories[$i]['id'] . "'";
+              $sql = "update " . TABLE_CATEGORIES . " set `categories_status` ='" . $categories_status . "'
+                      where `categories_id` ='" . $categories[$i]['id'] . "'";
               $db->Execute($sql);
 
             // set products_status based on selection
@@ -94,11 +94,11 @@
                 $products_status = '0';
               }
 
-              $sql = "select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $categories[$i]['id'] . "'";
+              $sql = "select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $categories[$i]['id'] . "'";
               $category_products = $db->Execute($sql);
 
               while (!$category_products->EOF) {
-                $sql = "update " . TABLE_PRODUCTS . " set products_status='" . $products_status . "' where products_id='" . $category_products->fields['products_id'] . "'";
+                $sql = "update " . TABLE_PRODUCTS . " set `products_status` ='" . $products_status . "' where `products_id` ='" . $category_products->fields['products_id'] . "'";
                 $db->Execute($sql);
                 $category_products->MoveNext();
               }
@@ -136,8 +136,8 @@
         if ( isset($_POST['add_type']) or isset($_POST['add_type_all']) ) {
           // check if it is already restricted
           $sql = "select * from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
-                           where category_id = '" . zen_db_prepare_input($_POST['categories_id']) . "'
-                           and product_type_id = '" . zen_db_prepare_input($_POST['restrict_type']) . "'";
+                           where `category_id` = '" . zen_db_prepare_input($_POST['categories_id']) . "'
+                           and `product_type_id` = '" . zen_db_prepare_input($_POST['restrict_type']) . "'";
 
           $type_to_cat = $db->Execute($sql);
           if ($type_to_cat->RecordCount() < 1) {
@@ -168,7 +168,7 @@
 
         if ($action == 'insert_category') {
           $insert_sql_data = array('parent_id' => $current_category_id,
-                                   'date_added' => 'now()');
+                                   'date_added' => $db->NOW() );
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
@@ -176,19 +176,19 @@
 
           $categories_id = zen_db_insert_id( TABLE_CATEGORIES, 'categories_id' );
 // check if [arent is restricted
-          $sql = "select parent_id from " . TABLE_CATEGORIES . "
-                  where categories_id = '" . $categories_id . "'";
+          $sql = "select `parent_id` from " . TABLE_CATEGORIES . "
+                  where `categories_id` = '" . $categories_id . "'";
 
           $parent_cat = $db->Execute($sql);
           if ($parent_cat->fields['parent_id'] != '0') {
-            $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
-                     where category_id = '" . $parent_cat->fields['parent_id'] . "'";
+            $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
+                     where `category_id` = '" . $parent_cat->fields['parent_id'] . "'";
             $parent_product_type = $db->Execute($sql);
 
             if ($parent_product_type->RecordCount() > 0) {
               $sql = "select * from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
-                             where category_id = '" . $parent_cat->fields['parent_id'] . "'
-                             and product_type_id = '" . $parent_product_type->fields['product_type_id'] . "'";
+                             where `category_id` = '" . $parent_cat->fields['parent_id'] . "'
+                             and `product_type_id` = '" . $parent_product_type->fields['product_type_id'] . "'";
               $has_type = $db->Execute($sql);
 
               if ($has_type->RecordCount() < 1) {
@@ -201,7 +201,7 @@
 		    }
           }
         } elseif ($action == 'update_category') {
-          $update_sql_data = array('last_modified' => 'now()');
+          $update_sql_data = array('last_modified' => $db->NOW());
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
           $db->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'name' => 'categories_id', 'value' => $categories_id ) );
         }
@@ -241,15 +241,15 @@
           }
           if (($categories_image->filename != 'none' && $categories_image->filename != '') && (!is_numeric(strpos($categories_image->filename,'none')))) {
             $db->Execute("update " . TABLE_CATEGORIES . "
-                          set categories_image = '" . $categories_image_name . "'
-                          where categories_id = '" . (int)$categories_id . "'");
+                          set `categories_image` = '" . $categories_image_name . "'
+                          where `categories_id` = '" . (int)$categories_id . "'");
           } else {
             // remove when set to none
 //            if ($categories_image->filename == 'none' or (!is_numeric(strpos($categories_image->filename,'none'))) ) {
             if (($categories_image->filename != '') && ($categories_image->filename == 'none' or (!is_numeric(strpos($categories_image->filename,'none')))) ) {
               $db->Execute("update " . TABLE_CATEGORIES . "
-                            set categories_image = ''
-                            where categories_id = '" . (int)$categories_id . "'");
+                            set `categories_image` = ''
+                            where `categories_id` = '" . (int)$categories_id . "'");
             }
           }
         }
@@ -272,9 +272,9 @@
           $products_delete = array();
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select products_id
+            $product_ids = $db->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                         where categories_id = '" . (int)$categories[$i]['id'] . "'");
+                                         where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
             while (!$product_ids->EOF) {
               $products[$product_ids->fields['products_id']]['categories'][] = $categories[$i]['id'];
@@ -342,9 +342,9 @@
           $categories = zen_get_category_tree($categories_id, '', '0', '', true);
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select products_id
+            $product_ids = $db->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                         where categories_id = '" . (int)$categories[$i]['id'] . "'");
+                                         where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
             while (!$product_ids->EOF) {
               $products[$product_ids->fields['products_id']]['categories'][] = $categories[$i]['id'];
@@ -358,7 +358,7 @@
 
             // set products_status based on selection
 
-              $sql = "select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $categories[$i]['id'] . "'";
+              $sql = "select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $categories[$i]['id'] . "'";
               $category_products = $db->Execute($sql);
 
               while (!$category_products->EOF) {
@@ -391,12 +391,12 @@
             zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $categories_id));
           } else {
             $db->Execute("update " . TABLE_CATEGORIES . "
-                          set parent_id = '" . (int)$new_parent_id . "', `last_modified` = now()
-                          where categories_id = '" . (int)$categories_id . "'");
+                          set `parent_id` = '" . (int)$new_parent_id . "', `last_modified` = ".$db->NOW()."
+                          where `categories_id` = '" . (int)$categories_id . "'");
 
 // fix here - if this is a category with subcats it needs to know to loop through
             // reset all products_price_sorter for moved category products
-            $reset_price_sorter = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . (int)$categories_id . "'");
+            $reset_price_sorter = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . (int)$categories_id . "'");
             while (!$reset_price_sorter->EOF) {
               zen_update_products_price_sorter($reset_price_sorter->fields['products_id']);
               $reset_price_sorter->MoveNext();
@@ -446,7 +446,7 @@
       $copy_attributes_delete_first = ($_POST['copy_attributes'] == 'copy_attributes_delete' ? '1' : '0');
       $copy_attributes_duplicates_skipped = ($_POST['copy_attributes'] == 'copy_attributes_ignore' ? '1' : '0');
       $copy_attributes_duplicates_overwrite = ($_POST['copy_attributes'] == 'copy_attributes_update' ? '1' : '0');
-      $copy_to_category = $db->Execute("select products_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where categories_id='" . $_POST['categories_update_id'] . "'");
+      $copy_to_category = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
       while (!$copy_to_category->EOF) {
         zen_copy_products_attributes($_POST['products_id'], $copy_to_category->fields['products_id']);
         $copy_to_category->MoveNext();
@@ -462,9 +462,9 @@
         $pieces = explode('_',$_GET['cPath']);
         $cat_id = $pieces[sizeof($pieces)-1];
 //	echo $cat_id;
-        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . (int)$cat_id . "'";
+        $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` = '" . (int)$cat_id . "'";
         $product_type_list = $db->Execute($sql);
-        $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where category_id = '" . (int)$cat_id . "' and product_type_id = '" . $_GET['product_type'] . "'";
+        $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` = '" . (int)$cat_id . "' and `product_type_id` = '" . $_GET['product_type'] . "'";
         $product_type_good = $db->Execute($sql);
         if ($product_type_list->RecordCount() < 1 || $product_type_good->RecordCount() > 0) {
           $url = zen_get_all_get_params();
@@ -675,13 +675,13 @@
         $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $cInfo->categories_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
         $contents[] = array('text' => TEXT_RESTRICT_PRODUCT_TYPE . ' ' . zen_draw_pull_down_menu('restrict_type', $type_array) . '&nbsp<input type="submit" name="add_type_all" value="' . BUTTON_ADD_PRODUCT_TYPES_SUBCATEGORIES_ON . '">' . '&nbsp<input type="submit" name="add_type" value="' . BUTTON_ADD_PRODUCT_TYPES_SUBCATEGORIES_OFF . '">');
         $sql = "select * from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
-                         where category_id = '" . $cInfo->categories_id . "'";
+                         where `category_id` = '" . $cInfo->categories_id . "'";
 
         $restrict_types = $db->Execute($sql);
         if ($restrict_types->RecordCount() > 0 ) {
           $contents[] = array('text' => '<br />' . TEXT_CATEGORY_HAS_RESTRICTIONS . '<br />');
           while (!$restrict_types->EOF) {
-            $sql = "select type_name from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $restrict_types->fields['product_type_id'] . "'";
+            $sql = "select `type_name` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $restrict_types->fields['product_type_id'] . "'";
             $type = $db->Execute($sql);
             $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=remove_type&cPath=' . $cPath . '&cID='.$cInfo->categories_id.'&type_id='.$restrict_types->fields['product_type_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $type->fields['type_name'] . '<br />');
             $restrict_types->MoveNext();

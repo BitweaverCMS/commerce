@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: attributes_preview.php,v 1.4 2005/08/24 11:52:10 lsces Exp $
+// $Id: attributes_preview.php,v 1.5 2005/10/31 16:20:00 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -31,10 +31,9 @@
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
             where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
             and      patrib.`options_id` = popt.`products_options_i`d
-            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" .
-            " limit 1";
+            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $pr_attr = $db->Execute($sql);
+    $pr_attr = $db->Execute($sql, NULL, 1);
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {

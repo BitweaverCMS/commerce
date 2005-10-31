@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: media_manager.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -71,7 +71,7 @@
                                 (`media_id`, `clip_type`, `clip_filename`, `date_added`) values (
                                  '" . $_GET['mID'] . "',
                                  '" . $media_type . "',
-                                 '" . $media_upload_filename . "', now())");
+                                 '" . $media_upload_filename . "', ".$db->NOW().")");
                 }
               }
 
@@ -87,14 +87,14 @@
           $messageStack->add_session(ERROR_UNKNOWN_DATA, 'caution');
         } else {
           if ($action == 'insert') {
-            $insert_sql_data = array('date_added' => 'now()');
+            $insert_sql_data = array('date_added' => $db->NOW());
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
             $db->associateInsert(TABLE_MEDIA_MANAGER, $sql_data_array);
             $media_id = zen_db_insert_id( TABLE_MEDIA_MANAGER, 'media_id' );
           } elseif ($action == 'save') {
-            $update_sql_data = array('last_modified' => 'now()');
+            $update_sql_data = array('last_modified' => $db->NOW());
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/10/11 03:50:14 spiderr Exp $
+// $Id: header_php.php,v 1.9 2005/10/31 16:19:59 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -72,7 +72,7 @@
       }
 
       $sql = "insert into " . TABLE_REVIEWS . "
-                              (products_id, customers_id, customers_name, reviews_rating, `date_added`, status)
+                              (`products_id`, `customers_id`, `customers_name`, `reviews_rating`, `date_added`, `status`)
                      values ('" . (int)$_GET['products_id'] . "', '" . (int)$_SESSION['customer_id'] . "', '" .
                              zen_db_input($customer->fields['customers_firstname']) . ' ' .
                              zen_db_input($customer->fields['customers_lastname']) . "', '" .
@@ -83,7 +83,7 @@
       $insert_id = zen_db_insert_id( TABLE_REVIEWS, 'reviews_id' );
 
       $sql = "insert into " . TABLE_REVIEWS_DESCRIPTION . "
-                          (reviews_id, languages_id, reviews_text)
+                          (`reviews_id`, `languages_id`, `reviews_text`)
                      values ('" . (int)$insert_id . "', '" . (int)$_SESSION['languages_id'] . "', '" .
                              zen_db_input($review_text) . "')";
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.6 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: coupon_restrict.php,v 1.7 2005/10/31 16:19:58 lsces Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -138,8 +138,8 @@
       }
         echo '          <tr class="dataTableRow">' . "\n";
 
-     $coupon = $db->Execute("select coupon_name from " . TABLE_COUPONS_DESCRIPTION . "
-                             where coupon_id = '" . $_GET['cid'] . "' and language_id = '" . $_SESSION['languages_id'] . "'");
+     $coupon = $db->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . "
+                             where `coupon_id` = '" . $_GET['cid'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
      $category_name = zen_get_category_name($cr_list->fields['category_id'], $_SESSION['languages_id']);
 ?>
                 <td class="dataTableContent"><?php echo $_GET['cid']; ?></td>
@@ -229,7 +229,7 @@
       }
         echo '          <tr class="dataTableRow">' . "\n";
 
-     $coupon = $db->Execute("select coupon_name from " . TABLE_COUPONS_DESCRIPTION . " where coupon_id = '" . $_GET['cid'] . "' and language_id = '" . $_SESSION['languages_id'] . "'");
+     $coupon = $db->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cid'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
      $product_name = zen_get_products_name($pr_list->fields['product_id'], $_SESSION['languages_id']);
 ?>
                 <td class="dataTableContent"><?php echo $_GET['cid']; ?></td>

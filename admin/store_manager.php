@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.10 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: store_manager.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -57,7 +57,7 @@
 
     case ('update_all_products_price_sorter'):
     // reset products_price_sorter for searches etc.
-    $sql = "select products_id from " . TABLE_PRODUCTS;
+    $sql = "select `products_id` from " . TABLE_PRODUCTS;
     $update_prices = $db->Execute($sql);
 
     while (!$update_prices->EOF) {
@@ -71,7 +71,7 @@
 
     case ('update_all_products_viewed'):
     // reset products_viewed to 0
-    $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . " set products_viewed= '0'";
+    $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . " set `products_viewed` = '0'";
     $update_viewed = $db->Execute($sql);
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_VIEWED, 'success');
@@ -81,7 +81,7 @@
 
     case ('update_all_products_ordered'):
     // reset products_ordered to 0
-    $sql = "update " . TABLE_PRODUCTS . " set products_ordered= '0'";
+    $sql = "update " . TABLE_PRODUCTS . " set `products_ordered` = '0'";
     $update_viewed = $db->Execute($sql);
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_ORDERED, 'success');
@@ -91,7 +91,7 @@
 
     case ('update_counter'):
     // reset products_viewed to 0
-    $sql = "update " . TABLE_COUNTER . " set counter= '" . $_POST['new_counter'] . "'";
+    $sql = "update " . TABLE_COUNTER . " set `counter` = '" . $_POST['new_counter'] . "'";
     $update_counter = $db->Execute($sql);
 
     $messageStack->add_session(SUCCESS_UPDATE_COUNTER . $_POST['new_counter'], 'success');
@@ -102,14 +102,14 @@
     case ('update_all_master_categories_id'):
     // reset products master categories ID
 
-    $sql = "select products_id from " . TABLE_PRODUCTS;
+    $sql = "select `products_id` from " . TABLE_PRODUCTS;
     $check_products = $db->Execute($sql);
     while (!$check_products->EOF) {
 
-      $sql = "select products_id, categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id='" . $check_products->fields['products_id'] . "'";
+      $sql = "select `products_id`, `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` ='" . $check_products->fields['products_id'] . "'";
       $check_category = $db->Execute($sql);
 
-      $sql = "update " . TABLE_PRODUCTS . " set master_categories_id='" . $check_category->fields['categories_id'] . "' where products_id='" . $check_products->fields['products_id'] . "'";
+      $sql = "update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $check_category->fields['categories_id'] . "' where `products_id` ='" . $check_products->fields['products_id'] . "'";
       $update_viewed = $db->Execute($sql);
 
       $check_products->MoveNext();
@@ -124,12 +124,12 @@
       $old_orders_id = zen_db_prepare_input($_POST['old_orders_id']);
       $new_orders_id = zen_db_prepare_input($_POST['new_orders_id']);
 
-      $db->Execute("update " . TABLE_ORDERS . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_TOTAL . " set orders_id='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $db->Execute("update " . TABLE_ORDERS_TOTAL . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
     break;
 
     case ('locate_configuration'):

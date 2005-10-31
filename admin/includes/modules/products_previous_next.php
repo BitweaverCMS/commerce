@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.4 2005/08/24 12:16:09 lsces Exp $
+//  $Id: products_previous_next.php,v 1.5 2005/10/31 16:20:01 lsces Exp $
 //
 
 /////
@@ -26,7 +26,7 @@
   if ($prev_next_list=='') {
 // calculate the previous and next
 
-    $check_type = $db->Execute("select products_type from " . TABLE_PRODUCTS . " where products_id='" . $productsId . "'");
+    $check_type = $db->Execute("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` ='" . $productsId . "'");
     define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
 
     // sort order
@@ -59,9 +59,9 @@
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
 
     if (!$current_category_id) {
-      $sql = "SELECT categories_id
+      $sql = "SELECT `categories_id`
               from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-              where  products_id ='" .  $productsId . "'";
+              where  `products_id` ='" .  $productsId . "'";
 
       $cPath_row = $db->Execute($sql);
       $current_category_id = $cPath_row->fields['categories_id'];
@@ -107,9 +107,9 @@
 
     if ($previous == -1) $previous = $last;
 
-    $sql = "select categories_name
+    $sql = "select `categories_name`
             from   " . TABLE_CATEGORIES_DESCRIPTION . "
-            where  categories_id = $current_category_id AND language_id = '" . $_SESSION['languages_id'] . "'";
+            where  `categories_id` = $current_category_id AND `language_id` = '" . $_SESSION['languages_id'] . "'";
 
     $category_name_row = $db->Execute($sql);
   } // if is_array

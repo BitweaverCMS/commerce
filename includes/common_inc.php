@@ -537,7 +537,8 @@
     }
 
     // $new_fields = ', product_is_free, product_is_call, product_is_showroom_only';
-    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
+    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$products_id . "'", NULL, 1);
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);
@@ -636,7 +637,8 @@
     global $db;
     $the_free_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->Execute("select `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
+      $product_check = $db->Execute("select `product_is_free` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$products_id . "'", NULL, 1);
       if ($product_check->fields['product_is_free'] == '1') {
         $the_free_price = true;
 	  }
@@ -650,7 +652,8 @@
     global $db;
     $the_call_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->Execute("select `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
+      $product_check = $db->Execute("select `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$products_id . "'", NULL, 1);
       if ($product_check->fields['product_is_call'] == '1') {
         $the_call_price = true;
       }
@@ -662,7 +665,8 @@
 // Is the product priced by attributes?
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $db;
-    $product_check = $db->Execute("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
+    $product_check = $db->Execute("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$products_id . "'", NULL, 1);
     if ($product_check->fields['products_priced_by_attribute'] == '1') {
       $the_products_priced_by_attribute = true;
     } else {
@@ -1203,7 +1207,8 @@ If a special exist * 10+9
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
     global $db, $currencies;
-    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'", 1);
+    $product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$products_id . "'", NULL, 1);
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);
@@ -1473,7 +1478,7 @@ If a special exist * 10+9
 // get sale price
 
 // changed to use master_categories_id
-//      $product_to_categories = $db->Execute("select categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where products_id = '" . (int)$product_id . "'");
+//      $product_to_categories = $db->Execute("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
 //      $category = $product_to_categories->fields['categories_id'];
 
       $product_to_categories = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");

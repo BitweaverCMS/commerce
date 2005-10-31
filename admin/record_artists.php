@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_artists.php,v 1.6 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: record_artists.php,v 1.7 2005/10/31 16:19:58 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -34,14 +34,14 @@
         $sql_data_array = array('artists_name' => $artists_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => 'now()');
+          $insert_sql_data = array('date_added' => $db->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
           $db->associateInsert(TABLE_RECORD_ARTISTS, $sql_data_array);
           $artists_id = zen_db_insert_id( TABLE_RECORD_ARTISTS, 'artists_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => 'now()');
+          $update_sql_data = array('last_modified' => $db->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 

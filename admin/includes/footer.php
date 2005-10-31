@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: footer.php,v 1.3 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: footer.php,v 1.4 2005/10/31 16:20:00 lsces Exp $
 //
 
-$gBitSmarty->assign_by_ref( 'bitcommerceAdmin', ob_get_contents() );
+$obcontent = ob_get_contents();
+$gBitSmarty->assign_by_ref( 'bitcommerceAdmin', $obcontent );
 ob_end_clean();
 
 $gBitSystem->mLayout = array( 1 );

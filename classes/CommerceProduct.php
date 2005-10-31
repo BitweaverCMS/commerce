@@ -63,8 +63,8 @@ class CommerceProduct extends LibertyAttachable {
 					  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`) $joinSql
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
-						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.tax_class_id )
-						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.tax_class_id=txc.tax_class_id )
+						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
+						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
@@ -343,15 +343,15 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		if( !empty( $pParamHash['products_date_available'] ) ) {
-			$pParamHash['product_store']['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : 'now()';
+			$pParamHash['product_store']['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : $this->mDb->NOW();
 		} else {
 			$pParamHash['product_store']['products_date_available'] = NULL;
 		}
 
-		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? 'now()' : $pParamHash['products_last_modified']);
+		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? $this->mDb->NOW() : $pParamHash['products_last_modified']);
 		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL));
 		if( !$this->isValid() ) {
-			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? 'now()' : $pParamHash['products_date_added']);
+			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
 
 
@@ -543,33 +543,33 @@ Skip deleting of images for now
 						}
 					}
 */
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE products_id = ?", array( $this->mProductsId ) );
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 				// remove downloads if they exist
-				$remove_downloads= $this->mDb->Execute("SELECT products_attributes_id FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id= '" . $this->mProductsId . "'");
+				$remove_downloads= $this->mDb->Execute("SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $this->mProductsId . "'");
 				while (!$remove_downloads->EOF) {
-					$db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE products_attributes_id=?", array( $remove_downloads->fields['products_attributes_id'] ) );
+					$db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
 					$remove_downloads->MoveNext();
 				}
 
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
-				$product_reviews = $this->mDb->query("SELECT reviews_id FROM " . TABLE_REVIEWS . " WHERE products_id = ?", array( $this->mProductsId ));
+				$product_reviews = $this->mDb->query("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				while (!$product_reviews->EOF) {
 					$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
-								WHERE reviews_id = ?", array( $product_reviews->fields['reviews_id'] ) );
+								WHERE `reviews_id` = ?", array( $product_reviews->fields['reviews_id'] ) );
 					$product_reviews->MoveNext();
 				}
 
-				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE products_id = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE products_id = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 				LibertyAttachable::expunge();
 
@@ -726,7 +726,8 @@ Skip deleting of images for now
 		}
 
 		// $new_fields = ', product_is_free, product_is_call, product_is_showroom_only';
-		$product_check = $db->Execute("select products_tax_class_id, products_price, products_priced_by_attribute, product_is_free, product_is_call from " . TABLE_PRODUCTS . " where products_id = '" . (int)$pProductsId . "'" . " limit 1");
+		$product_check = $db->Execute("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = '" . (int)$pProductsId . "'", NULL, 1);
 
 		$show_display_price = '';
 		$display_normal_price = zen_get_products_base_price($pProductsId);
@@ -832,7 +833,7 @@ Skip deleting of images for now
 			$pProductsId = $this->mProductsId;
 		}
 		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) && !$this->hasNotification( $pCustomersId, $pProductsId ) ) {
-			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, now())";
+			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, $this->mDb->NOW())";
 			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId ) );
 		}
 	}

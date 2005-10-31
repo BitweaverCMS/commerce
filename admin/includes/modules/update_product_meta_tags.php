@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product_meta_tags.php,v 1.4 2005/10/06 21:01:47 spiderr Exp $
+//  $Id: update_product_meta_tags.php,v 1.5 2005/10/31 16:20:01 lsces Exp $
 //
 
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
@@ -51,7 +51,7 @@
           }
 
 // check if new meta tags or existing
-          $check_meta_tags_description = $db->Execute("select products_id from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where products_id='" . $products_id . "'");
+          $check_meta_tags_description = $db->Execute("select `products_id` from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where `products_id` ='" . $products_id . "'");
           if ($check_meta_tags_description->RecordCount() <= 0) {
             $action = 'new_product_meta_tags';
           }
@@ -71,7 +71,7 @@
 
               $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product_meta_tags') {
-              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
             }
           }
           zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));

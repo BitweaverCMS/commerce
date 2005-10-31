@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: record_company_filter.php,v 1.4 2005/08/24 15:31:16 spiderr Exp $
+// $Id: record_company_filter.php,v 1.5 2005/10/31 16:19:59 lsces Exp $
 //
 // show the products of a specified music_genre
     if (isset($_GET['record_company_id']))
@@ -81,7 +81,7 @@
           $listing_sql .= "pd.`products_name` " . ($sort_order == 'd' ? 'desc' : '');
           break;
         case 'PRODUCT_LIST_MANUFACTURER':
-          $listing_sql .= "m.record_company_name " . ($sort_order == 'd' ? 'desc' : '') . ", pd.`products_name`";
+          $listing_sql .= "m.`record_company_name` " . ($sort_order == 'd' ? 'desc' : '') . ", pd.`products_name`";
           break;
         case 'PRODUCT_LIST_QUANTITY':
           $listing_sql .= "p.`products_quantity` " . ($sort_order == 'd' ? 'desc' : '') . ", pd.`products_name`";
@@ -103,9 +103,9 @@
     {
       if (isset($_GET['record_company_id']))
       {
-        $filterlist_sql = "select distinct c.`categories_id` as id, cd.`categories_name` as name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_MUSIC_EXTRA . " pme  where p.`products_status` = '1' and pme.`products_id` = p2c.`products_id` and p2c.`categories_id` = c.`categories_id` and p2c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and pme.record_company_id = '" . (int)$_GET['record_company_id'] . "' order by cd.`categories_name`";
+        $filterlist_sql = "select distinct c.`categories_id` as `id`, cd.`categories_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_MUSIC_EXTRA . " pme  where p.`products_status` = '1' and pme.`products_id` = p2c.`products_id` and p2c.`categories_id` = c.`categories_id` and p2c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and pme.`record_company_id` = '" . (int)$_GET['record_company_id'] . "' order by cd.`categories_name`";
       } else {
-        $filterlist_sql= "select distinct m.music_genre_id as id, m.music_genre_name as name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_PRODUCT_MUSIC_EXTRA . " pme, " . TABLE_RECORD_COMPANY . " m where p.`products_status` = '1' and pme.record_company_id = m.record_company_id and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.record_company_name";
+        $filterlist_sql= "select distinct m.`music_genre_id` as `id`, m.`music_genre_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_PRODUCT_MUSIC_EXTRA . " pme, " . TABLE_RECORD_COMPANY . " m where p.`products_status` = '1' and pme.`record_company_id` = m.`record_company_id` and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.`record_company_name`";
       }
       $getoption_set =  false;
       $filterlist = $db->Execute($filterlist_sql);
@@ -131,8 +131,8 @@
     $image = DIR_WS_TEMPLATE_IMAGES . 'table_background_list.gif';
     if ($current_category_id) {
 
-      $sql = "select categories_image from " . TABLE_CATEGORIES . "
-              where  categories_id = '" . (int)$current_category_id . "'";
+      $sql = "select `categories_image` from " . TABLE_CATEGORIES . "
+              where  `categories_id` = '" . (int)$current_category_id . "'";
 
       $image_name = $db->Execute($sql);
       $image = $image_name->fields['categories_image'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.11 2005/10/27 22:17:57 spiderr Exp $
+// $Id: functions_lookups.php,v 1.12 2005/10/31 16:19:57 lsces Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -27,10 +27,10 @@
 
     if (!is_numeric($language_id)) $language_id = $_SESSION['languages_id'];
 
-    $status = $db->Execute("SELECT orders_status_name
+    $status = $db->Execute("SELECT `orders_status_name`
                             FROM " . TABLE_ORDERS_STATUS . "
-                            WHERE orders_status_id = '" . (int)$order_status_id . "'
-                            and language_id = '" . (int)$language_id . "'");
+                            WHERE `orders_status_id` = '" . (int)$order_status_id . "'
+                            and `language_id` = '" . (int)$language_id . "'");
 
     return $status->fields['orders_status_name'] . ' [' . (int)$order_status_id . ']';
   }
@@ -160,7 +160,7 @@
 	    global $db;
     	$check_valid = $db->Execute("select p.`products_id`
         	                         from " . TABLE_PRODUCTS . " p
-            	                     where `products_id`='" . $valid_id . "' limit 1");
+            	                     where `products_id`='" . $valid_id . "'", NULL, 1);
 	    if( !$check_valid->EOF ) {
     	  $ret = true;
 	    }
@@ -254,15 +254,15 @@
       // don't include READONLY attributes to determin if attributes must be selected to add to cart
       $attributes_query = "select pa.`products_attributes_id`
                            from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.options_id = po.products_options_id
-                           where pa.`products_id` = '" . (int)$products_id . "' and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "' limit 1";
+                           where pa.`products_id` = '" . (int)$products_id . "' and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
     } else {
       // regardless of READONLY attributes no add to cart buttons
       $attributes_query = "select pa.`products_attributes_id`
                            from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                           where pa.`products_id` = '" . (int)$products_id . "' limit 1";
+                           where pa.`products_id` = '" . (int)$products_id . "'";
     }
 
-    $attributes = $db->Execute($attributes_query);
+    $attributes = $db->Execute($attributes_query, NULL, 1);
 
     if ($attributes->fields['products_attributes_id'] > 0) {
       return true;
@@ -303,6 +303,7 @@
 
   function zen_get_category_description($category_id, $fn_language_id) {
     global $db;
+    if ( !$category_id ) return "";
     $category_query = "select `categories_description` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id` = ? and `language_id` = ?";
     $category = $db->query($category_query, array( $category_id, $fn_language_id) );
     return $category->fields['categories_description'];
@@ -385,7 +386,7 @@
                              from " . TABLE_PRODUCTS_ATTRIBUTES . "
                              where `products_id` = '" . $products_id . "'
                              and `options_id` = '" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "' limit 1");
+                             and `options_values_id` = '" . $options_values_id . "'", NULL, 1);
 
       return $check->fields['products_options_sort_order'];
   }
@@ -396,13 +397,13 @@
     global $db;
       $check = $db->Execute("select `products_options_sort_order`
                              from " . TABLE_PRODUCTS_OPTIONS . "
-                             where `products_options_id` = '" . $options_id . "' limit 1");
+                             where `products_options_id` = '" . $options_id . "'", NULL, 1);
 
       $check_options_id = $db->Execute("select `products_id`, `options_id`, `options_values_id`, `products_options_sort_order`
                              from " . TABLE_PRODUCTS_ATTRIBUTES . "
                              where `products_id` ='" . $products_id . "'
                              and `options_id` ='" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "' limit 1");
+                             and `options_values_id` = '" . $options_values_id . "'", NULL, 1);
 
 
       return $check->fields['products_options_sort_order'] . '.' . str_pad($check_options_id->fields['products_options_sort_order'],5,'0',STR_PAD_LEFT);
@@ -545,7 +546,7 @@
   function zen_get_categories_name_from_product($product_id) {
     global $db;
 
-    $check_products_category= $db->Execute("select `products_id`, `categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id`='" . $product_id . "' limit 1");
+    $check_products_category= $db->Execute("select `products_id`, `categories_id from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id`='" . $product_id . "'", NULL, 1);
     $the_categories_name= $db->Execute("select `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id`= '" . $check_products_category->fields['categories_id'] . "' and `language_id`= '" . $_SESSION['languages_id'] . "'");
 
     return $the_categories_name->fields['categories_name'];

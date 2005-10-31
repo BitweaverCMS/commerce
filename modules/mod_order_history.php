@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.7 2005/08/24 15:31:18 spiderr Exp $
+// $Id: mod_order_history.php,v 1.8 2005/10/31 16:20:01 lsces Exp $
 //
 	global $db, $gBitProduct;
 
@@ -29,10 +29,9 @@
 						and o.`orders_id` = op.`orders_id`
 						and op.`products_id` = p.`products_id`
 						and p.`products_status` = '1'
-						order by o.date_purchased desc
-						limit " . MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX;
+						order by o.date_purchased desc";
 
-		$orders_history = $db->query( $orders_history_query, $gBitUser->mUserId );
+		$orders_history = $db->query( $orders_history_query, $gBitUser->mUserId,MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX );
 
 		if ($orders_history->RecordCount() > 0) {
 			$product_ids = '';
@@ -43,11 +42,11 @@
 			$product_ids = substr($product_ids, 0, -1);
 			$rows=0;
 			$customer_orders_string = '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
-			$products_history_query = "select products_id, products_name
+			$products_history_query = "select `products_id`, `products_name`
 								from " . TABLE_PRODUCTS_DESCRIPTION . "
-								where products_id in (" . $product_ids . ")
-								and language_id = '" . (int)$_SESSION['languages_id'] . "'
-								order by products_name";
+								where `products_id` in (" . $product_ids . ")
+								and `language_id` = '" . (int)$_SESSION['languages_id'] . "'
+								order by `products_name`";
 
 			$products_history = $db->Execute($products_history_query);
 

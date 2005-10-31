@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: tax_rates.php,v 1.7 2005/10/31 16:19:58 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -39,7 +39,7 @@
                             '" . zen_db_input($tax_rate) . "',
                             '" . zen_db_input($tax_description) . "',
                             '" . (int)zen_db_input($tax_priority) . "',
-                            now())");
+                            ".$db->NOW().")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES));
         break;
@@ -58,7 +58,7 @@
                           `tax_rate`= '" . zen_db_input($tax_rate) . "',
                           `tax_description` = '" . zen_db_input($tax_description) . "',
                           `tax_priority` = '" . (int)zen_db_input($tax_priority) . "',
-                          `last_modified` = now() where tax_rates_id = '" . (int)$tax_rates_id . "'");
+                          `last_modified` = ".$db->NOW()." where `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;

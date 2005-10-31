@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.3 2005/10/06 21:01:48 spiderr Exp $
+// $Id: functions_email.php,v 1.4 2005/10/31 16:19:57 lsces Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -164,7 +164,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
                         '" . zen_db_input($email_subject) . "',
                         '" . zen_db_input($email_html) . "',
                         '" . zen_db_input($email_text) . "',
-                        now() ,
+                        ".$db->NOW()." ,
                         '" . zen_db_input($module) . "')");
     return $db;
   }
