@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.16 2005/10/06 21:01:41 spiderr Exp $
+// $Id: index.php,v 1.17 2005/10/31 23:45:45 lsces Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -112,8 +112,8 @@ ob_start();
 	print '</html>';
 
 	require(DIR_FS_INCLUDES . 'application_bottom.php');
-
-$gBitSmarty->assign_by_ref( 'bitcommerceCenter', ob_get_contents() );
+$content = ob_get_contents();
+$gBitSmarty->assign_by_ref( 'bitcommerceCenter', $content );
 ob_end_clean();
 
 if( !empty( $gCommercePopupTemplate ) ) {
