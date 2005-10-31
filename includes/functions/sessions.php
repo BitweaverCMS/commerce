@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sessions.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
+// $Id: sessions.php,v 1.4 2005/10/31 21:15:13 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -44,10 +44,10 @@
 
     function _sess_read($key) {
       global $db;
-      $qid = "select value
+      $qid = "select `value`
               from " . TABLE_SESSIONS . "
-              where sesskey = '" . zen_db_input($key) . "'
-              and expiry > '" . time() . "'";
+              where `sesskey` = '" . zen_db_input($key) . "'
+              and `expiry` > '" . time() . "'";
 
       $value = $db->Execute($qid);
 
@@ -67,14 +67,14 @@
 
       $qid = "select count(*) as `total`
               from " . TABLE_SESSIONS . "
-              where sesskey = '" . zen_db_input($key) . "'";
+              where `sesskey` = '" . zen_db_input($key) . "'";
 
       $total = $db->Execute($qid);
 
       if ($total->fields['total'] > 0) {
         $sql = "update " . TABLE_SESSIONS . "
-                set expiry = '" . zen_db_input($expiry) . "', value = '" . zen_db_input($value) . "'
-                where sesskey = '" . zen_db_input($key) . "'";
+                set `expiry` = '" . zen_db_input($expiry) . "', `value` = '" . zen_db_input($value) . "'
+                where `sesskey` = '" . zen_db_input($key) . "'";
 
         return $db->Execute($sql);
 
@@ -90,13 +90,13 @@
 
     function _sess_destroy($key) {
       global $db;
-      $sql = "delete from " . TABLE_SESSIONS . " where sesskey = '" . zen_db_input($key) . "'";
+      $sql = "delete from " . TABLE_SESSIONS . " where `sesskey` = '" . zen_db_input($key) . "'";
       return $db->Execute($sql);
     }
 
     function _sess_gc($maxlifetime) {
       global $db;
-      $sql = "delete from " . TABLE_SESSIONS . " where expiry < '" . time() . "'";
+      $sql = "delete from " . TABLE_SESSIONS . " where `expiry` < '" . time() . "'";
       $db->Execute($sql);
       return true;
     }

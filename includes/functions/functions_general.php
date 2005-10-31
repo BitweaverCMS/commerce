@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.21 2005/10/31 16:19:57 lsces Exp $
+// $Id: functions_general.php,v 1.22 2005/10/31 21:15:13 lsces Exp $
 //
 /**
  * General Function Repository.
@@ -615,7 +615,7 @@
 
     $currency_code = "select `currencies_id`
                       from " . TABLE_CURRENCIES . "
-                      where code = '" . zen_db_input($code) . "'";
+                      where `code` = '" . zen_db_input($code) . "'";
 
     $currency = $db->Execute($currency_code);
 
