@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.6 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: en.php,v 1.7 2005/10/31 21:18:19 lsces Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -38,9 +38,9 @@ define('DATE_FORMAT_SPIFFYCAL', 'MM/dd/yyyy');  //Use only 'dd', 'MM' and 'yyyy'
 // raw date is in format YYYYMMDD, or DDMMYYYY
 function zen_date_raw($date, $reverse = false) {
   if ($reverse) {
-    return substr($date, 3, 2) . substr($date, 0, 2) . substr($date, 6, 4);
+    return substr($date, 3, 2) . '.' . substr($date, 0, 2) . '.' . substr($date, 6, 4);
   } else {
-    return substr($date, 6, 4) . substr($date, 0, 2) . substr($date, 3, 2);
+    return substr($date, 6, 4) . '-' . substr($date, 0, 2) . '-' . substr($date, 3, 2);
   }
 }
 
