@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.16 2005/10/31 16:20:01 lsces Exp $
+// $Id: shopping_cart.php,v 1.17 2005/10/31 22:27:55 lsces Exp $
 //
 
   class shoppingCart {
@@ -1111,8 +1111,8 @@ if ((int)$products_id != $products_id) {
 			$products_id = current( $products_id );
 		}
       // check if mixed is on
-      $product = $db->Execute("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . 
-			" where `products_id` ='" . $products_id . "'", NULL, 1);
+      $product = $db->getOne("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . 
+			" where `products_id` ='" . $products_id . "'");
 
       // if mixed attributes is off return qty for current attribute selection
       if ($product->fields['products_quantity_mixed'] == '0') {
@@ -1141,8 +1141,8 @@ if ((int)$products_id != $products_id) {
       if (!is_array($this->contents)) return 0;
 
       // check if mixed is on
-      $product = $db->Execute("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS . 
-			" where `products_id` ='" . zen_get_prid($products_id) . "'", NULL, 1);
+      $product = $db->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS . 
+			" where `products_id` ='" . zen_get_prid($products_id) . "'");
 
       // if mixed attributes is off return qty for current attribute selection
       if ($product->fields['products_mixed_discount_quantity'] == '0') {
@@ -1179,8 +1179,8 @@ if ((int)$products_id != $products_id) {
       while (list($products_id, ) = each($this->contents)) {
         $testing_id = zen_get_prid($products_id);
         // check if field it true
-        $product_check = $db->Execute("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS . 
-			" where `products_id` ='" . $testing_id . "'", NULL, 1);
+        $product_check = $db->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS . 
+			" where `products_id` ='" . $testing_id . "'");
         if ($product_check->fields['check_it'] == $check_value) {
           $in_cart_check_qty += $this->contents[$products_id]['quantity'];
         }
