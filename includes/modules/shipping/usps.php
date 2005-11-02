@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.4 2005/08/24 02:53:52 lsces Exp $
+// $Id: usps.php,v 1.5 2005/11/02 22:26:54 spiderr Exp $
 //
 
 class usps {
@@ -68,6 +68,17 @@ class usps {
 							'Library' => 'Library'
 							);
 
+		$this->codes = array('Express' => 'USPSEXP',
+							'First Class' => 'First-Class Mail',
+							'Priority' => 'USPSPRI',
+							'Parcel' => 'USPSPAR',
+							'Media' => 'USPSREG',
+							'Global Express Mail (EMS)' => 'USPSIGEM',
+							'Global Express Guaranteed Non-Document Service' => 'USPSIGDX',
+							'Airmail Parcel Post' => 'USPSIAPP',
+							);
+
+
 		$this->intl_types = array('GXG Document' => 'Global Express Guaranteed Document Service',
 									'GXG Non-Document' => 'Global Express Guaranteed Non-Document Service',
 									'Express' => 'Global Express Mail (EMS)',
@@ -78,6 +89,7 @@ class usps {
 									'Airmail Parcel' => 'Airmail Parcel Post',
 									'Surface Letter' => 'Economy (Surface) Letter-post',
 									'Surface Post' => 'Economy (Surface) Parcel Post');
+
 
 		$this->countries = $this->country_list();
 	}
@@ -151,9 +163,9 @@ class usps {
 				$size = sizeof($uspsQuote);
 				for ($i=0; $i<$size; $i++) {
 					list($type, $cost) = each($uspsQuote[$i]);
-
 // BOF: UPS USPS
 					$title = ((isset($this->types[$type])) ? $this->types[$type] : $type);
+					$code = ((isset($this->codes[$type])) ? $this->codes[$type] : '');
 					if(in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS)))    $title .= $transittime[$type];
 /*
 					$methods[] = array('id' => $type,
@@ -161,6 +173,7 @@ class usps {
 									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shipping_num_boxes);
 */
 					$methods[] = array('id' => $type,
+									'code' => $code,
 									'title' => $title,
 									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shipping_num_boxes);
 				}

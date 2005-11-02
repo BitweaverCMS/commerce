@@ -17,7 +17,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping.php,v 1.5 2005/10/06 21:01:47 spiderr Exp $
+// $Id: shipping.php,v 1.6 2005/11/02 22:26:54 spiderr Exp $
 //
 
   class shipping {
@@ -29,7 +29,6 @@
 
       if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
         $this->modules = explode(';', MODULE_SHIPPING_INSTALLED);
-
         $include_modules = array();
 
         if ( (zen_not_null($module)) && (in_array(substr($module['id'], 0, strpos($module['id'], '_')) . '.' . substr($PHP_SELF, (strrpos($PHP_SELF, '.')+1)), $this->modules)) ) {

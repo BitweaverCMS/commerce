@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_success.php,v 1.1 2005/10/06 19:38:27 spiderr Exp $
+// $Id: checkout_success.php,v 1.2 2005/11/02 22:26:54 spiderr Exp $
 //
+global $zv_orders_id;
 ?>
 <?php echo zen_draw_form('order', zen_href_link(FILENAME_CHECKOUT_SUCCESS, 'action=update', 'SSL')); ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">

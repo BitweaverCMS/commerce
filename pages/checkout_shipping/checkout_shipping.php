@@ -17,11 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.3 2005/10/08 20:24:58 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.4 2005/11/02 22:26:54 spiderr Exp $
 //
   require(DIR_FS_CLASSES . 'http_client.php');
 
 	define( 'META_TAG_TITLE', tra( 'Step 1 of 3 - Delivery Information' ) );
+
+vd( $_SESSION['shipping'] );
 
   global $gBitCustomer;
 
@@ -195,11 +197,13 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 					$_SESSION['shipping'] = '';
 				} else {
 					if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-					$_SESSION['shipping'] = array('id' => $_SESSION['shipping'],
-										'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-										'cost' => $quote[0]['methods'][0]['cost']);
-
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+						$_SESSION['shipping'] = array(
+							'id' => $_SESSION['shipping'],
+							'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+							'cost' => $quote[0]['methods'][0]['cost'],
+							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+							);
+						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 					}
 				}
 				} else {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.23 2005/10/31 23:46:33 lsces Exp $
+// $Id: order.php,v 1.24 2005/11/02 22:26:54 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
@@ -125,6 +125,7 @@ class order extends BitBase {
                           'payment_method' => $order->fields['payment_method'],
                           'payment_module_code' => $order->fields['payment_module_code'],
                           'shipping_method' => $order->fields['shipping_method'],
+                          'shipping_method_code' => $order->fields['shipping_method_code'],
                           'shipping_module_code' => $order->fields['shipping_module_code'],
                           'coupon_code' => $order->fields['coupon_code'],
                           'cc_type' => $order->fields['cc_type'],
@@ -359,6 +360,7 @@ class order extends BitBase {
 //                          'cc_expires' => (isset($GLOBALS['cc_expires']) ? $GLOBALS['cc_expires'] : ''),
 //                          'cc_cvv' => (isset($GLOBALS['cc_cvv']) ? $GLOBALS['cc_cvv'] : ''),
                           'shipping_method' => $_SESSION['shipping']['title'],
+                          'shipping_method_code' => $_SESSION['shipping']['code'],
                           'shipping_module_code' => $_SESSION['shipping']['id'],
                           'shipping_cost' => $_SESSION['shipping']['cost'],
                           'subtotal' => 0,
@@ -567,6 +569,7 @@ class order extends BitBase {
 							'payment_method' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_METHOD_GV : $this->info['payment_method']),
 							'payment_module_code' => (($this->info['payment_module_code'] == '' and $this->info['payment_method'] == '') ? PAYMENT_MODULE_GV : $this->info['payment_module_code']),
 							'shipping_method' => $this->info['shipping_method'],
+							'shipping_method_code' => $this->info['shipping_method_code'],
 							'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
 							'coupon_code' => $this->info['coupon_code'],
 							'cc_type' => $this->info['cc_type'],
