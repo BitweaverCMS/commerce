@@ -35,8 +35,6 @@ function bitcommerce_expunge ( &$pObject ) {
 
 }
 
-define( 'COVER_REZ', 4.16666666 );
-
 
 
 ?>
