@@ -17,13 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.4 2005/11/02 22:26:54 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.5 2005/11/02 22:33:01 spiderr Exp $
 //
   require(DIR_FS_CLASSES . 'http_client.php');
 
 	define( 'META_TAG_TITLE', tra( 'Step 1 of 3 - Delivery Information' ) );
-
-vd( $_SESSION['shipping'] );
 
   global $gBitCustomer;
 
