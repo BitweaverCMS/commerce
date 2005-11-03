@@ -638,8 +638,8 @@
     $the_free_price = false;
 	if( !empty( $products_id ) ) {
       $product_check = $gBitDb->getOne("select `product_is_free` from " . TABLE_PRODUCTS . 
-			" where `products_id` = '" . (int)$products_id . "'");
-      if ($product_check->fields['product_is_free'] == '1') {
+			" where `products_id` = ?", array( $products_id ) );
+      if( $product_check == '1' ) {
         $the_free_price = true;
 	  }
     }
@@ -653,8 +653,8 @@
     $the_call_price = false;
 	if( !empty( $products_id ) ) {
       $product_check = $gBitDb->getOne("select `product_is_call` from " . TABLE_PRODUCTS . 
-			" where `products_id` = '" . (int)$products_id . "'");
-      if ($product_check->fields['product_is_call'] == '1') {
+			" where `products_id` = ?", array( $products_id ) );
+      if ( $product_check == '1' ) {
         $the_call_price = true;
       }
     }
@@ -666,13 +666,8 @@
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $gBitDb;
     $product_check = $gBitDb->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . 
-			" where `products_id` = '" . (int)$products_id . "'");
-    if ($product_check->fields['products_priced_by_attribute'] == '1') {
-      $the_products_priced_by_attribute = true;
-    } else {
-      $the_products_priced_by_attribute = false;
-    }
-    return $the_products_priced_by_attribute;
+			" where `products_id` = ?", array( $products_id ) );
+    return( $product_check == '1' );
   }
 
 ////
@@ -1207,8 +1202,8 @@ If a special exist * 10+9
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
     global $gBitDb, $currencies;
-    $product_check = $gBitDb->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
-			" where `products_id` = '" . (int)$products_id . "'");
+    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = ?", array( $products_id ) );
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);
