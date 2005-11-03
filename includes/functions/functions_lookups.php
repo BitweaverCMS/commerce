@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.14 2005/10/31 23:46:32 lsces Exp $
+// $Id: functions_lookups.php,v 1.15 2005/11/03 15:12:26 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -289,13 +289,13 @@
   }
 
   function zen_get_category_name($category_id, $fn_language_id) {
-    global $db;
+    global $gBitDb;
     $category_query = "select `categories_name`
                        from " . TABLE_CATEGORIES_DESCRIPTION . "
                        where `categories_id` = '" . $category_id . "'
                        and `language_id` = '" . $fn_language_id . "'";
 
-    $category = $db->Execute($category_query);
+    $category = $gBitDb->Execute($category_query);
 
     return $category->fields['categories_name'];
   }

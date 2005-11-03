@@ -251,8 +251,8 @@
 // uses $tbl = table name, $fld = field name
 
   function zen_field_type($tbl, $fld) {
-    global $db;
-    $rs = $db->MetaColumns($tbl);
+    global $gBitDb;
+    $rs = $gBitDb->MetaColumns($tbl);
     $type = $rs[strtoupper($fld)]->type;
     return $type;
   }
@@ -260,8 +260,8 @@
 // function to return field length
 // uses $tbl = table name, $fld = field name
   function zen_field_length($tbl, $fld) {
-    global $db;
-    $rs = $db->MetaColumns($tbl);
+    global $gBitDb;
+    $rs = $gBitDb->MetaColumns($tbl);
     $length = $rs[strtoupper($fld)]->max_length;
     return $length;
   }
@@ -381,13 +381,13 @@
   }
 
   function zen_db_insert_id( $pTableName, $pIdColumn ) {
-  	global $db;
-  	return( $db->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
+  	global $gBitDb;
+  	return( $gBitDb->GetOne( "SELECT MAX(`$pIdColumn`) FROM $pTableName" ) );
   }
 
   function zen_db_offset_date( $pDays, $pColumn=NULL ) {
-  	global $db;
-  	return( $db->OffsetDate( $pDays, $pColumn ) );
+  	global $gBitDb;
+  	return( $gBitDb->OffsetDate( $pDays, $pColumn ) );
   }
 
 
@@ -427,8 +427,8 @@
 
 
   function zen_get_languages() {
-    global $db;
-    $languages = $db->Execute("SELECT `languages_id`, `name`, `code`, `image`, `directory`
+    global $gBitDb;
+    $languages = $gBitDb->Execute("SELECT `languages_id`, `name`, `code`, `image`, `directory`
                                FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`");
 
     while (!$languages->EOF) {
@@ -464,14 +464,14 @@
 ////
 // computes products_price + option groups lowest attributes price of each group when on
   function zen_get_products_base_price($products_id) {
-    global $db;
-      $product_check = $db->Execute("select `products_price`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'");
+    global $gBitDb;
+      $product_check = $gBitDb->Execute("select `products_price`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$products_id . "'");
 
 // is there a products_price to add to attributes
       $products_price = $product_check->fields['products_price'];
 
       // do not select display only attributes and attributes_price_base_inc is true
-      $product_att_query = $db->Execute("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
+      $product_att_query = $gBitDb->Execute("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
 
       $the_options_id= 'x';
       $the_base_price= 0;
@@ -497,7 +497,7 @@
 // Display Price Retail
 // Specials and Tax Included
   function zen_get_products_display_price($products_id) {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
 // 0 = normal shopping
 // 1 = Login to shop
@@ -537,7 +537,7 @@
     }
 
     // $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-    $product_check = $db->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+    $product_check = $gBitDb->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
 			" where `products_id` = '" . (int)$products_id . "'");
 
     $show_display_price = '';
@@ -634,10 +634,10 @@
 ////
 // Is the product free?
   function zen_get_products_price_is_free($products_id) {
-    global $db;
+    global $gBitDb;
     $the_free_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->getOne("select `product_is_free` from " . TABLE_PRODUCTS . 
+      $product_check = $gBitDb->getOne("select `product_is_free` from " . TABLE_PRODUCTS . 
 			" where `products_id` = '" . (int)$products_id . "'");
       if ($product_check->fields['product_is_free'] == '1') {
         $the_free_price = true;
@@ -649,10 +649,10 @@
 ////
 // Is the product call for price?
   function zen_get_products_price_is_call($products_id) {
-    global $db;
+    global $gBitDb;
     $the_call_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $db->getOne("select `product_is_call` from " . TABLE_PRODUCTS . 
+      $product_check = $gBitDb->getOne("select `product_is_call` from " . TABLE_PRODUCTS . 
 			" where `products_id` = '" . (int)$products_id . "'");
       if ($product_check->fields['product_is_call'] == '1') {
         $the_call_price = true;
@@ -664,8 +664,8 @@
 ////
 // Is the product priced by attributes?
   function zen_get_products_price_is_priced_by_attributes($products_id) {
-    global $db;
-    $product_check = $db->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . 
+    global $gBitDb;
+    $product_check = $gBitDb->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . 
 			" where `products_id` = '" . (int)$products_id . "'");
     if ($product_check->fields['products_priced_by_attribute'] == '1') {
       $the_products_priced_by_attribute = true;
@@ -679,9 +679,9 @@
 // Return a product's minimum quantity
 // TABLES: products
   function zen_get_products_quantity_order_min($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $the_products_quantity_order_min = $db->query("select `products_id`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $the_products_quantity_order_min = $gBitDb->query("select `products_id`, `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_min->fields['products_quantity_order_min'];
   }
 
@@ -690,9 +690,9 @@
 // Return a product's minimum unit order
 // TABLES: products
   function zen_get_products_quantity_order_units($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $the_products_quantity_order_units = $db->query( "select `products_id`, `products_quantity_order_units` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $the_products_quantity_order_units = $gBitDb->query( "select `products_id`, `products_quantity_order_units` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_units->fields['products_quantity_order_units'];
   }
 
@@ -700,19 +700,19 @@
 // Return a product's maximum quantity
 // TABLES: products
   function zen_get_products_quantity_order_max($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $the_products_quantity_order_max = $db->query("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $the_products_quantity_order_max = $gBitDb->query("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_max->fields['products_quantity_order_max'];
   }
 
 ////
 // Find quantity discount quantity mixed and not mixed
   function zen_get_products_quantity_discount_mixed($product_id, $qty) {
-    global $db;
+    global $gBitDb;
     global $cart;
 
-    $product_discounts = $db->Execute("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    $product_discounts = $gBitDb->Execute("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
 
     if ($product_discounts->fields['products_quantity_mixed']) {
       if ($new_qty = $_SESSION['cart']->count_contents_qty($product_id)) {
@@ -727,9 +727,9 @@
 // Return a product's quantity box status
 // TABLES: products
   function zen_get_products_qty_box_status($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $the_products_qty_box_status = $db->Execute("select `products_id`, `products_qty_box_status`  from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    $the_products_qty_box_status = $gBitDb->Execute("select `products_id`, `products_qty_box_status`  from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
     return $the_products_qty_box_status->fields['products_qty_box_status'];
   }
 
@@ -737,9 +737,9 @@
 // Return a product mixed setting
 // TABLES: products
   function zen_get_products_quantity_mixed($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $the_products_quantity_mixed = $db->Execute("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    $the_products_quantity_mixed = $gBitDb->Execute("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
     if ($the_products_quantity_mixed->fields['products_quantity_mixed'] == '1') {
       $look_up = true;
     } else {
@@ -754,7 +754,7 @@
 // this gets the discount amount this does not determin when to apply the discount
   function zen_get_products_sale_discount_type($product_id = false, $categories_id = false, $return_value = false) {
     global $currencies;
-    global $db;
+    global $gBitDb;
 
 /*
 
@@ -799,7 +799,7 @@ If a special exist * 10+9
     $sale_exists = 'false';
     $sale_maker_discount = '';
     $sale_maker_special_condition = '';
-    $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
+    $salemaker_sales = $gBitDb->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
     while (!$salemaker_sales->EOF) {
       $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
   	  while (list($key,$value) = each($categories)) {
@@ -881,11 +881,11 @@ If a special exist * 10+9
 ////
 // are there discount quanties
   function zen_get_discount_qty($product_id, $check_qty) {
-    global $db;
+    global $gBitDb;
 
     $product_id = (int)$product_id;
 
-    $discounts_qty_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` = '" . $product_id . "' and `discount_qty` != 0");
+    $discounts_qty_query = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` = '" . $product_id . "' and `discount_qty` != 0");
 //echo 'zen_get_discount_qty: ' . $product_id . ' - ' . $check_qty . '<br />';
     if ($discounts_qty_query->RecordCount() > 0 and $check_qty > 0) {
       return true;
@@ -1206,8 +1206,8 @@ If a special exist * 10+9
 // Actual Price Retail
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
-    global $db, $currencies;
-    $product_check = $db->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+    global $gBitDb, $currencies;
+    $product_check = $gBitDb->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
 			" where `products_id` = '" . (int)$products_id . "'");
 
     $show_display_price = '';
@@ -1284,11 +1284,11 @@ If a special exist * 10+9
 ////
 // attributes final price
   function zen_get_attributes_price_final($attribute, $qty = 1, $pre_selected, $include_onetime = 'false') {
-    global $db;
+    global $gBitDb;
     global $cart;
 
     if ($pre_selected == '' or $attribute != $pre_selected->fields["products_attributes_id"]) {
-      $pre_selected = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
+      $pre_selected = $gBitDb->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
     } else {
       // use existing select
     }
@@ -1326,11 +1326,11 @@ If a special exist * 10+9
 ////
 // attributes final price onetime
   function zen_get_attributes_price_final_onetime($attribute, $qty= 1, $pre_selected_onetime) {
-    global $db;
+    global $gBitDb;
     global $cart;
 
     if ($pre_selected_onetime == '' or $attribute != $pre_selected_onetime->fields["products_attributes_id"]) {
-      $pre_selected_onetime = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
+      $pre_selected_onetime = $gBitDb->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
     } else {
       // use existing select
     }
@@ -1356,9 +1356,9 @@ If a special exist * 10+9
 ////
 // get attributes type
   function zen_get_attributes_type($check_attribute) {
-    global $db;
-    $check_options_id_query = $db->Execute("select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` ='" . $check_attribute . "'");
-    $check_type_query = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $check_options_id_query->fields['options_id'] . "'");
+    global $gBitDb;
+    $check_options_id_query = $gBitDb->Execute("select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` ='" . $check_attribute . "'");
+    $check_type_query = $gBitDb->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $check_options_id_query->fields['options_id'] . "'");
     return $check_type_query->fields['products_options_type'];
   }
 
@@ -1441,8 +1441,8 @@ If a special exist * 10+9
 
 //get specials price or sale price
   function zen_get_products_special_price($product_id, $specials_price_only=false) {
-    global $db;
-    $product = $db->Execute("select `products_price`, `products_model`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    global $gBitDb;
+    $product = $gBitDb->Execute("select `products_price`, `products_model`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
 
     if ($product->RecordCount() > 0) {
 //  	  $product_price = $product->fields['products_price'];
@@ -1451,7 +1451,7 @@ If a special exist * 10+9
   	  return false;
     }
 
-    $specials = $db->Execute("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and `status` ='1'");
+    $specials = $gBitDb->Execute("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and `status` ='1'");
     if ($specials->RecordCount() > 0) {
 //      if ($product->fields['products_priced_by_attribute'] == 1) {
     	  $special_price = $specials->fields['specials_new_products_price'];
@@ -1478,13 +1478,13 @@ If a special exist * 10+9
 // get sale price
 
 // changed to use master_categories_id
-//      $product_to_categories = $db->Execute("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
+//      $product_to_categories = $gBitDb->Execute("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
 //      $category = $product_to_categories->fields['categories_id'];
 
-      $product_to_categories = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+      $product_to_categories = $gBitDb->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
       $category = $product_to_categories->fields['master_categories_id'];
 
-      $sale = $db->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
+      $sale = $gBitDb->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
       if ($sale->RecordCount() < 1) {
          return $special_price;
       }
@@ -1542,11 +1542,11 @@ If a special exist * 10+9
 ////
 // set the products_price_sorter
   function zen_update_products_price_sorter($product_id) {
-    global $db;
+    global $gBitDb;
     if( !($products_price_sorter = zen_get_products_actual_price($product_id) ) ) {
 		$products_price_sorter = NULL;
 	}
-    $db->query("update " . TABLE_PRODUCTS . " set `products_price_sorter` = ? WHERE `products_id` = ?", array( $products_price_sorter, $product_id ) );
+    $gBitDb->query("update " . TABLE_PRODUCTS . " set `products_price_sorter` = ? WHERE `products_id` = ?", array( $products_price_sorter, $product_id ) );
   }
 
 
@@ -1607,12 +1607,12 @@ If a special exist * 10+9
 // Return true if the category has subcategories
 // TABLES: categories
   function zen_has_category_subcategories($category_id) {
-    global $db;
+    global $gBitDb;
     $child_category_query = "select count(*) as `count`
                              from " . TABLE_CATEGORIES . "
                              where `parent_id` = '" . (int)$category_id . "'";
 
-    $child_category = $db->Execute($child_category_query);
+    $child_category = $gBitDb->Execute($child_category_query);
 
     if ($child_category->fields['count'] > 0) {
       return true;

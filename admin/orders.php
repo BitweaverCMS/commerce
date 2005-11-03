@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.24 2005/10/31 22:53:09 lsces Exp $
+//  $Id: orders.php,v 1.25 2005/11/03 15:12:26 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -470,7 +470,7 @@
       </tr>
 <?php
 // check if order has open gv
-		$gv_check = $db->getOne("select `order_id`, `unique_id`
+		$gv_check = $db->query("select `order_id`, `unique_id`
 								from " . TABLE_COUPON_GV_QUEUE ."
 								where `order_id` = '" . $_GET['oID'] . "' and `release_flag`='N'");
 		if ($gv_check->RecordCount() > 0) {

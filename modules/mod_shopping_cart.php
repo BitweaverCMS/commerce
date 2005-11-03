@@ -17,10 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.8 2005/08/24 14:23:34 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.9 2005/11/03 15:12:27 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies, $gBitUser;
 
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+	require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php' );
 if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):

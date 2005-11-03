@@ -17,17 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: category_tree.php,v 1.2 2005/08/24 02:51:13 lsces Exp $
+// $Id: category_tree.php,v 1.3 2005/11/03 15:12:26 spiderr Exp $
 //
 
   class category_tree {
 
     function zen_category_tree($product_type = "all") {
-      global $db, $cPath, $cPath_array;
+      global $gBitDb, $cPath, $cPath_array;
       if ($product_type != 'all') {
         $sql = "select type_master_type from " . TABLE_PRODUCT_TYPES . "
                 where type_master_type = '" . $product_type . "'";
-        $master_type_result = $db->Execute($sql);
+        $master_type_result = $gBitDb->Execute($sql);
         $master_type = $master_type_result->fields['type_master_type'];
       }
       $this->tree = array();
@@ -50,7 +50,7 @@
                              and c.`categories_status`= '1'
                              order by `sort_order`, cd.`categories_name`";
       }
-      $categories = $db->Execute($categories_query, '', true, 150);
+      $categories = $gBitDb->Execute($categories_query, '', true, 150);
       while (!$categories->EOF)  {
         $this->tree[$categories->fields['categories_id']] = array('name' => $categories->fields['categories_name'],
                                                     'parent' => $categories->fields['parent_id'],
@@ -106,7 +106,7 @@
 
      }
 
-          $rows = $db->Execute($categories_query);
+          $rows = $gBitDb->Execute($categories_query);
 
           if ($rows->RecordCount()>0) {
             $new_path .= $value;

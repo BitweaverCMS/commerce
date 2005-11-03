@@ -17,16 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_categories.php,v 1.5 2005/11/02 03:06:32 spiderr Exp $
+// $Id: mod_categories.php,v 1.6 2005/11/03 15:12:27 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
     $main_category_tree = new category_tree;
     $row = 0;
     $box_categories_array = array();
 
 // don't build a tree when no categories
-    if ( $db->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
+    if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
 		$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
     }
 	if( empty( $moduleTitle ) ) {
