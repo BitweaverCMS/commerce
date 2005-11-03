@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.13 2005/10/31 23:46:32 lsces Exp $
+//  $Id: options_values_manager.php,v 1.14 2005/11/03 21:17:38 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS . 
+  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
 		" where `language_id` ='" . $_SESSION['languages_id'] . "'");
-  if ($chk_option_names->RecordCount() < 1) {
+  if ( empty( $chk_option_names ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
@@ -246,9 +246,9 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
               $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(`products_id`, `options_id`, `options_values_id`) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
               $check_previous = $db->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'");
               // do not add duplicate attributes
-              if ($check_previous->RecordCount() < 1) {
-                $db->Execute($sql);
-                $new_attribute++;
+              if( empty( $check_previous ) ) {
+				$db->Execute($sql);
+				$new_attribute++;
               }
               $products_only->MoveNext();
             }

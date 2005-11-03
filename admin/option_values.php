@@ -17,21 +17,21 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.11 2005/10/31 22:53:09 lsces Exp $
+//  $Id: option_values.php,v 1.12 2005/11/03 21:17:38 spiderr Exp $
 //
 ?>
 <?php
   require('includes/application_top.php');
 
   // verify option values exist
-  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . 
+  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
 		" where `products_options_values_id` != '0' and `language_id` ='" . $_SESSION['languages_id'] . "'");
-  if ($chk_option_values->RecordCount() < 1) {
+  if ( empty( $chk_option_values ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
 
-  
+
   $currencies = new currencies();
 
   switch($_GET['action']) {

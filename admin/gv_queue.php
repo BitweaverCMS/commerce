@@ -17,23 +17,23 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.10 2005/10/31 22:53:09 lsces Exp $
+//  $Id: gv_queue.php,v 1.11 2005/11/03 21:17:38 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
-  
+
   $currencies = new currencies();
 
 // bof: find gv for a particular order and set page
   if ($_GET['order'] != '') {
-    $gv_check = $db->getOne("select `order_id`, `unique_id`
+    $gv_id = $db->getOne("select `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE . "
                                   where `order_id` = '" . $_GET['order'] . "' and `release_flag` = 'N'");
 
-    $_GET['gid'] = $gv_check->fields['unique_id'];
+    $_GET['gid'] = $gv_id;
 
-    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " 
+    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, "
 		 . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')"
 		 . " order by gv.`order_id`, gv.`unique_id`");
     $page_cnt=1;
@@ -45,7 +45,7 @@
       $gv_page->MoveNext();
     }
     $_GET['page'] = round(($page_cnt/MAX_DISPLAY_SEARCH_RESULTS));
-    zen_redirect(zen_href_link_admin(FILENAME_GV_QUEUE, 'gid=' . $gv_check->fields['unique_id'] . '&page=' . $_GET['page']));
+    zen_redirect(zen_href_link_admin(FILENAME_GV_QUEUE, 'gid=' . $gv_id . '&page=' . $_GET['page']));
   }
 // eof: find gv for a particular order and set page
 

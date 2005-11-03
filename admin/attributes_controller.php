@@ -17,28 +17,28 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.17 2005/10/31 23:46:32 lsces Exp $
+//  $Id: attributes_controller.php,v 1.18 2005/11/03 21:17:38 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names, values, products
-  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS . 
-		" where `language_id`='" . $_SESSION['languages_id'] . "'");
-  if ($chk_option_names->RecordCount() < 1) {
+  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
+		" where `language_id`=?", array( $_SESSION['languages_id'] ) );
+  if ( empty( $chk_option_names ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
-  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . 
-		" where `products_options_values_id` != '0' and `language_id`='" . $_SESSION['languages_id'] . "'");
-  if ($chk_option_values->RecordCount() < 1) {
-    $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
-    zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
+  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
+		" where `products_options_values_id` != '0' and `language_id`=?", array( $_SESSION['languages_id'] ) );
+  if( empty( $chk_option_values ) ) {
+	$messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
+	zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
   $chk_products = $db->getOne("select * from " . TABLE_PRODUCTS);
-  if ($chk_products->RecordCount() < 1) {
-    $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
-    zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
+  if( empty( $chk_products ) ) {
+	$messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
+	zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
   }
 
 
@@ -188,10 +188,10 @@
         break;
       case 'add_product_attributes':
 // check for duplicate and block them
-        $check_duplicate = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                         where `products_id` ='" . $_POST['products_id'] . "'
-                                         and `options_id` = '" . $_POST['options_id'] . "'
-                                         and `options_values_id` = '" . $_POST['values_id'] . "'");
+        $check_duplicate = $db->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
+                                         where `products_id` = ?
+                                         and `options_id` = ?
+                                         and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
 
         if ($check_duplicate->RecordCount() > 0) {
           // do not add duplicates give a warning
@@ -253,50 +253,52 @@
             $attributes_image_name = (isset($_POST['attributes_previous_image']) ? $_POST['attributes_previous_image'] : '');
           }
 
-            $db->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES . "
-                          values ('',
-                                  '" . (int)$products_id . "',
-                                  '" . (int)$options_id . "',
-                                  '" . (int)$values_id . "',
-                                  '" . zen_db_input($value_price) . "',
-                                  '" . zen_db_input($price_prefix) . "',
-                                  '" . zen_db_input($products_options_sort_order) . "',
-                                  '" . zen_db_input($product_attribute_is_free) . "',
-                                  '" . zen_db_input($products_attributes_wt) . "',
-                                  '" . zen_db_input($products_attributes_wt_pfix) . "',
-                                  '" . zen_db_input($attributes_display_only) . "',
-                                  '" . zen_db_input($attributes_default) . "',
-                                  '" . zen_db_input($attributes_discounted) . "',
-                                  '" . zen_db_input($attributes_image_name) . "',
-                                  '" . zen_db_input($attributes_price_base_inc) . "',
-                                  '" . zen_db_input($attributes_price_onetime) . "',
-                                  '" . zen_db_input($attributes_price_factor) . "',
-                                  '" . zen_db_input($attributes_pf_offset) . "',
-                                  '" . zen_db_input($attributes_pf_onetime) . "',
-                                  '" . zen_db_input($attributes_pf_onetime_offset) . "',
-                                  '" . zen_db_input($attributes_qty_prices) . "',
-                                  '" . zen_db_input($attributes_qty_prices_onetime) . "',
-                                  '" . zen_db_input($attributes_price_words) . "',
-                                  '" . zen_db_input($attributes_price_words_free) . "',
-                                  '" . zen_db_input($attributes_price_letters) . "',
-                                  '" . zen_db_input($attributes_price_letters_free) . "',
-                                  '" . zen_db_input($attributes_required) . "')");
+			$attrs = array(
+				'products_id' => $products_id,
+				'options_id' => $options_id,
+				'options_values_id' => $values_id,
+				'options_values_price' => $value_price,
+				'price_prefix' => $price_prefix,
+				'products_options_sort_order' => $products_options_sort_order,
+				'product_attribute_is_free' => $product_attribute_is_free,
+				'products_attributes_wt' => $products_attributes_wt,
+				'products_attributes_wt_pfix' => $products_attributes_wt_pfix,
+				'attributes_display_only' => $attributes_display_only,
+				'attributes_default' => $attributes_default,
+				'attributes_discounted' => $attributes_discounted,
+				'attributes_image' => $attributes_image_name,
+				'attributes_price_base_inc' => $attributes_price_base_inc,
+				'attributes_price_onetime' => $attributes_price_onetime,
+				'attributes_price_factor' => $attributes_price_factor,
+				'attributes_pf_offset' => $attributes_pf_offset,
+				'attributes_pf_onetime' => $attributes_pf_onetime,
+				'attributes_pf_onetime_offset' => $attributes_pf_onetime_offset,
+				'attributes_qty_prices' => $attributes_qty_prices,
+				'attributes_qty_prices_onetime' => $attributes_qty_prices_onetime,
+				'attributes_price_words' => $attributes_price_words,
+				'attributes_price_words_free' => $attributes_price_words_free,
+				'attributes_price_letters' => $attributes_price_letters,
+				'attributes_price_letters_free' => $attributes_price_letters_free,
+				'attributes_required' => $attributes_required,
+			);
+
+            $db->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $attrs );
 
             if (DOWNLOAD_ENABLED == 'true') {
-              $products_attributes_id = zen_db_insert_id( TABLE_PRODUCTS_ATTRIBUTES, 'products_attributes_id' );
+				$products_attributes_id = zen_db_insert_id( TABLE_PRODUCTS_ATTRIBUTES, 'products_attributes_id' );
 
-              $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
-              $products_attributes_maxdays = zen_db_prepare_input($_POST['products_attributes_maxdays']);
-              $products_attributes_maxcount = zen_db_prepare_input($_POST['products_attributes_maxcount']);
+				$products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
+				$products_attributes_maxdays = zen_db_prepare_input($_POST['products_attributes_maxdays']);
+				$products_attributes_maxcount = zen_db_prepare_input($_POST['products_attributes_maxcount']);
 
-//die( 'I am adding ' . strlen($_POST['products_attributes_filename']) . ' vs ' . strlen(trim($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_prepare_input($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_input($products_attributes_filename)) );
-              if (zen_not_null($products_attributes_filename)) {
-                $db->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
-                              values (" . (int)$products_attributes_id . ",
-                                      '" . zen_db_input($products_attributes_filename) . "',
-                                      '" . zen_db_input($products_attributes_maxdays) . "',
-                                      '" . zen_db_input($products_attributes_maxcount) . "')");
-              }
+	//die( 'I am adding ' . strlen($_POST['products_attributes_filename']) . ' vs ' . strlen(trim($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_prepare_input($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_input($products_attributes_filename)) );
+				if (zen_not_null($products_attributes_filename)) {
+					$db->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+								values (" . (int)$products_attributes_id . ",
+										'" . zen_db_input($products_attributes_filename) . "',
+										'" . zen_db_input($products_attributes_maxdays) . "',
+										'" . zen_db_input($products_attributes_maxcount) . "')");
+				}
             }
           }
         }
@@ -307,11 +309,7 @@
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&products_id=' . $_POST['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
       case 'update_product_attribute':
-        $check_duplicate = $db->Execute("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                         where `products_id` ='" . $_POST['products_id'] . "'
-                                         and `options_id` = '" . $_POST['options_id'] . "'
-                                         and `options_values_id` = '" . $_POST['values_id'] . "'
-                                         and `products_attributes_id` != '" . $_POST['attribute_id'] . "'");
+        $check_duplicate = $db->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` =? and `options_id` = ? and `options_values_id` = ? and `products_attributes_id` != ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'], $_POST['attribute_id'] ) );
 
         if ($check_duplicate->RecordCount() > 0) {
           // do not add duplicates give a warning
@@ -390,33 +388,32 @@
                         set attributes_image = '" .  $attributes_image_name . "'
                         where products_attributes_id = '" . (int)$attribute_id . "'");
 
-            $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . "
-                          set `products_id` = '" . (int)$products_id . "',
-                              `options_id` = '" . (int)$options_id . "',
-                              `options_values_id` = '" . (int)$values_id . "',
-                              `options_values_price` = '" . zen_db_input($value_price) . "',
-                              `price_prefix` = '" . zen_db_input($price_prefix) . "',
-                              `products_options_sort_order` = '" . zen_db_input($products_options_sort_order) . "',
-                              `product_attribute_is_free` = '" . zen_db_input($product_attribute_is_free) . "',
-                              `products_attributes_wt` = '" . zen_db_input($products_attributes_wt) . "',
-                              `products_attributes_wt_pfix` = '" . zen_db_input($products_attributes_wt_pfix) . "',
-                              `attributes_display_only` = '" . zen_db_input($attributes_display_only) . "',
-                              `attributes_default` = '" . zen_db_input($attributes_default) . "',
-                              `attributes_discounted` = '" . zen_db_input($attributes_discounted) . "',
-                              `attributes_price_base_inc` = '" . zen_db_input($attributes_price_base_inc) . "',
-                              `attributes_price_onetime` = '" . zen_db_input($attributes_price_onetime) . "',
-                              `attributes_price_factor` = '" . zen_db_input($attributes_price_factor) . "',
-                              `attributes_pf_offset` = '" . zen_db_input($attributes_pf_offset) . "',
-                              `attributes_pf_onetime` = '" . zen_db_input($attributes_pf_onetime) . "',
-                              `attributes_pf_onetime_offset` = '" . zen_db_input($attributes_pf_onetime_offset) . "',
-                              `attributes_qty_prices` = '" . zen_db_input($attributes_qty_prices) . "',
-                              `attributes_qty_prices_onetime` = '" . zen_db_input($attributes_qty_prices_onetime) . "',
-                              `attributes_price_words` = '" . zen_db_input($attributes_price_words) . "',
-                              `attributes_price_words_free` = '" . zen_db_input($attributes_price_words_free) . "',
-                              `attributes_price_letters` = '" . zen_db_input($attributes_price_letters) . "',
-                              `attributes_price_letters_free` = '" . zen_db_input($attributes_price_letters_free) . "',
-                              `attributes_required` = '" . zen_db_input($attributes_required) . "'
-                          where `products_attributes_id` = '" . (int)$attribute_id . "'");
+			$attrs = array(
+				'products_id' => $products_id,
+				'options_id' => $options_id,
+				'options_values_id' => $values_id,
+				'options_values_price' => $value_price,
+				'price_prefix' => $price_prefix,
+				'products_options_sort_order' => $products_options_sort_order,
+				'product_attribute_is_free' => $product_attribute_is_free,
+				'products_attributes_wt' => $products_attributes_wt,
+				'products_attributes_wt_pfix' => $products_attributes_wt_pfix,
+				'attributes_display_only' => $attributes_display_only,
+				'attributes_default' => $attributes_default,
+				'attributes_discounted' => $attributes_discounted,
+				'attributes_price_base_inc' => $attributes_price_base_inc,
+				'attributes_price_onetime' => $attributes_price_onetime,
+				'attributes_pf_offset' => $attributes_pf_offset,
+				'attributes_pf_onetime' => $attributes_pf_onetime,
+				'attributes_pf_onetime_offset' => $attributes_pf_onetime_offset,
+				'attributes_price_words' => $attributes_price_words,
+				'attributes_price_words_free' => $attributes_price_words_free,
+				'attributes_price_letters' => $attributes_price_letters,
+				'attributes_price_letters_free' => $attributes_price_letters_free,
+				'attributes_required' => $attributes_required,
+			);
+
+            $db->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $attrs, array( 'name' => 'products_attributes_id', 'value' => $attribute_id ) );
 
             if (DOWNLOAD_ENABLED == 'true') {
               $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);

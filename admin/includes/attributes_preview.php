@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: attributes_preview.php,v 1.6 2005/10/31 22:53:10 lsces Exp $
+// $Id: attributes_preview.php,v 1.7 2005/11/03 21:17:39 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -35,7 +35,7 @@
 
     $pr_attr = $db->getOne($sql);
 
-    if ($pr_attr->fields['total'] > 0) {
+    if( !empty( $pr_attr ) ) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
         $options_order_by= ' order by LPAD(popt.`products_options_sort_order`,11,"0")';
       } else {

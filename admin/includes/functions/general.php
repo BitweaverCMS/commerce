@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.27 2005/10/31 22:53:09 lsces Exp $
+//  $Id: general.php,v 1.28 2005/11/03 21:17:39 spiderr Exp $
 //
 
 ////
@@ -1443,11 +1443,11 @@
   function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
     global $db;
     $check_options_to_values_query= $db->getOne("SELECT `products_options_id`
-                                                  FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-                                                  WHERE `products_options_id` = '" . $products_options_id . "'
-                                                  and `products_options_values_id` ='" . $products_options_values_id);
+		FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
+		WHERE `products_options_id` = ?
+		AND `products_options_values_id` =?" , array( $products_options_id, $products_options_values_id ) );
 
-    if ($check_options_to_values_query->RecordCount() != 1) {
+    if( $check_options_to_values_query ) {
       return false;
     } else {
       return true;

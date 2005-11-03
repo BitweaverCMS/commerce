@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.16 2005/10/31 22:53:09 lsces Exp $
+//  $Id: products_price_manager.php,v 1.17 2005/11/03 21:17:38 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify products exist
   $chk_products = $db->getOne("select * from " . TABLE_PRODUCTS);
-  if ($chk_products->RecordCount() < 1) {
+  if( empty( $chk_products ) ) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
   }
@@ -80,10 +80,9 @@
   }
 
   if ($action == 'add_discount_qty_id') {
-    $add_id = $db->getOne("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . 
+    $add_id = $db->getOne("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY .
 		" where `products_id`='" . $productsId . "' order by `discount_id` desc");
     $add_cnt = 1;
-    $add_id = $add_id->fields['discount_id'];
     while ($add_cnt <= DISCOUNT_QTY_ADD) {
       $db->Execute("insert into " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
                     (`discount_id`, `products_id`)

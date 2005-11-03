@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.25 2005/11/03 15:12:26 spiderr Exp $
+//  $Id: orders.php,v 1.26 2005/11/03 21:17:38 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -659,7 +659,7 @@
         $gv_check = $db->getOne("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
                                   where `order_id` = '" . $oInfo->orders_id . "' and `release_flag` ='N'");
-        if ($gv_check->RecordCount() > 0) {
+        if( $gv_check ) {
           $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $oInfo->orders_id) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
           $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
           $contents[] = array('align' => 'center', 'text' => $goto_gv);
