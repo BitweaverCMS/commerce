@@ -537,8 +537,8 @@
     }
 
     // $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-    $product_check = $gBitDb->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
-			" where `products_id` = '" . (int)$products_id . "'");
+    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+			" where `products_id` = ?", array( $products_id ) );
 
     $show_display_price = '';
     $display_normal_price = zen_get_products_base_price($products_id);

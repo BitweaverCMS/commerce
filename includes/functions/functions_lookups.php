@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.15 2005/11/03 15:12:26 spiderr Exp $
+// $Id: functions_lookups.php,v 1.16 2005/11/03 15:30:15 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -157,11 +157,11 @@
   function zen_products_id_valid($valid_id) {
 	$ret = FALSE;
 	if( is_numeric( $valid_id ) ) {
-	    global $db;
-    	$check_valid = $db->getOne("select p.`products_id`
+	    global $gBitDb;
+    	$check_valid = $gBitDb->getOne("select p.`products_id`
         	                         from " . TABLE_PRODUCTS . " p
             	                     where `products_id`='" . $valid_id . "'");
-	    if( !$check_valid->EOF ) {
+	    if( $check_valid ) {
     	  $ret = true;
 	    }
 	}
