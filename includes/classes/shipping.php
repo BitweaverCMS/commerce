@@ -17,7 +17,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping.php,v 1.6 2005/11/02 22:26:54 spiderr Exp $
+// $Id: shipping.php,v 1.7 2005/11/03 03:28:26 spiderr Exp $
 //
 
   class shipping {
@@ -36,7 +36,8 @@
         } else {
           reset($this->modules);
           while (list(, $value) = each($this->modules)) {
-            $class = substr($value, 0, strrpos($value, '.'));
+          	$base = basename( $value );
+            $class = substr( $base, 0, strrpos($base, '.'));
             $include_modules[] = array('class' => $class, 'file' => $value);
           }
         }
@@ -104,14 +105,15 @@
 
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
-          $class = substr($value, 0, strrpos($value, '.'));
-          if (zen_not_null($module)) {
-            if ( ($module == $class) && ($GLOBALS[$class]->enabled) ) {
-              $include_quotes[] = $class;
-            }
-          } elseif ($GLOBALS[$class]->enabled) {
-            $include_quotes[] = $class;
-          }
+			$base = basename( $value );
+			$class = substr($base, 0, strrpos($base, '.'));
+			if (zen_not_null($module)) {
+				if ( ($module == $class) && ($GLOBALS[$class]->enabled) ) {
+					$include_quotes[] = $class;
+				}
+			} elseif ($GLOBALS[$class]->enabled) {
+				$include_quotes[] = $class;
+			}
         }
 
         $size = sizeof($include_quotes);
