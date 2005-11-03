@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.4 2005/08/24 02:53:52 lsces Exp $
+// $Id: ups.php,v 1.5 2005/11/03 03:17:39 spiderr Exp $
 //
 
   class ups {
@@ -144,7 +144,9 @@
 // EOF: UPS USPS
           $methods[] = array('id' => $type,
                              'title' => $this->types[$type],
-                             'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shipping_num_boxes);
+                             'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shipping_num_boxes,
+                             'code' => 'UPS '.$this->types[$type],
+                             );
           }
 
         $this->quotes['methods'] = $methods;
