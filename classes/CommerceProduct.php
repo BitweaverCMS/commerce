@@ -186,7 +186,7 @@ class CommerceProduct extends LibertyAttachable {
 			if ( $pListHash['freshness'] == '1' ) {
 				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$this->mDb->SQLDate( 'Ym' );
 			} else {
-				$whereSql .= ' and '.$this->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.`products_date_added`' ).' > NOW()';
+				$whereSql .= ' and '.$this->mDb->OffsetDate( SHOW_NEW_PRODUCTS_LIMIT, 'p.`products_date_added`' ).' > '. $this->mDb->NOW();
 			}
 		}
 
@@ -834,8 +834,8 @@ Skip deleting of images for now
 			$pProductsId = $this->mProductsId;
 		}
 		if( is_numeric( $pProductsId ) && is_numeric( $pCustomersId ) && !$this->hasNotification( $pCustomersId, $pProductsId ) ) {
-			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, $this->mDb->NOW())";
-			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId ) );
+			$sql = "INSERT INTO " . TABLE_PRODUCTS_NOTIFICATIONS . " (`products_id`, `customers_id`, `date_added`) values (?, ?, ?)";
+			$this->mDb->query( $sql, array( $pProductsId, $pCustomersId, $this->mDb->NOW() ) );
 		}
 	}
 

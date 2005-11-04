@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.24 2005/11/02 22:26:54 spiderr Exp $
+// $Id: order.php,v 1.25 2005/11/04 19:16:12 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
@@ -576,7 +576,7 @@ class order extends BitBase {
 							'cc_owner' => $this->info['cc_owner'],
 							'cc_number' => $this->info['cc_number'],
 							'cc_expires' => $this->info['cc_expires'],
-							'date_purchased' => $db->NOW(),
+							'date_purchased' => $this->mDb->NOW(),
 							'orders_status' => $this->info['order_status'],
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
@@ -604,7 +604,7 @@ class order extends BitBase {
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
 		$sql_data_array = array('orders_id' => $insert_id,
 							'orders_status_id' => $this->info['order_status'],
-							'date_added' => $db->NOW(),
+							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments']);
 
@@ -959,7 +959,7 @@ class order extends BitBase {
 		if ( $statusChanged || !empty( $comments ) ) {
 			$this->mDb->StartTrans();
 			$this->mDb->query( "update " . TABLE_ORDERS . "
-								set `orders_status` = ?, `last_modified` = ".$db->NOW()."
+								set `orders_status` = ?, `last_modified` = ".$this->mDb->NOW()."
 								where `orders_id` = ?", array( $status, $this->mOrdersId ) );
 
 			$this->info['orders_status_id'] = $status;
@@ -1005,7 +1005,7 @@ class order extends BitBase {
 
 			$this->mDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . "
 						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
-						values ( ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $db->NOW(), $customer_notified, $comments ) );
+						values ( ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments ) );
 
 			$this->mDb->CompleteTrans();
 			$order_updated = true;
