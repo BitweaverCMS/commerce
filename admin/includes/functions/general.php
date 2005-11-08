@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.28 2005/11/03 21:17:39 spiderr Exp $
+//  $Id: general.php,v 1.29 2005/11/08 05:17:02 spiderr Exp $
 //
 
 ////
@@ -907,13 +907,13 @@
       }
     }
 
-    $db->Execute("delete FROM " . TABLE_CATEGORIES . "
-                  WHERE `categories_id` = '" . (int)$category_id . "'");
-
     $db->Execute("delete FROM " . TABLE_CATEGORIES_DESCRIPTION . "
                   WHERE `categories_id` = '" . (int)$category_id . "'");
 
     $db->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
+                  WHERE `categories_id` = '" . (int)$category_id . "'");
+
+    $db->Execute("delete FROM " . TABLE_CATEGORIES . "
                   WHERE `categories_id` = '" . (int)$category_id . "'");
 
 
