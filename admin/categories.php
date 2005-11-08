@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.12 2005/10/31 16:19:58 lsces Exp $
+//  $Id: categories.php,v 1.13 2005/11/08 04:45:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -213,25 +213,29 @@
           $language_id = $languages[$i]['id'];
 
 // clean $categories_description when blank or just <p /> left behind
-          $sql_data_array = array('categories_name' => zen_db_prepare_input($categories_name_array[$language_id]),
+          $sql_data_array = array('categories_name' => substr( $categories_name_array[$language_id], 0, 32 ),
                                   'categories_description' => ($categories_description_array[$language_id] == '<p />' ? '' : zen_db_prepare_input($categories_description_array[$language_id])));
 
-          if ($action == 'insert_category') {
-            $insert_sql_data = array('categories_id' => $categories_id,
-                                     'language_id' => $languages[$i]['id']);
+			if( empty( $sql_data_array['categories_name'] ) ) {
+	            $messageStack->add_session(tra( 'You must enter a category name' ), 'error');
+			} else {
+				if ($action == 'insert_category') {
+					$insert_sql_data = array('categories_id' => $categories_id,
+											'language_id' => $languages[$i]['id']);
 
-            $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
+					$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
-          } elseif ($action == 'update_category') {
-			$setSql = ( '`'.implode( array_keys( $sql_data_array ), '`=?, `' ).'`=?' );
-			$bindVars = array_values( $sql_data_array );
-			array_push( $bindVars, $categories_id );
-			array_push( $bindVars, $languages[$i]['id'] );
+					$db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
+				} elseif ($action == 'update_category') {
+					$setSql = ( '`'.implode( array_keys( $sql_data_array ), '`=?, `' ).'`=?' );
+					$bindVars = array_values( $sql_data_array );
+					array_push( $bindVars, $categories_id );
+					array_push( $bindVars, $languages[$i]['id'] );
 
-			$query = "UPDATE " . TABLE_CATEGORIES_DESCRIPTION . " SET $setSql WHERE `categories_id`=? AND `language_id`=? ";
-			$db->query( $query, $bindVars );
-          }
+					$query = "UPDATE " . TABLE_CATEGORIES_DESCRIPTION . " SET $setSql WHERE `categories_id`=? AND `language_id`=? ";
+					$db->query( $query, $bindVars );
+				}
+			}
         }
 
         if ($categories_image = new upload('categories_image')) {
