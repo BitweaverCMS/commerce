@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.8 2005/11/10 06:53:37 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.9 2005/11/10 07:23:52 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -78,7 +78,6 @@
                 $order_by;
 
         $products_options = $db->query($sql, array( $_GET['products_id'], $products_options_names->fields['products_options_id'], $_SESSION['languages_id'] ) );
-vd( $products_options->fields );
         $products_options_value_id = '';
         $products_options_details = '';
         $products_options_details_noname = '';

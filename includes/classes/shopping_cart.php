@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.18 2005/11/10 06:53:37 spiderr Exp $
+// $Id: shopping_cart.php,v 1.19 2005/11/10 07:23:51 spiderr Exp $
 //
 
   class shoppingCart {
@@ -151,7 +151,7 @@
 
     function add_cart($products_id, $qty = '1', $attributes = '', $notify = true) {
       global $db;
-      $products_id = zen_get_uprid($products_id, $attributes);
+      $uproducts_id = zen_get_uprid($products_id, $attributes);
       if ($notify == true) {
         $_SESSION['new_products_id_in_cart'] = $products_id;
       }
@@ -295,23 +295,19 @@
               reset($value);
               while (list($opt, $val) = each($value)) {
                 $products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $opt);
-                $sql = "update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                        set `products_options_value_id` = '" . $val . "'
-                        where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                        and `products_id` = '" . zen_db_input($products_id) . "'
-                        and `products_options_id` = '" . (int)$option.'_chk'.$val . "'";
+                $sql = "UPDATE " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
+                        SET `products_options_value_id` = ?
+                        WHERE `customers_id` =? AND `products_id` =? AND `products_options_id` =?";
 
-                $db->Execute($sql);
+                $db->query( $sql, array( $val, $_SESSION['customer_id'], $products_id, (int)$option.'_chk'.$val ) );
               }
             } else {
               if ($_SESSION['customer_id']) {
-                $sql = "update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-                        set `products_options_value_id` = '" . $value . "', `products_options_value_text` = '" . $attr_value . "'
-                        where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                        and `products_id` = '" . zen_db_input($products_id) . "'
-                        and `products_options_id` = '" . (int)$option . "'";
+                $sql = "UPDATE " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
+                        SET `products_options_value_id`=?, `products_options_value_text`=?
+                        WHERE `customers_id` = ? AND `products_id` = ? AND `products_options_id` = ?";
 
-                $db->Execute($sql);
+                $db->query( $sql, array( $value, $attr_value, $_SESSION['customer_id'], $products_id, $option ) );
               }
             }
           }

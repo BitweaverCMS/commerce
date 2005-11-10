@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.3 2005/10/31 23:46:33 lsces Exp $
+// $Id: shopping_cart.php,v 1.4 2005/11/10 07:23:52 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -77,9 +77,9 @@
 // Push all attributes information in an array
       if (isset($products[$i]['attributes']) && is_array($products[$i]['attributes'])) {
           if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
-            $options_order_by= ' order by LPAD(popt.products_options_sort_order,11,"0")';
+            $options_order_by= ' order by popt.`products_options_sort_order`';
           } else {
-            $options_order_by= ' order by popt.products_options_name';
+            $options_order_by= ' order by popt.`products_options_name`';
           }
         while (list($option, $value) = each($products[$i]['attributes'])) {
           //clr 030714 move hidden field to if statement below
