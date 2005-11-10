@@ -206,6 +206,7 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   products_model C(32),
   products_image C(250),
   products_price N(15,4),
+  products_cogs N(15,4),
   products_virtual I1,
   products_date_added T,
   products_last_modified T,
