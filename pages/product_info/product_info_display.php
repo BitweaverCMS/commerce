@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.3 2005/11/10 06:53:37 spiderr Exp $
+// $Id: product_info_display.php,v 1.4 2005/11/10 22:02:09 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -70,7 +70,7 @@ if( !empty( $debug_on ) ) {
 	<h1><?=$products_name;?></h1>
 </div>
 
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
+<table border="1" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
@@ -105,71 +105,9 @@ if( !empty( $debug_on ) ) {
   <tr>
     <td colspan="2" class="main" align="center">
 <?php
-  if( $pr_attr ) {
-?>
-      <table border="0" width="90%" cellspacing="0" cellpadding="2">
-<?php if ($zv_display_select_option > 0) { ?>
-        <tr>
-          <td colspan="2" class="main" align="left"><?php echo TEXT_PRODUCT_OPTIONS; ?></td>
-        </tr>
-<?php } // show please select unless all are readonly ?>
-<?php
-    for($i=0;$i<sizeof($options_name);$i++) {
-?>
-<?php
-  if ($options_comment[$i] != '' and $options_comment_position[$i] == '0') {
-?>
 
-        <tr>
-          <td><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_TRANPARENT, '1', '5'); ?></td>
-        </tr>
-        <tr>
-          <td colspan="2" class="ProductInfoComments" align="left" valign="bottom"><?php echo $options_comment[$i]; ?></td>
-        </tr>
-<?php
-  }
-?>
-        <tr>
-          <td class="main" align="left" valign="top"><?php echo $options_name[$i] . ':'; ?></td>
-          <td class="main" align="left" valign="top" width="75%"><?php echo $options_menu[$i]; ?></td>
-        </tr>
-<?php if ($options_comment[$i] != '' and $options_comment_position[$i] == '1') { ?>
-        <tr>
-          <td colspan="2" class="ProductInfoComments" align="left" valign="top"><?php echo $options_comment[$i]; ?></td>
-        </tr>
-<?php } ?>
+	$gBitSmarty->display( 'bitpackage:bitcommerce/product_options_inc.tpl' );
 
-<?php
-if ($options_attributes_image[$i] != '') {
-?>
-        <tr><td colspan="2"><table class="products-attributes-images"><tr>
-          <?php echo $options_attributes_image[$i]; ?>
-        </tr></table></td></tr>
-<?php
-}
-?>
-<?php
-    }
-?>
-<?php
-  if ($show_onetime_charges_description == 'true') {
-?>
-        <tr>
-          <td colspan="2" class="main" align="left"><?php echo TEXT_ONETIME_CHARGE_SYMBOL . TEXT_ONETIME_CHARGE_DESCRIPTION; ?></td>
-        </tr>
-<?php } ?>
-
-<?php
-  if ($show_attributes_qty_prices_description == 'true') {
-?>
-        <tr>
-          <td colspan="2" class="main" align="left"><?php echo zen_image(DIR_WS_TEMPLATE_ICONS . 'icon_status_green.gif', TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK, 10, 10) . '&nbsp;' . '<a href="javascript:popupWindowPrice(\'' . zen_href_link(FILENAME_POPUP_ATTRIBUTES_QTY_PRICES, 'products_id=' . $_GET['products_id'] . '&products_tax_class_id=' . $products_tax_class_id) . '\')">' . TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK . '</a>'; ?></td>
-        </tr>
-<?php } ?>
-
-      </table>
-<?php
-  }
 ?>
     </td>
   </tr>

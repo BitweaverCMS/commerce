@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.19 2005/11/10 07:23:51 spiderr Exp $
+// $Id: shopping_cart.php,v 1.20 2005/11/10 22:02:09 spiderr Exp $
 //
 
   class shoppingCart {
@@ -151,7 +151,7 @@
 
     function add_cart($products_id, $qty = '1', $attributes = '', $notify = true) {
       global $db;
-      $uproducts_id = zen_get_uprid($products_id, $attributes);
+      $products_id = zen_get_uprid($products_id, $attributes);
       if ($notify == true) {
         $_SESSION['new_products_id_in_cart'] = $products_id;
       }
@@ -434,13 +434,11 @@
         $qty = $this->contents[$products_id]['quantity'];
 
 // products price
-        $product_query = "select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`,
-                          `products_priced_by_attribute`, `product_is_always_free_ship`, `products_discount_type`, `products_discount_type_from`,
-                          `products_virtual`, `products_model`
+        $product_query = "select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`, `products_priced_by_attribute`, `product_is_always_free_ship`, `products_discount_type`, `products_discount_type_from`, `products_virtual`, `products_model`
                           from " . TABLE_PRODUCTS . "
-                          where `products_id` = '" . (int)$products_id . "'";
+                          where `products_id` = ?";
 
-        if ($product = $db->Execute($product_query)) {
+        if ($product = $db->query( $product_query, array( zen_get_prid( $products_id ) ) ) ) {
           $prid = $product->fields['products_id'];
           $products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
           $products_price = $product->fields['products_price'];
@@ -837,7 +835,7 @@ if ((int)$products_id != $products_id) {
       $products_array = array();
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
-        if( $product = $gBitProduct->getProduct( $products_id ) ) {
+        if( $product = $gBitProduct->getProduct( zen_get_prid( $products_id ) ) ) {
 
           $prid = $product['products_id'];
           $products_price = $product['products_price'];
@@ -927,7 +925,8 @@ if ((int)$products_id != $products_id) {
             $new_qty = (int)$new_qty;
           }
 
-		  $product['id'] = $products_id;
+		  $product['cart_hash'] = $products_id;
+		  $product['id'] = $prid;
           $product['name'] = $product['products_name'];
           $product['model'] = $product['products_model'];
           $product['image'] = $product['products_image'];

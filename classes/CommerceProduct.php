@@ -839,6 +839,48 @@ Skip deleting of images for now
 		}
 	}
 
+	function loadOptions() {
+		$this->mOptions = array();
+		if( $this->isValid() ) {
+			if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
+				$options_order_by= ' ORDER BY popt.`products_options_sort_order`';
+			} else {
+				$options_order_by= ' ORDER BY popt.`products_options_name`';
+			}
+
+			$sql = "SELECT distinct popt.`products_options_id` AS hash_key, popt.*
+					FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+						INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " patrib ON(patrib.`options_id` = popt.`products_options_id`)
+					WHERE patrib.`products_id`= ? AND popt.`language_id` = ? " .
+					$options_order_by;
+
+			if( $this->mOptions = $this->mDb->GetAssoc($sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) ) ) {
+				if ( PRODUCTS_OPTIONS_SORT_BY_PRICE =='1' ) {
+					$order_by= ' ORDER BY pa.`products_options_sort_order`, pov.`products_options_values_name`';
+				} else {
+					$order_by= ' ORDER BY pa.`products_options_sort_order`, pa.`options_values_price`';
+				}
+
+				foreach( array_keys( $this->mOptions ) as $optionsId ) {
+					$sql = "SELECT pov.`products_options_values_id`, pov.`products_options_values_name`, pa.*
+							FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov ON (pa.`options_values_id` = pov.`products_options_values_id`)
+							WHERE pa.`products_id`=? AND pa.`options_id`=? AND pov.`language_id`=? " .
+							$order_by;
+			        if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId, $_SESSION['languages_id'] ) ) ) {
+						$this->mOptions[$optionsId]['values'] = array();
+						while( !$rs->EOF ) {
+							array_push( $this->mOptions[$optionsId]['values'], $rs->fields );
+							$rs->MoveNext();
+						}
+			        }
+				}
+			}
+		}
+		return( count( $this->mOptions ) );
+	}
+
+
 	function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
 		$ret = FALSE;
 		if( empty( $pProductsId ) ) {
@@ -873,6 +915,10 @@ Skip deleting of images for now
 			$ret = $this->mDb->getOne($query, array( $pProductsId, $pCustomersId ) );
 		}
 		return $ret;
+	}
+
+	function isFree() {
+		return( !empty( $gBitProduct->mInfo['product_is_free'] ) );
 	}
 
 }
