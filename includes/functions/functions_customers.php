@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_customers.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
+// $Id: functions_customers.php,v 1.4 2005/11/10 13:46:53 spiderr Exp $
 //
 //
 ////
@@ -38,90 +38,6 @@
     }
   }
 
-////
-// Return a formatted address
-// TABLES: address_format
-  function zen_address_format($address_format_id, $address, $html, $boln, $eoln) {
-    global $db;
-    $address_format_query = "select address_format as format
-                             from " . TABLE_ADDRESS_FORMAT . "
-                             where address_format_id = '" . (int)$address_format_id . "'";
-
-    $address_format = $db->Execute($address_format_query);
-    $company = zen_output_string_protected($address['company']);
-    if (isset($address['firstname']) && zen_not_null($address['firstname'])) {
-      $firstname = zen_output_string_protected($address['firstname']);
-      $lastname = zen_output_string_protected($address['lastname']);
-    } elseif (isset($address['name']) && zen_not_null($address['name'])) {
-      $firstname = zen_output_string_protected($address['name']);
-      $lastname = '';
-    } else {
-      $firstname = '';
-      $lastname = '';
-    }
-    $street = zen_output_string_protected($address['street_address']);
-    $suburb = zen_output_string_protected($address['suburb']);
-    $city = zen_output_string_protected($address['city']);
-    $state = zen_output_string_protected($address['state']);
-    if (isset($address['country_id']) && zen_not_null($address['country_id'])) {
-      $country = zen_get_country_name($address['country_id']);
-
-      if (isset($address['zone_id']) && zen_not_null($address['zone_id'])) {
-        $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
-      }
-    } elseif (isset($address['country']) && zen_not_null($address['country'])) {
-      if (is_array($address['country'])) {
-        $country = zen_output_string_protected($address['country']['countries_name']);
-      } else {       
-      $country = zen_output_string_protected($address['country']);
-      }
-    } else {
-      $country = '';
-    }
-    $postcode = zen_output_string_protected($address['postcode']);
-    $zip = $postcode;
-
-    if ($html) {
-// HTML Mode
-      $HR = '<hr>';
-      $hr = '<hr>';
-      if ( ($boln == '') && ($eoln == "\n") ) { // Values not specified, use rational defaults
-        $CR = '<br />';
-        $cr = '<br />';
-        $eoln = $cr;
-      } else { // Use values supplied
-        $CR = $eoln . $boln;
-        $cr = $CR;
-      }
-    } else {
-// Text Mode
-      $CR = $eoln;
-      $cr = $CR;
-      $HR = '----------------------------------------';
-      $hr = '----------------------------------------';
-    }
-
-    $statecomma = '';
-    $streets = $street;
-    if ($suburb != '') $streets = $street . $cr . $suburb;
-    if ($country == '') {
-      if (is_array($address['country'])) {
-        $country = zen_output_string_protected($address['country']['countries_name']);
-      } else {       
-      $country = zen_output_string_protected($address['country']);
-      }
-    }
-    if ($state != '') $statecomma = $state . ', ';
-
-    $fmt = $address_format->fields['format'];
-    eval("\$address_out = \"$fmt\";");
-
-    if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
-      $address_out = $company . $cr . $address_out;
-    }
-
-    return $address_out;
-  }
 
 ////
 // Return a formatted address

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.26 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: orders.php,v 1.27 2005/11/10 13:46:53 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -213,15 +213,14 @@
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main" valign="top"><strong><?php echo ENTRY_CUSTOMER; ?></strong></td>
-                <td class="main"><?php echo $gBitUser->getDisplayLink( $order->info['login'], $order->info ); ?></td>
+                <td class="main"><?php echo $gBitUser->getDisplayName( TRUE ); ?></td>
               </tr>
-              <tr>
-                <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '5'); ?></td>
-              </tr>
+<?php if( !empty( $order->customer['telephone'] ) ) { ?>
               <tr>
                 <td class="main"><strong><?php echo ENTRY_TELEPHONE_NUMBER; ?></strong></td>
                 <td class="main"><?php echo $order->customer['telephone']; ?></td>
               </tr>
+<?php } ?>
               <tr>
                 <td class="main"><strong><?php echo ENTRY_EMAIL_ADDRESS; ?></strong></td>
                 <td class="main"><?php echo '<a href="mailto:' . $order->customer['email_address'] . '">' . $order->customer['email_address'] . '</a>'; ?></td>
