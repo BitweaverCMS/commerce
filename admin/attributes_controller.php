@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.18 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.19 2005/11/10 06:53:37 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -204,7 +204,7 @@
           } else {
 // iii 030811 added:  For TEXT and FILE option types, ignore option value
 // entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
-        $products_options_array = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
+        $products_options_array = $db->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['options_id'] ) );
         $values_id = zen_db_prepare_input((($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id']);
 
             $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -1099,9 +1099,9 @@ if ($action == '') {
             <td class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_VALUE . '<br />'; ?><select name="values_id" size="5">
 <?php
 // FIX HERE 2
-      $values_values = $db->Execute("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
-                                     where pov.`language_id` ='" . $_SESSION['languages_id'] . "' and povtpo.products_options_id='" . $attributes_values->fields['options_id'] . "'
-                                     order by pov.products_options_values_name");
+      $values_values = $db->query("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
+                                     where pov.`language_id` =? AND povtpo.products_options_id=?
+                                     order by pov.products_options_values_name", array( $_SESSION['languages_id'], $attributes_values->fields['options_id'] ) );
 
       while(!$values_values->EOF) {
         $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($values_values->fields['products_options_values_id'])) . ']';

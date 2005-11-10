@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.7 2005/10/31 23:46:34 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.8 2005/11/10 06:53:37 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -32,32 +32,29 @@
 
     $pr_attr = $db->getOne($sql);
 
-    if ($pr_attr->fields['total'] > 0) {
+    if ( $pr_attr ) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
-        $options_order_by= ' order by LPAD(popt.products_options_sort_order,11,"0")';
+        $options_order_by= ' ORDER BY popt.`products_options_sort_order`';
       } else {
-        $options_order_by= ' order by popt.products_options_name';
+        $options_order_by= ' ORDER BY popt.`products_options_name`';
       }
 
-      $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
-                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size,
-                              popt.products_options_images_per_row,
-                              popt.products_options_images_style
-              from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.options_id = popt.products_options_id
-              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+      $sql = "SELECT distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
+                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size, popt.products_options_images_per_row, popt.products_options_images_style
+              FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+              	INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " patrib ON(patrib.`options_id` = popt.`products_options_id`)
+              WHERE patrib.`products_id`= ? AND popt.`language_id` = ? " .
               $options_order_by;
 
-      $products_options_names = $db->Execute($sql);
+      $products_options_names = $db->query($sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
 
 // iii 030813 added: initialize $number_of_uploads
       $number_of_uploads = 0;
 
       if ( PRODUCTS_OPTIONS_SORT_BY_PRICE =='1' ) {
-        $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pov.products_options_values_name';
+        $order_by= ' ORDER BY pa.`products_options_sort_order`, pov.`products_options_values_name`';
       } else {
-        $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
+        $order_by= ' ORDER BY pa.`products_options_sort_order`, pa.`options_values_price`';
       }
 
       $discount_type = zen_get_products_sale_discount_type((int)$_GET['products_id']);
@@ -74,18 +71,14 @@
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
-        $sql = "select    pov.`products_options_values_id`,
-                          pov.`products_options_values_name`,
-                          pa.*
-                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.`options_values_id` = pov.`products_options_values_id`
-                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+        $sql = "SELECT pov.`products_options_values_id`, pov.`products_options_values_name`, pa.*
+                FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+                	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov ON (pa.`options_values_id` = pov.`products_options_values_id`)
+                WHERE pa.`products_id`=? AND pa.`options_id`=? AND pov.`language_id`=? " .
                 $order_by;
 
-        $products_options = $db->Execute($sql);
-
+        $products_options = $db->query($sql, array( $_GET['products_id'], $products_options_names->fields['products_options_id'], $_SESSION['languages_id'] ) );
+vd( $products_options->fields );
         $products_options_value_id = '';
         $products_options_details = '';
         $products_options_details_noname = '';

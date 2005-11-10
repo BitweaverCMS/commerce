@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.29 2005/11/08 05:17:02 spiderr Exp $
+//  $Id: general.php,v 1.30 2005/11/10 06:53:37 spiderr Exp $
 //
 
 ////
@@ -1442,16 +1442,12 @@
 // Validate Option Name and Option Type Match
   function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
     global $db;
+$db->debug();
     $check_options_to_values_query= $db->getOne("SELECT `products_options_id`
 		FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
 		WHERE `products_options_id` = ?
 		AND `products_options_values_id` =?" , array( $products_options_id, $products_options_values_id ) );
-
-    if( $check_options_to_values_query ) {
-      return false;
-    } else {
-      return true;
-    }
+      return $check_options_to_values_query;
   }
 
 ////
@@ -1658,7 +1654,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Get the Option Name for a particular language
   function zen_get_option_name_language($option, $language) {
     global $db;
-    $lookup = $db->Execute("SELECT `products_options_id`, `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = '" . $option . "' and `language_id` = '" . $language . "'");
+    $lookup = $db->query("SELECT `products_options_id`, `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = ? AND `language_id` = ?", array( $option, $language ) );
     return $lookup->fields['products_options_name'];
   }
 

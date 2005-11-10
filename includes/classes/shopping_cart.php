@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.17 2005/10/31 22:27:55 lsces Exp $
+// $Id: shopping_cart.php,v 1.18 2005/11/10 06:53:37 spiderr Exp $
 //
 
   class shoppingCart {
@@ -163,13 +163,11 @@
         $this->contents[$products_id] = array('quantity' => $qty);
 // insert into database
         if ($_SESSION['customer_id']) {
-          $sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
-                              (`customers_id`, `products_id`, `customers_basket_quantity`,
-                              `customers_basket_date_added`)
-                              values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
-                              $qty . "', '" . date('Ymd') . "')";
+			$sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
+						(`customers_id`, `products_id`, `customers_basket_quantity`, `customers_basket_date_added`)
+					values ( ?, ?, ?, ? )";
 
-          $db->Execute($sql);
+			$db->query( $sql, array( $_SESSION['customer_id'], $products_id, $qty, date('Ymd') ) );
         }
 
         if (is_array($attributes)) {
@@ -1111,7 +1109,7 @@ if ((int)$products_id != $products_id) {
 			$products_id = current( $products_id );
 		}
       // check if mixed is on
-      $product = $db->getOne("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . 
+      $product = $db->getOne("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS .
 			" where `products_id` ='" . $products_id . "'");
 
       // if mixed attributes is off return qty for current attribute selection
@@ -1141,7 +1139,7 @@ if ((int)$products_id != $products_id) {
       if (!is_array($this->contents)) return 0;
 
       // check if mixed is on
-      $product = $db->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS . 
+      $product = $db->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
 			" where `products_id` ='" . zen_get_prid($products_id) . "'");
 
       // if mixed attributes is off return qty for current attribute selection
@@ -1179,7 +1177,7 @@ if ((int)$products_id != $products_id) {
       while (list($products_id, ) = each($this->contents)) {
         $testing_id = zen_get_prid($products_id);
         // check if field it true
-        $product_check = $db->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS . 
+        $product_check = $db->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .
 			" where `products_id` ='" . $testing_id . "'");
         if ($product_check->fields['check_it'] == $check_value) {
           $in_cart_check_qty += $this->contents[$products_id]['quantity'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.15 2005/10/31 23:46:32 lsces Exp $
+//  $Id: options_name_manager.php,v 1.16 2005/11/10 06:53:37 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -128,13 +128,10 @@
           $products_options_images_per_row = zen_db_prepare_input($products_options_images_per_row_array[$languages[$i]['id']]);
           $products_options_images_style = zen_db_prepare_input($products_options_images_style_array[$languages[$i]['id']]);
 
-//          zen_db_query("update " . TABLE_PRODUCTS_OPTIONS . " set products_options_name = '" . zen_db_input($option_name) . "', products_options_type = '" . $option_type . "' where products_options_id = '" . (int)$option_id . "' and `language_id` = '" . (int)$languages[$i]['id'] . "'");
-
-          $db->Execute("update " . TABLE_PRODUCTS_OPTIONS . "
-                        set `products_options_name` = '" . zen_db_input($option_name) . "', products_options_type = '" . $option_type . "', products_options_length = '" . zen_db_input($products_options_length) . "', products_options_comment = '" . zen_db_input($products_options_comment) . "', products_options_size = '" . zen_db_input($products_options_size) . "', products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "', products_options_sort_order = '" . zen_db_input($products_options_sort_order) . "', products_options_images_per_row = '" . zen_db_input($products_options_images_per_row) . "', products_options_images_style = '" . zen_db_input($products_options_images_style) . "'
-                        where `products_options_id` = '" . (int)$option_id . "'
-                        and `language_id` = '" . (int)$languages[$i]['id'] . "'");
-
+          $db->query( "update " . TABLE_PRODUCTS_OPTIONS . "
+                        set `products_options_name` = ?, products_options_type = ?, products_options_length = ?, products_options_comment = ?, products_options_size = ?, products_options_sort_order = ?, products_options_images_per_row = ?, products_options_images_style = ?
+                        where `products_options_id` = ? AND `language_id` = ?",
+array( $option_name, $option_type, $products_options_length, $products_options_comment, $products_options_size, $products_options_sort_order, $products_options_images_per_row, $products_options_images_style, $option_id, $languages[$i]['id'] ) );
         }
 
         switch ($option_type) {
@@ -545,7 +542,7 @@ function go_option() {
     $num_pages = (int) $num_pages;
 
 // fix limit error on some versions
-    if ($option_page_start < 0) { $option_page_start = 0; }
+    if ($option_page_start <= 0) { $option_page_start = BIT_QUERY_DEFAULT; }
 
 
     // Previous
@@ -553,13 +550,16 @@ function go_option() {
       echo '<a href="' . zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER, 'option_page=' . $prev_option_page . '&option_order_by=' . $_GET['option_order_by']) . '"> &lt;&lt; </a> | ';
     }
 
-    for ($i = 1; $i <= $num_pages; $i++) {
-      if ($i != $_GET['option_page']) {
-        echo '<a href="' . zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER, 'option_page=' . $i . '&option_order_by=' . $_GET['option_order_by']) . '">' . $i . '</a> | ';
-      } else {
-        echo '<b><font color=red>' . $i . '</font></b> | ';
-      }
-    }
+	if( $num_pages > 1 ) {
+		echo 'Pages:';
+		for ($i = 1; $i <= $num_pages; $i++) {
+			if ($i != $_GET['option_page']) {
+				echo '<a href="' . zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER, 'option_page=' . $i . '&option_order_by=' . $_GET['option_order_by']) . '">' . $i . '</a> | ';
+			} else {
+				echo '<b><font color=red>' . $i . '</font></b> | ';
+			}
+		}
+	}
 
     // Next
     if ($_GET['option_page'] != $num_pages) {
@@ -587,7 +587,7 @@ function go_option() {
 <?php
     $next_id = 1;
     $rows = 0;
-    $options_values = $db->query($options, array( $_SESSION['languages_id'] ), $option_page_start, $per_page );
+    $options_values = $db->query($options, array( $_SESSION['languages_id'] ), $per_page, $option_page_start );
     while (!$options_values->EOF) {
       $rows++;
 ?>

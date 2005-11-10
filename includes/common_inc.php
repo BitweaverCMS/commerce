@@ -537,7 +537,7 @@
     }
 
     // $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
 
     $show_display_price = '';
@@ -637,7 +637,7 @@
     global $gBitDb;
     $the_free_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $gBitDb->getOne("select `product_is_free` from " . TABLE_PRODUCTS . 
+      $product_check = $gBitDb->getOne("select `product_is_free` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
       if( $product_check == '1' ) {
         $the_free_price = true;
@@ -652,7 +652,7 @@
     global $gBitDb;
     $the_call_price = false;
 	if( !empty( $products_id ) ) {
-      $product_check = $gBitDb->getOne("select `product_is_call` from " . TABLE_PRODUCTS . 
+      $product_check = $gBitDb->getOne("select `product_is_call` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
       if ( $product_check == '1' ) {
         $the_call_price = true;
@@ -665,7 +665,7 @@
 // Is the product priced by attributes?
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $gBitDb;
-    $product_check = $gBitDb->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS . 
+    $product_check = $gBitDb->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
     return( $product_check == '1' );
   }
@@ -1202,7 +1202,7 @@ If a special exist * 10+9
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
     global $gBitDb, $currencies;
-    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . 
+    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
 
     $show_display_price = '';
@@ -1352,8 +1352,8 @@ If a special exist * 10+9
 // get attributes type
   function zen_get_attributes_type($check_attribute) {
     global $gBitDb;
-    $check_options_id_query = $gBitDb->Execute("select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` ='" . $check_attribute . "'");
-    $check_type_query = $gBitDb->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` ='" . $check_options_id_query->fields['options_id'] . "'");
+    $check_options_id_query = $gBitDb->query( "select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` =?", array( $check_attribute ) );
+    $check_type_query = $gBitDb->query( "select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` =?", array( $check_options_id_query->fields['options_id'] ) );
     return $check_type_query->fields['products_options_type'];
   }
 

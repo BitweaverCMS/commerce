@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.25 2005/11/04 19:16:12 spiderr Exp $
+// $Id: order.php,v 1.26 2005/11/10 06:53:37 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
@@ -225,7 +225,7 @@ class order extends BitBase {
                              where `orders_id` = '" . (int)$order_id . "'
                              and orders_products_id = '" . (int)$orders_products->fields['orders_products_id'] . "'";
 
-        $attributes = $db->Execute($attributes_query);
+        $attributes = $db->query($attributes_query);
         if ($attributes->RecordCount()) {
           while (!$attributes->EOF) {
             $this->products[$index]['attributes'][$subindex] = array('option' => $attributes->fields['products_options'],

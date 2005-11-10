@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
+// $Id: product_info_display.php,v 1.3 2005/11/10 06:53:37 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -105,7 +105,7 @@ if( !empty( $debug_on ) ) {
   <tr>
     <td colspan="2" class="main" align="center">
 <?php
-  if ($pr_attr->fields['total'] > 0) {
+  if( $pr_attr ) {
 ?>
       <table border="0" width="90%" cellspacing="0" cellpadding="2">
 <?php if ($zv_display_select_option > 0) { ?>
