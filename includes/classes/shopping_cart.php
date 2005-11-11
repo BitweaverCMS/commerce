@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.20 2005/11/10 22:02:09 spiderr Exp $
+// $Id: shopping_cart.php,v 1.21 2005/11/11 02:52:11 spiderr Exp $
 //
 
   class shoppingCart {
@@ -28,9 +28,11 @@
     }
 
     function restore_contents() {
-      global $db;
+		global $db, $gBitUser;
 
-      if (!$_SESSION['customer_id']) return false;
+		if( !$gBitUser->isRegistered() ) {
+			return false;
+		}
 
 // insert current cart contents in database
       if (is_array($this->contents)) {
@@ -103,7 +105,7 @@
         //CLR 020606 update query to pull attribute value_text. This is needed for text attributes.
 //        $attributes_query = zen_db_query("select products_options_id, products_options_value_id, products_options_value_text from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$customer_id . "' and `products_id` = '" . zen_db_input($products['products_id']) . "'");
 
-        $order_by = ' order by LPAD(`products_options_sort_order`,11,"0")';
+        $order_by = ' order by `products_options_sort_order`';
 
         $attributes = $db->Execute("select `products_options_id`, `products_options_value_id`, `products_options_value_text`
                              from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "

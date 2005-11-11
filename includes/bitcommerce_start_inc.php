@@ -168,9 +168,12 @@
   require_once(DIR_FS_CLASSES . 'shopping_cart.php');
 
 // create the shopping cart & fix the cart if necesary
-  if( empty( $_SESSION['cart'] ) ) {
-    $_SESSION['cart'] = new shoppingCart;
-  }
+	if( empty( $_SESSION['cart'] ) ) {
+		$_SESSION['cart'] = new shoppingCart;
+		if( $gBitUser->isRegistered() ) {
+			$_SESSION['cart']->restore_contents();
+		}
+	}
 
 // include currencies class and create an instance
   require_once(DIR_FS_CLASSES . 'currencies.php');
