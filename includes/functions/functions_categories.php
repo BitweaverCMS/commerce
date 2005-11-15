@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.8 2005/10/31 22:53:09 lsces Exp $
+// $Id: functions_categories.php,v 1.9 2005/11/15 22:13:56 spiderr Exp $
 //
 //
 ////
@@ -191,19 +191,17 @@
                        and p.`products_status` = '1'
                        and p.`products_id` = p2c.`products_id`";
 
-    $category = $db->getOne($category_query);
-
-    if ($category->RecordCount() > 0) {
+    if ($category = $db->getOne($category_query) ) {
 
       $categories = array();
-      zen_get_parent_categories($categories, $category->fields['categories_id']);
+      zen_get_parent_categories($categories, $category);
 
       $categories = array_reverse($categories);
 
       $cPath = implode('_', $categories);
 
       if (zen_not_null($cPath)) $cPath .= '_';
-      $cPath .= $category->fields['categories_id'];
+      $cPath .= $category;
     }
 
     return $cPath;
