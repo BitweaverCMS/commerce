@@ -17,14 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.1 2005/07/08 06:12:32 spiderr Exp $
+// $Id: ot_coupon.php,v 1.2 2005/11/15 22:01:21 spiderr Exp $
 //
 
   define('MODULE_ORDER_TOTAL_COUPON_TITLE', 'Discount Coupons');
   define('MODULE_ORDER_TOTAL_COUPON_HEADER', TEXT_GV_NAMES . '/Discount Coupons');
   define('MODULE_ORDER_TOTAL_COUPON_DESCRIPTION', 'Discount Coupons');
   define('MODULE_ORDER_TOTAL_COUPON_TEXT_ENTER_CODE', TEXT_GV_REDEEM);
-  define('MODULE_ORDER_TOTAL_COUPON_HEADER', TEXT_GV_NAMES . '/Discount Coupons');
   define('SHIPPING_NOT_INCLUDED', ' [Shipping not included]');
   define('TAX_NOT_INCLUDED', ' [Tax not included]');
   define('IMAGE_REDEEM_VOUCHER', 'Redeem Voucher');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id: checkout_payment.php,v 1.3 2005/11/15 22:01:21 spiderr Exp $
 //
 
 define('NAVBAR_TITLE_1', 'Checkout');

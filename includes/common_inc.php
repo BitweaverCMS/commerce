@@ -484,7 +484,7 @@
     $suburb = zen_output_string_protected($address['suburb']);
     $city = zen_output_string_protected($address['city']);
     $state = zen_output_string_protected($address['state']);
-    $telephone = zen_output_string_protected($address['telephone']);
+    $telephone = (isset( $address['telephone'] ) ? zen_output_string_protected($address['telephone']) : NULL);
     if (isset($address['country_id']) && zen_not_null($address['country_id'])) {
       $country = zen_get_country_name($address['country_id']);
 
@@ -887,9 +887,9 @@ If a special exist * 10+9
       $check_category = zen_get_products_category_id($product_id);
     }
 
-    $deduction_type_array = array(array('id' => '0', 'text' => DEDUCTION_TYPE_DROPDOWN_0),
-                                  array('id' => '1', 'text' => DEDUCTION_TYPE_DROPDOWN_1),
-                                  array('id' => '2', 'text' => DEDUCTION_TYPE_DROPDOWN_2));
+    $deduction_type_array = array(array('id' => '0', 'text' => tra( 'Deduct amount' )),
+                                  array('id' => '1', 'text' => tra( 'Percent' )),
+                                  array('id' => '2', 'text' => tra( 'New Price' )));
 
     $sale_exists = 'false';
     $sale_maker_discount = '';
@@ -1298,6 +1298,18 @@ If a special exist * 10+9
 
 
 ////
+// Return a product ID from a product ID with attributes
+  function zen_get_prid($uprid) {
+    $ret = 0;
+  	if( !empty( $uprid ) ) {
+      $pieces = explode(':', $uprid);
+	  $ret = $pieces[0];
+	}
+    return $ret;
+  }
+
+
+////
 // Actual Price Retail
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
@@ -1330,7 +1342,7 @@ If a special exist * 10+9
 ////
 // return attributes_price_factor
   function zen_get_attributes_price_factor($price, $special, $factor, $offset) {
-    if (ATTRIBUTES_PRICE_FACTOR_FROM_SPECIAL =='1' and $special) {
+    if( defined( 'ATTRIBUTES_PRICE_FACTOR_FROM_SPECIAL' ) && ATTRIBUTES_PRICE_FACTOR_FROM_SPECIAL =='1' and $special) {
       // calculate from specials_new_products_price
       $calculated_price = $special * ($factor - $offset);
     } else {
@@ -1348,7 +1360,7 @@ If a special exist * 10+9
       $attribute_qty = split("[:,]" , $string);
       $size = sizeof($attribute_qty);
       for ($i=0, $n=$size; $i<$n; $i+=2) {
-        $new_price = $attribute_qty[$i+1];
+        $new_price = isset( $attribute_qty[$i+1] ) ? $attribute_qty[$i+1] : 0;
         if ($qty <= $attribute_qty[$i]) {
           $new_price = $attribute_qty[$i+1];
           break;
@@ -1388,6 +1400,7 @@ If a special exist * 10+9
       // use existing select
     }
 
+	$attributes_price_final = 0;
     // normal attributes price
     if ($pre_selected->fields["price_prefix"] == '-') {
       $attributes_price_final -= $pre_selected->fields["options_values_price"];

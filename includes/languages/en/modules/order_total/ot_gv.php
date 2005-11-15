@@ -17,14 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.1 2005/07/08 06:12:32 spiderr Exp $
+// $Id: ot_gv.php,v 1.2 2005/11/15 22:01:21 spiderr Exp $
 //
 
   define('MODULE_ORDER_TOTAL_GV_TITLE', TEXT_GV_NAMES);
   define('MODULE_ORDER_TOTAL_GV_HEADER', TEXT_GV_NAMES . '/Discount Coupons');
   define('MODULE_ORDER_TOTAL_GV_DESCRIPTION', TEXT_GV_NAMES);
+if( !defined( 'SHIPPING_NOT_INCLUDED' ) ) {
   define('SHIPPING_NOT_INCLUDED', ' [Shipping not included]');
+}
+if( !defined( 'TAX_NOT_INCLUDED' ) ) {
   define('TAX_NOT_INCLUDED', ' [Tax not included]');
+}
   define('MODULE_ORDER_TOTAL_GV_USER_PROMPT', 'Apply balance ->&nbsp;');
   define('MODULE_ORDER_TOTAL_GV_TEXT_ENTER_CODE', TEXT_GV_REDEEM);
   define('TEXT_INVALID_REDEEM_AMOUNT', 'Incorrect amount of balance to use');

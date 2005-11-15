@@ -17,18 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.21 2005/11/11 02:52:11 spiderr Exp $
+// $Id: shopping_cart.php,v 1.22 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class shoppingCart {
     var $contents, $total, $weight, $cartID, $content_type, $free_shipping_item, $free_shipping_weight, $free_shipping_price;
 
     function shoppingCart() {
-      $this->reset();
+		$this->reset();
     }
 
     function restore_contents() {
-		global $db, $gBitUser;
+		global $gBitDb, $gBitUser;
 
 		if( !$gBitUser->isRegistered() ) {
 			return false;
@@ -45,7 +45,7 @@
                             where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                             and `products_id` = '" . zen_db_input($products_id) . "'";
 
-          $product = $db->Execute($product_query);
+          $product = $gBitDb->Execute($product_query);
 
           if ($product->RecordCount()<=0) {
             $sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
@@ -54,7 +54,7 @@
                                  values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
                                  $qty . "', '" . date('Ymd') . "')";
 
-            $db->Execute($sql);
+            $gBitDb->Execute($sql);
 
             if (isset($this->contents[$products_id]['attributes'])) {
               reset($this->contents[$products_id]['attributes']);
@@ -73,7 +73,7 @@
                                      values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
                                      $option . "', '" . $value . "', '" . $attr_value . "', '" . $products_options_sort_order . "')";
 
-                $db->Execute($sql);
+                $gBitDb->Execute($sql);
               }
             }
           } else {
@@ -82,7 +82,7 @@
                     where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and `products_id` = '" . zen_db_input($products_id) . "'";
 
-            $db->Execute($sql);
+            $gBitDb->Execute($sql);
 
           }
         }
@@ -94,8 +94,7 @@
       $products_query = "select `products_id`, `customers_basket_quantity`
                          from " . TABLE_CUSTOMERS_BASKET . "
                          where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
-
-      $products = $db->Execute($products_query);
+      $products = $gBitDb->Execute($products_query);
 
       while (!$products->EOF) {
         $this->contents[$products->fields['products_id']] = array('quantity' => $products->fields['customers_basket_quantity']);
@@ -107,7 +106,7 @@
 
         $order_by = ' order by `products_options_sort_order`';
 
-        $attributes = $db->Execute("select `products_options_id`, `products_options_value_id`, `products_options_value_text`
+        $attributes = $gBitDb->Execute("select `products_options_id`, `products_options_value_id`, `products_options_value_text`
                              from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                              where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                              and `products_id` = '" . zen_db_input($products->fields['products_id']) . "' " . $order_by);
@@ -127,7 +126,7 @@
     }
 
     function reset($reset_database = false) {
-      global $db, $gBitUser;
+      global $gBitDb, $gBitUser;
 
       $this->contents = array();
       $this->total = 0;
@@ -141,10 +140,10 @@
 
       if( $gBitUser->isRegistered() && ($reset_database == true)) {
         $sql = "delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
-        $db->query($sql, array( $gBitUser->mUserId ) );
+        $gBitDb->query($sql, array( $gBitUser->mUserId ) );
 
         $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = ?";
-        $db->query($sql, array( $gBitUser->mUserId ) );
+        $gBitDb->query($sql, array( $gBitUser->mUserId ) );
       }
 
       unset($this->cartID);
@@ -152,7 +151,7 @@
     }
 
     function add_cart($products_id, $qty = '1', $attributes = '', $notify = true) {
-      global $db;
+      global $gBitDb;
       $products_id = zen_get_uprid($products_id, $attributes);
       if ($notify == true) {
         $_SESSION['new_products_id_in_cart'] = $products_id;
@@ -169,7 +168,7 @@
 						(`customers_id`, `products_id`, `customers_basket_quantity`, `customers_basket_date_added`)
 					values ( ?, ?, ?, ? )";
 
-			$db->query( $sql, array( $_SESSION['customer_id'], $products_id, $qty, date('Ymd') ) );
+			$gBitDb->query( $sql, array( $_SESSION['customer_id'], $products_id, $qty, date('Ymd') ) );
         }
 
         if (is_array($attributes)) {
@@ -215,7 +214,7 @@
                                         values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
                                         (int)$option.'_chk'.$val . "', '" . $val . "',  '" . $products_options_sort_order . "')";
 
-                    $db->Execute($sql);
+                    $gBitDb->Execute($sql);
                   }
                 } else {
                   if ($attr_value) {
@@ -227,7 +226,7 @@
                                       values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
                                       (int)$option . "', '" . $value . "', '" . $attr_value . "', '" . $products_options_sort_order . "')";
 
-                  $db->Execute($sql);
+                  $gBitDb->Execute($sql);
                 }
               }
             }
@@ -241,7 +240,7 @@
     }
 
     function update_quantity($products_id, $quantity = '', $attributes = '') {
-      global $db;
+      global $gBitDb;
 
       if (empty($quantity)) return true; // nothing needs to be updated if theres no quantity, so we return true..
 
@@ -253,7 +252,7 @@
                 where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and `products_id` = '" . zen_db_input($products_id) . "'";
 
-        $db->Execute($sql);
+        $gBitDb->Execute($sql);
 
       }
 
@@ -301,7 +300,7 @@
                         SET `products_options_value_id` = ?
                         WHERE `customers_id` =? AND `products_id` =? AND `products_options_id` =?";
 
-                $db->query( $sql, array( $val, $_SESSION['customer_id'], $products_id, (int)$option.'_chk'.$val ) );
+                $gBitDb->query( $sql, array( $val, $_SESSION['customer_id'], $products_id, (int)$option.'_chk'.$val ) );
               }
             } else {
               if ($_SESSION['customer_id']) {
@@ -309,7 +308,7 @@
                         SET `products_options_value_id`=?, `products_options_value_text`=?
                         WHERE `customers_id` = ? AND `products_id` = ? AND `products_options_id` = ?";
 
-                $db->query( $sql, array( $value, $attr_value, $_SESSION['customer_id'], $products_id, $option ) );
+                $gBitDb->query( $sql, array( $value, $attr_value, $_SESSION['customer_id'], $products_id, $option ) );
               }
             }
           }
@@ -318,7 +317,7 @@
     }
 
     function cleanup() {
-      global $db;
+      global $gBitDb;
 
       reset($this->contents);
       while (list($key,) = each($this->contents)) {
@@ -330,13 +329,13 @@
                     where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and `products_id` = '" . $key . "'";
 
-            $db->Execute($sql);
+            $gBitDb->Execute($sql);
 
             $sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                     where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                     and `products_id` = '" . $key . "'";
 
-            $db->Execute($sql);
+            $gBitDb->Execute($sql);
           }
         }
       }
@@ -372,7 +371,7 @@
     }
 
     function remove($products_id) {
-      global $db;
+      global $gBitDb;
 //die($products_id);
       //CLR 030228 add call zen_get_uprid to correctly format product ids containing quotes
 //      $products_id = zen_get_uprid($products_id, $attributes);
@@ -386,7 +385,7 @@
                 where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and `products_id` = '" . zen_db_input($products_id) . "'";
 
-        $db->Execute($sql);
+        $gBitDb->Execute($sql);
 
 //        zen_db_query("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$customer_id . "' and `products_id` = '" . zen_db_input($products_id) . "'");
 
@@ -394,7 +393,7 @@
                 where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                 and `products_id` = '" . zen_db_input($products_id) . "'";
 
-        $db->Execute($sql);
+        $gBitDb->Execute($sql);
 
       }
 
@@ -420,7 +419,7 @@
 
 // calculates totals
     function calculate() {
-      global $db;
+      global $gBitDb;
       $this->total = 0;
       $this->weight = 0;
 
@@ -434,14 +433,14 @@
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
         $qty = $this->contents[$products_id]['quantity'];
+        $prid = zen_get_prid( $products_id );
 
 // products price
         $product_query = "select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`, `products_priced_by_attribute`, `product_is_always_free_ship`, `products_discount_type`, `products_discount_type_from`, `products_virtual`, `products_model`
                           from " . TABLE_PRODUCTS . "
                           where `products_id` = ?";
 
-        if ($product = $db->query( $product_query, array( zen_get_prid( $products_id ) ) ) ) {
-          $prid = $product->fields['products_id'];
+        if ($product = $gBitDb->query( $product_query, array( $prid ) ) ) {
           $products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
           $products_price = $product->fields['products_price'];
 
@@ -507,7 +506,7 @@
                                       and `options_id` = '" . (int)$option . "'
                                       and `options_values_id` = '" . (int)$value . "'";
 
-            $attribute_price = $db->Execute($attribute_price_query);
+            $attribute_price = $gBitDb->Execute($attribute_price_query);
 
             $new_attributes_price = 0;
             $discount_type_id = '';
@@ -602,7 +601,7 @@
                                        and `options_id` = '" . (int)$option . "'
                                        and `options_values_id` = '" . (int)$value . "'";
 
-            $attribute_weight = $db->Execute($attribute_weight_query);
+            $attribute_weight = $gBitDb->Execute($attribute_weight_query);
 
           // adjusted count for free shipping
           if ($product->fields['product_is_always_free_ship'] != 1) {
@@ -624,7 +623,7 @@
     }
 
     function attributes_price($products_id) {
-      global $db;
+      global $gBitDb;
 
       $attributes_price = 0;
       $qty = $this->contents[$products_id]['quantity'];
@@ -640,7 +639,7 @@
                                     and `options_id` = '" . (int)$option . "'
                                     and `options_values_id` = '" . (int)$value . "'";
 
-          $attribute_price = $db->Execute($attribute_price_query);
+          $attribute_price = $gBitDb->Execute($attribute_price_query);
 
           $new_attributes_price = 0;
           $discount_type_id = '';
@@ -723,7 +722,7 @@
 // one time attribute prices
 // add to tpl_shopping_cart/orders
     function attributes_price_onetime_charges($products_id, $qty) {
-      global $db;
+      global $gBitDb;
 
       $attributes_price_onetime = 0;
 
@@ -738,7 +737,7 @@
                                     and `options_id` = '" . (int)$option . "'
                                     and `options_values_id` = '" . (int)$value . "'";
 
-          $attribute_price = $db->Execute($attribute_price_query);
+          $attribute_price = $gBitDb->Execute($attribute_price_query);
 
           $new_attributes_price = 0;
           $discount_type_id = '';
@@ -789,28 +788,25 @@ if ((int)$products_id != $products_id) {
     }
 
 
-    function attributes_weight($products_id) {
-      global $db;
+    function attributes_weight( $pCartProductsHash ) {
+      global $gBitDb;
 
+		$prid = zen_get_prid( $pCartProductsHash );
       $attribute_weight = 0;
 
-      if (isset($this->contents[$products_id]['attributes'])) {
-        reset($this->contents[$products_id]['attributes']);
-        while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-          $attribute_weight_query = "select `products_attributes_wt`, `products_attributes_wt_pfix`
-                                    from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                    where `products_id` = '" . (int)$products_id . "'
-                                    and `options_id` = '" . (int)$option . "'
-                                    and `options_values_id` = '" . (int)$value . "'";
-
-          $attribute_weight_info = $db->Execute($attribute_weight_query);
-
+      if (isset($this->contents[$pCartProductsHash]['attributes'])) {
+        reset($this->contents[$pCartProductsHash]['attributes']);
+        while (list($option, $value) = each($this->contents[$pCartProductsHash]['attributes'])) {
+			$sql = "select `products_attributes_wt`, `products_attributes_wt_pfix`
+					from " . TABLE_PRODUCTS_ATTRIBUTES . "
+					WHERE `products_id` = ? AND `options_id` = ? AND `options_values_id` = ?";
+			$attribute_weight_info = $gBitDb->query( $sql, array( $prid, (int)$option, (int)$value ) );
           // adjusted count for free shipping
-          $product = $db->Execute("select `products_id`, `product_is_always_free_ship`
+          $freeShip = $gBitDb->getOne("select `product_is_always_free_ship`
                           from " . TABLE_PRODUCTS . "
-                          where `products_id` = '" . (int)$products_id . "'");
+                          where `products_id` = ?", array( $prid ) );
 
-          if ($product->fields['product_is_always_free_ship'] != 1) {
+          if ( $freeShip != 1 ) {
             $new_attributes_weight = $attribute_weight_info->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;
@@ -830,7 +826,7 @@ if ((int)$products_id != $products_id) {
 
 
     function get_products($check_for_valid_cart = false) {
-      global $db, $gBitProduct;
+      global $gBitDb, $gBitProduct;
 
       if (!is_array($this->contents)) return false;
 
@@ -860,21 +856,21 @@ if ((int)$products_id != $products_id) {
             $products_price = 0;
           }
 
-// adjust price for discounts when priced by attribute
-          if ($product['products_priced_by_attribute'] == '1' and zen_has_product_attributes($product['products_id'], 'false')) {
-            // reset for priced by attributes
-//            $products_price = $product['products_price'];
-            if ($special_price) {
-              $products_price = $special_price;
-            } else {
-              $products_price = $product['products_price'];
-            }
-          } else {
-// discount qty pricing
-            if ( !empty( $product->fields['products_discount_type'] ) ) {
-              $products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['quantity']);
-            }
-          }
+			// adjust price for discounts when priced by attribute
+			if ($product['products_priced_by_attribute'] == '1' and zen_has_product_attributes($product['products_id'], 'false')) {
+				// reset for priced by attributes
+				// $products_price = $product['products_price'];
+				if ($special_price) {
+					$products_price = $special_price;
+				} else {
+					$products_price = $product['products_price'];
+				}
+			} else {
+				// discount qty pricing
+				if ( !empty( $product['products_discount_type'] ) ) {
+					$products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['quantity']);
+				}
+			}
             if ($check_for_valid_cart == true) {
                 $check_quantity = $this->contents[$products_id]['quantity'];
                 $check_quantity_min = $product['products_quantity_order_min'];
@@ -927,8 +923,7 @@ if ((int)$products_id != $products_id) {
             $new_qty = (int)$new_qty;
           }
 
-		  $product['cart_hash'] = $products_id;
-		  $product['id'] = $prid;
+		  $product['id'] = $products_id;
           $product['name'] = $product['products_name'];
           $product['model'] = $product['products_model'];
           $product['image'] = $product['products_image'];
@@ -967,7 +962,7 @@ if ((int)$products_id != $products_id) {
     }
 
     function get_content_type($gv_only = 'false') {
-      global $db;
+      global $gBitDb;
 
       $this->content_type = false;
       $gift_voucher = 0;
@@ -976,9 +971,9 @@ if ((int)$products_id != $products_id) {
       if ( $this->count_contents() > 0 ) {
         reset($this->contents);
         while (list($products_id, ) = each($this->contents)) {
-          $free_ship_check = $db->Execute("select `products_virtual`, `products_model`, `products_price` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($products_id) . "'");
+          $free_ship_check = $gBitDb->query( "select `products_virtual`, `products_model`, `products_price` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid($products_id) ) );
           $virtual_check = false;
-          if (ereg('^GIFT', addslashes($free_ship_check->fields['products_model']))) {
+          if( $free_ship_check && ereg( '^GIFT', addslashes($free_ship_check->fields['products_model'] ) ) ) {
             $gift_voucher += ($free_ship_check->fields['products_price'] + $this->attributes_price($products_id)) * $this->contents[$products_id]['quantity'];
           }
           if (isset($this->contents[$products_id]['attributes'])) {
@@ -991,7 +986,7 @@ if ((int)$products_id != $products_id) {
                                       and pa.`options_values_id` = '" . (int)$value . "'
                                       and pa.`products_attributes_id` = pad.`products_attributes_id`";
 
-              $virtual_check = $db->Execute($virtual_check_query);
+              $virtual_check = $gBitDb->Execute($virtual_check_query);
 
               if ($virtual_check->fields['total'] > 0) {
                 switch ($this->content_type) {
@@ -1069,7 +1064,7 @@ if ((int)$products_id != $products_id) {
                  }
                 break;
               default:
-                if ($free_ship_check->fields['products_virtual'] == '1') {
+                if( $free_ship_check && $free_ship_check->fields['products_virtual'] == '1') {
                   $this->content_type = 'virtual';
                  } else {
                   $this->content_type = 'physical';
@@ -1098,7 +1093,7 @@ if ((int)$products_id != $products_id) {
 
 // check mixed min/units
     function in_cart_mixed($products_id) {
-      global $db;
+      global $gBitDb;
       // if nothing is in cart return 0
       if (!is_array($this->contents)) return 0;
 
@@ -1106,11 +1101,11 @@ if ((int)$products_id != $products_id) {
 			$products_id = current( $products_id );
 		}
       // check if mixed is on
-      $product = $db->getOne("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS .
-			" where `products_id` ='" . $products_id . "'");
+      $productQtyMixed = $gBitDb->GetOne("select `products_quantity_mixed` from " . TABLE_PRODUCTS .
+			" where `products_id` ='" .  zen_get_prid( $products_id ) . "'");
 
       // if mixed attributes is off return qty for current attribute selection
-      if ($product->fields['products_quantity_mixed'] == '0') {
+      if( $productQtyMixed == '0' ) {
         return $this->get_quantity($products_id);
       }
 
@@ -1131,12 +1126,12 @@ if ((int)$products_id != $products_id) {
 
 // check mixed discount_quantity
     function in_cart_mixed_discount_quantity($products_id) {
-      global $db;
+      global $gBitDb;
       // if nothing is in cart return 0
       if (!is_array($this->contents)) return 0;
 
       // check if mixed is on
-      $product = $db->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
+      $product = $gBitDb->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
 			" where `products_id` ='" . zen_get_prid($products_id) . "'");
 
       // if mixed attributes is off return qty for current attribute selection
@@ -1163,7 +1158,7 @@ if ((int)$products_id != $products_id) {
 // $check_value is the value being tested for - default is 1
 // Syntax: $_SESSION['cart']->in_cart_check('product_is_free','1');
     function in_cart_check($check_what, $check_value='1') {
-      global $db;
+      global $gBitDb;
       // if nothing is in cart return 0
       if (!is_array($this->contents)) return 0;
 
@@ -1174,9 +1169,9 @@ if ((int)$products_id != $products_id) {
       while (list($products_id, ) = each($this->contents)) {
         $testing_id = zen_get_prid($products_id);
         // check if field it true
-        $product_check = $db->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .
+        $product_check = $gBitDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .
 			" where `products_id` ='" . $testing_id . "'");
-        if ($product_check->fields['check_it'] == $check_value) {
+        if( $product_check == $check_value ) {
           $in_cart_check_qty += $this->contents[$products_id]['quantity'];
         }
       }

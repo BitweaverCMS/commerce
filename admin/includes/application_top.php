@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.14 2005/10/31 16:20:00 lsces Exp $
+//  $Id: application_top.php,v 1.15 2005/11/15 22:01:20 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -208,6 +208,8 @@ error_reporting(E_ALL & ~E_NOTICE);
   if (file_exists(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page)) {
     include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page);
   }
+require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
+
 
   if ($za_dir = @dir(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions')) {
     while ($zv_file = $za_dir->read()) {

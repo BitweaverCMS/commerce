@@ -6,6 +6,7 @@ define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 
 class CommerceProduct extends LibertyAttachable {
 	var $mProductsId;
+	var $mOptions;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
 		LibertyAttachable::LibertyAttachable();
@@ -21,6 +22,7 @@ class CommerceProduct extends LibertyAttachable {
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
 		$this->mAdminContentPerm = 'bit_p_commerce_admin';
+		$this->mOptions = NULL;
 	}
 
 	function load() {
@@ -116,7 +118,7 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
-		if( empty( $pMixed ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
+		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
 
@@ -456,58 +458,119 @@ class CommerceProduct extends LibertyAttachable {
 				liberty_process_image( $fileHash );
 			}
 
-
-
-		// future image handler code
-/*
-			if ($new_image == 'true' and IMAGE_MANAGER_HANDLER >= 1) {
-		define('IMAGE_MANAGER_HANDLER', 0);
-		define('DIR_IMAGEMAGICK', '');
-				$src= DIR_FS_CATALOG . DIR_WS_IMAGES . zen_get_products_image($this->mProductsId);
-				$filename_small= $src;
-				preg_match("/.*\/(.*)\.(\w*)$/", $src, $fname);
-				list($oiwidth, $oiheight, $oitype) = getimagesize($src);
-
-				$small_width= SMALL_IMAGE_WIDTH;
-				$small_height= SMALL_IMAGE_HEIGHT;
-				$medium_width= MEDIUM_IMAGE_WIDTH;
-				$medium_height= MEDIUM_IMAGE_HEIGHT;
-				$large_width= LARGE_IMAGE_WIDTH;
-				$large_height= LARGE_IMAGE_HEIGHT;
-
-				$k = max($oiheight / $small_height, $oiwidth / $small_width); //use smallest size
-				$small_width = round($oiwidth / $k);
-				$small_height = round($oiheight / $k);
-
-				$k = max($oiheight / $medium_height, $oiwidth / $medium_width); //use smallest size
-				$medium_width = round($oiwidth / $k);
-				$medium_height = round($oiheight / $k);
-
-				$large_width= $oiwidth;
-				$large_height= $oiheight;
-
-				$products_image = zen_get_products_image($this->mProductsId);
-				$products_image_extention = substr($products_image, strrpos($products_image, '.'));
-				$products_image_base = ereg_replace($products_image_extention, '', $products_image);
-
-				$filename_medium = DIR_FS_CATALOG . DIR_WS_IMAGES . 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . '.' . $fname[2];
-				$filename_large = DIR_FS_CATALOG . DIR_WS_IMAGES . 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . '.' . $fname[2];
-
-		// ImageMagick
-				if (IMAGE_MANAGER_HANDLER == '1') {
-					copy($src, $filename_large);
-					copy($src, $filename_medium);
-					exec(DIR_IMAGEMAGICK . "mogrify -geometry " . $large_width . " " . $filename_large);
-					exec(DIR_IMAGEMAGICK . "mogrify -geometry " . $medium_width . " " . $filename_medium);
-					exec(DIR_IMAGEMAGICK . "mogrify -geometry " . $small_width . " " . $filename_small);
-				}
-			}
-*/
 			$this->mDb->CompleteTrans();
 			$this->load();
 		}
 
 		return( $this->mProductsId );
+	}
+
+
+	function getAttribute( $pOptionId, $pOptionValueId, $pAttr ) {
+		$ret = NULL;
+		if( is_null( $this->mOptions ) ) {
+			$this->loadOptions();
+		}
+		if( !empty( $this->mOptions[$pOptionId][$pOptionValueId][$pAttr] ) ) {
+			$ret = $this->mOptions[$pOptionId][$pOptionValueId][$pAttr];
+		}
+		return $ret;
+	}
+
+	function compareAttributes( &$pParamHash, $pAttr ) {
+		$currentAttr = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], $pAttr );
+		if( (!empty( $pParamHash[$pAttr] ) && $pParamHash[$pAttr] != $currentAttr )
+			||	(empty( $pParamHash[$pAttr] ) && !empty( $pParamHash[$pAttr] ) != $currentAttr ) ) {
+			$pParamHash['attributes_store'][$pAttr] = !empty( $pParamHash[$pAttr] ) ? $pParamHash[$pAttr] : NULL;
+		}
+	}
+
+
+	function verifyAttributes( &$pParamHash ) {
+		if( !empty( $pParamHash['options_id'] ) ) {
+			// iii 030811 added:  For TEXT and FILE option types, ignore option value
+			// entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
+			$optionType = $this->mDb->GetOne( "select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $pParamHash['options_id'] ) );
+			$pParamHash['options_values_id'] = (($optionType == PRODUCTS_OPTIONS_TYPE_TEXT) || ($optionType == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $pParamHash['options_values_id'];
+			$this->compareAttributes( $pParamHash, 'options_values_id' );
+			$this->compareAttributes( $pParamHash, 'options_values_price' );
+
+			$attrList = array(
+				'products_options_sort_order',
+				'product_attribute_is_free',
+				'products_attributes_wt',
+				'products_attributes_wt_pfix',
+				'attributes_display_only',
+				'attributes_default',
+				'attributes_discounted',
+				'attributes_price_base_inc',
+				'attributes_price_onetime',
+				'attributes_price_factor',
+				'attributes_pf_offset',
+				'attributes_pf_onetime',
+				'attributes_pf_onetime_offset',
+				'attributes_qty_prices',
+				'attributes_qty_prices_onetime',
+				'attributes_price_words',
+				'attributes_price_words_free',
+				'attributes_price_letters',
+				'attributes_price_letters_free',
+				'attributes_required',
+				'options_values_price',
+				'price_prefix',
+			);
+
+			foreach( $attrList as $attr ) {
+				$this->compareAttributes( $pParamHash, $attr  );
+			}
+		}
+		return( !empty( $pParamHash['attributes_store'] ) && count( $pParamHash['attributes_store'] ) );
+	}
+
+	function storeAttributes( $pParamHash ) {
+		if( $this->verifyAttributes( $pParamHash ) ) {
+			if( $optValId = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], 'products_options_values_id' ) ) {
+	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'name' => 'products_options_values_id', 'value' => $optValId ) );
+	        } else {
+				$pParamHash['attributes_store']['options_id'] = $pParamHash['options_id'];
+				$pParamHash['attributes_store']['products_id'] = $this->mProductsId;
+	            $this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'] );
+	        }
+		}
+/*
+// check for duplicate and block them
+$check_duplicate = $db->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ? and `options_id` = ? and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
+            $products_id = zen_db_prepare_input($_POST['products_id']);
+//            $values_id = zen_db_prepare_input($_POST['values_id']);
+
+        if ($check_duplicate->RecordCount() > 0) {
+          // do not add duplicates give a warning
+          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+        } else {
+          // Validate options_id and options_value_id
+          if (!zen_validate_options_to_options_value($_POST['options_id'], $_POST['values_id'])) {
+            // do not add invalid match
+            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+          } else {
+// add - update as record exists
+// attributes images
+// when set to none remove from database
+          if (isset($_POST['attributes_image']) && zen_not_null($_POST['attributes_image']) && ($_POST['attributes_image'] != 'none')) {
+            $attributes_image = zen_db_prepare_input($_POST['attributes_image']);
+          } else {
+            $attributes_image = '';
+          }
+
+          $attributes_image = new upload('attributes_image');
+          $attributes_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
+          if ($attributes_image->parse() && $attributes_image->save($_POST['overwrite'])) {
+            $attributes_image_name = $_POST['img_dir'] . $attributes_image->filename;
+          } else {
+            $attributes_image_name = (isset($_POST['attributes_previous_image']) ? $_POST['attributes_previous_image'] : '');
+          }
+			'attributes_image' => $attributes_image_name,
+*/
+
 	}
 
 	////
@@ -695,25 +758,25 @@ Skip deleting of images for now
 		// verify display of prices
 		switch (true) {
 			case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
-			// customer must be logged in to browse
-			return '';
-			break;
+				// customer must be logged in to browse
+				return '';
+				break;
 			case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
-			// customer may browse but no prices
-			return TEXT_LOGIN_FOR_PRICE_PRICE;
-			break;
+				// customer may browse but no prices
+				return TEXT_LOGIN_FOR_PRICE_PRICE;
+				break;
 			case (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM != ''):
-			// customer may browse but no prices
-			return TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM;
-			break;
+				// customer may browse but no prices
+				return TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM;
+				break;
 			case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customer_id'] == ''):
-			// customer must be logged in to browse
-			return TEXT_AUTHORIZATION_PENDING_PRICE;
-			break;
+				// customer must be logged in to browse
+				return TEXT_AUTHORIZATION_PENDING_PRICE;
+				break;
 			case ((CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and CUSTOMERS_APPROVAL_AUTHORIZATION != '3') and $_SESSION['customers_authorization'] > '0'):
-			// customer must be logged in to browse
-			return TEXT_AUTHORIZATION_PENDING_PRICE;
-			break;
+				// customer must be logged in to browse
+				return TEXT_AUTHORIZATION_PENDING_PRICE;
+				break;
 			default:
 			// proceed normally
 			break;
@@ -737,44 +800,44 @@ Skip deleting of images for now
 
 		$show_sale_discount = '';
 		if (SHOW_SALE_DISCOUNT_STATUS == '1' and ($display_special_price != 0 or $display_sale_price != 0)) {
-		if ($display_sale_price) {
-			if (SHOW_SALE_DISCOUNT == 1) {
-			if ($display_normal_price != 0) {
-				$show_discount_amount = number_format(100 - (($display_sale_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS);
-			} else {
-				$show_discount_amount = '';
-			}
-			$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $show_discount_amount . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
+			if ($display_sale_price) {
+				if (SHOW_SALE_DISCOUNT == 1) {
+				if ($display_normal_price != 0) {
+					$show_discount_amount = number_format(100 - (($display_sale_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS);
+				} else {
+					$show_discount_amount = '';
+				}
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $show_discount_amount . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
 
+				} else {
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_sale_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+				}
 			} else {
-			$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_sale_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+				if (SHOW_SALE_DISCOUNT == 1) {
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . number_format(100 - (($display_special_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS) . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
+				} else {
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_special_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+				}
 			}
-		} else {
-			if (SHOW_SALE_DISCOUNT == 1) {
-			$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . number_format(100 - (($display_special_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS) . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
-			} else {
-			$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_special_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
-			}
-		}
 		}
 
 		if ($display_special_price) {
-		$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . ' </span>';
-		if ($display_sale_price && $display_sale_price != $display_special_price) {
-			$show_special_price = '&nbsp;' . '<span class="productSpecialPriceSale">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
-			if ($product_check->fields['product_is_free'] == '1') {
-			$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . '<s>' . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
+			$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . ' </span>';
+			if ($display_sale_price && $display_sale_price != $display_special_price) {
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPriceSale">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				if ($product_check->fields['product_is_free'] == '1') {
+				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . '<s>' . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
+				} else {
+				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				}
 			} else {
-			$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				if ($product_check->fields['product_is_free'] == '1') {
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . '<s>' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
+				} else {
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				}
+				$show_sale_price = '';
 			}
-		} else {
-			if ($product_check->fields['product_is_free'] == '1') {
-			$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . '<s>' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
-			} else {
-			$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
-			}
-			$show_sale_price = '';
-		}
 		} else {
 			if ($display_sale_price) {
 				$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . ' </span>';
@@ -809,15 +872,14 @@ Skip deleting of images for now
 
 		// If Call for Price, Show it
 		if ($product_check->fields['product_is_call']) {
-		if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
-			$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
-		} else {
-			$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
+			if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
+				$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
+			} else {
+				$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
+			}
 		}
+		return $final_display_price . $free_tag . $call_tag;
 	}
-
-	return $final_display_price . $free_tag . $call_tag;
-}
 
 	function expungeNotification( $pCustomersId, $pProductsId=NULL ) {
 		if( empty( $pProductsId ) ) {
@@ -854,7 +916,7 @@ Skip deleting of images for now
 					WHERE patrib.`products_id`= ? AND popt.`language_id` = ? " .
 					$options_order_by;
 
-			if( $this->mOptions = $this->mDb->GetAssoc($sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) ) ) {
+			if( $this->mOptions = $this->mDb->GetAssoc($sql, array( $this->mProductsId, (int)$_SESSION['languages_id'] ) ) ) {
 				if ( PRODUCTS_OPTIONS_SORT_BY_PRICE =='1' ) {
 					$order_by= ' ORDER BY pa.`products_options_sort_order`, pov.`products_options_values_name`';
 				} else {
@@ -870,7 +932,7 @@ Skip deleting of images for now
 			        if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId, $_SESSION['languages_id'] ) ) ) {
 						$this->mOptions[$optionsId]['values'] = array();
 						while( !$rs->EOF ) {
-							array_push( $this->mOptions[$optionsId]['values'], $rs->fields );
+							$this->mOptions[$optionsId]['values'][$rs->fields['products_options_values_id']] = $rs->fields;
 							$rs->MoveNext();
 						}
 			        }
@@ -915,6 +977,18 @@ Skip deleting of images for now
 			$ret = $this->mDb->getOne($query, array( $pProductsId, $pCustomersId ) );
 		}
 		return $ret;
+	}
+
+	function hasReviews() {
+		if( $this->isValid() ) {
+			// if review must be approved or disabled do not show review
+			$review_status = " AND r.status = '1'";
+			$sql = "SELECT count(*) as count
+					FROM " . TABLE_REVIEWS . " r INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON (r.`reviews_id` = rd.`reviews_id`)
+					WHERE r.`products_id` = ? AND rd.`languages_id` = ?" . $review_status;
+
+			return( $this->mDb->GetOne( $sql, array( $this->mProductsId, $_SESSION['languages_id'] ) ) );
+		}
 	}
 
 	function isFree() {

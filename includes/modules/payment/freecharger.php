@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freecharger.php,v 1.2 2005/08/24 02:53:52 lsces Exp $
+// $Id: freecharger.php,v 1.3 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class freecharger {
@@ -29,16 +29,14 @@
       $this->code = 'freecharger';
       $this->title = MODULE_PAYMENT_FREECHARGER_TEXT_TITLE;
       $this->description = MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_PAYMENT_FREECHARGER_SORT_ORDER;
-      $this->enabled = ((MODULE_PAYMENT_FREECHARGER_STATUS == 'True') ? true : false);
+      $this->sort_order = ( defined( 'MODULE_PAYMENT_FREECHARGER_SORT_ORDER' ) ? MODULE_PAYMENT_FREECHARGER_SORT_ORDER : NULL );
+      $this->enabled = ((defined( 'MODULE_PAYMENT_FREECHARGER_STATUS' ) && MODULE_PAYMENT_FREECHARGER_STATUS == 'True') ? true : false);
 
-      if ((int)MODULE_PAYMENT_FREECHARGER_ORDER_STATUS_ID > 0) {
+      if (defined( 'MODULE_PAYMENT_FREECHARGER_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_FREECHARGER_ORDER_STATUS_ID > 0) {
         $this->order_status = MODULE_PAYMENT_FREECHARGER_ORDER_STATUS_ID;
-        $payment='freecharger';
+        $this->payment='freecharger';
       } else {
-        if ($payment=='freecharger') {
-          $payment='';
-        }
+          $this->payment='';
       }
 
       if (is_object($order)) $this->update_status();

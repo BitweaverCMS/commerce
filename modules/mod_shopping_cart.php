@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.9 2005/11/03 15:12:27 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.10 2005/11/15 22:01:22 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies, $gBitUser;
 
@@ -56,15 +56,15 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
       $content .= '<tr><td align="right" valign="top" class="infoboxcontents">';
 
-      if (($_SESSION['new_products_id_in_cart']) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
         $content .= '<span class="newItemInCart">';
       } else {
         $content .= '<span class="infoboxcontents">';
       }
 
-      $content .= $products[$i]['quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrl( $products[$i]['id'] ) . '">';
+      $content .= $products[$i]['quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrl( zen_get_prid( $products[$i]['id'] ) ) . '">';
 
-      if (($_SESSION['new_products_id_in_cart']) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
         $content .= '<span class="newItemInCart">';
       } else {
         $content .= '<span class="infoboxcontents">';
@@ -72,7 +72,7 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
 
       $content .= $products[$i]['name'] . '</span></a></td></tr>';
 
-      if (($_SESSION['new_products_id_in_cart']) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
         $_SESSION['new_products_id_in_cart'] = '';
       }
     }

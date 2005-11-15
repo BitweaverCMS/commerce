@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.5 2005/11/03 03:17:39 spiderr Exp $
+// $Id: ups.php,v 1.6 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class ups {
@@ -25,7 +25,7 @@
 
 // class constructor
     function ups() {
-      global $order, $db, $template;
+      global $order, $db, $template, $current_page_base;
 
       $this->code = 'ups';
       $this->title = MODULE_SHIPPING_UPS_TEXT_TITLE;

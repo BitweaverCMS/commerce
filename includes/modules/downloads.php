@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.7 2005/10/31 22:53:09 lsces Exp $
+// $Id: downloads.php,v 1.8 2005/11/15 22:01:21 spiderr Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
@@ -26,8 +26,7 @@
                      where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                      order by `orders_id` desc";
 
-    $orders_lookup = $db->getOne($orders_lookup_query);
-    $last_order = $orders_lookup->fields['orders_id'];
+    $last_order = $db->getOne($orders_lookup_query);
   } else {
     $last_order = $_GET['order_id'];
   }

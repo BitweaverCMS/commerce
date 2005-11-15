@@ -17,22 +17,20 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.5 2005/11/02 22:33:01 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.6 2005/11/15 22:01:22 spiderr Exp $
 //
-  require(DIR_FS_CLASSES . 'http_client.php');
+require(DIR_FS_CLASSES . 'http_client.php');
 
-	define( 'META_TAG_TITLE', tra( 'Step 1 of 3 - Delivery Information' ) );
-
-  global $gBitCustomer;
+global $gBitCustomer, $order;
 
 // if there is nothing in the customers cart, redirect them to the shopping cart page
-  if ($_SESSION['cart']->count_contents() <= 0) {
-    zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-  }
+if ($_SESSION['cart']->count_contents() <= 0) {
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
 // if the order contains only virtual products, forward the customer to the billing page as
 // a shipping address is not needed
-  if ($order->content_type == 'virtual') {
+  if ( is_object( $order ) && $order->content_type == 'virtual') {
     $_SESSION['shipping'] = false;
     $_SESSION['sendto'] = false;
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
@@ -173,6 +171,11 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 //			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 		}
 	} elseif( !$gBitUser->isRegistered() ) {
+	} elseif( $_REQUEST['change_address'] || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+		if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
+			$gBitSmarty->assign( 'addresses', $addresses );
+		}
+		$gBitSmarty->assign( 'changeAddress', TRUE );
 	} elseif( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
 		if (zen_not_null($_POST['comments'])) {
 			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
@@ -212,13 +215,6 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			$_SESSION['shipping'] = false;
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
-	}
-
-	if( $_REQUEST['change_address'] || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
-		if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
-			$gBitSmarty->assign( 'addresses', $addresses );
-		}
-		$gBitSmarty->assign( 'changeAddress', TRUE );
 	} else {
 		// get all available shipping quotes
 		$quotes = $shipping_modules->quote();

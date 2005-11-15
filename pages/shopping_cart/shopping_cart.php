@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.5 2005/11/10 22:02:09 spiderr Exp $
+// $Id: shopping_cart.php,v 1.6 2005/11/15 22:01:23 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -75,6 +75,7 @@
     $products = $_SESSION['cart']->get_products();
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
 // Push all attributes information in an array
+		$prid =  zen_get_prid( $products[$i]['id'] );
       if (isset($products[$i]['attributes']) && is_array($products[$i]['attributes'])) {
           if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
             $options_order_by= ' order by popt.`products_options_sort_order`';
@@ -87,7 +88,7 @@
           $attributes = "select popt.`products_options_name`, poval.`products_options_values_name`,
                                      pa.`options_values_price`, pa.`price_prefix`
                          from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                         where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
+                         where pa.`products_id` = '" .  $prid . "'
                          and pa.`options_id` = '" . $option . "'
                          and pa.`options_id` = popt.`products_options_id`
                          and pa.`options_values_id` = '" . $value . "'
@@ -120,6 +121,7 @@
     }
 
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
+		$prid =  zen_get_prid( $products[$i]['id'] );
       if (($i/2) == floor($i/2)) {
         $info_box_contents[] = array('params' => 'class="even"');
       } else {
@@ -136,7 +138,7 @@
 
       switch (true) {
         case (SHOW_SHOPPING_CART_DELETE == 1):
-          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['cart_hash']) . '"> ' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT) . '</a> ';
+          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '"> ' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT) . '</a> ';
           $zc_del_checkbox = '';
           break;
         case (SHOW_SHOPPING_CART_DELETE == 2):
@@ -144,7 +146,7 @@
           $zc_del_checkbox = zen_draw_checkbox_field('cart_delete[]', $products[$i]['id']);
           break;
         default:
-          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['cart_hash']) . '">' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT, NULL, NULL, 'align=center') . '</a> ';
+          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '">' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT, NULL, NULL, 'align=center') . '</a> ';
           $zc_del_checkbox = zen_draw_checkbox_field('cart_delete[]', $products[$i]['id']);
           break;
       }
@@ -155,8 +157,8 @@
 
       $products_name = '<table border="0"  cellspacing="2" cellpadding="2">' .
                        '  <tr>' .
-                       '    <td class="productListing-data" align="center" width="100"><a href="' . zen_href_link(zen_get_info_page($products[$i]['id']), 'products_id=' . $products[$i]['id']) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image( CommerceProduct::getImageUrl( $products[$i]['id'], 'avatar' ), $products[$i]['name']) : '') . '</a></td>' .
-                       '    <td class="productListing-data" valign="top"><a href="' . zen_href_link(zen_get_info_page($products[$i]['id']), 'products_id=' . $products[$i]['id']) . '"><span class="cartproductname">' . $products[$i]['name'] . '</span></a>';
+                       '    <td class="productListing-data" align="center" width="100"><a href="' . CommerceProduct::getDisplayUrl( $prid ) . '">' . (IMAGE_SHOPPING_CART_STATUS == 1 ? zen_image( CommerceProduct::getImageUrl(  $prid, 'avatar' ), $products[$i]['name']) : '') . '</a></td>' .
+                       '    <td class="productListing-data" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $prid ) . '"><span class="cartproductname">' . $products[$i]['name'] . '</span></a>';
 
       if (STOCK_CHECK == 'true') {
         $stock_check = zen_check_stock($products[$i]['id'], $products[$i]['quantity']);
@@ -181,27 +183,27 @@
       $info_box_contents[$cur_row][] = array('params' => 'class="productListing-data"',
                                              'text' => $products_name);
 
-      $show_products_quantity_max = zen_get_products_quantity_order_max($products[$i]['id']);
+      $show_products_quantity_max = zen_get_products_quantity_order_max( $prid );
 
-      if ($show_products_quantity_max == 1 or zen_get_products_qty_box_status($products[$i]['id']) == 0) {
+      if ($show_products_quantity_max == 1 or zen_get_products_qty_box_status( $prid ) == 0) {
         if (SHOW_SHOPPING_CART_UPDATE == 1 or SHOW_SHOPPING_CART_UPDATE == 3) {
         $info_box_contents[$cur_row][] = array('align' => 'center',
                                                'params' => 'class="productListing-data" valign="middle"',
-                                               'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display((int)$products[$i]['id']) . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT));
+                                               'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ) . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT));
         } else {
         $info_box_contents[$cur_row][] = array('align' => 'center',
                                                'params' => 'class="productListing-data" valign="middle"',
-                                               'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display((int)$products[$i]['id']));
+                                               'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ));
         }
       } else {
         if (SHOW_SHOPPING_CART_UPDATE == 1 or SHOW_SHOPPING_CART_UPDATE == 3) {
         $info_box_contents[$cur_row][] = array('align' => 'center',
                                                'params' => 'class="productListing-data" valign="middle"',
-                                               'text' => zen_draw_input_field('cart_quantity[]', $products[$i]['quantity'], 'size="4"') . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT) . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . '<br />' . zen_get_products_quantity_min_units_display((int)$products[$i]['id']));
+                                               'text' => zen_draw_input_field('cart_quantity[]', $products[$i]['quantity'], 'size="4"') . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT) . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . '<br />' . zen_get_products_quantity_min_units_display( $prid));
                                               } else {
         $info_box_contents[$cur_row][] = array('align' => 'center',
                                                'params' => 'class="productListing-data" valign="middle"',
-                                               'text' => zen_draw_input_field('cart_quantity[]', $products[$i]['quantity'], 'size="4"') . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . '<br />' . zen_get_products_quantity_min_units_display((int)$products[$i]['id']));
+                                               'text' => zen_draw_input_field('cart_quantity[]', $products[$i]['quantity'], 'size="4"') . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . '<br />' . zen_get_products_quantity_min_units_display( $prid));
                                               }
       }
 

@@ -245,6 +245,11 @@ BITCOMMERCE_DB_PREFIX.'products' => "
 			  , CONSTRAINT prod_manf_id_ref FOREIGN KEY ( manufacturers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers( manufacturers_id )'
 ",
 
+BITCOMMERCE_DB_PREFIX.'products_options_types' => "
+  products_options_types_id I4,
+  products_options_types_name C(32)
+",
+
 BITCOMMERCE_DB_PREFIX.'products_options' => "
   products_options_id I4,
   language_id I4 NOTNULL default '1',
@@ -258,11 +263,26 @@ BITCOMMERCE_DB_PREFIX.'products_options' => "
   products_options_images_style I1 default '0'
 ",
 
+BITCOMMERCE_DB_PREFIX.'products_options_values' => "
+  products_options_values_id I4,
+  language_id I4 NOTNULL default '1',
+  products_options_values_name C(64),
+  products_ov_sort_order I4
+",
+
+BITCOMMERCE_DB_PREFIX.'prd_opt_val_to_prd_opt' => "
+  prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
+  products_options_id I4,
+  products_options_values_id I4
+  CONSTRAINT ', CONSTRAINT prd_opt_val_to_prd_opt_ref FOREIGN KEY ( products_options_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options( products_options_id ),
+  				CONSTRAINT prd_opt_val_to_prd_val_ref FOREIGN KEY ( products_options_values_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options_values( products_options_values_id )'
+",
+
 BITCOMMERCE_DB_PREFIX.'products_attributes' => "
   products_attributes_id I4 PRIMARY AUTO,
   products_id I4 NOTNULL,
-  options_id I4,
-  options_values_id I4,
+  options_id I4 NOTNULL,
+  options_values_id I4 NOTNULL,
   options_values_price N(15,4),
   price_prefix C(1),
   products_options_sort_order I4,
@@ -286,7 +306,9 @@ BITCOMMERCE_DB_PREFIX.'products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_required I1
-  CONSTRAINT ', CONSTRAINT prod_attr_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT prod_attr_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id ),
+  				CONSTRAINT prod_attr_options_id_ref FOREIGN KEY ( options_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options( products_options_id ),
+  				CONSTRAINT prod_attr_options_val_id_ref FOREIGN KEY ( options_values_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options_values( products_options_values_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_attributes_dld' => "
@@ -320,24 +342,6 @@ BITCOMMERCE_DB_PREFIX.'products_notifications' => "
   date_added T
   CONSTRAINT ', CONSTRAINT prod_noti_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
               , CONSTRAINT prod_noti_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
-",
-
-BITCOMMERCE_DB_PREFIX.'products_options_types' => "
-  products_options_types_id I4,
-  products_options_types_name C(32)
-",
-
-BITCOMMERCE_DB_PREFIX.'products_options_values' => "
-  products_options_values_id I4,
-  language_id I4 NOTNULL default '1',
-  products_options_values_name C(64),
-  products_ov_sort_order I4
-",
-
-BITCOMMERCE_DB_PREFIX.'prd_opt_val_to_prd_opt' => "
-  prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
-  products_options_id I4,
-  products_options_values_id I4
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_to_categories' => "

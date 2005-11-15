@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.27 2005/10/31 16:20:01 lsces Exp $
+// $Id: application_top.php,v 1.28 2005/11/15 22:01:20 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -177,7 +177,7 @@ function clean_input( &$pArray ) {
 }
 
 // validate products_id for search engines and bookmarks, etc.
-  if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && $_SESSION['check_valid'] != 'false') {
+  if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && !empty( $_SESSION['check_valid'] ) && $_SESSION['check_valid'] != 'false') {
     $check_valid = zen_products_id_valid($_GET['products_id']);
     if (!$check_valid) {
       $_GET['main_page'] = zen_get_info_page( $_GET['products_id'] );
@@ -342,7 +342,7 @@ function clean_input( &$pArray ) {
                                 if ( in_array($_POST['products_id'][$i], (is_array($_REQUEST['cart_delete']) ? $_REQUEST['cart_delete'] : array())) or $_POST['cart_quantity'][$i]==0) {
                                   $_SESSION['cart']->remove($_POST['products_id'][$i]);
                                 } else {
-                                  $add_max = zen_get_products_quantity_order_max($_POST['products_id'][$i]);
+                                  $add_max = zen_get_products_quantity_order_max( zen_get_prid( $_POST['products_id'][$i] ) );
                                   $cart_qty = $_SESSION['cart']->in_cart_mixed($_POST['products_id']);
                                   $new_qty = $_POST['cart_quantity'][$i];
                                   if (($add_max == 1 and $cart_qty == 1)) {

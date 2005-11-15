@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.5 2005/11/02 22:26:54 spiderr Exp $
+// $Id: usps.php,v 1.6 2005/11/15 22:01:21 spiderr Exp $
 //
 
 class usps {
@@ -25,7 +25,7 @@ class usps {
 
 // class constructor
 	function usps() {
-		global $order, $db, $template;
+		global $order, $db, $template, $current_page_base;
 
 		$this->code = 'usps';
 		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;

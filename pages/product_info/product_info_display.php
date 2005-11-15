@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.4 2005/11/10 22:02:09 spiderr Exp $
+// $Id: product_info_display.php,v 1.5 2005/11/15 22:01:23 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -70,7 +70,7 @@ if( !empty( $debug_on ) ) {
 	<h1><?=$products_name;?></h1>
 </div>
 
-<table border="1" width="100%" cellspacing="2" cellpadding="2">
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
@@ -84,7 +84,7 @@ if( !empty( $debug_on ) ) {
     <td align="center" class="pageHeading">
 <?php
 // base price
-  if( !empty( $show_onetime_charges_description ) && $show_onetime_charges_description == 'true') {
+  if( !empty( $productSettings['show_onetime_charges_description'] ) && $productSettings['show_onetime_charges_description'] == 'true') {
     $one_time = '<span class="smallText">' . TEXT_ONETIME_CHARGE_SYMBOL . TEXT_ONETIME_CHARGE_DESCRIPTION . '</span><br />';
   } else {
     $one_time = '';
@@ -172,11 +172,11 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
   <tr>
     <td class="main" align="left" valign="bottom">
 <?php
-  if ($reviews->fields['count'] > 0 or SHOW_PRODUCT_INFO_REVIEWS == '1') {
+  if( SHOW_PRODUCT_INFO_REVIEWS == '1' ) {
     echo '<table align="left">';
     echo '  <tr>';
     echo '    <td class="main" align="center" valign="bottom">';
-    echo (SHOW_PRODUCT_INFO_REVIEWS_COUNT == '1' ? TEXT_CURRENT_REVIEWS . ' ' . $reviews->fields['count'] : '&nbsp;') . '<br />';
+    echo (SHOW_PRODUCT_INFO_REVIEWS_COUNT == '1' ? TEXT_CURRENT_REVIEWS . ' ' . $gBitProduct->hasReviews() : '&nbsp;') . '<br />';
     echo (SHOW_PRODUCT_INFO_REVIEWS == '1' ? '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params()) . '">' . zen_image_button(BUTTON_IMAGE_REVIEWS, BUTTON_REVIEWS_ALT) . '</a>' : '&nbsp;');
     echo '    </td>';
     echo '  </tr>';

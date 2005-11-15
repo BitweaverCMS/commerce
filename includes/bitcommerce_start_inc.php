@@ -174,6 +174,9 @@
 			$_SESSION['cart']->restore_contents();
 		}
 	}
+	if( !isset( $_SESSION['cc_id'] ) ) {
+		$_SESSION['cc_id'] = NULL;
+	}
 
 // include currencies class and create an instance
   require_once(DIR_FS_CLASSES . 'currencies.php');

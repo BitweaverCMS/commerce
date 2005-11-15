@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment.php,v 1.1 2005/10/06 19:38:27 spiderr Exp $
+// $Id: checkout_payment.php,v 1.2 2005/11/15 22:01:22 spiderr Exp $
 //
 ?>
 <?php echo $payment_modules->javascript_validation(); ?>
@@ -120,7 +120,7 @@
     <td class="plainBoxHeading" colspan="2"><?php echo $selection[$i]['module']; ?></td>
     <td class="main" align="right">
 <?php
-    if (MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
+    if( defined( 'MODULE_ORDER_TOTAL_COD_STATUS' ) && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
       echo TEXT_INFO_COD_FEES;
     } else {
       // echo 'WRONG ' . $selection[$i]['id'];
@@ -181,27 +181,29 @@
   </tr>
 <?php
     for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
+    	if( !empty( $selection[$i] ) ) {
 ?>
   <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
     <td class="main" colspan="2"><?php echo $selection[$i]['module']; ?></td>
-    <td class="main" colspan="2"align="right" colspan="2"><?php echo $selection[$i]['checkbox']; ?></td>
+    <td class="main" colspan="2"align="right" colspan="2"><?php if( !empty( $selection[$i]['checkbox'] ) ) { echo $selection[$i]['checkbox']; } ?></td>
   </tr>
 <?php
-      if ($_GET['credit_class_error_code'] == $selection[$i]['id']) {
+			if( !empty($_GET['credit_class_error_code'] ) && $_GET['credit_class_error_code'] == $selection[$i]['id']) {
 ?>
   <tr>
     <td class="messageStackError" width="100%" valign="top" colspan="3"><?php echo zen_output_string_protected($_GET['credit_class_error']); ?></td>
   </tr>
 <?php
-      }
-      for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
+			}
+			for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
 ?>
   <tr>
     <td class="main"colspan="2"><?php echo $selection[$i]['fields'][$j]['title']; ?></td>
     <td class="main" colspan="1"><?php echo $selection[$i]['fields'][$j]['field']; ?></td>
   </tr>
 <?php
-      }
+			}
+      	}
     }
   }
 ?>

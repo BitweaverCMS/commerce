@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.4 2005/10/31 16:20:01 lsces Exp $
+// $Id: ot_coupon.php,v 1.5 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class ot_coupon {
@@ -42,25 +42,26 @@
 
   function process() {
     global $order, $currencies, $db;
-    $od_amount = $this->calculate_deductions($this->get_order_total());
-    $this->deduction = $od_amount['total'];
-    if ($od_amount['total'] > 0) {
-      while (list($key, $value) = each($order->info['tax_groups'])) {
-        $tax_rate = zen_get_tax_rate_from_desc($key);
-        if ($od_amount[$key]) {
-          $order->info['tax_groups'][$key] -= $od_amount[$key];
-          $order->info['total'] -=  $od_amount[$key];
-        }
-      }
-      if ($od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
-      $sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
-      $zq_coupon_code = $db->Execute($sql);
-      $this->coupon_code = $zq_coupon_code->fields['coupon_code'];
-      $order->info['total'] = $order->info['total'] - $od_amount['total'];
-      $this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
-                     'text' => '-' . $currencies->format($od_amount['total']),
-                     'value' => $od_amount['total']);
-    }
+    if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
+		$this->deduction = $od_amount['total'];
+		if ($od_amount['total'] > 0) {
+		  while (list($key, $value) = each($order->info['tax_groups'])) {
+			$tax_rate = zen_get_tax_rate_from_desc($key);
+			if ($od_amount[$key]) {
+			  $order->info['tax_groups'][$key] -= $od_amount[$key];
+			  $order->info['total'] -=  $od_amount[$key];
+			}
+		  }
+		  if ($od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
+		  $sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
+		  $zq_coupon_code = $db->Execute($sql);
+		  $this->coupon_code = $zq_coupon_code->fields['coupon_code'];
+		  $order->info['total'] = $order->info['total'] - $od_amount['total'];
+		  $this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
+						 'text' => '-' . $currencies->format($od_amount['total']),
+						 'value' => $od_amount['total']);
+		}
+	}
   }
 
   function selection_test() {
@@ -184,7 +185,8 @@ function update_credit_account($i) {
   function calculate_deductions($order_total) {
     global $db, $order;
     $tax_address = zen_get_tax_locations();
-    $od_amount = array();
+    $od_amount['total'] = 0;
+    $od_amount['tax'] = 0;
     if ($_SESSION['cc_id']) {
       $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'");
       if ($coupon->RecordCount() > 0 ) {

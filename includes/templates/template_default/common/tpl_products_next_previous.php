@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.8 2005/10/31 16:20:01 lsces Exp $
+// $Id: tpl_products_next_previous.php,v 1.9 2005/11/15 22:01:22 spiderr Exp $
 //
   /*
 
@@ -86,6 +86,9 @@
 			$products_ids->MoveNext();
 		}
 
+		$previous = NULL;
+		$next_item = NULL;
+		$position = NULL;
 		// if invalid product id skip
 		if (is_array($id_array)) {
 			reset ($id_array);
@@ -94,9 +97,9 @@
 			if ($value == (int)$_GET['products_id']) {
 				$position = $counter + 1;
 				if ($key == 0) {
-				$previous = -1; // it was the first to be found
+					$previous = -1; // it was the first to be found
 				} else {
-				$previous = $id_array[$key - 1];
+					$previous = $id_array[$key - 1];
 				}
 				if ($id_array[$key + 1]) {
 				$next_item = $id_array[$key + 1];

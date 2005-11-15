@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.7 2005/09/13 13:38:25 spiderr Exp $
+// $Id: ot_gv.php,v 1.8 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class ot_gv {
@@ -37,7 +37,6 @@
       $this->calculate_tax = MODULE_ORDER_TOTAL_GV_CALC_TAX;
       $this->credit_tax = MODULE_ORDER_TOTAL_GV_CREDIT_TAX;
       $this->tax_class  = MODULE_ORDER_TOTAL_GV_TAX_CLASS;
-      $this->show_redeem_box = MODULE_ORDER_TOTAL_GV_REDEEM_BOX;
       $this->credit_class = true;
 	  $gvAmount = $currencies->format( $this->user_has_gv_account( $_SESSION['customer_id'] ) );
 		if (!zen_not_null(ltrim($_SESSION['cot_gv'], ' 0')) || $_SESSION['cot_gv'] == '0') {
@@ -79,6 +78,8 @@
 
     function pre_confirmation_check($order_total) {
       global $order;
+		$od_amount = 0;
+		$tod_amount = 0;
       // clean out negative values and strip common currency symbols
       $_SESSION['cot_gv'] = str_replace(array('$','%','#','','','',''), '', $_SESSION['cot_gv']);
       $_SESSION['cot_gv'] = abs($_SESSION['cot_gv']);
@@ -105,9 +106,8 @@
     function use_credit_amount() {
 //      $_SESSION['cot_gv'] = false;
       if ($this->selection_test()) {
-        $output_string = $this->checkbox;
+        return $this->checkbox;
       }
-      return $output_string;
     }
 
     function update_credit_account($i) {
@@ -141,6 +141,7 @@
 
     function credit_selection() {
       global $db, $currencies;
+		$selection = array();
       $gv_query = $db->Execute("select coupon_id from " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
       if ($gv_query->RecordCount() > 0 || $this->use_credit_amount()) {
         $selection = array('id' => $this->code,
@@ -168,8 +169,10 @@
 
     function collect_posts() {
       global $db, $currencies;
-      if (!$_POST['cot_gv']) $_SESSION['cot_gv'] = '0.00';
-      if ($_POST['gv_redeem_code']) {
+    	if ( empty( $_POST['cot_gv'] ) ) {
+			 $_SESSION['cot_gv'] = '0.00';
+		}
+      if ( !empty( $_POST['gv_redeem_code'] ) ) {
         $gv_result = $db->Execute("select `coupon_id`, `coupon_type`, `coupon_amount` from " . TABLE_COUPONS . " where `coupon_code` = '" . $_POST['gv_redeem_code'] . "'");
         if ($gv_result->RecordCount() > 0) {
           $redeem_query = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
@@ -206,7 +209,7 @@
           zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
        }
      }
-     if ($_POST['submit_redeem_x'] && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
+     if ( isset( $_POST['submit_redeem_x'] ) && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
    }
 
     function calculate_credit($amount) {
@@ -225,6 +228,7 @@
     function calculate_tax_deduction($amount, $od_amount, $method, $finalise = false) {
       global $order;
       $tax_address = zen_get_tax_locations();
+		$tod_amount = 0;
       switch ($method) {
         case 'Standard':
         $ratio1 = zen_round($od_amount / $amount,2);

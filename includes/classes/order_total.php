@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order_total.php,v 1.4 2005/10/06 21:01:47 spiderr Exp $
+// $Id: order_total.php,v 1.5 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class order_total {
@@ -100,7 +100,7 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ($GLOBALS[$class]->credit_class ) {
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $selection = $GLOBALS[$class]->credit_selection();
             if (is_array($selection)) $selection_array[] = $selection;
           }
@@ -140,9 +140,11 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( $GLOBALS[$class]->credit_class ) {
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $post_var = 'c' . $GLOBALS[$class]->code;
-            if ($_POST[$post_var]) $_SESSION[$post_var] = $_POST[$post_var];
+            if ( !empty( $_POST[$post_var] ) ) {
+				$_SESSION[$post_var] = $_POST[$post_var];
+			}
             $GLOBALS[$class]->collect_posts();
           }
         }
@@ -162,7 +164,7 @@
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
           $order_total=$this->get_order_total_main($class,$order_total);
-          if ( $GLOBALS[$class]->credit_class ) {
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
 //echo $total_deductions . '#'.$order_total;
             $order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);

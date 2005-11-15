@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.5 2005/10/06 21:01:47 spiderr Exp $
+// $Id: payment.php,v 1.6 2005/11/15 22:01:21 spiderr Exp $
 //
 
   class payment {
@@ -126,7 +126,7 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ($GLOBALS[$class]->enabled) {
+          if ( !empty($GLOBALS[$class]) && $GLOBALS[$class]->enabled) {
             $js .= $GLOBALS[$class]->javascript_validation();
           }
         }
@@ -155,7 +155,7 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ($GLOBALS[$class]->enabled) {
+          if ( !empty( $GLOBALS[$class] ) && $GLOBALS[$class]->enabled) {
             $selection = $GLOBALS[$class]->selection();
             if (is_array($selection)) $selection_array[] = $selection;
           }

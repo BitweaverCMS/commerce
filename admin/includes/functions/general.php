@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.31 2005/11/10 13:46:53 spiderr Exp $
+//  $Id: general.php,v 1.32 2005/11/15 22:01:20 spiderr Exp $
 //
 
 ////
@@ -331,13 +331,6 @@
     }
 
     return $uprid;
-  }
-
-
-  function zen_get_prid($uprid) {
-    $pieces = explode('{', $uprid);
-
-    return $pieces[0];
   }
 
 

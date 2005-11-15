@@ -17,10 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.26 2005/11/10 06:53:37 spiderr Exp $
+// $Id: order.php,v 1.27 2005/11/15 22:01:21 spiderr Exp $
 //
-
-require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 
 class order extends BitBase {
   	var $mOrdersId;
@@ -242,7 +240,7 @@ class order extends BitBase {
 
         $index++;
         $orders_products->MoveNext();
-      }
+       }
     }
 
     function cart() {
@@ -338,22 +336,21 @@ class order extends BitBase {
 
       $class =& $_SESSION['payment'];
 
-      if (isset($_SESSION['cc_id'])) {
-        $coupon_code_query = "select coupon_code
-                              from " . TABLE_COUPONS . "
-                              where coupon_id = '" . (int)$_SESSION['cc_id'] . "'";
+		$coupon_code = NULL;
+      if( !empty( $_SESSION['cc_id'] ) ) {
+        $coupon_code_query = "SELECT `coupon_code`
+                              FROM " . TABLE_COUPONS . "
+                              WHERE `coupon_id` = ?";
 
-        $coupon_code = $db->Execute($coupon_code_query);
-
-
+        $coupon_code = $db->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
       }
 
       $this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
-                          'currency' => $_SESSION['currency'],
-                          'currency_value' => $currencies->currencies[$_SESSION['currency']]['value'],
-                          'payment_method' => $GLOBALS[$class]->title,
-                          'payment_module_code' => $GLOBALS[$class]->code,
-                          'coupon_code' => $coupon_code->fields['coupon_code'],
+                          'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
+                          'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['value'] : NULL,
+                          'payment_method' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->title : '',
+                          'payment_module_code' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
+                          'coupon_code' => $coupon_code,
 //                          'cc_type' => (isset($GLOBALS['cc_type']) ? $GLOBALS['cc_type'] : ''),
 //                          'cc_owner' => (isset($GLOBALS['cc_owner']) ? $GLOBALS['cc_owner'] : ''),
 //                          'cc_number' => (isset($GLOBALS['cc_number']) ? $GLOBALS['cc_number'] : ''),
@@ -448,6 +445,7 @@ class order extends BitBase {
         if ($products[$i]['attributes']) {
           $subindex = 0;
           reset($products[$i]['attributes']);
+vd( $products[$i] );
           while (list($option, $value) = each($products[$i]['attributes'])) {
 /*
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
@@ -620,6 +618,7 @@ class order extends BitBase {
     function  create_add_products($zf_insert_id, $zf_mode = false) {
       global $db, $currencies, $order_total_modules, $order_totals;
 
+		$this->mDb->StartTrans();
 // initialized for the email confirmation
 
       $this->products_ordered = '';
@@ -731,7 +730,7 @@ class order extends BitBase {
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                 on pa.`products_attributes_id` = pad.`products_attributes_id`
-                               where pa.`products_id` = '" . zen_db_input($this->products[$i]['id']) . "'
+                               where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ) . "'
                                 and pa.`options_id` = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
                                 and pa.`options_id` = popt.`products_options_id`
                                 and pa.`options_values_id` = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
@@ -751,7 +750,7 @@ class order extends BitBase {
                                pa.`attributes_price_words`, pa.`attributes_price_words_free`,
                                pa.`attributes_price_letters`, pa.`attributes_price_letters_free`
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                               where pa.`products_id` = '" . $this->products[$i]['id'] . "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
+                               where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
            }
 
 //clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
@@ -766,8 +765,8 @@ class order extends BitBase {
                                    'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
                                    'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
                                    'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
-                                   'attributes_discounted' => $attributes_values->fields['attributes_discounted'],
-                                   'attributes_price_base_inc' => $attributes_values->fields['attributes_price_base_inc'],
+                                   'attributes_discounted' => (int)$attributes_values->fields['attributes_discounted'],
+                                   'attributes_price_base_inc' => (int)$attributes_values->fields['attributes_price_base_inc'],
                                    'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
                                    'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
                                    'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
@@ -822,6 +821,7 @@ class order extends BitBase {
     }
 
      $order_total_modules->apply_credit();//ICW ADDED FOR CREDIT CLASS SYSTEM
+		$this->mDb->CompleteTrans();
     }
 
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.22 2005/10/31 21:15:13 lsces Exp $
+// $Id: functions_general.php,v 1.23 2005/11/15 22:01:21 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -464,18 +464,6 @@
 
 
 ////
-// Return a product ID from a product ID with attributes
-  function zen_get_prid($uprid) {
-    $ret = 0;
-  	if( !empty( $uprid ) ) {
-      $pieces = explode(':', $uprid);
-	  $ret = $pieces[0];
-	}
-    return $ret;
-  }
-
-
-////
 //! Send email (text/html) using MIME
 // This is the old central mail function. The SMTP Server should be configured correctly in php.ini
 // Parameters:
@@ -536,23 +524,21 @@
 
 ////
   function zen_count_modules($modules = '') {
-    $count = 0;
+	$count = 0;
 
-    if (empty($modules)) return $count;
+	if (empty($modules)) return $count;
 
-    $modules_array = split(';', $modules);
+	$modules_array = split(';', $modules);
 
-    for ($i=0, $n=sizeof($modules_array); $i<$n; $i++) {
-      $class = substr($modules_array[$i], 0, strrpos($modules_array[$i], '.'));
+	for ($i=0, $n=sizeof($modules_array); $i<$n; $i++) {
+		$class = substr($modules_array[$i], 0, strrpos($modules_array[$i], '.'));
 
-      if (is_object($GLOBALS[$class])) {
-        if ($GLOBALS[$class]->enabled) {
-          $count++;
-        }
-      }
-    }
+		if ( !empty( $GLOBALS[$class] ) && is_object($GLOBALS[$class]) && !empty( $GLOBALS[$class]->enabled ) ) {
+			$count++;
+		}
+	}
 
-    return $count;
+	return $count;
   }
 
 ////
@@ -694,6 +680,7 @@
 ////
   function is_product_valid($product_id, $coupon_id) {
     global $db;
+	$product_valid = false;
 	if( is_numeric( $coupon_id ) ) {
 		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
 						WHERE `coupon_id` = ?
@@ -710,32 +697,32 @@
 		if ($coupons->RecordCount() == 0) return true;
 		$product_valid = true;
 		while (!$coupons->EOF) {
-		if (($coupons->fields['product_id'] != 0) && ($coupons->fields['product_id'] != $product_id)) {
-			$product_valid = false;
-		}
+			if (($coupons->fields['product_id'] != 0) && ($coupons->fields['product_id'] != $product_id)) {
+				$product_valid = false;
+			}
 
-		if (($coupons->fields['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
-			$product_valid = false;
-		}
+			if (($coupons->fields['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+				$product_valid = false;
+			}
 
-		if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='N')) {
-			$product_valid = true;
-		}
+			if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='N')) {
+				$product_valid = true;
+			}
 
-		if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
-			$product_valid = true;
-		}
+			if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+				$product_valid = true;
+			}
 
-		if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='Y')) {
-			$product_valid = false;
-		}
+			if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='Y')) {
+				$product_valid = false;
+			}
 
-		if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='Y')) {
-			$product_valid = false;
-		}
+			if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='Y')) {
+				$product_valid = false;
+			}
 
-		if ($product_valid == true) break;
-		$coupons->MoveNext();
+			if ($product_valid == true) break;
+			$coupons->MoveNext();
 		}
 	}
     return $product_valid;
