@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.6 2005/11/15 22:01:21 spiderr Exp $
+// $Id: usps.php,v 1.7 2005/11/16 11:52:21 spiderr Exp $
 //
 
 class usps {
@@ -283,8 +283,8 @@ class usps {
 							'<Service>' . $key . '</Service>' .
 							'<ZipOrigination>' . SHIPPING_ORIGIN_ZIP . '</ZipOrigination>' .
 							'<ZipDestination>' . $dest_zip . '</ZipDestination>' .
-							'<Pounds>1</Pounds>' .
-							'<Ounces>1</Ounces>' .
+							'<Pounds>'.$this->pounds.'</Pounds>' .
+							'<Ounces>'.$this->ounces.'</Ounces>' .
 							'<Container>' . $this->container . '</Container>' .
 							'<Size>' . $this->size . '</Size>' .
 							'<Machinable>' . $this->machinable . '</Machinable>' .
