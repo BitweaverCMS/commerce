@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.3 2005/11/15 22:01:22 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.4 2005/11/16 12:12:51 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -92,12 +92,11 @@
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '        <tr>' . "\n" .
          '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top">' . $order->products[$i]['name'];
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$i]['products_id'] ) . '">' . $order->products[$i]['name']. '</a>';
 
     if (STOCK_CHECK == 'true') {
       echo zen_check_stock(stripslashes($order->products[$i]['id']), $order->products[$i]['quantity']);
     }
-vd( $order->products[$i]['attributes'] );
     if ( !empty( $order->products[$i]['attributes'] ) && (sizeof($order->products[$i]['attributes']) > 0) ) {
       for ($j=0, $n2=sizeof($order->products[$i]['attributes']); $j<$n2; $j++) {
         echo '<br /><nobr>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'] . '</i></nobr>';

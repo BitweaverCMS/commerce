@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.27 2005/11/15 22:01:21 spiderr Exp $
+// $Id: order.php,v 1.28 2005/11/16 12:12:50 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -179,13 +179,12 @@ class order extends BitBase {
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
-      $orders_products_query = "select op.*, pt.*
-                                from " . TABLE_ORDERS_PRODUCTS . " op
+      $orders_products_query = "SELECT op.*, pt.*
+                                FROM " . TABLE_ORDERS_PRODUCTS . " op
 									LEFT OUTER JOIN  " . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
 									LEFT OUTER JOIN  " . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-                                where `orders_id` = '" . (int)$order_id . "'";
-
-      $orders_products = $db->Execute($orders_products_query);
+                                WHERE `orders_id` = ?";
+      $orders_products = $this->mDb->query( $orders_products_query, array( $order_id ) );
 
       while (!$orders_products->EOF) {
 // convert quantity to proper decimals - account history
@@ -218,22 +217,20 @@ class order extends BitBase {
 		$this->products[$index]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
-        $attributes_query = "select products_options_id, products_options_values_id, products_options, products_options_values, options_values_price,
-                                    price_prefix from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-                             where `orders_id` = '" . (int)$order_id . "'
-                             and orders_products_id = '" . (int)$orders_products->fields['orders_products_id'] . "'";
-
-        $attributes = $db->query($attributes_query);
+        $attributes_query = "SELECT `products_options_id`, `products_options_values_id`, `products_options`, `products_options_values`, options_values_price, `price_prefix`
+                             FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
+                             WHERE `orders_id` = ? AND orders_products_id = ?";
+        $attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
         if ($attributes->RecordCount()) {
-          while (!$attributes->EOF) {
-            $this->products[$index]['attributes'][$subindex] = array('option' => $attributes->fields['products_options'],
-                                                                     'value' => $attributes->fields['products_options_values'],
-                                                                     'prefix' => $attributes->fields['price_prefix'],
-                                                                     'price' => $attributes->fields['options_values_price']);
+			while (!$attributes->EOF) {
+				$this->products[$index]['attributes'][$subindex] = array('option' => $attributes->fields['products_options'],
+																		'value' => $attributes->fields['products_options_values'],
+																		'prefix' => $attributes->fields['price_prefix'],
+																		'price' => $attributes->fields['options_values_price']);
 
-            $subindex++;
-            $attributes->MoveNext();
-          }
+				$subindex++;
+				$attributes->MoveNext();
+			}
         }
 
         $this->info['tax_groups']["{$this->products[$index]['tax']}"] = '1';
@@ -442,11 +439,11 @@ class order extends BitBase {
         $this->products[$index]['tax'] = zen_get_tax_rate( $products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
         $this->products[$index]['tax_description'] = zen_get_tax_description( $products[$i]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
 
-        if ($products[$i]['attributes']) {
-          $subindex = 0;
-          reset($products[$i]['attributes']);
-vd( $products[$i] );
-          while (list($option, $value) = each($products[$i]['attributes'])) {
+		if ($products[$i]['attributes']) {
+			$subindex = 0;
+			reset($products[$i]['attributes']);
+			$this->products[$index]['attributes'] = array();
+			while (list($option, $value) = each($products[$i]['attributes'])) {
 /*
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
             if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
@@ -462,12 +459,12 @@ vd( $products[$i] );
                                       " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval,
                                       " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                  where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
-                                 and pa.`options_id` = '" . (int)$option . "'
-                                 and pa.`options_id` = popt.`products_options_id`
-                                 and pa.`options_values_id` = '" . (int)$value . "'
-                                 and pa.`options_values_id` = poval.`products_options_values_id`
-                                 and popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                                 and poval.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+									and pa.`options_id` = '" . (int)$option . "'
+									and pa.`options_id` = popt.`products_options_id`
+									and pa.`options_values_id` = '" . (int)$value . "'
+									and pa.`options_values_id` = poval.`products_options_values_id`
+									and popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+									and poval.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
             $attributes = $db->Execute($attributes_query);
 
@@ -755,7 +752,7 @@ vd( $products[$i] );
 
 //clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
            $sql_data_array = array('orders_id' => $zf_insert_id,
-                                   'orders_products_id' => $order_products_id,
+                                   'orders_products_id' => $insert_id,
                                    'products_options' => $attributes_values->fields['products_options_name'],
 
 //                                 'products_options_values' => $attributes_values->fields['products_options_values_name'],
@@ -785,7 +782,7 @@ vd( $products[$i] );
 
            if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
              $sql_data_array = array('orders_id' => $zf_insert_id,
-                                     'orders_products_id' => $order_products_id,
+                                     'orders_products_id' => $insert_id,
                                      'orders_products_filename' => $attributes_values->fields['products_attributes_filename'],
                                      'download_maxdays' => $attributes_values->fields['products_attributes_maxdays'],
                                      'download_count' => $attributes_values->fields['products_attributes_maxcount']);
