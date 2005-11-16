@@ -469,10 +469,10 @@ class CommerceProduct extends LibertyAttachable {
 	function getAttribute( $pOptionId, $pOptionValueId, $pAttr ) {
 		$ret = NULL;
 		if( is_null( $this->mOptions ) ) {
-			$this->loadOptions();
+			$this->loadAttributes();
 		}
-		if( !empty( $this->mOptions[$pOptionId][$pOptionValueId][$pAttr] ) ) {
-			$ret = $this->mOptions[$pOptionId][$pOptionValueId][$pAttr];
+		if( !empty( $this->mOptions[$pOptionId]['values'][$pOptionValueId][$pAttr] ) ) {
+			$ret = $this->mOptions[$pOptionId]['values'][$pOptionValueId][$pAttr];
 		}
 		return $ret;
 	}
@@ -480,7 +480,7 @@ class CommerceProduct extends LibertyAttachable {
 	function compareAttributes( &$pParamHash, $pAttr ) {
 		$currentAttr = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], $pAttr );
 		if( (!empty( $pParamHash[$pAttr] ) && $pParamHash[$pAttr] != $currentAttr )
-			||	(empty( $pParamHash[$pAttr] ) && !empty( $pParamHash[$pAttr] ) != $currentAttr ) ) {
+			||	(empty( $pParamHash[$pAttr] ) && !empty( $pParamHash[$pAttr] )) ) {
 			$pParamHash['attributes_store'][$pAttr] = !empty( $pParamHash[$pAttr] ) ? $pParamHash[$pAttr] : NULL;
 		}
 	}
@@ -529,8 +529,9 @@ class CommerceProduct extends LibertyAttachable {
 
 	function storeAttributes( $pParamHash ) {
 		if( $this->verifyAttributes( $pParamHash ) ) {
-			if( $optValId = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], 'products_options_values_id' ) ) {
-	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'name' => 'products_options_values_id', 'value' => $optValId ) );
+			$prodAttrId = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], 'products_attributes_id' );
+			if( $prodAttrId ) {
+	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'name' => 'products_attributes_id', 'value' => $prodAttrId ) );
 	        } else {
 				$pParamHash['attributes_store']['options_id'] = $pParamHash['options_id'];
 				$pParamHash['attributes_store']['products_id'] = $this->mProductsId;
@@ -571,6 +572,80 @@ $check_duplicate = $db->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " W
 			'attributes_image' => $attributes_image_name,
 */
 
+	}
+
+
+	function getDiscount( $pQuantity, $pDiscount ) {
+		$ret = NULL;
+		if( empty( $this->mDiscounts ) ) {
+			$this->loadDiscounts();
+		}
+		if( !empty( $this->mDiscounts[$pQuantity][$pDiscount] ) ) {
+			$ret = $this->mDiscounts[$pQuantity][$pDiscount];
+		}
+		return $ret;
+	}
+
+
+	function compareDiscount( &$pParamHash, $pDiscount ) {
+		$currentDiscount = $this->getDiscount( $pParamHash['discount_qty'], $pDiscount );
+
+		if( (empty( $pParamHash[$pDiscount] ) && !empty( $currentDiscount ))
+			|| (!empty( $pParamHash[$pDiscount] ) && ($pParamHash[$pDiscount] != $currentDiscount) ) ) {
+			$pParamHash['discounts_store'][$pDiscount] = $pParamHash[$pDiscount];
+		}
+	}
+
+
+	function verifyDiscount( &$pParamHash ) {
+		if( is_numeric( $pParamHash['discount_qty'] ) ) {
+			$this->compareDiscount( $pParamHash, 'discount_qty' );
+		}
+		if( is_numeric( $pParamHash['discount_price'] ) ) {
+			$this->compareDiscount( $pParamHash, 'discount_price' );
+		}
+
+		return( !empty( $pParamHash['discounts_store'] ) && count( $pParamHash['discounts_store'] ) );
+	}
+
+	function expungeDiscount( $pDiscountId ) {
+		if( $this->isValid() && is_numeric( $pDiscountId ) ) {
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` =? AND `discount_id`=?", array( $this->mProductsId, $pDiscountId ) );
+		}
+	}
+
+	function storeDiscount( $pParamHash ) {
+		if( !empty( $pParamHash['discount_id'] ) && empty( $pParamHash['discount_qty'] ) ) {
+			$this->expungeDiscount( $pParamHash['discount_id'] );
+		} elseif( $this->verifyDiscount( $pParamHash ) ) {
+			$pParamHash['discounts_store']['products_id'] = $this->mProductsId;
+			$pParamHash['discounts_store']['discount_id'] = !empty( $pParamHash['discount_id'] ) ? $pParamHash['discount_id'] : $this->getDiscount( $pParamHash['discount_qty'], 'discount_id' );
+vd( $pParamHash );
+
+			// this is a little funky cause we also to an insert due to oddball updates
+			if( $pParamHash['discounts_store']['discount_id'] ) {
+				$this->expungeDiscount( $pParamHash['discount_id'] );
+			} else {
+				$pParamHash['discounts_store']['discount_id'] = (int)$this->mDb->getOne( "SELECT MAX(`discount_id`) FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id`=?", array( $this->mProductsId ) ) + 1;
+			}
+			if( !isset( $pParamHash['discounts_store']['discount_qty'] ) ) {
+				 $pParamHash['discounts_store']['discount_qty'] = $pParamHash['discount_qty'];
+			}
+			if( !isset( $pParamHash['discounts_store']['discount_price'] ) ) {
+				 $pParamHash['discount_price']['discount_qty'] = $pParamHash['discount_price'];
+			}
+
+			$this->mDb->associateInsert( TABLE_PRODUCTS_DISCOUNT_QUANTITY, $pParamHash['discounts_store'] );
+		}
+		return( !empty( $pParamHash['discount_price'] ) && count( $pParamHash['discount_price'] ) );
+	}
+
+	function loadDiscounts() {
+		$this->mDiscounts = array();
+		if( $this->isValid() ) {
+			$this->mDiscounts = $this->mDb->getAssoc( "SELECT `discount_qty` AS `hash_key`, * FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ? ORDER BY `discount_qty`", array( $this->mProductsId ) );
+		}
+		return( count( $this->mDiscounts ) );
 	}
 
 	////
@@ -901,7 +976,7 @@ Skip deleting of images for now
 		}
 	}
 
-	function loadOptions() {
+	function loadAttributes() {
 		$this->mOptions = array();
 		if( $this->isValid() ) {
 			if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.17 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.18 2005/11/16 16:01:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -77,19 +77,6 @@
     $delete_featured = $db->Execute("delete from " . TABLE_FEATURED . " where `products_id`='" . $productsId . "'");
 
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
-  }
-
-  if ($action == 'add_discount_qty_id') {
-    $add_id = $db->getOne("select `discount_id` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY .
-		" where `products_id`='" . $productsId . "' order by `discount_id` desc");
-    $add_cnt = 1;
-    while ($add_cnt <= DISCOUNT_QTY_ADD) {
-      $db->Execute("insert into " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
-                    (`discount_id`, `products_id`)
-                    values ('" . ($add_id + $add_cnt) . "', '" . $productsId . "')");
-      $add_cnt++;
-    }
-    zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit' . '&products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
   if (zen_not_null($action)) {
@@ -161,24 +148,18 @@
 				`status`='" . zen_db_input($_POST['featured_status']) . "'
 				where `products_id` ='" . $productsId . "'");
 			}
-			$db->Execute("delete from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $productsId . "'");
-			$i=1;
-			$new_id = 0;
-			$discount_cnt = 0;
-			foreach( array_keys( $_POST['discount_qty'] ) as $i ) {
-				if ($_POST['discount_qty'][$i] > 0) {
-					$new_id++;
-					$db->Execute("insert into " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
-								(`discount_id`, `products_id`, `discount_qty`, `discount_price`)
-								values ('" . $new_id . "', '" . $productsId . "', '" . $_POST['discount_qty'][$i] . "', '" . $_POST['discount_price'][$i] . "')");
-					$discount_cnt++;
-				} else {
-					loop;
-				}
+
+			$discounted = FALSE;
+			foreach( array_keys( $_POST['discount_qty'] ) as $discountId ) {
+				$discountHash = array(	'discount_id' => $discountId,
+										'discount_qty' => $_POST['discount_qty'][$discountId],
+										'discount_price' => $_POST['discount_price'][$discountId] );
+				$gBitProduct->storeDiscount( $discountHash );
+				$discounted = $discounted || !empty( $_POST['discount_qty'][$discountId] );
 			}
 
-			if ($discount_cnt <= 0) {
-			$db->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
+			if( !$discounted ) {
+				$db->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
 			}
 
 			// reset products_price_sorter for searches etc.
@@ -743,44 +724,8 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
 
       <tr>
         <td><br><table border="4" cellspacing="0" cellpadding="2">
-<?php
-// fix here
-// discount
-    $discounts_qty = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $productsId . "' order by `discount_qty`");
-    $discount_cnt = $discounts_qty->RecordCount();
-    $make = 1;
-    $i;
-    while (!$discounts_qty->EOF) {
-      $i++;
-      $discount_name[] = array('id' => $i,
-                                 'discount_qty' => $discounts_qty->fields['discount_qty'],
-                                 'discount_price' => $discounts_qty->fields['discount_price']);
-      $discounts_qty->MoveNext();
-    }
-?>
-
-<?php
-  if ($discounts_qty->RecordCount() > 0) {
-?>
-
           <tr>
             <td colspan="5" class="main" valign="top"><?php echo TEXT_PRODUCTS_MIXED_DISCOUNT_QUANTITY; ?>&nbsp;&nbsp;<?php echo zen_draw_radio_field('products_mixed_discount_quantity', '1', $in_products_mixed_discount_quantity==1) . '&nbsp;' . 'Yes' . '&nbsp;&nbsp;' . zen_draw_radio_field('products_mixed_discount_quantity', '0', $out_products_mixed_discount_quantity) . '&nbsp;' . 'No'; ?></td>
-          </tr>
-          <tr>
-            <td colspan="5" class="main" align="center">
-              <?php
-                if ($action != '') {
-                  echo TEXT_ADD_ADDITIONAL_DISCOUNT . '<br />';
-                  echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id . '&action=add_discount_qty_id') . '">' .  zen_image_button('button_blank_discounts.gif', IMAGE_ADD_BLANK_DISCOUNTS) . '</a>' . '<br />';
-                  echo TEXT_BLANKS_INFO;
-                } else {
-                  echo ($action == '' ? '<span class="alert">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : '');
-                }
-              ?>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5"><?php echo zen_draw_separator('pixel_black.gif', '100%', '2'); ?></td>
           </tr>
           <tr>
             <td class="main">
@@ -816,7 +761,9 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
   $display_free_price = zen_get_products_price_is_free($_GET['products_id']);
   $display_call_price = zen_get_products_price_is_call($_GET['products_id']);
 */
-    for ($i=0, $n=sizeof($discount_name); $i<$n; $i++) {
+	$lastDiscount = 0;
+	if( $gBitProduct->loadDiscounts() ) {
+    foreach( $gBitProduct->mDiscounts as $discount ) {
       switch ($pInfo->products_discount_type) {
         // none
         case '0':
@@ -826,12 +773,12 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
         case '1':
           $display_price = zen_get_products_base_price($_GET['products_id']);
           if ($pInfo->products_discount_type_from == '0') {
-            $discounted_price = $display_price - ($display_price * ($discount_name[$i]['discount_price']/100));
+            $discounted_price = $display_price - ($display_price * ($discount['discount_price']/100));
           } else {
             if (!$display_specials_price) {
-              $discounted_price = $display_price - ($display_price * ($discount_name[$i]['discount_price']/100));
+              $discounted_price = $display_price - ($display_price * ($discount['discount_price']/100));
             } else {
-              $discounted_price = $display_specials_price - ($display_specials_price * ($discount_name[$i]['discount_price']/100));
+              $discounted_price = $display_specials_price - ($display_specials_price * ($discount['discount_price']/100));
             }
           }
 
@@ -839,66 +786,62 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
         // actual price
         case '2':
           if ($pInfo->products_discount_type_from == '0') {
-            $discounted_price = $discount_name[$i]['discount_price'];
+            $discounted_price = $discount['discount_price'];
           } else {
-            $discounted_price = $discount_name[$i]['discount_price'];
+            $discounted_price = $discount['discount_price'];
           }
           break;
         // amount offprice
         case '3':
           $display_price = zen_get_products_base_price($_GET['products_id']);
           if ($pInfo->products_discount_type_from == '0') {
-            $discounted_price = $display_price - $discount_name[$i]['discount_price'];
+            $discounted_price = $display_price - $discount['discount_price'];
           } else {
             if (!$display_specials_price) {
-              $discounted_price = $display_price - $discount_name[$i]['discount_price'];
+              $discounted_price = $display_price - $discount['discount_price'];
             } else {
-              $discounted_price = $display_specials_price - $discount_name[$i]['discount_price'];
+              $discounted_price = $display_specials_price - $discount['discount_price'];
             }
           }
           break;
       }
 ?>
           <tr>
-            <td class="main"><?php echo TEXT_PRODUCTS_DISCOUNT . ' ' . $discount_name[$i]['id']; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('discount_qty[' . $discount_name[$i]['id'] . ']', $discount_name[$i]['discount_qty']); ?></td>
-            <td class="main"><?php echo zen_draw_input_field('discount_price[' . $discount_name[$i]['id'] . ']', $discount_name[$i]['discount_price']); ?></td>
+            <td class="main"><?php echo tra( TEXT_PRODUCTS_DISCOUNT ) ?></td>
+            <td class="main"><?php echo zen_draw_input_field('discount_qty[' . $discount['discount_id'] . ']', $discount['discount_qty']); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('discount_price[' . $discount['discount_id'] . ']', $discount['discount_price']); ?></td>
 <?php
-  if (DISPLAY_PRICE_WITH_TAX == 'true') {
+			if (DISPLAY_PRICE_WITH_TAX == 'true') {
 ?>
-            <td class="main" align="right"><?php echo $currencies->display_price($discounted_price, '', 1) . ' ' . $currencies->display_price($discounted_price, zen_get_tax_rate(1), 1); ?></td>
-            <td class="main" align="right"><?php echo ' x ' . number_format($discount_name[$i]['discount_qty']) . ' = ' . $currencies->display_price($discounted_price, '', $discount_name[$i]['discount_qty']) . ' ' . $currencies->display_price($discounted_price, zen_get_tax_rate(1), $discount_name[$i]['discount_qty']); ?></td>
-<?php } else { ?>
+			<td class="main" align="right"><?php echo $currencies->display_price($discounted_price, '', 1) . ' ' . $currencies->display_price($discounted_price, zen_get_tax_rate(1), 1); ?></td>
+			<td class="main" align="right"><?php echo ' x ' . number_format($discount['discount_qty']) . ' = ' . $currencies->display_price($discounted_price, '', $discount['discount_qty']) . ' ' . $currencies->display_price($discounted_price, zen_get_tax_rate(1), $discount['discount_qty']); ?></td>
+<?php
+			} else {
+?>
             <td class="main" align="right"><?php echo $currencies->display_price($discounted_price, '', 1); ?></td>
-            <td class="main" align="right"><?php echo ' x ' . number_format($discount_name[$i]['discount_qty']) . ' = ' . $currencies->display_price($discounted_price, '', $discount_name[$i]['discount_qty']); ?></td>
-<?php } ?>
+            <td class="main" align="right"><?php echo ' x ' . number_format($discount['discount_qty']) . ' = ' . $currencies->display_price($discounted_price, '', $discount['discount_qty']); ?></td>
+<?php
+			}
+?>
           </tr>
 <?php
-    }
-?>
-<?php
-  } else {
+			$lastDiscount = ($lastDiscount < $discount['discount_id'] ? $discount['discount_id'] : $lastDiscount);
+	    }
+	}
+
+	for( $i = $lastDiscount + 1; $i < $lastDiscount + 6; $i++ ) {
 ?>
           <tr>
-          <td><?php echo zen_draw_separator('pixel_black.gif', '100%', '2'); ?></td>
-          </tr>
-          <tr>
-            <td class="main" align="center" width="500">
-              <?php
-                if ($action != '') {
-                  echo TEXT_ADD_ADDITIONAL_DISCOUNT . '<br />';
-                  echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&action=add_discount_qty_id') . '">' .  zen_image_button('button_blank_discounts.gif', IMAGE_ADD_BLANK_DISCOUNTS) . '</a>' . '<br />';
-                  echo TEXT_BLANKS_INFO;
-                } else {
-                  echo ($action == '' ? '<span class="alert">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : '') . '<br />';
-                  echo TEXT_INFO_NO_DISCOUNTS;
-                }
-              ?>
-            </td>
+            <td class="main"><?php echo tra( 'New Discount' ) ?></td>
+            <td class="main"><?php echo zen_draw_input_field('discount_qty[' . $i . ']', ''); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('discount_price[' . $i . ']', ''); ?></td>
+			<td class="main" align="right"></td>
+			<td class="main" align="right"></td>
           </tr>
 <?php
-  } // $discounts_qty->RecordCount() > 0
+	}
 ?>
+
 
         </table></td>
       </tr>
@@ -908,21 +851,10 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
       </tr>
       <tr>
         <td><table border="0" cellspacing="0" cellpadding="2" align="center">
-          <?php if ($action == '') { ?>
-          <tr>
-            <td class="pageHeading" align="center" valign="middle">
-              <?php echo ($action == '' ? '<span class="alert">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : ''); ?>
-            </td>
-          </tr>
-          <?php } ?>
           <tr>
             <td class="main" align="center" valign="middle" width="100%">
             <?php
-            if ($action == '') {
-              echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=edit' . '&products_id=' . $productsId . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT_PRODUCT) . '</a>' . '<br />' . TEXT_INFO_EDIT_CAUTION;
-            } else {
               echo zen_image_submit('button_update.gif', IMAGE_UPDATE_PRICE_CHANGES) . '&nbsp;&nbsp;' . '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=cancel' . '&products_id=' . $productsId . '&current_category_id=' . $current_category_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>' . '<br />' . TEXT_UPDATE_COMMIT;
-            }
             ?>
             </td>
           </tr>

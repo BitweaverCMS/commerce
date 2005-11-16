@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.11 2005/11/15 22:01:22 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.12 2005/11/16 16:01:08 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
 //////////////////////////////////////////////////
 // limit to 1 for larger tables
 
-if ( $gBitProduct->loadOptions() ) {
+if ( $gBitProduct->loadAttributes() ) {
 	$productSettings['zv_display_select_option'] = 0;
 	$productSettings['show_attributes_qty_prices_description'] = 'false';
 	$productSettings['show_onetime_charges_description'] = 'false';

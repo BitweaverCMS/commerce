@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.7 2005/11/16 12:12:51 spiderr Exp $
+// $Id: shopping_cart.php,v 1.8 2005/11/16 16:01:08 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
@@ -73,7 +73,6 @@
 
     $any_out_of_stock = 0;
     $products = $_SESSION['cart']->get_products();
-vd( $products );
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
 // Push all attributes information in an array
 		$prid =  zen_get_prid( $products[$i]['id'] );
