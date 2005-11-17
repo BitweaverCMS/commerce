@@ -470,10 +470,10 @@
 
     $address_format = $db->Execute($address_format_query);
     $company = zen_output_string_protected($address['company']);
-    if (isset($address['firstname']) && zen_not_null($address['firstname'])) {
+    if ( !empty( $address['firstname'] ) ) {
       $firstname = zen_output_string_protected($address['firstname']);
       $lastname = zen_output_string_protected($address['lastname']);
-    } elseif (isset($address['name']) && zen_not_null($address['name'])) {
+    } elseif( !empty( $address['name'] ) ) {
       $firstname = zen_output_string_protected($address['name']);
       $lastname = '';
     } else {
@@ -485,13 +485,13 @@
     $city = zen_output_string_protected($address['city']);
     $state = zen_output_string_protected($address['state']);
     $telephone = (isset( $address['telephone'] ) ? zen_output_string_protected($address['telephone']) : NULL);
-    if (isset($address['country_id']) && zen_not_null($address['country_id'])) {
+    if ( !empty( $address['country_id'] ) ) {
       $country = zen_get_country_name($address['country_id']);
 
-      if (isset($address['zone_id']) && zen_not_null($address['zone_id'])) {
+      if ( !empty( $address['zone_id'] ) ) {
         $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
       }
-    } elseif (isset($address['country']) && zen_not_null($address['country'])) {
+    } elseif( !empty( $address['country'] ) ) {
       if (is_array($address['country'])) {
         $country = zen_output_string_protected($address['country']['countries_name']);
       } else {
@@ -538,11 +538,11 @@
     $fmt = $address_format->fields['format'];
     eval("\$address_out = \"$fmt\";");
     if( !empty( $telephone ) ) {
-    	$address_out = $cr . $telephone;
+    	$address_out .= $cr . $telephone;
     }
 
     if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
-      $address_out = $company . $cr . $address_out;
+      $address_out .= $company . $cr . $address_out;
     }
 
     return $address_out;
