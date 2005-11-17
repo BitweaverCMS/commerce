@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.27 2005/11/10 13:46:53 spiderr Exp $
+//  $Id: orders.php,v 1.28 2005/11/17 15:52:31 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -213,7 +213,7 @@
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main" valign="top"><strong><?php echo ENTRY_CUSTOMER; ?></strong></td>
-                <td class="main"><?php echo $gBitUser->getDisplayName( TRUE ); ?></td>
+                <td class="main"><?php echo $gBitUser->getDisplayName( TRUE, $order->customer ); ?></td>
               </tr>
 <?php if( !empty( $order->customer['telephone'] ) ) { ?>
               <tr>
@@ -273,7 +273,7 @@
         <td class="main"><strong><?php echo ENTRY_ORDER_ID . $oID; ?></strong></td>
       </tr>
       <tr>
-     <td><table border="0" cellspacing="0" cellpadding="2">
+     <td><table border="0" cellspacing="0" cellpadding="2" style="width:auto;">
         <tr>
            <td class="main"><strong><?php echo ENTRY_DATE_PURCHASED; ?></strong></td>
            <td class="main"><?php echo zen_date_long($order->info['date_purchased']); ?></td>
