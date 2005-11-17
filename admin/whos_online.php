@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: whos_online.php,v 1.7 2005/11/17 22:34:03 gilesw Exp $
 //
+
 
 // highlight bots
 function zen_check_bot($checking) {
@@ -84,6 +85,12 @@ function zen_check_minutes($the_time_last_click) {
                 where `time_last_click` < '" . $xx_mins_ago . "'
                 or (`time_entry`=`time_last_click`
                 and `time_last_click` < '" . $xx_mins_ago_dead . "')");
+                
+//geoip initialization
+require_once(UTIL_PKG_PATH.'pear/Net/GeoIP.php');
+$geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_GeoIP::MEMORY_CACHE);
+             
+                
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -248,7 +255,7 @@ function zen_check_minutes($the_time_last_click) {
                     }
                   ?>
                 </td>
-                <td class="dataTableContentWhois" align="left"><a href="http://www.dnsstuff.com/tools/whois.ch?ip=<?php echo $whos_online->fields['ip_address']; ?>" target="new"><?php echo '<u>' . $whos_online->fields['ip_address'] . '</u>'; ?></a></td>
+                <td class="dataTableContentWhois" align="left"><a href="http://www.dnsstuff.com/tools/whois.ch?ip=<?php echo $whos_online->fields['ip_address']; ?>" target="new"><?php echo '<u>' . $whos_online->fields['ip_address'] . '</u> ' . $geoip->lookupCountryName($whos_online->fields['ip_address']); ?></a></td>
                 <td class="dataTableContentWhois"><?php echo date('H:i:s', $whos_online->fields['time_entry']); ?></td>
                 <td class="dataTableContentWhois" align="center"><?php echo date('H:i:s', $whos_online->fields['time_last_click']); ?></td>
                 <td class="dataTableContentWhois"><?php if (eregi('^(.*)' . zen_session_name() . '=[a-f,0-9]+[&]*(.*)', $whos_online->fields['last_page_url'], $array)) { echo $array[1] . $array[2]; } else { echo "<a href='".$whos_online->fields['last_page_url']."' target=new>". '<u>' . $whos_online->fields['last_page_url'] . '</u>' ."</a>"; } ?>&nbsp;</td>
