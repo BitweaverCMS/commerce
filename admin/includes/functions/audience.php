@@ -17,60 +17,61 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: audience.php,v 1.5 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: audience.php,v 1.6 2005/11/17 18:20:18 spiderr Exp $
 //
 // This should be turned into a class...
 
-  function get_audiences_list($query_category='email', $display_count="") {
-  // used to display drop-down list of available audiences in emailing modules:
-  // ie: mail, gv_main, coupon_admin... and eventually newsletters too.
-  // gets info from query_builder table
+	function get_audiences_list($query_category='email', $display_count="") {
+		// used to display drop-down list of available audiences in emailing modules:
+		// ie: mail, gv_main, coupon_admin... and eventually newsletters too.
+		// gets info from query_builder table
 
-  global $db, $gBitCustomer;
-  include_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . 'audience.php');  //$current_page
-  $count_array = array();
-  $count=0;
-  if ($display_count=="") $display_count=AUDIENCE_SELECT_DISPLAY_COUNTS;
+		global $db, $gBitCustomer, $gBitUser;
+		include_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . 'audience.php');  //$current_page
+		$count_array = array();
+		$count=0;
+		if ($display_count=="") $display_count=AUDIENCE_SELECT_DISPLAY_COUNTS;
 
-  // get list of queries in database table, based on category supplied
-  $queries_list = $db->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
-                  "where query_category like '%" . $query_category . "%'");
+		// get list of queries in database table, based on category supplied
+		$queries_list = $db->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
+						"where query_category like '%" . $query_category . "%'");
 
-    $audience_list = array();
-    if ($queries_list->RecordCount() > 1) {  // if more than one query record found
-      $audience_list[] = array('id' => '', 'text' => TEXT_SELECT_AN_OPTION); //provide a "not-selected" value
-  }
+			$audience_list = array();
+			if ($queries_list->RecordCount() > 1) {  // if more than one query record found
+			$audience_list[] = array('id' => '', 'text' => TEXT_SELECT_AN_OPTION); //provide a "not-selected" value
+		}
 
-  reset($queries_list);
-  while (!$queries_list->EOF) {
-    // if requested, show recordcounts at end of descriptions of each entry
-    // This could slow things down considerably, so use sparingly !!!!
-    if ($display_count=='true' || $display_count ==true ) {  // if it's literal 'true' or logical true
-    $count_array = $db->Execute(parsed_query_string($queries_list->fields['query_string']) );
-    $count = $count_array->RecordCount();
-    }
+		reset($queries_list);
+		while (!$queries_list->EOF) {
+			// if requested, show recordcounts at end of descriptions of each entry
+			// This could slow things down considerably, so use sparingly !!!!
+			if ($display_count=='true' || $display_count ==true ) {  // if it's literal 'true' or logical true
+			$count_array = $db->Execute(parsed_query_string($queries_list->fields['query_string']) );
+			$count = $count_array->RecordCount();
+			}
 
-    // generate an array consisting of 2 columns which are identical. Key and Text are same.
-    // Thus, when the array is used in a Select Box, the key is the same as the displayed description
-    // The key can then be used to get the actual select SQL statement using the get...addresses_query function, below.
-      $audience_list[] = array('id' => $queries_list->fields['query_name'], 'text' => $queries_list->fields['query_name'] . ' (' . $count . ')');
-    $queries_list->MoveNext();
-  }
+			// generate an array consisting of 2 columns which are identical. Key and Text are same.
+			// Thus, when the array is used in a Select Box, the key is the same as the displayed description
+			// The key can then be used to get the actual select SQL statement using the get...addresses_query function, below.
+			$audience_list[] = array('id' => $queries_list->fields['query_name'], 'text' => $queries_list->fields['query_name'] . ' (' . $count . ')');
+			$queries_list->MoveNext();
+		}
 
-  //if this is called by an emailing module which offers individual customers as an option, add all customers email addresses as well.
-  if ($query_category=='email') {
-    $customers_values = $db->Execute("select customers_email_address, customers_firstname, customers_lastname " .
-                  "from " . TABLE_CUSTOMERS . " WHERE customers_email_format != 'NONE' " .
-                  "order by customers_lastname, customers_firstname, customers_email_address");
-    while(!$customers_values->EOF) {
-      $audience_list[] = array('id' => $customers_values->fields['customers_email_address'],
-                 'text' => $customers_values->fields['customers_lastname'] . ', ' . $customers_values->fields['customers_firstname'] . ' (' . $customers_values->fields['customers_email_address'] . ')');
-      $customers_values->MoveNext();
-    }
-  }
-  // send back the array for display in the SELECT drop-down menu
-  return $audience_list;
-  }
+		//if this is called by an emailing module which offers individual customers as an option, add all customers email addresses as well.
+		if ($query_category=='email') {
+			$customers_values = $db->Execute("select uu.`email`, customers_firstname, customers_lastname, uu.`real_name`, uu.`login`
+											 FROM " . TABLE_CUSTOMERS . " cc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(cc.`customers_id`=uu.`user_id`)
+											 WHERE customers_email_format != 'NONE' " .
+											 "order by customers_lastname, customers_firstname, `real_name`, `login`, `email`");
+			while(!$customers_values->EOF) {
+			$audience_list[] = array('id' => $customers_values->fields['customers_email_address'],
+									 'text' => (!empty( $customers_values->fields['customers_lastname'] ) ? $customers_values->fields['customers_lastname'] . ', ' . $customers_values->fields['customers_firstname'] : $gBitUser->getDisplayName( FALSE, $customers_values->fields ) ) . ' (' . $customers_values->fields['email'] . ')' );
+			$customers_values->MoveNext();
+			}
+		}
+		// send back the array for display in the SELECT drop-down menu
+		return $audience_list;
+	}
 
   function get_audience_sql_query($selected_entry, $query_category='email') {
     // This is used to take the query_name selected in the drop-down menu or singular customer email address and

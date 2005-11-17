@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.8 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: gv_mail.php,v 1.9 2005/11/17 18:20:18 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -373,11 +373,11 @@ function check_form(form_name) {
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
 <?php
-    $customers = get_audiences_list('email');
+    $customerGroups = get_audiences_list( NULL );
 ?>
               <tr>
-                <td class="main"><?php echo TEXT_CUSTOMER; ?></td>
-                <td><?php echo zen_draw_pull_down_menu('customers_email_address', $customers, $_GET['customer']);?></td>
+                <td class="main"><?php echo tra( 'Customer Group' ); ?>:</td>
+                <td><?php echo zen_draw_pull_down_menu('customers_email_address', $customerGroups, $_GET['customer']);?></td>
               </tr>
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
