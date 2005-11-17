@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.28 2005/11/17 15:52:31 spiderr Exp $
+//  $Id: orders.php,v 1.29 2005/11/17 18:59:08 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -213,7 +213,7 @@
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main" valign="top"><strong><?php echo ENTRY_CUSTOMER; ?></strong></td>
-                <td class="main"><?php echo $gBitUser->getDisplayName( TRUE, $order->customer ); ?></td>
+                <td class="main"><?php echo $gBitUser->getDisplayName( TRUE, $order->customer ).' (ID: '.$order->customer['user_id'].')'; ?></td>
               </tr>
 <?php if( !empty( $order->customer['telephone'] ) ) { ?>
               <tr>
@@ -340,6 +340,7 @@
             <th align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></th>
           </tr>
 <?php
+	$foreignCurrency = $order->info['currency'] != DEFAULT_CURRENCY;
     for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
       echo '          <tr class="dataTableRow">' . "\n" .
            '            <td class="dataTableContent" valign="top" align="right">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
@@ -372,6 +373,7 @@
            '            <td class="dataTableContent" align="right" valign="top">' .
                           $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                           ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '') .
+                          ($foreignCurrency ? ' ('.$currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, DEFAULT_CURRENCY).' )' : '' ) .
                         '</td>' . "\n";
       echo '          </tr>' . "\n";
     }
@@ -382,7 +384,9 @@
     for ($i = 0, $n = sizeof($order->totals); $i < $n; $i++) {
       echo '              <tr>' . "\n" .
            '                <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Text">' . $order->totals[$i]['title'] . '</td>' . "\n" .
-           '                <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Amount">' . $order->totals[$i]['text'] . '</td>' . "\n" .
+           '                <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Amount">' . $order->totals[$i]['text'] .
+			($foreignCurrency ? ' ( '.($currencies->format( $order->totals[$i]['value'], true, DEFAULT_CURRENCY)).' ) ' : '' ) .
+           '</td>' . "\n" .
            '              </tr>' . "\n";
     }
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.28 2005/11/16 12:12:50 spiderr Exp $
+// $Id: order.php,v 1.29 2005/11/17 18:59:08 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -74,13 +74,13 @@ class order extends BitBase {
 
       $order_id = zen_db_prepare_input($order_id);
 
-      $order_query = "select *
-                      from " . TABLE_ORDERS . "
-                      where `orders_id` = '" . (int)$order_id . "'";
+      $order_query = "SELECT *
+                      FROM " . TABLE_ORDERS . " co INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
+                      WHERE `orders_id` = ?";
 
-      $order = $db->Execute($order_query);
+      $order = $db->query( $order_query, array( $order_id ) );
 
-      $totals_query = "select title, text, class
+      $totals_query = "select title, text, class, value
                        from " . TABLE_ORDERS_TOTAL . "
                        where `orders_id` = '" . (int)$order_id . "'
                        order by `sort_order`";
@@ -90,7 +90,8 @@ class order extends BitBase {
       while (!$totals->EOF) {
         $this->totals[] = array('title' => $totals->fields['title'],
                                 'text' => $totals->fields['text'],
-                                'class' => $totals->fields['class']);
+                                'class' => $totals->fields['class'],
+                                'value' => $totals->fields['value']);
         $totals->MoveNext();
       }
 
@@ -140,7 +141,10 @@ class order extends BitBase {
                           );
 
       $this->customer = array('id' => $order->fields['customers_id'],
+                              'user_id' => $order->fields['user_id'],
                               'name' => $order->fields['customers_name'],
+                              'real_name' => $order->fields['real_name'],
+                              'login' => $order->fields['login'],
                               'company' => $order->fields['customers_company'],
                               'street_address' => $order->fields['customers_street_address'],
                               'suburb' => $order->fields['customers_suburb'],
