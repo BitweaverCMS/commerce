@@ -17,16 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history_info.php,v 1.3 2005/08/24 02:50:50 lsces Exp $
+// $Id: blk_account_history_info.php,v 1.4 2005/11/17 19:42:49 spiderr Exp $
 //
-  $statuses_query = "select os.`orders_status_name`, osh.`date_added`, osh.`comments`
-                     from   " . TABLE_ORDERS_STATUS . " os, " . TABLE_ORDERS_STATUS_HISTORY . " osh
-                     where      osh.`orders_id` = '" . (int)$_GET['order_id'] . "'
-                     and        osh.`orders_status_id` = os.`orders_status_id`
-                     and        os.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                     order by   osh.`date_added`";
 
-  $statuses = $db->Execute($statuses_query);
+	vd( $order );
 
   while (!$statuses->EOF) {
 

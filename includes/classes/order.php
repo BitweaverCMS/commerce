@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.29 2005/11/17 18:59:08 spiderr Exp $
+// $Id: order.php,v 1.30 2005/11/17 19:42:50 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -243,6 +243,24 @@ class order extends BitBase {
         $orders_products->MoveNext();
        }
     }
+
+	function loadHistory() {
+		$this->mHistory = array();
+		if( $this->isValid() ) {
+			$sql = "SELECT *
+					FROM   " . TABLE_ORDERS_STATUS . " os INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON( osh.`orders_status_id` = os.`orders_status_id` )
+					WHERE osh.`orders_id` = ? AND os.`language_id` = ?
+					ORDER BY osh.`date_added`";
+
+			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId, $_SESSION['languages_id'] ) ) ) {
+				while( !$rs->EOF ) {
+					array_push( $this->mHistory, $rs->fields );
+					$rs->MoveNext();
+				}
+			}
+		}
+		return( count( $this->mHistory ) );
+	}
 
     function cart() {
       global $db, $currencies, $gBitUser, $gBitCustomer;

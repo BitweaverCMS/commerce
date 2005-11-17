@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.2 2005/11/16 12:12:51 spiderr Exp $
+// $Id: account_history_info.php,v 1.3 2005/11/17 19:42:50 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -145,19 +145,19 @@
 ?>
     </td>
   </tr>
+<?php
+		if( $order->loadHistory() ) {
+?>
   <tr>
-    <td colspan="2" class="plainBoxHeading">
-      <?php echo HEADING_ORDER_HISTORY; ?>
+    <td colspan="2">
+<?php
+			$gBitSmarty->assign_by_ref( 'orderHistory', $order->mHistory );
+			$gBitSmarty->display( 'bitpackage:bitcommerce/account_history_info_inc.tpl' );
+?>
     </td>
   </tr>
-  <tr>
-    <td class="plainBox" colspan="2">
-      <table border="0" width="100%" cellspacing="0" cellpadding="2">
-
-<?php require(DIR_FS_BLOCKS . 'blk_account_history_info.php'); ?>
-
-      </table>
-    </td>
-  </tr>
+<?php
+		}
+?>
 </table>
 </div>
