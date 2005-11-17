@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.23 2005/11/15 22:01:21 spiderr Exp $
+// $Id: functions_general.php,v 1.24 2005/11/17 17:33:16 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -681,6 +681,7 @@
   function is_product_valid($product_id, $coupon_id) {
     global $db;
 	$product_valid = false;
+	$product_id = zen_get_prid( $product_id );
 	if( is_numeric( $coupon_id ) ) {
 		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
 						WHERE `coupon_id` = ?
