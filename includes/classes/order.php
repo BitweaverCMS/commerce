@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.30 2005/11/17 19:42:50 spiderr Exp $
+// $Id: order.php,v 1.31 2005/11/21 14:14:54 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -221,15 +221,18 @@ class order extends BitBase {
 		$this->products[$index]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
-        $attributes_query = "SELECT `products_options_id`, `products_options_values_id`, `products_options`, `products_options_values`, options_values_price, `price_prefix`
+        $attributes_query = "SELECT *, `orders_products_attributes_id` AS products_attributes_id
                              FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
                              WHERE `orders_id` = ? AND orders_products_id = ?";
         $attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
         if ($attributes->RecordCount()) {
 			while (!$attributes->EOF) {
-				$this->products[$index]['attributes'][$subindex] = array('option' => $attributes->fields['products_options'],
+				$this->products[$index]['attributes'][$subindex] = array( 'options_id' => $attributes->fields['products_options_id'],
+																		'options_values_id' => $attributes->fields['products_options_values_id'],
+																		'option' => $attributes->fields['products_options'],
 																		'value' => $attributes->fields['products_options_values'],
 																		'prefix' => $attributes->fields['price_prefix'],
+																		'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->products[$index] ),
 																		'price' => $attributes->fields['options_values_price']);
 
 				$subindex++;
@@ -243,6 +246,33 @@ class order extends BitBase {
         $orders_products->MoveNext();
        }
     }
+
+	function getOrderAttributePrice( $pAttributeHash, $pProductHash ) {
+
+		$ret = 0;
+		// normal attributes price
+		if( $pAttributeHash["price_prefix"] == '-' ) {
+			$ret -= $pAttributeHash["options_values_price"];
+		} else {
+			$ret += $pAttributeHash["options_values_price"];
+		}
+		// qty discounts
+		$ret += zen_get_attributes_qty_prices_onetime( $pAttributeHash["attributes_qty_prices"], $qty );
+
+		// price factor
+		$display_normal_price = $pProductHash['price'];
+		$display_special_price = zen_get_products_special_price( $pre_selected->fields["products_id"] );
+
+		$ret += zen_get_attributes_price_factor( $pProductHash['price'], $pProductHash['price'], $pAttributeHash["attributes_price_factor"], $pAttributeHash["attributes_pf_offset"] );
+
+		// per word and letter charges
+		if (zen_get_attributes_type($attribute) == PRODUCTS_OPTIONS_TYPE_TEXT) {
+		// calc per word or per letter
+		}
+
+		return $ret;
+	}
+
 
 	function loadHistory() {
 		$this->mHistory = array();
@@ -736,16 +766,7 @@ class order extends BitBase {
            for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
            if (DOWNLOAD_ENABLED == 'true') {
              $attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
-                               pa.`options_values_price`, pa.`price_prefix`,
-                               pa.`product_attribute_is_free`, pa.`products_attributes_wt`, pa.`products_attributes_wt_pfix`,
-                               pa.`attributes_discounted`, pa.`attributes_price_base_inc`, pa.`attributes_price_onetime`,
-                               pa.`attributes_price_factor`, pa.`attributes_pf_offset`,
-                               pa.`attributes_pf_onetime`, pa.`attributes_pf_onetime_offset`,
-                               pa.`attributes_qty_prices`, pa.`attributes_qty_prices_onetime`,
-                               pa.`attributes_price_words`, pa.`attributes_price_words_free`,
-                               pa.`attributes_price_letters`, pa.`attributes_price_letters_free`,
-                               pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`,
-                               pa.`product_attribute_is_free`, pa.`attributes_discounted`
+                               pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                 on pa.`products_attributes_id` = pad.`products_attributes_id`
@@ -759,15 +780,7 @@ class order extends BitBase {
 
              $attributes_values = $db->Execute($attributes_query);
            } else {
-             $attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`,
-                               pa.`options_values_price`, pa.`price_prefix`,
-                               pa.`product_attribute_is_free`, pa.`products_attributes_wt`, pa.`products_attributes_wt_pfix`,
-                               pa.`attributes_discounted`, pa.`attributes_price_base_inc`, pa.`attributes_price_onetime`,
-                               pa.`attributes_price_factor`, pa.`attributes_pf_offset`,
-                               pa.`attributes_pf_onetime`, pa.`attributes_pf_onetime_offset`,
-                               pa.`attributes_qty_prices`, pa.`attributes_qty_prices_onetime`,
-                               pa.`attributes_price_words`, pa.`attributes_price_words_free`,
-                               pa.`attributes_price_letters`, pa.`attributes_price_letters_free`
+             $attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
                                from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                                where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
            }
@@ -796,7 +809,9 @@ class order extends BitBase {
                                    'attributes_price_words' => $attributes_values->fields['attributes_price_words'],
                                    'attributes_price_words_free' => $attributes_values->fields['attributes_price_words_free'],
                                    'attributes_price_letters' => $attributes_values->fields['attributes_price_letters'],
-                                   'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free']
+                                   'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free'],
+                                   'products_options_id' => $attributes_values->fields['options_id'],
+                                   'products_options_values_id' => $attributes_values->fields['options_values_id'],
                                    );
 
 
@@ -992,28 +1007,28 @@ class order extends BitBase {
 				}
 
 				//send emails
-				$message = STORE_NAME . "\n" . EMAIL_SEPARATOR . "\n" .
-					EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n\n" .
-					EMAIL_TEXT_INVOICE_URL . ' ' . $this->getDisplayLink() . "\n\n" .
-					EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
+				$message = STORE_NAME . "\n------------------------------------------------------\n" .
+					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n\n" .
+					tra( 'Detailed Invoice' ) . ': ' . $this->getDisplayLink() . "\n\n" .
+					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
 					strip_tags($notify_comments) ;
 				if( $statusChanged ) {
-					$message .= str_replace( "\n",' ', EMAIL_TEXT_STATUS_UPDATED ) . $this->info['orders_status'] . "\n\n";
+					$message .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
 				}
-				$message .= EMAIL_TEXT_STATUS_PLEASE_REPLY;
+				$message .= tra( 'Please reply to this email if you have any questions.' );
 
 				$html_msg['EMAIL_CUSTOMERS_NAME']    = $this->customer['name'];
-				$html_msg['EMAIL_TEXT_ORDER_NUMBER'] = EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId;
+				$html_msg['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
 				$html_msg['EMAIL_TEXT_INVOICE_URL']  = $this->getDisplayLink();
-				$html_msg['EMAIL_TEXT_DATE_ORDERED'] = EMAIL_TEXT_DATE_ORDERED . ' ' . zen_date_long( $this->info['date_purchased'] );
+				$html_msg['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
 				$html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = $notify_comments;
 				if( $statusChanged ) {
-					$html_msg['EMAIL_TEXT_STATUS_UPDATED'] = str_replace( "\n", ' ', EMAIL_TEXT_STATUS_UPDATED);
+					$html_msg['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
 					$html_msg['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
 				}
-				$html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = str_replace( "\n", '', EMAIL_TEXT_STATUS_PLEASE_REPLY );
+				$html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
-				zen_mail( $this->customer['name'], $this->customer['email_address'], EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
+				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
 
 				$customer_notified = '1';
 				//send extra emails

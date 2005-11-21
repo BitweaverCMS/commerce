@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_previous_orders.php,v 1.4 2005/08/24 15:06:38 lsces Exp $
+// $Id: blk_previous_orders.php,v 1.5 2005/11/21 14:14:54 spiderr Exp $
 //
   $orders_query = "select o.`orders_id`, o.`date_purchased`, o.`delivery_name`,
                           o.`delivery_country`, o.`billing_name`, o.`billing_country`,
@@ -31,7 +31,7 @@
                    and    s.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                    order by `orders_id` desc";
 
-  $orders = $db->Execute($orders_query, 3);
+  $orders = $db->Execute($orders_query, 10);
 
   while (!$orders->EOF) {
     if (zen_not_null($orders->fields['delivery_name'])) {
