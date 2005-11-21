@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.14 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.15 2005/11/21 16:22:43 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -744,7 +744,7 @@ function go_option() {
                                       where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "' and `language_id` = '" . (int)$languages[$i]['id'] . "'");
           $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . ' value="' . $value_name->fields['products_options_values_name'] . '">&nbsp;<br />';
         }
-          $products_ov_sort_order = $db->Execute("select `distinct products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");
+          $products_ov_sort_order = $db->Execute("select distinct `products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");
           $inputs2 .= '&nbsp;<input type="text" name="products_ov_sort_order" size="4" value="' . $products_ov_sort_order->fields['products_ov_sort_order'] . '">&nbsp;';
 ?>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo $values_values->fields['products_options_values_id']; ?><input type="hidden" name="value_id" value="<?php echo $values_values->fields['products_options_values_id']; ?>">&nbsp;</td>

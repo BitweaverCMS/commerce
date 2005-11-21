@@ -223,7 +223,7 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   products_tax_class_id I4,
   manufacturers_id I4,
   suppliers_id I4,
-  products_barcode C (14), 
+  products_barcode C (14),
   products_ordered F DEFAULT '0' NOTNULL,
   products_quantity_order_min F DEFAULT '1' NOTNULL,
   products_quantity_order_units F DEFAULT '1' NOTNULL,
@@ -494,24 +494,22 @@ BITCOMMERCE_DB_PREFIX.'currencies' => "
 BITCOMMERCE_DB_PREFIX.'customers_basket' => "
   customers_basket_id I4 PRIMARY AUTO,
   customers_id I4,
-  products_id I4 NOTNULL,
+  products_id C(128) NOTNULL,
   customers_basket_quantity F DEFAULT '0' NOTNULL,
   final_price N(15,4),
   customers_basket_date_added C(8)
-  CONSTRAINT ', CONSTRAINT cust_bask_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-              , CONSTRAINT cust_bask_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT cust_bask_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
   customers_id I4,
-  products_id I4 NOTNULL,
+  products_id C(128),
   products_options_id C(64),
   products_options_value_id I4,
   products_options_value_text C(64),
   products_options_sort_order X2 NOTNULL
-  CONSTRAINT ', CONSTRAINT cust_bask_att_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-              , CONSTRAINT cust_bask_att_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT cust_bask_att_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'customers_info' => "
@@ -761,7 +759,7 @@ BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   attributes_price_letters_free I2,
   products_options_id INT( 11 ) NOTNULL,
   products_options_values_id INT( 11 ) NOTNULL
-  CONSTRAINT ', CONSTRAINT ord_prod_att_prod_ref FOREIGN KEY ( orders_products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
+  CONSTRAINT ', CONSTRAINT ord_prod_att_prod_ref FOREIGN KEY ( orders_products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders_products( orders_products_id )
   			  , CONSTRAINT ord_prod_att_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
@@ -1079,7 +1077,7 @@ global $gBitInstaller;
 
 $indices = array (
   'mfg_name_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'manufacturers', 'cols' => 'manufacturers_name', 'opts' => NULL),
-  'sup_name_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'suppliers', 'cols' => 'suppliers_name', 'opts' => NULL),  
+  'sup_name_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'suppliers', 'cols' => 'suppliers_name', 'opts' => NULL),
   'email_address_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'customers', 'cols' => 'customers_email_address', 'opts' => NULL ),
   'referral_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'customers', 'cols' => 'customers_referral', 'opts' => NULL ),
   'grp_pricing_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'customers', 'cols' => 'customers_group_pricing', 'opts' => NULL ),
@@ -2823,7 +2821,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'SO','Sonderjylland')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'ST','Storstrom')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'VE','Vejle')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'VJ','Vestjælland')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'VJ','Vestjï¿½land')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (57,'VI','Viborg')",
 
 //El Salvador
@@ -3854,10 +3852,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'FR','Freiburg')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'GE','Geneve')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'GL','Glarus')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'GR','Graubünden')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'GR','Graubnden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'JU','Jura')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'LU','Luzern')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NE','Neuchâtel')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NE','Neuchï¿½el')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NW','Nidwalden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'OW','Obwalden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'SG','Sankt Gallen')",
