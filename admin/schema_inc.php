@@ -759,8 +759,8 @@ BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   attributes_price_words_free I2,
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
-  products_options_id INT( 11 ) DEFAULT '0' NOTNULL,
-  products_options_values_id INT( 11 ) DEFAULT '0' NOTNULL
+  products_options_id INT( 11 ) NOTNULL,
+  products_options_values_id INT( 11 ) NOTNULL
   CONSTRAINT ', CONSTRAINT ord_prod_att_prod_ref FOREIGN KEY ( orders_products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
   			  , CONSTRAINT ord_prod_att_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
