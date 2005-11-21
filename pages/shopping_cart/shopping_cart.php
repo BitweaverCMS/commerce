@@ -17,9 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.8 2005/11/16 16:01:08 spiderr Exp $
+// $Id: shopping_cart.php,v 1.9 2005/11/21 14:45:38 spiderr Exp $
 //
 ?>
+<script language="javascript" src="includes/general.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript"><!--
+function popupWindow(url) {
+  window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=550,height=550,screenX=150,screenY=100,top=100,left=150')
+}
+//--></script>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(FILENAME_SHOPPING_CART, 'action=update_product')); ?>
 <table border="0"  width="100%" cellspacing="2" cellpadding="2">
   <tr>
