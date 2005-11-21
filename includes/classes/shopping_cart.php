@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.22 2005/11/15 22:01:21 spiderr Exp $
+// $Id: shopping_cart.php,v 1.23 2005/11/21 14:42:07 spiderr Exp $
 //
 
   class shoppingCart {
@@ -951,10 +951,14 @@ if ((int)$products_id != $products_id) {
       return $this->total;
     }
 
-    function show_weight() {
+    function show_weight( $pUnit=NULL ) {
       $this->calculate();
+      $ret = $this->weight;
+      if( strtolower( $pUnit ) == 'kg' ) {
+      	$ret *= .45359;
+      }
 
-      return $this->weight;
+      return $ret;
     }
 
     function generate_cart_id($length = 5) {
