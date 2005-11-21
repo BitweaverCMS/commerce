@@ -542,7 +542,7 @@
     }
 
     if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
-      $address_out .= $company . $cr . $address_out;
+      $address_out = $company . $cr . $address_out;
     }
 
     return $address_out;
