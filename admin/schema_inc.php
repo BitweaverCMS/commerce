@@ -603,6 +603,9 @@ BITCOMMERCE_DB_PREFIX.'manufacturers_info' => "
 BITCOMMERCE_DB_PREFIX.'suppliers_info' => "
   suppliers_id I4,
   languages_id I4,
+  suppliers_url C(255),
+  url_clicked I4,
+  date_last_click T
   CONSTRAINT ', CONSTRAINT supp_info_supp_id_ref FOREIGN KEY ( suppliers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."suppliers( suppliers_id )'
 ",
 
