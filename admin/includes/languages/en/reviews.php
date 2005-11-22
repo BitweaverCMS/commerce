@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: reviews.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Reviews');
@@ -26,8 +26,8 @@ define('TABLE_HEADING_PRODUCTS', 'Products');
 define('TABLE_HEADING_CUSTOMER_NAME','Customer Name');
 define('TABLE_HEADING_RATING', 'Rating');
 define('TABLE_HEADING_DATE_ADDED', 'Date Added');
-define('TABLE_HEADING_STATUS', 'Status');
-define('TABLE_HEADING_ACTION', 'Action');
+
+
 
 define('ENTRY_PRODUCT', 'Product:');
 define('ENTRY_FROM', 'From:');

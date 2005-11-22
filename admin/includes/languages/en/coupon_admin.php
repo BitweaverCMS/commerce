@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('TOP_BAR_TITLE', 'Statistics');
@@ -49,7 +49,7 @@ define('TEXT_REMEMBER', 'Don\'t lose the coupon code, make sure to keep the code
 define('TEXT_VISIT', 'Visit us at %s');
 define('TEXT_ENTER_CODE', ' and enter the code ');
 
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('CUSTOMER_ID', 'Customer ID');
 define('CUSTOMER_NAME', 'Customer Name');

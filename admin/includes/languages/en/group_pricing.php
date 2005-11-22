@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: group_pricing.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Group Pricing');
@@ -25,7 +25,7 @@ define('HEADING_TITLE', 'Group Pricing');
 define('TABLE_HEADING_GROUP_ID', 'ID');
 define('TABLE_HEADING_GROUP_NAME', 'Group Name');
 define('TABLE_HEADING_GROUP_AMOUNT', '% Discount');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_HEADING_NEW_PRICING_GROUP', 'New Pricing Group');
 define('TEXT_HEADING_EDIT_PRICING_GROUP', 'Edit Pricing Group');
@@ -36,7 +36,7 @@ define('TEXT_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_DELETE_INTRO', 'Are you sure you want to delete this group?');
 define('TEXT_GROUP_PRICING_NAME', 'Group Name: ');
 define('TEXT_GROUP_PRICING_AMOUNT', 'Percentage Discount: ');
-define('TEXT_DATE_ADDED', 'Date Added:');
+
 define('TEXT_LAST_MODIFIED', 'Date Modified:');
 define('TEXT_CUSTOMERS', 'Customers in Group:');
 ?>

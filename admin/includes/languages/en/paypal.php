@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: paypal.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
   //begin ADMIN text
@@ -32,7 +32,7 @@
   define('TABLE_HEADING_TXN_TYPE', 'Transaction Type');
   define('TABLE_HEADING_PAYMENT_STATUS', 'Payment Status');
   define('TABLE_HEADING_PAYMENT_AMOUNT', 'Amount');
-  define('TABLE_HEADING_ACTION', 'Action');
+  
   define('TABLE_HEADING_DATE_ADDED', 'Date Added');
   define('TABLE_HEADING_NUM_HISTORY_ENTRIES', 'Number of entries in Status History');
   define('TABLE_HEADING_ENTRY_NUM', 'Entry Number');

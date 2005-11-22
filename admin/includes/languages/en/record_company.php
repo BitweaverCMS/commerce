@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_company.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: record_company.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
   define('HEADING_TITLE', 'Record Companies');
   define('TABLE_HEADING_RECORD_COMPANY', 'Record Company');
-  define('TABLE_HEADING_ACTION', 'Action');
+  
   define('TEXT_NEW_INTRO', 'Please enter the details of the new Record Company below.');
   define('TEXT_EDIT_INTRO', 'Please amend the details of the Record Company below.');
   define('TEXT_DELETE_INTRO', 'Are you sure you want to delete this Record Company.');

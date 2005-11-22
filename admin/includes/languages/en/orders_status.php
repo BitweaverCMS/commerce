@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: orders_status.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Orders Status');
 
 define('TABLE_HEADING_ORDERS_STATUS', 'Orders Status');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_ORDERS_STATUS_NAME', 'Orders Status:');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.8 2005/11/22 11:06:53 gilesw Exp $
+//  $Id: en.php,v 1.9 2005/11/22 12:11:13 gilesw Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -394,7 +394,16 @@ define('TEXT_DEFAULT', 'default');
 define('TEXT_SET_DEFAULT', 'Set as default');
 define('TEXT_FIELD_REQUIRED', '&nbsp;<span class="fieldRequired">* Required</span>');
 
+define('TABLE_HEADING_ACTION', 'Action');
+define('TABLE_HEADING_STATUS', 'Status');
+
 define('ERROR_NO_DEFAULT_CURRENCY_DEFINED', 'Error: There is currently no default currency set. Please set one at: Administration Tool->Localization->Currencies');
+
+define('TEXT_PRODUCTS_IMAGE_DIR', 'Upload to directory:');
+define('TEXT_PRODUCTS', 'Products:');
+define('TEXT_LAST_MODIFIED', 'Last Modified:');
+define('TEXT_DATE_ADDED', 'Date Added:');
+define('TEXT_IMAGE_NONEXISTENT', 'IMAGE DOES NOT EXIST');
 
 define('TEXT_CACHE_CATEGORIES', 'Categories Box');
 define('TEXT_CACHE_MANUFACTURERS', 'Manufacturers Box');
@@ -404,6 +413,8 @@ define('TEXT_CACHE_ALSO_PURCHASED', 'Also Purchased Module');
 define('TEXT_NONE', '--none--');
 define('TEXT_TOP', 'Top');
 
+define('ERROR_DIRECTORY_NOT_WRITEABLE', 'Error: I can not write to this directory. Please set the right user permissions on: %s');
+define('ERROR_DIRECTORY_DOES_NOT_EXIST', 'Error: Directory does not exist: %s');
 define('ERROR_DESTINATION_DOES_NOT_EXIST', 'Error: Destination does not exist %s');
 define('ERROR_DESTINATION_NOT_WRITEABLE', 'Error: Destination not writeable %s');
 define('ERROR_FILE_NOT_SAVED', 'Error: File upload not saved.');

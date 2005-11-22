@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: categories.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -30,20 +30,20 @@ define('TABLE_HEADING_CATEGORIES_SORT_ORDER', 'Sort');
 define('TABLE_HEADING_PRICE','Price/Special/Sale');
 define('TABLE_HEADING_QUANTITY','Quantity');
 
-define('TABLE_HEADING_ACTION', 'Action');
-define('TABLE_HEADING_STATUS', 'Status');
+
+
 
 define('TEXT_CATEGORIES', 'Categories:');
 define('TEXT_SUBCATEGORIES', 'Subcategories:');
-define('TEXT_PRODUCTS', 'Products:');
+
 define('TEXT_PRODUCTS_PRICE_INFO', 'Price:');
 define('TEXT_PRODUCTS_TAX_CLASS', 'Tax Class:');
 define('TEXT_PRODUCTS_AVERAGE_RATING', 'Average Rating:');
 define('TEXT_PRODUCTS_QUANTITY_INFO', 'Quantity:');
-define('TEXT_DATE_ADDED', 'Date Added:');
+
 define('TEXT_DATE_AVAILABLE', 'Date Available:');
-define('TEXT_LAST_MODIFIED', 'Last Modified:');
-define('TEXT_IMAGE_NONEXISTENT', 'IMAGE DOES NOT EXIST');
+
+
 define('TEXT_NO_CHILD_CATEGORIES_OR_PRODUCTS', 'Please insert a new category or product in this level.');
 define('TEXT_PRODUCT_MORE_INFORMATION', 'For more information, please visit this products <a href="http://%s" target="blank">webpage</a>.');
 define('TEXT_PRODUCT_DATE_ADDED', 'This product was added to our catalog on %s.');
@@ -102,7 +102,7 @@ define('TEXT_PRODUCTS_DESCRIPTION', 'Products Description:');
 define('TEXT_PRODUCTS_QUANTITY', 'Products Quantity:');
 define('TEXT_PRODUCTS_MODEL', 'Products Model:');
 define('TEXT_PRODUCTS_IMAGE', 'Products Image:');
-define('TEXT_PRODUCTS_IMAGE_DIR', 'Upload to directory:');
+
 define('TEXT_PRODUCTS_URL', 'Products URL:');
 define('TEXT_PRODUCTS_URL_WITHOUT_HTTP', '<small>(without http://)</small>');
 define('TEXT_PRODUCTS_PRICE_NET', 'Products Price (Net):');

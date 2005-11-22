@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: template_select.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: template_select.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Template Selection');
@@ -25,7 +25,7 @@ define('HEADING_TITLE', 'Template Selection');
 define('TABLE_HEADING_LANGUAGE', 'Template Language');
 define('TABLE_HEADING_NAME', 'Template Name');
 define('TABLE_HEADING_DIRECTORY', 'Template Directory');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_HEADING_EDIT_TEMPLATE', 'Edit Template Settings');
 define('TEXT_INFO_HEADING_DELETE_TEMPLATE', 'Delete Template association');

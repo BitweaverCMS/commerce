@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: downloads_manager.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE','Downloads Manager');
@@ -30,7 +30,7 @@ define('TABLE_HEADING_OPT_VALUE', 'Option Value Name');
 define('TABLE_TEXT_FILENAME', 'Filename');
 define('TABLE_TEXT_MAX_DAYS', 'Days');
 define('TABLE_TEXT_MAX_COUNT', 'Count');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TABLE_HEADING_OPT_PRICE', 'Price');
 define('TABLE_HEADING_OPT_PRICE_PREFIX', 'Prefix');

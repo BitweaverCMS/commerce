@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_popup.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: salemaker_popup.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Salemaker');
@@ -30,6 +30,6 @@ define('TABLE_HEADING_SALE_NAME', 'SaleName');
 define('TABLE_HEADING_SALE_DEDUCTION', 'Deduction');
 define('TABLE_HEADING_SALE_DATE_START', 'Startdate');
 define('TABLE_HEADING_SALE_DATE_END', 'Enddate');
-define('TABLE_HEADING_STATUS', 'Status');
-define('TABLE_HEADING_ACTION', 'Action');
+
+
 ?>

@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: configuration.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('TABLE_HEADING_CONFIGURATION_TITLE', 'Title');
 define('TABLE_HEADING_CONFIGURATION_VALUE', 'Value');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_DATE_ADDED', 'Date Added:');

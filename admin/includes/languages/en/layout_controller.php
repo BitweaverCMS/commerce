@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: layout_controller.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Column Boxes');
@@ -28,7 +28,7 @@ define('TABLE_HEADING_LAYOUT_BOX_STATUS_SINGLE', 'SINGLE COLUMN<br />Status');
 define('TABLE_HEADING_LAYOUT_BOX_LOCATION', 'LEFT or RIGHT<br />COLUMN');
 define('TABLE_HEADING_LAYOUT_BOX_SORT_ORDER', 'LEFT/RIGHT COLUMN<br />Sort Order');
 define('TABLE_HEADING_LAYOUT_BOX_SORT_ORDER_SINGLE', 'SINGLE COLUMN<br />Sort Order');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_LAYOUT_BOX','Selected Box: ');
@@ -56,7 +56,7 @@ define('HEADING_TITLE_LAYOUT_TEMPLATE', 'Site Template Layout');
 
 define('TABLE_HEADING_LAYOUT_TITLE', 'Title');
 define('TABLE_HEADING_LAYOUT_VALUE', 'Value');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 
 define('TEXT_MODULE_DIRECTORY', 'Site Layout Directory:');

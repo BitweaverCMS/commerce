@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: admin.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: admin.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Admin Settings');
@@ -25,7 +25,7 @@ define('HEADING_TITLE', 'Admin Settings');
 define('TABLE_HEADING_ADMINS_NAME', 'Admins Name');
 define('TABLE_HEADING_ADMINS_ID', 'ID');
 define('TABLE_HEADING_ADMINS_EMAIL', 'Email');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_HEADING_NEW_ADMIN', 'New');
 define('TEXT_HEADING_EDIT_ADMIN', 'Edit');

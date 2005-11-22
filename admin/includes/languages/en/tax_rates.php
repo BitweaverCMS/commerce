@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: tax_rates.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Tax Rates');
@@ -27,7 +27,7 @@ define('TABLE_HEADING_TAX_CLASS_TITLE', 'Tax Class');
 define('TABLE_HEADING_COUNTRIES_NAME', 'Country');
 define('TABLE_HEADING_ZONE', 'Zone');
 define('TABLE_HEADING_TAX_RATE', 'Tax Rate');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_DATE_ADDED', 'Date Added:');

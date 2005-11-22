@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: modules.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE_MODULES_PAYMENT', 'Payment Modules');
@@ -28,7 +28,7 @@ define('HEADING_TITLE_MODULES_PRODUCT_TYPES', 'Product Type Modules');
 define('TABLE_HEADING_MODULES', 'Modules');
 define('TABLE_HEADING_SORT_ORDER', 'Sort Order');
 define('TABLE_HEADING_ORDERS_STATUS','Orders Status');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_MODULE_DIRECTORY', 'Module Directory:');
 ?>

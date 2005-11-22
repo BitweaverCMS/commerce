@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: music_genre.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: music_genre.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
   define('HEADING_TITLE', 'Music Genres');
   define('TABLE_HEADING_MUSIC_GENRE', 'Music Genres');
-  define('TABLE_HEADING_ACTION', 'Action');
+  
   define('TEXT_NEW_INTRO', 'Please enter the details of the new Music Genre below.');
   define('TEXT_EDIT_INTRO', 'Please amend the details of the Music Genre below.');
   define('TEXT_DELETE_INTRO', 'Are you sure you want to delete this Music Genre.');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_sent.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: gv_sent.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Gift Voucher\'s Sent');
@@ -26,7 +26,7 @@ define('TABLE_HEADING_SENDERS_NAME', 'Senders Name');
 define('TABLE_HEADING_VOUCHER_VALUE', TEXT_GV_NAME . ' Value');
 define('TABLE_HEADING_VOUCHER_CODE', TEXT_GV_REDEEM);
 define('TABLE_HEADING_DATE_SENT', 'Date Sent');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_INFO_SENDERS_ID', 'Senders ID:');
 define('TEXT_INFO_AMOUNT_SENT', 'Amount Sent:');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: banner_manager.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Banner Manager');
@@ -25,10 +25,10 @@ define('HEADING_TITLE', 'Banner Manager');
 define('TABLE_HEADING_BANNERS', 'Banners');
 define('TABLE_HEADING_GROUPS', 'Groups');
 define('TABLE_HEADING_STATISTICS', 'Displays / Clicks');
-define('TABLE_HEADING_STATUS', 'Status');
+
 define('TABLE_HEADING_BANNER_OPEN_NEW_WINDOWS','New Window');
 define('TABLE_HEADING_BANNER_ON_SSL', 'Show SSL');
-define('TABLE_HEADING_ACTION', 'Action');
+
 define('TABLE_HEADING_BANNER_SORT_ORDER', 'Sort<br />Order');
 
 define('TEXT_BANNERS_TITLE', 'Banner Title:');

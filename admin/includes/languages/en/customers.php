@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: customers.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Customers');
@@ -27,7 +27,7 @@ define('TABLE_HEADING_FIRSTNAME', 'First Name');
 define('TABLE_HEADING_LASTNAME', 'Last Name');
 define('TABLE_HEADING_ACCOUNT_CREATED', 'Account Created');
 define('TABLE_HEADING_LOGIN', 'Last Login');
-define('TABLE_HEADING_ACTION', 'Action');
+
 define('TABLE_HEADING_PRICING_GROUP', 'Pricing Group');
 define('TABLE_HEADING_AUTHORIZATION_APPROVAL', 'Authorized');
 

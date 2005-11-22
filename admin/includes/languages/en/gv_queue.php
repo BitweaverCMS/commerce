@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: gv_queue.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', TEXT_GV_NAME . ' Release Queue');
@@ -26,7 +26,7 @@ define('TABLE_HEADING_CUSTOMERS', 'Customers');
 define('TABLE_HEADING_ORDERS_ID', 'Order-No.');
 define('TABLE_HEADING_VOUCHER_VALUE', TEXT_GV_NAME . ' Value');
 define('TABLE_HEADING_DATE_PURCHASED', 'Date Purchased');
-define('TABLE_HEADING_ACTION', 'Action');
+
 
 define('TEXT_REDEEM_GV_MESSAGE_HEADER', 'You recently purchased a ' . TEXT_GV_NAME . ' from our online store.');
 define('TEXT_REDEEM_GV_MESSAGE_RELEASED', 'For security reasons this was not made immediately available to you. ' .

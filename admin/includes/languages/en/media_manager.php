@@ -17,20 +17,20 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: media_manager.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE_MEDIA_MANAGER', 'Media Manager');
 
 define('TABLE_HEADING_MEDIA', 'Collection Name');
-define('TABLE_HEADING_ACTION', 'Action');
+
 define('TEXT_HEADING_NEW_MEDIA_COLLECTION', 'New Media Collection');
 define('TEXT_NEW_INTRO', 'Please enter the details of the new media collection below');
 define('TEXT_MEDIA_COLLECTION_NAME', 'Media Collection Name');
 define('TEXT_MEDIA_EDIT_INSTRUCTIONS', 'Use the section above to change the Media Collection Name, then clicking on the save button.<br /><br />
                                         Use the selection below to add or remove media clips from the media collection.');
-define('TEXT_DATE_ADDED', 'Date Added:');
-define('TEXT_LAST_MODIFIED', 'Last Modified:');
+
+
 define('TEXT_PRODUCTS', 'Linked Products:');
 define('TEXT_NO_PRODUCTS', 'No Products in this category');
 define('TEXT_HEADING_EDIT_MEDIA_COLLECTION', 'Edit Media Collection');

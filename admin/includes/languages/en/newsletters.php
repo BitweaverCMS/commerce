@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: newsletters.php,v 1.3 2005/11/22 12:11:12 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Newsletter Manager');
@@ -26,8 +26,8 @@ define('TABLE_HEADING_NEWSLETTERS', 'Newsletters');
 define('TABLE_HEADING_SIZE', 'Size');
 define('TABLE_HEADING_MODULE', 'Module');
 define('TABLE_HEADING_SENT', 'Sent');
-define('TABLE_HEADING_STATUS', 'Status');
-define('TABLE_HEADING_ACTION', 'Action');
+
+
 
 define('TEXT_NEWSLETTER_MODULE', 'Module:');
 define('TEXT_NEWSLETTER_TITLE', 'Subject:');

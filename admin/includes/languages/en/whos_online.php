@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: whos_online.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Who\'s Online');
@@ -29,7 +29,7 @@ define('TABLE_HEADING_IP_ADDRESS', 'IP Address');
 define('TABLE_HEADING_ENTRY_TIME', 'Entry Time');
 define('TABLE_HEADING_LAST_CLICK', 'Last Click');
 define('TABLE_HEADING_LAST_PAGE_URL', 'Last URL');
-define('TABLE_HEADING_ACTION', 'Action');
+
 define('TABLE_HEADING_SHOPPING_CART', 'Users Shopping Cart');
 define('TEXT_SHOPPING_CART_SUBTOTAL', 'Subtotal');
 define('TEXT_NUMBER_OF_CUSTOMERS', 'Currently there are %s customers online');
