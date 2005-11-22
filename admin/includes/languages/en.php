@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.7 2005/10/31 21:18:19 lsces Exp $
+//  $Id: en.php,v 1.8 2005/11/22 11:06:53 gilesw Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -116,6 +116,7 @@ define('BOX_CATALOG_PRODUCT_TYPES', 'Product Types');
 define('BOX_CATALOG_CATEGORIES_OPTIONS_NAME_MANAGER', 'Option Name Manager');
 define('BOX_CATALOG_CATEGORIES_OPTIONS_VALUES_MANAGER', 'Option Value Manager');
 define('BOX_CATALOG_MANUFACTURERS', 'Manufacturers');
+define('BOX_CATALOG_SUPPLIERS', 'Suppliers');
 define('BOX_CATALOG_REVIEWS', 'Reviews');
 define('BOX_CATALOG_SPECIALS', 'Specials');
 define('BOX_CATALOG_PRODUCTS_EXPECTED', 'Products Expected');
@@ -378,6 +379,7 @@ define('TEXT_DISPLAY_NUMBER_OF_PRODUCTS_EXPECTED', 'Displaying <b>%d</b> to <b>%
 define('TEXT_DISPLAY_NUMBER_OF_REVIEWS', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> product reviews)');
 define('TEXT_DISPLAY_NUMBER_OF_SALES', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> sales)');
 define('TEXT_DISPLAY_NUMBER_OF_SPECIALS', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> products on special)');
+define('TEXT_DISPLAY_NUMBER_OF_SUPPLIERS', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> suppliers)');
 define('TEXT_DISPLAY_NUMBER_OF_TAX_CLASSES', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> tax classes)');
 define('TEXT_DISPLAY_NUMBER_OF_TEMPLATES', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> template associations)');
 define('TEXT_DISPLAY_NUMBER_OF_TAX_ZONES', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> tax zones)');
@@ -396,6 +398,7 @@ define('ERROR_NO_DEFAULT_CURRENCY_DEFINED', 'Error: There is currently no defaul
 
 define('TEXT_CACHE_CATEGORIES', 'Categories Box');
 define('TEXT_CACHE_MANUFACTURERS', 'Manufacturers Box');
+define('TEXT_CACHE_MANUFACTURERS', 'Suppliers Box');
 define('TEXT_CACHE_ALSO_PURCHASED', 'Also Purchased Module');
 
 define('TEXT_NONE', '--none--');

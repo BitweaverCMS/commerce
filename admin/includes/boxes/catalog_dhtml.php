@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: catalog_dhtml.php,v 1.6 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: catalog_dhtml.php,v 1.7 2005/11/22 11:04:42 gilesw Exp $
 //
   $za_contents = array();
   $za_heading = array('text' => BOX_HEADING_CATALOG, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
@@ -32,6 +32,7 @@
   $za_contents[] = array('text' => BOX_CATALOG_PRODUCT_OPTIONS_NAME, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_NAME, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_PRODUCT_OPTIONS_VALUES, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_VALUES, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_MANUFACTURERS, 'link' => zen_href_link_admin(FILENAME_MANUFACTURERS, '', 'NONSSL'));
+  $za_contents[] = array('text' => BOX_CATALOG_SUPPLIERS, 'link' => zen_href_link_admin(FILENAME_SUPPLIERS, '', 'NONSSL'));  
   $za_contents[] = array('text' => BOX_CATALOG_REVIEWS, 'link' => zen_href_link_admin(FILENAME_REVIEWS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_SPECIALS, 'link' => zen_href_link_admin(FILENAME_SPECIALS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_FEATURED, 'link' => zen_href_link_admin(FILENAME_FEATURED, '', 'NONSSL'));

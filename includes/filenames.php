@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: filenames.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
+// $Id: filenames.php,v 1.4 2005/11/22 11:05:21 gilesw Exp $
 //
 
 
@@ -144,6 +144,7 @@
   define('FILENAME_SHIPPING', 'shippinginfo');
   define('FILENAME_SHOPPING_CART', 'shopping_cart');
   define('FILENAME_SSL_CHECK', 'ssl_check');
+  define('FILENAME_SUPPLIERS', 'suppliers');  
   define('FILENAME_TEMPLATE_SELECT', 'template_select');
   define('FILENAME_TAX_CLASSES', 'tax_classes');
   define('FILENAME_TAX_RATES', 'tax_rates');

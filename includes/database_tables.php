@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.9 2005/08/24 02:50:27 lsces Exp $
+// $Id: database_tables.php,v 1.10 2005/11/22 11:05:48 gilesw Exp $
 //
 
 // define the database table names used in the project
@@ -95,6 +95,8 @@
   define('TABLE_SALEMAKER_SALES', '`'.BITCOMMERCE_DB_PREFIX . 'salemaker_sales`');
   define('TABLE_SESSIONS', '`'.BITCOMMERCE_DB_PREFIX . 'sessions`');
   define('TABLE_SPECIALS', '`'.BITCOMMERCE_DB_PREFIX . 'specials`');
+  define('TABLE_SUPPLIERS', '`'.BITCOMMERCE_DB_PREFIX . 'suppliers`');
+  define('TABLE_SUPPLIERS_INFO', '`'.BITCOMMERCE_DB_PREFIX . 'suppliers_info`'); 
   define('TABLE_TEMPLATE_SELECT', '`'.BITCOMMERCE_DB_PREFIX . 'template_select`');
   define('TABLE_TAX_CLASS', '`'.BITCOMMERCE_DB_PREFIX . 'tax_class`');
   define('TABLE_TAX_RATES', '`'.BITCOMMERCE_DB_PREFIX . 'tax_rates`');
