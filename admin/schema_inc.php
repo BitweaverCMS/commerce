@@ -692,7 +692,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   payment_method C(128),
   payment_module_code C(32),
   shipping_method C(128),
-  shipping_method_code C(256),
+  shipping_method_code C(255),
   shipping_module_code C(32),
   coupon_code C(32),
   cc_type C(20),
