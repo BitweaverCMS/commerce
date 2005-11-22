@@ -620,7 +620,6 @@ $check_duplicate = $db->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " W
 		} elseif( $this->verifyDiscount( $pParamHash ) ) {
 			$pParamHash['discounts_store']['products_id'] = $this->mProductsId;
 			$pParamHash['discounts_store']['discount_id'] = !empty( $pParamHash['discount_id'] ) ? $pParamHash['discount_id'] : $this->getDiscount( $pParamHash['discount_qty'], 'discount_id' );
-vd( $pParamHash );
 
 			// this is a little funky cause we also to an insert due to oddball updates
 			if( $pParamHash['discounts_store']['discount_id'] ) {
@@ -687,9 +686,9 @@ Skip deleting of images for now
 				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 				// remove downloads if they exist
-				$remove_downloads= $this->mDb->Execute("SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $this->mProductsId . "'");
+				$remove_downloads= $this->mDb->query( "SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
 				while (!$remove_downloads->EOF) {
-					$db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
+					$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
 					$remove_downloads->MoveNext();
 				}
 
