@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.11 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: languages.php,v 1.12 2005/11/22 12:16:21 gilesw Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -135,6 +135,23 @@
 
             $manufacturers->MoveNext();
           }
+
+// create additional suppliers_info records
+          $suppliers = $db->Execute("select m.`suppliers_id`, mi.`suppliers_url`
+		                               from " . TABLE_SUPPLIERS . " m
+						   left join " . TABLE_SUPPLIERS_INFO . " mi
+						   on m.`suppliers_id` = mi.`suppliers_id`
+						   where mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
+
+          while (!$suppliers->EOF) {
+            $db->Execute("insert into " . TABLE_SUPPLIERS_INFO . "
+		                    (`suppliers_id`, `languages_id`, `suppliers_url`)
+					              values ('" . $suppliers->fields['suppliers_id'] . "', '" . (int)$insert_id . "',
+					                      '" . zen_db_input($suppliers->fields['suppliers_url']) . "')");
+
+            $suppliers->MoveNext();
+          }
+
 
 // create additional orders_status records
           $orders_status = $db->Execute("select `orders_status_id`, `orders_status_name`
