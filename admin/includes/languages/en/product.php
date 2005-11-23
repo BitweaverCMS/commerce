@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.4 2005/11/23 12:57:31 gilesw Exp $
+//  $Id: product.php,v 1.5 2005/11/23 13:30:56 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -99,6 +99,7 @@ define('TEXT_PRODUCTS_QTY_BOX_STATUS_OFF', 'No, Do not show Quantity Box');
 
 define('TEXT_PRODUCTS_MANUFACTURER', 'Products Manufacturer:');
 define('TEXT_PRODUCTS_SUPPLIER', 'Products Supplier:');
+define('TEXT_PRODUCTS_BARCODE', 'Products Barcode:');
 define('TEXT_PRODUCTS_NAME', 'Products Name:');
 define('TEXT_PRODUCTS_DESCRIPTION', 'Products Description:');
 define('TEXT_PRODUCTS_QUANTITY', 'Products Quantity:');

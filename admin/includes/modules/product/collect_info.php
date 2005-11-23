@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.14 2005/11/23 12:57:31 gilesw Exp $
+//  $Id: collect_info.php,v 1.15 2005/11/23 13:30:56 gilesw Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -36,7 +36,8 @@
                        'products_status' => '',
                        'products_tax_class_id' => DEFAULT_PRODUCT_TAX_CLASS_ID,
                        'manufacturers_id' => '',
-                       'suppliers_id' => '',                       
+                       'suppliers_id' => '',
+                       'products_barcode' => '',                                              
                        'products_quantity_order_min' => '',
                        'products_quantity_order_units' => '',
                        'products_priced_by_attribute' => '',
@@ -498,6 +499,10 @@ updateGross();
             <td class="main"><?php echo TEXT_PRODUCTS_WEIGHT; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_weight', $pInfo->products_weight); ?></td>
           </tr>
+          <tr>
+            <td class="main"><?php echo TEXT_PRODUCTS_BARCODE; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_barcode', $pInfo->products_barcode); ?></td>
+          </tr>          
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
