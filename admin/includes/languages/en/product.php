@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.5 2005/11/23 13:30:56 gilesw Exp $
+//  $Id: product.php,v 1.6 2005/11/23 16:08:09 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -110,6 +110,8 @@ define('TEXT_PRODUCTS_URL', 'Products URL:');
 define('TEXT_PRODUCTS_URL_WITHOUT_HTTP', '<small>(without http://)</small>');
 define('TEXT_PRODUCTS_PRICE_NET', 'Products Price (Net):');
 define('TEXT_PRODUCTS_PRICE_GROSS', 'Products Price (Gross):');
+define('TEXT_PRODUCTS_COGS_NET', 'Products Cost (Net):');
+
 define('TEXT_PRODUCTS_WEIGHT', 'Products Weight:');
 
 define('EMPTY_CATEGORY', 'Empty Category');

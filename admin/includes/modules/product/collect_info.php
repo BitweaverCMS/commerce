@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.15 2005/11/23 13:30:56 gilesw Exp $
+//  $Id: collect_info.php,v 1.16 2005/11/23 16:08:09 gilesw Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -28,6 +28,7 @@
                        'products_model' => '',
                        'products_image' => '',
                        'products_price' => '',
+                       'products_cogs' => '',                       
                        'products_virtual' => DEFAULT_PRODUCT_PRODUCTS_VIRTUAL,
                        'products_weight' => '',
                        'products_date_added' => '',
@@ -357,6 +358,10 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_pull_down_menu('products_tax_class_id', $tax_class_array, $pInfo->products_tax_class_id, 'onchange="updateGross()"'); ?></td>
           </tr>
           <tr bgcolor="#ebebff">
+            <td class="main"><?php echo TEXT_PRODUCTS_COGS_NET; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_cogs', $pInfo->products_cogs); ?></td>
+          </tr>                         
+          <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_PRICE_NET; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_price', $pInfo->products_price, 'onKeyUp="updateGross()"'); ?></td>
           </tr>
@@ -364,6 +369,9 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
             <td class="main"><?php echo TEXT_PRODUCTS_PRICE_GROSS; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_price_gross', $pInfo->products_price, 'OnKeyUp="updateNet()"'); ?></td>
           </tr>
+          
+     
+          
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
