@@ -1969,9 +1969,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (239,'Zimbabwe', 'ZW', 'ZWE', '716', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (1,'US Dollar', 'USD', '\$', '', '.', ',', '2', '1.0000', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (2,'Euro', 'EUR', '', '&euro;', '.', ',', '2', '0.817565', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (3,'United Kingdom Pounds', 'GBP', '', '&pound;', '.', ',', '2', '0.5654713399', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (4,'Canada Dollars', 'CAD', '', '&euro;', '.', ',', '2', '1.2115475341', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (5,'Australia Dollars', 'AUD', '', '&euro;', '.', ',', '2', '1.3121995036', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (3,'United Kingdom Pounds', 'GBP', '&pound;', '', '.', ',', '2', '0.5654713399', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (4,'Canada Dollars', 'CAD', '', '', '.', ',', '2', '1.2115475341', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (5,'Australia Dollars', 'AUD', '', '', '.', ',', '2', '1.3121995036', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (6,'Japan Yen', 'JPY', '', '&yen;', '.', ',', '2', '112.2350011215', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."languages` VALUES (1,'English', 'en', 'icon.gif', 'english',1)",
 
