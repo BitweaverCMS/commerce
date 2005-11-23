@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.16 2005/11/23 16:08:09 gilesw Exp $
+//  $Id: collect_info.php,v 1.17 2005/11/23 17:10:08 gilesw Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -26,6 +26,7 @@
                        'products_id' => '',
                        'products_quantity' => '',
                        'products_model' => '',
+                       'products_manufacturers_model' => '',                       
                        'products_image' => '',
                        'products_price' => '',
                        'products_cogs' => '',                       
@@ -293,7 +294,11 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_MANUFACTURER; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, $pInfo->manufacturers_id); ?></td>
-          </tr>
+          </tr>          
+          <tr>
+            <td class="main"><?php echo TEXT_PRODUCTS_MANUFACTURERS_MODEL; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_manufacturers_model', $pInfo->products_manufacturers_model, zen_set_field_length(TABLE_PRODUCTS, 'products_manufacturers_model')); ?></td>
+          </tr>           
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_SUPPLIER; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_pull_down_menu('suppliers_id', $suppliers_array, $pInfo->suppliers_id); ?></td>

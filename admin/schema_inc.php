@@ -211,6 +211,7 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   products_type I4 NOTNULL,
   products_quantity F DEFAULT '0' NOTNULL,
   products_model C(32),
+  products_manufacturers_model C(32),
   products_image C(250),
   products_price N(15,4),
   products_cogs N(15,4),

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.6 2005/11/23 16:08:09 gilesw Exp $
+//  $Id: product.php,v 1.7 2005/11/23 17:10:08 gilesw Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -104,6 +104,8 @@ define('TEXT_PRODUCTS_NAME', 'Products Name:');
 define('TEXT_PRODUCTS_DESCRIPTION', 'Products Description:');
 define('TEXT_PRODUCTS_QUANTITY', 'Products Quantity:');
 define('TEXT_PRODUCTS_MODEL', 'Products Model:');
+define('TEXT_PRODUCTS_MANUFACTURERS_MODEL', 'Manufacturers Model:');
+
 define('TEXT_PRODUCTS_IMAGE', 'Products Image:');
 
 define('TEXT_PRODUCTS_URL', 'Products URL:');

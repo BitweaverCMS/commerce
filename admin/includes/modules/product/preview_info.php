@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.8 2005/11/23 16:08:09 gilesw Exp $
+//  $Id: preview_info.php,v 1.9 2005/11/23 17:10:08 gilesw Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -28,7 +28,7 @@
     } else {
       $products = $db->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
                                       pd.`products_description`, pd.`products_url`, p.`products_quantity`,
-                                      p.`products_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
+                                      p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
                                       p.`products_weight`, p.`products_date_added`, p.products_last_modified,
                                       p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`, p.`products_barcode` ,
                                       p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
