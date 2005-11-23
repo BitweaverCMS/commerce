@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.13 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: collect_info.php,v 1.14 2005/11/23 12:57:31 gilesw Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -36,6 +36,7 @@
                        'products_status' => '',
                        'products_tax_class_id' => DEFAULT_PRODUCT_TAX_CLASS_ID,
                        'manufacturers_id' => '',
+                       'suppliers_id' => '',                       
                        'products_quantity_order_min' => '',
                        'products_quantity_order_units' => '',
                        'products_priced_by_attribute' => '',
@@ -79,6 +80,15 @@
       $manufacturers_array[] = array('id' => $manufacturers->fields['manufacturers_id'],
                                      'text' => $manufacturers->fields['manufacturers_name']);
       $manufacturers->MoveNext();
+    }
+
+    $suppliers_array = array(array('id' => '', 'text' => TEXT_NONE));
+    $suppliers = $db->Execute("select `suppliers_id`, `suppliers_name`
+                                   from " . TABLE_SUPPLIERS . " order by `suppliers_name`");
+    while (!$suppliers->EOF) {
+      $suppliers_array[] = array('id' => $suppliers->fields['suppliers_id'],
+                                     'text' => $suppliers->fields['suppliers_name']);
+      $suppliers->MoveNext();
     }
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
@@ -282,6 +292,11 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
             <td class="main"><?php echo TEXT_PRODUCTS_MANUFACTURER; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, $pInfo->manufacturers_id); ?></td>
           </tr>
+          <tr>
+            <td class="main"><?php echo TEXT_PRODUCTS_SUPPLIER; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_pull_down_menu('suppliers_id', $suppliers_array, $pInfo->suppliers_id); ?></td>
+          </tr>          
+          
           <tr>
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>

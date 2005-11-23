@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.5 2005/08/24 12:16:09 lsces Exp $
+//  $Id: preview_info.php,v 1.6 2005/11/23 12:57:31 gilesw Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -30,7 +30,7 @@
                                       pd.`products_description`, pd.`products_url`, p.`products_quantity`,
                                       p.`products_model`, p.`products_image`, p.`products_price`, p.`products_virtual`,
                                       p.`products_weight`, p.`products_date_added`, p.products_last_modified,
-                                      p.`products_date_available`, p.`products_status, p.`manufacturers_id`,
+                                      p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`,
                                       p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
                                       p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed,
                                       p.product_is_always_free_ship, p.`products_qty_box_status`, p.`products_quantity_order_max`,
