@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.17 2005/11/23 17:10:08 gilesw Exp $
+//  $Id: collect_info.php,v 1.18 2005/11/23 17:58:39 gilesw Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -187,14 +187,13 @@ var tax_rates = new Array();
       }
     }
 ?>
-
 function doRound(x, places) {
   return Math.round(x * Math.pow(10, places)) / Math.pow(10, places);
 }
 
 function getTaxRate() {
-  var selected_value = document.forms["new_product"].`products_tax_class_id`.selectedIndex;
-  var parameterVal = document.forms["new_product"].`products_tax_class_id`[selected_value].value;
+  var selected_value = document.forms["new_product"].products_tax_class_id.selectedIndex;
+  var parameterVal = document.forms["new_product"].products_tax_class_id[selected_value].value;
 
   if ( (parameterVal > 0) && (tax_rates[parameterVal] > 0) ) {
     return tax_rates[parameterVal];
@@ -205,25 +204,94 @@ function getTaxRate() {
 
 function updateGross() {
   var taxRate = getTaxRate();
-  var grossValue = document.forms["new_product"].`products_price`.value;
+  var grossValue = document.forms["new_product"].products_price.value;
 
   if (taxRate > 0) {
     grossValue = grossValue * ((taxRate / 100) + 1);
   }
 
-  document.forms["new_product"].`products_price`_gross.value = doRound(grossValue, 4);
+  document.forms["new_product"].products_price_gross.value = doRound(grossValue, 4);
+      updateProfit();
+      updateMargin();   
+      updateRounding();    
 }
 
 function updateNet() {
   var taxRate = getTaxRate();
-  var netValue = document.forms["new_product"].`products_price`_gross.value;
+  var netValue = document.forms["new_product"].products_price_gross.value;
 
   if (taxRate > 0) {
     netValue = netValue / ((taxRate / 100) + 1);
   }
 
-  document.forms["new_product"].`products_price`.value = doRound(netValue, 4);
+  document.forms["new_product"].products_price.value = doRound(netValue, 4);
+      updateProfit();
+      updateMargin();
+      updateRounding();    
 }
+function updateFromMargin() {
+   document.forms["new_product"].products_price.value = (document.forms["new_product"].products_cogs.value/100)*document.forms["new_product"].products_margin.value + parseFloat(document.forms["new_product"].products_cogs.value);
+  var taxRate = getTaxRate();
+  var grossValue = document.forms["new_product"].products_price.value;
+  if (taxRate > 0) {
+    grossValue = grossValue * ((taxRate / 100) + 1);
+  }
+  document.forms["new_product"].products_price_gross.value = doRound(grossValue, 4);
+  updateProfit();
+  RoundingHold();
+}
+function updateFromProfit() {
+  document.forms["new_product"].products_price.value = parseFloat(document.forms["new_product"].products_cogs.value) + parseFloat(document.forms["new_product"].products_profit.value);
+  var taxRate = getTaxRate();
+  var grossValue = document.forms["new_product"].products_price.value;
+  if (taxRate > 0) {
+    grossValue = grossValue * ((taxRate / 100) + 1);
+  }
+  document.forms["new_product"].products_price_gross.value = doRound(grossValue, 4);   
+  updateMargin();
+}
+function updateFromCost() {   
+   updateProfit();   
+   updateMargin();   
+}
+function updateProfit() {
+   var profit;
+   profit = (document.forms["new_product"].products_price.value)-(document.forms["new_product"].products_cogs.value);
+   document.forms["new_product"].products_profit.value = doRound(profit, 2);
+}
+function updateMargin() {   
+   var margin;
+   margin = (document.forms["new_product"].products_price.value / (document.forms["new_product"].products_cogs.value / 100)) - 100;  
+   document.forms["new_product"].products_margin.value = doRound(margin, 2);
+}
+function updateRounding() {  
+  var someStr;
+  var someArray
+  someStr = document.forms["new_product"].products_price_gross.value;
+  someArray = someStr.split('.');
+  rounding = someArray[1];
+  document.forms["new_product"].products_rounding.value = doRound(rounding, 2);
+}
+function updateFromRounding() {  
+  var grossStr;
+  var grossArray
+  grossStr = document.forms["new_product"].products_price_gross.value;
+  grossArray = grossStr.split('.');
+  grossStr = grossArray[0];
+  grossStr += "." + document.forms["new_product"].products_rounding.value;
+  document.forms["new_product"].products_price_gross.value = grossStr;
+  updateNet();
+}
+function RoundingHold() {  
+  var grossStr;
+  var grossArray
+  grossStr = document.forms["new_product"].products_price_gross.value;
+  grossArray = grossStr.split('.');
+  grossStr = grossArray[0];
+  grossStr += "." + document.forms["new_product"].products_rounding.value;
+  document.forms["new_product"].products_price_gross.value = grossStr;
+}
+
 //--></script>
     <?php
 //  echo $type_admin_handler;
@@ -364,8 +432,20 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           </tr>
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_COGS_NET; ?></td>
-            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_cogs', $pInfo->products_cogs); ?></td>
-          </tr>                         
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_cogs', $pInfo->products_cogs , 'onKeyUp="updateFromCost()"'); ?></td>
+          </tr>
+          <tr bgcolor="#ebebff">
+            <td class="main"><?php echo TEXT_PRODUCTS_MARGIN; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_margin', $products_margin , 'onKeyUp="updateFromMargin()"'); ?></td>
+          </tr> 
+          <tr bgcolor="#ebebff">
+            <td class="main"><?php echo TEXT_PRODUCTS_PROFIT; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_profit', $products_profit , 'onKeyUp="updateFromProfit()"'); ?></td>
+          </tr>
+          <tr bgcolor="#ebebff">
+            <td class="main"><?php echo TEXT_PRODUCTS_ROUNDING; ?></td>
+            <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_rounding', $products_rounding , 'onKeyUp="updateFromRounding()"'); ?></td>
+          </tr>                                                          
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_PRICE_NET; ?></td>
             <td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . zen_draw_input_field('products_price', $pInfo->products_price, 'onKeyUp="updateGross()"'); ?></td>
