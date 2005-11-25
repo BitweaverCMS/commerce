@@ -17,10 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.8 2005/10/31 21:37:17 lsces Exp $
+//  $Id: manufacturers.php,v 1.9 2005/11/25 12:19:35 gilesw Exp $
 //
 
   require('includes/application_top.php');
+
+if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGES . 'manufacturers');
+
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
 

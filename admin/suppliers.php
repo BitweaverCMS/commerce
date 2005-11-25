@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: suppliers.php,v 1.1 2005/11/22 11:03:55 gilesw Exp $
+//  $Id: suppliers.php,v 1.2 2005/11/25 12:19:35 gilesw Exp $
 //
 
   require('includes/application_top.php');
 
-  $action = (isset($_GET['action']) ? $_GET['action'] : '');
+if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 'suppliers');
 
+  $action = (isset($_GET['action']) ? $_GET['action'] : '');
   if (zen_not_null($action)) {
     switch ($action) {
       case 'insert':
@@ -94,11 +95,11 @@
         $suppliers_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $manufacturer = $db->Execute("select `suppliers_image`
+          $supplier = $db->Execute("select `suppliers_image`
                                         from " . TABLE_SUPPLIERS . "
                                         where `suppliers_id` = '" . (int)$suppliers_id . "'");
 
-          $image_location = DIR_FS_CATALOG_IMAGES . $manufacturer->fields['suppliers_image'];
+          $image_location = DIR_FS_CATALOG_IMAGES . $supplier->fields['suppliers_image'];
 
           if (file_exists($image_location)) @unlink($image_location);
         }
@@ -183,11 +184,11 @@
   $suppliers = $db->Execute($suppliers_query_raw);
   while (!$suppliers->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $suppliers->fields['suppliers_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
-      $manufacturer_products = $db->Execute("select count(*) as `products_count`
+      $supplier_products = $db->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
                                              where `suppliers_id` = '" . (int)$suppliers->fields['suppliers_id'] . "'");
 
-      $mInfo_array = array_merge($suppliers->fields, $manufacturer_products->fields);
+      $mInfo_array = array_merge($suppliers->fields, $supplier_products->fields);
       $mInfo = new objectInfo($mInfo_array);
     }
 
@@ -250,13 +251,13 @@
 
       $contents[] = array('text' => '<BR />' . TEXT_PRODUCTS_IMAGE_DIR . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
 
-      $manufacturer_inputs_string = '';
+      $supplier_inputs_string = '';
       $languages = zen_get_languages();
       for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-        $manufacturer_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('suppliers_url[' . $languages[$i]['id'] . ']', '', zen_set_field_length(TABLE_SUPPLIERS_INFO, 'suppliers_url') );
+        $supplier_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('suppliers_url[' . $languages[$i]['id'] . ']', '', zen_set_field_length(TABLE_SUPPLIERS_INFO, 'suppliers_url') );
       }
 
-      $contents[] = array('text' => '<br>' . TEXT_SUPPLIERS_URL . $manufacturer_inputs_string);
+      $contents[] = array('text' => '<br>' . TEXT_SUPPLIERS_URL . $supplier_inputs_string);
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $_GET['mID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'edit':
@@ -276,13 +277,13 @@
       $default_directory = substr( $mInfo->suppliers_image, 0,strpos( $mInfo->suppliers_image, '/')+1);
       $contents[] = array('text' => '<BR />' . TEXT_PRODUCTS_IMAGE_DIR . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
       $contents[] = array('text' => '<br />' . zen_info_image($mInfo->suppliers_image, $mInfo->suppliers_name));
-      $manufacturer_inputs_string = '';
+      $supplier_inputs_string = '';
       $languages = zen_get_languages();
       for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-        $manufacturer_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('suppliers_url[' . $languages[$i]['id'] . ']', zen_get_manufacturer_url($mInfo->suppliers_id, $languages[$i]['id']), zen_set_field_length(TABLE_SUPPLIERS_INFO, 'suppliers_url'));
+        $supplier_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('suppliers_url[' . $languages[$i]['id'] . ']', zen_get_manufacturer_url($mInfo->suppliers_id, $languages[$i]['id']), zen_set_field_length(TABLE_SUPPLIERS_INFO, 'suppliers_url'));
       }
 
-      $contents[] = array('text' => '<br>' . TEXT_SUPPLIERS_URL . $manufacturer_inputs_string);
+      $contents[] = array('text' => '<br>' . TEXT_SUPPLIERS_URL . $supplier_inputs_string);
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->suppliers_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'delete':
