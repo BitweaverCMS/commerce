@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: suppliers.php,v 1.2 2005/11/25 12:19:35 gilesw Exp $
+//  $Id: suppliers.php,v 1.3 2005/11/25 13:59:25 gilesw Exp $
 //
 
   require('includes/application_top.php');
@@ -45,8 +45,8 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
           $update_sql_data = array('last_modified' => $db->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
+          $db->associateUpdate(TABLE_SUPPLIERS, $sql_data_array, array( 'name'=>'suppliers_id', 'value'=> (int)$suppliers_id ) );
 
-          $db->associateInsert(TABLE_SUPPLIERS, $sql_data_array, 'update', "`suppliers_id` = '" . (int)$suppliers_id . "'");
         }
 
         $suppliers_image = new upload('suppliers_image');
@@ -79,7 +79,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 
             $db->associateInsert(TABLE_SUPPLIERS_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateInsert(TABLE_SUPPLIERS_INFO, $sql_data_array, 'update', "suppliers_id = '" . (int)$suppliers_id . "' and languages_id = '" . (int)$language_id . "'");
+            $db->associateUpdate(TABLE_SUPPLIERS_INFO, $sql_data_array, array( 'name'=>'suppliers_id', 'value'=> (int)$suppliers_id , 'name'=>'languages_id', 'value'=> (int)$language_id) );
           }
         }
 
