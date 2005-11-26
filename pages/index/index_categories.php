@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_categories.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: index_categories.php,v 1.2 2005/11/26 15:03:02 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
 <?php
-if ($show_welcome == 'true') {
+if( !empty( $show_welcome ) && $show_welcome == 'true') {
 ?>
   <tr>
     <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
@@ -71,7 +71,7 @@ if ($show_welcome == 'true') {
 <?php } // categories_description ?>
 <tr>
 <?php
-  require(DIR_FS_MODULES . 'pages/index/category_row.php');
+  require(DIR_FS_PAGES . 'index/index_category_row.php');
 ?>
 </tr>
 </table>

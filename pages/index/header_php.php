@@ -17,28 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/09/27 22:33:56 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/11/26 15:03:02 spiderr Exp $
 //
 
 // the following cPath references come from application_top.php
   $category_depth = 'top';
   if (isset($cPath) && zen_not_null($cPath)) {
-    $categories_products_query = "select count(*) as `total`
-                                  from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-                                  where   `categories_id` = '" . (int)$current_category_id . "'";
-
-    $categories_products = $db->Execute($categories_products_query);
-
-    if ($categories_products->fields['total'] > 0) {
+    if ( $gComCategory->countProductsInCategory( $current_category_id ) ) {
       $category_depth = 'products'; // display products
     } else {
-      $category_parent_query = "select count(*) as `total`
-                                from   " . TABLE_CATEGORIES . "
-                                where  `parent_id` = '" . (int)$current_category_id . "'";
-
-      $category_parent = $db->Execute($category_parent_query);
-
-      if ($category_parent->fields['total'] > 0) {
+      if ( $gComCategory->countParentCategories( $current_category_id ) ) {
         $category_depth = 'nested'; // navigate through the categories
       } else {
         $category_depth = 'products'; // category has no products, but display the 'no products' message

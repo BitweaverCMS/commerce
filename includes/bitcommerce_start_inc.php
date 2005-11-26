@@ -318,6 +318,8 @@
 	if( empty( $_REQUEST['cPath'] ) ) {
 		$_REQUEST['cPath'] = '';
 	}
+	$gComCategory = new CommerceCategory( $_REQUEST['cPath'] );
+
 	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
 		$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
 	}

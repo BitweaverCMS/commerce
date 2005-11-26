@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_category_row.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: index_category_row.php,v 1.2 2005/11/26 15:03:02 spiderr Exp $
 //
 ?>
 
-       <td align="center" class="smallText" width="<?php echo $width; ?> " valign="top"><a href="<?php echo zen_href_link(FILENAME_DEFAULT, $cPath_new); ?>"><?php echo zen_image(DIR_WS_IMAGES . $categories->fields['categories_image'], $categories->fields['categories_name'], SUBCATEGORY_IMAGE_WIDTH, SUBCATEGORY_IMAGE_HEIGHT); ?><br /><?php echo $categories->fields['categories_name']; ?></a></td>
+       <td align="center" class="smallText" width="<?php echo $width; ?> " valign="top"><a href="<?php echo zen_href_link(FILENAME_DEFAULT, 'cPath='.$categories->fields['categories_id']); ?>"><?php echo zen_image(DIR_WS_IMAGES . $categories->fields['categories_image'], $categories->fields['categories_name'], SUBCATEGORY_IMAGE_WIDTH, SUBCATEGORY_IMAGE_HEIGHT); ?><br /><?php echo $categories->fields['categories_name']; ?></a></td>
 <?php
-  if ($newrow) {
+  if( !empty( $newrow) ) {
 ?>
     </tr>
     <tr>
