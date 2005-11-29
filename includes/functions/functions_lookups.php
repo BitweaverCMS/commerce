@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.16 2005/11/03 15:30:15 spiderr Exp $
+// $Id: functions_lookups.php,v 1.17 2005/11/29 15:39:30 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -556,7 +556,7 @@
 // configuration key value lookup in TABLE_PRODUCT_TYPE_LAYOUT
   function zen_get_configuration_key_value_layout($lookup, $type=1) {
     global $db;
-    $configuration_query= $db->Execute("select `configuration_value` from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`='" . $lookup . "' and `product_type_id`='". $type . "'");
+    $configuration_query= $db->query("select `configuration_value` from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`=? and `product_type_id`=?", array( $lookup, $type ) );
     $lookup_value= $configuration_query->fields['configuration_value'];
     if ( !($lookup_value) ) {
       $lookup_value='<font color="FF0000">' . $lookup . '</font>';

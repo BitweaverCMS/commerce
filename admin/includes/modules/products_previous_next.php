@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.5 2005/10/31 16:20:01 lsces Exp $
+//  $Id: products_previous_next.php,v 1.6 2005/11/29 15:39:30 spiderr Exp $
 //
 
 /////
@@ -26,7 +26,7 @@
   if ($prev_next_list=='') {
 // calculate the previous and next
 
-    $check_type = $db->Execute("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` ='" . $productsId . "'");
+    $check_type = $db->query("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` =?", array( $productsId ) );
     define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
 
     // sort order
