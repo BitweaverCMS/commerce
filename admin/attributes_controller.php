@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.19 2005/11/10 06:53:37 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.20 2005/11/29 16:26:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -211,7 +211,7 @@
             $options_id = zen_db_prepare_input($_POST['options_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
             $value_price = zen_db_prepare_input($_POST['value_price']);
-            $price_prefix = zen_db_prepare_input($_POST['price_prefix']);
+            $price_prefix = zen_db_prepare_input($_POST['price_prefix'][0]);
 
             $products_options_sort_order = zen_db_prepare_input($_POST['products_options_sort_order']);
             $product_attribute_is_free = zen_db_prepare_input($_POST['product_attribute_is_free']);
@@ -337,7 +337,7 @@
             $options_id = zen_db_prepare_input($_POST['options_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
             $value_price = zen_db_prepare_input($_POST['value_price']);
-            $price_prefix = zen_db_prepare_input($_POST['price_prefix']);
+            $price_prefix = zen_db_prepare_input($_POST['price_prefix'][0]);
 
             $products_options_sort_order = zen_db_prepare_input($_POST['products_options_sort_order']);
             $product_attribute_is_free = zen_db_prepare_input($_POST['product_attribute_is_free']);
@@ -1178,7 +1178,7 @@ if ($action == '') {
       <td class="attributeBoxContent">
         <table border="1" cellpadding="4" cellspacing="2" align="left">
           <tr>
-            <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_PRICE; ?><br /><input type="text" name="price_prefix" value="<?php echo $attributes_values->fields['price_prefix']; ?>" size="2">&nbsp;<input type="text" name="value_price" value="<?php echo $attributes_values->fields['options_values_price']; ?>" size="6">&nbsp;</td>
+            <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_PRICE; ?><br /><input type="text" name="price_prefix" size="1" value="<?php echo $attributes_values->fields['price_prefix']; ?>" size="2">&nbsp;<input type="text" name="value_price" value="<?php echo $attributes_values->fields['options_values_price']; ?>" size="6">&nbsp;</td>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT; ?><br /><input type="text" name="products_attributes_wt_pfix" value="<?php echo $attributes_values->fields['products_attributes_wt_pfix']; ?>" size="2">&nbsp;<input type="text" name="products_attributes_wt" value="<?php echo $attributes_values->fields['products_attributes_wt']; ?>" size="6">&nbsp;</td>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_SORT_ORDER; ?><br /><input type="text" name="products_options_sort_order" value="<?php echo $attributes_values->fields['products_options_sort_order']; ?>" size="4">&nbsp;</td>
             <td align="center" class="smallText">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME; ?><br />&nbsp;<input type="text" name="attributes_price_onetime" value="<?php echo $attributes_values->fields['attributes_price_onetime']; ?>" size="6">&nbsp;</td>
@@ -1627,63 +1627,85 @@ $off_overwrite = false;
 <!-- eof Option Name and Value -->
 
 <!-- bof Prices and Weight -->
-  <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
+  <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2" style="width:auto;">
     <tr>
       <td colspan="2" class="pageHeading"><?php echo TEXT_PRICES_AND_WEIGHTS; ?></td>
     </tr>
     <tr>
       <td class="attributeBoxContent">
-        <table border="1" cellpadding="4" cellspacing="2">
-          <tr>
-            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_PRICE . '<br />'; ?><input type="text" name="price_prefix" size="2" value="+">&nbsp;<input type="text" name="value_price" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_WEIGHT . '<br />'; ?><input type="text" name="products_attributes_wt_pfix" size="2" value="+">&nbsp;<input type="text" name="products_attributes_wt" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_SORT_ORDER; ?><br /><input type="text" name="products_options_sort_order" value="" size="4">&nbsp;</td>
-            <td align="center" class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME . '<br />'; ?><input type="text" name="attributes_price_onetime" size="6">&nbsp;</td>
-          </tr>
-        </table>
-      </td>
-
+			<div class="row">
+				<div class="formlabel"><?php echo tra( 'Sort Order' ); ?></div>
+				<div class="forminput"><input type="text" name="products_options_sort_order" value="" size="4">&nbsp;</div>
+			</div>
+			<h2><?php echo tra( 'Attribute Pricing' ) ?></h2>
+			<div class="row">
+				<div class="formlabel"><?php echo tra( 'Fixed Attribute Price' ) ?> </div>
+				<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="+">&nbsp;<input type="text" name="value_price" size="6">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME; ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_onetime" size="6">&nbsp;</div>
+			</div>
 <?php if (ATTRIBUTES_ENABLED_PRICE_FACTOR == 'true') { ?>
-      <td class="attributeBoxContent">
-        <table border="1" cellpadding="4" cellspacing="2">
-          <tr>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET . '<br />'; ?><input type="text" name="attributes_price_factor" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_pf_offset" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME . '<br />'; ?><input type="text" name="attributes_pf_onetime" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_pf_onetime_offset" size="6">&nbsp;</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-<?php
-    } // ATTRIBUTES_ENABLED_PRICE_FACTOR
-?>
+			<div class="row">
+				<div class="formlabel"><?php echo tra( '% Attribute Price' ) ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_factor" size="6"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET; ?></div>
+				<div class="forminput"><input type="text" name="attributes_pf_offset" size="6">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME; ?></div>
+				<div class="forminput"><input type="text" name="attributes_pf_onetime" size="6"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME; ?></div>
+				<div class="forminput"><input type="text" name="attributes_pf_onetime_offset" size="6"></div>
+			</div>
 
+<?php
+} // ATTRIBUTES_ENABLED_PRICE_FACTOR
+?>
 <?php if (ATTRIBUTES_ENABLED_QTY_PRICES == 'true') { ?>
-    <tr>
-      <td colspan="2" class="attributeBoxContent">
-        <table border="1" cellpadding="4" cellspacing="2">
-          <tr>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES . '<br />'; ?><input type="text" name="attributes_qty_prices" size="60">&nbsp;</td>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES_ONETIME . '<br />'; ?><input type="text" name="attributes_qty_prices_onetime" size="60">&nbsp;</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
+			<h2><?php echo tra( 'Attribute Quantity Pricing' ) ?></h2>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES; ?></div>
+				<div class="forminput"><input type="text" name="attributes_qty_prices" size="60"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES_ONETIME; ?></div>
+				<div class="forminput"><input type="text" name="attributes_qty_prices_onetime" size="60"></div>
+			</div>
 <?php } // ATTRIBUTES_ENABLED_QTY_PRICES ?>
 
 <?php if (ATTRIBUTES_ENABLED_TEXT_PRICES == 'true') { ?>
-    <tr>
-      <td colspan="2" class="attributeBoxContent">
-        <table border="1" cellpadding="4" cellspacing="2">
-          <tr>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_WORDS . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_WORDS_FREE . '<br />'; ?><input type="text" name="attributes_price_words" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_price_words_free" size="6">&nbsp;</td>
-            <td align="center" class="attributeBoxContent" nowrap="nowrap">&nbsp;<?php echo TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS . '&nbsp;&nbsp;' . TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS_FREE . '<br />'; ?><input type="text" name="attributes_price_letters" size="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="attributes_price_letters_free" size="6">&nbsp;</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
+			<h2><?php echo tra( 'Attribute Text Pricing' ) ?></h2>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_WORDS; ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_words" size="6"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_WORDS_FREE; ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_words_free" size="6"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS; ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_letters" size="6"></div>
+			</div>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS_FREE; ?></div>
+				<div class="forminput"><input type="text" name="attributes_price_letters_free" size="6"></div>
+			</div>
 <?php } // ATTRIBUTES_ENABLED_TEXT_PRICES ?>
 
-  </table></td></tr>
+			<h2><?php echo tra( 'Attribute Weights' ) ?></h2>
+			<div class="row">
+				<div class="formlabel"><?php echo TABLE_HEADING_OPT_WEIGHT ?></div>
+				<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlenght="1" value="+">&nbsp;<input type="text" name="products_attributes_wt" size="6">&nbsp;</div>
+			</div>
+
+  </td></tr>
 
 <!-- eof Option Name and Value -->
 
