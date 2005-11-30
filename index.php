@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.17 2005/10/31 23:45:45 lsces Exp $
+// $Id: index.php,v 1.18 2005/11/30 04:17:49 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -60,9 +60,13 @@ ob_start();
 	// load all files in the page directory starting with 'header_php'
 
 	$directory_array = $template->get_template_part($code_page_directory, '/^header_php/');
+
 	while(list ($key, $value) = each($directory_array)) {
 		require($code_page_directory . '/' . $value);
 	}
+
+	//new smarty based pages are doing away with this call
+	require_once( DIR_FS_MODULES . 'require_languages.php' );
 
 	require($template->get_template_dir('html_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/html_header.php');
 

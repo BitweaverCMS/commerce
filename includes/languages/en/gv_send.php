@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_send.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id: gv_send.php,v 1.3 2005/11/30 04:17:49 spiderr Exp $
 //
 
 define('HEADING_TITLE', 'Send ' . TEXT_GV_NAME);
@@ -30,10 +30,7 @@ define('ENTRY_MESSAGE', 'Message to Recipients:');
 define('ENTRY_AMOUNT', 'Amount of ' . TEXT_GV_NAME . ':');
 define('ERROR_ENTRY_AMOUNT_CHECK', '&nbsp;&nbsp;<span class="errorText">Invalid Amount</span>');
 define('ERROR_ENTRY_EMAIL_ADDRESS_CHECK', '&nbsp;&nbsp;<span class="errorText">Invalid Email Address</span>');
-define('MAIN_MESSAGE', 'You have decided to post a ' . TEXT_GV_NAME . ' worth %s to %s who\'s email address is %s<br /><br />The text accompanying the email will read<br /><br />Dear %s<br /><br />' .
-                        'You have been sent a ' . TEXT_GV_NAME . ' worth %s by %s');
-
-define('PERSONAL_MESSAGE', '%s says');
+define('MAIN_MESSAGE', 'Hi %s<br /><br />You have been sent a ' . TEXT_GV_NAME . ' worth %s by %s');
 define('TEXT_SUCCESS', 'Congratulations, your ' . TEXT_GV_NAME . ' has successfully been sent');
 
 define('TEXT_AVAILABLE_BALANCE','Current Available Balance: ');
@@ -43,7 +40,7 @@ define('EMAIL_SEPARATOR', '-----------------------------------------------------
 define('EMAIL_GV_TEXT_HEADER', 'Congratulations, You have received a ' . TEXT_GV_NAME . ' worth %s');
 define('EMAIL_GV_FROM', 'This ' . TEXT_GV_NAME . ' has been sent to you by %s');
 define('EMAIL_GV_MESSAGE', 'with a message saying: ');
-define('EMAIL_GV_SEND_TO', 'Hi, %s');
+define('EMAIL_GV_SEND_TO', 'Hi %s');
 define('EMAIL_GV_REDEEM', 'To redeem this ' . TEXT_GV_NAME . ', please click on the link below. Please also write down the ' . TEXT_GV_REDEEM . ': %s  just in case you have problems.');
 define('EMAIL_GV_LINK', 'To redeem please click here');
 define('EMAIL_GV_VISIT', ' or visit ');

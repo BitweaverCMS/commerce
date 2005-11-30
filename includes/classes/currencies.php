@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.11 2005/08/30 16:37:37 spiderr Exp $
+// $Id: currencies.php,v 1.12 2005/11/30 04:17:49 spiderr Exp $
 //
 
 ////

@@ -17,115 +17,159 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_send.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: gv_send.php,v 1.2 2005/11/30 04:17:49 spiderr Exp $
 //
-//echo 'Local Customer GV = ' . $local_customer_gv . '<br />';
-//echo 'Base Customer GV = ' . $base_customer_gv . '<br />';
-//echo 'Local Customer Send = ' . $local_customer_send . '<br />';
-//echo 'Base Customer Send = ' . $base_customer_send . '<br />';
-?>
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-  <tr>
-    <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
-      </tr>
-    </table></td>
-  </tr>
-  <tr>
-    <td class="main" height="10px"></td>
-  </tr>
-  <tr>
-    <td class="plainBox">
-      <table border="0" width="100%" cellspacing="2" cellpadding="2">
-        <tr>
-          <td class="main"><?php echo TEXT_AVAILABLE_BALANCE . $currencies->format($gv_current_balance); ?></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-<?php
-  if ($_GET['action'] == 'doneprocess') {
-?>
-  <tr>
-    <td class="main"><?php echo TEXT_SUCCESS; ?></td>
-  </tr>
-  <tr>
-    <td align="right"><br /><a href="<?php echo zen_href_link(FILENAME_DEFAULT, '', 'NONSSL'); ?>"><?php echo zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT); ?></a></td>
-  </tr>
-<?php
-  }
-  if ($_GET['action'] == 'send' && !$error) {
-    // validate entries
-      $gv_amount = (double) $gv_amount;
-      $gv_query = "select `customers_firstname`, `customers_lastname`
-                   from " . TABLE_CUSTOMERS . "
-                   where `customers_id` = '" . $_SESSION['customer_id'] . "'";
+  require('includes/classes/http_client.php');
 
-      $gv_result = $db->Execute($gv_query);
+// if the customer is not logged on, redirect them to the login page
+	if( !$gBitUser->isRegistered() ) {
+		$_SESSION['navigation']->set_snapshot();
+		zen_redirect(FILENAME_LOGIN);
+	}
 
-      $send_name = $gv_result->fields['customers_firstname'] . ' ' . $gv_result->fields['customers_lastname'];
-?>
-  <tr>
-    <td class="main"><form action="<?php echo zen_href_link(FILENAME_GV_SEND, 'action=process', 'NONSSL'); ?>" method="post"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td class="main"><?php echo sprintf(MAIN_MESSAGE, $currencies->format($_POST['amount'], false), $_POST['to_name'], $_POST['email'], $_POST['to_name'], $currencies->format($_POST['amount'], false), $send_name); ?></td>
-      </tr>
-<?php
-      if ($_POST['message']) {
-?>
-      <tr>
-        <td class="main"><?php echo sprintf(PERSONAL_MESSAGE, $gv_result->fields['customers_firstname']); ?></td>
-      </tr>
-      <tr>
-        <td class="main"><tt><?php echo stripslashes($_POST['message']); ?></tt></td>
-      </tr>
-<?php
-      }
 
-      echo zen_draw_hidden_field('send_name', $send_name) . zen_draw_hidden_field('to_name', stripslashes($_POST['to_name'])) . zen_draw_hidden_field('email', $_POST['email']) . zen_draw_hidden_field('amount', $gv_amount) . zen_draw_hidden_field('message', stripslashes($_POST['message']));
+
+	$feedback = array();
+
+	// do a fresh calculation after sending an email
+	$query = "select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?";
+	$gvBalance = $db->getOne( $query, array( $_SESSION['customer_id'] ) );
+
+	$requestAction = !empty( $_REQUEST['action'] ) ? strtolower( $_REQUEST['action'] ) : NULL;
+
+	$requestAmount = NULL;
+	if( !empty( $_POST['amount'] ) ) {
+		$requestAmount = preg_replace( '/[^0-9.]/', '', $_POST['amount'] );
+		$requestAmountValue = $currencies->value( $requestAmount, true, DEFAULT_CURRENCY );
+	}
+
+	if( $requestAction == 'send' ) {
+		$_SESSION['complete'] = '';
+		if (!zen_validate_email(trim($_POST['email']))) {
+			$feedback['error']['error_email'] = ERROR_ENTRY_EMAIL_ADDRESS_CHECK;
+		}
+		$customer_amount = $gvBalance;
+
+		if( !is_numeric( $requestAmount ) || $requestAmountValue > $customer_amount ) {
+			$feedback['error']['error_amount'] = ERROR_ENTRY_AMOUNT_CHECK;
+		}
+	} elseif ($requestAction == 'process') {
+		$id1 = zen_create_coupon_code();
+		$new_amount = $gvBalance - $requestAmountValue;
+		$new_db_amount = $gvBalance - $requestAmountValue;
+		if ($new_amount < 0) {
+			$feedback['error']['error_amount'] = ERROR_ENTRY_AMOUNT_CHECK;
+			$requestAction = 'send';
+		} else {
+			$requestAction = 'complete';
+			$gv_query="update " . TABLE_COUPON_GV_CUSTOMER . "
+						set `amount` = '" .  $new_amount . "'
+						where `customer_id` = '" . $_SESSION['customer_id'] . "'";
+
+			$db->Execute($gv_query);
+
+			$gv_query="select `customers_firstname`, `customers_lastname`
+						from " . TABLE_CUSTOMERS . "
+						where `customers_id` = ?";
+			$gv_customer=$db->query($gv_query, array( $_SESSION['customer_id'] ) );
+
+			$gv_query="insert into " . TABLE_COUPONS . " (`coupon_type`, `coupon_code`, `date_created`, `coupon_amount`) values ('G', ?, NOW(), ?)";
+			$gv = $db->query($gv_query, array( $id1, $requestAmountValue ) );
+			$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
+
+			$gv_query="insert into " . TABLE_COUPON_EMAIL_TRACK . "
+								(`coupon_id`, `customer_id_sent`, `sent_firstname`, `sent_lastname`, `emailed_to`, `date_sent`)
+						values ('" . $insert_id . "' ,'" . $_SESSION['customer_id'] . "', '" .
+								$gv_customer->fields['customers_firstname'] . "', '" .
+								$gv_customer->fields['customers_lastname'] . "', '" .
+								$_POST['email'] . "', now())";
+
+			$db->Execute($gv_query);
+
+			$gv_email = STORE_NAME . "\n" .
+					EMAIL_SEPARATOR . "\n" .
+					sprintf(EMAIL_GV_TEXT_HEADER, $currencies->format( $requestAmount, false ) ) . "\n" .
+					EMAIL_SEPARATOR . "\n\n" .
+					sprintf( EMAIL_GV_FROM, $gBitUser->getDisplayName() ) . "\n";
+
+				$html_msg['EMAIL_GV_TEXT_HEADER'] =  sprintf(EMAIL_GV_TEXT_HEADER, '');
+				$html_msg['EMAIL_GV_AMOUNT'] =  $currencies->format( $requestAmount, false );
+				$html_msg['EMAIL_GV_FROM'] =  sprintf(EMAIL_GV_FROM, $gBitUser->getDisplayName() ) ;
+
+			if (isset($_POST['message'])) {
+				$gv_email .= EMAIL_GV_MESSAGE . "\n\n";
+				$html_msg['EMAIL_GV_MESSAGE'] = EMAIL_GV_MESSAGE . '<br />';
+
+				if (isset($_POST['to_name'])) {
+				$gv_email .= sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']) . "\n\n";
+				$html_msg['EMAIL_GV_SEND_TO'] = '<tt>'.sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']). '</tt><br />';
+				}
+				$gv_email .= stripslashes($_POST['message']) . "\n\n";
+				$gv_email .= EMAIL_SEPARATOR . "\n\n";
+				$html_msg['EMAIL_MESSAGE_HTML'] = stripslashes($_POST['message']);
+			}
+
+			$html_msg['GV_REDEEM_HOW'] = sprintf(EMAIL_GV_REDEEM, '<strong>' . $id1 . '</strong>');
+			$html_msg['GV_REDEEM_URL'] = '<a href="'.zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $id1, 'NONSSL').'">'.EMAIL_GV_LINK.'</a>';
+			$html_msg['GV_REDEEM_CODE'] = $id1;
+
+			$gv_email .= sprintf(EMAIL_GV_REDEEM, $id1) . "\n\n";
+			$gv_email .= EMAIL_GV_LINK . ' ' . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $id1, 'NONSSL');;
+			$gv_email .= "\n\n";
+			$gv_email .= EMAIL_GV_FIXED_FOOTER . "\n\n";
+			$gv_email .= EMAIL_GV_SHOP_FOOTER;
+
+			$gv_email_subject = sprintf(EMAIL_GV_TEXT_SUBJECT, $gBitUser->getDisplayName()).' '.tra( 'to' ).' '.STORE_NAME;
+
+		// include disclaimer
+			$gv_email .= "\n\n" . EMAIL_ADVISORY . "\n\n";
+
+				$html_msg['EMAIL_GV_FIXED_FOOTER'] = str_replace(array("\r\n", "\n", "\r", "-----"), '', EMAIL_GV_FIXED_FOOTER);
+				$html_msg['EMAIL_GV_SHOP_FOOTER'] =	EMAIL_GV_SHOP_FOOTER;
+
+		// send the email
+			zen_mail('', $_POST['email'], $gv_email_subject, nl2br($gv_email), STORE_NAME, EMAIL_FROM, $html_msg,'gv_send');
+
+		// send additional emails
+			if (SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_STATUS == '1' and SEND_EXTRA_GV_CUSTOMER_EMAILS_TO !='') {
+				if ($_SESSION['customer_id']) {
+				$account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
+									from " . TABLE_CUSTOMERS . "
+									where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
+
+				$account = $db->Execute($account_query);
+				}
+				$extra_info=email_collect_extra_info($_POST['to_name'],$_POST['email'], $account->fields['customers_firstname'] . ' ' . $account->fields['customers_lastname'] , $account->fields['customers_email_address'] );
+				$html_msg['EXTRA_INFO'] = $extra_info['HTML'];
+				zen_mail('', SEND_EXTRA_GV_CUSTOMER_EMAILS_TO, SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_SUBJECT . ' ' . $gv_email_subject,
+					$gv_email . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg,'gv_send_extra');
+			}
+
+			// do a fresh calculation after sending an email
+			$query = "select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?";
+			$gvBalance = $db->getOne( $query, array( $_SESSION['customer_id'] ) );
+		}
+	}
+
+	$gBitSmarty->assign( 'gvBalance', $currencies->format( $gvBalance, true ) );
+
+	if ($requestAction == 'complete') {
+		zen_redirect(zen_href_link(FILENAME_GV_SEND, 'action=doneprocess'));
+	}
+	$breadcrumb->add(NAVBAR_TITLE);
+
+	if ($requestAction == 'doneprocess') {
+		$feedback['success'] = tra( TEXT_SUCCESS );
+	} elseif( $requestAction == 'send' && empty( $formfeedback['error'] ) ) {
+		// validate entries
+		$gvAmount = $currencies->format( $requestAmount, false );
+		$gBitSmarty->assign( 'gvAmount', $gvAmount );
+
+		$mainMessage = sprintf(MAIN_MESSAGE, $_POST['to_name'], $gvAmount, $gBitUser->getDisplayName() );
+		$gBitSmarty->assign( 'mainMessage', $mainMessage );
+	}
+
+	$gBitSmarty->assign( 'feedback', $feedback );
+
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_send.tpl' );
 ?>
-      <tr>
-        <td class="main"><?php echo zen_image_submit(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT, 'name=back') . '</a>'; ?></td>
-        <td align="right"><?php echo zen_image_submit(BUTTON_IMAGE_SEND, BUTTON_SEND_ALT); ?></td>
-      </tr>
-    </table></form></td>
-  </tr>
-<?php
-  } elseif ($_GET['action']=='' || $error) {
-?>
-  <tr>
-    <td class="main"><?php echo HEADING_TEXT; ?></td>
-  </tr>
-  <tr>
-    <td class="main"><form action="<?php echo zen_href_link(FILENAME_GV_SEND, 'action=send', 'NONSSL'); ?>" method="post"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td class="main"><?php echo ENTRY_NAME; ?><br /><?php echo zen_draw_input_field('to_name', $_POST['to_name'], 'size="40"');?></td>
-      </tr>
-      <tr>
-        <td class="main"><?php echo ENTRY_EMAIL; ?><br /><?php echo zen_draw_input_field('email', $_POST['email'], 'size="40"'); if ($error) echo $error_email; ?></td>
-      </tr>
-      <tr>
-        <td class="main"><?php echo ENTRY_AMOUNT; ?><br /><?php echo zen_draw_input_field('amount', $_POST['amount'], '', '', false); if ($error) echo $error_amount; ?></td>
-      </tr>
-      <tr>
-        <td class="main"><?php echo ENTRY_MESSAGE; ?><br /><?php echo zen_draw_textarea_field('message', 'soft', 50, 15, stripslashes($_POST['message'])); ?></td>
-      </tr>
-    </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
-        <td class="main" align="right"><?php echo zen_image_submit(BUTTON_IMAGE_SEND, BUTTON_SEND_ALT); ?></td>
-      </tr>
-    </table></form></td>
-  </tr>
-<?php
-  }
-?>
-  <tr>
-    <td class="main" height="10px"></td>
-  </tr>
-  <tr>
-    <td colspan="2" class="main"><?php echo EMAIL_ADVISORY_INCLUDED_WARNING . str_replace('-----', '', EMAIL_ADVISORY); ?></td>
-  </tr>
-</table>

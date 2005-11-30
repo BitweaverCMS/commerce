@@ -17,62 +17,28 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//// $Id: gv_faq.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+//// $Id: gv_faq.php,v 1.2 2005/11/30 04:17:49 spiderr Exp $
 //
-?>
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-    <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
-  <tr>
-    <td class="main" height="10px"></td>
-  </tr>
-  <tr>
-    <td class="main"><?php echo TEXT_INFORMATION; ?></td>
-  </tr>
-  <tr>
-    <td class="main"><strong><?php echo SUB_HEADING_TITLE; ?></strong></td>
-  </tr>
-  <tr>
-    <td class="main"><?php echo SUB_HEADING_TEXT; ?></td>
-  </tr>
-<?php
-// only show when there is a GV balance
-  if ($has_gv_balance ) {
-?>
-  <tr>
-    <td class="main" height="10px"></td>
-  </tr>
-  <tr>
-    <td class="plainBoxHeading" colspan="2"><?php echo BOX_HEADING_GIFT_VOUCHER; ?></td>
-  </tr>
-  <tr>
-    <td class="plainBox" colspan="2">
-      <table border="0" width="100%" cellspacing="2" cellpadding="2">
-        <tr>
-          <td class="main"><?php echo VOUCHER_BALANCE; ?></td>
-          <td class="main"><?php echo $currencies->format($gv_result->fields['amount']); ?></td>
-          <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-<?php
-  }
-  if ($_SESSION['gv_id']) {
-?>
-  <tr>
-    <td class="main"><?php echo VOUCHER_REDEEMED; ?></td>
-    <td class="main" align="right" valign="bottom"><?php echo $currencies->format($coupon->fields['coupon_amount']); ?></td>
-  </tr>
-<?php
-  }
-?>
 
-  <tr>
-    <td class="main" height="10px"></td>
-  </tr>
-  <tr>
-    <td class="main" colspan="2"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
-  </tr>
-</table>
+	if( $gBitUser->isRegistered() ) {
+		$gv_query = "select `amount`
+					from " . TABLE_COUPON_GV_CUSTOMER . "
+					where `customer_id` = ?";
+		if( $gvBalance = $gBitDb->getOne($gv_query, array( $gBitUser->mUserId ) ) ) {
+			$gvBalance = $currencies->format( $gvBalance );
+		}
+		$gBitSmarty->assign( 'gvBalance', $gvBalance );
+	}
+	if( !empty( $_SESSION['gv_id'] ) ) {
+		$gv_query = "select `coupon_amount`
+					from " . TABLE_COUPONS . "
+					where `coupon_id` = ?";
+		if( $couponAmount = $gBitDb->getOne($gv_query, array( $_SESSION['gv_id'] ) ) ) {
+			$couponAmount = $currencies->format( $couponAmount );
+		}
+		$gBitSmarty->assign( 'couponAmount', $couponAmount );
+	}
+  	$breadcrumb->add(NAVBAR_TITLE);
+
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_faq.tpl' );
+?>
