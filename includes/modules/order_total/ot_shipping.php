@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_shipping.php,v 1.3 2005/08/24 02:52:59 lsces Exp $
+// $Id: ot_shipping.php,v 1.4 2005/11/30 06:28:04 spiderr Exp $
 //
 
   class ot_shipping {
@@ -55,7 +55,7 @@
       }
       $module = substr($_SESSION['shipping']['id'], 0, strpos($_SESSION['shipping']['id'], '_'));
       if (zen_not_null($order->info['shipping_method'])) {
-        if ($GLOBALS[$module]->tax_class > 0) {
+        if( !empty( $GLOBALS[$module]->tax_class ) ) {
           if (!defined($GLOBALS[$module]->tax_basis)) {
             $shipping_tax_basis = STORE_SHIPPING_TAX_BASIS;
           } else {

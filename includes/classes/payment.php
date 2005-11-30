@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.6 2005/11/15 22:01:21 spiderr Exp $
+// $Id: payment.php,v 1.7 2005/11/30 06:28:04 spiderr Exp $
 //
 
   class payment {
@@ -95,7 +95,7 @@
 */
     function update_status() {
       if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module])) {
+        if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module])) {
           if (method_exists($GLOBALS[$this->selected_module], 'update_status')) {
             $GLOBALS[$this->selected_module]->update_status();
           }
@@ -168,7 +168,7 @@
     function pre_confirmation_check() {
       global $credit_covers, $payment_modules;
       if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
+        if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
           if ($credit_covers) {
             $GLOBALS[$this->selected_module]->enabled = false;
             $GLOBALS[$this->selected_module] = NULL;
@@ -182,7 +182,7 @@
 
     function confirmation() {
       if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
+        if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
           return $GLOBALS[$this->selected_module]->confirmation();
         }
       }
@@ -190,7 +190,7 @@
 
     function process_button() {
       if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
+        if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
           return $GLOBALS[$this->selected_module]->process_button();
         }
       }

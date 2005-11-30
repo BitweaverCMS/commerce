@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_product_listing.php,v 1.1 2005/08/04 07:24:06 spiderr Exp $
+// $Id: tpl_modules_product_listing.php,v 1.2 2005/11/30 06:28:04 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="0">
 <?php
 // only show when there is something to submit and enabled
-    if ($show_top_submit_button == 'true') {
+    if( !empty( $show_top_submit_button ) && $show_top_submit_button == 'true') {
 ?>
   <tr>
     <td align="right" colspan="2">
@@ -60,7 +60,7 @@
 ?>
 <?php
 // only show when there is something to submit and enabled
-    if ($show_bottom_submit_button == 'true') {
+    if( !empty( $show_bottom_submit_button ) && $show_bottom_submit_button == 'true' ) {
 ?>
   <tr>
     <td align="right" colspan="2">

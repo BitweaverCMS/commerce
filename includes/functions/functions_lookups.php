@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.17 2005/11/29 15:39:30 spiderr Exp $
+// $Id: functions_lookups.php,v 1.18 2005/11/30 06:28:04 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -264,11 +264,7 @@
 
     $attributes = $db->getOne($attributes_query);
 
-    if ($attributes->fields['products_attributes_id'] > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return( !empty( $attributes ) );
   }
 
 ///

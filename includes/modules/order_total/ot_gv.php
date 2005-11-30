@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.8 2005/11/15 22:01:21 spiderr Exp $
+// $Id: ot_gv.php,v 1.9 2005/11/30 06:28:04 spiderr Exp $
 //
 
   class ot_gv {
@@ -98,7 +98,9 @@
           $tod_amount = $this->calculate_tax_deduction($order_total, $od_amount, $this->calculate_tax);
           $od_amount = $this->calculate_credit($order_total)+$tod_amount;
         }
-        if ($od_amount >= $order->info['total'] && MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID != 0) $order->info['order_status'] = MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID;
+        if ($od_amount >= $order->info['total'] && defined( 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID' ) && MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID != 0) {
+			 $order->info['order_status'] = MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID;
+		}
       }
       return $od_amount + $tod_amount;
     }

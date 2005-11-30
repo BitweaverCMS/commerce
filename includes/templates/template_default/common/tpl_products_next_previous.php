@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.9 2005/11/15 22:01:22 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.10 2005/11/30 06:28:04 spiderr Exp $
 //
   /*
 
@@ -101,10 +101,10 @@
 				} else {
 					$previous = $id_array[$key - 1];
 				}
-				if ($id_array[$key + 1]) {
-				$next_item = $id_array[$key + 1];
+				if( !empty( $id_array[$key + 1] ) ) {
+					$next_item = $id_array[$key + 1];
 				} else {
-				$next_item = $id_array[0];
+					$next_item = $id_array[0];
 				}
 			}
 			$last = $value;
