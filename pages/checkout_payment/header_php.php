@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.6 2005/09/27 22:33:54 spiderr Exp $
+// $Id: header_php.php,v 1.7 2005/11/30 07:14:30 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -89,8 +89,7 @@
 		}
 	}
 
-//  $_SESSION['comments'] = '';
-    $comments = $_SESSION['comments'];
+    $comments = !empty( $_SESSION['comments'] ) ? $_SESSION['comments'] : NULL;
 
   $total_weight = $_SESSION['cart']->show_weight();
   $total_count = $_SESSION['cart']->count_contents();

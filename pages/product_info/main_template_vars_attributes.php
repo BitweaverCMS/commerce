@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.12 2005/11/16 16:01:08 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.13 2005/11/30 07:14:30 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -269,7 +269,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				} else {
 	//              $selected_attribute = ($vals['attributes_default']=='1' ? true : false);
 				// if an error, set to customer setting
-				if ($_POST['id'] !='') {
+				if( !empty( $_POST['id'] ) ) {
 					$selected_attribute= false;
 					reset($_POST['id']);
 					while(list($key,$value) = each($_POST['id'])) {
