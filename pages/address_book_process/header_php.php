@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.10 2005/10/11 03:50:12 spiderr Exp $
+// $Id: header_php.php,v 1.11 2005/11/30 07:46:27 spiderr Exp $
 //
 
   if (!$_SESSION['customer_id']) {
@@ -25,7 +25,7 @@
     zen_redirect(FILENAME_LOGIN);
   }
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
   if (isset($_GET['action']) && ($_GET['action'] == 'deleteconfirm') && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     $sql = "delete from   " . TABLE_ADDRESS_BOOK . "
                    where  address_book_id = '" . (int)$_GET['delete'] . "'

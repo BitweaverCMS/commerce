@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.6 2005/10/31 16:20:01 lsces Exp $
+// $Id: header_php.php,v 1.7 2005/11/30 07:46:26 spiderr Exp $
 //
   if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(FILENAME_LOGIN);
   }
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
 
   $global_query = "select global_product_notifications
                    from   " . TABLE_CUSTOMERS_INFO . "

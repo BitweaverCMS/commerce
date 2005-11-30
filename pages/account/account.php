@@ -17,13 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account.php,v 1.1 2005/10/06 19:38:26 spiderr Exp $
+// $Id: account.php,v 1.2 2005/11/30 07:46:26 spiderr Exp $
 //
 // Variables passed to this page from header_php.php
 //
 // $customer_has_gv_balance
 // $customer_gv_balance
 //
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+
+	$gvBalance = CommerceVoucher::getGiftAmount();
+	$couponAmount = CommerceVoucher::getCouponAmount();
+
+	$breadcrumb->add(NAVBAR_TITLE);
 ?>
 
 <table  width="100%" border="0" cellspacing="2" cellpadding="2" class="centerColumn">
@@ -89,7 +95,7 @@
   </tr>
 <?php
 // only show when there is a GV balance
-  if ($customer_has_gv_balance ) {
+  if( $gvBalance ) {
 ?>
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo BOX_HEADING_GIFT_VOUCHER; ?></td>
@@ -99,7 +105,7 @@
       <table border="0" width="100%" cellspacing="2" cellpadding="2">
         <tr>
           <td class="main"><?php echo VOUCHER_BALANCE; ?></td>
-          <td class="main"><?php echo $customer_gv_balance; ?></td>
+          <td class="main"><?php echo $gvBalance; ?></td>
           <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a>'; ?></td>
         </tr>
       </table>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/11/30 07:14:30 spiderr Exp $
+// $Id: header_php.php,v 1.8 2005/11/30 07:46:27 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -102,7 +102,7 @@
   require(DIR_FS_CLASSES . 'shipping.php');
   $shipping_modules = new shipping($_SESSION['shipping']);
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
 
   if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {
     $messageStack->add('checkout_payment', $error['error'], 'error');

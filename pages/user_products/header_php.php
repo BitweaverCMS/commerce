@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.4 2005/10/06 21:01:56 spiderr Exp $
+// $Id: header_php.php,v 1.5 2005/11/30 07:46:31 spiderr Exp $
 //
 
 if( !empty( $_REQUEST['user_id'] ) ) {
@@ -12,7 +12,7 @@ if( !empty( $_REQUEST['user_id'] ) ) {
 define('NAVBAR_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
 define('HEADING_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
 
 $listHash['user_id'] = $gQueryUser->mUserId;

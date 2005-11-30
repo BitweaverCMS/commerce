@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/10/11 03:50:11 spiderr Exp $
+// $Id: header_php.php,v 1.8 2005/11/30 07:46:26 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(FILENAME_LOGIN);
   }
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
   if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
     if (ACCOUNT_GENDER == 'true') $gender = zen_db_prepare_input($_POST['gender']);
     $firstname = zen_db_prepare_input($_POST['firstname']);

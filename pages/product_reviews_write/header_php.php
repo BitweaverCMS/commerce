@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.9 2005/10/31 16:19:59 lsces Exp $
+// $Id: header_php.php,v 1.10 2005/11/30 07:46:30 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(FILENAME_LOGIN);
   }
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
 
   $product_info_query = "select p.`products_id`, p.`products_model`, p.`products_image`,
                                 p.`products_price`, p.`products_tax_class_id`, pd.`products_name`

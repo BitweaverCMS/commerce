@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.4 2005/10/09 04:51:03 spiderr Exp $
+// $Id: checkout_process.php,v 1.5 2005/11/30 07:46:27 spiderr Exp $
 //
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
 
 // if the customer is not logged on, redirect them to the time out page
   if (!$_SESSION['customer_id']) {

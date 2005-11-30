@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/09/27 22:33:57 spiderr Exp $
+// $Id: header_php.php,v 1.6 2005/11/30 07:46:30 spiderr Exp $
 //
   $review_query_raw = "select p.`products_id`, p.`products_price`,
                           p.`products_tax_class_id`, p.`products_image`, p.`products_model`, pd.`products_name`
@@ -45,6 +45,6 @@
     $products_image = $review->fields['products_image'];
   }
 
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
 ?>

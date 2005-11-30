@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.13 2005/11/30 07:14:30 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.14 2005/11/30 07:46:30 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -374,7 +374,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				//CLR 030714 Add logic for text option
 	//            $products_attribs_query = zen_db_query("select distinct patrib.options_values_price, patrib.price_prefix from " . TABLE_PRODUCTS_ATTRIBUTES . " patrib where patrib.`products_id`='" . (int)$_GET['products_id'] . "' and patrib.options_id = '" . $products_options_name['products_options_id'] . "'");
 	//            $products_attribs_array = zen_db_fetch_array($products_attribs_query);
-				if ($_POST['id']) {
+				if ( !empty( $_POST['id'] ) ) {
 					reset($_POST['id']);
 					while(list($key,$value) = each($_POST['id'])) {
 	//echo ereg_replace('txt_', '', $key) . '#';

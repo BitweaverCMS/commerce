@@ -16,8 +16,8 @@ class CommerceVoucher extends BitBase {
 			$gv_query = "select `amount`
 						from " . TABLE_COUPON_GV_CUSTOMER . "
 						where `customer_id` = ?";
-			if( ($gvBalance = $gBitDb->getOne($gv_query, array( $gBitUser->mUserId ) )) && $pFormat ) {
-				$gvBalance = $currencies->format( $gvBalance );
+			if( ($ret = $gBitDb->getOne($gv_query, array( $gBitUser->mUserId ) )) && $pFormat ) {
+				$ret = $currencies->format( $ret );
 			}
 		}
 		return $ret;
@@ -25,15 +25,16 @@ class CommerceVoucher extends BitBase {
 
 	function getCouponAmount( $pFormat=TRUE ) {
 		global $gBitDb, $currencies;
+		$ret = NULL;
 		if( !empty( $_SESSION['gv_id'] ) ) {
 			$gv_query = "select `coupon_amount`
 						from " . TABLE_COUPONS . "
 						where `coupon_id` = ?";
-			if( ($couponAmount = $gBitDb->getOne($gv_query, array( $_SESSION['gv_id'] ) )) && $pFormat ) {
-				$couponAmount = $currencies->format( $couponAmount );
+			if( ($ret = $gBitDb->getOne($gv_query, array( $_SESSION['gv_id'] ) )) && $pFormat ) {
+				$ret = $currencies->format( $ret );
 			}
-			$gBitSmarty->assign( 'couponAmount', $couponAmount );
 		}
+		return $ret;
 	}
 
 	function redeemCoupon( $pCode ) {

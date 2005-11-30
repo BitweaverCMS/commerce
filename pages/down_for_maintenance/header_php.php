@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/09/27 22:33:55 spiderr Exp $
+// $Id: header_php.php,v 1.4 2005/11/30 07:46:28 spiderr Exp $
 //
-  require(DIR_FS_MODULES . 'require_languages.php');
+  require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
 
   if (DOWN_FOR_MAINTENANCE_COLUMN_RIGHT_OFF == 'true') $flag_disable_right = true;

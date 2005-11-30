@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//// $Id: gv_faq.php,v 1.3 2005/11/30 07:17:24 spiderr Exp $
+//// $Id: gv_faq.php,v 1.4 2005/11/30 07:46:28 spiderr Exp $
 //
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
 	$gBitSmarty->assign( 'gvBalance', CommerceVoucher::getGiftAmount() );
-	$gBitSmarty->assign( 'gvBalance', CommerceVoucher::getCouponAmount() );
+	$gBitSmarty->assign( 'couponAmount', CommerceVoucher::getCouponAmount() );
   	$breadcrumb->add(NAVBAR_TITLE);
 
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_faq.tpl' );
