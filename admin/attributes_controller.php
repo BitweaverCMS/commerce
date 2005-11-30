@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.20 2005/11/29 16:26:28 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.21 2005/11/30 07:15:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -205,8 +205,7 @@
 // iii 030811 added:  For TEXT and FILE option types, ignore option value
 // entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
         $products_options_array = $db->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['options_id'] ) );
-        $values_id = zen_db_prepare_input((($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id']);
-
+        $values_id = (($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id'];
             $products_id = zen_db_prepare_input($_POST['products_id']);
             $options_id = zen_db_prepare_input($_POST['options_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
