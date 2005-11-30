@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.21 2005/11/30 07:15:33 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.22 2005/11/30 07:24:05 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -328,7 +328,7 @@
             $values_id = PRODUCTS_OPTIONS_VALUES_TEXT_ID;
             break;
           default:
-          $values_id = zen_db_prepare_input($_POST['values_id']);
+          $values_id = $_POST['values_id'];
         }
 // iii 030811 added END
 
