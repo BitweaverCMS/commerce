@@ -64,7 +64,7 @@ BITCOMMERCE_DB_PREFIX.'zones' => "
   zone_id I4 PRIMARY AUTO,
   zone_country_id I4,
   zone_code C(32),
-  zone_name C(32)
+  zone_name C(48)
 ",
 
 BITCOMMERCE_DB_PREFIX.'address_book' => "
