@@ -1993,9 +1993,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."products_options_values` (`products_options_values_id`, `language_id`, `products_options_values_name`) VALUES (0, 1, 'TEXT')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."geo_zones` (`geo_zone_id`, `geo_zone_name`, `geo_zone_description`,`date_added`) VALUES (1,'Florida', 'Florida local sales tax zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."geo_zones` (`geo_zone_id`, `geo_zone_name`, `geo_zone_description`,`date_added`) VALUES (2,'UKVAT', 'United Kingdom VAT zone', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_class` (tax_class_id, `tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES (1, 'Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_rates` VALUES (1, 1, 1, 1, 7.0000, 'FL TAX 7.0%', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_rates` VALUES (2, 2, 1, 1, 17.500, 'UK VAT 17.5%', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."tax_class` (tax_class_id, `tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES (1, 'Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
 
 //Afghanistan
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (1,'BA','Badakhshan')",
