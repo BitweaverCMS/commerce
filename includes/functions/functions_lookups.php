@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.18 2005/11/30 06:28:04 spiderr Exp $
+// $Id: functions_lookups.php,v 1.19 2005/11/30 07:10:02 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -407,30 +407,30 @@
 
 ////
 // check if attribute is display only
-  function zen_get_attributes_valid($product_id, $option, $value) {
-    global $db;
+	function zen_get_attributes_valid($product_id, $option, $value) {
+		global $db;
+		$check_valid = true;
 
-// regular attribute validation
-    $check_attributes = $db->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . $option . "' and `options_values_id`='" . $value . "'");
+		// text required validation
+		if (ereg('^txt_', $option)) {
+		  $check_attributes = $db->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . ereg_replace('txt_', '', $option) . "' and `options_values_id`='0'");
+		// text cannot be blank
+		  if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
+			$check_valid = false;
+		  }
+		} else {
+			// regular attribute validation
+			$check_attributes = $db->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . $option . "' and `options_values_id`='" . $value . "'");
 
-    $check_valid = true;
+			// display only cannot be selected
+			if ($check_attributes->fields['attributes_display_only'] == '1') {
+			  $check_valid = false;
+			}
 
-// display only cannot be selected
-    if ($check_attributes->fields['attributes_display_only'] == '1') {
-      $check_valid = false;
-    }
+		}
 
-// text required validation
-    if (ereg('^txt_', $option)) {
-      $check_attributes = $db->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . ereg_replace('txt_', '', $option) . "' and `options_values_id`='0'");
-// text cannot be blank
-      if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
-        $check_valid = false;
-      }
-    }
-
-    return $check_valid;
-  }
+	    return $check_valid;
+	}
 
   function zen_options_name($options_id) {
     global $db;
