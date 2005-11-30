@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.6 2005/10/11 03:50:12 spiderr Exp $
+// $Id: header_php.php,v 1.7 2005/11/30 07:17:24 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -71,7 +71,7 @@
 
   $payment_modules = new payment($_SESSION['payment']);
   $payment_modules->update_status();
-  if ( (is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (!is_object($$_SESSION['payment'])) && (!$credit_covers) ) {
+  if ( (is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
     $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
   }
 

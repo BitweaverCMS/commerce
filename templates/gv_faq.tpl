@@ -2,7 +2,7 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
 		<div class="header">
-			<h1>{tr}Gift Certificates FAQ{/tr}</h1>
+			<h1>{tr}{$smarty.const.TEXT_GV_NAMES} FAQ{/tr}</h1>
 		</div>
 
 		<div class="body">

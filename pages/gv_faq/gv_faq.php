@@ -17,27 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//// $Id: gv_faq.php,v 1.2 2005/11/30 04:17:49 spiderr Exp $
+//// $Id: gv_faq.php,v 1.3 2005/11/30 07:17:24 spiderr Exp $
 //
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
-	if( $gBitUser->isRegistered() ) {
-		$gv_query = "select `amount`
-					from " . TABLE_COUPON_GV_CUSTOMER . "
-					where `customer_id` = ?";
-		if( $gvBalance = $gBitDb->getOne($gv_query, array( $gBitUser->mUserId ) ) ) {
-			$gvBalance = $currencies->format( $gvBalance );
-		}
-		$gBitSmarty->assign( 'gvBalance', $gvBalance );
-	}
-	if( !empty( $_SESSION['gv_id'] ) ) {
-		$gv_query = "select `coupon_amount`
-					from " . TABLE_COUPONS . "
-					where `coupon_id` = ?";
-		if( $couponAmount = $gBitDb->getOne($gv_query, array( $_SESSION['gv_id'] ) ) ) {
-			$couponAmount = $currencies->format( $couponAmount );
-		}
-		$gBitSmarty->assign( 'couponAmount', $couponAmount );
-	}
+	$gBitSmarty->assign( 'gvBalance', CommerceVoucher::getGiftAmount() );
+	$gBitSmarty->assign( 'gvBalance', CommerceVoucher::getCouponAmount() );
   	$breadcrumb->add(NAVBAR_TITLE);
 
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_faq.tpl' );

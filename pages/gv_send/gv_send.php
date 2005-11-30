@@ -17,9 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_send.php,v 1.2 2005/11/30 04:17:49 spiderr Exp $
+// $Id: gv_send.php,v 1.3 2005/11/30 07:17:24 spiderr Exp $
 //
-  require('includes/classes/http_client.php');
+	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
 // if the customer is not logged on, redirect them to the login page
 	if( !$gBitUser->isRegistered() ) {
@@ -32,8 +33,7 @@
 	$feedback = array();
 
 	// do a fresh calculation after sending an email
-	$query = "select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?";
-	$gvBalance = $db->getOne( $query, array( $_SESSION['customer_id'] ) );
+	$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
 
 	$requestAction = !empty( $_REQUEST['action'] ) ? strtolower( $_REQUEST['action'] ) : NULL;
 
@@ -124,8 +124,8 @@
 		// include disclaimer
 			$gv_email .= "\n\n" . EMAIL_ADVISORY . "\n\n";
 
-				$html_msg['EMAIL_GV_FIXED_FOOTER'] = str_replace(array("\r\n", "\n", "\r", "-----"), '', EMAIL_GV_FIXED_FOOTER);
-				$html_msg['EMAIL_GV_SHOP_FOOTER'] =	EMAIL_GV_SHOP_FOOTER;
+			$html_msg['EMAIL_GV_FIXED_FOOTER'] = str_replace(array("\r\n", "\n", "\r", "-----"), '', EMAIL_GV_FIXED_FOOTER);
+			$html_msg['EMAIL_GV_SHOP_FOOTER'] =	EMAIL_GV_SHOP_FOOTER;
 
 		// send the email
 			zen_mail('', $_POST['email'], $gv_email_subject, nl2br($gv_email), STORE_NAME, EMAIL_FROM, $html_msg,'gv_send');
@@ -146,8 +146,7 @@
 			}
 
 			// do a fresh calculation after sending an email
-			$query = "select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?";
-			$gvBalance = $db->getOne( $query, array( $_SESSION['customer_id'] ) );
+			$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
 		}
 	}
 

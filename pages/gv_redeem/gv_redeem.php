@@ -17,28 +17,25 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_redeem.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id: gv_redeem.php,v 1.2 2005/11/30 07:17:24 spiderr Exp $
 //
+
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+
+	if( !$gBitUser->isRegistered() ) {
+		$_SESSION['navigation']->set_snapshot();
+		zen_redirect(FILENAME_LOGIN);
+	}
+	// check for a voucher number in the url
+	if( !empty( $_REQUEST['gv_no'] ) && ($couponAmount = CommerceVoucher::redeemCoupon( $_REQUEST['gv_no'] )) ) {
+		$_SESSION['gv_id'] = '';
+		$feedback['success']['valid']  = sprintf(TEXT_VALID_GV, $currencies->format( $couponAmount ) );
+	} else {
+		$feedback['error']['invalid']  = TEXT_INVALID_GV;
+	}
+
+	$breadcrumb->add(NAVBAR_TITLE);
+
+	$gBitSmarty->assign( 'feedback', $feedback );
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_redeem.tpl' );
 ?>
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-    <td class="pageHeading"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
-  <tr>
-    <td class="plainBox"><?php echo TEXT_INFORMATION; ?></td>
-  </tr>
-<?php
-// if we get here then either the url gv_no was not set or it was invalid
-// so output a message.
-  $message = sprintf(TEXT_VALID_GV, $currencies->format($coupon->fields['coupon_amount']));
-  if ($error) {
-    $message = TEXT_INVALID_GV;
-  }
-?>
-  <tr>
-    <td class="plainBox"><?php echo $message; ?></td>
-  </tr>
-  <tr>
-    <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">' . zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT) . '</a>'; ?></td>
-  </tr>
-</table>

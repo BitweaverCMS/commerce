@@ -1070,7 +1070,7 @@ Skip deleting of images for now
 	}
 
 	function isFree() {
-		return( !empty( $gBitProduct->mInfo['product_is_free'] ) );
+		return( !empty( $this->mInfo['product_is_free'] ) );
 	}
 
 }

@@ -17,10 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.10 2005/11/15 22:01:22 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.11 2005/11/30 07:17:24 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies, $gBitUser;
 
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php' );
 if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
@@ -78,28 +79,14 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
     }
     $content .= '</table>';
 
-  if ($_SESSION['customer_id']) {
-    $gv_query = "select `amount`
-                 from " . TABLE_COUPON_GV_CUSTOMER . "
-                 where `customer_id` = '" . $_SESSION['customer_id'] . "'";
-
-    $gv_result = $db->Execute($gv_query);
-
-    if ($gv_result->fields['amount'] > 0 ) {
+  if( $gvBalance = CommerceVoucher::getGiftAmount() ) {
       $content .= zen_draw_separator();
-      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_BALANCE . '</td><td class="smalltext" align="right" valign="bottom">' . $currencies->format($gv_result->fields['amount']) . '</td></tr></table>';
+      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_BALANCE . '</td><td class="smalltext" align="right" valign="bottom">' . $gvBalance . '</td></tr></table>';
       $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext"><a href="'. zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a></td></tr></table>';
-    }
   }
-  if( !empty( $_SESSION['gv_id'] ) ) {
-    $gv_query = "select coupon_amount
-                 from " . TABLE_COUPONS . "
-                 where `coupon_id` = '" . $_SESSION['gv_id'] . "'";
-
-    $coupon = $db->Execute($gv_query);
+  if( $couponAmount = CommerceVoucher::getCouponAmount() ) {
     $content .= zen_draw_separator();
-    $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $currencies->format($coupon->fields['coupon_amount']) . '</td></tr></table>';
-
+    $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $couponAmount . '</td></tr></table>';
   }
   if( !empty( $_SESSION['cc_id'] ) ) {
     $content .= zen_draw_separator();

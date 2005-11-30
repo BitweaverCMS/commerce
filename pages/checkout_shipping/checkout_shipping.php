@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.6 2005/11/15 22:01:22 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.7 2005/11/30 07:17:24 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -121,8 +121,6 @@ $gBitSmarty->assign_by_ref( 'order', $order );
   } else {
     $free_shipping = false;
   }
-
-  require(DIR_FS_MODULES . 'require_languages.php');
 
 	// process the selected shipping method
 	if( !empty( $_REQUEST['submit_address'] ) ) {
