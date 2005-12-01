@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.7 2005/11/30 07:17:24 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.8 2005/12/01 07:18:05 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -186,34 +186,36 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 
 				list($module, $method) = explode('_', $_SESSION['shipping']);
 				if ( is_object($$module) || ($_SESSION['shipping'] == 'free_free') ) {
-				if ($_SESSION['shipping'] == 'free_free') {
-					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-					$quote[0]['methods'][0]['cost'] = '0';
-				} else {
-					$quote = $shipping_modules->quote($method, $module);
-				}
-				if (isset($quote['error'])) {
-					$_SESSION['shipping'] = '';
-				} else {
-					if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-						$_SESSION['shipping'] = array(
-							'id' => $_SESSION['shipping'],
-							'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-							'cost' => $quote[0]['methods'][0]['cost'],
-							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-							);
-						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+					if ($_SESSION['shipping'] == 'free_free') {
+						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
+						$quote[0]['methods'][0]['cost'] = '0';
+					} else {
+						$quote = $shipping_modules->quote($method, $module);
 					}
-				}
+					if (isset($quote['error'])) {
+						$_SESSION['shipping'] = '';
+					} else {
+						if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+							$_SESSION['shipping'] = array(
+								'id' => $_SESSION['shipping'],
+								'title' => (($free_shipping == true) ?  $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+								'cost' => $quote[0]['methods'][0]['cost'],
+								'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+								);
+							zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+						}
+					}
 				} else {
-				$_SESSION['shipping'] = false;
+					$_SESSION['shipping'] = false;
 				}
 			}
 		} else {
-			$_SESSION['shipping'] = false;
+			// not virtual product, but no shipping cost.
+			$_SESSION['shipping'] = (!$free_shipping ? 'free_free' : false);
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
-	} else {
+	}
+	if( zen_count_shipping_modules() ) {
 		// get all available shipping quotes
 		$quotes = $shipping_modules->quote();
 		// if no shipping method has been selected, automatically select the cheapest method.
@@ -238,7 +240,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			}
 		}
 
-		$gBitSmarty->assign( 'shippingModules', zen_count_shipping_modules() );
+		$gBitSmarty->assign( 'shippingModules', TRUE );
 		$gBitSmarty->assign_by_ref( 'quotes', $quotes );
 		$gBitSmarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
 		$gBitSmarty->assign( 'freeShipping', $free_shipping );
