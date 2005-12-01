@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.16 2005/11/10 06:53:37 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.17 2005/12/01 03:03:50 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -65,7 +65,7 @@
         $products_options_images_style = $_POST['products_options_images_style'];
 
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
-          $option_name = zen_db_prepare_input($option_name_array[$languages[$i]['id']]);
+          $option_name = substr( $option_name_array[$languages[$i]['id']], 0, 32 );
 
           $db->query(" insert into " . TABLE_PRODUCTS_OPTIONS . " (products_options_id, products_options_name, language_id, products_options_sort_order, products_options_type, products_options_images_per_row, products_options_images_style) values ( ?, ?, ?, ?, ?, ?, ? )", array( $products_options_id, $option_name, $languages[$i]['id'], (int)$products_options_sort_order[$languages[$i]['id']], $option_type, $products_options_images_per_row, $products_options_images_style ) );
         }
