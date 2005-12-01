@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.11 2005/12/01 18:59:30 mej Exp $
+//  $Id: geo_zones.php,v 1.12 2005/12/01 21:08:56 mej Exp $
 //
 
   require('includes/application_top.php');
@@ -35,8 +35,8 @@
                     (`zone_country_id`, `zone_id`, `geo_zone_id`, `date_added`)
                     values ('" . (int)$zone_country_id . "',
                             '" . (int)$zone_id . "',
-                            '" . (int)$zID . "',
-                            'NOW')");
+                            '" . (int)$zID . "', 
+                            " . $gBitDb->mDb->sysTimeStamp . ")");
 
         $new_subzone_id = zen_db_insert_id( TABLE_ZONES_TO_GEO_ZONES, 'association_id' );
 
@@ -52,7 +52,7 @@
                       set `geo_zone_id` = '" . (int)$zID . "',
                           `zone_country_id` = '" . (int)$zone_country_id . "',
                           `zone_id` = " . (zen_not_null($zone_id) ? "'" . (int)$zone_id . "'" : 'null') . ",
-                          `last_modified` = 'NOW'
+                          `last_modified` = " . $gBitDb->mDb->sysTimeStamp . "
 					where `association_id` = '" . (int)$sID . "'");
 
 
@@ -86,7 +86,8 @@
         $db->Execute("insert into " . TABLE_GEO_ZONES . "
                     (`geo_zone_name`, `geo_zone_description`, `date_added`)
                     values ('" . zen_db_input($geo_zone_name) . "',
-                            '" . zen_db_input($geo_zone_description) . "', 'NOW')");
+                            '" . zen_db_input($geo_zone_description) . "',
+                            " . $gBitDb->mDb->sysTimeStamp . ")");
 
         $new_zone_id = zen_db_insert_id( TABLE_GEO_ZONES, 'geo_zone_id' );
 
@@ -100,7 +101,7 @@
         $db->Execute("update " . TABLE_GEO_ZONES . "
                       set `geo_zone_name` = '" . zen_db_input($geo_zone_name) . "',
                           `geo_zone_description` = '" . zen_db_input($geo_zone_description) . "',
-                          `last_modified` = 'NOW' where `geo_zone_id` = '" . (int)$zID . "'");
+                          `last_modified` = " . $gBitDb->mDb->sysTimeStamp . " where `geo_zone_id` = '" . (int)$zID . "'");
 
 
         zen_redirect(zen_href_link_admin(FILENAME_GEO_ZONES, 'zpage=' . $_GET['zpage'] . '&zID=' . $_GET['zID']));
@@ -119,10 +120,10 @@
           $_GET['action']= '';
           $messageStack->add_session(ERROR_TAX_RATE_EXISTS, 'caution');
         } else {
-          $db->Execute("delete from " . TABLE_GEO_ZONES . "
+          $db->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
                         where `geo_zone_id` = '" . (int)$zID . "'");
 
-          $db->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
+          $db->Execute("delete from " . TABLE_GEO_ZONES . "
                         where `geo_zone_id` = '" . (int)$zID . "'");
         }
 
