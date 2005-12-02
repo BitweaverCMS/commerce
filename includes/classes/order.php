@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.31 2005/11/21 14:14:54 spiderr Exp $
+// $Id: order.php,v 1.32 2005/12/02 20:16:10 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -284,6 +284,7 @@ class order extends BitBase {
 
 			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId, $_SESSION['languages_id'] ) ) ) {
 				while( !$rs->EOF ) {
+					$rs->fields['comments'] = str_replace( "\n",'<br/>', $rs->fields['comments'] );
 					array_push( $this->mHistory, $rs->fields );
 					$rs->MoveNext();
 				}

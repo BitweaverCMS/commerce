@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.3 2005/11/17 19:42:50 spiderr Exp $
+// $Id: account_history_info.php,v 1.4 2005/12/02 20:16:10 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -154,6 +154,7 @@
 			$gBitSmarty->assign_by_ref( 'orderHistory', $order->mHistory );
 			$gBitSmarty->display( 'bitpackage:bitcommerce/account_history_info_inc.tpl' );
 ?>
+		<a href="mailto:<?php echo STORE_OWNER_EMAIL_ADDRESS; ?>">Contact Us</a>
     </td>
   </tr>
 <?php
