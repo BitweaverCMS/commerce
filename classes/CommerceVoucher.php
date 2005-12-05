@@ -49,7 +49,7 @@ class CommerceVoucher extends BitBase {
 			if( $coupon = $gBitDb->getRow($gv_query, array( $pCode ) ) ) {
 				$redeem_query = "select coupon_id
 								 from ". TABLE_COUPON_REDEEM_TRACK . "
-								 where coupon_id = ? AND coupon_active = ?";
+								 where coupon_id = ?";
 				$isRedeemed = $gBitDb->getOne( $redeem_query, array( $coupon['coupon_id'] ) );
 				if( !$isRedeemed ) {
 			// check for required session variables
