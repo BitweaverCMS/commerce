@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.7 2005/10/06 21:01:48 spiderr Exp $
+// $Id: html_output.php,v 1.8 2005/12/05 16:47:02 squareing Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -109,7 +109,7 @@
 
 // alt is added to the img tag even if it is null to prevent browsers from outputting
 // the image filename as default
-    $image = '<img src="' . zen_output_string($src) . '" border="0" alt="' . zen_output_string($alt) . '"';
+    $image = '<img src="' . zen_output_string($src) . '" class="zen image" alt="' . zen_output_string($alt) . '"';
 
     if (zen_not_null($alt)) {
       $image .= ' title=" ' . zen_output_string($alt) . ' "';
