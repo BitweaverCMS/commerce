@@ -1,4 +1,4 @@
-{bitmodule title=$smarty.const.BOX_HEADING_INFORMATION name="bc_information"}
+{bitmodule title=$smarty.const.BOX_HEADING_INFORMATION name="bc_commerceinformation"}
 	<ul>
 		<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shippinginfo">{tr}Shipping &amp; Returns{/tr}</a></li>
 		<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=privacy">{tr}Privacy Notice{/tr}</a></li>
