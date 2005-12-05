@@ -1,5 +1,5 @@
 {strip}
-{bitmodule title=$moduleTitle|default:'Search' name="search"}
+{bitmodule title=$moduleTitle|default:'Search' name="bc_search"}
 	{form ipackage=bitcommerce iname="quick_find" action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=advanced_search_result"}
 		<input type="hidden" name="search_in_description" value="1" />
 		<input type="text" name="keyword" size="15" />
