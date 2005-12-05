@@ -4,5 +4,4 @@
 	</div>
 
 	{include file="bitpackage:bitcommerce/list_products_inc.tpl"}
-
 </div>	<!-- end .bitcommerce -->

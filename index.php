@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.18 2005/11/30 04:17:49 spiderr Exp $
+// $Id: index.php,v 1.19 2005/12/05 15:00:09 squareing Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -113,7 +113,6 @@ ob_start();
 	// template also loads the page body code based on the variable $body_code.
 
 	require($template->get_template_dir('tpl_main_page.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_main_page.php');
-	print '</html>';
 
 	require(DIR_FS_INCLUDES . 'application_bottom.php');
 $content = ob_get_contents();

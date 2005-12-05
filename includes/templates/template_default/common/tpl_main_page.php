@@ -17,32 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_main_page.php,v 1.8 2005/09/27 22:33:53 spiderr Exp $
+// $Id: tpl_main_page.php,v 1.9 2005/12/05 15:00:12 squareing Exp $
 //
 
 	$header_template = 'tpl_header.php';
 	$footer_template = 'tpl_footer.php';
 	require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php');
-
+	require($body_code);
 ?>
 
-<div id="content">
-
-	<div id="floatwrap">
-		<div id="col-main">
-	  		<div id="main">
-<?php require($body_code); ?>
-			</div> <!-- end main -->
-		</div> <!-- end mainwrap -->
-		<br class="clear" />
-	</div> <!-- end floatwrap -->
-
-<br class="clear" />
-
-</div> <!-- end pagewrap -->
-
-
 <div id="footer">
-<?php require(DIR_FS_MODULES . 'footer.php'); ?>
+	<?php require(DIR_FS_MODULES . 'footer.php'); ?>
 </div> <!-- end footer -->
-

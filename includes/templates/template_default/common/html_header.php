@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_header.php,v 1.5 2005/09/27 22:33:53 spiderr Exp $
+// $Id: html_header.php,v 1.6 2005/12/05 15:00:11 squareing Exp $
 //
 // TODO
 // cvs block
@@ -37,11 +37,3 @@ require(DIR_FS_MODULES . 'meta_tags.php');
     require($page_directory . '/' . $value);
   }
 ?>
-<script type="text/javascript">
-function clearText(thefield){
-if (thefield.defaultValue==thefield.value)
-thefield.value = ""
-}
-</script>
-
-</head>
