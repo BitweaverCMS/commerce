@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_languages.php,v 1.4 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_languages.php,v 1.5 2005/12/05 17:48:51 squareing Exp $
 //
 	global $db, $gBitProduct, $lng;
 
@@ -34,7 +34,7 @@
 		reset($lng->catalog_languages);
 		$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
 		$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
-		$baseUrl .= strpos( $baseUrl, '?' ) ? '&' : '?' ;
+		$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
 		$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
 	}
 	if( empty( $moduleTitle ) ) {

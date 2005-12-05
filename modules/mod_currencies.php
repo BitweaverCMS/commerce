@@ -17,36 +17,27 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_currencies.php,v 1.5 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_currencies.php,v 1.6 2005/12/05 17:48:51 squareing Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
 	// test if box should display
 	$show_currencies= false;
 
-	if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
+	if( substr( basename( $_SERVER['PHP_SELF'] ), 0, 8 ) != 'checkout' ) {
 		$show_currencies= true;
 	}
 
 	if ($show_currencies == true) {
-		if (isset($currencies) && is_object($currencies)) {
-			reset($currencies->currencies);
-			$currencies_array = array();
-			while (list($key, $value) = each($currencies->currencies)) {
-				$currencies_array[] = array('id' => $key, 'text' => $value['title']);
+		if( isset( $currencies ) && is_object( $currencies ) ) {
+			reset( $currencies->currencies );
+			$currenciesHash = array();
+			while( list( $key, $value ) = each( $currencies->currencies ) ) {
+				$currenciesHash[$key] = $value['title'];
 			}
 
-			$hidden_get_variables = '';
-			reset($_GET);
-			while (list($key, $value) = each($_GET)) {
-				if ( ($key != 'currency') && ($key != zen_session_name()) && ($key != 'x') && ($key != 'y') ) {
-					$hidden_get_variables .= zen_draw_hidden_field($key, $value);
-				}
-			}
-
-			$defaultCurrency = !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
-
-			$gBitSmarty->assign( 'sideboxCurrenciesPulldown', zen_draw_pull_down_menu('currency', $currencies_array, $defaultCurrency, 'onchange="this.form.submit();" style="width: 100%"') );
+			$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
+			$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
 			if( empty( $moduleTitle ) ) {
 				$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
 			}
