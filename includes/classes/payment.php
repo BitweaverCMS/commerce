@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.7 2005/11/30 06:28:04 spiderr Exp $
+// $Id: payment.php,v 1.8 2005/12/06 14:51:40 spiderr Exp $
 //
 
   class payment {
@@ -196,28 +196,38 @@
       }
     }
 
-    function before_process() {
-      if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
-          return $GLOBALS[$this->selected_module]->before_process();
-        }
-      }
-    }
+	function before_process() {
+		global $gBitProduct, $order;
+		$ret = NULL;
+		if (is_array($this->modules)) {
+			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
+				$ret = $GLOBALS[$this->selected_module]->before_process();
+			}
+		}
+		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $order );
+		return $ret;
+	}
 
-    function after_process() {
-      if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
-          return $GLOBALS[$this->selected_module]->after_process();
-        }
-      }
-    }
+	function after_process() {
+		$ret = NULL;
+		if (is_array($this->modules)) {
+			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
+				$ret = $GLOBALS[$this->selected_module]->after_process();
+			}
+		}
+		return $ret;
+	}
 
     function after_order_create($zf_order_id) {
-      if (is_array($this->modules)) {
-        if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
-          return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
-        }
-      }
+		global $gBitProduct, $order;
+		$ret = NULL;
+		if (is_array($this->modules)) {
+			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
+			return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
+			}
+		}
+		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
+		return $ret;
     }
 
     function admin_notification($zf_order_id) {
