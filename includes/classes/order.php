@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.32 2005/12/02 20:16:10 spiderr Exp $
+// $Id: order.php,v 1.33 2005/12/06 14:34:28 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -636,32 +636,29 @@ class order extends BitBase {
 
 		$db->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-		$insert_id = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
+		$this->mOrdersId = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
 
 		for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
-			$sql_data_array = array('orders_id' => $insert_id,
+			$sql_data_array = array('orders_id' => $this->mOrdersId,
 									'title' => $zf_ot_modules[$i]['title'],
 									'text' => $zf_ot_modules[$i]['text'],
 									'value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
 									'class' => $zf_ot_modules[$i]['code'],
 									'sort_order' => $zf_ot_modules[$i]['sort_order']);
-
 			$db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
 		}
 
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
-		$sql_data_array = array('orders_id' => $insert_id,
+		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'orders_status_id' => $this->info['order_status'],
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments']);
-
 		$db->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
 		$db->CompleteTrans();
 
-		return($insert_id);
-
+		return( $this->mOrdersId );
     }
 
 
