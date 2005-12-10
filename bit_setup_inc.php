@@ -3,7 +3,7 @@ global $gBitSystem;
 
 $gBitSystem->registerPackage( 'bitcommerce', dirname( __FILE__ ).'/', TRUE, LIBERTY_SERVICE_COMMERCE );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
-	$gBitSystem->registerAppMenu( 'bitcommerce', 'Shopping', BITCOMMERCE_PKG_URL.'index.php', 'bitpackage:bitcommerce/menu_bitcommerce.tpl' );
+	$gBitSystem->registerAppMenu( BITCOMMERCE_PKG_DIR, 'Shopping', BITCOMMERCE_PKG_URL.'index.php', 'bitpackage:bitcommerce/menu_bitcommerce.tpl' );
 }
 
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
