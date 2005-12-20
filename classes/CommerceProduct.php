@@ -252,7 +252,7 @@ class CommerceProduct extends LibertyAttachable {
 
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = zen_get_products_display_price( $productId );
+				$ret[$productId]['display_price'] = CommerceProduct::getDisplayPrice( $productId );
 			}
 		}
 

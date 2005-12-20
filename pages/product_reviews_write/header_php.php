@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.10 2005/11/30 07:46:30 spiderr Exp $
+// $Id: header_php.php,v 1.11 2005/12/20 17:13:06 gilesw Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -108,7 +108,7 @@
     }
   }
 
-  $products_price = zen_get_products_display_price($product_info->fields['products_id']);
+  $products_price = CommerceProduct::getDisplayPrice($product_info->fields['products_id']);
 
   $products_name = $product_info->fields['products_name'];
 

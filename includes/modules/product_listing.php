@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.12 2005/09/01 14:03:25 spiderr Exp $
+// $Id: product_listing.php,v 1.13 2005/12/20 17:13:01 gilesw Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
@@ -118,7 +118,7 @@
             $lc_text = '&nbsp;<a href="' . zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $listing->fields['manufacturers_id']) . '">' . $listing->fields['manufacturers_name'] . '</a>&nbsp;';
             break;
           case 'PRODUCT_LIST_PRICE':
-            $lc_price = zen_get_products_display_price($listing->fields['products_id']) . '<br />';
+            $lc_price = CommerceProduct::getDisplayPrice($listing->fields['products_id']) . '<br />';
             $lc_align = 'right';
             $lc_text = '&nbsp;' . $lc_price . '&nbsp;';
 

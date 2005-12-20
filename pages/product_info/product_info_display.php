@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.5 2005/11/15 22:01:23 spiderr Exp $
+// $Id: product_info_display.php,v 1.6 2005/12/20 17:13:04 gilesw Exp $
 //
 // Variables available on this page
 //
@@ -89,7 +89,7 @@ if( !empty( $debug_on ) ) {
   } else {
     $one_time = '';
   }
-  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . zen_get_products_display_price((int)$_GET['products_id']);
+  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']);
 ?>
     </td>
   </tr>

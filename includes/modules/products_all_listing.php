@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_all_listing.php,v 1.5 2005/10/06 21:01:49 spiderr Exp $
+// $Id: products_all_listing.php,v 1.6 2005/12/20 17:13:01 gilesw Exp $
 //
 
 ?>
@@ -78,7 +78,7 @@
       }
 
       if ((PRODUCT_ALL_LIST_PRICE != '0' and zen_get_products_allow_add_to_cart($products_all->fields['products_id']) == 'Y') and zen_check_show_prices() == 'true') {
-        $products_price = zen_get_products_display_price($products_all->fields['products_id']);
+        $products_price = CommerceProduct::getDisplayPrice($products_all->fields['products_id']);
         $display_products_price = TEXT_PRICE . ' ' . $products_price . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_PRICE, 3, 1)) . (zen_get_show_product_switch($products_all->fields['products_id'], 'ALWAYS_FREE_SHIPPING_IMAGE_SWITCH') ? (zen_get_product_is_always_free_ship($products_all->fields['products_id']) ? TEXT_PRODUCT_FREE_SHIPPING_ICON . '<br />' : '') : '');
       } else {
         $display_products_price = '';

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.22 2005/11/30 07:24:05 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.23 2005/12/20 17:13:03 gilesw Exp $
 //
 
   require('includes/application_top.php');
@@ -872,7 +872,7 @@ if ($action == 'attributes_preview') {
 <?php
   $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
-  echo zen_get_products_display_price($_GET['products_id']) . '<br /><br />';
+  echo CommerceProduct::getDisplayPrice($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
 ?>
             </td>

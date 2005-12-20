@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/11/30 07:46:30 spiderr Exp $
+// $Id: header_php.php,v 1.9 2005/12/20 17:13:07 gilesw Exp $
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 
@@ -78,7 +78,7 @@
 
   $review_info = $db->Execute($review_info_query);
 
-  $products_price = zen_get_products_display_price($review_info->fields['products_id']);
+  $products_price = CommerceProduct::getDisplayPrice($review_info->fields['products_id']);
 
   $products_name = $review_info->fields['products_name'];
 

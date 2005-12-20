@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.10 2005/08/24 15:31:16 spiderr Exp $
+// $Id: specials_index.php,v 1.11 2005/12/20 17:13:01 gilesw Exp $
 //
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
@@ -66,7 +66,7 @@
     }
 
 	foreach( array_keys( $specialProducts ) AS $productsId ) {
-		$products_price = zen_get_products_display_price( $productsId );
+		$products_price = CommerceProduct::getDisplayPrice( $productsId );
 		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
 		$list_box_contents[$row][$col] = array('align' => 'center',
 												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',

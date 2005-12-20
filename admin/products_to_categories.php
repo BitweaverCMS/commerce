@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.13 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: products_to_categories.php,v 1.14 2005/12/20 17:13:03 gilesw Exp $
 
   require('includes/application_top.php');
 
@@ -679,7 +679,7 @@ function go_option() {
       }
       $contents[] = array('text' => '<br />' . TEXT_PRODUCTS_NAME . $product_to_copy->fields['products_name']);
       $contents[] = array('text' => TEXT_PRODUCTS_MODEL . $product_to_copy->fields['products_model']);
-      $contents[] = array('text' => TEXT_PRODUCTS_PRICE . zen_get_products_display_price($productsId));
+      $contents[] = array('text' => TEXT_PRODUCTS_PRICE . CommerceProduct::getDisplayPrice($productsId));
       switch (true) {
         case ($product_to_copy->fields['master_categories_id'] == 0 and $productsId > 0):
           $contents[] = array('text' => '<br /><span class="alert">' . WARNING_MASTER_CATEGORIES_ID . '</span><br />&nbsp;');

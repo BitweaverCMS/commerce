@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
+//  $Id: specials.php,v 1.12 2005/12/20 17:13:03 gilesw Exp $
 //
 
   require('includes/application_top.php');
@@ -355,7 +355,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
                 <td  class="dataTableContent" align="right"><?php echo $specials->fields['products_id']; ?>&nbsp;</td>
                 <td  class="dataTableContent"><?php echo $specials->fields['products_name']; ?></td>
                 <td  class="dataTableContent" align="left"><?php echo $specials->fields['products_model']; ?>&nbsp;</td>
-                <td colspan="2" class="dataTableContent" align="right"><?php echo zen_get_products_display_price($specials->fields['products_id']); ?></td>
+                <td colspan="2" class="dataTableContent" align="right"><?php echo CommerceProduct::getDisplayPrice($specials->fields['products_id']); ?></td>
                 <td  class="dataTableContent" align="center"><?php echo (($specials->fields['specials_date_available'] != '0001-01-01' and $specials->fields['specials_date_available'] !='') ? zen_date_short($specials->fields['specials_date_available']) : TEXT_NONE); ?></td>
                 <td  class="dataTableContent" align="center"><?php echo (($specials->fields['expires_date'] != '0001-01-01' and $specials->fields['expires_date'] !='') ? zen_date_short($specials->fields['expires_date']) : TEXT_NONE); ?></td>
                 <td  class="dataTableContent" align="center">
@@ -425,7 +425,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
         $contents[] = array('align' => 'center', 'text' => '<br>' . zen_info_image($sInfo->products_image, $sInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT));
         $contents[] = array('text' => '<br>' . TEXT_INFO_ORIGINAL_PRICE . ' ' . $currencies->format($specials_current_price));
         $contents[] = array('text' => '' . TEXT_INFO_NEW_PRICE . ' ' . $currencies->format($sInfo->specials_new_products_price));
-        $contents[] = array('text' => '' . TEXT_INFO_DISPLAY_PRICE . ' ' . zen_get_products_display_price($sInfo->products_id));
+        $contents[] = array('text' => '' . TEXT_INFO_DISPLAY_PRICE . ' ' . CommerceProduct::getDisplayPrice($sInfo->products_id));
 
         $contents[] = array('text' => '<br>' . TEXT_INFO_AVAILABLE_DATE . ' <b>' . (($specials->fields['specials_date_available'] != '0001-01-01' and $specials->fields['specials_date_available'] !='') ? zen_date_short($specials->fields['specials_date_available']) : TEXT_NONE) . '</b>');
         $contents[] = array('text' => '<br>' . TEXT_INFO_EXPIRES_DATE . ' <b>' . (($specials->fields['expires_date'] != '0001-01-01' and $specials->fields['expires_date'] !='') ? zen_date_short($specials->fields['expires_date']) : TEXT_NONE) . '</b>');

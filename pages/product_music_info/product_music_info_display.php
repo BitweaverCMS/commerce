@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_music_info_display.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
+// $Id: product_music_info_display.php,v 1.3 2005/12/20 17:13:06 gilesw Exp $
 //
 // Variables available on this page
 //
@@ -100,7 +100,7 @@ if ($debug_on == '1') {
     $one_time = '';
   }
 
-  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_MUSIC_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . zen_get_products_display_price((int)$_GET['products_id']);
+  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_MUSIC_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']);
 ?>
     </td>
   </tr>

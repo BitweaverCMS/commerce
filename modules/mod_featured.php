@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_featured.php,v 1.6 2005/08/24 15:31:18 spiderr Exp $
+// $Id: mod_featured.php,v 1.7 2005/12/20 17:13:02 gilesw Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -33,7 +33,7 @@
 	$listHash['featured'] = TRUE;
 	if( $sideboxFeature = $gBitProduct->getList( $listHash ) ) {
 		$sideboxFeature = current( $sideboxFeature );
-		$whats_new_price = zen_get_products_display_price($sideboxFeature['products_id']);
+		$whats_new_price = CommerceProduct::getDisplayPrice($sideboxFeature['products_id']);
 
 		$gBitSmarty->assign_by_ref( 'sideboxFeature', $sideboxFeature );
 	}

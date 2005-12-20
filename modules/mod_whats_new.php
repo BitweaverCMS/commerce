@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whats_new.php,v 1.7 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_whats_new.php,v 1.8 2005/12/20 17:13:02 gilesw Exp $
 //
 	global $db, $gBitProduct, $currencies;
 
@@ -33,7 +33,7 @@
 
   if( $productList = $gBitProduct->getList( $listHash ) ) {
   	$newProduct = current( $productList );
-    $whats_new_price = zen_get_products_display_price($newProduct['products_id']);
+    $whats_new_price = CommerceProduct::getDisplayPrice($newProduct['products_id']);
     if( $newProduct['specials_new_products_price'] = zen_get_products_special_price($newProduct['products_id']) ) {
 		$newProduct['display_special_price'] = $currencies->display_price($newProduct['specials_new_products_price'], zen_get_tax_rate($newProduct['products_tax_class_id']));
 	}

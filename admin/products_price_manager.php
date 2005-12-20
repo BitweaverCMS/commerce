@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.18 2005/11/16 16:01:08 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.19 2005/12/20 17:13:03 gilesw Exp $
 //
 
   require('includes/application_top.php');
@@ -282,7 +282,7 @@ if ($_GET['products_id'] != '') {
 // FIX HERE
   $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
-  echo zen_get_products_display_price($_GET['products_id']) . '<br /><br />';
+  echo CommerceProduct::getDisplayPrice($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
   $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
   while (!$not_for_cart->EOF) {

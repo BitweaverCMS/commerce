@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.15 2005/10/25 02:28:20 spiderr Exp $
+// $Id: new_products.php,v 1.16 2005/12/20 17:13:01 gilesw Exp $
 //
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
@@ -46,7 +46,7 @@
     }
 // $gBitProduct->debug();
     foreach( $new_products as $product ) {
-      $products_price = zen_get_products_display_price($product['products_id']);
+      $products_price = CommerceProduct::getDisplayPrice($product['products_id']);
 
       $list_box_contents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
