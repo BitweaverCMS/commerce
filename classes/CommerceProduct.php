@@ -866,11 +866,9 @@ Skip deleting of images for now
 				return '';
 			}
 		}
-
 		// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-		$product_check = $db->getOne("select `products_tax_class_id`, `products_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
-			" where `products_id` = '" . (int)$pProductsId . "'");
-
+		$product_check = $db->getRow("select `products_tax_class_id`, `products_price` , `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
+		       
 		$show_display_price = '';
 		$display_normal_price = zen_get_products_base_price($pProductsId);
 		$display_special_price = zen_get_products_special_price($pProductsId, true);
@@ -888,44 +886,44 @@ Skip deleting of images for now
 				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $show_discount_amount . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
 
 				} else {
-				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_sale_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_sale_price), zen_get_tax_rate($product_check['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
 				}
 			} else {
 				if (SHOW_SALE_DISCOUNT == 1) {
 				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . number_format(100 - (($display_special_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS) . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
 				} else {
-				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_special_price), zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+				$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $currencies->display_price(($display_normal_price - $display_special_price), zen_get_tax_rate($product_check['products_tax_class_id'])) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
 				}
 			}
 		}
 
 		if ($display_special_price) {
-			$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . ' </span>';
+			$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . ' </span>';
 			if ($display_sale_price && $display_sale_price != $display_special_price) {
-				$show_special_price = '&nbsp;' . '<span class="productSpecialPriceSale">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
-				if ($product_check->fields['product_is_free'] == '1') {
-				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . '<s>' . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPriceSale">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</span>';
+				if ($product_check['product_is_free'] == '1') {
+				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . '<s>' . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</s>' . '</span>';
 				} else {
-				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</span>';
 				}
 			} else {
-				if ($product_check->fields['product_is_free'] == '1') {
-				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . '<s>' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>' . '</span>';
+				if ($product_check['product_is_free'] == '1') {
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . '<s>' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</s>' . '</span>';
 				} else {
-				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . $currencies->display_price($display_special_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</span>';
 				}
 				$show_sale_price = '';
 			}
 		} else {
 			if ($display_sale_price) {
-				$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . ' </span>';
+				$show_normal_price = '<span class="normalprice">' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . ' </span>';
 				$show_special_price = '';
-				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</span>';
+				$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . $currencies->display_price($display_sale_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</span>';
 			} else {
-				if ($product_check->fields['product_is_free'] == '1') {
-				$show_normal_price = '<s>' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id'])) . '</s>';
+				if ($product_check['product_is_free'] == '1') {
+				$show_normal_price = '<s>' . $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check['products_tax_class_id'])) . '</s>';
 				} else {
-				$show_normal_price = $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check->fields['products_tax_class_id']));
+				$show_normal_price = $currencies->display_price($display_normal_price, zen_get_tax_rate($product_check['products_tax_class_id']));
 				}
 				$show_special_price = '';
 				$show_sale_price = '';
@@ -940,7 +938,7 @@ Skip deleting of images for now
 		}
 
 		// If Free, Show it
-		if ($product_check->fields['product_is_free'] == '1') {
+		if ($product_check['product_is_free'] == '1') {
 			if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
 				$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
 			} else {
@@ -949,7 +947,7 @@ Skip deleting of images for now
 		}
 
 		// If Call for Price, Show it
-		if ($product_check->fields['product_is_call']) {
+		if ($product_check['product_is_call']) {
 			if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
 				$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
 			} else {
