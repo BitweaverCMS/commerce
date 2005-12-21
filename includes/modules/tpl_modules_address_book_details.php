@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_address_book_details.php,v 1.4 2005/10/09 19:47:32 spiderr Exp $
+// $Id: tpl_modules_address_book_details.php,v 1.5 2005/12/21 18:24:05 gilesw Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -86,15 +86,18 @@
   if (ACCOUNT_STATE == 'true') {
 ?>
   <tr>
-    <td class="main"><?php echo ENTRY_STATE; ?></td>
+    <td class="main"><?php echo ENTRY_STATE . $country; ?></td>
     <td class="main">
-<?php
-    if ($process == true) {
+<?php  		
+        
+  if ($action == 'process') {
+ 
       if ($entry_state_has_zones == true) {
+
         $zones_array = array();
         $zones_values = $db->Execute("select `zone_name`
                                      from " . TABLE_ZONES . "
-                                     where `zone_country_id` = '" . (int)$country . "'
+                                     where `zone_country_id` = '" . (int)$country_id . "'
                                      order by `zone_name`");
 
         while (!$zones_values->EOF) {

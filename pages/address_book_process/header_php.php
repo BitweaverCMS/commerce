@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.11 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.12 2005/12/21 18:24:07 gilesw Exp $
 //
 
   if (!$_SESSION['customer_id']) {
@@ -99,4 +99,14 @@
   } else {
     $breadcrumb->add(NAVBAR_TITLE_ADD_ENTRY);
   }
+
+      if (ACCOUNT_STATE == 'true') {
+        $check_query = "select count(*) as `total`
+                        from " . TABLE_ZONES . "
+						where `zone_country_id` = '" . (int)$country_id . "'";
+
+        $check = $db->Execute($check_query);           
+        $entry_state_has_zones = ($check->fields['total'] > 0);    
+      }
+  
 ?>
