@@ -1216,7 +1216,7 @@ $gBitInstaller->makePackageHomeable( BITCOMMERCE_PKG_NAME );
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
-	array('bit_p_commerce_admin', 'Can administer commerce.', 'admins', 'bitcommerce'),
+	array('bit_p_commerce_admin', 'Can administer commerce.', 'admin', 'bitcommerce'),
 	array('bit_p_view_product', 'Can create and modify storefront products', 'basic', 'bitcommerce'),
 	array('bit_p_purchase_product', 'Can purchase webstore products', 'basic', 'bitcommerce'),
 	array('bit_p_edit_product', 'Can create and modify storefront products', 'editors', 'bitcommerce'),
