@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
+//  $Id: coupon_admin.php,v 1.11 2006/01/12 19:35:26 spiderr Exp $
 //
 
   require('includes/application_top.php');
-  
+
   $currencies = new currencies();
 
   if ($_GET['selected_box']) {
@@ -164,9 +164,15 @@
       if ( ($_POST['back_x']) || ($_POST['back_y']) ) {
         $_GET['action'] = 'new';
       } else {
-        $coupon_type = "F";
-        if (substr($_POST['coupon_amount'], -1) == '%') $coupon_type='P';
-        if ($_POST['coupon_free_ship']) $coupon_type = 'S';
+        if ($_POST['coupon_free_ship']) {
+        	$coupon_type = 'S';
+        } elseif (substr($_POST['coupon_amount'], -1) == '%') {
+        	$_POST['coupon_amount'] = str_replace( '%', '', $_POST['coupon_amount'] );
+        	$coupon_type='P';
+        } else {
+	        $coupon_type = "F";
+        }
+
         $sql_data_array = array('coupon_code' => zen_db_prepare_input($_POST['coupon_code']),
                                 'coupon_amount' => zen_db_prepare_input($_POST['coupon_amount']),
                                 'coupon_type' => zen_db_prepare_input($coupon_type),
@@ -187,7 +193,7 @@
                                  );
         }
         if ($_GET['oldaction']=='voucheredit') {
-          $db->associateInsert(TABLE_COUPONS, $sql_data_array, 'update', "coupon_id='" . $_GET['cid']."'");
+          $db->associateUpdate( TABLE_COUPONS, $sql_data_array, array( 'name'=>"coupon_id", 'value'=>$_GET['cid'] ) );
           for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
             $language_id = $languages[$i]['id'];
             $db->Execute("update " . TABLE_COUPONS_DESCRIPTION . "
