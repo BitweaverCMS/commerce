@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.9 2005/11/30 06:28:04 spiderr Exp $
+// $Id: ot_gv.php,v 1.10 2006/01/12 22:39:28 spiderr Exp $
 //
 
   class ot_gv {
@@ -149,7 +149,7 @@
         $selection = array('id' => $this->code,
                        'module' => $this->title,
                        'checkbox' => $this->use_credit_amount(),
-                       'fields' => array(array('title' => MODULE_ORDER_TOTAL_GV_TEXT_ENTER_CODE,
+                       'fields' => array(array('title' => tra( 'Gift Code' ),
                                                'field' => zen_draw_input_field('gv_redeem_code'))));
 
       }

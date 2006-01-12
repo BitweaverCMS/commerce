@@ -5,8 +5,67 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class CommerceVoucher extends BitBase {
 	var $pCategoryId;
 
-	function CommerceVoucher() {
+	function CommerceVoucher( $pCouponId=NULL ) {
+		$this->mCouponId = $pCouponId;
 		BitBase::BitBase();
+	}
+
+	function load( $pCode=NULL ) {
+		$this->mInfo = array();
+		if( !empty( $pCode ) || $this->isValid() ) {
+			$error = true;
+			if( !empty( $pCode ) ) {
+				$lookup = 'UPPER(`coupon_code`)';
+				$bindVars =  array( strtoupper( $pCode ) );
+			} else {
+				$lookup = 'coupon_id';
+				$bindVars =  array( $this->mCouponId );
+			}
+
+			$query = "SELECT * FROM " . TABLE_COUPONS . " WHERE $lookup=? AND coupon_active='Y'";
+			if( ($this->mInfo = $this->mDb->getRow( $query, $bindVars )) ) {
+				$this->mCouponId = $this->mInfo['coupon_id'];
+			}
+		}
+		return( count( $this->mInfo ) );
+	}
+
+	function isValid() {
+		return( !empty( $this->mCouponId ) && is_numeric( $this->mCouponId ) );
+	}
+
+	function isRedeemable() {
+		if( $this->isValid() ) {
+			$couponStart = $this->mDb->getOne("select coupon_start_date from " . TABLE_COUPONS . "
+										where coupon_start_date <= now() and
+										coupon_id=?", array( $this->mCouponId ) );
+			if ( !$couponStart ) {
+				$this->mError['redeem_error'] = TEXT_INVALID_STARTDATE_COUPON;
+			}
+
+			$couponExpire=$this->mDb->getOne("SELECT coupon_expire_date FROM " . TABLE_COUPONS . "
+									   WHERE coupon_expire_date >= now() AND coupon_id=?", array( $this->mCouponId ) );
+			if ( !$couponExpire ) {
+				$this->mError['redeem_error'] = TEXT_INVALID_FINISDATE_COUPON;
+			}
+
+			if( $this->getField( 'uses_per_coupon' ) > 0 ) {
+				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id=?";
+				$redeemCount = $this->mDb->getOne( $query, array( $this->mCouponId ) );
+				if( $redeemCount >= $this->getField( 'uses_per_coupon' ) ) {
+					$this->mError['redeem_error'] =TEXT_INVALID_USES_COUPON . $this->getField( 'uses_per_coupon' ) . TIMES;
+				}
+			}
+
+			if ( $this->getField( 'uses_per_user' ) > 0 ) {
+				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id = ? AND customer_id = ?";
+				$redeemCountCustomer = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
+				if ( $redeemCountCustomer >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
+					$this->mError['redeem_error'] = TEXT_INVALID_USES_USER_COUPON . $this->getField( 'uses_per_user' ) . TIMES;
+				}
+			}
+		}
+		return( count( $this->mErrors ) == 0 );
 	}
 
 	function getGiftAmount( $pFormat=TRUE ) {

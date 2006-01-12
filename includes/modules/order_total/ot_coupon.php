@@ -17,8 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.5 2005/11/15 22:01:21 spiderr Exp $
+// $Id: ot_coupon.php,v 1.6 2006/01/12 22:39:28 spiderr Exp $
 //
+
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
   class ot_coupon {
     var $title, $output;
@@ -62,6 +64,8 @@
 						 'value' => $od_amount['total']);
 		}
 	}
+$db->debug( 0 );
+//die;
   }
 
   function selection_test() {
@@ -90,97 +94,65 @@
   function credit_selection() {
     $selection = array('id' => $this->code,
                        'module' => $this->title,
-                       'fields' => array(array('title' => MODULE_ORDER_TOTAL_COUPON_TEXT_ENTER_CODE,
+                       'fields' => array(array('title' => 'Coupon Code',
                                                'field' => zen_draw_input_field('dc_redeem_code'))));
     return $selection;
   }
 
 
-  function collect_posts() {
-    global $db, $currencies;
-//    if ($_POST['cc_id']) {
-    if ($_POST['dc_redeem_code']) {
+	function collect_posts() {
+		global $db, $currencies;
+		if ( !empty( $_POST['dc_redeem_code'] ) ) {
+			$coupon = new CommerceVoucher();
+			if ( !$coupon->load( $_POST['dc_redeem_code'] ) ) {
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON), 'SSL',true, false));
+			} elseif ($coupon->getField('coupon_type') != 'G') {
+				// JTD - added missing code here to handle coupon product restrictions
+				// look through the items in the cart to see if this coupon is valid for any item in the cart
+				$products = $_SESSION['cart']->get_products();
+				$foundvalid = FALSE;
+				for ($i=0; $i<sizeof($products); $i++) {
+					if (is_product_valid($products[$i]['id'], $coupon->mCouponId ) ) {
+						$foundvalid = TRUE;
+					}
+				}
+				if (!$foundvalid) {
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT), 'SSL',true, false));
+				}
+				// JTD - end of additions of missing code to handle coupon product restrictions
 
-      $coupon_result=$db->Execute("select coupon_id, coupon_amount, coupon_type, coupon_minimum_order,
-                                       uses_per_coupon, uses_per_user, restrict_to_products,
-                                       restrict_to_categories from " . TABLE_COUPONS . "
-                                       where coupon_code='". $_POST['dc_redeem_code']."'
-                                       and coupon_active='Y'");
-      if ($coupon_result->fields['coupon_type'] != 'G') {
+				if( !$coupon->isRedeemable() ) {
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mError['redeem_error'] ), 'SSL',true, false));
+				}
 
-        if ($coupon_result->RecordCount() <1 ) {
-          zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON), 'SSL',true, false));
-        }
-
-        // JTD - added missing code here to handle coupon product restrictions
-       // look through the items in the cart to see if this coupon is valid for any item in the cart
-       $products = $_SESSION['cart']->get_products();
-       $foundvalid = FALSE;
-       for ($i=0; $i<sizeof($products); $i++) {
-         if (is_product_valid($products[$i]['id'], $coupon_result->fields['coupon_id']))
-           $foundvalid = TRUE;
-         }
-         if (!$foundvalid)
-           zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT), 'SSL',true, false));
-       // JTD - end of additions of missing code to handle coupon product restrictions
-
-        $date_query=$db->Execute("select coupon_start_date from " . TABLE_COUPONS . "
-                                where coupon_start_date <= now() and
-                                coupon_code='".$_POST['dc_redeem_code']."'");
-
-        if ($date_query->RecordCount() < 1 ) {
-          zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_STARTDATE_COUPON), 'SSL', true, false));
-        }
-
-        $date_query=$db->Execute("select coupon_expire_date from " . TABLE_COUPONS . "
-                                where coupon_expire_date >= now() and
-                                coupon_code='".$_POST['dc_redeem_code']."'");
-
-        if ($date_query->RecordCount() < 1 ) {
-          zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_FINISDATE_COUPON), 'SSL', true, false));
-        }
-
-        $coupon_count = $db->Execute("select coupon_id from " . TABLE_COUPON_REDEEM_TRACK . "
-                                          where coupon_id = '" . $coupon_result->fields['coupon_id']."'");
-
-        $coupon_count_customer = $db->Execute("select coupon_id from " . TABLE_COUPON_REDEEM_TRACK . "
-                                                   where coupon_id = '" . $coupon_result->fields['coupon_id']."' and
-                                                   customer_id = '" . $_SESSION['customer_id'] . "'");
-
-        if ($coupon_count->RecordCount() >= $coupon_result->fields['uses_per_coupon'] && $coupon_result->fields['uses_per_coupon'] > 0) {
-          zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_USES_COUPON . $coupon_result->fields['uses_per_coupon'] . TIMES ), 'SSL', true, false));
-        }
-
-        if ($coupon_count_customer->RecordCount() >= $coupon_result->fields['uses_per_user'] && $coupon_result->fields['uses_per_user'] > 0) {
-          zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(sprintf(TEXT_INVALID_USES_USER_COUPON, $_POST['dc_redeem_code']) . $coupon_result->fields['uses_per_user'] . ($coupon_result->fields['uses_per_user'] == 1 ? TIME : TIMES) ), 'SSL', true,false));
-        }
-
-        if ($coupon_result->fields['coupon_type']=='S') {
-          $coupon_amount = $order->info['shipping_cost'];
-        } else {
-          $coupon_amount = $currencies->format($coupon_result->fields['coupon_amount']) . ' ';
-        }
-        $_SESSION['cc_id'] = $coupon_result->fields['coupon_id'];
-      }
-      if ($_POST['submit_redeem_coupon_x'] && !$_POST['gv_redeem_code']) zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE), 'SSL', true, false));
-    }
-  }
+				if ($coupon->getField('coupon_type')=='S') {
+					$coupon_amount = $order->info['shipping_cost'];
+				} else {
+					$coupon_amount = $currencies->format($coupon->getField('coupon_amount')) . ' ';
+				}
+				$_SESSION['cc_id'] = $coupon->mCouponId;
+			}
+			if ($_POST['submit_redeem_coupon_x'] && !$_POST['gv_redeem_code']) {
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE), 'SSL', true, false));
+			}
+		}
+	}
 
 
-function update_credit_account($i) {
-  return false;
- }
+	function update_credit_account($i) {
+		return false;
+	}
 
- function apply_credit() {
-   global $db, $insert_id;
-   $cc_id = $_SESSION['cc_id'];
-   if ($this->deduction !=0) {
-     $db->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . "
-                               (coupon_id, redeem_date, redeem_ip, customer_id, order_id)
-                   values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
-   }
-   $_SESSION['cc_id'] = "";
- }
+	function apply_credit() {
+		global $db, $insert_id;
+		$cc_id = $_SESSION['cc_id'];
+		if ($this->deduction !=0) {
+			$db->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . "
+									(coupon_id, redeem_date, redeem_ip, customer_id, order_id)
+						values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
+		}
+		$_SESSION['cc_id'] = "";
+	}
 
   function calculate_deductions($order_total) {
     global $db, $order;
@@ -188,23 +160,23 @@ function update_credit_account($i) {
     $od_amount['total'] = 0;
     $od_amount['tax'] = 0;
     if ($_SESSION['cc_id']) {
-      $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'");
-      if ($coupon->RecordCount() > 0 ) {
-        if ($coupon->fields['coupon_minimum_order'] <= $order_total) {
-          if ($coupon->fields['coupon_type']=='S') {
+    	$coupon = new CommerceVoucher( $_SESSION['cc_id'] );
+      if( $coupon->load() ) {
+        if ($coupon->getField( 'coupon_minimum_order' ) <= $order_total) {
+          if ($coupon->getField( 'coupon_type' )=='S') {
             $od_amount['total'] = $order->info['shipping_cost'];
             $od_amount['type'] = 'S';
           } else {
-            if ($coupon->fields['coupon_type'] == 'P') {
-              $od_amount['total'] = zen_round($order_total*($coupon->fields['coupon_amount']/100), 2);
+            if ($coupon->getField( 'coupon_type' ) == 'P') {
+              $od_amount['total'] = zen_round($order_total*($coupon->getField( 'coupon_amount' )/100), 2);
             } else {
-              $od_amount['total'] = $coupon->fields['coupon_amount'] * ($order_total>0);
+              $od_amount['total'] = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
             }
             if ($od_amount['total']>$order_total) $od_amount['total'] = $order_total;
             $products = $_SESSION['cart']->get_products();
             for ($i=0; $i<sizeof($products); $i++) {
               if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
-                if ($coupon->fields['coupon_type'] == 'P') {
+                if ($coupon->getField( 'coupon_type' ) == 'P') {
                   switch ($this->calculate_tax) {
                     case 'Credit Note':
                       $tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
@@ -233,7 +205,7 @@ function update_credit_account($i) {
                     default:
                   }
                 }
-                if ($coupon->fields['coupon_type'] == 'F') {
+                if ($coupon->getField( 'coupon_type' ) == 'F') {
                   switch ($this->calculate_tax) {
                     case 'Credit Note':
                       $tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
