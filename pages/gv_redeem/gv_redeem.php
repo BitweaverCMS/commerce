@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_redeem.php,v 1.2 2005/11/30 07:17:24 spiderr Exp $
+// $Id: gv_redeem.php,v 1.3 2006/01/13 17:17:15 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -27,11 +27,13 @@
 		zen_redirect(FILENAME_LOGIN);
 	}
 	// check for a voucher number in the url
-	if( !empty( $_REQUEST['gv_no'] ) && ($couponAmount = CommerceVoucher::redeemCoupon( $_REQUEST['gv_no'] )) ) {
-		$_SESSION['gv_id'] = '';
-		$feedback['success']['valid']  = sprintf(TEXT_VALID_GV, $currencies->format( $couponAmount ) );
-	} else {
-		$feedback['error']['invalid']  = TEXT_INVALID_GV;
+	if( isset( $_REQUEST['gv_no'] ) ) {
+		if( !empty( $_REQUEST['gv_no'] ) && ($couponAmount = CommerceVoucher::redeemCoupon( $_REQUEST['gv_no'] )) ) {
+			$_SESSION['gv_id'] = '';
+			$feedback['success']['valid']  = sprintf(TEXT_VALID_GV, $currencies->format( $couponAmount ) );
+		} else {
+			$feedback['error']['invalid']  = TEXT_INVALID_GV;
+		}
 	}
 
 	$breadcrumb->add(NAVBAR_TITLE);
