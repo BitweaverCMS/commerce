@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_taxes.php,v 1.6 2005/08/24 15:06:37 lsces Exp $
+// $Id: functions_taxes.php,v 1.7 2006/01/13 23:48:33 spiderr Exp $
 //
 //
 ////
 // Returns the tax rate for a zone / class
 // TABLES: tax_rates, zones_to_geo_zones
   function zen_get_tax_rate($class_id, $country_id = -1, $zone_id = -1) {
-    global $db, $gBitUser;
+    global $gBitDb, $gBitUser;
     global $customer_zone_id, $customer_country_id;
 
     if ( ($country_id == -1) && ($zone_id == -1) ) {
@@ -59,7 +59,7 @@
 					and tr.tax_class_id = '" . (int)$class_id . "'
 					group by tr.tax_priority";
 
-		$tax = $db->Execute($tax_query);
+		$tax = $gBitDb->Execute($tax_query);
 
 		if ($tax->RecordCount() > 0) {
 		$tax_multiplier = 1.0;
@@ -78,7 +78,7 @@
 // Return the tax description for a zone / class
 // TABLES: tax_rates;
   function zen_get_tax_description($class_id, $country_id, $zone_id) {
-    global $db;
+    global $gBitDb;
     $tax_query = "select tax_description
                   from " . TABLE_TAX_RATES . " tr
                   left join " . TABLE_ZONES_TO_GEO_ZONES . " za on (tr.tax_zone_id = za.geo_zone_id)
@@ -91,7 +91,7 @@
                   and tr.tax_class_id = '" . (int)$class_id . "'
                   order by tr.tax_priority";
 
-    $tax = $db->Execute($tax_query);
+    $tax = $gBitDb->Execute($tax_query);
 
     if ($tax->RecordCount() > 0) {
       $tax_description = '';
@@ -144,7 +144,7 @@
 ////
 // Get tax rate from tax description
  function zen_get_tax_rate_from_desc($tax_desc) {
-    global $db;
+    global $gBitDb;
     $tax_rate = 0.00;
 
     $tax_descriptions = explode(' + ', $tax_desc);
@@ -154,7 +154,7 @@
                   where tax_description = '" .
                   $tax_description . "'";
 
-      $tax = $db->Execute($tax_query);
+      $tax = $gBitDb->Execute($tax_query);
 
       $tax_rate += $tax->fields['tax_rate'];
     }
@@ -163,7 +163,7 @@
   }
 
  function zen_get_tax_locations($store_country = -1, $store_zone = -1) {
-  global $db;
+  global $gBitDb;
     switch (STORE_PRODUCT_TAX_BASIS) {
 
       case 'Shipping':
@@ -172,7 +172,7 @@
                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                 and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
-        $tax_address_result = $db->Execute($tax_address_query);
+        $tax_address_result = $gBitDb->Execute($tax_address_query);
       break;
       case 'Billing':
 
@@ -181,7 +181,7 @@
                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                 and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
-        $tax_address_result = $db->Execute($tax_address_query);
+        $tax_address_result = $gBitDb->Execute($tax_address_query);
       break;
       case 'Store':
         $tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id`
@@ -189,7 +189,7 @@
                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                 and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
-        $tax_address_result = $db->Execute($tax_address_query);
+        $tax_address_result = $gBitDb->Execute($tax_address_query);
 
         if ($tax_address_result ->fields['entry_zone_id'] == STORE_ZONE) {
 
@@ -199,7 +199,7 @@
                                   left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                   where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                   and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
-        $tax_address_result = $db->Execute($tax_address_query);
+        $tax_address_result = $gBitDb->Execute($tax_address_query);
        }
      }
      $tax_address['zone_id'] = $tax_address_result->fields['entry_zone_id'];

@@ -21,10 +21,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.7 2005/10/06 21:01:49 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.8 2006/01/13 23:48:33 spiderr Exp $
 //
 
-global $gBitDb, $order, $currencies;
+global $gBitDb, $order, $currencies, $total_weight, $total_count;
 
 ?>
 <!-- shipping_estimator //-->
@@ -236,7 +236,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
 	$state_values->MoveNext();
         }
 
-      $ShipTxt.= '<tr><td colspan="1" class="main">' . ENTRY_STATE .'</td><td colspan="2" class="main">'. zen_draw_pull_down_menu('state',$state_array) . '</td></tr>';
+      $ShipTxt.= '<tr><td colspan="1" class="main">' . ENTRY_STATE .'</td><td colspan="2" class="main">'. zen_draw_pull_down_menu('state',$state_array, $_REQUEST['state']) . '</td></tr>';
 
         if(CART_SHIPPING_METHOD_ZIP_REQUIRED == "true"){
           $ShipTxt.='<tr><td colspan="1" class="main">'.ENTRY_POST_CODE .'</td><td colspan="2" class="main">'. zen_draw_input_field('zip_code', $selected_zip, 'size="7"') . '</td></tr>';
@@ -259,42 +259,38 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
       $ShipTxt.='<tr><td></td><td class="main" align="left"><strong>' . CART_SHIPPING_METHOD_TEXT . '</strong></td><td class="main" align="center"><strong>' . CART_SHIPPING_METHOD_RATES . '</strong></td></tr>';
       $ShipTxt.='<tr><td colspan="3" class="main">'.zen_draw_separator().'</td></tr>';
       for ($i=0, $n=sizeof($quotes); $i<$n; $i++) {
+		if( !empty( $quotes[$i]['error'] ) ) {
+			$ShipTxt.='<tr><td class="main">'.$quotes[$i]['icon'].'&nbsp;</td>';
+			$ShipTxt.='<td colspan="2" class="main"><span class="warning">'.$quotes[$i]['module'].'&nbsp;';
+			$ShipTxt.= '('.$quotes[$i]['error'].')</span></td></tr>';
+		}
         if(sizeof($quotes[$i]['methods'])==1){
-          // simple shipping method
-          $thisquoteid = $quotes[$i]['id'].'_'.$quotes[$i]['methods'][0]['id'];
-          $ShipTxt.= '<tr class="'.$extra.'">';
-          $ShipTxt.='<td class="main">'.$quotes[$i]['icon'].'&nbsp;</td>';
-          if($quotes[$i]['error']){
-            $ShipTxt.='<td colspan="2" class="main">'.$quotes[$i]['module'].'&nbsp;';
-            $ShipTxt.= '('.$quotes[$i]['error'].')</td></tr>';
-          }else{
-            if($selected_shipping['id'] == $thisquoteid){
-              $ShipTxt.='<td class="main"><strong>'.$quotes[$i]['module'].'&nbsp;';
-              $ShipTxt.= '('.$quotes[$i]['methods'][0]['title'].')</strong></td><td align="right" class="main"><strong>'.$currencies->format(zen_add_tax($quotes[$i]['methods'][0]['cost'], $quotes[$i]['tax'])).'<strong></td></tr>';
-            }else{
-              $ShipTxt.='<td class="main">'.$quotes[$i]['module'].'&nbsp;';
-              $ShipTxt.= '('.$quotes[$i]['methods'][0]['title'].')</td><td align="right" class="main">'.$currencies->format(zen_add_tax($quotes[$i]['methods'][0]['cost'], $quotes[$i]['tax'])).'</td></tr>';
-            }
-          }
+			// simple shipping method
+			$thisquoteid = $quotes[$i]['id'].'_'.$quotes[$i]['methods'][0]['id'];
+			$ShipTxt.= '<tr class="'.$extra.'">';
+			$ShipTxt.='<td class="main">'.$quotes[$i]['icon'].'&nbsp;</td>';
+			if($selected_shipping['id'] == $thisquoteid){
+				$ShipTxt.='<td class="main"><strong>'.$quotes[$i]['module'].'&nbsp;';
+				$ShipTxt.= '('.$quotes[$i]['methods'][0]['title'].')</strong></td><td align="right" class="main"><strong>'.$currencies->format(zen_add_tax($quotes[$i]['methods'][0]['cost'], $quotes[$i]['tax'])).'<strong></td></tr>';
+			}else{
+				$ShipTxt.='<td class="main">'.$quotes[$i]['module'].'&nbsp;';
+				$ShipTxt.= '('.$quotes[$i]['methods'][0]['title'].')</td><td align="right" class="main">'.$currencies->format(zen_add_tax($quotes[$i]['methods'][0]['cost'], $quotes[$i]['tax'])).'</td></tr>';
+			}
         } else {
-          // shipping method with sub methods (multipickup)
-          for ($j=0, $n2=sizeof($quotes[$i]['methods']); $j<$n2; $j++) {
-            $thisquoteid = $quotes[$i]['id'].'_'.$quotes[$i]['methods'][$j]['id'];
-            $ShipTxt.= '<tr class="'.$extra.'">';
-            $ShipTxt.='<td class="main">'.$quotes[$i]['icon'].'&nbsp;</td>';
-            if($quotes[$i]['error']){
-              $ShipTxt.='<td colspan="2" class="main">'.$quotes[$i]['module'].'&nbsp;';
-              $ShipTxt.= '('.$quotes[$i]['error'].')</td></tr>';
-            }else{
-              if($selected_shipping['id'] == $thisquoteid){
-                $ShipTxt.='<td class="main"><strong>'.$quotes[$i]['module'].'&nbsp;';
-                $ShipTxt.= '('.$quotes[$i]['methods'][$j]['title'].')</strong></td><td align="right" class="main"><strong>'.$currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], $quotes[$i]['tax'])).'</strong></td></tr>';
-              }else{
-                $ShipTxt.='<td class="main">'.$quotes[$i]['module'].'&nbsp;';
-                $ShipTxt.= '('.$quotes[$i]['methods'][$j]['title'].')</td><td align="right" class="main">'.$currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], $quotes[$i]['tax'])).'</td></tr>';
-              }
-            }
-          }
+			// shipping method with sub methods (multipickup)
+			for ($j=0, $n2=sizeof($quotes[$i]['methods']); $j<$n2; $j++) {
+	          	$icon = !empty( $quotes[$i]['methods'][$j]['icon'] ) ? $quotes[$i]['methods'][$j]['icon'] : (!empty( $quotes[$i]['icon'] ) ? $quotes[$i]['icon'] : '');
+				$thisquoteid = $quotes[$i]['id'].'_'.$quotes[$i]['methods'][$j]['id'];
+				$ShipTxt.= '<tr class="'.$extra.'">';
+				$ShipTxt.='<td class="main">'.$icon.'&nbsp;</td>';
+				if($selected_shipping['id'] == $thisquoteid){
+					$ShipTxt.='<td class="main"><strong>'.$quotes[$i]['module'].'&nbsp;';
+					$ShipTxt.= '('.$quotes[$i]['methods'][$j]['title'].')</strong></td><td align="right" class="main"><strong>'.$currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], $quotes[$i]['tax'])).'</strong></td></tr>';
+				}else{
+					$ShipTxt.='<td class="main">'.$quotes[$i]['module'].'&nbsp;';
+					$ShipTxt.= '('.$quotes[$i]['methods'][$j]['title'].')</td><td align="right" class="main">'.$currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], $quotes[$i]['tax'])).'</td></tr>';
+				}
+			}
         }
       }
     }

@@ -313,16 +313,16 @@ class CommerceProduct extends LibertyAttachable {
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
 			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : 1),
 			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
-			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),			
+			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),
 			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
-			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : NULL),					
+			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : NULL),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : NULL),
 			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
 			'products_virtual' => (!empty( $pParamHash['products_virtual'] ) ? (int)$pParamHash['products_virtual'] : NULL),
 			'products_tax_class_id' => (!empty( $pParamHash['products_tax_class_id'] ) ? $pParamHash['products_tax_class_id'] : NULL),
 			'manufacturers_id' => (!empty( $pParamHash['manufacturers_id'] ) ? $pParamHash['manufacturers_id'] : NULL),
-			'suppliers_id' => (!empty( $pParamHash['suppliers_id'] ) ? $pParamHash['suppliers_id'] : NULL),	
-			'products_barcode' => (!empty( $pParamHash['products_barcode'] ) ? $pParamHash['products_barcode'] : NULL),	
+			'suppliers_id' => (!empty( $pParamHash['suppliers_id'] ) ? $pParamHash['suppliers_id'] : NULL),
+			'products_barcode' => (!empty( $pParamHash['products_barcode'] ) ? $pParamHash['products_barcode'] : NULL),
 			'products_priced_by_attribute' => (!empty( $pParamHash['products_priced_by_attribute'] ) ? $pParamHash['products_priced_by_attribute'] : NULL),
 			'product_is_free' => (!empty( $pParamHash['product_is_free'] ) ? $pParamHash['product_is_free'] : NULL),
 			'product_is_call' => (!empty( $pParamHash['product_is_call'] ) ? $pParamHash['product_is_call'] : NULL),
@@ -544,7 +544,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 /*
 // check for duplicate and block them
-$check_duplicate = $db->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ? and `options_id` = ? and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
+$check_duplicate = $gBitDb->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ? and `options_id` = ? and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
             $products_id = zen_db_prepare_input($_POST['products_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
 
@@ -825,7 +825,7 @@ Skip deleting of images for now
 	// Display Price Retail
 	// Specials and Tax Included
 	function getDisplayPrice( $pProductsId=NULL ) {
-		global $db, $currencies;
+		global $gBitDb, $currencies;
 
 		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
 			$pProductsId = $this->mProductsId;
@@ -867,8 +867,8 @@ Skip deleting of images for now
 			}
 		}
 		// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-		$product_check = $db->getRow("select `products_tax_class_id`, `products_price` , `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
-		       
+		$product_check = $gBitDb->getRow("select `products_tax_class_id`, `products_price` , `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
+
 		$show_display_price = '';
 		$display_normal_price = zen_get_products_base_price($pProductsId);
 		$display_special_price = zen_get_products_special_price($pProductsId, true);
