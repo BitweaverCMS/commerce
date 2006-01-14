@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.9 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: product_types.php,v 1.10 2006/01/14 23:39:57 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@
 
         $db->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
                       set `configuration_value` = '" . zen_db_input($configuration_value) . "',
-                          `last_modified` = now() where configuration_id = '" . (int)$cID . "'");
+                          `last_modified` = ".$db->NOW()." where configuration_id = '" . (int)$cID . "'");
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT;
 
@@ -66,7 +66,7 @@
                                 'allow_add_to_cart' => $allow_add_to_cart);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => 'now()');
+          $insert_sql_data = array('date_added' => $db->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
@@ -75,7 +75,7 @@
         } elseif ($action == 'save') {
           $master_type = zen_db_prepare_input($_POST['master_type']);
 
-          $update_sql_data = array('last_modified' => 'now()',
+          $update_sql_data = array('last_modified' => $db->NOW(),
                                    'type_master_type' => $master_type
            );
 
@@ -378,7 +378,7 @@ if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_PRODUCT_TYPE . ' :: ' . $ptInfo->type_name . '</b>');
 
-      $contents = array('form' => zen_draw_form('product_types', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form('product_types', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=save', 'get', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_NAME . '<br>' . zen_draw_input_field('type_name', $ptInfo->type_name, zen_set_field_length(TABLE_PRODUCT_TYPES, 'type_name')));
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_IMAGE . '<br>' . zen_draw_file_field('default_image') . '<br />' . $ptInfo->default_image);
