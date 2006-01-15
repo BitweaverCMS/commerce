@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:26 spiderr Exp $
+// $Id: header_php.php,v 1.5 2006/01/15 00:03:24 lsces Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -26,9 +26,9 @@
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
-  $newsletter_query = "select customers_newsletter
+  $newsletter_query = "select `customers_newsletter`
                        from   " . TABLE_CUSTOMERS . "
-                       where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+                       where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $newsletter = $db->Execute($newsletter_query);
 
@@ -43,8 +43,8 @@
       $newsletter_general = (($newsletter->fields['customers_newsletter'] == '1') ? '0' : '1');
 
       $sql = "update " . TABLE_CUSTOMERS . "
-              set    customers_newsletter = '" . (int)$newsletter_general . "'
-              where  customers_id = '" . (int)$_SESSION['customer_id'] . "'";
+              set    `customers_newsletter` = '" . (int)$newsletter_general . "'
+              where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
       $db->Execute($sql);
     }

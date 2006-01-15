@@ -17,15 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_address_book.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
+// $Id: blk_address_book.php,v 1.4 2006/01/15 00:03:24 lsces Exp $
 //
-  $addresses_query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
-                             entry_company as company, entry_street_address as street_address,
-                             entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
-                             entry_state as state, entry_zone_id as zone_id, entry_country_id as country_id
+  $addresses_query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
+                             `entry_company` as `company`, `entry_street_address` as `street_address`,
+                             `entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
+                             `entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_country_id` as `country_id`
                       from   " . TABLE_ADDRESS_BOOK . "
-                      where  customers_id = '" . (int)$_SESSION['customer_id'] . "'
-                      order by firstname, lastname";
+                      where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
+                      order by `entry_firstname`, `entry_lastname`";
 
   $addresses = $db->Execute($addresses_query);
 

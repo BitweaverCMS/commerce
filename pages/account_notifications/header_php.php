@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/11/30 07:46:26 spiderr Exp $
+// $Id: header_php.php,v 1.8 2006/01/15 00:03:24 lsces Exp $
 //
   if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
@@ -26,9 +26,9 @@
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
-  $global_query = "select global_product_notifications
+  $global_query = "select `global_product_notifications`
                    from   " . TABLE_CUSTOMERS_INFO . "
-                   where  customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+                   where  `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
   $global = $db->Execute($global_query);
 
@@ -45,8 +45,8 @@
 			$product_global = (($global->fields['global_product_notifications'] == '1') ? '0' : '1');
 
 			$sql = "update " . TABLE_CUSTOMERS_INFO . "
-					set    global_product_notifications = '" . (int)$product_global . "'
-					where  customers_info_id = '" . (int)$_SESSION['customer_id'] . "'";
+					set    `global_product_notifications` = '" . (int)$product_global . "'
+					where  `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 			$db->Execute($sql);
 
