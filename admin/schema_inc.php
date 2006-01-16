@@ -82,9 +82,9 @@ BITCOMMERCE_DB_PREFIX.'address_book' => "
   entry_country_id I4,
   entry_zone_id I4,
   entry_telephone C(32)
-  CONSTRAINT ', CONSTRAINT addr_book_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-  			  , CONSTRAINT addr_book_zone_ref FOREIGN KEY ( entry_zone_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."zones( zone_id )
-  			  , CONSTRAINT addr_book_country_ref FOREIGN KEY ( entry_country_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."countries( countries_id )'
+  CONSTRAINT ', CONSTRAINT `addr_book_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
+  			  , CONSTRAINT `addr_book_zone_ref` FOREIGN KEY ( `entry_zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."zones`( `zone_id` )
+  			  , CONSTRAINT `addr_book_country_ref` FOREIGN KEY ( `entry_country_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."countries`( `countries_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'address_format' => "
@@ -134,7 +134,7 @@ BITCOMMERCE_DB_PREFIX.'banners_history' => "
   banners_shown I2,
   banners_clicked I2,
   banners_history_date T
-  CONSTRAINT ', CONSTRAINT bann_hist_banners_ref FOREIGN KEY ( banners_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."banners( banners_id )'
+  CONSTRAINT ', CONSTRAINT `bann_hist_banners_ref` FOREIGN KEY ( `banners_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."banners`( `banners_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'categories' => "
@@ -152,7 +152,7 @@ BITCOMMERCE_DB_PREFIX.'categories_description' => "
   language_id I4 PRIMARY NOTNULL default '1',
   categories_name C(32) NOTNULL,
   categories_description X2
-  CONSTRAINT ', CONSTRAINT cat_desc_cat_ref FOREIGN KEY ( categories_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."categories( categories_id )'
+  CONSTRAINT ', CONSTRAINT `cat_desc_cat_ref` FOREIGN KEY ( `categories_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."categories`( `categories_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'configuration' => "
@@ -201,8 +201,8 @@ BITCOMMERCE_DB_PREFIX.'product_types' => "
 BITCOMMERCE_DB_PREFIX.'product_types_to_category' => "
   product_type_id I4,
   category_id I4
-  CONSTRAINT ', CONSTRAINT prod_types_to_cat_type_ref FOREIGN KEY ( product_type_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types( type_id )
-  			 , CONSTRAINT prod_types_to_cat_cat_ref FOREIGN KEY ( category_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."categories( categories_id )'
+  CONSTRAINT ', CONSTRAINT `prod_types_to_cat_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )
+  			 , CONSTRAINT `prod_types_to_cat_cat_ref` FOREIGN KEY ( `category_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."categories`( `categories_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products' => "
@@ -249,12 +249,12 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   related_content_id I4,
   purchase_group_id I4
 
-  CONSTRAINT ', CONSTRAINT prod_content_id_ref FOREIGN KEY ( content_id ) REFERENCES ".str_replace( BIT_DB_PREFIX, '`', '' )."tiki_content( content_id )
-			  , CONSTRAINT prod_rel_content_id_ref FOREIGN KEY ( related_content_id ) REFERENCES ".str_replace( BIT_DB_PREFIX, '`', '' )."tiki_content( content_id )
-			  , CONSTRAINT prod_pur_group_id_ref FOREIGN KEY ( purchase_group_id ) REFERENCES ".str_replace( BIT_DB_PREFIX, '`', '' )."users_groups( group_id )
-			  , CONSTRAINT prod_type_ref FOREIGN KEY ( products_type ) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types( type_id )
-			  , CONSTRAINT prod_supp_id_ref FOREIGN KEY ( suppliers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."suppliers( suppliers_id )
-			  , CONSTRAINT prod_manf_id_ref FOREIGN KEY ( manufacturers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers( manufacturers_id )'
+  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES ".BIT_DB_PREFIX."tiki_content`( `content_id` )
+			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES ".BIT_DB_PREFIX."tiki_content`( `content_id` )
+			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES ".BIT_DB_PREFIX."users_groups`( `group_id` )
+			  , CONSTRAINT `prod_type_ref` FOREIGN KEY ( `products_type` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )
+			  , CONSTRAINT `prod_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."suppliers`( `suppliers_id` )
+			  , CONSTRAINT `prod_manf_id_ref` FOREIGN KEY ( `manufacturers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."manufacturers`( `manufacturers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_options_types' => "
@@ -286,8 +286,8 @@ BITCOMMERCE_DB_PREFIX.'prd_opt_val_to_prd_opt' => "
   prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
   products_options_id I4,
   products_options_values_id I4
-  CONSTRAINT ', CONSTRAINT prd_opt_val_to_prd_opt_ref FOREIGN KEY ( products_options_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options( products_options_id ),
-  				CONSTRAINT prd_opt_val_to_prd_val_ref FOREIGN KEY ( products_options_values_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options_values( products_options_values_id )'
+  CONSTRAINT ', CONSTRAINT `prd_opt_val_to_prd_opt_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products_options`( `products_options_id` ),
+  				CONSTRAINT `prd_opt_val_to_prd_val_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products_options_values`( `products_options_values_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_attributes' => "
@@ -318,9 +318,9 @@ BITCOMMERCE_DB_PREFIX.'products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_required I1
-  CONSTRAINT ', CONSTRAINT prod_attr_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id ),
-  				CONSTRAINT prod_attr_options_id_ref FOREIGN KEY ( options_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options( products_options_id ),
-  				CONSTRAINT prod_attr_options_val_id_ref FOREIGN KEY ( options_values_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products_options_values( products_options_values_id )'
+  CONSTRAINT ', CONSTRAINT `prod_attr_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` ),
+  				CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products_options`( `products_options_id` ),
+  				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products_options_values`( `products_options_values_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_attributes_dld' => "
@@ -337,7 +337,7 @@ BITCOMMERCE_DB_PREFIX.'products_description' => "
   products_description X,
   products_url C(255),
   products_viewed I2 default '0'
-  CONSTRAINT ', CONSTRAINT prod_desc_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `prod_desc_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_discount_quantity' => "
@@ -345,22 +345,22 @@ BITCOMMERCE_DB_PREFIX.'products_discount_quantity' => "
   products_id I4,
   discount_qty FLOAT DEFAULT '0' NOTNULL,
   discount_price N(15,4)
-  CONSTRAINT ', CONSTRAINT prod_disc_qty_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `prod_disc_qty_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_notifications' => "
   products_id I4,
   customers_id I4,
   date_added T
-  CONSTRAINT ', CONSTRAINT prod_noti_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-              , CONSTRAINT prod_noti_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `prod_noti_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
+              , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products( products_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_to_categories' => "
   products_id I4 PRIMARY,
   categories_id I4 PRIMARY
-  CONSTRAINT ', CONSTRAINT p2c_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
-  			  , CONSTRAINT p2c_categories_id_ref FOREIGN KEY ( categories_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."categories( categories_id )'
+  CONSTRAINT ', CONSTRAINT `p2c_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )
+  			  , CONSTRAINT `p2c_categories_id_ref` FOREIGN KEY ( `categories_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."categories`( `categories_id` )'
 ",
 
 // Music Products
@@ -370,7 +370,7 @@ BITCOMMERCE_DB_PREFIX.'product_music_extra' => "
   artists_id I4,
   record_company_id I4,
   music_genre_id I4
-  CONSTRAINT ', CONSTRAINT prod_music_xtra_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `prod_music_xtra_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'music_genre' => "
@@ -499,7 +499,7 @@ BITCOMMERCE_DB_PREFIX.'customers_basket' => "
   customers_basket_quantity F DEFAULT '0' NOTNULL,
   final_price N(15,4),
   customers_basket_date_added C(8)
-  CONSTRAINT ', CONSTRAINT cust_bask_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'customers_basket_att' => "
@@ -510,7 +510,7 @@ BITCOMMERCE_DB_PREFIX.'customers_basket_att' => "
   products_options_value_id I4,
   products_options_value_text C(64),
   products_options_sort_order X2 NOTNULL
-  CONSTRAINT ', CONSTRAINT cust_bask_att_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `cust_bask_att_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'customers_info' => "
@@ -550,7 +550,7 @@ BITCOMMERCE_DB_PREFIX.'featured' => "
   date_status_change T,
   status I1 NOTNULL default '1',
   featured_date_available date NOTNULL default '0001-01-01'
-  CONSTRAINT ', CONSTRAINT featured_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `featured_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'files_uploaded' => "
@@ -558,7 +558,7 @@ BITCOMMERCE_DB_PREFIX.'files_uploaded' => "
   sesskey C(32),
   customers_id I4,
   files_uploaded_name C(64)
-  CONSTRAINT ', CONSTRAINT files_up_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `files_up_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'geo_zones' => "
@@ -598,7 +598,7 @@ BITCOMMERCE_DB_PREFIX.'manufacturers_info' => "
   manufacturers_url C(255),
   url_clicked I4,
   date_last_click T
-  CONSTRAINT ', CONSTRAINT manf_info_manf_id_ref FOREIGN KEY ( manufacturers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."manufacturers( manufacturers_id )'
+  CONSTRAINT ', CONSTRAINT `manf_info_manf_id_ref` FOREIGN KEY ( `manufacturers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."manufacturers`( `manufacturers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'suppliers_info' => "
@@ -607,7 +607,7 @@ BITCOMMERCE_DB_PREFIX.'suppliers_info' => "
   suppliers_url C(255),
   url_clicked I4,
   date_last_click T
-  CONSTRAINT ', CONSTRAINT supp_info_supp_id_ref FOREIGN KEY ( suppliers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."suppliers( suppliers_id )'
+  CONSTRAINT ', CONSTRAINT `supp_info_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."suppliers`( `suppliers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'media_manager' => "
@@ -635,7 +635,7 @@ BITCOMMERCE_DB_PREFIX.'media_clips' => "
 BITCOMMERCE_DB_PREFIX.'media_to_products' => "
   media_id I4 PRIMARY,
   product_id I4 PRIMARY
-  CONSTRAINT ', CONSTRAINT m2p_products_id_ref FOREIGN KEY ( product_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `m2p_products_id_ref` FOREIGN KEY ( `product_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'newsletters' => "
@@ -656,7 +656,7 @@ BITCOMMERCE_DB_PREFIX.'meta_tags_products_desc' => "
   metatags_title C(255),
   metatags_keywords X,
   metatags_description X
-  CONSTRAINT ', CONSTRAINT meta_tags_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `meta_tags_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders' => "
@@ -715,7 +715,7 @@ BITCOMMERCE_DB_PREFIX.'orders' => "
   order_tax N(14,2),
   paypal_ipn_id I4,
   ip_address C(15)
-  CONSTRAINT ', CONSTRAINT orders_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `orders_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products' => "
@@ -734,8 +734,8 @@ BITCOMMERCE_DB_PREFIX.'orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
-  CONSTRAINT ', CONSTRAINT orders_prod_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )
-  			  , CONSTRAINT ord_prod_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( `products_id` )
+  			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( `orders_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
@@ -764,8 +764,8 @@ BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   attributes_price_letters_free I2,
   products_options_id INT( 11 ) NOTNULL,
   products_options_values_id INT( 11 ) NOTNULL
-  CONSTRAINT ', CONSTRAINT ord_prod_att_prod_ref FOREIGN KEY ( orders_products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders_products( orders_products_id )
-  			  , CONSTRAINT ord_prod_att_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  CONSTRAINT ', CONSTRAINT `ord_prod_att_prod_ref` FOREIGN KEY ( `orders_products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders_products`( `orders_products_id` )
+  			  , CONSTRAINT `ord_prod_att_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_dld' => "
@@ -775,7 +775,7 @@ BITCOMMERCE_DB_PREFIX.'orders_products_dld' => "
   orders_products_filename C(255),
   download_maxdays I2,
   download_count I2
-  CONSTRAINT ', CONSTRAINT ord_prod_dld_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  CONSTRAINT ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_status' => "
@@ -792,8 +792,8 @@ BITCOMMERCE_DB_PREFIX.'orders_status_history' => "
   date_added T,
   customer_notified I1 default '0',
   comments X
-  CONSTRAINT ', CONSTRAINT ord_stat_hist_ord_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
-			  , CONSTRAINT ord_stat_hist_stat_ref FOREIGN KEY ( orders_status_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders_status( orders_status_id )'
+  CONSTRAINT ', CONSTRAINT `ord_stat_hist_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )
+			  , CONSTRAINT `ord_stat_hist_stat_ref` FOREIGN KEY ( `orders_status_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders_status`( `orders_status_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_total' => "
@@ -804,7 +804,7 @@ BITCOMMERCE_DB_PREFIX.'orders_total' => "
   value N(15,4),
   class C(32),
   sort_order I4
-  CONSTRAINT ', CONSTRAINT ord_total_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  CONSTRAINT ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'reviews' => "
@@ -817,15 +817,15 @@ BITCOMMERCE_DB_PREFIX.'reviews' => "
   last_modified T,
   reviews_read I2,
   status I1 NOTNULL default '1'
-  CONSTRAINT ', CONSTRAINT reviews_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-              , CONSTRAINT reviews_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `reviews_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
+              , CONSTRAINT `reviews_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'reviews_description' => "
   reviews_id I4,
   languages_id I4,
   reviews_text X
-  CONSTRAINT ', CONSTRAINT reviews_desc_reviews_ref FOREIGN KEY ( reviews_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."reviews( reviews_id )'
+  CONSTRAINT ', CONSTRAINT `reviews_desc_reviews_ref` FOREIGN KEY ( `reviews_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."reviews`( `reviews_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'salemaker_sales' => "
@@ -862,7 +862,7 @@ BITCOMMERCE_DB_PREFIX.'specials' => "
   date_status_change T,
   status I1 NOTNULL default '1',
   specials_date_available date NOTNULL default '0001-01-01'
-  CONSTRAINT ', CONSTRAINT specials_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `specials_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 
@@ -883,7 +883,7 @@ BITCOMMERCE_DB_PREFIX.'tax_rates' => "
   tax_description C(255),
   last_modified T,
   date_added T
-  CONSTRAINT ', CONSTRAINT tax_rates_class_ref FOREIGN KEY ( tax_class_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."tax_class( tax_class_id )'
+  CONSTRAINT ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( tax_class_id ) REFERENCES `".BITCOMMERCE_DB_PREFIX."tax_class`( `tax_class_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'template_select' => "
@@ -902,7 +902,7 @@ BITCOMMERCE_DB_PREFIX.'whos_online' => "
   last_page_url C(254),
   host_address X2 NOTNULL,
   user_agent C(255)
-  CONSTRAINT ', CONSTRAINT whos_cust_ref FOREIGN KEY ( customer_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `whos_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'zones_to_geo_zones' => "
@@ -912,8 +912,8 @@ BITCOMMERCE_DB_PREFIX.'zones_to_geo_zones' => "
   geo_zone_id I4,
   last_modified T,
   date_added T
-  CONSTRAINT ', CONSTRAINT zone2geo_zone_ref FOREIGN KEY ( zone_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."zones( zone_id )
-  			  , CONSTRAINT zone2geo_geo_zone_ref FOREIGN KEY ( geo_zone_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."geo_zones( geo_zone_id )'
+  CONSTRAINT ', CONSTRAINT `zone2geo_zone_ref` FOREIGN KEY ( `zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."zones`( `zone_id` )
+  			  , CONSTRAINT `zone2geo_geo_zone_ref` FOREIGN KEY ( `geo_zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."geo_zones`( `geo_zone_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'customers_wishlist' => "
@@ -925,8 +925,8 @@ BITCOMMERCE_DB_PREFIX.'customers_wishlist' => "
   final_price N(8,2),
   products_quantity I2,
   wishlist_name C(64)
-  CONSTRAINT ', CONSTRAINT cust_wish_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )
-              , CONSTRAINT cust_wish_products_id_ref FOREIGN KEY ( products_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( products_id )'
+  CONSTRAINT ', CONSTRAINT `cust_wish_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
+              , CONSTRAINT `cust_wish_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'product_type_layout' => "
@@ -941,7 +941,7 @@ BITCOMMERCE_DB_PREFIX.'product_type_layout' => "
   date_added T,
   use_function X,
   set_function X
-  CONSTRAINT ', CONSTRAINT prod_layout_type_ref FOREIGN KEY ( product_type_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."product_types( type_id )'
+  CONSTRAINT ', CONSTRAINT `prod_layout_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'query_builder' => "
@@ -990,7 +990,7 @@ BITCOMMERCE_DB_PREFIX.'authorizenet' => "
   received X NOTNULL,
   time C(50),
   session_id C(254)
-  CONSTRAINT ', CONSTRAINT authorizenet_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `authorizenet_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'paypal_session' => "
@@ -1057,7 +1057,7 @@ BITCOMMERCE_DB_PREFIX.'paypal_pment_stat_his' => "
   payment_status C(17),
   pending_reason C(14),
   date_added T
-  CONSTRAINT ', CONSTRAINT paypal_pment_stat_his_ipn_ref FOREIGN KEY ( paypal_ipn_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."paypal( paypal_ipn_id )'
+  CONSTRAINT ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id ) REFERENCES `".BITCOMMERCE_DB_PREFIX."paypal`( `paypal_ipn_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'pubs_credit_card_log' => "
@@ -1069,8 +1069,8 @@ BITCOMMERCE_DB_PREFIX.'pubs_credit_card_log' => "
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
-  CONSTRAINT ', CONSTRAINT pubs_cc_log_order_ref FOREIGN KEY ( orders_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( orders_id )
-  			  , CONSTRAINT pubs_cc_log_cust_ref FOREIGN KEY ( customers_id ) REFERENCES ".BITCOMMERCE_DB_PREFIX."customers( customers_id )'
+  CONSTRAINT ', CONSTRAINT `pubs_cc_log_order_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )
+  			  , CONSTRAINT `pubs_cc_log_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",
 
 );
@@ -1730,244 +1730,244 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."configuration_group` VALUES ('24', 'Index Listing', 'Index Products Listing', '24', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."configuration_group` VALUES ('25', 'Define Page Status', 'Define Main Pages and HTMLArea Options', '25', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."configuration_group` VALUES ('26', 'Easy Populate', 'Config options for Easy Populate', '26', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (1,'Afghanistan', 'AF', 'AFG', '4', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (2,'Albania', 'AL', 'ALB', '8', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (3,'Algeria', 'DZ', 'DZA', '12', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (4,'American Samoa', 'AS', 'ASM', '16', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (5,'Andorra', 'AD', 'AND', '20', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (6,'Angola', 'AO', 'AGO', '24', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (7,'Anguilla', 'AI', 'AIA', '660', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (8,'Antarctica', 'AQ', 'ATA', '10', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (9,'Antigua and Barbuda', 'AG', 'ATG', '28', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (10,'Argentina', 'AR', 'ARG', '32', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (11,'Armenia', 'AM', 'ARM', '51', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (12,'Aruba', 'AW', 'ABW', '533', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (13,'Australia', 'AU', 'AUS', '36', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (14,'Austria', 'AT', 'AUT', '40', '5')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (15,'Azerbaijan', 'AZ', 'AZE', '31', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (16,'Bahamas', 'BS', 'BHS', '44', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (17,'Bahrain', 'BH', 'BHR', '48', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (18,'Bangladesh', 'BD', 'BGD', '50', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (19,'Barbados', 'BB', 'BRB', '52', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (20,'Belarus', 'BY', 'BLR', '112', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (21,'Belgium', 'BE', 'BEL', '56', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (22,'Belize', 'BZ', 'BLZ', '84', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (23,'Benin', 'BJ', 'BEN', '204', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (24,'Bermuda', 'BM', 'BMU', '60', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (25,'Bhutan', 'BT', 'BTN', '64', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (26,'Bolivia', 'BO', 'BOL', '68', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (27,'Bosnia and Herzegowina', 'BA', 'BIH', '70', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (28,'Botswana', 'BW', 'BWA', '72', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (29,'Bouvet Island', 'BV', 'BVT', '74', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (30,'Brazil', 'BR', 'BRA', '76', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (31,'British Indian Ocean Territory', 'IO', 'IOT', '86', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (32,'Brunei Darussalam', 'BN', 'BRN', '96', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (33,'Bulgaria', 'BG', 'BGR', '100', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (34,'Burkina Faso', 'BF', 'BFA', '854', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (35,'Burundi', 'BI', 'BDI', '108', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (36,'Cambodia', 'KH', 'KHM', '116', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (37,'Cameroon', 'CM', 'CMR', '120', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (38,'Canada', 'CA', 'CAN', '124', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (39,'Cape Verde', 'CV', 'CPV', '132', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (40,'Cayman Islands', 'KY', 'CYM', '136', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (41,'Central African Republic', 'CF', 'CAF', '140', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (42,'Chad', 'TD', 'TCD', '148', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (43,'Chile', 'CL', 'CHL', '152', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (44,'China', 'CN', 'CHN', '156', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (45,'Christmas Island', 'CX', 'CXR', '162', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (46,'Cocos (Keeling) Islands', 'CC', 'CCK', '166', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (47,'Colombia', 'CO', 'COL', '170', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (48,'Comoros', 'KM', 'COM', '174', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (49,'Congo', 'CG', 'COG', '178', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (50,'Cook Islands', 'CK', 'COK', '184', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (51,'Costa Rica', 'CR', 'CRI', '188', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (52,'Cote D''Ivoire', 'CI', 'CIV', '384', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (53,'Croatia', 'HR', 'HRV', '191', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (55,'Cyprus', 'CY', 'CYP', '196', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (54,'Cuba', 'CU', 'CUB', '203', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (56,'Czech Republic', 'CZ', 'CZE', '203', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (57,'Denmark', 'DK', 'DNK', '208', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (58,'Djibouti', 'DJ', 'DJI', '262', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (59,'Dominica', 'DM', 'DMA', '212', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (60,'Dominican Republic', 'DO', 'DOM', '214', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (61,'East Timor', 'TP', 'TMP', '626', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (62,'Ecuador', 'EC', 'ECU', '218', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (63,'Egypt', 'EG', 'EGY', '818', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (64,'El Salvador', 'SV', 'SLV', '222', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (65,'Equatorial Guinea', 'GQ', 'GNQ', '226', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (66,'Eritrea', 'ER', 'ERI', '232', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (67,'Estonia', 'EE', 'EST', '233', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (68,'Ethiopia', 'ET', 'ETH', '231', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (69,'Falkland Islands (Malvinas)', 'FK', 'FLK', '238', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (70,'Faroe Islands', 'FO', 'FRO', '234', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (71,'Fiji', 'FJ', 'FJI', '242', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (72,'Finland', 'FI', 'FIN', '246', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (74,'France, Metropolitan', 'FX', 'FXX', '249', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (73,'France', 'FR', 'FRA', '250', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (75,'French Guiana', 'GF', 'GUF', '254', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (76,'French Polynesia', 'PF', 'PYF', '258', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (77,'French Southern Territories', 'TF', 'ATF', '260', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (78,'Gabon', 'GA', 'GAB', '266', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (79,'Gambia', 'GM', 'GMB', '270', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (80,'Georgia', 'GE', 'GEO', '268', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (81,'Germany', 'DE', 'DEU', '276', '5')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (82,'Ghana', 'GH', 'GHA', '288', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (83,'Gibraltar', 'GI', 'GIB', '292', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (84,'Greece', 'GR', 'GRC', '300', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (85,'Greenland', 'GL', 'GRL', '304', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (86,'Grenada', 'GD', 'GRD', '308', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (87,'Guadeloupe', 'GP', 'GLP', '312', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (88,'Guam', 'GU', 'GUM', '316', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (89,'Guatemala', 'GT', 'GTM', '320', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (90,'Guinea', 'GN', 'GIN', '324', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (91,'Guinea-bissau', 'GW', 'GNB', '624', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (92,'Guyana', 'GY', 'GUY', '328', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (93,'Haiti', 'HT', 'HTI', '332', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (94,'Heard and Mc Donald Islands', 'HM', 'HMD', '334', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (95,'Honduras', 'HN', 'HND', '340', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (96,'Hong Kong', 'HK', 'HKG', '344', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (97,'Hungary', 'HU', 'HUN', '348', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (98,'Iceland', 'IS', 'ISL', '352', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (99,'India', 'IN', 'IND', '356', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (100,'Indonesia', 'ID', 'IDN', '360', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (101,'Iran (Islamic Republic of)', 'IR', 'IRN', '364', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (102,'Iraq', 'IQ', 'IRQ', '368', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (103,'Ireland', 'IE', 'IRL', '372', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (104,'Israel', 'IL', 'ISR', '376', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (105,'Italy', 'IT', 'ITA', '380', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (106,'Jamaica', 'JM', 'JAM', '388', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (107,'Japan', 'JP', 'JPN', '392', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (108,'Jordan', 'JO', 'JOR', '400', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (109,'Kazakhstan', 'KZ', 'KAZ', '398', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (110,'Kenya', 'KE', 'KEN', '404', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (111,'Kiribati', 'KI', 'KIR', '296', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (112,'Korea, Democratic People''s Republic of', 'KP', 'PRK', '408', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (113,'Korea, Republic of', 'KR', 'KOR', '410', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (114,'Kuwait', 'KW', 'KWT', '414', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (115,'Kyrgyzstan', 'KG', 'KGZ', '417', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (116,'Lao People''s Democratic Republic', 'LA', 'LAO', '418', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (117,'Latvia', 'LV', 'LVA', '428', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (118,'Lebanon', 'LB', 'LBN', '422', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (119,'Lesotho', 'LS', 'LSO', '426', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (120,'Liberia', 'LR', 'LBR', '430', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (121,'Libyan Arab Jamahiriya', 'LY', 'LBY', '434', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (122,'Liechtenstein', 'LI', 'LIE', '438', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (123,'Lithuania', 'LT', 'LTU', '440', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (124,'Luxembourg', 'LU', 'LUX', '442', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (125,'Macau', 'MO', 'MAC', '446', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (126,'Macedonia, The Former Yugoslav Republic of', 'MK', 'MKD', '807', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (127,'Madagascar', 'MG', 'MDG', '450', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (128,'Malawi', 'MW', 'MWI', '454', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (129,'Malaysia', 'MY', 'MYS', '458', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (130,'Maldives', 'MV', 'MDV', '462', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (131,'Mali', 'ML', 'MLI', '466', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (132,'Malta', 'MT', 'MLT', '470', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (133,'Marshall Islands', 'MH', 'MHL', '584', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (134,'Martinique', 'MQ', 'MTQ', '474', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (135,'Mauritania', 'MR', 'MRT', '478', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (136,'Mauritius', 'MU', 'MUS', '480', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (137,'Mayotte', 'YT', 'MYT', '175', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (138,'Mexico', 'MX', 'MEX', '484', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (139,'Micronesia, Federated States of', 'FM', 'FSM', '583', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (140,'Moldova, Republic of', 'MD', 'MDA', '498', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (141,'Monaco', 'MC', 'MCO', '492', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (142,'Mongolia', 'MN', 'MNG', '496', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (143,'Montserrat', 'MS', 'MSR', '500', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (144,'Morocco', 'MA', 'MAR', '504', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (145,'Mozambique', 'MZ', 'MOZ', '508', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (146,'Myanmar', 'MM', 'MMR', '104', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (147,'Namibia', 'NA', 'NAM', '516', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (148,'Nauru', 'NR', 'NRU', '520', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (149,'Nepal', 'NP', 'NPL', '524', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (150,'Netherlands', 'NL', 'NLD', '528', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (151,'Netherlands Antilles', 'AN', 'ANT', '530', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (152,'New Caledonia', 'NC', 'NCL', '540', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (153,'New Zealand', 'NZ', 'NZL', '554', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (154,'Nicaragua', 'NI', 'NIC', '558', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (155,'Niger', 'NE', 'NER', '562', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (156,'Nigeria', 'NG', 'NGA', '566', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (157,'Niue', 'NU', 'NIU', '570', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (158,'Norfolk Island', 'NF', 'NFK', '574', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (159,'Northern Mariana Islands', 'MP', 'MNP', '580', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (160,'Norway', 'NO', 'NOR', '578', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (161,'Oman', 'OM', 'OMN', '512', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (162,'Pakistan', 'PK', 'PAK', '586', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (163,'Palau', 'PW', 'PLW', '585', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (164,'Panama', 'PA', 'PAN', '591', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (165,'Papua New Guinea', 'PG', 'PNG', '598', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (166,'Paraguay', 'PY', 'PRY', '600', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (167,'Peru', 'PE', 'PER', '604', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (168,'Philippines', 'PH', 'PHL', '608', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (169,'Pitcairn', 'PN', 'PCN', '612', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (170,'Poland', 'PL', 'POL', '616', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (171,'Portugal', 'PT', 'PRT', '620', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (172,'Puerto Rico', 'PR', 'PRI', '630', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (173,'Qatar', 'QA', 'QAT', '634', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (174,'Reunion', 'RE', 'REU', '638', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (175,'Romania', 'RO', 'ROM', '642', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (176,'Russian Federation', 'RU', 'RUS', '643', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (177,'Rwanda', 'RW', 'RWA', '646', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (178,'Saint Kitts and Nevis', 'KN', 'KNA', '659', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (179,'Saint Lucia', 'LC', 'LCA', '662', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (180,'Saint Vincent and the Grenadines', 'VC', 'VCT', '670', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (181,'Samoa', 'WS', 'WSM', '882', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (182,'San Marino', 'SM', 'SMR', '674', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (183,'Sao Tome and Principe', 'ST', 'STP', '678', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (184,'Saudi Arabia', 'SA', 'SAU', '682', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (185,'Senegal', 'SN', 'SEN', '686', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (186,'Seychelles', 'SC', 'SYC', '690', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (187,'Sierra Leone', 'SL', 'SLE', '694', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (188,'Singapore', 'SG', 'SGP', '702', '4')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (189,'Slovakia (Slovak Republic)', 'SK', 'SVK', '703', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (190,'Slovenia', 'SI', 'SVN', '705', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (191,'Solomon Islands', 'SB', 'SLB', '90', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (192,'Somalia', 'SO', 'SOM', '706', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (193,'South Africa', 'ZA', 'ZAF', '710', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (194,'South Georgia and the South Sandwich Islands', 'GS', 'SGS', '239', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (195,'Spain', 'ES', 'ESP', '724', '3')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (196,'Sri Lanka', 'LK', 'LKA', '144', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (197,'St. Helena', 'SH', 'SHN', '654', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (198,'St. Pierre and Miquelon', 'PM', 'SPM', '666', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (199,'Sudan', 'SD', 'SDN', '736', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (200,'Suriname', 'SR', 'SUR', '740', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (201,'Svalbard and Jan Mayen Islands', 'SJ', 'SJM', '744', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (202,'Swaziland', 'SZ', 'SWZ', '748', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (203,'Sweden', 'SE', 'SWE', '752', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (204,'Switzerland', 'CH', 'CHE', '756', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (205,'Syrian Arab Republic', 'SY', 'SYR', '760', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (206,'Taiwan', 'TW', 'TWN', '158', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (207,'Tajikistan', 'TJ', 'TJK', '762', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (208,'Tanzania, United Republic of', 'TZ', 'TZA', '834', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (209,'Thailand', 'TH', 'THA', '764', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (210,'Togo', 'TG', 'TGO', '768', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (211,'Tokelau', 'TK', 'TKL', '772', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (212,'Tonga', 'TO', 'TON', '776', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (213,'Trinidad and Tobago', 'TT', 'TTO', '780', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (214,'Tunisia', 'TN', 'TUN', '788', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (215,'Turkey', 'TR', 'TUR', '792', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (216,'Turkmenistan', 'TM', 'TKM', '795', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (217,'Turks and Caicos Islands', 'TC', 'TCA', '796', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (218,'Tuvalu', 'TV', 'TUV', '798', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (219,'Uganda', 'UG', 'UGA', '800', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (220,'Ukraine', 'UA', 'UKR', '804', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (221,'United Arab Emirates', 'AE', 'ARE', '784', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (222,'United Kingdom', 'GB', 'GBR', '826', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (223,'United States', 'US', 'USA', '840', '2')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (224,'United States Minor Outlying Islands', 'UM', 'UMI', '581', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (225,'Uruguay', 'UY', 'URY', '858', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (226,'Uzbekistan', 'UZ', 'UZB', '860', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (227,'Vanuatu', 'VU', 'VUT', '548', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (228,'Vatican City State (Holy See)', 'VA', 'VAT', '336', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (229,'Venezuela', 'VE', 'VEN', '862', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (230,'Viet Nam', 'VN', 'VNM', '704', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (231,'Virgin Islands (British)', 'VG', 'VGB', '92', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (232,'Virgin Islands (U.S.)', 'VI', 'VIR', '850', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (233,'Wallis and Futuna Islands', 'WF', 'WLF', '876', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (234,'Western Sahara', 'EH', 'ESH', '732', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (235,'Yemen', 'YE', 'YEM', '887', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (237,'Zaire', 'ZR', 'ZAR', '180', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (238,'Zambia', 'ZM', 'ZMB', '894', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` (countries_id,countries_name,countries_iso_code_2,countries_iso_code_3,countries_iso_code_num,address_format_id) VALUES (239,'Zimbabwe', 'ZW', 'ZWE', '716', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (1,'Afghanistan', 'AF', 'AFG', '4', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (2,'Albania', 'AL', 'ALB', '8', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (3,'Algeria', 'DZ', 'DZA', '12', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (4,'American Samoa', 'AS', 'ASM', '16', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (5,'Andorra', 'AD', 'AND', '20', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (6,'Angola', 'AO', 'AGO', '24', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (7,'Anguilla', 'AI', 'AIA', '660', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (8,'Antarctica', 'AQ', 'ATA', '10', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (9,'Antigua and Barbuda', 'AG', 'ATG', '28', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (10,'Argentina', 'AR', 'ARG', '32', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (11,'Armenia', 'AM', 'ARM', '51', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (12,'Aruba', 'AW', 'ABW', '533', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (13,'Australia', 'AU', 'AUS', '36', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (14,'Austria', 'AT', 'AUT', '40', '5')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (15,'Azerbaijan', 'AZ', 'AZE', '31', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (16,'Bahamas', 'BS', 'BHS', '44', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (17,'Bahrain', 'BH', 'BHR', '48', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (18,'Bangladesh', 'BD', 'BGD', '50', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (19,'Barbados', 'BB', 'BRB', '52', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (20,'Belarus', 'BY', 'BLR', '112', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (21,'Belgium', 'BE', 'BEL', '56', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (22,'Belize', 'BZ', 'BLZ', '84', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (23,'Benin', 'BJ', 'BEN', '204', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (24,'Bermuda', 'BM', 'BMU', '60', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (25,'Bhutan', 'BT', 'BTN', '64', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (26,'Bolivia', 'BO', 'BOL', '68', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (27,'Bosnia and Herzegowina', 'BA', 'BIH', '70', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (28,'Botswana', 'BW', 'BWA', '72', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (29,'Bouvet Island', 'BV', 'BVT', '74', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (30,'Brazil', 'BR', 'BRA', '76', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (31,'British Indian Ocean Territory', 'IO', 'IOT', '86', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (32,'Brunei Darussalam', 'BN', 'BRN', '96', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (33,'Bulgaria', 'BG', 'BGR', '100', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (34,'Burkina Faso', 'BF', 'BFA', '854', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (35,'Burundi', 'BI', 'BDI', '108', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (36,'Cambodia', 'KH', 'KHM', '116', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (37,'Cameroon', 'CM', 'CMR', '120', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (38,'Canada', 'CA', 'CAN', '124', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (39,'Cape Verde', 'CV', 'CPV', '132', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (40,'Cayman Islands', 'KY', 'CYM', '136', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (41,'Central African Republic', 'CF', 'CAF', '140', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (42,'Chad', 'TD', 'TCD', '148', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (43,'Chile', 'CL', 'CHL', '152', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (44,'China', 'CN', 'CHN', '156', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (45,'Christmas Island', 'CX', 'CXR', '162', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (46,'Cocos (Keeling) Islands', 'CC', 'CCK', '166', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (47,'Colombia', 'CO', 'COL', '170', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (48,'Comoros', 'KM', 'COM', '174', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (49,'Congo', 'CG', 'COG', '178', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (50,'Cook Islands', 'CK', 'COK', '184', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (51,'Costa Rica', 'CR', 'CRI', '188', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (52,'Cote D''Ivoire', 'CI', 'CIV', '384', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (53,'Croatia', 'HR', 'HRV', '191', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (55,'Cyprus', 'CY', 'CYP', '196', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (54,'Cuba', 'CU', 'CUB', '203', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (56,'Czech Republic', 'CZ', 'CZE', '203', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (57,'Denmark', 'DK', 'DNK', '208', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (58,'Djibouti', 'DJ', 'DJI', '262', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (59,'Dominica', 'DM', 'DMA', '212', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (60,'Dominican Republic', 'DO', 'DOM', '214', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (61,'East Timor', 'TP', 'TMP', '626', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (62,'Ecuador', 'EC', 'ECU', '218', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (63,'Egypt', 'EG', 'EGY', '818', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (64,'El Salvador', 'SV', 'SLV', '222', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (65,'Equatorial Guinea', 'GQ', 'GNQ', '226', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (66,'Eritrea', 'ER', 'ERI', '232', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (67,'Estonia', 'EE', 'EST', '233', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (68,'Ethiopia', 'ET', 'ETH', '231', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (69,'Falkland Islands (Malvinas)', 'FK', 'FLK', '238', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (70,'Faroe Islands', 'FO', 'FRO', '234', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (71,'Fiji', 'FJ', 'FJI', '242', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (72,'Finland', 'FI', 'FIN', '246', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (74,'France, Metropolitan', 'FX', 'FXX', '249', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (73,'France', 'FR', 'FRA', '250', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (75,'French Guiana', 'GF', 'GUF', '254', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (76,'French Polynesia', 'PF', 'PYF', '258', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (77,'French Southern Territories', 'TF', 'ATF', '260', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (78,'Gabon', 'GA', 'GAB', '266', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (79,'Gambia', 'GM', 'GMB', '270', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (80,'Georgia', 'GE', 'GEO', '268', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (81,'Germany', 'DE', 'DEU', '276', '5')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (82,'Ghana', 'GH', 'GHA', '288', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (83,'Gibraltar', 'GI', 'GIB', '292', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (84,'Greece', 'GR', 'GRC', '300', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (85,'Greenland', 'GL', 'GRL', '304', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (86,'Grenada', 'GD', 'GRD', '308', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (87,'Guadeloupe', 'GP', 'GLP', '312', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (88,'Guam', 'GU', 'GUM', '316', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (89,'Guatemala', 'GT', 'GTM', '320', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (90,'Guinea', 'GN', 'GIN', '324', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (91,'Guinea-bissau', 'GW', 'GNB', '624', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (92,'Guyana', 'GY', 'GUY', '328', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (93,'Haiti', 'HT', 'HTI', '332', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (94,'Heard and Mc Donald Islands', 'HM', 'HMD', '334', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (95,'Honduras', 'HN', 'HND', '340', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (96,'Hong Kong', 'HK', 'HKG', '344', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (97,'Hungary', 'HU', 'HUN', '348', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (98,'Iceland', 'IS', 'ISL', '352', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (99,'India', 'IN', 'IND', '356', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (100,'Indonesia', 'ID', 'IDN', '360', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (101,'Iran (Islamic Republic of)', 'IR', 'IRN', '364', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (102,'Iraq', 'IQ', 'IRQ', '368', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (103,'Ireland', 'IE', 'IRL', '372', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (104,'Israel', 'IL', 'ISR', '376', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (105,'Italy', 'IT', 'ITA', '380', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (106,'Jamaica', 'JM', 'JAM', '388', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (107,'Japan', 'JP', 'JPN', '392', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (108,'Jordan', 'JO', 'JOR', '400', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (109,'Kazakhstan', 'KZ', 'KAZ', '398', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (110,'Kenya', 'KE', 'KEN', '404', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (111,'Kiribati', 'KI', 'KIR', '296', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (112,'Korea, Democratic People''s Republic of', 'KP', 'PRK', '408', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (113,'Korea, Republic of', 'KR', 'KOR', '410', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (114,'Kuwait', 'KW', 'KWT', '414', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (115,'Kyrgyzstan', 'KG', 'KGZ', '417', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (116,'Lao People''s Democratic Republic', 'LA', 'LAO', '418', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (117,'Latvia', 'LV', 'LVA', '428', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (118,'Lebanon', 'LB', 'LBN', '422', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (119,'Lesotho', 'LS', 'LSO', '426', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (120,'Liberia', 'LR', 'LBR', '430', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (121,'Libyan Arab Jamahiriya', 'LY', 'LBY', '434', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (122,'Liechtenstein', 'LI', 'LIE', '438', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (123,'Lithuania', 'LT', 'LTU', '440', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (124,'Luxembourg', 'LU', 'LUX', '442', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (125,'Macau', 'MO', 'MAC', '446', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (126,'Macedonia, The Former Yugoslav Republic of', 'MK', 'MKD', '807', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (127,'Madagascar', 'MG', 'MDG', '450', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (128,'Malawi', 'MW', 'MWI', '454', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (129,'Malaysia', 'MY', 'MYS', '458', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (130,'Maldives', 'MV', 'MDV', '462', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (131,'Mali', 'ML', 'MLI', '466', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (132,'Malta', 'MT', 'MLT', '470', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (133,'Marshall Islands', 'MH', 'MHL', '584', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (134,'Martinique', 'MQ', 'MTQ', '474', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (135,'Mauritania', 'MR', 'MRT', '478', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (136,'Mauritius', 'MU', 'MUS', '480', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (137,'Mayotte', 'YT', 'MYT', '175', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (138,'Mexico', 'MX', 'MEX', '484', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (139,'Micronesia, Federated States of', 'FM', 'FSM', '583', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (140,'Moldova, Republic of', 'MD', 'MDA', '498', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (141,'Monaco', 'MC', 'MCO', '492', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (142,'Mongolia', 'MN', 'MNG', '496', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (143,'Montserrat', 'MS', 'MSR', '500', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (144,'Morocco', 'MA', 'MAR', '504', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (145,'Mozambique', 'MZ', 'MOZ', '508', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (146,'Myanmar', 'MM', 'MMR', '104', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (147,'Namibia', 'NA', 'NAM', '516', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (148,'Nauru', 'NR', 'NRU', '520', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (149,'Nepal', 'NP', 'NPL', '524', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (150,'Netherlands', 'NL', 'NLD', '528', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (151,'Netherlands Antilles', 'AN', 'ANT', '530', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (152,'New Caledonia', 'NC', 'NCL', '540', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (153,'New Zealand', 'NZ', 'NZL', '554', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (154,'Nicaragua', 'NI', 'NIC', '558', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (155,'Niger', 'NE', 'NER', '562', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (156,'Nigeria', 'NG', 'NGA', '566', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (157,'Niue', 'NU', 'NIU', '570', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (158,'Norfolk Island', 'NF', 'NFK', '574', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (159,'Northern Mariana Islands', 'MP', 'MNP', '580', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (160,'Norway', 'NO', 'NOR', '578', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (161,'Oman', 'OM', 'OMN', '512', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (162,'Pakistan', 'PK', 'PAK', '586', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (163,'Palau', 'PW', 'PLW', '585', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (164,'Panama', 'PA', 'PAN', '591', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (165,'Papua New Guinea', 'PG', 'PNG', '598', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (166,'Paraguay', 'PY', 'PRY', '600', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (167,'Peru', 'PE', 'PER', '604', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (168,'Philippines', 'PH', 'PHL', '608', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (169,'Pitcairn', 'PN', 'PCN', '612', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (170,'Poland', 'PL', 'POL', '616', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (171,'Portugal', 'PT', 'PRT', '620', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (172,'Puerto Rico', 'PR', 'PRI', '630', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (173,'Qatar', 'QA', 'QAT', '634', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (174,'Reunion', 'RE', 'REU', '638', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (175,'Romania', 'RO', 'ROM', '642', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (176,'Russian Federation', 'RU', 'RUS', '643', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (177,'Rwanda', 'RW', 'RWA', '646', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (178,'Saint Kitts and Nevis', 'KN', 'KNA', '659', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (179,'Saint Lucia', 'LC', 'LCA', '662', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (180,'Saint Vincent and the Grenadines', 'VC', 'VCT', '670', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (181,'Samoa', 'WS', 'WSM', '882', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (182,'San Marino', 'SM', 'SMR', '674', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (183,'Sao Tome and Principe', 'ST', 'STP', '678', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (184,'Saudi Arabia', 'SA', 'SAU', '682', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (185,'Senegal', 'SN', 'SEN', '686', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (186,'Seychelles', 'SC', 'SYC', '690', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (187,'Sierra Leone', 'SL', 'SLE', '694', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (188,'Singapore', 'SG', 'SGP', '702', '4')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (189,'Slovakia (Slovak Republic)', 'SK', 'SVK', '703', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (190,'Slovenia', 'SI', 'SVN', '705', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (191,'Solomon Islands', 'SB', 'SLB', '90', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (192,'Somalia', 'SO', 'SOM', '706', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (193,'South Africa', 'ZA', 'ZAF', '710', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (194,'South Georgia and the South Sandwich Islands', 'GS', 'SGS', '239', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (195,'Spain', 'ES', 'ESP', '724', '3')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (196,'Sri Lanka', 'LK', 'LKA', '144', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (197,'St. Helena', 'SH', 'SHN', '654', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (198,'St. Pierre and Miquelon', 'PM', 'SPM', '666', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (199,'Sudan', 'SD', 'SDN', '736', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (200,'Suriname', 'SR', 'SUR', '740', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (201,'Svalbard and Jan Mayen Islands', 'SJ', 'SJM', '744', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (202,'Swaziland', 'SZ', 'SWZ', '748', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (203,'Sweden', 'SE', 'SWE', '752', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (204,'Switzerland', 'CH', 'CHE', '756', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (205,'Syrian Arab Republic', 'SY', 'SYR', '760', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (206,'Taiwan', 'TW', 'TWN', '158', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (207,'Tajikistan', 'TJ', 'TJK', '762', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (208,'Tanzania, United Republic of', 'TZ', 'TZA', '834', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (209,'Thailand', 'TH', 'THA', '764', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (210,'Togo', 'TG', 'TGO', '768', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (211,'Tokelau', 'TK', 'TKL', '772', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (212,'Tonga', 'TO', 'TON', '776', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (213,'Trinidad and Tobago', 'TT', 'TTO', '780', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (214,'Tunisia', 'TN', 'TUN', '788', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (215,'Turkey', 'TR', 'TUR', '792', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (216,'Turkmenistan', 'TM', 'TKM', '795', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (217,'Turks and Caicos Islands', 'TC', 'TCA', '796', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (218,'Tuvalu', 'TV', 'TUV', '798', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (219,'Uganda', 'UG', 'UGA', '800', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (220,'Ukraine', 'UA', 'UKR', '804', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (221,'United Arab Emirates', 'AE', 'ARE', '784', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (222,'United Kingdom', 'GB', 'GBR', '826', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (223,'United States', 'US', 'USA', '840', '2')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (224,'United States Minor Outlying Islands', 'UM', 'UMI', '581', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (225,'Uruguay', 'UY', 'URY', '858', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (226,'Uzbekistan', 'UZ', 'UZB', '860', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (227,'Vanuatu', 'VU', 'VUT', '548', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (228,'Vatican City State (Holy See)', 'VA', 'VAT', '336', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (229,'Venezuela', 'VE', 'VEN', '862', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (230,'Viet Nam', 'VN', 'VNM', '704', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (231,'Virgin Islands (British)', 'VG', 'VGB', '92', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (232,'Virgin Islands (U.S.)', 'VI', 'VIR', '850', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (233,'Wallis and Futuna Islands', 'WF', 'WLF', '876', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (234,'Western Sahara', 'EH', 'ESH', '732', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (235,'Yemen', 'YE', 'YEM', '887', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (237,'Zaire', 'ZR', 'ZAR', '180', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (238,'Zambia', 'ZM', 'ZMB', '894', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."countries` VALUES (239,'Zimbabwe', 'ZW', 'ZWE', '716', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (1,'US Dollar', 'USD', '\$', '', '.', ',', '2', '1.0000', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (2,'Euro', 'EUR', '', '&euro;', '.', ',', '2', '0.817565', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."currencies` VALUES (3,'United Kingdom Pounds', 'GBP', '&pound;', '', '.', ',', '2', '0.5654713399', 'NOW')",
