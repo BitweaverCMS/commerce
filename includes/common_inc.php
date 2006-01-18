@@ -464,9 +464,9 @@
 // TABLES: address_format
   function zen_address_format($address_format_id, $address, $html, $boln, $eoln) {
     global $db;
-    $address_format_query = "select address_format as format
+    $address_format_query = "select `address_format` as `format`
                              from " . TABLE_ADDRESS_FORMAT . "
-                             where address_format_id = '" . (int)$address_format_id . "'";
+                             where `address_format_id` = '" . (int)$address_format_id . "'";
 
     $address_format = $db->Execute($address_format_query);
     $company = zen_output_string_protected($address['company']);
