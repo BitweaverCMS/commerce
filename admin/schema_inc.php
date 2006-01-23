@@ -353,7 +353,7 @@ BITCOMMERCE_DB_PREFIX.'products_notifications' => "
   customers_id I4,
   date_added T
   CONSTRAINT ', CONSTRAINT `prod_noti_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
-              , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products( products_id )'
+              , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_to_categories' => "
