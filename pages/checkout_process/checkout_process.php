@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.5 2005/11/30 07:46:27 spiderr Exp $
+// $Id: checkout_process.php,v 1.6 2006/01/23 04:57:43 spiderr Exp $
 //
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
@@ -55,10 +55,10 @@ $gBitDb->mDb->StartTrans();
   $payment_modules->before_process();
 
   $insert_id = $order->create($order_totals, 2);
+  $order->create_add_products($insert_id);
 
   $payment_modules->after_order_create($insert_id);
 
-  $order->create_add_products($insert_id);
 $gBitDb->mDb->completeTrans();
 
   $order->send_order_email($insert_id, 2);

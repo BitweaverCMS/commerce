@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.33 2005/12/06 14:34:28 spiderr Exp $
+// $Id: order.php,v 1.34 2006/01/23 04:57:42 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -662,197 +662,195 @@ class order extends BitBase {
     }
 
 
-    function  create_add_products($zf_insert_id, $zf_mode = false) {
-      global $db, $currencies, $order_total_modules, $order_totals;
+	function  create_add_products($zf_insert_id, $zf_mode = false) {
+		global $db, $currencies, $order_total_modules, $order_totals;
 
-		$this->mDb->StartTrans();
-// initialized for the email confirmation
+			$this->mDb->StartTrans();
+	// initialized for the email confirmation
 
-      $this->products_ordered = '';
-      $this->products_ordered_html = '';
-      $this->subtotal = 0;
-      $this->total_tax = 0;
+		$this->products_ordered = '';
+		$this->products_ordered_html = '';
+		$this->subtotal = 0;
+		$this->total_tax = 0;
 
-// lowstock email report
-      $this->email_low_stock='';
+	// lowstock email report
+		$this->email_low_stock='';
 
-  for ($i=0, $n=count( $this->products ); $i<$n; $i++) {
-// Stock Update - Joao Correia
-        if (STOCK_LIMITED == 'true') {
-          if (DOWNLOAD_ENABLED == 'true') {
-            $stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
-                            FROM " . TABLE_PRODUCTS . " p
-                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                             ON p.`products_id`=pa.`products_id`
-                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                             ON pa.products_attributes_id=pad.products_attributes_id
-                            WHERE p.`products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'";
+		for ($i=0, $n=count( $this->products ); $i<$n; $i++) {
+			// Stock Update - Joao Correia
+			if (STOCK_LIMITED == 'true') {
+				if (DOWNLOAD_ENABLED == 'true') {
+					$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
+									FROM " . TABLE_PRODUCTS . " p
+									LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+									ON p.`products_id`=pa.`products_id`
+									LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+									ON pa.products_attributes_id=pad.products_attributes_id
+									WHERE p.`products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'";
 
-// Will work with only one option for downloadable products
-// otherwise, we have to build the query dynamically with a loop
-            $products_attributes = $this->products[$i]['attributes'];
-            if (is_array($products_attributes)) {
-              $stock_query_raw .= " AND pa.`options_id` = '" . $products_attributes[0]['option_id'] . "' AND pa.`options_values_id` = '" . $products_attributes[0]['value_id'] . "'";
-            }
-            $stock_values = $db->Execute($stock_query_raw);
-          } else {
-            $stock_values = $db->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
-          }
+					// Will work with only one option for downloadable products
+					// otherwise, we have to build the query dynamically with a loop
+					$products_attributes = $this->products[$i]['attributes'];
+					if (is_array($products_attributes)) {
+						$stock_query_raw .= " AND pa.`options_id` = '" . $products_attributes[0]['option_id'] . "' AND pa.`options_values_id` = '" . $products_attributes[0]['value_id'] . "'";
+					}
+					$stock_values = $db->Execute($stock_query_raw);
+				} else {
+					$stock_values = $db->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+				}
+
+				if ($stock_values->RecordCount() > 0) {
+					// do not decrement quantities if products_attributes_filename exists
+					if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values->fields['products_attributes_filename'])) {
+						$stock_left = $stock_values->fields['products_quantity'] - $this->products[$i]['quantity'];
+						$this->products[$i]['stock_reduce'] = $this->products[$i]['quantity'];
+					} else {
+						$stock_left = $stock_values->fields['products_quantity'];
+					}
+
+		//            $this->products[$i]['stock_value'] = $stock_values->fields['products_quantity'];
+
+					$db->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+		//        if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
+					if ($stock_left < 1) {
+						// only set status to off when not displaying sold out
+						if (SHOW_PRODUCTS_SOLD_OUT == '0') {
+							$db->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+						}
+					}
+
+		// for low stock email
+					if ( $stock_left <= STOCK_REORDER_LEVEL ) {
+				// WebMakers.com Added: add to low stock email
+					$this->email_low_stock .=  'ID# ' . zen_get_prid($this->products[$i]['id']) . "\t\t" . $this->products[$i]['model'] . "\t\t" . $this->products[$i]['name'] . "\t\t" . ' Qty Left: ' . $stock_left . "\n";
+					}
+				}
+			}
+
+			// Update products_ordered (for bestsellers list)
+			$db->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->products[$i]['quantity']) . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+
+			$sql_data_array = array('orders_id' => $zf_insert_id,
+								'products_id' => zen_get_prid($this->products[$i]['id']),
+								'products_model' => $this->products[$i]['model'],
+								'products_name' => $this->products[$i]['name'],
+								'products_price' => $this->products[$i]['price'],
+								'final_price' => $this->products[$i]['final_price'],
+								'onetime_charges' => $this->products[$i]['onetime_charges'],
+								'products_tax' => $this->products[$i]['tax'],
+								'products_quantity' => $this->products[$i]['quantity'],
+								'products_priced_by_attribute' => $this->products[$i]['products_priced_by_attribute'],
+								'product_is_free' => $this->products[$i]['product_is_free'],
+								'products_discount_type' => $this->products[$i]['products_discount_type'],
+								'products_discount_type_from' => $this->products[$i]['products_discount_type_from']);
+			$db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
+			$this->products[$i]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
+
+			$order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
+
+			if( !empty( $this->products[$i]['purchase_group_id'] ) ) {
+				global $gBitUser;
+				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['purchase_group_id'] );
+			}
 
 
-          if ($stock_values->RecordCount() > 0) {
-// do not decrement quantities if products_attributes_filename exists
-            if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values->fields['products_attributes_filename'])) {
-              $stock_left = $stock_values->fields['products_quantity'] - $this->products[$i]['quantity'];
-              $this->products[$i]['stock_reduce'] = $this->products[$i]['quantity'];
-            } else {
-              $stock_left = $stock_values->fields['products_quantity'];
-            }
+	//------insert customer choosen option to order--------
+			$attributes_exist = '0';
+			$this->products_ordered_attributes = '';
+			if( !empty($this->products[$i]['attributes']) ) {
+				$attributes_exist = '1';
+				for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
+					if (DOWNLOAD_ENABLED == 'true') {
+						$attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
+										pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
+										from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+											on pa.`products_attributes_id` = pad.`products_attributes_id`
+										where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ) . "'
+											and pa.`options_id` = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
+											and pa.`options_id` = popt.`products_options_id`
+											and pa.`options_values_id` = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
+											and pa.`options_values_id` = poval.`products_options_values_id`
+											and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
+											and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
 
-//            $this->products[$i]['stock_value'] = $stock_values->fields['products_quantity'];
+						$attributes_values = $db->Execute($attributes_query);
+					} else {
+						$attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
+										from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
+					}
 
-             $db->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
-//        if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
-            if ($stock_left < 1) {
-// only set status to off when not displaying sold out
-              if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-                 $db->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
-              }
-            }
+					//clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
+					$sql_data_array = array('orders_id' => $zf_insert_id,
+											'orders_products_id' => $this->products[$i]['orders_products_id'],
+											'products_options' => $attributes_values->fields['products_options_name'],
 
-// for low stock email
-            if ( $stock_left <= STOCK_REORDER_LEVEL ) {
-          // WebMakers.com Added: add to low stock email
-              $this->email_low_stock .=  'ID# ' . zen_get_prid($this->products[$i]['id']) . "\t\t" . $this->products[$i]['model'] . "\t\t" . $this->products[$i]['name'] . "\t\t" . ' Qty Left: ' . $stock_left . "\n";
-            }
-          }
-        }
+			//                                 'products_options_values' => $attributes_values->fields['products_options_values_name'],
+											'products_options_values' => $this->products[$i]['attributes'][$j]['value'],
+											'options_values_price' => $attributes_values->fields['options_values_price'],
+											'price_prefix' => $attributes_values->fields['price_prefix'],
+											'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
+											'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
+											'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
+											'attributes_discounted' => (int)$attributes_values->fields['attributes_discounted'],
+											'attributes_price_base_inc' => (int)$attributes_values->fields['attributes_price_base_inc'],
+											'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
+											'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
+											'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
+											'attributes_pf_onetime' => $attributes_values->fields['attributes_pf_onetime'],
+											'attributes_pf_onetime_offset' => $attributes_values->fields['attributes_pf_onetime_offset'],
+											'attributes_qty_prices' => $attributes_values->fields['attributes_qty_prices'],
+											'attributes_qty_prices_onetime' => $attributes_values->fields['attributes_qty_prices_onetime'],
+											'attributes_price_words' => $attributes_values->fields['attributes_price_words'],
+											'attributes_price_words_free' => $attributes_values->fields['attributes_price_words_free'],
+											'attributes_price_letters' => $attributes_values->fields['attributes_price_letters'],
+											'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free'],
+											'products_options_id' => $attributes_values->fields['options_id'],
+											'products_options_values_id' => $attributes_values->fields['options_values_id'],
+											);
 
-// Update products_ordered (for bestsellers list)
- 		$db->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->products[$i]['quantity']) . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 
-        $sql_data_array = array('orders_id' => $zf_insert_id,
-                            'products_id' => zen_get_prid($this->products[$i]['id']),
-                            'products_model' => $this->products[$i]['model'],
-                            'products_name' => $this->products[$i]['name'],
-                            'products_price' => $this->products[$i]['price'],
-                            'final_price' => $this->products[$i]['final_price'],
-                            'onetime_charges' => $this->products[$i]['onetime_charges'],
-                            'products_tax' => $this->products[$i]['tax'],
-                            'products_quantity' => $this->products[$i]['quantity'],
-                            'products_priced_by_attribute' => $this->products[$i]['products_priced_by_attribute'],
-                            'product_is_free' => $this->products[$i]['product_is_free'],
-                            'products_discount_type' => $this->products[$i]['products_discount_type'],
-                            'products_discount_type_from' => $this->products[$i]['products_discount_type_from']);
-        $db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
+					$db->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 
-		$insert_id = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
+					if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
+						$sql_data_array = array('orders_id' => $zf_insert_id,
+												'orders_products_id' => $this->products[$i]['orders_products_id'],
+												'orders_products_filename' => $attributes_values->fields['products_attributes_filename'],
+												'download_maxdays' => $attributes_values->fields['products_attributes_maxdays'],
+												'download_count' => $attributes_values->fields['products_attributes_maxcount']);
 
-        $order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
+						$db->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
+					}
+			//clr 030714 changing to use values from $orders->products and adding call to zen_decode_specialchars()
+			//        $this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . $attributes_values->fields['products_options_values_name'];
+					$this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . zen_decode_specialchars($this->products[$i]['attributes'][$j]['value']);
+				}
+			}
+			//------insert customer choosen option eof ----
+			$this->total_weight += ($this->products[$i]['quantity'] * $this->products[$i]['weight']);
+			$this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->products[$i]['quantity'];
+			$this->total_cost += $total_products_price;
 
-		if( !empty( $this->products[$i]['purchase_group_id'] ) ) {
-			global $gBitUser;
-			$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['purchase_group_id'] );
+			// include onetime charges
+			$this->products_ordered .=  $this->products[$i]['quantity'] . ' x ' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') . ' = ' .
+									$currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
+									($this->products[$i]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .
+									$this->products_ordered_attributes . "\n";
+			$this->products_ordered_html .=
+			'<tr>' .
+			'<td class="product-details" align="right" valign="top" width="30">' . $this->products[$i]['quantity'] . '&nbsp;x</td>' .
+			'<td class="product-details" valign="top">' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') .
+			'<nobr><small><em> '. $this->products_ordered_attributes .'</em></small></nobr></td>' .
+			'<td class="product-details-num" valign="top" align="right">' .
+				$currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
+				($this->products[$i]['onetime_charges'] !=0 ?
+						'</td></tr><tr><td class="product-details">' . TEXT_ONETIME_CHARGES_EMAIL . '</td>' .
+						'<td>' . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .
+			'</td></tr>';
 		}
 
-
-//------insert customer choosen option to order--------
-        $attributes_exist = '0';
-        $this->products_ordered_attributes = '';
-        if( !empty($this->products[$i]['attributes']) ) {
-           $attributes_exist = '1';
-           for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
-           if (DOWNLOAD_ENABLED == 'true') {
-             $attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
-                               pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
-                               from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                               left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                on pa.`products_attributes_id` = pad.`products_attributes_id`
-                               where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ) . "'
-                                and pa.`options_id` = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
-                                and pa.`options_id` = popt.`products_options_id`
-                                and pa.`options_values_id` = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
-                                and pa.`options_values_id` = poval.`products_options_values_id`
-                                and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
-                                and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
-
-             $attributes_values = $db->Execute($attributes_query);
-           } else {
-             $attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
-                               from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                               where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
-           }
-
-//clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
-           $sql_data_array = array('orders_id' => $zf_insert_id,
-                                   'orders_products_id' => $insert_id,
-                                   'products_options' => $attributes_values->fields['products_options_name'],
-
-//                                 'products_options_values' => $attributes_values->fields['products_options_values_name'],
-                                   'products_options_values' => $this->products[$i]['attributes'][$j]['value'],
-                                   'options_values_price' => $attributes_values->fields['options_values_price'],
-                                   'price_prefix' => $attributes_values->fields['price_prefix'],
-                                   'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
-                                   'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
-                                   'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
-                                   'attributes_discounted' => (int)$attributes_values->fields['attributes_discounted'],
-                                   'attributes_price_base_inc' => (int)$attributes_values->fields['attributes_price_base_inc'],
-                                   'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
-                                   'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
-                                   'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
-                                   'attributes_pf_onetime' => $attributes_values->fields['attributes_pf_onetime'],
-                                   'attributes_pf_onetime_offset' => $attributes_values->fields['attributes_pf_onetime_offset'],
-                                   'attributes_qty_prices' => $attributes_values->fields['attributes_qty_prices'],
-                                   'attributes_qty_prices_onetime' => $attributes_values->fields['attributes_qty_prices_onetime'],
-                                   'attributes_price_words' => $attributes_values->fields['attributes_price_words'],
-                                   'attributes_price_words_free' => $attributes_values->fields['attributes_price_words_free'],
-                                   'attributes_price_letters' => $attributes_values->fields['attributes_price_letters'],
-                                   'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free'],
-                                   'products_options_id' => $attributes_values->fields['options_id'],
-                                   'products_options_values_id' => $attributes_values->fields['options_values_id'],
-                                   );
-
-
-           $db->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
-
-           if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
-             $sql_data_array = array('orders_id' => $zf_insert_id,
-                                     'orders_products_id' => $insert_id,
-                                     'orders_products_filename' => $attributes_values->fields['products_attributes_filename'],
-                                     'download_maxdays' => $attributes_values->fields['products_attributes_maxdays'],
-                                     'download_count' => $attributes_values->fields['products_attributes_maxcount']);
-
-             $db->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
-           }
-//clr 030714 changing to use values from $orders->products and adding call to zen_decode_specialchars()
-//        $this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . $attributes_values->fields['products_options_values_name'];
-           $this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . zen_decode_specialchars($this->products[$i]['attributes'][$j]['value']);
-        }
-      }
-//------insert customer choosen option eof ----
-      $this->total_weight += ($this->products[$i]['quantity'] * $this->products[$i]['weight']);
-      $this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->products[$i]['quantity'];
-      $this->total_cost += $total_products_price;
-
-// include onetime charges
-      $this->products_ordered .=  $this->products[$i]['quantity'] . ' x ' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') . ' = ' .
-                            $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
-                            ($this->products[$i]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .
-                            $this->products_ordered_attributes . "\n";
-      $this->products_ordered_html .=
-	'<tr>' .
-	'<td class="product-details" align="right" valign="top" width="30">' . $this->products[$i]['quantity'] . '&nbsp;x</td>' .
-	'<td class="product-details" valign="top">' . $this->products[$i]['name'] . ($this->products[$i]['model'] != '' ? ' (' . $this->products[$i]['model'] . ') ' : '') .
-	'<nobr><small><em> '. $this->products_ordered_attributes .'</em></small></nobr></td>' .
-	'<td class="product-details-num" valign="top" align="right">' .
-	    $currencies->display_price($this->products[$i]['final_price'], $this->products[$i]['tax'], $this->products[$i]['quantity']) .
-	    ($this->products[$i]['onetime_charges'] !=0 ?
-                 '</td></tr><tr><td class="product-details">' . TEXT_ONETIME_CHARGES_EMAIL . '</td>' .
-                 '<td>' . $currencies->display_price($this->products[$i]['onetime_charges'], $this->products[$i]['tax'], 1) : '') .
-	'</td></tr>';
-    }
-
-     $order_total_modules->apply_credit();//ICW ADDED FOR CREDIT CLASS SYSTEM
+		$order_total_modules->apply_credit();//ICW ADDED FOR CREDIT CLASS SYSTEM
 		$this->mDb->CompleteTrans();
     }
 
