@@ -78,10 +78,142 @@ class CommerceProduct extends LibertyAttachable {
 				}
 				$ret['products_weight_kg'] = $ret['products_weight'] * .45359;
 				$ret['info_page'] = $ret['type_handler'].'_info';
+				if( empty( $ret['wholesale_price'] ) ) {
+					$ret['wholesale_price'] = $ret['products_price'];
+				}
 			}
 		}
 		return $ret;
 	}
+
+	function canPurchaseWholesale() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$ret = $this->hasEditPermission();
+		}
+		return $ret;
+	}
+
+	function getPurchasePrice( $pQuantity=1 ) {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			$wholesalePrice = $this->getField( 'wholesale_price' );
+			$retailPrice = $this->getField( 'products_price' );
+			if( $wholesalePrice && $retailPrice && $wholesalePrice != $retailPrice && $this->canPurchaseWholesale() ) {
+				$ret = $wholesalePrice;
+			} else {
+				$ret = $retailPrice;
+			}
+
+
+          // adjusted count for free shipping
+          if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
+            $products_weight = $this->getField('products_weight');
+          } else {
+            $products_weight = 0;
+          }
+
+          $special_price = zen_get_products_special_price($prid);
+          if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
+            $ret = $special_price;
+          } else {
+            $special_price = 0;
+          }
+
+          if (zen_get_products_price_is_free($this->mProductsId)) {
+            // no charge
+            $ret = 0;
+          }
+
+// adjust price for discounts when priced by attribute
+          if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
+            // reset for priced by attributes
+//            $products_price = $products->fields['products_price'];
+            if ($special_price) {
+              $ret = $special_price;
+            } else {
+              $ret = $this->getField('products_price');
+            }
+          } else {
+// discount qty pricing
+            if( $this->getField('products_discount_type') ) {
+              $ret = $this->getQuantityPrice( $pQuantity );
+            }
+          }
+		}
+		return $ret;
+	}
+
+	function getQuantityPrice( $pQuantity, $check_amount=0 ) {
+		global $db, $cart;
+		if( is_object( $_SESSION['cart'] ) ) {
+			$new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity( $this->mProductsId );
+			// check for discount qty mix
+			if ($new_qty > $pQuantity) {
+				$pQuantity = $new_qty;
+			}
+		}
+
+		$discountPrice = $db->getOne( "select `discount_price` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`=? and `discount_qty` <= ? ORDER BY `discount_qty` DESC", array( $this->mProductsId, $pQuantity ) );
+
+		$display_price = zen_get_products_base_price(  $this->mProductsId );
+		$display_specials_price = zen_get_products_special_price( $this->mProductsId, true);
+
+		switch( $this->getField('products_discount_type') ) {
+			// none
+			case (empty( $discountPrice )):
+			//no discount applies
+			case '0':
+				$discounted_price = zen_get_products_actual_price( $this->mProductsId );
+				break;
+			// percentage discount
+			case '1':
+				if ($this->getField('products_discount_type_from') == '0') {
+					// priced by attributes
+					if ($check_amount != 0) {
+						$discounted_price = $check_amount - ($check_amount * ($discountPrice/100));
+		//echo 'ID#' .  $this->mProductsId . ' Amount is: ' . $check_amount . ' discount: ' . $discounted_price . '<br />';
+		//echo 'I SEE 2 for ' . $this->getField('products_discount_type') . ' - ' . $this->getField('products_discount_type_from') . ' - '. $check_amount . ' new: ' . $discounted_price . ' qty: ' . $pQuantity;
+					} else {
+						$discounted_price = $display_price - ($display_price * ($discountPrice/100));
+					}
+				} else {
+					if (!$display_specials_price) {
+						// priced by attributes
+						if ($check_amount != 0) {
+							$discounted_price = $check_amount - ($check_amount * ($discountPrice/100));
+						} else {
+							$discounted_price = $display_price - ($display_price * ($discountPrice/100));
+						}
+					} else {
+						$discounted_price = $display_specials_price - ($display_specials_price * ($discountPrice/100));
+					}
+				}
+
+				break;
+			// actual price
+			case '2':
+				$discounted_price = $discountPrice;
+				break;
+			// amount offprice
+			case '3':
+				if ($this->getField('products_discount_type_from') == '0') {
+					$discounted_price = $display_price - $discountPrice;
+				} else {
+					if (!$display_specials_price) {
+						$discounted_price = $display_price - $discountPrice;
+					} else {
+						$discounted_price = $display_specials_price - $discountPrice;
+					}
+				}
+				break;
+		}
+
+		return $discounted_price;
+	}
+
+
+
 
 	function getTitle() {
 		if( $this->isValid() ) {
@@ -315,6 +447,7 @@ class CommerceProduct extends LibertyAttachable {
 			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
 			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),
 			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
+			'wholesale_price' => (!empty( $pParamHash['wholesale_price'] ) ? $pParamHash['wholesale_price'] : NULL),
 			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : NULL),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : NULL),
 			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
