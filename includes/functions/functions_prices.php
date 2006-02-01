@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.7 2005/10/31 16:19:57 lsces Exp $
+// $Id: functions_prices.php,v 1.8 2006/02/01 21:16:17 spiderr Exp $
 //
 //
 ////
@@ -273,82 +273,6 @@ If a special exist * 10
 */
 
   }
-
-////
-// compute discount based on qty
-  function zen_get_products_discount_price_qty($product_id, $check_qty, $check_amount=0) {
-    global $db, $cart;
-      $new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id);
-      // check for discount qty mix
-      if ($new_qty > $check_qty) {
-        $check_qty = $new_qty;
-      }
-      $product_id = (int)$product_id;
-      $products_query = $db->Execute("select `products_discount_type`, `products_discount_type_from`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` ='" . $product_id . "'");
-      $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $product_id . "' and `discount_qty` <='" . $check_qty . "' order by `discount_qty` desc");
-
-      $display_price = zen_get_products_base_price($product_id);
-      $display_specials_price = zen_get_products_special_price($product_id, true);
-
-      switch ($products_query->fields['products_discount_type']) {
-        // none
-        case ($products_discounts_query->EOF):
-          //no discount applies
-          $discounted_price = zen_get_products_actual_price($product_id);
-          break;
-        case '0':
-          $discounted_price = zen_get_products_actual_price($product_id);
-          break;
-        // percentage discount
-        case '1':
-          if ($products_query->fields['products_discount_type_from'] == '0') {
-            // priced by attributes
-            if ($check_amount != 0) {
-              $discounted_price = $check_amount - ($check_amount * ($products_discounts_query->fields['discount_price']/100));
-//echo 'ID#' . $product_id . ' Amount is: ' . $check_amount . ' discount: ' . $discounted_price . '<br />';
-//echo 'I SEE 2 for ' . $products_query->fields['products_discount_type'] . ' - ' . $products_query->fields['products_discount_type_from'] . ' - '. $check_amount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
-            } else {
-              $discounted_price = $display_price - ($display_price * ($products_discounts_query->fields['discount_price']/100));
-            }
-          } else {
-            if (!$display_specials_price) {
-              // priced by attributes
-              if ($check_amount != 0) {
-                $discounted_price = $check_amount - ($check_amount * ($products_discounts_query->fields['discount_price']/100));
-              } else {
-                $discounted_price = $display_price - ($display_price * ($products_discounts_query->fields['discount_price']/100));
-              }
-            } else {
-              $discounted_price = $display_specials_price - ($display_specials_price * ($products_discounts_query->fields['discount_price']/100));
-            }
-          }
-
-          break;
-        // actual price
-        case '2':
-          if ($products_query->fields['products_discount_type_from'] == '0') {
-            $discounted_price = $products_discounts_query->fields['discount_price'];
-          } else {
-            $discounted_price = $products_discounts_query->fields['discount_price'];
-          }
-          break;
-        // amount offprice
-        case '3':
-          if ($products_query->fields['products_discount_type_from'] == '0') {
-            $discounted_price = $display_price - $products_discounts_query->fields['discount_price'];
-          } else {
-            if (!$display_specials_price) {
-              $discounted_price = $display_price - $products_discounts_query->fields['discount_price'];
-            } else {
-              $discounted_price = $display_specials_price - $products_discounts_query->fields['discount_price'];
-            }
-          }
-          break;
-      }
-
-      return $discounted_price;
-  }
-
 
 ////
 // salemaker categories array

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.12 2005/11/30 04:17:49 spiderr Exp $
+// $Id: currencies.php,v 1.13 2006/02/01 21:16:17 spiderr Exp $
 //
 
 ////
@@ -35,7 +35,7 @@
                                   `thousands_point`, `decimal_places`, `value`
                           FROM " . TABLE_CURRENCIES;
 
-      $currencies = $gBitDb->Execute($currencies_query);
+      $currencies = $gBitDb->query( $currencies_query );
 
       while (!$currencies->EOF) {
         $this->currencies[$currencies->fields['code']] = array('title' => $currencies->fields['title'],

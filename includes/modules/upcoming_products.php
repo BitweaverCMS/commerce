@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.6 2005/08/24 12:40:51 lsces Exp $
+// $Id: upcoming_products.php,v 1.7 2006/02/01 21:16:17 spiderr Exp $
 //
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
@@ -42,7 +42,7 @@
                        order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
   }
 
-  $expected = $db->Execute($expected_query, MAX_DISPLAY_UPCOMING_PRODUCTS);
+  $expected = $db->query($expected_query, NULL, MAX_DISPLAY_UPCOMING_PRODUCTS);
 
   if ($expected->RecordCount() > 0) {
     require( DIR_FS_MODULES . 'tpl_modules_upcoming_products.php');

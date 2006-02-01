@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.23 2005/11/21 14:42:07 spiderr Exp $
+// $Id: shopping_cart.php,v 1.24 2006/02/01 21:16:17 spiderr Exp $
 //
 
   class shoppingCart {
@@ -436,51 +436,13 @@
         $prid = zen_get_prid( $products_id );
 
 // products price
-        $product_query = "select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`, `products_priced_by_attribute`, `product_is_always_free_ship`, `products_discount_type`, `products_discount_type_from`, `products_virtual`, `products_model`
-                          from " . TABLE_PRODUCTS . "
-                          where `products_id` = ?";
-
-        if ($product = $gBitDb->query( $product_query, array( $prid ) ) ) {
-          $products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
-          $products_price = $product->fields['products_price'];
-
-          // adjusted count for free shipping
-          if ($product->fields['product_is_always_free_ship'] != 1 and $product->fields['products_virtual'] != 1) {
-            $products_weight = $product->fields['products_weight'];
-          } else {
-            $products_weight = 0;
-          }
-
-          $special_price = zen_get_products_special_price($prid);
-          if ($special_price and $product->fields['products_priced_by_attribute'] == 0) {
-            $products_price = $special_price;
-          } else {
-            $special_price = 0;
-          }
-
-          if (zen_get_products_price_is_free($product->fields['products_id'])) {
-            // no charge
-            $products_price = 0;
-          }
-
-// adjust price for discounts when priced by attribute
-          if ($product->fields['products_priced_by_attribute'] == '1' and zen_has_product_attributes($product->fields['products_id'], 'false')) {
-            // reset for priced by attributes
-//            $products_price = $products->fields['products_price'];
-            if ($special_price) {
-              $products_price = $special_price;
-            } else {
-              $products_price = $product->fields['products_price'];
-            }
-          } else {
-// discount qty pricing
-            if( !empty($product->fields['products_discount_type'] ) ) {
-              $products_price = zen_get_products_discount_price_qty($product->fields['products_id'], $qty);
-            }
-          }
+		$product = new CommerceProduct( $prid );
+        if( $product->load() ) {
+          $products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
+          $products_price = $product->getPurchasePrice( $qty );
 
 // shipping adjustments
-          if (($product->fields['product_is_always_free_ship'] == 1) or ($product->fields['products_virtual'] == 1) or (ereg('^GIFT', addslashes($product->fields['products_model'])))) {
+          if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
             $this->free_shipping_item += $qty;
             $this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
             $this->free_shipping_weight += ($qty * $products_weight);
@@ -521,7 +483,7 @@
               if ($attribute_price->fields['price_prefix'] == '-') {
                 if ($attribute_price->fields['attributes_discounted'] == '1') {
 // calculate proper discount for attributes
-                  $new_attributes_price = zen_get_discount_calc($product->fields['products_id'], $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
+                  $new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
                   $this->total -= $qty * zen_add_tax( ($new_attributes_price), $products_tax);
                 } else {
                   $this->total -= $qty * zen_add_tax($attribute_price->fields['options_values_price'], $products_tax);
@@ -529,7 +491,7 @@
               } else {
                 if ($attribute_price->fields['attributes_discounted'] == '1') {
 // calculate proper discount for attributes
-                  $new_attributes_price = zen_get_discount_calc($product->fields['products_id'], $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
+                  $new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
                   $this->total += $qty * zen_add_tax( ($new_attributes_price), $products_tax);
                 } else {
                   $this->total += $qty * zen_add_tax($attribute_price->fields['options_values_price'], $products_tax);
@@ -604,7 +566,7 @@
             $attribute_weight = $gBitDb->Execute($attribute_weight_query);
 
           // adjusted count for free shipping
-          if ($product->fields['product_is_always_free_ship'] != 1) {
+          if ($product->getField('product_is_always_free_ship') != 1) {
             $new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
           } else {
             $new_attributes_weight = 0;
@@ -833,114 +795,81 @@ if ((int)$products_id != $products_id) {
       $products_array = array();
       reset($this->contents);
       while (list($products_id, ) = each($this->contents)) {
-        if( $product = $gBitProduct->getProduct( zen_get_prid( $products_id ) ) ) {
+      	$product = new CommerceProduct( zen_get_prid( $products_id ) );
+		if( $product->load() ) {
+			$prid = $product->mProductsId;
+			$products_price = $product->getPurchasePrice( $qty );
 
-          $prid = $product['products_id'];
-          $products_price = $product['products_price'];
-//fix here
-/*
-          $special_price = zen_get_products_special_price($prid);
-          if ($special_price) {
-            $products_price = $special_price;
-          }
-*/
-          $special_price = zen_get_products_special_price($prid);
-          if ($special_price and $product['products_priced_by_attribute'] == 0) {
-            $products_price = $special_price;
-          } else {
-            $special_price = 0;
-          }
+				if ($check_for_valid_cart == true) {
+					$check_quantity = $this->contents[$products_id]['quantity'];
+					$check_quantity_min = $product->getField( 'products_quantity_order_min' );
+				// Check quantity min
+					if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
+					$check_quantity = $new_check_quantity;
+					}
 
-          if (zen_get_products_price_is_free($product['products_id'])) {
-            // no charge
-            $products_price = 0;
-          }
+					$fix_once = 0;
+					if ($check_quantity < $check_quantity_min) {
+					$fix_once ++;
+					$_SESSION['valid_to_checkout'] = false;
+					$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+					}
 
-			// adjust price for discounts when priced by attribute
-			if ($product['products_priced_by_attribute'] == '1' and zen_has_product_attributes($product['products_id'], 'false')) {
-				// reset for priced by attributes
-				// $products_price = $product['products_price'];
-				if ($special_price) {
-					$products_price = $special_price;
-				} else {
-					$products_price = $product['products_price'];
+				// Check Quantity Units if not already an error on Quantity Minimum
+					if ($fix_once == 0) {
+					$check_units = $product->getField( 'products_quantity_order_units' );
+					if ( fmod($check_quantity,$check_units) != 0 ) {
+						$_SESSION['valid_to_checkout'] = false;
+						$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+					}
+					}
+
+				// Verify Valid Attributes
+				}
+
+			//clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
+
+	// convert quantity to proper decimals
+			if (QUANTITY_DECIMALS != 0) {
+	//          $new_qty = round($new_qty, QUANTITY_DECIMALS);
+
+				$fix_qty = $this->contents[$products_id]['quantity'];
+				switch (true) {
+				case (!strstr($fix_qty, '.')):
+				$new_qty = $fix_qty;
+				break;
+				default:
+				$new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
+				break;
 				}
 			} else {
-				// discount qty pricing
-				if ( !empty( $product['products_discount_type'] ) ) {
-					$products_price = zen_get_products_discount_price_qty($product['products_id'], $this->contents[$products_id]['quantity']);
-				}
+				$new_qty = $this->contents[$products_id]['quantity'];
 			}
-            if ($check_for_valid_cart == true) {
-                $check_quantity = $this->contents[$products_id]['quantity'];
-                $check_quantity_min = $product['products_quantity_order_min'];
-              // Check quantity min
-                if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
-                  $check_quantity = $new_check_quantity;
-                }
 
-                $fix_once = 0;
-                if ($check_quantity < $check_quantity_min) {
-                  $fix_once ++;
-                  $_SESSION['valid_to_checkout'] = false;
-                  $_SESSION['cart_errors'] .= ERROR_PRODUCT . $product['products_name'] . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-                }
+			$new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-              // Check Quantity Units if not already an error on Quantity Minimum
-                if ($fix_once == 0) {
-                  $check_units = $product['products_quantity_order_units'];
-                  if ( fmod($check_quantity,$check_units) != 0 ) {
-                    $_SESSION['valid_to_checkout'] = false;
-                    $_SESSION['cart_errors'] .= ERROR_PRODUCT . $product['products_name'] . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-                  }
-                }
+			if ($new_qty == (int)$new_qty) {
+				$new_qty = (int)$new_qty;
+			}
 
-              // Verify Valid Attributes
-            }
-
-          //clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
-
-// convert quantity to proper decimals
-          if (QUANTITY_DECIMALS != 0) {
-//          $new_qty = round($new_qty, QUANTITY_DECIMALS);
-
-            $fix_qty = $this->contents[$products_id]['quantity'];
-            switch (true) {
-            case (!strstr($fix_qty, '.')):
-              $new_qty = $fix_qty;
-              break;
-            default:
-              $new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
-              break;
-            }
-          } else {
-            $new_qty = $this->contents[$products_id]['quantity'];
-          }
-
-          $new_qty = round($new_qty, QUANTITY_DECIMALS);
-
-          if ($new_qty == (int)$new_qty) {
-            $new_qty = (int)$new_qty;
-          }
-
-		  $product['id'] = $products_id;
-          $product['name'] = $product['products_name'];
-          $product['model'] = $product['products_model'];
-          $product['image'] = $product['products_image'];
-          $product['image_url'] = $product['products_image_url'];
-          $product['price'] = ($product['product_is_free'] =='1' ? 0 : $products_price);
-          $product['quantity'] = $new_qty;
-          $product['weight'] = $product['products_weight'] + $this->attributes_weight($products_id);
-// fix here
-          $product['final_price'] = $products_price + $this->attributes_price($products_id);
-          $product['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
-          $product['tax_class_id'] = $product['products_tax_class_id'];
-          $product['tax'] = (isset($product['tax_rate']) ? $product['tax_rate'] : NULL);
-          $product['tax_description'] = (isset($product['tax_description']) ? $product['tax_description'] : NULL);
-          $product['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
-          $product['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
-          $products_array[] = $product;
-        }
+			$productHash['id'] = $products_id;
+			$productHash['name'] = $product->getField('products_name');
+			$productHash['model'] = $product->getField('products_model');
+			$productHash['image'] = $product->getField('products_image');
+			$productHash['image_url'] = $product->getField('products_image_url');
+			$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $products_price);
+			$productHash['quantity'] = $new_qty;
+			$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
+	// fix here
+			$productHash['final_price'] = $products_price + $this->attributes_price($products_id);
+			$productHash['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
+			$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
+			$productHash['tax'] = $product->getField('tax_rate');
+			$productHash['tax_description'] = $product->getField('tax_description');
+			$productHash['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
+			$productHash['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
+			$products_array[] = $productHash;
+			}
       }
       return $products_array;
     }

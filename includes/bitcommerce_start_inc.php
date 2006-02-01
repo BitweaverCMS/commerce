@@ -86,22 +86,21 @@
 
 
 
-  $configuration = $gBitDb->Query('SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
-                                 FROM ' . TABLE_CONFIGURATION );
+	$configuration = $gBitDb->query('SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
+									FROM ' . TABLE_CONFIGURATION );
 
-  while (!$configuration->EOF) {
-//    define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);
-    define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);
-//    echo $configuration->fields['cfgkey'] . '#';
-    $configuration->MoveNext();
-  }
-  $configuration = $gBitDb->Execute('select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
-                          from ' . TABLE_PRODUCT_TYPE_LAYOUT);
+	while (!$configuration->EOF) {
+		define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);
+		$configuration->MoveNext();
+	}
 
-  while (!$configuration->EOF) {
-    define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);
-    $configuration->movenext();
-  }
+	$configuration = $gBitDb->query('select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
+							from ' . TABLE_PRODUCT_TYPE_LAYOUT);
+
+	while (!$configuration->EOF) {
+		define($configuration->fields['cfgkey'], $configuration->fields['cfgvalue']);
+		$configuration->movenext();
+	}
 
   // set the language
   if( empty( $_SESSION['languages_id'] ) || isset($_GET['language'])) {
