@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.14 2006/02/05 21:36:07 spiderr Exp $
+//  $Id: index.php,v 1.15 2006/02/05 22:57:43 lsces Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -94,10 +94,9 @@
   if( $rs = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
 
 	  while( $orders_status = $rs->fetchRow() ) {
-		$orders_pending = $db->Execute("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
-
-		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending['count'] . '</td></tr>';
-		$orders_status->MoveNext();
+		$orders_pending = $db->GetOne("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
+		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending . '</td></tr>';
+		$rs->MoveNext();
 	  }
   }
 
