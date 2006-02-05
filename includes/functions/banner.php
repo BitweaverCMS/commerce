@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.8 2006/02/05 21:36:07 spiderr Exp $
+// $Id: banner.php,v 1.9 2006/02/05 22:11:12 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -123,7 +123,7 @@
       }
     } elseif ($action == 'static') {
       if (is_object($identifier)) {
-        $banner = $identifier;
+        $banner = $identifier->fields;
       } else {
         $banner_query = "select `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                          from " . TABLE_BANNERS . "

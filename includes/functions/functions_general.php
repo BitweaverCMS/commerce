@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.25 2006/02/05 21:36:07 spiderr Exp $
+// $Id: functions_general.php,v 1.26 2006/02/05 22:11:12 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -925,7 +925,7 @@
       return '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' .  TEXT_SHOWCASE_ONLY . '</a>';
     }
 
-    $button_check = $db->getRow( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $button_check = $db->fetchRow( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     switch (true) {
 // cannot be added to the cart
     case (zen_get_products_allow_add_to_cart($product_id) == 'N'):
@@ -1025,7 +1025,7 @@
     $zp_sql = "select * from " . TABLE_GET_TERMS_TO_FILTER;
     $zp_result = false;
 	if( $rs = $db->Execute($zp_sql) ) {
-    	while( $zp_filter_terms = $rs->getRow() ) {
+    	while( $zp_filter_terms = $rs->fetchRow() ) {
     		if ( !empty( $_GET[$zp_filter_terms['get_term_name']] ) ) {
 				$zp_result = true;
 			}

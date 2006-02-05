@@ -17,14 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box2.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_banner_box2.php,v 1.4 2006/02/05 22:11:12 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
 	$banner_box_group= SHOW_BANNERS_GROUP_SET8;
 
-	$bannerRs = zen_banner_exists('dynamic', $banner_box_group);
-	if( $bannerRs->RecordCount() ) {
+	if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
 		$gBitSmarty->assign( 'sideboxBannerBox2', zen_display_banner('static', $bannerRs ) );
 	}
 	if( empty( $moduleTitle ) ) {
