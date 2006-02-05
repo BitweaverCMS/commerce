@@ -250,9 +250,9 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   related_content_id I4,
   purchase_group_id I4
 
-  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES ".BIT_DB_PREFIX."liberty_content`( `content_id` )
-			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES ".BIT_DB_PREFIX."liberty_content`( `content_id` )
-			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES ".BIT_DB_PREFIX."users_groups`( `group_id` )
+  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )
 			  , CONSTRAINT `prod_type_ref` FOREIGN KEY ( `products_type` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )
 			  , CONSTRAINT `prod_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."suppliers`( `suppliers_id` )
 			  , CONSTRAINT `prod_manf_id_ref` FOREIGN KEY ( `manufacturers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."manufacturers`( `manufacturers_id` )'
@@ -354,7 +354,7 @@ BITCOMMERCE_DB_PREFIX.'products_notifications' => "
   customers_id I4,
   date_added T
   CONSTRAINT ', CONSTRAINT `prod_noti_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )
-              , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products( `products_id` )'
+              , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'products_to_categories' => "
@@ -735,8 +735,8 @@ BITCOMMERCE_DB_PREFIX.'orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
-  CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES ".BITCOMMERCE_DB_PREFIX."products( `products_id` )
-  			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES ".BITCOMMERCE_DB_PREFIX."orders( `orders_id` )'
+  CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."products`( `products_id` )
+  			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
@@ -766,7 +766,7 @@ BITCOMMERCE_DB_PREFIX.'orders_products_att' => "
   products_options_id INT( 11 ) NOTNULL,
   products_options_values_id INT( 11 ) NOTNULL
   CONSTRAINT ', CONSTRAINT `ord_prod_att_prod_ref` FOREIGN KEY ( `orders_products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders_products`( `orders_products_id` )
-  			  , CONSTRAINT `ord_prod_att_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders( orders_id )'
+  			  , CONSTRAINT `ord_prod_att_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'orders_products_dld' => "
@@ -884,7 +884,7 @@ BITCOMMERCE_DB_PREFIX.'tax_rates' => "
   tax_description C(255),
   last_modified T,
   date_added T
-  CONSTRAINT ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( tax_class_id ) REFERENCES `".BITCOMMERCE_DB_PREFIX."tax_class`( `tax_class_id` )'
+  CONSTRAINT ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( `tax_class_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."tax_class`( `tax_class_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'template_select' => "
@@ -1058,7 +1058,7 @@ BITCOMMERCE_DB_PREFIX.'paypal_pment_stat_his' => "
   payment_status C(17),
   pending_reason C(14),
   date_added T
-  CONSTRAINT ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id ) REFERENCES `".BITCOMMERCE_DB_PREFIX."paypal`( `paypal_ipn_id` )'
+  CONSTRAINT ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."paypal`( `paypal_ipn_id` )'
 ",
 
 BITCOMMERCE_DB_PREFIX.'pubs_credit_card_log' => "
