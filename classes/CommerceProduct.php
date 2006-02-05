@@ -58,12 +58,12 @@ class CommerceProduct extends LibertyAttachable {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
 			$this->getServicesSql( 'content_load_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
-			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,tc.*, m.*
+			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,lc.*, m.*
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
-					  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
-					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`) $joinSql
+					  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
+					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
 						LEFT OUTER JOIN ".TABLE_SUPPLIERS." s ON ( p.`suppliers_id`=s.`suppliers_id` )					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
 // Leave these out for now... and possibly forever. These can produce multiple row returns
@@ -312,7 +312,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		if( !empty( $pListHash['user_id'] ) ) {
-			$whereSql .= " AND tc.`user_id` = ? ";
+			$whereSql .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
 
@@ -352,19 +352,19 @@ class CommerceProduct extends LibertyAttachable {
 
 		$countQuery = "select COUNT( p.`products_id` )
 				  from " . TABLE_PRODUCTS . " p
-				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
+				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 					$joinSql
 				  where p.`products_status` = '1' $whereSql ";
 		$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
 
-		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, tc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
+		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
-				 	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON(p.`content_id`=tc.`content_id` )
+				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
-				  	INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`)
+				  	INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
 				  where p.`products_status` = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
