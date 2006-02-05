@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.4 2006/02/05 21:36:07 spiderr Exp $
+// $Id: specials.php,v 1.5 2006/02/05 22:51:33 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -46,7 +46,7 @@
                        or ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01'))";
 
     if( $rs = $db->Execute($specials_query) ) {
-      while( $specials = $rs->getRow() ) {
+      while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
         zen_update_products_price_sorter($specials['products_id']);
       }
@@ -68,7 +68,7 @@
                        ";
 
     if( $rs = $db->Execute($specials_query) ) {
-      while( $specials = $rs->getRow() ) {
+      while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '1');
         zen_update_products_price_sorter($specials['products_id']);
       }
@@ -82,7 +82,7 @@
                        ";
 
     if( $rs = $db->Execute($specials_query) ) {
-      while( $specials = $rs->getRow() ) {
+      while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
         zen_update_products_price_sorter($specials['products_id']);
       }

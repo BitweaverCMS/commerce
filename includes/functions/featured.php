@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured.php,v 1.3 2006/02/05 21:36:07 spiderr Exp $
+// $Id: featured.php,v 1.4 2006/02/05 22:51:33 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -45,7 +45,7 @@
                        or ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01'))";
 
     if( $rs = $db->Execute($featured_query) ) {
-      while( $featured = $rs->getRow() ) {
+      while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '0');
       }
     }
@@ -65,7 +65,7 @@
                        ";
 
     if( $rs = $db->Execute($featured_query) ) {
-      while( $featured = $rs->getRow() ) {
+      while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '1');
       }
     }
@@ -78,7 +78,7 @@
                        ";
 
     if( $rs = $db->Execute($featured_query) ) {
-      while( $featured = $rs->getRow() ) {
+      while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '0');
       }
     }
