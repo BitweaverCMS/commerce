@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.8 2006/02/05 14:58:16 spiderr Exp $
+//  $Id: tax_rates.php,v 1.9 2006/02/05 17:37:03 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -132,7 +132,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $rates_query_raw = "select r.`tax_rates_id`, z.`geo_zone_id`, z.`geo_zone_name`, lc.`tax_class_title`, lc.`tax_class_id`, r.`tax_priority`, r.`tax_rate`, r.`tax_description`, r.`date_added`, r.`last_modified` from " . TABLE_TAX_CLASS . " lc, " . TABLE_TAX_RATES . " r left join " . TABLE_GEO_ZONES . " z on r.`tax_zone_id` = z.`geo_zone_id` where r.`tax_class_id` = lc.`tax_class_id`";
+  $rates_query_raw = "select r.`tax_rates_id`, z.`geo_zone_id`, z.`geo_zone_name`, tc.`tax_class_title`, tc.`tax_class_id`, r.`tax_priority`, r.`tax_rate`, r.`tax_description`, r.`date_added`, r.`last_modified` from " . TABLE_TAX_CLASS . " tc, " . TABLE_TAX_RATES . " r left join " . TABLE_GEO_ZONES . " z on r.`tax_zone_id` = z.`geo_zone_id` where r.`tax_class_id` = tc.`tax_class_id`";
   $rates_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $rates_query_raw, $rates_query_numrows);
   $rates = $db->Execute($rates_query_raw);
   while (!$rates->EOF) {
