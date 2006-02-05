@@ -567,8 +567,8 @@
 		global $gBitDb, $gBitUser;
     	$query = "SELECT `products_price`, `wholesale_price`, `products_priced_by_attribute`, uu.`user_id`
     			  FROM " . TABLE_PRODUCTS . " p
-					INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id`=p.`content_id`)
-					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=tc.`user_id`)
+					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
+					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
     			  WHERE `products_id` = ?";
 		$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
 

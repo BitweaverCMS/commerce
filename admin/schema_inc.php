@@ -250,8 +250,8 @@ BITCOMMERCE_DB_PREFIX.'products' => "
   related_content_id I4,
   purchase_group_id I4
 
-  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES ".BIT_DB_PREFIX."tiki_content`( `content_id` )
-			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES ".BIT_DB_PREFIX."tiki_content`( `content_id` )
+  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES ".BIT_DB_PREFIX."liberty_content`( `content_id` )
+			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES ".BIT_DB_PREFIX."liberty_content`( `content_id` )
 			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES ".BIT_DB_PREFIX."users_groups`( `group_id` )
 			  , CONSTRAINT `prod_type_ref` FOREIGN KEY ( `products_type` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."product_types`( `type_id` )
 			  , CONSTRAINT `prod_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."suppliers`( `suppliers_id` )
