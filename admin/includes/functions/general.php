@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.33 2005/11/22 11:52:32 gilesw Exp $
+//  $Id: general.php,v 1.34 2006/02/05 22:30:55 lsces Exp $
 //
 
 ////
@@ -732,11 +732,10 @@
 ////
 // Retreive server information
   function zen_get_system_information() {
-    global $db, $_SERVER;
+    global $db, $_SERVER, $gBitDbHost, $gBitDbType;
 
 //    $db_query = $db->Execute("SELECT now() as datetime");
     list($system, $host, $kernel) = preg_split('/[\s,]+/', @exec('uname -a'), 5);
-
 
     return array('date' => zen_datetime_short(date('Y-m-d H:i:s')),
                  'system' => $system,
@@ -747,9 +746,9 @@
                  'http_server' => $_SERVER['SERVER_SOFTWARE'],
                  'php' => PHP_VERSION,
                  'zend' => (function_exists('zend_version') ? zend_version() : ''),
-                 'db_server' => DB_SERVER,
-                 'db_ip' => gethostbyname(DB_SERVER),
-                 'db_version' => 'MySQL ' . (function_exists('mysql_get_server_info') ? mysql_get_server_info() : ''),
+                 'db_server' => $gBitDbHost,
+                 'db_ip' => gethostbyname($gBitDbHost),
+                 'db_version' => $gBitDbType,
                  'db_date' => zen_datetime_short($db_query->fields['datetime']));
   }
 
