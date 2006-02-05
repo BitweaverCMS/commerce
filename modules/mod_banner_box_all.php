@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box_all.php,v 1.5 2005/10/31 16:20:01 lsces Exp $
+// $Id: mod_banner_box_all.php,v 1.6 2006/02/05 21:36:08 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -37,15 +37,14 @@
     }
 
 	$sql = "select banners_id from " . TABLE_BANNERS . " where status = '1' " . $new_banner_search . $my_banner_filter . " order by banners_sort_order";
-	$banners_all = $db->Execute($sql);
-
-	$sideboxBannersAll = array();
-	// if no active banner in the specified banner group then the box will not show
-	// uses banners in the defined group $banner_box_group
-	while( !$banners_all->EOF ) {
-		$banner = zen_banner_exists('dynamic', SHOW_BANNERS_GROUP_SET_ALL);
-		array_push( $sideboxBannersAll, zen_display_banner('static', $banners_all->fields['banners_id']) );
-		$banners_all->MoveNext();
+	if( $rs = $db->Execute($sql) ) {
+		$sideboxBannersAll = array();
+		// if no active banner in the specified banner group then the box will not show
+		// uses banners in the defined group $banner_box_group
+		while( $banners_all = $rs->fetchRow() ) {
+			$banner = zen_banner_exists('dynamic', SHOW_BANNERS_GROUP_SET_ALL);
+			array_push( $sideboxBannersAll, zen_display_banner('static', $banners_all['banners_id']) );
+		}
 	}
 
 	if( empty( $moduleTitle ) ) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.3 2005/09/16 21:48:44 spiderr Exp $
+// $Id: mod_manufacturers.php,v 1.4 2006/02/05 21:36:08 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -48,9 +48,7 @@ if ($show_manufacturers) {
                             order by `manufacturers_name`";
   }
 
-  $manufacturer_sidebox = $db->Execute($manufacturer_sidebox_query);
-
-  if ($manufacturer_sidebox->RecordCount()>0) {
+  if( $manufacturer_sidebox = $db->getRow($manufacturer_sidebox_query) ) {
     $number_of_rows = $manufacturer_sidebox->RecordCount()+1;
 
 // Display a list
@@ -62,8 +60,8 @@ if ($show_manufacturers) {
     }
 
     while (!$manufacturer_sidebox->EOF) {
-      $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox->fields['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox->fields['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox->fields['manufacturers_name']);
-      $manufacturer_sidebox_array[] = array('id' => $manufacturer_sidebox->fields['manufacturers_id'],
+      $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox['manufacturers_name']);
+      $manufacturer_sidebox_array[] = array('id' => $manufacturer_sidebox['manufacturers_id'],
                                        'text' => $manufacturer_sidebox_name);
 
       $manufacturer_sidebox->MoveNext();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.15 2005/11/15 22:01:20 spiderr Exp $
+//  $Id: application_top.php,v 1.16 2006/02/05 21:36:07 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -138,13 +138,13 @@ error_reporting(E_ALL & ~E_NOTICE);
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
 
 // Determine the DATABASE patch level
-  $project_db_info= $db->Execute('select * from ' . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database' ");
-  define('PROJECT_DB_VERSION_MAJOR',$project_db_info->fields['project_version_major']);
-  define('PROJECT_DB_VERSION_MINOR',$project_db_info->fields['project_version_minor']);
-  define('PROJECT_DB_VERSION_PATCH1',$project_db_info->fields['project_version_patch1']);
-  define('PROJECT_DB_VERSION_PATCH2',$project_db_info->fields['project_version_patch2']);
-  define('PROJECT_DB_VERSION_PATCH1_SOURCE',$project_db_info->fields['project_version_patch1_source']);
-  define('PROJECT_DB_VERSION_PATCH2_SOURCE',$project_db_info->fields['project_version_patch2_source']);
+  $project_db_info= $db->getRow('select * from ' . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database' ");
+  define('PROJECT_DB_VERSION_MAJOR',$project_db_info['project_version_major']);
+  define('PROJECT_DB_VERSION_MINOR',$project_db_info['project_version_minor']);
+  define('PROJECT_DB_VERSION_PATCH1',$project_db_info['project_version_patch1']);
+  define('PROJECT_DB_VERSION_PATCH2',$project_db_info['project_version_patch2']);
+  define('PROJECT_DB_VERSION_PATCH1_SOURCE',$project_db_info['project_version_patch1_source']);
+  define('PROJECT_DB_VERSION_PATCH2_SOURCE',$project_db_info['project_version_patch2_source']);
 
 // GZIP for Admin
 // if gzip_compression is enabled, start to buffer the output
@@ -183,17 +183,16 @@ error_reporting(E_ALL & ~E_NOTICE);
   $session_started = true;
 
 // Set theme related directories
-  $template_query = $db->Execute("select `template_dir`
+  $template_dir = $db->getOne("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
                                   " where `template_language` = '0'");
 
-  $template_dir = $template_query->fields['template_dir'];
-  $template_query = $db->Execute("select `template_dir`
+  $langDir = $db->getOne("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
                                   " where `template_language` = '" . $_SESSION['languages_id'] . "'");
 
-  if ($template_query->RecordCount() > 0) {
-    $template_dir = $template_query->fields['template_dir'];
+  if( $langDir ) {
+    $template_dir = $langDir;
   }
 
   define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_CATALOG_TEMPLATE . $template_dir . '/images/');

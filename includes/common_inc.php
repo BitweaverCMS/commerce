@@ -1601,8 +1601,8 @@ If a special exist * 10+9
 
 
 function reset_bitcommerce_layout() {
-	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
-	global $modlib;
+	require_once( THEMES_PKG_PATH.'BitThemes.php' );
+	global $gBitThemes;
 
 	$modules = array(
 		'l' => array(
@@ -1636,16 +1636,16 @@ function reset_bitcommerce_layout() {
 		)
 	);
 	$i = 1;
-	$modlib->removeAllLayoutModules( ROOT_USER_ID, BITCOMMERCE_PKG_NAME );
+	$gBitThemes->removeAllLayoutModules( ROOT_USER_ID, BITCOMMERCE_PKG_NAME );
 	foreach( array_keys( $modules ) as $col ) {
 		foreach( $modules[$col] as $moduleHash ) {
 			$moduleHash['fPackage'] = BITCOMMERCE_PKG_NAME;
-			$modlib->storeModule( $moduleHash );
+			$gBitThemes->storeModule( $moduleHash );
 			$moduleHash['user_id'] = ROOT_USER_ID;
 			$moduleHash['pos'] = $col;
 			$moduleHash['ord'] = $i++;
 			$moduleHash['layout'] = BITCOMMERCE_PKG_NAME;
-			$modlib->storeLayout( $moduleHash );
+			$gBitThemes->storeLayout( $moduleHash );
 		}
 		$i = 1;
 	}

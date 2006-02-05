@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.7 2005/12/05 17:09:32 squareing Exp $
+// $Id: banner.php,v 1.8 2006/02/05 21:36:07 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -54,14 +54,13 @@
                       FROM " . TABLE_BANNERS . "
                       WHERE `date_scheduled` IS NOT NULL";
 
-    $banners = $db->Execute($banners_query);
+    $banners = $db->query($banners_query);
 
-    if ($banners->RecordCount() > 0) {
-      while (!$banners->EOF) {
-        if (date('Y-m-d H:i:s') >= $banners->fields['date_scheduled']) {
-          zen_set_banner_status($banners->fields['banners_id'], '1');
+    if( $banners = $db->query($banners_query) ) {
+      while( $row = $banners->fetchRow() ) {
+        if (date('Y-m-d H:i:s') >= $row['date_scheduled'] ) {
+          zen_set_banner_status( $row['banners_id'], '1' );
         }
-        $banners->MoveNext();
       }
     }
   }
@@ -79,18 +78,17 @@
 
     $banners = $db->Execute($banners_query);
 
-    if ($banners->RecordCount() > 0) {
-      while (!$banners->EOF) {
-        if (zen_not_null($banners->fields['expires_date'])) {
-          if (date('Y-m-d H:i:s') >= $banners->fields['expires_date']) {
-            zen_set_banner_status($banners->fields['banners_id'], '0');
+    if( $banners = $db->Execute($banners_query) ) {
+      while ( $row = $banners->fetchRow() ) {
+        if (zen_not_null($row['expires_date'])) {
+          if (date('Y-m-d H:i:s') >= $row['expires_date']) {
+            zen_set_banner_status($row['banners_id'], '0');
           }
-        } elseif (zen_not_null($banners->fields['expires_impressions'])) {
-          if ( ($banners->fields['expires_impressions'] > 0) && ($banners->fields['banners_shown'] >= $banners->fields['expires_impressions']) ) {
-            zen_set_banner_status($banners->fields['banners_id'], '0');
+        } elseif (zen_not_null($row['expires_impressions'])) {
+          if ( ($row['expires_impressions'] > 0) && ($row['banners_shown'] >= $row['expires_impressions']) ) {
+            zen_set_banner_status($row['banners_id'], '0');
           }
         }
-        $banners->MoveNext();
       }
     }
   }
@@ -114,10 +112,8 @@
                            WHERE `status` = '1' " .
                            $new_banner_search . $my_banner_filter;
 
-      $banners = $db->Execute($banners_query);
-
-      if ($banners->fields['count'] > 0) {
-        $banner = $db->Execute("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
+      if( $bannerCount = $db->getOne($banners_query) ) {
+        $banner = $db->getRow("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                                FROM " . TABLE_BANNERS . "
                                WHERE `status` = '1' " .
                                $new_banner_search . $my_banner_filter . " order by ".$db->convert_sortmode( 'random' ));
@@ -134,9 +130,7 @@
                          where `status` = '1'
                          and `banners_id` = '" . (int)$identifier . "'" . $my_banner_filter;
 
-        $banner = $db->Execute($banner_query);
-
-        if ($banner->RecordCount() < 1) {
+        if( $banner = $db->getRow($banner_query) ) {
           //return '<strong>ZEN ERROR! (zen_display_banner(' . $action . ', ' . $identifier . ') -> Banner with ID \'' . $identifier . '\' not found, or status inactive</strong>';
         }
       }
@@ -144,16 +138,16 @@
       return '<strong>ZEN ERROR! (zen_display_banner(' . $action . ', ' . $identifier . ') -> Unknown $action parameter value - it must be either \'dynamic\' or \'static\'</strong>';
     }
 
-    if (zen_not_null($banner->fields['banners_html_text'])) {
-      $banner_string = $banner->fields['banners_html_text'];
+    if (zen_not_null($banner['banners_html_text'])) {
+      $banner_string = $banner['banners_html_text'];
     } else {
-      if ($banner->fields['banners_open_new_windows'] == '1') {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner->fields['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner->fields['banners_image']), $banner->fields['banners_title']) . '</a>';
+      if ($banner['banners_open_new_windows'] == '1') {
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner['banners_image']), $banner['banners_title']) . '</a>';
       } else {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner->fields['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner->fields['banners_image']), $banner->fields['banners_title']) . '</a>';
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner['banners_image']), $banner['banners_title']) . '</a>';
       }
     }
-    zen_update_banner_display_count($banner->fields['banners_id']);
+    zen_update_banner_display_count($banner['banners_id']);
 
     return $banner_string;
   }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_banner_box.php,v 1.4 2006/02/05 21:36:08 spiderr Exp $
 //
 	global $db, $gBitProduct, $banner;
 	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
@@ -25,8 +25,7 @@
 
 	$banner_box_group= SHOW_BANNERS_GROUP_SET7;
 
-	$bannerRs = zen_banner_exists('dynamic', $banner_box_group);
-	if( $bannerRs->RecordCount() ) {
+	if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
 		$gBitSmarty->assign( 'bannerContent', zen_display_banner('static', $bannerRs ) );
 	}
 	if( empty( $moduleTitle ) ) {

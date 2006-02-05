@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: salemaker.php,v 1.2 2005/08/24 02:51:32 lsces Exp $
+// $Id: salemaker.php,v 1.3 2006/02/05 21:36:07 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -45,13 +45,10 @@
                        and (('NOW' >= `sale_date_end` and `sale_date_end` != '0001-01-01')
                        or ('NOW' < `sale_date_start` and `sale_date_start` != '0001-01-01'))";
 
-    $salemaker = $db->Execute($salemaker_query);
-
-    if ($salemaker->RecordCount() > 0) {
-      while (!$salemaker->EOF) {
-        zen_set_salemaker_status($salemaker->fields['sale_id'], '0');
-        zen_update_salemaker_product_prices($salemaker->fields['sale_id']);
-        $salemaker->MoveNext();
+    if( $rs = $db->query($salemaker_query) ) {
+      while( $salemaker = $rs->fetchRow() ) {
+        zen_set_salemaker_status($salemaker['sale_id'], '0');
+        zen_update_salemaker_product_prices($salemaker['sale_id']);
       }
     }
   }
@@ -69,13 +66,10 @@
                        or (`sale_date_start` = '0001-01-01' and `sale_date_end` >= 'NOW'))
                        ";
 
-    $salemaker = $db->Execute($salemaker_query);
-
-    if ($salemaker->RecordCount() > 0) {
-      while (!$salemaker->EOF) {
-        zen_set_salemaker_status($salemaker->fields['sale_id'], '1');
-        zen_update_salemaker_product_prices($salemaker->fields['sale_id']);
-        $salemaker->MoveNext();
+    if( $rs = $db->query($salemaker_query) ) {
+      while( $salemaker = $rs->fetchRow() ) {
+        zen_set_salemaker_status($salemaker['sale_id'], '1');
+        zen_update_salemaker_product_prices($salemaker['sale_id']);
       }
     }
 
@@ -86,13 +80,10 @@
                        and ('NOW' < `sale_date_start` and `sale_date_start` != '0001-01-01')
                        ";
 
-    $salemaker = $db->Execute($salemaker_query);
-
-    if ($salemaker->RecordCount() > 0) {
-      while (!$salemaker->EOF) {
-        zen_set_salemaker_status($salemaker->fields['sale_id'], '0');
-        zen_update_salemaker_product_prices($salemaker->fields['sale_id']);
-        $salemaker->MoveNext();
+    if( $rs = $db->query($salemaker_query) ) {
+      while( $salemaker = $rs->fetchRow() ) {
+        zen_set_salemaker_status($salemaker['sale_id'], '0');
+        zen_update_salemaker_product_prices($salemaker['sale_id']);
       }
     }
   }

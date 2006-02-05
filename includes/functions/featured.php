@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured.php,v 1.2 2005/08/24 02:51:32 lsces Exp $
+// $Id: featured.php,v 1.3 2006/02/05 21:36:07 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -44,12 +44,9 @@
                        and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
                        or ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01'))";
 
-    $featured = $db->Execute($featured_query);
-
-    if ($featured->RecordCount() > 0) {
-      while (!$featured->EOF) {
-        zen_set_featured_status($featured->fields['featured_id'], '0');
-        $featured->MoveNext();
+    if( $rs = $db->Execute($featured_query) ) {
+      while( $featured = $rs->getRow() ) {
+        zen_set_featured_status($featured['featured_id'], '0');
       }
     }
   }
@@ -67,12 +64,9 @@
                        or (`featured_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
-    $featured = $db->Execute($featured_query);
-
-    if ($featured->RecordCount() > 0) {
-      while (!$featured->EOF) {
-        zen_set_featured_status($featured->fields['featured_id'], '1');
-        $featured->MoveNext();
+    if( $rs = $db->Execute($featured_query) ) {
+      while( $featured = $rs->getRow() ) {
+        zen_set_featured_status($featured['featured_id'], '1');
       }
     }
 
@@ -83,12 +77,9 @@
                        and ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01')
                        ";
 
-    $featured = $db->Execute($featured_query);
-
-    if ($featured->RecordCount() > 0) {
-      while (!$featured->EOF) {
-        zen_set_featured_status($featured->fields['featured_id'], '0');
-        $featured->MoveNext();
+    if( $rs = $db->Execute($featured_query) ) {
+      while( $featured = $rs->getRow() ) {
+        zen_set_featured_status($featured['featured_id'], '0');
       }
     }
 

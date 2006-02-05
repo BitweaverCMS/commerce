@@ -17,20 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: counter.php,v 1.2 2005/08/24 02:50:27 lsces Exp $
+// $Id: counter.php,v 1.3 2006/02/05 21:36:07 spiderr Exp $
 //
 
   $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
-  $counter = $db->Execute($counter_query);
-  if ($counter->RecordCount() <= 0) {
+  if( !$counter = $db->getRow($counter_query) ) {
     $date_now = date('Ymd');
     $sql = "insert into " . TABLE_COUNTER . " (`startdate`, `counter`) values ('" . $date_now . "', '1')";
     $db->Execute($sql);
     $counter_startdate = $date_now;
     $counter_now = 1;
   } else {
-    $counter_startdate = $counter->fields['startdate'];
-    $counter_now = ($counter->fields['counter'] + 1);
+    $counter_startdate = $counter['startdate'];
+    $counter_now = ($counter['counter'] + 1);
     $sql = "update " . TABLE_COUNTER . " set `counter` = '" . $counter_now . "'";
     $db->Execute($sql);
   }

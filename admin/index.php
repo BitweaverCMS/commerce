@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.13 2005/10/27 22:17:57 spiderr Exp $
+//  $Id: index.php,v 1.14 2006/02/05 21:36:07 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -91,13 +91,14 @@
 <table class="data">
    <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
   <?php   $orders_contents = '';
-  $orders_status = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'");
+  if( $rs = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
 
-  while (!$orders_status->EOF) {
-    $orders_pending = $db->Execute("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status->fields['orders_status_id'] . "'");
+	  while( $orders_status = $rs->fetchRow() ) {
+		$orders_pending = $db->Execute("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
 
-    $orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status->fields['orders_status_id'], 'NONSSL') . '">' . $orders_status->fields['orders_status_name'] . '</a>:</td><td> ' . $orders_pending->fields['count'] . '</td></tr>';
-    $orders_status->MoveNext();
+		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending['count'] . '</td></tr>';
+		$orders_status->MoveNext();
+	  }
   }
 
   echo $orders_contents;

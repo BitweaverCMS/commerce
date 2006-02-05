@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.3 2005/10/31 16:19:57 lsces Exp $
+// $Id: specials.php,v 1.4 2006/02/05 21:36:07 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -45,13 +45,10 @@
                        and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
                        or ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01'))";
 
-    $specials = $db->Execute($specials_query);
-
-    if ($specials->RecordCount() > 0) {
-      while (!$specials->EOF) {
-        zen_set_specials_status($specials->fields['specials_id'], '0');
-        zen_update_products_price_sorter($specials->fields['products_id']);
-        $specials->MoveNext();
+    if( $rs = $db->Execute($specials_query) ) {
+      while( $specials = $rs->getRow() ) {
+        zen_set_specials_status($specials['specials_id'], '0');
+        zen_update_products_price_sorter($specials['products_id']);
       }
     }
   }
@@ -70,13 +67,10 @@
                        or (`specials_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
-    $specials = $db->Execute($specials_query);
-
-    if ($specials->RecordCount() > 0) {
-      while (!$specials->EOF) {
-        zen_set_specials_status($specials->fields['specials_id'], '1');
-        zen_update_products_price_sorter($specials->fields['products_id']);
-        $specials->MoveNext();
+    if( $rs = $db->Execute($specials_query) ) {
+      while( $specials = $rs->getRow() ) {
+        zen_set_specials_status($specials['specials_id'], '1');
+        zen_update_products_price_sorter($specials['products_id']);
       }
     }
 
@@ -87,13 +81,10 @@
                        and ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01')
                        ";
 
-    $specials = $db->Execute($specials_query);
-
-    if ($specials->RecordCount() > 0) {
-      while (!$specials->EOF) {
-        zen_set_specials_status($specials->fields['specials_id'], '0');
-        zen_update_products_price_sorter($specials->fields['products_id']);
-        $specials->MoveNext();
+    if( $rs = $db->Execute($specials_query) ) {
+      while( $specials = $rs->getRow() ) {
+        zen_set_specials_status($specials['specials_id'], '0');
+        zen_update_products_price_sorter($specials['products_id']);
       }
     }
   }

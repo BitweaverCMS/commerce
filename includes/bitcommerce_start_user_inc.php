@@ -80,10 +80,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
           FROM " . TABLE_TEMPLATE_SELECT .
          " WHERE `template_language` = '" . $_SESSION['languages_id'] . "'";
 
-  $template_query = $db->Execute($sql);
-
-  if ($template_query->RecordCount() > 0) {
-      $template_dir = $template_query->fields['template_dir'];
+  if( $langDir = $db->getOne($sql) ) {
+      $template_dir = $langDir;
   }
 //if (template_switcher_available=="YES") $template_dir = templateswitch_custom($current_domain);
   define('DIR_WS_TEMPLATE', DIR_WS_TEMPLATES . $template_dir . '/');

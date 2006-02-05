@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.24 2005/11/17 17:33:16 spiderr Exp $
+// $Id: functions_general.php,v 1.25 2006/02/05 21:36:07 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -686,39 +686,39 @@
 		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
 						WHERE `coupon_id` = ?
 						ORDER BY".$db->convert_sortmode( 'coupon_restrict_asc' );
-		$coupons = $db->query($coupons_query, array( $coupon_id ) );
+		$couponsRs = $db->query($coupons_query, array( $coupon_id ) );
 
 		$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
-		$product = $db->query($product_query, array( $product_id ) );
+		$productModel = $db->getOne($product_query, array( $product_id ) );
 
-		if (ereg('^GIFT', $product->fields['products_model'])) {
-		return false;
+		if (ereg('^GIFT', $productModel)) {
+			return false;
 		}
 
-		if ($coupons->RecordCount() == 0) return true;
+		if( empty( $couponsRs ) ) return true;
 		$product_valid = true;
-		while (!$coupons->EOF) {
-			if (($coupons->fields['product_id'] != 0) && ($coupons->fields['product_id'] != $product_id)) {
+		while( $coupons = $couponsRs->fetchRow() ) {
+			if (($coupons['product_id'] != 0) && ($coupons['product_id'] != $product_id)) {
 				$product_valid = false;
 			}
 
-			if (($coupons->fields['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+			if (($coupons['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
 				$product_valid = false;
 			}
 
-			if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='N')) {
+			if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='N')) {
 				$product_valid = true;
 			}
 
-			if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='N')) {
+			if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
 				$product_valid = true;
 			}
 
-			if (($coupons->fields['product_id'] == (int)$product_id) && ($coupons->fields['coupon_restrict']=='Y')) {
+			if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='Y')) {
 				$product_valid = false;
 			}
 
-			if (($coupons->fields['category_id'] !=0) && (zen_product_in_category($product_id, $coupons->fields['category_id'])) && ($coupons->fields['coupon_restrict']=='Y')) {
+			if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='Y')) {
 				$product_valid = false;
 			}
 
@@ -925,16 +925,16 @@
       return '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' .  TEXT_SHOWCASE_ONLY . '</a>';
     }
 
-    $button_check = $db->query( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $button_check = $db->getRow( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     switch (true) {
 // cannot be added to the cart
     case (zen_get_products_allow_add_to_cart($product_id) == 'N'):
       return $additional_link;
       break;
-    case ($button_check->fields['product_is_call'] == '1'):
+    case ($button_check['product_is_call'] == '1'):
       $return_button = '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' . TEXT_CALL_FOR_PRICE . '</a>';
       break;
-    case ($button_check->fields['products_quantity'] <= 0 and SHOW_PRODUCTS_SOLD_OUT_IMAGE == '1'):
+    case ($button_check['products_quantity'] <= 0 and SHOW_PRODUCTS_SOLD_OUT_IMAGE == '1'):
       if ($_GET['main_page'] == zen_get_info_page($product_id)) {
         $return_button = zen_image_button(BUTTON_IMAGE_SOLD_OUT, BUTTON_SOLD_OUT_ALT);
       } else {
@@ -1023,11 +1023,13 @@
   function zen_check_url_get_terms() {
     global $db;
     $zp_sql = "select * from " . TABLE_GET_TERMS_TO_FILTER;
-    $zp_filter_terms = $db->Execute($zp_sql);
     $zp_result = false;
-    while (!$zp_filter_terms->EOF) {
-      if ( !empty( $_GET[$zp_filter_terms->fields['get_term_name']] ) ) $zp_result = true;
-      $zp_filter_terms->MoveNext();
+	if( $rs = $db->Execute($zp_sql) ) {
+    	while( $zp_filter_terms = $rs->getRow() ) {
+    		if ( !empty( $_GET[$zp_filter_terms['get_term_name']] ) ) {
+				$zp_result = true;
+			}
+		}
     }
     return $zp_result;
   }

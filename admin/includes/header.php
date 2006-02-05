@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.7 2005/08/31 22:36:58 spiderr Exp $
+//  $Id: header.php,v 1.8 2006/02/05 21:36:07 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -120,9 +120,8 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
 
 // check GV release queue and alert store owner
   if (SHOW_GV_QUEUE==true) {
-    $new_gv_queue= $db->Execute("select * from " . TABLE_COUPON_GV_QUEUE . " where `release_flag`='N'");
-    if ($new_gv_queue->RecordCount() > 0) {
-      $new_gv_queue_cnt= $new_gv_queue->RecordCount();
+    if( $new_gv_queue= $db->getOne("select COUNT(*) from " . TABLE_COUPON_GV_QUEUE . " where `release_flag`='N'") ) {
+      $new_gv_queue_cnt= $new_gv_queue;
       $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
     }
   }
