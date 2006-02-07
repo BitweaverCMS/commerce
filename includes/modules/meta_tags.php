@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.11 2006/02/05 21:36:08 spiderr Exp $
+// $Id: meta_tags.php,v 1.12 2006/02/07 01:19:19 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -40,7 +40,6 @@
 	if( $rs = $db->query($sql) ) {
 		while( $keywords_metatags = $rs->fetchRow() ) {
 			$keywords_string_metatags .= $keywords_metatags['categories_name'] . ' ';
-		    $keywords_metatags->MoveNext();
 		}
 	}
   if( empty( $keywords_string_metatags ) ) {
