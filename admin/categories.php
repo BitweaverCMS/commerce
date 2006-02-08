@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.13 2005/11/08 04:45:39 spiderr Exp $
+//  $Id: categories.php,v 1.14 2006/02/08 23:24:26 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -203,7 +203,7 @@
         } elseif ($action == 'update_category') {
           $update_sql_data = array('last_modified' => $db->NOW());
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-          $db->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'name' => 'categories_id', 'value' => $categories_id ) );
+          $db->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'categories_id' => $categories_id ) );
         }
 
         $languages = zen_get_languages();

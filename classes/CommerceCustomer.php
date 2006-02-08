@@ -50,7 +50,7 @@
 					}
 				}
 				if( !empty( $resyncHash ) ) {
-					$gBitDb->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'name'=>'customers_id', 'value'=>$rs->fields['customers_id'] ) );
+					$gBitDb->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'customers_id' =>$rs->fields['customers_id'] ) );
 				}
 			} else {
 				$custHash = array( 'customers_id' => $pInfo['user_id'], 'customers_nick' => $pInfo['login'], 'customers_email_address' => $pInfo['email'] );
@@ -189,7 +189,7 @@
 					$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 					$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 				} else {
-					$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'name'=>'address_book_id' , 'value'=>$pParamHash['address'] ) );
+					$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address'] ) );
 				}
 				if( !$this->getDefaultAddress() || !empty( $pParamHash['primary'] ) ) {
 					$this->setDefaultAddress( $pParamHash['address'] );

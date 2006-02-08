@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.10 2005/11/25 13:59:25 gilesw Exp $
+//  $Id: manufacturers.php,v 1.11 2006/02/08 23:24:26 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -48,7 +48,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
                
-          $db->associateUpdate(TABLE_MANUFACTURERS, $sql_data_array, array( 'name'=>'manufacturers_id', 'value'=> (int)$manufacturers_id ) );
+          $db->associateUpdate(TABLE_MANUFACTURERS, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id ) );
         }
 
         $manufacturers_image = new upload('manufacturers_image');
@@ -81,7 +81,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
 
             $db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateUpdate(TABLE_MANUFACTURERS_INFO, $sql_data_array, array( 'name'=>'manufacturers_id', 'value'=> (int)$manufacturers_id , 'name'=>'languages_id', 'value'=> (int)$language_id) );
+            $db->associateUpdate(TABLE_MANUFACTURERS_INFO, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id , 'languages_id' => (int)$language_id) );
             
           }
         }

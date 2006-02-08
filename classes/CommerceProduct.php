@@ -723,7 +723,7 @@ class CommerceProduct extends LibertyAttachable {
 
 			if( $this->isValid() ) {
 				$action = 'update_product';
-				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'name'=>'products_id', 'value'=>$this->mProductsId ) );
+				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'products_id' =>$this->mProductsId ) );
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( (int)$this->mProductsId );
 			} else {
@@ -881,7 +881,7 @@ class CommerceProduct extends LibertyAttachable {
 		if( $this->verifyAttributes( $pParamHash ) ) {
 			$prodAttrId = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], 'products_attributes_id' );
 			if( $prodAttrId ) {
-	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'name' => 'products_attributes_id', 'value' => $prodAttrId ) );
+	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'products_attributes_id' => $prodAttrId ) );
 	        } else {
 				$pParamHash['attributes_store']['options_id'] = $pParamHash['options_id'];
 				$pParamHash['attributes_store']['products_id'] = $this->mProductsId;

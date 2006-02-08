@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.11 2006/01/12 19:35:26 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.12 2006/02/08 23:24:26 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -193,7 +193,7 @@
                                  );
         }
         if ($_GET['oldaction']=='voucheredit') {
-          $db->associateUpdate( TABLE_COUPONS, $sql_data_array, array( 'name'=>"coupon_id", 'value'=>$_GET['cid'] ) );
+          $db->associateUpdate( TABLE_COUPONS, $sql_data_array, array( "coupon_id"=>$_GET['cid'] ) );
           for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
             $language_id = $languages[$i]['id'];
             $db->Execute("update " . TABLE_COUPONS_DESCRIPTION . "

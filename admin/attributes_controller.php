@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.23 2005/12/20 17:13:03 gilesw Exp $
+//  $Id: attributes_controller.php,v 1.24 2006/02/08 23:24:23 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -412,7 +412,7 @@
 				'attributes_required' => $attributes_required,
 			);
 
-            $db->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $attrs, array( 'name' => 'products_attributes_id', 'value' => $attribute_id ) );
+            $db->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $attrs, array( 'products_attributes_id' => $attribute_id ) );
 
             if (DOWNLOAD_ENABLED == 'true') {
               $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
