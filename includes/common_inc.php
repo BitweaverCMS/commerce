@@ -563,21 +563,22 @@
 
 ////
 // computes products_price + option groups lowest attributes price of each group when on
-  function zen_get_products_base_price($products_id) {
+	function zen_get_products_base_price($products_id) {
 		global $gBitDb, $gBitUser;
-    	$query = "SELECT `products_price`, `wholesale_price`, `products_priced_by_attribute`, uu.`user_id`
-    			  FROM " . TABLE_PRODUCTS . " p
+		$query = "SELECT `products_price`, `wholesale_price`, `products_priced_by_attribute`, uu.`user_id`
+				FROM " . TABLE_PRODUCTS . " p
 					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
-    			  WHERE `products_id` = ?";
+				WHERE `products_id` = ?";
 		$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
 
 	// is there a products_price to add to attributes
-		if( $gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) {
+		if( !empty( $product['wholesale_price'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
 			$products_price = $product['wholesale_price'];
 		} else {
 			$products_price = $product['products_price'];
 		}
+
 		// do not select display only attributes and attributes_price_base_inc is true
 		$product_att_query = $gBitDb->query("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
 
@@ -598,7 +599,7 @@
 			$the_base_price = $products_price;
 		}
 		return $the_base_price;
-  }
+	}
 
 
 ////
