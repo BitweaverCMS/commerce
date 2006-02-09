@@ -29,7 +29,9 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
   // Secure webserver: eg, https://localhost - should not be empty for productive servers
   define('HTTPS_SERVER', 'https://'.$_SERVER['HTTP_HOST']);
   // secure webserver for checkout procedure?
-  define('ENABLE_SSL', 'true');
+  if( !defined( 'ENABLE_SSL' ) ) {
+	define('ENABLE_SSL', 'true');
+  }
 
 // NOTE: be sure to leave the trailing '/' at the end of these lines if you make changes!
 // * DIR_WS_* = Webserver directories (virtual/URL)
