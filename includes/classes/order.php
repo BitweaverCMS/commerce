@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.34 2006/01/23 04:57:42 spiderr Exp $
+// $Id: order.php,v 1.35 2006/02/09 20:57:16 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -735,6 +735,7 @@ class order extends BitBase {
 								'products_model' => $this->products[$i]['model'],
 								'products_name' => $this->products[$i]['name'],
 								'products_price' => $this->products[$i]['price'],
+								'products_commission' => $this->products[$i]['commission'],
 								'final_price' => $this->products[$i]['final_price'],
 								'onetime_charges' => $this->products[$i]['onetime_charges'],
 								'products_tax' => $this->products[$i]['tax'],

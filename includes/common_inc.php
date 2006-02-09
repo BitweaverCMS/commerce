@@ -565,7 +565,7 @@
 // computes products_price + option groups lowest attributes price of each group when on
 	function zen_get_products_base_price($products_id) {
 		global $gBitDb, $gBitUser;
-		$query = "SELECT `products_price`, `wholesale_price`, `products_priced_by_attribute`, uu.`user_id`
+		$query = "SELECT `products_price`, `products_commission`, `products_priced_by_attribute`, uu.`user_id`
 				FROM " . TABLE_PRODUCTS . " p
 					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
@@ -573,10 +573,9 @@
 		$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
 
 	// is there a products_price to add to attributes
-		if( !empty( $product['wholesale_price'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
-			$products_price = $product['wholesale_price'];
-		} else {
-			$products_price = $product['products_price'];
+		$products_price = $product['products_price'];
+		if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
+			$products_price -= $product['products_commission'];
 		}
 
 		// do not select display only attributes and attributes_price_base_inc is true
@@ -1185,7 +1184,7 @@ If a special exist * 10+9
 // Specials and Tax Included
   function zen_get_products_actual_price($products_id) {
     global $gBitDb, $currencies;
-    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `wholesale_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
+    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_commission`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
 			" where `products_id` = ?", array( $products_id ) );
 
     $show_display_price = '';

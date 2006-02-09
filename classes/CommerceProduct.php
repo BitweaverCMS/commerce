@@ -108,18 +108,15 @@ class CommerceProduct extends LibertyAttachable {
 				}
 				$ret['products_weight_kg'] = $ret['products_weight'] * .45359;
 				$ret['info_page'] = $ret['type_handler'].'_info';
-				if( empty( $ret['wholesale_price'] ) ) {
-					$ret['wholesale_price'] = $ret['products_price'];
-				}
 			}
 		}
 		return $ret;
 	}
 
-	function canPurchaseWholesale() {
-		$ret = FALSE;
+	function getCommissionDiscount() {
+		$ret = 0;
 		if( $this->isValid() ) {
-			$ret = $this->hasEditPermission();
+			$ret = $this->hasEditPermission() ? $this->getField( 'products_commission' ) : 0;
 		}
 		return $ret;
 	}
@@ -127,15 +124,7 @@ class CommerceProduct extends LibertyAttachable {
 	function getPurchasePrice( $pQuantity=1 ) {
 		$ret = NULL;
 		if( $this->isValid() ) {
-			$wholesalePrice = $this->getField( 'wholesale_price' );
-			$retailPrice = $this->getField( 'products_price' );
-			if( $wholesalePrice && $retailPrice && $wholesalePrice != $retailPrice && $this->canPurchaseWholesale() ) {
-				$ret = $wholesalePrice;
-			} else {
-				$ret = $retailPrice;
-			}
-
-
+			$ret = $this->getField( 'actual_price' );
           // adjusted count for free shipping
           if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
             $products_weight = $this->getField('products_weight');
@@ -162,7 +151,7 @@ class CommerceProduct extends LibertyAttachable {
             if ($special_price) {
               $ret = $special_price;
             } else {
-              $ret = $this->getField('products_price');
+              $ret = $this->getField('purchase_price');
             }
           } else {
 // discount qty pricing
@@ -243,40 +232,6 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 
-////
-// computes products_price + option groups lowest attributes price of each group when on
-	function getBasePrice() {
-		global $gBitUser;
-
-	// is there a products_price to add to attributes
-		if( $gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) {
-			$products_price = $this->getField( 'wholesale_price' );
-		} else {
-			$products_price = $this->getField( 'products_price' );
-		}
-		// do not select display only attributes and attributes_price_base_inc is true
-		$product_att_query = $gBitDb->query("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
-
-		$the_options_id= 'x';
-		$the_base_price= 0;
-	// add attributes price to price
-		if ($product['products_priced_by_attribute'] == '1' and $product_att_query->RecordCount() >= 1) {
-			while (!$product_att_query->EOF) {
-				if ( $the_options_id != $product_att_query->fields['options_id']) {
-					$the_options_id = $product_att_query->fields['options_id'];
-					$the_base_price += $product_att_query->fields['options_values_price'];
-				}
-				$product_att_query->MoveNext();
-			}
-
-			$the_base_price = $products_price + $the_base_price;
-		} else {
-			$the_base_price = $products_price;
-		}
-		return $the_base_price;
-	}
-
-
 	function getPrice( $pType = 'actual' ) {
 		$ret = 0;
 		if( $this->isValid() ) {
@@ -337,7 +292,7 @@ class CommerceProduct extends LibertyAttachable {
 			}
 		}
 		// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-		$product_check = $gBitDb->getRow("select `products_tax_class_id`, `products_price` , `wholesale_price`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
+		$product_check = $gBitDb->getRow("select `products_tax_class_id`, `products_price` , `products_commission`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
 
 		$show_display_price = '';
 		$display_normal_price = zen_get_products_base_price($pProductsId);
@@ -660,7 +615,7 @@ class CommerceProduct extends LibertyAttachable {
 			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
 			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),
 			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
-			'wholesale_price' => (!empty( $pParamHash['wholesale_price'] ) ? $pParamHash['wholesale_price'] : NULL),
+			'products_commission' => (!empty( $pParamHash['products_commission'] ) ? $pParamHash['products_commission'] : NULL),
 			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : NULL),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : NULL),
 			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
@@ -720,7 +675,6 @@ class CommerceProduct extends LibertyAttachable {
 // $this->debug();
 	// when set to none remove from database
 	//          if (isset($pParamHash['products_image']) && zen_not_null($pParamHash['products_image']) && ($pParamHash['products_image'] != 'none')) {
-
 			if( $this->isValid() ) {
 				$action = 'update_product';
 				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'products_id' =>$this->mProductsId ) );
@@ -733,7 +687,7 @@ class CommerceProduct extends LibertyAttachable {
 				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( $this->mProductsId );
-				$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
+					$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
 			}
 
 			$languages = zen_get_languages();

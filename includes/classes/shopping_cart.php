@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.24 2006/02/01 21:16:17 spiderr Exp $
+// $Id: shopping_cart.php,v 1.25 2006/02/09 20:57:17 spiderr Exp $
 //
 
   class shoppingCart {
@@ -859,6 +859,11 @@ if ((int)$products_id != $products_id) {
 			$productHash['image_url'] = $product->getField('products_image_url');
 			$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $products_price);
 			$productHash['quantity'] = $new_qty;
+			if( $product->getField( 'products_commission' ) && !$product->getCommissionDiscount() ) {
+				$productHash['commission'] = ($products_price / $product->getField('actual_price')) * ($product->getField('products_commission') - $product->getCommissionDiscount());
+			} else {
+				$productHash['commission'] = 0;
+			}
 			$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
 	// fix here
 			$productHash['final_price'] = $products_price + $this->attributes_price($products_id);
