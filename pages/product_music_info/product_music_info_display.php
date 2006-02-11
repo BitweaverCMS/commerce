@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_music_info_display.php,v 1.3 2005/12/20 17:13:06 gilesw Exp $
+// $Id: product_music_info_display.php,v 1.4 2006/02/11 05:06:37 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -39,33 +39,6 @@
 ?>
 <?php echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-<?php
-if ($debug_on == '1') {
-  echo '<tr>';
-  echo '  <td colspan="2" class="smallText">';
-  echo 'Looking at ' . (int)$_GET['products_id'] . '<br />';
-  echo 'Base Price ' . zen_get_products_base_price((int)$_GET['products_id']) . '<br />';
-  echo 'Actual Price ' . zen_get_products_actual_price((int)$_GET['products_id']) . '<br />';
-  echo 'Special Price ' . zen_get_products_special_price((int)$_GET['products_id'], true) . '<br />';
-  echo 'Sale Maker Discount Type ' . zen_get_products_sale_discount_type((int)$_GET['products_id']) . '<br />';
-  echo 'Discount Calc ' . zen_get_discount_calc((int)$_GET['products_id']) . '<br />';
-  echo 'Discount Calc Attr $100 $75 $50 $25 ' . zen_get_discount_calc((int)$_GET['products_id'], true, 100) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 75) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 50) . ' | ' . zen_get_discount_calc((int)$_GET['products_id'], true, 25) . '<br />';
-
-  echo '<br> Start of page - product music <br>' .
-  zen_get_show_product_switch($products_id_current, 'weight') . '<br>' .
-  zen_get_show_product_switch($products_id_current, 'weight_attributes') . '<br>' .
-  zen_get_show_product_switch($products_id_current, 'date_added') . '<br>' .
-  zen_get_show_product_switch($products_id_current, 'quantity') . '<br>' .
-  zen_get_show_product_switch($products_id_current, 'model') . '<br>' .
-  SHOW_PRODUCT_MUSIC_INFO_WEIGHT_ATTRIBUTES . '<br>' .
-  SHOW_PRODUCT_MUSIC_INFO_WEIGHT . '<br>' .
-  SHOW_PRODUCT_MUSIC_INFO_MANUFACTURER . '<br>' .
-  SHOW_PRODUCT_MUSIC_INFO_QUANTITY . '<br>' .
-  '<br />';
-  echo '  </td>';
-  echo '</tr>';
-}
-?>
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '1' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">
