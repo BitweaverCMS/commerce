@@ -732,7 +732,7 @@ class CommerceProduct extends LibertyAttachable {
 					$bindVars['metatags_description'] = zen_db_prepare_input($pParamHash['metatags_description'][$language_id]);
 				}
 
-				$this->mDb->query( "DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "WHERE `products_id`=?", array( $this->mProductsId ) );
+				$this->mDb->query( "DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id`=?", array( $this->mProductsId ) );
 				if( !empty( $bindVars ) ) {
 					$bindVars['products_id'] = $this->mProductsId;
 					$bindVars['language_id'] = $language_id;
