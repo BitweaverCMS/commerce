@@ -1,7 +1,12 @@
 <?php
 global $gBitSystem;
 
-$gBitSystem->registerPackage( 'bitcommerce', dirname( __FILE__ ).'/', TRUE, LIBERTY_SERVICE_COMMERCE );
+$registerHash = array(
+	'package_name' => 'bitcommerce',
+	'package_path' => dirname( __FILE__ ).'/',
+	'service' => LIBERTY_SERVICE_COMMERCE,
+);
+$gBitSystem->registerPackage( $registerHash );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	$gBitSystem->registerAppMenu( BITCOMMERCE_PKG_DIR, 'Shopping', BITCOMMERCE_PKG_URL.'index.php', 'bitpackage:bitcommerce/menu_bitcommerce.tpl' );
 }
