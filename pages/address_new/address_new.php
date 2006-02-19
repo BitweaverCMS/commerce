@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.1 2005/10/06 19:50:06 spiderr Exp $
+// $Id: address_new.php,v 1.2 2006/02/19 17:15:08 spiderr Exp $
 //
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
 if( empty( $entry['country_id'] ) ) {
-	$entry['country_id'] = '223';
+	$entry['country_id'] = SHOW_CREATE_ACCOUNT_DEFAULT_COUNTRY;
 }
 
 	global $gBitSmarty, $db, $gBitCustomer;
