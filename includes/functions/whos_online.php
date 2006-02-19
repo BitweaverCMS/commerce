@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.6 2005/09/25 01:06:52 spiderr Exp $
+// $Id: whos_online.php,v 1.7 2006/02/19 21:20:46 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -55,8 +55,8 @@
 
     $db->Execute($sql);
 
-    $stored_customer_query = "select count(*) as `count`
-                              from " . TABLE_WHOS_ONLINE . "
+    $stored_customer_query = 'select count(*) as "count"
+                              from ' . TABLE_WHOS_ONLINE . "
                               where `session_id` = '" . zen_db_input($wo_session_id) . "'";
 
     $stored_customer = $db->Execute($stored_customer_query);
