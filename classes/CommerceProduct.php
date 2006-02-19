@@ -400,17 +400,17 @@ class CommerceProduct extends LibertyAttachable {
 		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
 			$pProductsId = $this->mProductsId;
 		}
-		$ret = HTTP_SERVER.BITCOMMERCE_PKG_URL;
+		$ret = BITCOMMERCE_PKG_URL;
 		if( is_numeric( $pProductsId ) ) {
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 				$ret .= $pProductsId;
 				if( !empty( $pCatPath ) ) {
-					$ret .= '/' . $_REQUEST['cPath'];
+					$ret .= '/' . $pCatPath;
 				}
 			} else {
 				$ret .= 'index.php?products_id='.$pProductsId;
 				if( !empty( $pCatPath ) ) {
-					$ret .= '&cPath=' . $_REQUEST['cPath'];
+					$ret .= '&cPath=' . $pCatPath;
 				}
 			}
 		}
