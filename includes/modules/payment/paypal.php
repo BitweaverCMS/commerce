@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.3 2005/10/31 16:19:56 lsces Exp $
+//  $Id: paypal.php,v 1.4 2006/02/19 17:13:23 spiderr Exp $
 //
 
 // Note this is temporary
@@ -205,7 +205,7 @@ DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
    function check() {
      global $db;
      if (!isset($this->_check)) {
-       $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYPAL_STATUS'");
+       $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYPAL_STATUS'");
        $this->_check = $check_query->RecordCount();
      }
      return $this->_check;
