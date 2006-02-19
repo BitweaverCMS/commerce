@@ -183,7 +183,7 @@ BITCOMMERCE_DB_PREFIX.'counter' => "
 ",
 
 BITCOMMERCE_DB_PREFIX.'counter_history' => "
-  month C(8),
+  ch_month C(8),
   counter I8
 ",
 
@@ -489,7 +489,7 @@ BITCOMMERCE_DB_PREFIX.'currencies' => "
   decimal_point C(1),
   thousands_point C(1),
   decimal_places C(1),
-  value float(13,8),
+  currency_value float(13,8),
   last_updated T
 ",
 
@@ -803,7 +803,7 @@ BITCOMMERCE_DB_PREFIX.'orders_total' => "
   orders_id I4 NOTNULL,
   title C(255),
   text C(255),
-  value N(15,4),
+  orders_value N(15,4),
   class C(32),
   sort_order I4
   CONSTRAINT ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."orders`( `orders_id` )'
@@ -851,7 +851,7 @@ BITCOMMERCE_DB_PREFIX.'salemaker_sales' => "
 BITCOMMERCE_DB_PREFIX.'sessions' => "
   sesskey C(32),
   expiry I4,
-  value X
+  sess_value X
 ",
 
 BITCOMMERCE_DB_PREFIX.'specials' => "
@@ -990,7 +990,7 @@ BITCOMMERCE_DB_PREFIX.'authorizenet' => "
   transaction_id I8,
   sent X NOTNULL,
   received X NOTNULL,
-  time C(50),
+  az_time C(50),
   session_id C(254)
   CONSTRAINT ', CONSTRAINT `authorizenet_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."customers`( `customers_id` )'
 ",

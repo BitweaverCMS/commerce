@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sessions.php,v 1.4 2005/10/31 21:15:13 lsces Exp $
+// $Id: sessions.php,v 1.5 2006/02/19 20:56:49 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -44,15 +44,15 @@
 
     function _sess_read($key) {
       global $db;
-      $qid = "select `value`
+      $qid = "select `sess_value`
               from " . TABLE_SESSIONS . "
               where `sesskey` = '" . zen_db_input($key) . "'
               and `expiry` > '" . time() . "'";
 
       $value = $db->Execute($qid);
 
-      if ($value->fields['value']) {
-        return $value->fields['value'];
+      if ($value->fields['sess_value']) {
+        return $value->fields['sess_value'];
       }
 
       return ("");
@@ -73,7 +73,7 @@
 
       if ($total->fields['total'] > 0) {
         $sql = "update " . TABLE_SESSIONS . "
-                set `expiry` = '" . zen_db_input($expiry) . "', `value` = '" . zen_db_input($value) . "'
+                set `expiry` = '" . zen_db_input($expiry) . "', `sess_value` = '" . zen_db_input($value) . "'
                 where `sesskey` = '" . zen_db_input($key) . "'";
 
         return $db->Execute($sql);

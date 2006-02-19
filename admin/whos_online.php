@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.7 2005/11/17 22:34:03 gilesw Exp $
+//  $Id: whos_online.php,v 1.8 2006/02/19 20:56:50 lsces Exp $
 //
 
 
@@ -34,7 +34,7 @@ function zen_check_bot($checking) {
 // host for current ip
 function zen_check_quantity($which) {
   global $db;
-  $which_query = $db->Execute("select `sesskey`, `value`
+  $which_query = $db->Execute("select `sesskey`, `sess_value`
                                    from " . TABLE_SESSIONS . "
                                    where `sesskey`= '" . $which . "'");
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.14 2006/02/08 23:24:27 spiderr Exp $
+// $Id: currencies.php,v 1.15 2006/02/19 20:56:50 lsces Exp $
 //
 
 ////
@@ -32,7 +32,7 @@
 	  BitBase::BitBase();
       $this->currencies = array();
       $currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`,
-                                  `thousands_point`, `decimal_places`, `value`
+                                  `thousands_point`, `decimal_places`, `currency_value`
                           FROM " . TABLE_CURRENCIES;
 
       $currencies = $gBitDb->query( $currencies_query );
@@ -44,7 +44,7 @@
                                                        'decimal_point' => $currencies->fields['decimal_point'],
                                                        'thousands_point' => $currencies->fields['thousands_point'],
                                                        'decimal_places' => $currencies->fields['decimal_places'],
-                                                       'value' => $currencies->fields['value']);
+                                                       'currency_value' => $currencies->fields['currency_value']);
 
       $currencies->MoveNext();
       }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_graphs.php,v 1.3 2005/08/24 03:18:27 lsces Exp $
+// $Id: html_graphs.php,v 1.4 2006/02/19 20:56:50 lsces Exp $
 //
 
 ////
@@ -379,7 +379,7 @@
     $dvalues = array();
 
     $banner_stats = $db->Execute("select ".$db->SQLDate( 'd', '`banners_history_date`' )." as `name`,
-	                                     `banners_shown` as `value`, `banners_clicked` as `dvalue`
+	                                     `banners_shown` as `svalue`, `banners_clicked` as `dvalue`
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where `banners_id` = '" . $banner_id . "'
 										 and ".$db->OffsetDate( $days, '`banners_history_date`' )." > 'NOW'
@@ -387,7 +387,7 @@
 
     while (!$banner_stats->EOF) {
       $names[] = $banner_stats->fields['name'];
-      $values[] = $banner_stats->fields['value'];
+      $values[] = $banner_stats->fields['svalue'];
       $dvalues[] = $banner_stats->fields['dvalue'];
 	  $banner_stats->MoveNext();
     }

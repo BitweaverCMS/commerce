@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.5 2005/10/31 22:53:09 lsces Exp $
+// $Id: authorizenet_aim.php,v 1.6 2006/02/19 20:56:50 lsces Exp $
 
 
   class authorizenet_aim {
@@ -362,7 +362,7 @@
 
 
 	    // Insert the data into the database
-	    $db->Execute("insert into " . TABLE_AUTHORIZENET . "  (id, customer_id,order_id, response_code, response_text, authorization_type, transaction_id, sent, received, time, session_id) values ('', '" . $_SESSION['customer_id'] . "', '" . $new_order_id . "', '" . $db_response_code . "', '" . $db_response_text . "', '" . $db_authorization_type . "', '" . $db_transaction_id . "', '" . $data . "', '" . $response_list . "', '" . $order_time . "', '" . $db_session_id . "')");
+	    $db->Execute("INSERT INTO " . TABLE_AUTHORIZENET . "  (`id`, `customer_id`, `order_id`, `response_code`, `response_text`, `authorization_type`, `transaction_id`, `sent`, `received`, `az_time`, `session_id`) VALUES ('', '" . $_SESSION['customer_id'] . "', '" . $new_order_id . "', '" . $db_response_code . "', '" . $db_response_text . "', '" . $db_authorization_type . "', '" . $db_transaction_id . "', '" . $data . "', '" . $response_list . "', '" . $order_time . "', '" . $db_session_id . "')");
 	  }
 
 	  // Parse the response code and text for custom error display

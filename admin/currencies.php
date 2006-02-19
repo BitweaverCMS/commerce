@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.12 2006/02/08 23:24:26 spiderr Exp $
+//  $Id: currencies.php,v 1.13 2006/02/19 20:56:50 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -112,7 +112,7 @@
 
           if (zen_not_null($rate)) {
             $db->Execute("update " . TABLE_CURRENCIES . "
-                          set `value` = '" . $rate . "', `last_updated` = 'NOW'
+                          set `currency_value` = '" . $rate . "', `last_updated` = 'NOW'
                           where `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
 
             $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
@@ -198,7 +198,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $currency_query_raw = "select `currencies_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `last_updated`, `value` from " . TABLE_CURRENCIES . " order by `title`";
+  $currency_query_raw = "select `currencies_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `last_updated`, `currency_value` from " . TABLE_CURRENCIES . " order by `title`";
   $currency_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $currency_query_raw, $currency_query_numrows);
   $currency = $db->Execute($currency_query_raw);
   while (!$currency->EOF) {
