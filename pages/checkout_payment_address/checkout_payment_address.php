@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment_address.php,v 1.2 2005/10/06 19:50:06 spiderr Exp $
+// $Id: checkout_payment_address.php,v 1.3 2006/02/19 17:14:26 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
 <tr>
-	<td class="pageHeading" colspan="3"><h1><?php echo HEADING_TITLE; ?></h1></td>
+	<td class="pageHeading" colspan="3"><h1><?php echo tra( 'Enter Your Billing Information' ); ?></h1></td>
 </tr>
 <tr>
 	<td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
@@ -82,7 +82,7 @@ if ($messageStack->size('checkout_address') > 0) {
 <tr>
 	<td class="main"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
 	<td class="main" colspan="2">
-		<span style="float:left"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></span>
+		<span style="float:left"><?php echo tra( 'Continue' ) . '<br />' . tra( '- to payment method.' ); ?></span>
 		<span style="float:right">
 		<?php echo zen_draw_hidden_field('action', 'submit') . zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT); ?>
 		</span>
