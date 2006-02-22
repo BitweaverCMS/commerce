@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.35 2006/02/09 20:57:16 spiderr Exp $
+// $Id: order.php,v 1.36 2006/02/22 03:54:07 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -40,6 +40,11 @@ class order extends BitBase {
 			$this->cart();
 		}
     }
+
+	function getField( $pField ) {
+		$ret = (isset( $this->info[$pField] ) ? $this->info[$pField] : NULL );
+		return $ret;
+	}
 
 	function getList( $pListHash ) {
 		global $gBitDb;
@@ -80,7 +85,7 @@ class order extends BitBase {
 
       $order = $db->query( $order_query, array( $order_id ) );
 
-      $totals_query = "select title, text, class, value
+      $totals_query = "select `title`, `text`, `class`, `orders_value`
                        from " . TABLE_ORDERS_TOTAL . "
                        where `orders_id` = '" . (int)$order_id . "'
                        order by `sort_order`";
@@ -91,11 +96,11 @@ class order extends BitBase {
         $this->totals[] = array('title' => $totals->fields['title'],
                                 'text' => $totals->fields['text'],
                                 'class' => $totals->fields['class'],
-                                'value' => $totals->fields['value']);
+                                'orders_value' => $totals->fields['orders_value']);
         $totals->MoveNext();
       }
 
-      $order_total_query = "select text, value
+      $order_total_query = "select `text`, `orders_value`
          from " . TABLE_ORDERS_TOTAL . "
          where `orders_id` = '" . (int)$order_id . "'
          and class = 'ot_total'";
@@ -104,7 +109,7 @@ class order extends BitBase {
       $order_total = $db->Execute($order_total_query);
 
 
-      $shipping_method_query = "select title, value
+      $shipping_method_query = "select title, `orders_value`
           from " . TABLE_ORDERS_TOTAL . "
           where `orders_id` = '" . (int)$order_id . "'
           and class = 'ot_shipping'";

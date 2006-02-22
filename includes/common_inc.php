@@ -292,7 +292,7 @@
 	if( $template ) {
 	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 	} else {
-      return zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $params);
+      return zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $parameters);
     }
   }
 

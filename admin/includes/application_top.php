@@ -17,13 +17,18 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.16 2006/02/05 21:36:07 spiderr Exp $
+//  $Id: application_top.php,v 1.17 2006/02/22 03:54:06 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-error_reporting(E_ALL & ~E_NOTICE);
+// Set the level of error reporting
+if( defined( 'IS_LIVE' ) ) {
+  	error_reporting(E_ALL & ~E_NOTICE);
+} else {
+	error_reporting(E_ALL);
+}
 
 global $gBitSystem, $gBitUser;
 $gBitSystem->verifyPermission( 'bit_p_commerce_admin' );
@@ -34,8 +39,6 @@ ob_start();
 // Start the clock for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 
-// Set the level of error reporting
-error_reporting(E_ALL & ~E_NOTICE);
 
 // set php_self in the local scope
   if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];

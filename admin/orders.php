@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.30 2005/11/21 14:43:53 spiderr Exp $
+//  $Id: orders.php,v 1.31 2006/02/22 03:54:06 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -55,7 +55,7 @@
     switch ($action) {
       case 'edit':
       // reset single download to on
-        if ($_GET['download_reset_on'] > 0) {
+        if( !empty( $_GET['download_reset_on'] ) ) {
           // adjust download_maxdays based on current date
           $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
@@ -70,7 +70,7 @@
           zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
         }
       // reset single download to off
-        if ($_GET['download_reset_off'] > 0) {
+        if( !empty( $_GET['download_reset_off'] ) ) {
           // adjust download_maxdays based on current date
           $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
           unset($_GET['download_reset_off']);
@@ -302,7 +302,7 @@
           </tr>
           <tr>
             <td class="main"><?php echo ENTRY_CREDIT_CARD_CVV; ?></td>
-            <td class="main"><?php echo $order->info['cc_cvv']; ?></td>
+            <td class="main"><?php echo $order->getField( 'cc_cvv' ); ?></td>
           </tr>
           <tr>
             <td class="main"><?php echo ENTRY_CREDIT_CARD_EXPIRES; ?></td>
@@ -348,7 +348,7 @@
 
       if (isset($order->products[$i]['attributes']) && (sizeof($order->products[$i]['attributes']) > 0)) {
         for ($j = 0, $k = sizeof($order->products[$i]['attributes']); $j < $k; $j++) {
-          echo '<br /><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'];
+          echo '<br /><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['orders_value'];
           if ($order->products[$i]['attributes'][$j]['price'] != '0') echo ' (' . $order->products[$i]['attributes'][$j]['prefix'] . $currencies->format($order->products[$i]['attributes'][$j]['final_price'] * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
           if ($order->products[$i]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->products[$i]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
           echo '</i></small></nobr>';
@@ -385,7 +385,7 @@
       echo '              <tr>' . "\n" .
            '                <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Text">' . $order->totals[$i]['title'] . '</td>' . "\n" .
            '                <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Amount">' . $order->totals[$i]['text'] .
-			($foreignCurrency ? ' ( '.($currencies->format( $order->totals[$i]['value'], true, DEFAULT_CURRENCY)).' ) ' : '' ) .
+			($foreignCurrency ? ' ( '.($currencies->format( $order->totals[$i]['orders_value'], true, DEFAULT_CURRENCY)).' ) ' : '' ) .
            '</td>' . "\n" .
            '              </tr>' . "\n";
     }
@@ -685,7 +685,7 @@
 
         if (sizeof($order->products[$i]['attributes']) > 0) {
           for ($j=0; $j<sizeof($order->products[$i]['attributes']); $j++) {
-            $contents[] = array('text' => '&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'] . '</i></nobr>' );
+            $contents[] = array('text' => '&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['orders_value'] . '</i></nobr>' );
           }
         }
         if ($i > MAX_DISPLAY_RESULTS_ORDERS_DETAILS_LISTING and MAX_DISPLAY_RESULTS_ORDERS_DETAILS_LISTING != 0) {

@@ -363,6 +363,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		// If Free, Show it
+		$free_tag = '';
 		if ($product_check['product_is_free'] == '1') {
 			if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
 				$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
@@ -372,6 +373,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		// If Call for Price, Show it
+		$call_tag = '';
 		if ($product_check['product_is_call']) {
 			if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
 				$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;

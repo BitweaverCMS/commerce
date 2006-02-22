@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.8 2006/02/05 21:36:07 spiderr Exp $
+//  $Id: header.php,v 1.9 2006/02/22 03:54:06 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -75,6 +75,8 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     echo $messageStack->output();
   }
 
+/*
+SPIDERKILL for obvious reasons...
 // check version with zen-cart server
   // ignore version-check if INI file setting has been set
   if (file_exists(DIR_FS_ADMIN . 'includes/local/skip_version_check.ini')) {
@@ -117,7 +119,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
     $url .= (strpos($url,'?')>5) ? '&vcheck=yes' : '?vcheck=yes';
     if ($zv_db_patch_ok == true || $version_check_sysinfo==true ) $new_version = '<a href="' . $url . '">' . zen_image_button('button_check_new_version.gif',IMAGE_CHECK_VERSION) . '</a>';
   }
-
+*/
 // check GV release queue and alert store owner
   if (SHOW_GV_QUEUE==true) {
     if( $new_gv_queue= $db->getOne("select COUNT(*) from " . TABLE_COUPON_GV_QUEUE . " where `release_flag`='N'") ) {

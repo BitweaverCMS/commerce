@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.9 2005/11/22 12:11:13 gilesw Exp $
+//  $Id: en.php,v 1.10 2006/02/22 03:54:06 spiderr Exp $
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..
@@ -407,7 +407,7 @@ define('TEXT_IMAGE_NONEXISTENT', 'IMAGE DOES NOT EXIST');
 
 define('TEXT_CACHE_CATEGORIES', 'Categories Box');
 define('TEXT_CACHE_MANUFACTURERS', 'Manufacturers Box');
-define('TEXT_CACHE_MANUFACTURERS', 'Suppliers Box');
+// define('TEXT_CACHE_MANUFACTURERS', 'Suppliers Box');
 define('TEXT_CACHE_ALSO_PURCHASED', 'Also Purchased Module');
 
 define('TEXT_NONE', '--none--');

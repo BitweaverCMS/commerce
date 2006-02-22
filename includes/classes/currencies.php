@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.15 2006/02/19 20:56:50 lsces Exp $
+// $Id: currencies.php,v 1.16 2006/02/22 03:54:07 spiderr Exp $
 //
 
 ////
@@ -62,7 +62,7 @@
 		}
 
 		if ($calculate_currency_value == true) {
-			$rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['value'];
+			$rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
 			$format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];
 		} else {
 			$format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];

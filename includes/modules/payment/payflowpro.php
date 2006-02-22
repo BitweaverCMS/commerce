@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.9 2005/10/31 22:53:09 lsces Exp $
+// $Id: payflowpro.php,v 1.10 2006/02/22 03:54:08 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -37,7 +37,7 @@
       global $order, $messageStack;
 
       $this->code = 'payflowpro';
-     if ($_GET['main_page'] != '') {
+     if( !empty( $_GET['main_page'] ) ) {
        $this->title = tra( 'Credit Card' ); // Payment module title in Catalog
      } else {
        $this->title = tra( 'Verisign PayFlow Pro' ); // Payment module title in Admin
