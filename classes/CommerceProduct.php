@@ -596,7 +596,7 @@ class CommerceProduct extends LibertyAttachable {
 	function isOwner() {
 		global $gBitUser;
 		$ret = FALSE;
-		if( $this->mInfo['user_id'] ) {
+		if( $this->getField( 'user_id' ) ) {
 			$ret = $gBitUser->mUserId == $this->mInfo['user_id'];
 		}
 		return( $ret );
