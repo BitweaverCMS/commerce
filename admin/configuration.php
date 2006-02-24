@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.6 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: configuration.php,v 1.7 2006/02/24 22:45:08 lsces Exp $
 //
 
-
+  define('HEADING_TITLE', 'Configuration Settings');
   require('includes/application_top.php');
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
