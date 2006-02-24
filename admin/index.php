@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.16 2006/02/24 04:13:04 spiderr Exp $
+//  $Id: index.php,v 1.17 2006/02/24 21:36:14 lsces Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -61,16 +61,16 @@ global $language;
 <!-- header_eof //-->
  <?php
 
-  $customers = $db->Execute("select count(*) as `count` from " . TABLE_CUSTOMERS);
+  $customers = $db->getOne("select count(*) from " . TABLE_CUSTOMERS);
 
-  $products = $db->Execute("select count(*) as `count` from " . TABLE_PRODUCTS . " where `products_status` = '1'");
+  $products = $db->getOne("select count(*) from " . TABLE_PRODUCTS . " where `products_status` = '1'");
 
-  $products_off = $db->Execute("select count(*) as `count` from " . TABLE_PRODUCTS . " where `products_status` = '0'");
+  $products_off = $db->getOne("select count(*) from " . TABLE_PRODUCTS . " where `products_status` = '0'");
 
-  $reviews = $db->Execute("select count(*) as `count` from " . TABLE_REVIEWS);
-  $reviews_pending = $db->Execute("select count(*) as `count` from " . TABLE_REVIEWS . " where `status`='0'");
+  $reviews = $db->getOne("select count(*) from " . TABLE_REVIEWS);
+  $reviews_pending = $db->getOne("select count(*) from " . TABLE_REVIEWS . " where `status`='0'");
 
-  $newsletters = $db->Execute("select count(*) as `count` from " . TABLE_CUSTOMERS . " where `customers_newsletter` = '1'");
+  $newsletters = $db->getOne("select count(*) from " . TABLE_CUSTOMERS . " where `customers_newsletter` = '1'");
 
   $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
   $counter = $db->Execute($counter_query);
@@ -78,12 +78,12 @@ global $language;
 //  $counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
   $counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
 
-  $specials = $db->Execute("select count(*) as `count` from " . TABLE_SPECIALS . " where `status`= '0'");
-  $specials_act = $db->Execute("select count(*) as `count` from " . TABLE_SPECIALS . " where `status`= '1'");
-  $featured = $db->Execute("select count(*) as `count` from " . TABLE_FEATURED . " where `status`= '0'");
-  $featured_act = $db->Execute("select count(*) as `count` from " . TABLE_FEATURED . " where `status`= '1'");
-  $salemaker = $db->Execute("select count(*) as `count` from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '0'");
-  $salemaker_act = $db->Execute("select count(*) as `count` from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '1'");
+  $specials = $db->getOne("select count(*) from " . TABLE_SPECIALS . " where `status`= '0'");
+  $specials_act = $db->getOne("select count(*) from " . TABLE_SPECIALS . " where `status`= '1'");
+  $featured = $db->getOne("select count(*) from " . TABLE_FEATURED . " where `status`= '0'");
+  $featured_act = $db->getOne("select count(*) from " . TABLE_FEATURED . " where `status`= '1'");
+  $salemaker = $db->getOne("select count(*) from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '0'");
+  $salemaker_act = $db->getOne("select count(*) from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '1'");
 
 
 ?>
@@ -94,7 +94,7 @@ global $language;
   if( $rs = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
 
 	  while( $orders_status = $rs->fetchRow() ) {
-		$orders_pending = $db->GetOne("select count(*) as `count` from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
+		$orders_pending = $db->GetOne("select count(*) from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
 		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending . '</td></tr>';
 		$rs->MoveNext();
 	  }
@@ -147,21 +147,21 @@ data is linked with users_users
 <?php
 	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_COUNTER . '</td><td> ' . $counter->fields['counter'] . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_CUSTOMERS . '</td><td> ' . $customers->fields['count'] . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products->fields['count'] . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off->fields['count'] . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_REVIEWS . '</td><td>' . $reviews->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_CUSTOMERS . '</td><td> ' . $customers . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_REVIEWS . '</td><td>' . $reviews . '</td></tr>';
     if (REVIEWS_APPROVAL=='1') {
-	  echo '<td><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></td><td>' . $reviews_pending->fields['count']. '</td></tr>';
+	  echo '<td><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></td><td>' . $reviews_pending. '</td></tr>';
     }
-	echo '<tr><td>' . BOX_ENTRY_NEWSLETTERS . '</td><td> ' . $newsletters->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_NEWSLETTERS . '</td><td> ' . $newsletters . '</td></tr>';
 
-	echo '<tr><td>' . BOX_ENTRY_SPECIALS_EXPIRED . '</td><td> ' . $specials->fields['count']. '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_SPECIALS_ACTIVE . '</td><td> ' . $specials_act->fields['count']. '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_FEATURED_EXPIRED . '</td><td> ' . $featured->fields['count']. '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_FEATURED_ACTIVE . '</td><td> ' . $featured_act->fields['count']. '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_EXPIRED . '</td><td> ' . $salemaker->fields['count']. '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_ACTIVE . '</td><td> ' . $salemaker_act->fields['count']. '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SPECIALS_EXPIRED . '</td><td> ' . $specials . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SPECIALS_ACTIVE . '</td><td> ' . $specials_act . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_FEATURED_EXPIRED . '</td><td> ' . $featured . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_FEATURED_ACTIVE . '</td><td> ' . $featured_act . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_EXPIRED . '</td><td> ' . $salemaker . '</td></tr>';
+	echo '<tr><td>' . BOX_ENTRY_SALEMAKER_ACTIVE . '</td><td> ' . $salemaker_act . '</td></tr>';
 
 ?>
 </table>
