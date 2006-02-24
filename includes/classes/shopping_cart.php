@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.27 2006/02/24 04:13:05 spiderr Exp $
+// $Id: shopping_cart.php,v 1.28 2006/02/24 23:20:10 spiderr Exp $
 //
 
   class shoppingCart {
@@ -1071,14 +1071,15 @@ if ((int)$products_id != $products_id) {
       // if nothing is in cart return 0
       if (!is_array($this->contents)) return 0;
 
-      // check if mixed is on
-      $product = $gBitDb->getOne("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
-			" where `products_id` ='" . zen_get_prid($products_id) . "'");
+		// check if mixed is on
+		if( $product = $gBitDb->getRow("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
+			" where `products_id` ='" . zen_get_prid($products_id) . "'") ) {
 
-      // if mixed attributes is off return qty for current attribute selection
-      if ($product->fields['products_mixed_discount_quantity'] == '0') {
-        return $this->get_quantity($products_id);
-      }
+			// if mixed attributes is off return qty for current attribute selection
+			if ($product['products_mixed_discount_qty'] == '0') {
+				return $this->get_quantity($products_id);
+			}
+		}
 
       // compute total quantity regardless of attributes
       $in_cart_mixed_qty_discount_quantity = 0;
