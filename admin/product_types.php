@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.10 2006/01/14 23:39:57 lsces Exp $
+//  $Id: product_types.php,v 1.11 2006/02/24 23:00:52 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -175,9 +175,9 @@
 
 <!-- body //-->
 <?php
-if ($_GET['action'] == 'layout' || $_GET['action'] == 'layout_edit') {
-  $sql = "select type_name from " . TABLE_PRODUCT_TYPES . "
-          where `type_id` = '"   . (int)$_GET['ptID'] . "'";
+if ( $action == 'layout' || $action == 'layout_edit') {
+  $sql = "SELECT `type_name` FROM " . TABLE_PRODUCT_TYPES . "
+          WHERE `type_id` = '"   . (int)$_GET['ptID'] . "'";
   $type_name = $db->Execute($sql);
 
 
