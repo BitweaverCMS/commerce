@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_classes.php,v 1.7 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: tax_classes.php,v 1.8 2006/02/24 23:56:36 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -29,11 +29,11 @@
         $tax_class_title = zen_db_prepare_input($_POST['tax_class_title']);
         $tax_class_description = zen_db_prepare_input($_POST['tax_class_description']);
 
-        $db->Execute("insert into " . TABLE_TAX_CLASS . "
-                    (tax_`class_title`, `tax_class_description`, `date_added`)
-                    values ('" . zen_db_input($tax_class_title) . "',
+        $db->Execute("INSERT INTO " . TABLE_TAX_CLASS . "
+                    (`tax_class_title`, `tax_class_description`, `date_added`)
+                    VALUES ('" . zen_db_input($tax_class_title) . "',
                             '" . zen_db_input($tax_class_description) . "',
-                            " . $dB->mDb->sysTimeStamp . ")");
+                            " . $db->mDb->sysTimeStamp . ")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES));
         break;
@@ -42,12 +42,12 @@
         $tax_class_title = zen_db_prepare_input($_POST['tax_class_title']);
         $tax_class_description = zen_db_prepare_input($_POST['tax_class_description']);
 
-        $db->Execute("update " . TABLE_TAX_CLASS . "
-                      set `tax_class_id` = '" . (int)$tax_class_id . "',
+        $db->Execute("UPDATE " . TABLE_TAX_CLASS . "
+                      SET `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_class_title` = '" . zen_db_input($tax_class_title) . "',
                           `tax_class_description` = '" . zen_db_input($tax_class_description) . "',
-                          `last_modified` = " . $dB->mDb->sysTimeStamp . "
-                      where `tax_class_id` = '" . (int)$tax_class_id . "'");
+                          `last_modified` = " . $db->mDb->sysTimeStamp . "
+                      WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page'] . '&tID=' . $tax_class_id));
         break;
@@ -60,8 +60,8 @@
         }
         $tax_class_id = zen_db_prepare_input($_GET['tID']);
 
-        $db->Execute("delete from " . TABLE_TAX_CLASS . "
-                      where `tax_class_id` = '" . (int)$tax_class_id . "'");
+        $db->Execute("DELETE FROM " . TABLE_TAX_CLASS . "
+                      WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page']));
         break;
