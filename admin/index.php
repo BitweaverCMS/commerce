@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.17 2006/02/24 21:36:14 lsces Exp $
+//  $Id: index.php,v 1.18 2006/02/24 22:33:01 lsces Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -61,16 +61,16 @@ global $language;
 <!-- header_eof //-->
  <?php
 
-  $customers = $db->getOne("select count(*) from " . TABLE_CUSTOMERS);
+  $customers = $db->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
 
-  $products = $db->getOne("select count(*) from " . TABLE_PRODUCTS . " where `products_status` = '1'");
+  $products = $db->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '1'");
 
-  $products_off = $db->getOne("select count(*) from " . TABLE_PRODUCTS . " where `products_status` = '0'");
+  $products_off = $db->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '0'");
 
-  $reviews = $db->getOne("select count(*) from " . TABLE_REVIEWS);
-  $reviews_pending = $db->getOne("select count(*) from " . TABLE_REVIEWS . " where `status`='0'");
+  $reviews = $db->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS);
+  $reviews_pending = $db->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS . " WHERE `status`='0'");
 
-  $newsletters = $db->getOne("select count(*) from " . TABLE_CUSTOMERS . " where `customers_newsletter` = '1'");
+  $newsletters = $db->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS . " WHERE `customers_newsletter` = '1'");
 
   $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
   $counter = $db->Execute($counter_query);
@@ -78,12 +78,12 @@ global $language;
 //  $counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
   $counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
 
-  $specials = $db->getOne("select count(*) from " . TABLE_SPECIALS . " where `status`= '0'");
-  $specials_act = $db->getOne("select count(*) from " . TABLE_SPECIALS . " where `status`= '1'");
-  $featured = $db->getOne("select count(*) from " . TABLE_FEATURED . " where `status`= '0'");
-  $featured_act = $db->getOne("select count(*) from " . TABLE_FEATURED . " where `status`= '1'");
-  $salemaker = $db->getOne("select count(*) from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '0'");
-  $salemaker_act = $db->getOne("select count(*) from " . TABLE_SALEMAKER_SALES . " where `sale_status` = '1'");
+  $specials = $db->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '0'");
+  $specials_act = $db->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '1'");
+  $featured = $db->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '0'");
+  $featured_act = $db->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '1'");
+  $salemaker = $db->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
+  $salemaker_act = $db->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
 
 
 ?>
@@ -91,10 +91,10 @@ global $language;
 <table class="data">
    <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
   <?php   $orders_contents = '';
-  if( $rs = $db->Execute("select `orders_status_name`, `orders_status_id` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
+  if( $rs = $db->Execute("SELECT `orders_status_name`, `orders_status_id` FROM " . TABLE_ORDERS_STATUS . " WHERE `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
 
 	  while( $orders_status = $rs->fetchRow() ) {
-		$orders_pending = $db->GetOne("select count(*) from " . TABLE_ORDERS . " where `orders_status` = '" . $orders_status['orders_status_id'] . "'");
+		$orders_pending = $db->GetOne("SELECT COUNT(*) FROM " . TABLE_ORDERS . " WHERE `orders_status` = '" . $orders_status['orders_status_id'] . "'");
 		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending . '</td></tr>';
 		$rs->MoveNext();
 	  }
