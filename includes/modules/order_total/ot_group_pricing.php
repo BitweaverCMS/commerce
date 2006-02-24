@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_group_pricing.php,v 1.3 2005/08/24 15:06:37 lsces Exp $
+// $Id: ot_group_pricing.php,v 1.4 2006/02/24 04:13:06 spiderr Exp $
 //
 
   class ot_group_pricing {
@@ -147,7 +147,7 @@
     function check() {
       global $db;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS'");
+        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
 

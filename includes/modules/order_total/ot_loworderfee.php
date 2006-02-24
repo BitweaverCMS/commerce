@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_loworderfee.php,v 1.2 2005/08/24 02:52:59 lsces Exp $
+// $Id: ot_loworderfee.php,v 1.3 2006/02/24 04:13:06 spiderr Exp $
 //
 
   class ot_loworderfee {
@@ -99,7 +99,7 @@
     function check() {
 	  global $db;
       if (!isset($this->_check)) {
-        $check_query = "select`configuration_value`
+        $check_query = "select `configuration_value`
                         from " . TABLE_CONFIGURATION . "
                         where `configuration_key` = 'MODULE_ORDER_TOTAL_LOWORDERFEE_STATUS'";
 

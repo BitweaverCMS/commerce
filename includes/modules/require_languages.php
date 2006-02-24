@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: require_languages.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: require_languages.php,v 1.4 2006/02/24 04:13:06 spiderr Exp $
 //
 // determine language or template language file
   if (file_exists($language_page_directory . $template_dir . '/' . $current_page_base . '.php')) {
@@ -27,7 +27,7 @@
   }
 
 // set language or template language file
-  $directory_array = $template->get_template_part($language_page_directory . $template_dir_select, '/^'.$current_page_base . '/');
+  $directory_array = $template->get_template_part($language_page_directory . $template_dir_select, '/^'.$current_page_base . '\./');
 
 // load language file(s)
   while(list ($key, $value) = each($directory_array)) {

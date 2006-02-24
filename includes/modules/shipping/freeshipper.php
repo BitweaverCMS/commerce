@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freeshipper.php,v 1.4 2005/09/01 22:01:11 spiderr Exp $
+// $Id: freeshipper.php,v 1.5 2006/02/24 04:13:08 spiderr Exp $
 //
   class freeshipper {
     var $code, $title, $description, $icon, $enabled;
@@ -80,7 +80,7 @@
     function check() {
       global $db;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_FREESHIPPER_STATUS'");
+        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_FREESHIPPER_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;

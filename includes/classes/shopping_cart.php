@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.26 2006/02/19 17:16:20 spiderr Exp $
+// $Id: shopping_cart.php,v 1.27 2006/02/24 04:13:05 spiderr Exp $
 //
 
   class shoppingCart {
@@ -445,11 +445,11 @@
           if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
             $this->free_shipping_item += $qty;
             $this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-            $this->free_shipping_weight += ($qty * $products_weight);
+            $this->free_shipping_weight += ($qty * $product->getField('products_weight') );
           }
 
           $this->total += zen_add_tax($products_price, $products_tax) * $qty;
-          $this->weight += ($qty * $products_weight);
+          $this->weight += ($qty * $product->getField('products_weight') );
         }
 
 // attributes price
@@ -798,6 +798,7 @@ if ((int)$products_id != $products_id) {
       	$product = new CommerceProduct( zen_get_prid( $products_id ) );
 		if( $product->load() ) {
 			$prid = $product->mProductsId;
+			$qty = $this->contents[$prid]['quantity'];
 			$products_price = $product->getPurchasePrice( $qty );
 
 				if ($check_for_valid_cart == true) {

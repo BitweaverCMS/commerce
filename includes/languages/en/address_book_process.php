@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_book_process.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id: address_book_process.php,v 1.3 2006/02/24 04:13:06 spiderr Exp $
 //
 
 define('NAVBAR_TITLE_1', 'My Account');
@@ -34,10 +34,7 @@ define('HEADING_TITLE_DELETE_ENTRY', '<h1>Delete Address Book Entry</h1>');
 define('DELETE_ADDRESS_TITLE', 'Delete Address');
 define('DELETE_ADDRESS_DESCRIPTION', 'Are you sure you would like to delete the selected address from your address book?');
 
-define('NEW_ADDRESS_TITLE', 'New Address Book Entry');
-
 define('SELECTED_ADDRESS', 'Selected Address');
-define('SET_AS_PRIMARY', 'Set as primary address.');
 
 define('SUCCESS_ADDRESS_BOOK_ENTRY_DELETED', 'The selected address has been successfully removed from your address book.');
 define('SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED', 'Your address book has been successfully updated.');

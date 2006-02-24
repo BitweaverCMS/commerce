@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.19 2005/12/05 15:00:09 squareing Exp $
+// $Id: index.php,v 1.20 2006/02/24 04:13:03 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -68,7 +68,7 @@ ob_start();
 	//new smarty based pages are doing away with this call
 	require_once( DIR_FS_MODULES . 'require_languages.php' );
 
-	require($template->get_template_dir('html_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/html_header.php');
+// 	require($template->get_template_dir('html_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/html_header.php');
 
 	// Define Template Variables picked up from includes/main_template_vars.php unless a file exists in the
 	// includes/pages/{page_name}/directory to overide. Allowing different pages to have different overall

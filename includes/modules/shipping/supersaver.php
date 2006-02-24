@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: supersaver.php,v 1.1 2005/09/01 22:01:11 spiderr Exp $
+// $Id: supersaver.php,v 1.2 2006/02/24 04:13:08 spiderr Exp $
 //
   class supersaver {
     var $code, $title, $description, $icon, $enabled;
@@ -104,7 +104,7 @@
     function check() {
       global $gBitDb;
       if (!isset($this->_check)) {
-        $check_query = $gBitDb->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_SUPERSAVER_STATUS'");
+        $check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_SUPERSAVER_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;

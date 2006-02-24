@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.9 2005/10/31 16:19:58 lsces Exp $
+//  $Id: orders_status.php,v 1.10 2006/02/24 04:13:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -73,7 +73,7 @@
         }
         $oID = zen_db_prepare_input($_GET['oID']);
 
-        $orders_status = $db->Execute("select`configuration_value`
+        $orders_status = $db->Execute("select `configuration_value`
                                        from " . TABLE_CONFIGURATION . "
                                        where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 

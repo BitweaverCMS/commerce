@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.15 2006/02/05 22:57:43 lsces Exp $
+//  $Id: index.php,v 1.16 2006/02/24 04:13:04 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
-
+global $language;
   $languages = zen_get_languages();
   $languages_array = array();
   $languages_selected = DEFAULT_LANGUAGE;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.7 2005/11/16 11:52:21 spiderr Exp $
+// $Id: usps.php,v 1.8 2006/02/24 04:13:08 spiderr Exp $
 //
 
 class usps {
@@ -197,7 +197,7 @@ class usps {
 	function check() {
 		global $db;
 		if (!isset($this->_check)) {
-			$check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_USPS_STATUS'");
+			$check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_USPS_STATUS'");
 			$this->_check = $check_query->RecordCount();
 		}
 		return $this->_check;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: table.php,v 1.2 2005/08/24 02:53:52 lsces Exp $
+// $Id: table.php,v 1.3 2006/02/24 04:13:08 spiderr Exp $
 //
 
   class table {
@@ -116,7 +116,7 @@
     function check() {
       global $db;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_TABLE_STATUS'");
+        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_SHIPPING_TABLE_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;

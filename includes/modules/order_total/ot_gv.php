@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.10 2006/01/12 22:39:28 spiderr Exp $
+// $Id: ot_gv.php,v 1.11 2006/02/24 04:13:06 spiderr Exp $
 //
 
   class ot_gv {
@@ -291,7 +291,7 @@
     function check() {
       global $db;
       if (!isset($this->check)) {
-        $check_query = $db->Execute("select`configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GV_STATUS'");
+        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GV_STATUS'");
         $this->check = $check_query->RecordCount();
       }
 

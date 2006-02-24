@@ -17,13 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.12 2005/12/21 18:24:07 gilesw Exp $
+// $Id: header_php.php,v 1.13 2006/02/24 04:13:08 spiderr Exp $
 //
 
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(FILENAME_LOGIN);
   }
+
+if( empty( $country_id ) ) {
+	$country_id = STORE_COUNTRY;
+}
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
   if (isset($_GET['action']) && ($_GET['action'] == 'deleteconfirm') && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
@@ -78,7 +82,10 @@
       }
     }
   } else {
-    $entry = array();
+		$entry = array( 'entry_gender' => '', 'entry_firstname' => '', 'entry_lastname' => '', 'entry_company' => '', 'entry_street_address' => '', 'entry_suburb' => '', 'entry_city' => '', 'entry_country_id' => '', 'entry_zone_id' => '', 'entry_state' => '', 'entry_postcode' => '', 'entry_country_id' => STORE_COUNTRY, 'entry_telephone' => '' );
+		if( !empty( $_REQUEST['address_store'] ) ) {
+    		$entry = array_merge( $entry, $_REQUEST['address_store'] );
+		}
   }
 
   if (!isset($_GET['delete']) && !isset($_GET['edit'])) {

@@ -132,7 +132,7 @@ class CommerceProduct extends LibertyAttachable {
             $products_weight = 0;
           }
 
-          $special_price = zen_get_products_special_price($prid);
+          $special_price = zen_get_products_special_price( $this->mProductsId );
           if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
             $ret = $special_price;
           } else {

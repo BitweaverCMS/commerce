@@ -17,9 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.31 2006/02/22 03:54:06 spiderr Exp $
+//  $Id: orders.php,v 1.32 2006/02/24 04:13:04 spiderr Exp $
 //
 
+	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
   require('includes/application_top.php');
   require_once( DIR_FS_CLASSES.'order.php');
 
