@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: message_stack.php,v 1.3 2006/02/22 03:54:06 spiderr Exp $
+//  $Id: message_stack.php,v 1.4 2006/02/24 23:26:07 lsces Exp $
 //
 
 /*
@@ -36,7 +36,7 @@
 
       $this->errors = array();
 
-      if( isset( $_SESSION['messageToStack'] ) ) {
+      if( isset( $_SESSION['messageToStack'] ) and $_SESSION['messageToStack'] != '' ) {
         for ($i = 0, $n = sizeof($_SESSION['messageToStack']); $i < $n; $i++) {
           $this->add($_SESSION['messageToStack'][$i]['text'], $_SESSION['messageToStack'][$i]['type']);
         }
