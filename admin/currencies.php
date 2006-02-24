@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.13 2006/02/19 20:56:50 lsces Exp $
+//  $Id: currencies.php,v 1.14 2006/02/24 22:31:53 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -39,7 +39,7 @@
         $decimal_point = zen_db_prepare_input($_POST['decimal_point']);
         $thousands_point = zen_db_prepare_input($_POST['thousands_point']);
         $decimal_places = zen_db_prepare_input($_POST['decimal_places']);
-        $value = zen_db_prepare_input($_POST['value']);
+        $currency_value = zen_db_prepare_input($_POST['currency_value']);
 
         $sql_data_array = array('title' => $title,
                                 'code' => $code,
@@ -48,7 +48,7 @@
                                 'decimal_point' => $decimal_point,
                                 'thousands_point' => $thousands_point,
                                 'decimal_places' => $decimal_places,
-                                'value' => $value);
+                                'currency_value' => $currency_value);
 
         if ($action == 'insert') {
           $db->associateInsert(TABLE_CURRENCIES, $sql_data_array);
@@ -58,9 +58,9 @@
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set `configuration_value` = '" . zen_db_input($code) . "'
-                        where `configuration_key` = 'DEFAULT_CURRENCY'");
+          $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+                        SET `configuration_value` = '" . zen_db_input($code) . "'
+                        WHERE `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency_id));
@@ -74,19 +74,19 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("select `currencies_id`
-                                  from " . TABLE_CURRENCIES . "
-                                  where `code` = '" . DEFAULT_CURRENCY . "'");
+        $currency = $db->Execute("SELECT `currencies_id`
+                                  FROM " . TABLE_CURRENCIES . "
+                                  WHERE `code` = '" . DEFAULT_CURRENCY . "'");
 
 
         if ($currency->fields['currencies_id'] == $currencies_id) {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
-                        set `configuration_value` = ''
-                        where `configuration_key` = 'DEFAULT_CURRENCY'");
+          $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+                        SET `configuration_value` = ''
+                        WHERE `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
-        $db->Execute("delete from " . TABLE_CURRENCIES . "
-                      where `currencies_id` = '" . (int)$currencies_id . "'");
+        $db->Execute("DELETE FROM " . TABLE_CURRENCIES . "
+                      WHERE `currencies_id` = '" . (int)$currencies_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
         break;
@@ -96,7 +96,7 @@
       case 'update':
         $server_used = CURRENCY_SERVER_PRIMARY;
 
-        $currency = $db->Execute("select `currencies_id`, `code`, `title` from " . TABLE_CURRENCIES);
+        $currency = $db->Execute("SELECT `currencies_id`, `code`, `title` FROM " . TABLE_CURRENCIES);
         while (!$currency->EOF) {
           $quote_function = 'quote_' . CURRENCY_SERVER_PRIMARY . '_currency';
           $rate = $quote_function($currency->fields['code']);
@@ -111,9 +111,9 @@
           }
 
           if (zen_not_null($rate)) {
-            $db->Execute("update " . TABLE_CURRENCIES . "
-                          set `currency_value` = '" . $rate . "', `last_updated` = 'NOW'
-                          where `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
+            $db->Execute("UPDATE " . TABLE_CURRENCIES . "
+                          SET `currency_value` = '" . $rate . "', `last_updated` = 'NOW'
+                          WHERE `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
 
             $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
           } else {
@@ -133,9 +133,9 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("select `code`
-                                  from " . TABLE_CURRENCIES . "
-                                  where `currencies_id` = '" . (int)$currencies_id . "'");
+        $currency = $db->Execute("SELECT `code`
+                                  FROM " . TABLE_CURRENCIES . "
+                                  WHERE `currencies_id` = '" . (int)$currencies_id . "'");
 
         $remove_currency = true;
         if ($currency->fields['code'] == DEFAULT_CURRENCY) {
@@ -219,7 +219,7 @@
     }
 ?>
                 <td class="dataTableContent"><?php echo $currency->fields['code']; ?></td>
-                <td class="dataTableContent" align="right"><?php echo number_format($currency->fields['value'], 8); ?></td>
+                <td class="dataTableContent" align="right"><?php echo number_format($currency->fields['currency_value'], 8); ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($currency->fields['currencies_id'] == $cInfo->currencies_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency->fields['currencies_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
@@ -282,7 +282,7 @@ JPY Japan Yen                             0.0089098765        112.2350011215
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_POINT . '<br>' . zen_draw_input_field('decimal_point'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_THOUSANDS_POINT . '<br>' . zen_draw_input_field('thousands_point'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_PLACES . '<br>' . zen_draw_input_field('decimal_places'));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_VALUE . '<br>' . zen_draw_input_field('value'));
+      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_VALUE . '<br>' . zen_draw_input_field('currency_value'));
       $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('default') . ' ' . TEXT_INFO_SET_AS_DEFAULT);
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . ' <a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $_GET['cID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -298,7 +298,7 @@ JPY Japan Yen                             0.0089098765        112.2350011215
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_POINT . '<br>' . zen_draw_input_field('decimal_point', $cInfo->decimal_point));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_THOUSANDS_POINT . '<br>' . zen_draw_input_field('thousands_point', $cInfo->thousands_point));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_PLACES . '<br>' . zen_draw_input_field('decimal_places', $cInfo->decimal_places));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_VALUE . '<br>' . zen_draw_input_field('value', $cInfo->value));
+      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_VALUE . '<br>' . zen_draw_input_field('currency_value', $cInfo->currency_value));
       if (DEFAULT_CURRENCY != $cInfo->code) $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('default') . ' ' . TEXT_INFO_SET_AS_DEFAULT);
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -322,7 +322,7 @@ JPY Japan Yen                             0.0089098765        112.2350011215
         $contents[] = array('text' => TEXT_INFO_CURRENCY_THOUSANDS_POINT . ' ' . $cInfo->thousands_point);
         $contents[] = array('text' => TEXT_INFO_CURRENCY_DECIMAL_PLACES . ' ' . $cInfo->decimal_places);
         $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_LAST_UPDATED . ' ' . zen_date_short($cInfo->last_updated));
-        $contents[] = array('text' => TEXT_INFO_CURRENCY_VALUE . ' ' . number_format($cInfo->value, 8));
+        $contents[] = array('text' => TEXT_INFO_CURRENCY_VALUE . ' ' . number_format($cInfo->currency_value, 8));
         $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_EXAMPLE . '<br>' . $currencies->format('30', false, DEFAULT_CURRENCY) . ' = ' . $currencies->format('30', true, $cInfo->code));
       }
       break;

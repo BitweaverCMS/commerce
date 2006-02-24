@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.16 2006/02/22 03:54:07 spiderr Exp $
+// $Id: currencies.php,v 1.17 2006/02/24 22:31:53 lsces Exp $
 //
 
 ////
@@ -81,9 +81,9 @@
 
       if ($calculate_currency_value == true) {
         if ($currency_type == DEFAULT_CURRENCY) {
-          $rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$_SESSION['currency']]['value'];
+          $rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$_SESSION['currency']]['currency_value'];
         } else {
-          $rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['value'];
+          $rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
         }
         $currency_value = zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']);
       } else {
@@ -102,7 +102,7 @@
     }
 
     function get_value($code) {
-      return $this->currencies[$code]['value'];
+      return $this->currencies[$code]['currency_value'];
     }
 
     function get_decimal_places($code) {
@@ -135,7 +135,7 @@
 		if( !empty( $pParamHash['title'] ) ) {
 			$pParamHash['currency_store']['title'] = trim( $pParamHash['title'] );
 		}
-		$pParamHash['currency_store']['value'] = ( !empty( $pParamHash['value'] ) ? $pParamHash['value'] : 1 );
+		$pParamHash['currency_store']['currency_value'] = ( !empty( $pParamHash['currency_value'] ) ? $pParamHash['currency_value'] : 1 );
 		$pParamHash['currency_store']['last_updated'] = $this->mDb->sysTimeStamp;
 
 		return( count( $this->mErrors ) == 0 );
@@ -153,7 +153,7 @@
 	}
 
 	function currencyExists( $code ) {
-		return $this->mDb->getOne( "select `currencies_id` from " . TABLE_CURRENCIES . " where `code` = ?", array( $code ) );
+		return $this->mDb->getOne( "SELECT `currencies_id` FROM " . TABLE_CURRENCIES . " WHERE `code` = ?", array( $code ) );
 	}
 
 	function bulkImport( $pBulkString ) {
@@ -165,7 +165,7 @@
 				if( count( $currValues ) > 1 ) {
 					$currHash['code'] = $currValues[1];
 					$currHash['title'] = $currValues[2];
-					$currHash['value'] = $currValues[4];
+					$currHash['currency_value'] = $currValues[4];
 					$this->store( $currHash );
 				}
 			}
