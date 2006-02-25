@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.14 2006/02/08 23:24:26 spiderr Exp $
+//  $Id: categories.php,v 1.15 2006/02/25 00:07:16 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -567,7 +567,7 @@
     $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
     $product_types = $db->Execute($sql);
     while (!$product_types->EOF) {
-      $type_array[] = array('id' => $product_types->fields['type_id'], text => $product_types->fields['type_name']);
+      $type_array[] = array('id' => $product_types->fields['type_id'], 'text' => $product_types->fields['type_name']);
       $product_types->MoveNext();
     }
     switch ($action) {
