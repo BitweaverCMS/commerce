@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.6 2006/01/12 22:39:28 spiderr Exp $
+// $Id: ot_coupon.php,v 1.7 2006/02/25 04:01:11 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -49,12 +49,12 @@
 		if ($od_amount['total'] > 0) {
 		  while (list($key, $value) = each($order->info['tax_groups'])) {
 			$tax_rate = zen_get_tax_rate_from_desc($key);
-			if ($od_amount[$key]) {
+			if( !empty( $od_amount[$key] ) ) {
 			  $order->info['tax_groups'][$key] -= $od_amount[$key];
 			  $order->info['total'] -=  $od_amount[$key];
 			}
 		  }
-		  if ($od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
+		  if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
 		  $sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
 		  $zq_coupon_code = $db->Execute($sql);
 		  $this->coupon_code = $zq_coupon_code->fields['coupon_code'];
@@ -132,7 +132,7 @@ $db->debug( 0 );
 				}
 				$_SESSION['cc_id'] = $coupon->mCouponId;
 			}
-			if ($_POST['submit_redeem_coupon_x'] && !$_POST['gv_redeem_code']) {
+			if( !empty( $_POST['submit_redeem_coupon_x'] ) && !$_POST['gv_redeem_code']) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE), 'SSL', true, false));
 			}
 		}

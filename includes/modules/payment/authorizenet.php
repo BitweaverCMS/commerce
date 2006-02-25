@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet.php,v 1.3 2005/10/31 16:19:56 lsces Exp $
+// $Id: authorizenet.php,v 1.4 2006/02/25 04:01:11 spiderr Exp $
 //
 
   class authorizenet {
@@ -28,22 +28,24 @@
       global $order;
 
       $this->code = 'authorizenet';
-     if ($_GET['main_page'] != '') {
+     if( !empty( $_GET['main_page'] ) ) {
        $this->title = MODULE_PAYMENT_AUTHORIZENET_TEXT_CATALOG_TITLE; // Payment module title in Catalog
      } else {
        $this->title = MODULE_PAYMENT_AUTHORIZENET_TEXT_ADMIN_TITLE; // Payment module title in Admin
      }
       $this->description = MODULE_PAYMENT_AUTHORIZENET_TEXT_DESCRIPTION;
-      $this->enabled = ((MODULE_PAYMENT_AUTHORIZENET_STATUS == 'True') ? true : false);
-      $this->sort_order = MODULE_PAYMENT_AUTHORIZENET_SORT_ORDER;
+		if( defined( 'MODULE_PAYMENT_AUTHORIZENET_STATUS' ) ) {
+	      $this->enabled = ((MODULE_PAYMENT_AUTHORIZENET_STATUS == 'True') ? true : false);
+    	  $this->sort_order = MODULE_PAYMENT_AUTHORIZENET_SORT_ORDER;
 
-      if ((int)MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID > 0) {
-        $this->order_status = MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID;
-      }
+	      if ((int)MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID > 0) {
+    	    $this->order_status = MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID;
+    	  }
 
-      if (is_object($order)) $this->update_status();
+	      if (is_object($order)) $this->update_status();
 
-      $this->form_action_url = 'https://secure.authorize.net/gateway/transact.dll';
+		}
+    	  $this->form_action_url = 'https://secure.authorize.net/gateway/transact.dll';
     }
 
 // Authorize.net utility functions

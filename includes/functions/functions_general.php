@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.27 2006/02/09 20:57:17 spiderr Exp $
+// $Id: functions_general.php,v 1.28 2006/02/25 04:01:10 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -685,7 +685,7 @@
 	if( is_numeric( $coupon_id ) ) {
 		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
 						WHERE `coupon_id` = ?
-						ORDER BY".$db->convert_sortmode( 'coupon_restrict_asc' );
+						ORDER BY ".$db->convert_sortmode( 'coupon_restrict_asc' );
 		$couponsRs = $db->query($coupons_query, array( $coupon_id ) );
 
 		$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";

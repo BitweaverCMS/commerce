@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.36 2006/02/22 03:54:07 spiderr Exp $
+// $Id: order.php,v 1.37 2006/02/25 04:01:10 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -647,7 +647,7 @@ class order extends BitBase {
 			$sql_data_array = array('orders_id' => $this->mOrdersId,
 									'title' => $zf_ot_modules[$i]['title'],
 									'text' => $zf_ot_modules[$i]['text'],
-									'value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
+									'orders_value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
 									'class' => $zf_ot_modules[$i]['code'],
 									'sort_order' => $zf_ot_modules[$i]['sort_order']);
 			$db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);

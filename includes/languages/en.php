@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.9 2005/10/31 21:18:19 lsces Exp $
+// $Id: en.php,v 1.10 2006/02/25 04:01:10 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -31,7 +31,7 @@
 //define('CUSTOM_KEYWORDS', 'ecommerce, open source, shop, online shopping');
 // eof: removed for meta tags
 
-define('FOOTER_TEXT_BODY', 'Copyright &copy; 2003 <a href="http://www.zen-cart.com" target="_blank">Zen Cart</a>. Powered by <a href="http://www.zen-cart.com" target="_blank">Zen Cart</a>');
+define('FOOTER_TEXT_BODY', '');
 
 // look in your $PATH_LOCALE/locale directory for available locales..
 // on RedHat try 'en_US'

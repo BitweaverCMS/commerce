@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.4 2006/02/19 17:13:23 spiderr Exp $
+//  $Id: paypal.php,v 1.5 2006/02/25 04:01:11 spiderr Exp $
 //
 
 // Note this is temporary
@@ -33,7 +33,7 @@ DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
    function paypal($paypal_ipn_id = '') {
      global $order;
        $this->code = 'paypal';
-    if ($_GET['main_page'] != '') {
+    if( !empty( $_GET['main_page'] ) ) {
        $this->title = MODULE_PAYMENT_PAYPAL_TEXT_CATALOG_TITLE; // Payment Module title in Catalog
     } else {
        $this->title = MODULE_PAYMENT_PAYPAL_TEXT_ADMIN_TITLE; // Payment Module title in Admin

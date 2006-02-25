@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.6 2006/02/19 20:56:50 lsces Exp $
+// $Id: authorizenet_aim.php,v 1.7 2006/02/25 04:01:11 spiderr Exp $
 
 
   class authorizenet_aim {
@@ -32,7 +32,7 @@
     function authorizenet_aim() {
       global $order;
       $this->code = 'authorizenet_aim';
-     if ($_GET['main_page'] != '') {
+     if( !empty( $_GET['main_page'] != '' )) {
        $this->title = MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CATALOG_TITLE; // Payment module title in Catalog
      } else {
        $this->title = MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_ADMIN_TITLE; // Payment module title in Admin
