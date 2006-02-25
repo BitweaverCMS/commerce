@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.10 2005/11/22 11:05:48 gilesw Exp $
+// $Id: database_tables.php,v 1.11 2006/02/25 00:24:33 lsces Exp $
 //
 
 // define the database table names used in the project
@@ -113,7 +113,7 @@ DEFINE('SQL_SHOW_PRODUCT_INFO_CATEGORY', "select `configuration_key`, `configura
 DEFINE('SQL_SHOW_PRODUCT_INFO_MAIN',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE 'SHOW_PRODUCT_INFO_MAIN%' order by `configuration_value`");
 DEFINE('SQL_SHOW_PRODUCT_INFO_MISSING',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION  . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_MISSING%' and `configuration_value` > 0 order by `configuration_value`");
 DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select `configuration_key`, `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE '%SHOW_PRODUCT_INFO_LISTING_BELOW%' and `configuration_value` > 0 order by `configuration_value`");
-DEFINE('SQL_BANNER_CHECK_QUERY', "select count(*) as count from " . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
+DEFINE('SQL_BANNER_CHECK_QUERY', 'select count(*) as "count" from ' . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set `banners_shown` = `banners_shown` +1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set `banners_clicked` = `banners_clicked` + 1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_ALSO_PURCHASED', "select p.`products_id`, p.`products_image`
