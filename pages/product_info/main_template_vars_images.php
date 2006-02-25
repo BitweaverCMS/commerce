@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images.php,v 1.6 2005/10/06 21:01:54 spiderr Exp $
+// $Id: main_template_vars_images.php,v 1.7 2006/02/25 08:51:57 spiderr Exp $
 //
 ?>
 <?php
@@ -51,10 +51,10 @@ echo
 // to be built into a single variable string
 ?>
 <script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '\\\')">' . zen_image( CommerceProduct::getImageUrl( $_GET['products_id'], 'small' ), addslashes($products_name)) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
+document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '\\\')">' . zen_image( CommerceProduct::getImageUrl( $_GET['products_id'], 'medium' ), addslashes($products_name)) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
 //--></script>
 <noscript>
 <?php
-  echo '<a href="' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '" target="_blank">' . zen_image(CommerceProduct::getImageUrl( $_GET['products_id'], 'small' ), $products_name) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>';
+  echo '<a href="' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '" target="_blank">' . zen_image(CommerceProduct::getImageUrl( $_GET['products_id'], 'medium' ), $products_name) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>';
 ?>
 </noscript>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.7 2006/02/11 05:06:37 spiderr Exp $
+// $Id: product_info_display.php,v 1.8 2006/02/25 08:51:57 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -37,15 +37,13 @@
 // $options_menu - Array
 //   $module_show_categories
 
-echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
+global $gBitProduct;
 
-<div class="header">
-	<h1><?=$products_name;?></h1>
-</div>
+echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
 
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
-    <td align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
+    <td rowspan="8" align="center" valign="top" class="smallText" rowspan="3" width="<?php echo SMALL_IMAGE_WIDTH; ?>">
 <?php
   if (zen_not_null($products_image)) {
     require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images.php');
@@ -54,7 +52,15 @@ echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['produ
   }
 ?>
     </td>
-    <td align="center" class="pageHeading">
+    <td class="pageHeading">
+
+<div class="header">
+	<h1><?=$products_name;?></h1>
+</div>
+
+
+<div class="box price">
+	<div class="row">
 <?php
 // base price
   if( !empty( $productSettings['show_onetime_charges_description'] ) && $productSettings['show_onetime_charges_description'] == 'true') {
@@ -62,40 +68,54 @@ echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['produ
   } else {
     $one_time = '';
   }
-  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']);
+  echo '<h2>' . $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']) . '</h2>';
 ?>
-    </td>
-  </tr>
-
-  <tr>
-    <td class="main" align="center" valign="top">
-      <?php echo ((SHOW_PRODUCT_INFO_MODEL == '1' and $products_model !='') ? TEXT_PRODUCT_MODEL . $products_model : '&nbsp;'); ?>
-    </td>
-  </tr>
-  <tr>
-    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_WEIGHT == '1' and $products_weight !=0) ? TEXT_PRODUCT_WEIGHT .  $products_weight . TEXT_PRODUCT_WEIGHT_UNIT : '&nbsp;'); ?></td>
-  </tr>
-  <tr>
-    <td colspan="2" class="main" align="center">
+	</div>
+<?php
+    if( SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField( 'products_model' ) ) {
+?>
+	<div class="row">
+      <?php echo $gBitProduct->getField( 'products_model' ); ?>
+	</div>
+<?php
+	}
+	if( SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField( 'products_weight' ) ) {
+?>
+	<div class="row">
+	    <?php echo TEXT_PRODUCT_WEIGHT . $gBitProduct->getField( 'products_weight' ) . TEXT_PRODUCT_WEIGHT_UNIT; ?>
+	</div>
+<?php
+	}
+?>
+	<div class="row">
 <?php
 
 	$gBitSmarty->display( 'bitpackage:bitcommerce/product_options_inc.tpl' );
 
 ?>
-    </td>
-  </tr>
-  <tr>
-    <td >&nbsp;</td>
-    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_QUANTITY == '1') ? $products_quantity . TEXT_PRODUCT_QUANTITY : '&nbsp;'); ?></td>
-  </tr>
-  <tr>
-    <td class="main" align="center"><?php echo ((SHOW_PRODUCT_INFO_MANUFACTURER == '1' and !empty($manufacturers_name)) ? TEXT_PRODUCT_MANUFACTURER . $manufacturers_name : '&nbsp;'); ?></td>
-    <td align="center">
+	</div>
+<?php
+	if( SHOW_PRODUCT_INFO_QUANTITY == '1' && !$gBitProduct->getField( 'products_virtual' ) ) {
+?>
+	<div class="row">
+    	<?php echo $products_quantity . TEXT_PRODUCT_QUANTITY; ?>
+	</div>
+<?php
+	}
+	if( SHOW_PRODUCT_INFO_MANUFACTURER == '1' and !empty($manufacturers_name) ) {
+?>
+	<div class="row">
+    	<?php echo $manufacturers_name; ?>
+	</div>
+<?php
+	}
+?>
 <?php
 if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == '') {
   echo '&nbsp;';
 } else {
 ?>
+	<div class="row">
       <table border="0" style="width:150px" cellspacing="2" cellpadding="2">
         <tr>
           <td align="center" class="cartBox">
@@ -113,24 +133,28 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
           </td>
         </tr>
       </table>
+	</div>
 <?php } // CUSTOMERS_APPROVAL == '3' ?>
-    </td>
-  </tr>
+
 
 <?php
   if ($products_discount_type != 0) {
-    echo '<tr><td colspan="2">';
+    echo '<div class="row">';
       require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_DISCOUNT_PRICES));
-    echo '</td></tr>';
+    echo '</div>';
   }
 ?>
 
+</div>
+
+
+
 <?php if ($products_description != '') { ?>
-  <tr>
-    <td colspan="2" class="plainbox-description"><?php echo stripslashes($products_description); ?></td>
-  </tr>
+    <p><?php echo stripslashes($products_description); ?></p>
 <?php } ?>
 
+    </td>
+  </tr>
 <?php require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images_additional.php'); ?>
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
@@ -140,8 +164,11 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
   </tr>
 <?php } ?>
   <tr>
-    <td align="center" colspan="2">&nbsp;</td>
+    <td align="center">&nbsp;</td>
   </tr>
+  <tr>
+    <td class="main" align="left" valign="bottom">
+<table>
   <tr>
     <td class="main" align="left" valign="bottom">
 <?php
@@ -169,6 +196,9 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
     echo '</table>';
   }
 ?>
+    </td>
+  </tr>
+</table>
     </td>
   </tr>
 <?php
@@ -203,7 +233,4 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
     } // SHOW_PRODUCT_INFO_URL
   }
 ?>
-<tr>
-  <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-</tr>
 </table></form>
