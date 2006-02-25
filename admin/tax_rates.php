@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.9 2006/02/05 17:37:03 lsces Exp $
+//  $Id: tax_rates.php,v 1.10 2006/02/25 00:02:56 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -32,14 +32,14 @@
         $tax_description = zen_db_prepare_input($_POST['tax_description']);
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
-        $db->Execute("insert into " . TABLE_TAX_RATES . "
+        $db->Execute("INSERT INTO " . TABLE_TAX_RATES . "
                     (`tax_zone_id`, `tax_class_id`, `tax_rate`, `tax_description`, `tax_priority`, `date_added`)
-                    values ('" . (int)$tax_zone_id . "',
+                    VALUES ('" . (int)$tax_zone_id . "',
                             '" . (int)$tax_class_id . "',
                             '" . zen_db_input($tax_rate) . "',
                             '" . zen_db_input($tax_description) . "',
                             '" . (int)zen_db_input($tax_priority) . "',
-                            ".$db->NOW().")");
+                            ". $db->mDb->sysTimeStamp .")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES));
         break;
@@ -51,14 +51,14 @@
         $tax_description = zen_db_prepare_input($_POST['tax_description']);
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
-        $db->Execute("update " . TABLE_TAX_RATES . "
-                      set `tax_rates_id` = '" . (int)$tax_rates_id . "',
+        $db->Execute("UPDATE " . TABLE_TAX_RATES . "
+                      SET `tax_rates_id` = '" . (int)$tax_rates_id . "',
                           `tax_zone_id` = '" . (int)$tax_zone_id . "',
                           `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_rate`= '" . zen_db_input($tax_rate) . "',
                           `tax_description` = '" . zen_db_input($tax_description) . "',
                           `tax_priority` = '" . (int)zen_db_input($tax_priority) . "',
-                          `last_modified` = ".$db->NOW()." where `tax_rates_id` = '" . (int)$tax_rates_id . "'");
+                          `last_modified` = ". $db->mDb->sysTimeStamp ." WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;
@@ -71,8 +71,8 @@
         }
         $tax_rates_id = zen_db_prepare_input($_GET['tID']);
 
-        $db->Execute("delete from " . TABLE_TAX_RATES . "
-                      where `tax_rates_id` = '" . (int)$tax_rates_id . "'");
+        $db->Execute("DELETE FROM " . TABLE_TAX_RATES . "
+                      WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
         break;
