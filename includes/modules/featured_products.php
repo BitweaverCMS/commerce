@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.10 2005/12/20 17:13:01 gilesw Exp $
+// $Id: featured_products.php,v 1.11 2006/03/01 04:03:23 spiderr Exp $
 //
 
 
@@ -45,7 +45,7 @@
 			$products_price = CommerceProduct::getDisplayPrice( $productsId );
 			$list_box_contents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-													'text' => '<a href="' . zen_href_link( $featuredProducts[$productsId]['info_page'], 'products_id=' . $productsId ) . '">' . zen_image( CommerceProduct::getImageUrl( $featuredProducts[$productsId]['products_id'], 'avatar' ), $featuredProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . zen_href_link( zen_get_info_page( $productsId ), 'products_id=' . $productsId ) . '">' . $featuredProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
+													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . zen_image( CommerceProduct::getImageUrl( $featuredProducts[$productsId]['products_id'], 'avatar' ), $featuredProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $featuredProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
 
 			$col ++;
 			if ($col > (SHOW_PRODUCT_INFO_COLUMNS_FEATURED_PRODUCTS - 1)) {
