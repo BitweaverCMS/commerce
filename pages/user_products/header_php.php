@@ -1,9 +1,10 @@
 <?php
-// $Id: header_php.php,v 1.5 2005/11/30 07:46:31 spiderr Exp $
+// $Id: header_php.php,v 1.6 2006/03/15 14:19:18 spiderr Exp $
 //
 
-if( !empty( $_REQUEST['user_id'] ) ) {
+if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId ) {
 	$gQueryUser = new BitPermUser( $_REQUEST['user_id'] );
+	$gQueryUser->load();
 } else {
 	$gQueryUser = &$gBitUser;
 }
