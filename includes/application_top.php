@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.32 2006/02/22 03:54:07 spiderr Exp $
+// $Id: application_top.php,v 1.33 2006/03/17 03:24:12 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -265,6 +265,9 @@ function clean_input( &$pArray ) {
       $adjust_max= 'false';
     if (isset($_REQUEST['id'])) {
       while(list($key,$value) = each($_REQUEST['id'])) {
+		if( is_array( $value ) ) {
+			$value = current( $value );
+		}
         $check = zen_get_attributes_valid($_POST['products_id'], $key, $value);
         if ($check == false) {
           // zen_get_products_name($_POST['products_id']) .

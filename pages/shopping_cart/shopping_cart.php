@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.9 2005/11/21 14:45:38 spiderr Exp $
+// $Id: shopping_cart.php,v 1.10 2006/03/17 03:24:12 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -91,11 +91,17 @@ function popupWindow(url) {
         while (list($option, $value) = each($products[$i]['attributes'])) {
           //clr 030714 move hidden field to if statement below
 //          echo zen_draw_hidden_field('id[' . $products[$i]['id'] . '][' . $option . ']', $value);
+			$matches = array();
+			if( preg_match( '/([0-9]*)_.*/', $option, $matches ) ) {
+				$optionId = $matches[1];
+			} else {
+				$optionId = $option;
+			}
           $attributes = "select popt.`products_options_name`, poval.`products_options_values_name`,
                                      pa.`options_values_price`, pa.`price_prefix`
                          from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                          where pa.`products_id` = '" .  $prid . "'
-                         and pa.`options_id` = '" . $option . "'
+                         and pa.`options_id` = '" . $optionId . "'
                          and pa.`options_id` = popt.`products_options_id`
                          and pa.`options_values_id` = '" . $value . "'
                          and pa.`options_values_id` = poval.`products_options_values_id`

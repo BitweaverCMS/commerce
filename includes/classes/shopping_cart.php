@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.28 2006/02/24 23:20:10 spiderr Exp $
+// $Id: shopping_cart.php,v 1.29 2006/03/17 03:24:12 spiderr Exp $
 //
 
   class shoppingCart {
@@ -788,95 +788,95 @@ if ((int)$products_id != $products_id) {
 
 
     function get_products($check_for_valid_cart = false) {
-      global $gBitDb, $gBitProduct;
+		global $gBitDb, $gBitProduct;
 
-      if (!is_array($this->contents)) return false;
+		if (!is_array($this->contents)) return false;
 
-      $products_array = array();
-      reset($this->contents);
-      while (list($products_id, ) = each($this->contents)) {
-      	$product = new CommerceProduct( zen_get_prid( $products_id ) );
-		if( $product->load() ) {
-			$prid = $product->mProductsId;
-			$qty = $this->contents[$prid]['quantity'];
-			$products_price = $product->getPurchasePrice( $qty );
+		$products_array = array();
+		reset($this->contents);
+		while (list($products_id, ) = each($this->contents)) {
+			$product = new CommerceProduct( zen_get_prid( $products_id ) );
+			if( $product->load() ) {
+				$prid = $product->mProductsId;
+				$qty = $this->contents[$prid]['quantity'];
+				$products_price = $product->getPurchasePrice( $qty );
 
-				if ($check_for_valid_cart == true) {
-					$check_quantity = $this->contents[$products_id]['quantity'];
-					$check_quantity_min = $product->getField( 'products_quantity_order_min' );
-				// Check quantity min
-					if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
-					$check_quantity = $new_check_quantity;
+					if ($check_for_valid_cart == true) {
+						$check_quantity = $this->contents[$products_id]['quantity'];
+						$check_quantity_min = $product->getField( 'products_quantity_order_min' );
+					// Check quantity min
+						if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
+							$check_quantity = $new_check_quantity;
+						}
+
+						$fix_once = 0;
+						if ($check_quantity < $check_quantity_min) {
+							$fix_once ++;
+							$_SESSION['valid_to_checkout'] = false;
+							$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+						}
+
+					// Check Quantity Units if not already an error on Quantity Minimum
+						if ($fix_once == 0) {
+							$check_units = $product->getField( 'products_quantity_order_units' );
+							if ( fmod($check_quantity,$check_units) != 0 ) {
+								$_SESSION['valid_to_checkout'] = false;
+								$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+							}
+						}
+
+					// Verify Valid Attributes
 					}
 
-					$fix_once = 0;
-					if ($check_quantity < $check_quantity_min) {
-					$fix_once ++;
-					$_SESSION['valid_to_checkout'] = false;
-					$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-					}
+				//clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
 
-				// Check Quantity Units if not already an error on Quantity Minimum
-					if ($fix_once == 0) {
-					$check_units = $product->getField( 'products_quantity_order_units' );
-					if ( fmod($check_quantity,$check_units) != 0 ) {
-						$_SESSION['valid_to_checkout'] = false;
-						$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-					}
-					}
+		// convert quantity to proper decimals
+				if (QUANTITY_DECIMALS != 0) {
+		//          $new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-				// Verify Valid Attributes
+					$fix_qty = $this->contents[$products_id]['quantity'];
+					switch (true) {
+						case (!strstr($fix_qty, '.')):
+							$new_qty = $fix_qty;
+							break;
+						default:
+							$new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
+							break;
+					}
+				} else {
+					$new_qty = $this->contents[$products_id]['quantity'];
 				}
 
-			//clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
+				$new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-	// convert quantity to proper decimals
-			if (QUANTITY_DECIMALS != 0) {
-	//          $new_qty = round($new_qty, QUANTITY_DECIMALS);
-
-				$fix_qty = $this->contents[$products_id]['quantity'];
-				switch (true) {
-				case (!strstr($fix_qty, '.')):
-				$new_qty = $fix_qty;
-				break;
-				default:
-				$new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
-				break;
+				if ($new_qty == (int)$new_qty) {
+					$new_qty = (int)$new_qty;
 				}
-			} else {
-				$new_qty = $this->contents[$products_id]['quantity'];
-			}
 
-			$new_qty = round($new_qty, QUANTITY_DECIMALS);
-
-			if ($new_qty == (int)$new_qty) {
-				$new_qty = (int)$new_qty;
-			}
-
-			$productHash =$product->mInfo;
-			$productHash['id'] = $products_id;
-			$productHash['name'] = $product->getField('products_name');
-			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
-			$productHash['model'] = $product->getField('products_model');
-			$productHash['image'] = $product->getField('products_image');
-			$productHash['image_url'] = $product->getField('products_image_url');
-			$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $products_price);
-			$productHash['quantity'] = $new_qty;
-			if( $product->getField( 'products_commission' ) && !$product->getCommissionDiscount() ) {
-				$productHash['commission'] = ($products_price / $product->getField('actual_price')) * ($product->getField('products_commission') - $product->getCommissionDiscount());
-			} else {
-				$productHash['commission'] = 0;
-			}
-			$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
-	// fix here
-			$productHash['final_price'] = $products_price + $this->attributes_price($products_id);
-			$productHash['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
-			$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
-			$productHash['tax'] = $product->getField('tax_rate');
-			$productHash['tax_description'] = $product->getField('tax_description');
-			$productHash['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
-			$productHash['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
-			$products_array[] = $productHash;
+				$productHash =$product->mInfo;
+				$productHash['id'] = $products_id;
+				$productHash['name'] = $product->getField('products_name');
+				$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
+				$productHash['model'] = $product->getField('products_model');
+				$productHash['image'] = $product->getField('products_image');
+				$productHash['image_url'] = $product->getField('products_image_url');
+				$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $products_price);
+				$productHash['quantity'] = $new_qty;
+				if( $product->getField( 'products_commission' ) && !$product->getCommissionDiscount() ) {
+					$productHash['commission'] = ($products_price / $product->getField('actual_price')) * ($product->getField('products_commission') - $product->getCommissionDiscount());
+				} else {
+					$productHash['commission'] = 0;
+				}
+				$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
+		// fix here
+				$productHash['final_price'] = $products_price + $this->attributes_price($products_id);
+				$productHash['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
+				$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
+				$productHash['tax'] = $product->getField('tax_rate');
+				$productHash['tax_description'] = $product->getField('tax_description');
+				$productHash['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
+				$productHash['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
+				$products_array[] = $productHash;
 			}
       }
       return $products_array;
