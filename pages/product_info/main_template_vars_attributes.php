@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.15 2006/03/17 03:24:12 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.16 2006/03/21 06:26:47 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -119,11 +119,11 @@ if ( $gBitProduct->loadAttributes() ) {
 					} else {
 						// normal price
 						if ($new_attributes_price == 0) {
-						$products_options_display_price= '';
+							$products_options_display_price= '';
 						} else {
-						$products_options_display_price= ' (' . $vals['price_prefix'] .
-						$currencies->display_price($new_attributes_price,
-						zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) ) . ') ';
+							$products_options_display_price= ' (' . $vals['price_prefix'] .
+							$currencies->display_price($new_attributes_price,
+							zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) ) . ') ';
 						}
 					}
 				}
