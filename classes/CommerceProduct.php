@@ -86,7 +86,7 @@ class CommerceProduct extends LibertyAttachable {
 		$ret = NULL;
 		if( is_numeric( $pProductsId ) ) {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
-			$this->getServicesSql( 'content_load_function', $selectSql, $joinSql, $whereSql, $bindVars );
+			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,lc.*, m.*
 					  FROM " . TABLE_PRODUCTS . " p
