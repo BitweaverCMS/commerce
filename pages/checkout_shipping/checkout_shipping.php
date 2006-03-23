@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.8 2005/12/01 07:18:05 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.9 2006/03/23 08:05:04 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -137,6 +137,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 				$_SESSION['sendto'] = $_REQUEST['address'];
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
+				unset( $order->delivery );
 				$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
 				$gBitSmarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
 			}

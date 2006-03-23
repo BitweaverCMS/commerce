@@ -60,7 +60,7 @@
 	{formlabel label="State/Province" for=""}
 	{formfeedback error=$errors.state}
 	{forminput}
-		{* $statePullDown *}<input type="text" maxlength="64" name="state" value="{$address.entry_postcode|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		{$statePullDown}<acronym title="{tr}Required{/tr}">*</acronym>
 	{/forminput}
 </div>
 {/if}
