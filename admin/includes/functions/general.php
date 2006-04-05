@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.34 2006/02/05 22:30:55 lsces Exp $
+//  $Id: general.php,v 1.35 2006/04/05 01:06:57 spiderr Exp $
 //
 
 ////
@@ -1376,7 +1376,6 @@
 // Validate Option Name and Option Type Match
   function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
     global $db;
-$db->debug();
     $check_options_to_values_query= $db->getOne("SELECT `products_options_id`
 		FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
 		WHERE `products_options_id` = ?
