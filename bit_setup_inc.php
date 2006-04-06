@@ -12,14 +12,8 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 }
 
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
-	$lastQuote = strrpos( BIT_DB_PREFIX, '`' );
-	if( $lastQuote != FALSE ) {
-		$lastQuote++;
-	}
-	$prefix = substr( BIT_DB_PREFIX,  $lastQuote );
-	define( 'BITCOMMERCE_DB_PREFIX', $prefix.'com_' );
+	define( 'BITCOMMERCE_DB_PREFIX', BIT_DB_PREFIX );
 }
-
 // include shopping cart class
 // 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
