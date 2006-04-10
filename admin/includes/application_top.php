@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.17 2006/02/22 03:54:06 spiderr Exp $
+//  $Id: application_top.php,v 1.18 2006/04/10 06:48:22 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // Set the level of error reporting
-if( defined( 'IS_LIVE' ) ) {
+if( defined( 'IS_LIVE' ) && IS_LIVE ) {
   	error_reporting(E_ALL & ~E_NOTICE);
 } else {
 	error_reporting(E_ALL);

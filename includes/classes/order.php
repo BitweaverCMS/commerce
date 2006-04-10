@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.37 2006/02/25 04:01:10 spiderr Exp $
+// $Id: order.php,v 1.38 2006/04/10 06:48:22 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -188,10 +188,11 @@ class order extends BitBase {
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
-      $orders_products_query = "SELECT op.*, pt.*
+      $orders_products_query = "SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
                                 FROM " . TABLE_ORDERS_PRODUCTS . " op
 									LEFT OUTER JOIN  " . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
 									LEFT OUTER JOIN  " . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
+									LEFT OUTER JOIN  `" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
                                 WHERE `orders_id` = ?";
       $orders_products = $this->mDb->query( $orders_products_query, array( $order_id ) );
 
@@ -253,7 +254,6 @@ class order extends BitBase {
     }
 
 	function getOrderAttributePrice( $pAttributeHash, $pProductHash ) {
-
 		$ret = 0;
 		// normal attributes price
 		if( $pAttributeHash["price_prefix"] == '-' ) {
@@ -262,16 +262,16 @@ class order extends BitBase {
 			$ret += $pAttributeHash["options_values_price"];
 		}
 		// qty discounts
-		$ret += zen_get_attributes_qty_prices_onetime( $pAttributeHash["attributes_qty_prices"], $qty );
+		$ret += zen_get_attributes_qty_prices_onetime( $pAttributeHash["attributes_qty_prices"], $pProductHash['products_quantity'] );
 
 		// price factor
 		$display_normal_price = $pProductHash['price'];
-		$display_special_price = zen_get_products_special_price( $pre_selected->fields["products_id"] );
+		$display_special_price = zen_get_products_special_price( $pProductHash["products_id"] );
 
 		$ret += zen_get_attributes_price_factor( $pProductHash['price'], $pProductHash['price'], $pAttributeHash["attributes_price_factor"], $pAttributeHash["attributes_pf_offset"] );
 
 		// per word and letter charges
-		if (zen_get_attributes_type($attribute) == PRODUCTS_OPTIONS_TYPE_TEXT) {
+		if (zen_get_attributes_type($pAttributeHash['products_attributes_id']) == PRODUCTS_OPTIONS_TYPE_TEXT) {
 		// calc per word or per letter
 		}
 

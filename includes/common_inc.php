@@ -196,14 +196,15 @@
 // Output a form hidden field
   function zen_draw_hidden_field($name, $value = '', $parameters = '') {
     $field = '<input type="hidden" name="' . zen_output_string($name) . '"';
-
-    if (zen_not_null($value)) {
+    if( !empty( $value ) ) {
       $field .= ' value="' . zen_output_string($value) . '"';
     } elseif (isset($GLOBALS[$name]) && is_string($GLOBALS[$name])) {
       $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
     }
 
-    if (zen_not_null($parameters)) $field .= ' ' . $parameters;
+    if (zen_not_null($parameters)) {
+		$field .= ' ' . $parameters;
+	}
 
     $field .= ' />';
 
@@ -1231,7 +1232,7 @@ If a special exist * 10+9
       $size = sizeof($attribute_qty);
       for ($i=0, $n=$size; $i<$n; $i+=2) {
         $new_price = isset( $attribute_qty[$i+1] ) ? $attribute_qty[$i+1] : 0;
-        if ($qty <= $attribute_qty[$i]) {
+        if( !empty( $attribute_qty[$i] ) && $qty <= $attribute_qty[$i]) {
           $new_price = $attribute_qty[$i+1];
           break;
         }
