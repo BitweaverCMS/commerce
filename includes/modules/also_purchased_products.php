@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: also_purchased_products.php,v 1.5 2005/10/06 21:01:49 spiderr Exp $
+// $Id: also_purchased_products.php,v 1.6 2006/04/11 04:18:00 spiderr Exp $
 //
   if (isset($_GET['products_id']) && SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS > 0) {
 
@@ -49,8 +49,6 @@
           $row ++;
         }
         $orders->MoveNext();
-
-        $title =  tra( 'Customers who bought this product also purchased...' );
       }
       require( DIR_FS_MODULES . 'tpl_modules_also_purchased_products.php');
     }

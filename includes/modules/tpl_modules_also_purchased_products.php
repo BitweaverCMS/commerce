@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_also_purchased_products.php,v 1.1 2005/08/04 07:24:06 spiderr Exp $
+// $Id: tpl_modules_also_purchased_products.php,v 1.2 2006/04/11 04:18:01 spiderr Exp $
 //
 ?>
 <!-- bof: also_purchased -->
 <table  width="100%" border="0" cellspacing="0" cellpadding="0" class="centerbox">
   <tr class="centerboxheading">
-    <td width="100%" class="centerboxheading"><?php echo $title; ?></td>
+    <td width="100%" class="centerboxheading"><?php echo tra( 'Customers who bought this product also purchased...' ); ?></td>
   </tr>
   <tr>
     <td class="centerboxcontent" >
