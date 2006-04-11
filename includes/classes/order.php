@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.38 2006/04/10 06:48:22 spiderr Exp $
+// $Id: order.php,v 1.39 2006/04/11 04:18:55 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -300,7 +300,6 @@ class order extends BitBase {
 
     function cart() {
       global $db, $currencies, $gBitUser, $gBitCustomer;
-
       $this->content_type = $_SESSION['cart']->get_content_type();
 
 		if( $gBitUser->isRegistered() ) {
