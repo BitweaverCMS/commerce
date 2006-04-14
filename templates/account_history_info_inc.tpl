@@ -1,7 +1,7 @@
        <h3>{tr}Status History & Comments{/tr}</h3>
        <ul class="data">
 {section loop=$orderHistory name=ix }
- 		{if $orderHistory[ix].customer_notified || $gBitUser->hasPermission( 'bit_p_commerce_admin' )}
+ 		{if $orderHistory[ix].customer_notified || $gBitUser->hasPermission( 'p_commerce_admin' )}
  		<li class="item">{$orderHistory[ix].customer_notified}
  			{if !$orderHistory[ix].customer_notified}<span class="warning">{/if}
 			{$orderHistory[ix].date_added|bit_short_datetime} - {$orderHistory[ix].orders_status_name}
@@ -13,6 +13,6 @@
        {/if}
 {/section}
 
-{if $gBitUser->hasPermission( 'bit_p_commerce_admin' )}
+{if $gBitUser->hasPermission( 'p_commerce_admin' )}
 	* <em class="warning">{tr}Customer cannot see these comments{/tr}</em>
 {/if}

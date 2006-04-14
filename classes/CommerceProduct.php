@@ -21,7 +21,7 @@ class CommerceProduct extends LibertyAttachable {
 		$this->mProductsId = $pProductsId;
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
-		$this->mAdminContentPerm = 'bit_p_commerce_admin';
+		$this->mAdminContentPerm = 'p_commerce_admin';
 		$this->mOptions = NULL;
 	}
 
@@ -29,7 +29,7 @@ class CommerceProduct extends LibertyAttachable {
 		global $gBitUser;
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->mInfo['content_id'];
-			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'bit_p_commerce_admin' ) ) {
+			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
 				$this->mInfo = array();
 				unset( $this->mContent );
 				unset( $this->mProductsId );
