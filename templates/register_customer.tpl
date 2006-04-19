@@ -33,7 +33,7 @@
 					{/forminput}
 				</div>
 
-				{if $gBitSystem->mPrefs.useRegisterPasscode eq 'y'}
+				{if $gBitSystem->isFeatureActive('users_register_passcode')}
 					<div class="row">
 						{formfeedback error=$userErrors.passcode}
 						{formlabel label="Passcode to register<br />(not your user password)" for="passcode"}
@@ -84,11 +84,11 @@
 					</div>
 				{/section}
 
-				{if $gBitSystem->mPrefs.rnd_num_reg eq 'y'}
+				{if $gBitSystem->isFeatureActive('users_random_number_reg')}
 					<hr />
 
 					<div class="row">
-						{formfeedback error=$userErrors.rnd_num_reg}
+						{formfeedback error=$userErrors.users_random_number_reg}
 						{formlabel label="Your registration code"}
 						{forminput}
 							<img src="{$smarty.const.USERS_PKG_URL}random_num_img.php" alt="{tr}Random Image{/tr}"/>
