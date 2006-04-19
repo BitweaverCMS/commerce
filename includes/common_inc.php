@@ -1170,13 +1170,26 @@ If a special exist * 10+9
 
 ////
 // Return a product ID from a product ID with attributes
-  function zen_get_prid($uprid) {
-    $ret = 0;
-  	if( !empty( $uprid ) ) {
-      $pieces = explode(':', $uprid);
-	  $ret = $pieces[0];
+  function zen_get_prid( $uprid ) {
+	$ret = 0;
+	if( !empty( $uprid ) ) {
+		$pieces = explode(':', $uprid);
+		$ret = $pieces[0];
 	}
-    return $ret;
+	return $ret;
+  }
+
+////
+// Return an option ID from a option ID with value_id
+  function zen_get_options_id( $pOptionsId ) {
+	$ret = 0;
+	if( strpos( $pOptionsId, '_' ) ) {
+		$pieces = explode('_', $pOptionsId);
+		$ret = $pieces[0];
+	} else {
+		$ret = $pOptionsId;
+	}
+	return $ret;
   }
 
 
@@ -1316,7 +1329,7 @@ If a special exist * 10+9
 
 // one time charges
     // onetime charge
-      $attributes_price_final_onetime += $pre_selected_onetime->fields["attributes_price_onetime"];
+      $attributes_price_final_onetime = $pre_selected_onetime->fields["attributes_price_onetime"];
 
     // price factor
     $display_normal_price = zen_get_products_actual_price($pre_selected_onetime->fields["products_id"]);

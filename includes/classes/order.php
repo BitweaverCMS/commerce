@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.39 2006/04/11 04:18:55 spiderr Exp $
+// $Id: order.php,v 1.40 2006/04/19 03:16:14 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -510,20 +510,20 @@ class order extends BitBase {
             }
 */
 
-            $attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
+            $attributes_query = "SELECT popt.`products_options_name`, poval.`products_options_values_name`,
                                         pa.`options_values_price`, pa.`price_prefix`
-                                 from " . TABLE_PRODUCTS_OPTIONS . " popt,
+                                 FROM " . TABLE_PRODUCTS_OPTIONS . " popt,
                                       " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval,
                                       " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                                 where pa.`products_id` = '" . (int)$products[$i]['id'] . "'
-									and pa.`options_id` = '" . (int)$option . "'
-									and pa.`options_id` = popt.`products_options_id`
-									and pa.`options_values_id` = '" . (int)$value . "'
-									and pa.`options_values_id` = poval.`products_options_values_id`
-									and popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-									and poval.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+                                 WHERE pa.`products_id` = ?
+									AND pa.`options_id` = ?
+									AND pa.`options_id` = popt.`products_options_id`
+									AND pa.`options_values_id` = ?
+									AND pa.`options_values_id` = poval.`products_options_values_id`
+									AND popt.`language_id` = ?
+									AND poval.`language_id` = ?";
 
-            $attributes = $db->Execute($attributes_query);
+            $attributes = $db->query($attributes_query, array( zen_get_prid( $products[$i]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'], (int)$_SESSION['languages_id'] ) );
 
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
             if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
@@ -685,20 +685,21 @@ class order extends BitBase {
 			if (STOCK_LIMITED == 'true') {
 				if (DOWNLOAD_ENABLED == 'true') {
 					$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
-									FROM " . TABLE_PRODUCTS . " p
-									LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-									ON p.`products_id`=pa.`products_id`
-									LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-									ON pa.products_attributes_id=pad.products_attributes_id
-									WHERE p.`products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'";
+										FROM " . TABLE_PRODUCTS . " p
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON p.`products_id`=pa.`products_id`
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON pa.`products_attributes_id`=pad.`products_attributes_id`
+										WHERE p.`products_id` = ?";
+					$bindVars = array( zen_get_prid($this->products[$i]['id']) );
 
 					// Will work with only one option for downloadable products
 					// otherwise, we have to build the query dynamically with a loop
 					$products_attributes = $this->products[$i]['attributes'];
-					if (is_array($products_attributes)) {
-						$stock_query_raw .= " AND pa.`options_id` = '" . $products_attributes[0]['option_id'] . "' AND pa.`options_values_id` = '" . $products_attributes[0]['value_id'] . "'";
+					if( is_array( $products_attributes ) ) {
+						$stock_query_raw .= " AND pa.`options_id` = ? AND pa.`options_values_id` = ?";
+						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
+						$bindVars[] = $products_attributes[0]['value_id'];
 					}
-					$stock_values = $db->Execute($stock_query_raw);
+					$stock_values = $db->query($stock_query_raw, $bindVars);
 				} else {
 					$stock_values = $db->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 				}
