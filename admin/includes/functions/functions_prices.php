@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.8 2006/02/01 21:14:28 spiderr Exp $
+// $Id: functions_prices.php,v 1.9 2006/04/20 03:46:17 spiderr Exp $
 //
 //
 
@@ -87,6 +87,7 @@
                                   array('id' => '2', 'text' => DEDUCTION_TYPE_DROPDOWN_2));
 
     $sale_maker_discount = 0;
+	$sale_maker_discount_type = FALSE;
     $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
     while (!$salemaker_sales->EOF) {
       $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);

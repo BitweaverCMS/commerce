@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.35 2006/04/05 01:06:57 spiderr Exp $
+//  $Id: general.php,v 1.36 2006/04/20 03:46:17 spiderr Exp $
 //
 
 ////
@@ -1797,6 +1797,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     global $db;
 
     $products_count = 0;
+	$cat_products_count = 0;
     if ($include_inactive == true) {
       switch ($counts_what) {
         case ('products'):
@@ -1840,7 +1841,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
         case ('products_active'):
         while (!$cat_products->EOF) {
           if (zen_get_product_is_linked($cat_products->fields['products_id']) == 'true') {
-            return $products_linked = 'true';
+            return 'true';
           }
           $cat_products->MoveNext();
         }
@@ -1861,7 +1862,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           break;
         case ('products_active'):
           if (zen_get_products_to_categories($cat_child_categories->fields['categories_id'], true, 'products_active') == 'true') {
-            return $products_linked = 'true';
+            return 'true';
           }
           break;
         }
@@ -1875,7 +1876,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           return $cat_products_count;
           break;
         case ('products_active'):
-          return $products_linked;
+          return 'true';
           break;
       }
   }

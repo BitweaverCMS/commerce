@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.15 2005/10/31 23:00:26 lsces Exp $
+//  $Id: modules.php,v 1.16 2006/04/20 03:46:16 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -71,7 +71,6 @@
         break;
       case 'install':
       case 'remove':
-$gBitDb->debug();
         $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
         $class = basename($_GET['module']);
         if( file_exists( $module_directory . $class . $file_extension ) ) {
@@ -225,7 +224,7 @@ $gBitDb->debug();
 ?>
                 <td class="dataTableContent"><?php echo $module->title; ?></td>
                 <td class="dataTableContent"><?php echo $module->code; ?></td>
-                <td class="dataTableContent" align="right"><?php if (is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
+                <td class="dataTableContent" align="right"><?php if( !empty( $module->sort_order ) && is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
 <?php
   if ($set == 'payment' and !empty($module->order_status)) {
 		$orders_status_name = $db->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );
@@ -244,10 +243,7 @@ $gBitDb->debug();
     }
   }
   ksort($installed_modules);
-  $check = $db->Execute("select `configuration_value`
-                         from " . TABLE_CONFIGURATION . "
-             where `configuration_key` = '" . $module_key . "'");
-
+  $check = $db->query("select `configuration_value` FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $module_key ) );
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
       $db->Execute("update " . TABLE_CONFIGURATION . "

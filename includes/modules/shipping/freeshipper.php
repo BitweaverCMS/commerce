@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freeshipper.php,v 1.5 2006/02/24 04:13:08 spiderr Exp $
+// $Id: freeshipper.php,v 1.6 2006/04/20 03:46:17 spiderr Exp $
 //
   class freeshipper {
     var $code, $title, $description, $icon, $enabled;
@@ -26,17 +26,19 @@
     function freeshipper() {
       global $order, $db;
       $this->code = 'freeshipper';
-      $this->title = MODULE_SHIPPING_FREESHIPPER_TEXT_TITLE;
-      $this->description = MODULE_SHIPPING_FREESHIPPER_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_SHIPPING_FREESHIPPER_SORT_ORDER;
-      $this->icon = '';
-      $this->tax_class = MODULE_SHIPPING_FREESHIPPER_TAX_CLASS;
+			if( defined( 'MODULE_SHIPPING_FREESHIPPER_STATUS' ) ) {
+				$this->title = MODULE_SHIPPING_FREESHIPPER_TEXT_TITLE;
+				$this->description = MODULE_SHIPPING_FREESHIPPER_TEXT_DESCRIPTION;
+				$this->sort_order = MODULE_SHIPPING_FREESHIPPER_SORT_ORDER;
+				$this->icon = '';
+				$this->tax_class = MODULE_SHIPPING_FREESHIPPER_TAX_CLASS;
 
-      // enable only when entire cart is free shipping
-//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') == $_SESSION['cart']->count_contents()) {
-      if (zen_get_shipping_enabled($this->code)) {
-        $this->enabled = ((MODULE_SHIPPING_FREESHIPPER_STATUS == 'True') ? true : false);
-      }
+			  // enable only when entire cart is free shipping
+		//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') == $_SESSION['cart']->count_contents()) {
+				if (zen_get_shipping_enabled($this->code)) {
+					$this->enabled = ((MODULE_SHIPPING_FREESHIPPER_STATUS == 'True') ? true : false);
+				}
+			}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_FREESHIPPER_ZONE > 0) ) {
         $check_flag = false;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: storepickup.php,v 1.3 2006/02/24 04:13:08 spiderr Exp $
+// $Id: storepickup.php,v 1.4 2006/04/20 03:46:17 spiderr Exp $
 //
 
   class storepickup {
@@ -28,13 +28,15 @@
       global $order, $db;
 
       $this->code = 'storepickup';
-      $this->title = MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE;
-      $this->description = MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_SHIPPING_STOREPICKUP_SORT_ORDER;
-      $this->icon = '';
-      $this->tax_class = MODULE_SHIPPING_STOREPICKUP_TAX_CLASS;
-      $this->tax_basis = MODULE_SHIPPING_ITEM_STOREPICKUP_BASIS;
-      $this->enabled = ((MODULE_SHIPPING_STOREPICKUP_STATUS == 'True') ? true : false);
+		if( defined( 'MODULE_SHIPPING_STOREPICKUP_STATUS' ) ) {
+			$this->title = MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE;
+			$this->description = MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION;
+			$this->sort_order = MODULE_SHIPPING_STOREPICKUP_SORT_ORDER;
+			$this->icon = '';
+			$this->tax_class = MODULE_SHIPPING_STOREPICKUP_TAX_CLASS;
+			$this->tax_basis = MODULE_SHIPPING_ITEM_STOREPICKUP_BASIS;
+			$this->enabled = ((MODULE_SHIPPING_STOREPICKUP_STATUS == 'True') ? true : false);
+		}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_STOREPICKUP_ZONE > 0) ) {
         $check_flag = false;

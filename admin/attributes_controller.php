@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.24 2006/02/08 23:24:23 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.25 2006/04/20 03:46:16 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -1045,6 +1045,7 @@ if ($action == '') {
           </tr>
 <?php } ?>
 <?php
+	$rows = 0;
   while (!$attributes_values->EOF) {
     $current_attributes_products_id = $attributes_values->fields['products_id'];
     $current_attributes_options_id = $attributes_values->fields['options_id'];
@@ -1312,6 +1313,7 @@ if ($action == '') {
 
 <?php
       if (DOWNLOAD_ENABLED == 'true') {
+		$products_attributes_filename = '';
         $download_query_raw ="select products_attributes_filename, products_attributes_maxdays, products_attributes_maxcount
                               from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                               where products_attributes_id='" . $attributes_values->fields['products_attributes_id'] . "'";

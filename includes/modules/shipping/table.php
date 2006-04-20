@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: table.php,v 1.3 2006/02/24 04:13:08 spiderr Exp $
+// $Id: table.php,v 1.4 2006/04/20 03:46:17 spiderr Exp $
 //
 
   class table {
@@ -28,16 +28,18 @@
       global $order, $db;
 
       $this->code = 'table';
-      $this->title = MODULE_SHIPPING_TABLE_TEXT_TITLE;
-      $this->description = MODULE_SHIPPING_TABLE_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_SHIPPING_TABLE_SORT_ORDER;
-      $this->icon = '';
-      $this->tax_class = MODULE_SHIPPING_TABLE_TAX_CLASS;
-      $this->tax_basis = MODULE_SHIPPING_TABLE_TAX_BASIS;
-      // disable only when entire cart is free shipping
-      if (zen_get_shipping_enabled($this->code)) {
-        $this->enabled = ((MODULE_SHIPPING_TABLE_STATUS == 'True') ? true : false);
-      }
+		if( defined( 'MODULE_SHIPPING_TABLE_STATUS' ) ) {
+		  $this->title = MODULE_SHIPPING_TABLE_TEXT_TITLE;
+		  $this->description = MODULE_SHIPPING_TABLE_TEXT_DESCRIPTION;
+		  $this->sort_order = MODULE_SHIPPING_TABLE_SORT_ORDER;
+		  $this->icon = '';
+		  $this->tax_class = MODULE_SHIPPING_TABLE_TAX_CLASS;
+		  $this->tax_basis = MODULE_SHIPPING_TABLE_TAX_BASIS;
+		  // disable only when entire cart is free shipping
+		  if (zen_get_shipping_enabled($this->code)) {
+			$this->enabled = ((MODULE_SHIPPING_TABLE_STATUS == 'True') ? true : false);
+		  }
+		}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_TABLE_ZONE > 0) ) {
         $check_flag = false;

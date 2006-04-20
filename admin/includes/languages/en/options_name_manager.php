@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
+//  $Id: options_name_manager.php,v 1.4 2006/04/20 03:46:17 spiderr Exp $
 //
 
 define('HEADING_TITLE_OPT', 'Product Options');
@@ -66,8 +66,8 @@ define('TABLE_TEXT_MAX_COUNT_SHORT', 'Max:');
   define('TABLE_HEADING_OPT_SORT_ORDER','Sort Order');
   define('TABLE_HEADING_OPT_DEFAULT','Default');
 
-  define('TABLE_HEADING_YES','Yes');
-  define('TABLE_HEADING_NO','No');
+//  define('TABLE_HEADING_YES','Yes');
+//  define('TABLE_HEADING_NO','No');
 
   define('TABLE_HEADING_OPT_TYPE', 'Option Type'); //CLR 031203 add option type column
   define('TABLE_HEADING_OPTION_VALUE_SIZE','Size');

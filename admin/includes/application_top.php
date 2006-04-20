@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.19 2006/04/14 23:09:17 spiderr Exp $
+//  $Id: application_top.php,v 1.20 2006/04/20 03:46:17 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -292,7 +292,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
   }
 
 // default open navigation box
-  if (!$_SESSION['selected_box']) {
+  if( empty( $_SESSION['selected_box'] ) ) {
     $_SESSION['selected_box'] = 'configuration';
   }
 

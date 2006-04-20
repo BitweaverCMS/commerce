@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.15 2005/11/21 16:22:43 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.16 2006/04/20 03:46:16 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -881,6 +881,7 @@ function go_option() {
 
   // build dropdown for option_name from
   $options_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_name` !='' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_FILE . "' order by products_options_name");
+	$option_from_dropdown = '';
   while(!$options_values_from->EOF) {
     $option_from_dropdown .= "\n" . '  <option name="' . $options_values_from->fields['products_options_name'] . '" value="' . $options_values_from->fields['products_options_id'] . '">' . $options_values_from->fields['products_options_name'] . '</option>';
     $options_values_from->MoveNext();
@@ -896,9 +897,13 @@ function go_option() {
 
   // build dropdown for option_values from
   $options_values_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_values_id` !='0' order by `products_options_values_name`");
+	$option_values_from_dropdown = '';
   while(!$options_values_values_from->EOF) {
     $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($options_values_values_from->fields['products_options_values_id'])) . ']';
-    $option_values_from_dropdown .= "\n" . '  <option name="' . $options_values_values_from->fields['products_options_values_name'] . '" value="' . $options_values_values_from->fields['products_options_values_id'] . '">' . $options_values_values_from->fields['products_options_values_name'] . $show_option_name . '</option>'; echo zen_draw_hidden_field('option_value_from_filter', $_GET['options_id_from']);
+    $option_values_from_dropdown .= "\n" . '  <option name="' . $options_values_values_from->fields['products_options_values_name'] . '" value="' . $options_values_values_from->fields['products_options_values_id'] . '">' . $options_values_values_from->fields['products_options_values_name'] . $show_option_name . '</option>'; 
+	if( !empty( $_GET['options_id_from'] ) ) {
+		echo zen_draw_hidden_field('option_value_from_filter', $_GET['options_id_from']);
+	}
     $options_values_values_from->MoveNext();
   }
 
