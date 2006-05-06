@@ -1,8 +1,9 @@
-{if $manufacturersPulldown}
+{if $manufacturers}
 	{bitmodule title=$moduleTitle name="bc_manufacturersselect"}
-		$content.= zen_draw_form('manufacturers', zen_href_link(FILENAME_DEFAULT, '', 'NONSSL', false), 'get');
-			{$manufacturersPulldown}
-		$content .= zen_draw_hidden_field('main_page', FILENAME_DEFAULT) . '</form>
+	<form name="manufacturers">
+			{html_options options=$manufacturers selected=$smarty.get.manufacturers_id name="manufacturers_id" onchange="this.form.submit();"}
+			{$manufacturers}
+	</form>
 	{/bitmodule}
 {/if}
 
