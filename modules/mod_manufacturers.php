@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.5 2006/05/06 21:44:09 spiderr Exp $
+// $Id: mod_manufacturers.php,v 1.6 2006/05/06 21:44:54 spiderr Exp $
 //
 	global $db, $gBitProduct;
 
@@ -49,7 +49,7 @@ if ($show_manufacturers) {
   }
 
   if( $manufacturer_sidebox = $db->getRow($manufacturer_sidebox_query) ) {
-    $number_of_rows = count( $manufacturer_sidebox->RecordCount() )+1;
+    $number_of_rows = count( $manufacturer_sidebox )+1;
 
 // Display a list
     $manufacturer_sidebox_array = array();
