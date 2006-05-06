@@ -1218,9 +1218,6 @@ foreach( array_keys( $tables ) AS $tableName ) {
 $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 	'description' => "bitcommerce - a fork of zencart.com which is a fork of OSCommerce.",
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#GPL">GPL</a>',
-	'version' => '0.1',
-	'state' => 'experimental',
-	'dependencies' => '',
 ) );
 
 $gBitInstaller->makePackageHomeable( BITCOMMERCE_PKG_NAME );
