@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.6 2006/05/06 21:44:54 spiderr Exp $
+// $Id: mod_manufacturers.php,v 1.7 2006/05/06 21:50:53 bitweaver Exp $
 //
 	global $db, $gBitProduct;
 
@@ -48,8 +48,8 @@ if ($show_manufacturers) {
                             order by `manufacturers_name`";
   }
 
-  if( $manufacturer_sidebox = $db->getRow($manufacturer_sidebox_query) ) {
-    $number_of_rows = count( $manufacturer_sidebox )+1;
+  if( $manufacturers = $db->query($manufacturer_sidebox_query) ) {
+	  $number_of_rows = count( $manufacturers->RecordCount() )+1;
 
 // Display a list
     $manufacturer_sidebox_array = array();
@@ -59,12 +59,10 @@ if ($show_manufacturers) {
       $manufacturer_sidebox_array[] = array('id' => '', 'text' => PULL_DOWN_MANUFACTURERS);
     }
 
-    while (!$manufacturer_sidebox->EOF) {
+	while( $manufacturer_sidebox = $manufacturers->fetchRow() ) {
       $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox['manufacturers_name']);
       $manufacturer_sidebox_array[] = array('id' => $manufacturer_sidebox['manufacturers_id'],
                                        'text' => $manufacturer_sidebox_name);
-
-      $manufacturer_sidebox->MoveNext();
     }
 	$gBitSmarty->assign( 'manufacturersPulldown', zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, (isset($_GET['manufacturers_id']) ? $_GET['manufacturers_id'] : ''), 'onchange="this.form.submit();" size="' . MAX_MANUFACTURERS_LIST . '" style="width: 100%"') . zen_hide_session_id() );
   //	require($template->get_template_dir('tpl_manufacturers_select.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturers_select.php');
