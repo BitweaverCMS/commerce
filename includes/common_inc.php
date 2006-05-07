@@ -637,7 +637,7 @@
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $gBitDb;
     $product_check = $gBitDb->getOne("select `products_priced_by_attribute` from " . TABLE_PRODUCTS .
-			" where `products_id` = ?", array( $products_id ) );
+			" where `products_id` = ?", array( zen_get_prid( $products_id ) ) );
     return( $product_check == '1' );
   }
 

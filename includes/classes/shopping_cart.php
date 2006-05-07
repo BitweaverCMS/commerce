@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.29 2006/03/17 03:24:12 spiderr Exp $
+// $Id: shopping_cart.php,v 1.30 2006/05/07 16:01:09 spiderr Exp $
 //
 
   class shoppingCart {
@@ -627,7 +627,7 @@
 // calculate proper discount for attributes
                 $discount_type_id = '';
                 $sale_maker_discount = '';
-                $new_attributes_price = zen_get_discount_calc($products_id, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
+                $new_attributes_price = zen_get_discount_calc(zen_get_prid($products_id), $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
                 $attributes_price += ($new_attributes_price);
               } else {
                 $attributes_price += $attribute_price->fields['options_values_price'];
