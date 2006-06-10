@@ -262,8 +262,10 @@
 // uses $tbl = table name, $fld = field name
   function zen_field_length($tbl, $fld) {
     global $gBitDb;
-    $rs = $gBitDb->MetaColumns($tbl);
-    $length = $rs[strtoupper($fld)]->max_length;
+	$length = NULL;
+    if( $rs = $gBitDb->MetaColumns($tbl) ) {
+	    $length = $rs[strtoupper($fld)]->max_length;
+	}
     return $length;
   }
 

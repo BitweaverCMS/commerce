@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
+//  $Id: attributes_controller.php,v 1.4 2006/06/10 12:13:15 spiderr Exp $
 //
 
 define('HEADING_TITLE_OPT', 'Product Options');
@@ -172,6 +172,6 @@ define('TABLE_TEXT_MAX_COUNT_SHORT', 'Max:');
   define('TEXT_CALL_FOR_PRICE', 'Call for Price');
   define('TEXT_SAVE_CHANGES','UPDATE AND SAVE CHANGES:');
 
-  define('TEXT_INFO_ID', 'ID#');
+//  define('TEXT_INFO_ID', 'ID#');
   define('TEXT_INFO_ALLOW_ADD_TO_CART_NO', 'No adding to cart');
 ?>

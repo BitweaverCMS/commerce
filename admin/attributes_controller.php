@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.25 2006/04/20 03:46:16 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.26 2006/06/10 12:13:15 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -48,7 +48,7 @@
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
 
-  $productsId = (isset($_GET['products_id']) ? $_GET['products_id'] : $productsId);
+  $productsId = (isset($_GET['products_id']) ? $_GET['products_id'] : '');
 
   $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
 
@@ -857,7 +857,7 @@ if ($action == 'attributes_preview') {
         </table></td>
       </tr>
 
-      <tr><form name="set_products_id_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_products_id') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_id', $_GET['products_id']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
+      <tr><form name="set_products_id_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'action=set_products_id') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_id', $_GET['products_id']); ?><?php echo zen_draw_hidden_field('current_category_id', !empty( $_GET['current_category_id'] ) ? $_GET['current_category_id'] : NULL ); ?>
         <td colspan="2"><table border="0" cellspacing="0" cellpadding="2">
 
 <?php
@@ -1813,7 +1813,7 @@ $off_overwrite = false;
         <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
           <tr class="attributeBoxContent">
             <td class="attributeBoxContent" valign="top"><?php echo TABLE_HEADING_DOWNLOAD; ?>&nbsp;</td>
-            <td class="attributeBoxContent"><?php echo TABLE_TEXT_FILENAME . '<br />' . zen_draw_input_field('products_attributes_filename', $products_attributes_filename, zen_set_field_length(TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD, 'products_attributes_filename', 35)); ?>&nbsp;</td>
+            <td class="attributeBoxContent"><?php echo TABLE_TEXT_FILENAME . '<br />' . zen_draw_input_field('products_attributes_filename', !empty( $products_attributes_filename ) ? $products_attributes_filename : NULL, zen_set_field_length(TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD, 'products_attributes_filename', 35)); ?>&nbsp;</td>
             <td class="attributeBoxContent"><?php echo TABLE_TEXT_MAX_DAYS . '<br />' . zen_draw_input_field('products_attributes_maxdays', $products_attributes_maxdays, 'size="5"'); ?>&nbsp;</td>
             <td class="attributeBoxContent"><?php echo TABLE_TEXT_MAX_COUNT . '<br />' . zen_draw_input_field('products_attributes_maxcount', $products_attributes_maxcount, 'size="5"'); ?>&nbsp;</td>
           </tr>

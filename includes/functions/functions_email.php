@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.4 2005/10/31 16:19:57 lsces Exp $
+// $Id: functions_email.php,v 1.5 2006/06/10 12:13:16 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -251,7 +251,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
     }
 
     $block['GV_BLOCK'] = '';
-    if ( ( $block['GV_WORTH'] ) && !empty( $block['GV_REDEEM'] ) && !empty( $block['GV_CODE_URL'] ) ) {
+    if ( !empty( $block['GV_WORTH'] ) && !empty( $block['GV_REDEEM'] ) && !empty( $block['GV_CODE_URL'] ) ) {
       $block['GV_BLOCK'] = '<div class="gv-block">' . $block['GV_WORTH'] . '<br />' . $block['GV_REDEEM'] . $block['GV_CODE_URL'] . '<br />' . $block['GV_LINK_OTHER'] . '</div>';
     }
 

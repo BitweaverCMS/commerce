@@ -17,17 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.6 2005/11/29 15:39:30 spiderr Exp $
+//  $Id: products_previous_next.php,v 1.7 2006/06/10 12:13:15 spiderr Exp $
 //
 
 /////
 // BOF PREVIOUS NEXT
 
-  if ($prev_next_list=='') {
+  if( empty( $prev_next_list ) ) {
 // calculate the previous and next
 
     $check_type = $db->query("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` =?", array( $productsId ) );
-    define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
+	if( !defined( 'PRODUCT_INFO_PREVIOUS_NEXT_SORT' ) ) {
+	    define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
+	}
 
     // sort order
     switch(PRODUCT_INFO_PREVIOUS_NEXT_SORT) {
@@ -95,7 +97,7 @@
         } else {
           $previous = $id_array[$key - 1];
         }
-        if ($id_array[$key + 1]) {
+        if( isset( $id_array[$key + 1] ) ) {
           $next_item = $id_array[$key + 1];
         } else {
           $next_item = $id_array[0];

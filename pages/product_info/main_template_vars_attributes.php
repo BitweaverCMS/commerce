@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.17 2006/04/20 03:46:17 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.18 2006/06/10 12:13:16 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -133,7 +133,7 @@ if ( $gBitProduct->loadAttributes() ) {
 
 	// collect weight information if it exists
 			if ((SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES=='1' && !empty( $vals['products_attributes_wt'] ) )) {
-				$products_options_display_weight = ' (' . $vals['products_attributes_wt_pfix'] . round( $vals['products_attributes_wt'], 2 ) . TEXT_PRODUCT_WEIGHT_UNIT . ')';
+				$products_options_display_weight = ' (' . $vals['products_attributes_wt_pfix'] . round( $vals['products_attributes_wt'], 2 ) . ' '. tra( 'lbs' ) . ')';
 				$products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_weight;
 			} else {
 				// reset

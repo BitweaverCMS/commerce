@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.19 2005/11/30 07:10:02 spiderr Exp $
+// $Id: functions_lookups.php,v 1.20 2006/06/10 12:13:16 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -53,14 +53,15 @@
     		$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
     	}
       if ($with_iso_codes == true) {
-        $countries = "select `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`
+        $countries = "select `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `countries_id`
                       from " . TABLE_COUNTRIES . "
 					  $whereSql
                       order by `countries_name`";
         $countries_values = $db->query( $countries, array( $countries_id ) );
         $countries_array = array('countries_name' => $countries_values->fields['countries_name'],
                                  'countries_iso_code_2' => $countries_values->fields['countries_iso_code_2'],
-                                 'countries_iso_code_3' => $countries_values->fields['countries_iso_code_3']);
+                                 'countries_iso_code_3' => $countries_values->fields['countries_iso_code_3'],
+								 'countries_id' => $countries_values->fields['countries_id']);
       } else {
         $countries = "select `countries_name`
                       from " . TABLE_COUNTRIES . "
@@ -102,6 +103,16 @@
   function zen_get_countries_with_iso_codes($countries_id) {
     return zen_get_countries($countries_id, true);
   }
+
+
+	function zen_get_zone_by_name( $pCountryId, $pName ) {
+		global $gBitDb;
+		$sql = "SELECT *
+				FROM " . TABLE_ZONES . "
+				WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
+		return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%' ) ) );
+	}
+
 
 ////
 // Returns the zone (State/Province) name
