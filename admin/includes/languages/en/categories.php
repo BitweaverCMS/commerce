@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
+//  $Id: categories.php,v 1.4 2006/06/24 05:11:48 spiderr Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -180,7 +180,7 @@ define('ERROR_CANNOT_MOVE_PRODUCT_TO_CATEGORY_SELF', 'Error: Cannot move product
 
   define('TEXT_PRODUCTS_MIXED','Product Qty Min/Unit Mix:');
 
-  define('PRODUCTS_PRICE_IS_FREE_TEXT', 'Product is Free');
+  //define('PRODUCTS_PRICE_IS_FREE_TEXT', 'Product is Free');
   define('TEXT_PRODUCT_IS_FREE','Product is Free:');
   define('TEXT_PRODUCTS_IS_FREE_PREVIEW','*Product is marked as FREE');
   define('TEXT_PRODUCTS_IS_FREE_EDIT','*Product is marked as FREE');
@@ -217,5 +217,5 @@ define('TEXT_PRODUCTS_STATUS_ON_OF',' of ');
 define('TEXT_PRODUCTS_STATUS_ACTIVE',' active ');
 
 define('TEXT_CATEGORIES_DESCRIPTION', 'Categories Description:');
-define('PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT', 'Product is call for price');
+//define('PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT', 'Product is call for price');
 ?>

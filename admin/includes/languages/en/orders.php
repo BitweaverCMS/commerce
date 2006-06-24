@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.6 2006/02/24 04:13:04 spiderr Exp $
+//  $Id: orders.php,v 1.7 2006/06/24 05:11:48 spiderr Exp $
 //
 
 //	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -36,7 +36,7 @@ define('TABLE_HEADING_DATE_PURCHASED', 'Date Purchased');
 
 define('TABLE_HEADING_TYPE', 'Order Type');
 
-define('TABLE_HEADING_QUANTITY', 'Qty.');
+//define('TABLE_HEADING_QUANTITY', 'Qty.');
 define('TABLE_HEADING_PRODUCTS_MODEL', 'Model');
 define('TABLE_HEADING_PRODUCTS', 'Products');
 define('TABLE_HEADING_TAX', 'Tax');

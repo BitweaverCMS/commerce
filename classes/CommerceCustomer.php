@@ -23,6 +23,20 @@
 			return( count( $this->mInfo ) );
 		}
 
+		function getCommissions() {
+			$ret = array();
+			if( $this->isValid() ) {
+				$sql = "SELECT co.*,cop.* FROM 
+							" . TABLE_ORDERS . " co  
+							INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
+							INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
+							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
+						WHERE lc.`user_id`=?";
+				$ret = $this->mDb->getAssoc( $sql, array( $this->mCustomerId ) );
+			}
+			return( $ret );
+		}
+
 		function syncBitUser( $pInfo ) {
 			global $gBitDb;
 			// bitcommerce customers table to bitweaver users_users table
