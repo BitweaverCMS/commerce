@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: zones.php,v 1.3 2006/02/24 04:13:08 spiderr Exp $
+// $Id: zones.php,v 1.4 2006/06/25 21:03:39 spiderr Exp $
 //
 /*
 
@@ -113,14 +113,13 @@
       $this->code = 'zones';
       $this->title = MODULE_SHIPPING_ZONES_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_ZONES_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_SHIPPING_ZONES_SORT_ORDER;
+      $this->sort_order = defined( 'MODULE_SHIPPING_ZONES_SORT_ORDER' ) ? MODULE_SHIPPING_ZONES_SORT_ORDER : NULL;
       $this->icon = '';
-      $this->tax_class = MODULE_SHIPPING_ZONES_TAX_CLASS;
-      $this->tax_class = MODULE_SHIPPING_ZONES_TAX_CLASS;
+      $this->tax_class = defined( 'MODULE_SHIPPING_ZONES_TAX_CLASS' ) ? MODULE_SHIPPING_ZONES_TAX_CLASS : NULL;
 
       // disable only when entire cart is free shipping
       if (zen_get_shipping_enabled($this->code)) {
-        $this->enabled = ((MODULE_SHIPPING_ZONES_STATUS == 'True') ? true : false);
+        $this->enabled = ((defined( 'MODULE_SHIPPING_ZONES_STATUS' ) && MODULE_SHIPPING_ZONES_STATUS == 'True') ? true : false);
       }
 
       // CUSTOMIZE THIS SETTING FOR THE NUMBER OF ZONES NEEDED
