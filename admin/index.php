@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.18 2006/02/24 22:33:01 lsces Exp $
+//  $Id: index.php,v 1.19 2006/07/10 03:43:58 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -108,12 +108,12 @@ global $language;
   <?php
 	require_once( DIR_FS_CLASSES.'order.php' );
 
-	$listHash = array( 'max_records' => '50' );
+	$listHash = array( 'max_records' => '250' );
 	$orders = order::getList( $listHash );
 
 	foreach( array_keys( $orders ) as $orderId ) {
 		$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orderId . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
-		echo '<tr><td>' . $orderAnchor . $orderId . ' - '. $gBitUser->getDisplayName( FALSE, $orders[$orderId] ) . '</a> ' . '</td><td>' . $orders[$orderId]['order_total'] . '</td><td align="right">' . "\n";
+		echo '<tr><td>' . $orderAnchor . $orderId . ' - '. $gBitUser->getDisplayName( FALSE, $orders[$orderId] ) . '</a> ' . '</td><td>' . round( $orders[$orderId]['order_total'], 2) . '</td><td align="right">' . "\n";
 		echo zen_date_short( $orders[$orderId]['date_purchased'] );
 		echo '</td><td>'.$orders[$orderId]['orders_status_name'].'</td></tr>' . "\n";
 	}

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.5 2006/06/10 12:13:16 spiderr Exp $
+// $Id: functions_email.php,v 1.6 2006/07/10 03:43:58 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -316,6 +316,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 //----------------------------------------------------------------------------------------------------
  function smtpmail($mail_to, $subject, $message, $headers = "") {
+	global $messageStack;
    $message = preg_replace("/(?<!\r)\n/si", "\r\n", $message);
    $mailbox = (EMAIL_SMTPAUTH_MAILBOX) ? EMAIL_SMTPAUTH_MAILBOX : EMAIL_FROM;
    $mail_to_array = explode(",", $mail_to);

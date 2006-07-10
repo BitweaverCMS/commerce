@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.40 2006/04/19 03:16:14 spiderr Exp $
+// $Id: order.php,v 1.41 2006/07/10 03:43:58 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -49,6 +49,7 @@ class order extends BitBase {
 	function getList( $pListHash ) {
 		global $gBitDb;
 		$bindVars = array();
+		$ret = array();
 		$whereSql = '';
 
 		if( !empty( $pListHash['orders_status_id'] ) ) {
@@ -70,8 +71,13 @@ class order extends BitBase {
 				  	LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
 				  WHERE `class` = 'ot_total' $whereSql
 				  ORDER BY ".$gBitDb->convert_sortmode( $pListHash['sort_mode'] );
+		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$ret[$row['orders_id']] = $row;
+			}
+		}
 
-		return( $gBitDb->GetAssoc( $query, $bindVars, $pListHash['max_records'] ) );
+		return( $ret );
 	}
 
     function load($order_id) {

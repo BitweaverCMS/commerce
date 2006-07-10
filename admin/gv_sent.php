@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_sent.php,v 1.6 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: gv_sent.php,v 1.7 2006/07/10 03:43:58 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -71,6 +71,7 @@
             <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_SENDERS_NAME; ?></td>
+                <td class="dataTableHeadingContent"><?php echo tra( 'Emailed To' ); ?></td>
                 <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_VOUCHER_VALUE; ?></td>
                 <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_VOUCHER_CODE; ?></td>
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_DATE_SENT; ?></td>
@@ -91,6 +92,7 @@
     }
 ?>
                 <td class="dataTableContent"><?php echo $gv_list->fields['sent_firstname'] . ' ' . $gv_list->fields['sent_lastname']; ?></td>
+                <td class="dataTableContent" align="left"><?php echo $gv_list->fields['emailed_to']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $currencies->format($gv_list->fields['coupon_amount']); ?></td>
                 <td class="dataTableContent" align="center"><?php echo $gv_list->fields['coupon_code']; ?></td>
                 <td class="dataTableContent" align="right"><?php echo zen_date_short($gv_list->fields['date_sent']); ?></td>

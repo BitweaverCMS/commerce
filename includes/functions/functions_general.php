@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.28 2006/02/25 04:01:10 spiderr Exp $
+// $Id: functions_general.php,v 1.29 2006/07/10 03:43:58 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -723,7 +723,7 @@
 			}
 
 			if ($product_valid == true) break;
-			$coupons->MoveNext();
+			
 		}
 	}
     return $product_valid;
