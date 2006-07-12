@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.5 2006/07/12 04:11:19 spiderr Exp $
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $error = false;
 
-  if ( (isset($_GET['keyword']) && empty($_GET['keyword'])) &&
-       (isset($_GET['dfrom']) && (empty($_GET['dfrom']) || ($_GET['dfrom'] == DOB_FORMAT_STRING))) &&
-       (isset($_GET['dto']) && (empty($_GET['dto']) || ($_GET['dto'] == DOB_FORMAT_STRING))) &&
-       (isset($_GET['pfrom']) && !is_numeric($_GET['pfrom'])) &&
-       (isset($_GET['pto']) && !is_numeric($_GET['pto'])) ) {
+  if ( (isset($_REQUEST['keyword']) && empty($_REQUEST['keyword'])) &&
+       (isset($_REQUEST['dfrom']) && (empty($_REQUEST['dfrom']) || ($_REQUEST['dfrom'] == DOB_FORMAT_STRING))) &&
+       (isset($_REQUEST['dto']) && (empty($_REQUEST['dto']) || ($_REQUEST['dto'] == DOB_FORMAT_STRING))) &&
+       (isset($_REQUEST['pfrom']) && !is_numeric($_REQUEST['pfrom'])) &&
+       (isset($_REQUEST['pto']) && !is_numeric($_REQUEST['pto'])) ) {
     $error = true;
     $messageStack->add_session('search', ERROR_AT_LEAST_ONE_INPUT);
   } else {
@@ -36,24 +36,24 @@
     $pto = '';
     $keywords = '';
 
-    if (isset($_GET['dfrom'])) {
-      $dfrom = (($_GET['dfrom'] == DOB_FORMAT_STRING) ? '' : $_GET['dfrom']);
+    if (isset($_REQUEST['dfrom'])) {
+      $dfrom = (($_REQUEST['dfrom'] == DOB_FORMAT_STRING) ? '' : $_REQUEST['dfrom']);
     }
 
-    if (isset($_GET['dto'])) {
-      $dto = (($_GET['dto'] == DOB_FORMAT_STRING) ? '' : $_GET['dto']);
+    if (isset($_REQUEST['dto'])) {
+      $dto = (($_REQUEST['dto'] == DOB_FORMAT_STRING) ? '' : $_REQUEST['dto']);
     }
 
-    if (isset($_GET['pfrom'])) {
-      $pfrom = $_GET['pfrom'];
+    if (isset($_REQUEST['pfrom'])) {
+      $pfrom = $_REQUEST['pfrom'];
     }
 
-    if (isset($_GET['pto'])) {
-      $pto = $_GET['pto'];
+    if (isset($_REQUEST['pto'])) {
+      $pto = $_REQUEST['pto'];
     }
 
-    if (isset($_GET['keyword'])) {
-      $keywords = $_GET['keyword'];
+    if (isset($_REQUEST['keyword'])) {
+      $keywords = $_REQUEST['keyword'];
     }
 
     $date_check_error = false;
@@ -126,7 +126,6 @@
   }
 
   if ($error == true) {
-
     zen_redirect(zen_href_link(FILENAME_ADVANCED_SEARCH, zen_get_all_get_params(), 'NONSSL', true, false));
   }
 

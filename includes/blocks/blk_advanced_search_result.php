@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.7 2005/10/31 23:46:32 lsces Exp $
+// $Id: blk_advanced_search_result.php,v 1.8 2006/07/12 04:12:20 spiderr Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -77,14 +77,14 @@
 //  $select_str = "select distinct " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.`products_price`) as final_price ";
   $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`products_price_sorter` ";
 
-  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
+  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     $select_str .= ", SUM(tr.tax_rate) as tax_rate ";
   }
 
 //  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd left join " . TABLE_SPECIALS . " s on p.`products_id` = s.`products_id`, " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c";
   $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id) ";
 
-  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
+  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     if (!$_SESSION['customer_country_id']) {
       $_SESSION['customer_country_id'] = STORE_COUNTRY;
       $_SESSIOn['customer_zone_id'] = STORE_ZONE;
@@ -96,26 +96,26 @@
 
   $where_str = " where p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id'] . "' ";
 
-  if (isset($_GET['categories_id']) && zen_not_null($_GET['categories_id'])) {
-    if ($_GET['inc_subcat'] == '1') {
+  if (isset($_REQUEST['categories_id']) && zen_not_null($_REQUEST['categories_id'])) {
+    if ($_REQUEST['inc_subcat'] == '1') {
       $subcategories_array = array();
-      zen_get_subcategories($subcategories_array, $_GET['categories_id']);
-      $where_str .= " and p2c.`products_id` = pd.`products_id` and (p2c.`categories_id` = '" . (int)$_GET['categories_id'] . "'";
+      zen_get_subcategories($subcategories_array, $_REQUEST['categories_id']);
+      $where_str .= " and p2c.`products_id` = pd.`products_id` and (p2c.`categories_id` = '" . (int)$_REQUEST['categories_id'] . "'";
       for ($i=0, $n=sizeof($subcategories_array); $i<$n; $i++ ) {
         $where_str .= " or p2c.`categories_id` = '" . $subcategories_array[$i] . "'";
       }
       $where_str .= ")";
     } else {
-      $where_str .= " and pd.`language_id` = '" . $_SESSION['languages_id'] . "' and p2c.`categories_id` = '" . (int)$_GET['categories_id'] . "'";
+      $where_str .= " and pd.`language_id` = '" . $_SESSION['languages_id'] . "' and p2c.`categories_id` = '" . (int)$_REQUEST['categories_id'] . "'";
     }
   }
 
-  if (isset($_GET['manufacturers_id']) && zen_not_null($_GET['manufacturers_id'])) {
-    $where_str .= " and m.`manufacturers_id` = '" . $_GET['manufacturers_id'] . "'";
+  if (isset($_REQUEST['manufacturers_id']) && zen_not_null($_REQUEST['manufacturers_id'])) {
+    $where_str .= " and m.`manufacturers_id` = '" . $_REQUEST['manufacturers_id'] . "'";
   }
 
-  if (isset($_GET['keyword']) && zen_not_null($_GET['keyword'])) {
-    if (zen_parse_search_string(stripslashes($_GET['keyword']), $search_keywords)) {
+  if (isset($_REQUEST['keyword']) && zen_not_null($_REQUEST['keyword'])) {
+    if (zen_parse_search_string(stripslashes($_REQUEST['keyword']), $search_keywords)) {
       $where_str .= " and (";
       for ($i=0, $n=sizeof($search_keywords); $i<$n; $i++ ) {
         switch ($search_keywords[$i]) {
@@ -130,7 +130,7 @@
 // search meta tags
             $where_str .= " or (mtpd.`metatags_keywords` like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.`metatags_keywords` !='')";
             $where_str .= " or (mtpd.`metatags_description` like '%" . addslashes($search_keywords[$i]) . "%' and mtpd.`metatags_description` !='')";
-            if (isset($_GET['search_in_description']) && ($_GET['search_in_description'] == '1')) $where_str .= " or pd.`products_description` like '%" . addslashes($search_keywords[$i]) . "%'";
+            if (isset($_REQUEST['search_in_description']) && ($_REQUEST['search_in_description'] == '1')) $where_str .= " or pd.`products_description` like '%" . addslashes($search_keywords[$i]) . "%'";
               $where_str .= ')';
             break;
         }
@@ -139,18 +139,18 @@
     }
   }
 
-  if (isset($_GET['dfrom']) && zen_not_null($_GET['dfrom']) && ($_GET['dfrom'] != DOB_FORMAT_STRING)) {
+  if (isset($_REQUEST['dfrom']) && zen_not_null($_REQUEST['dfrom']) && ($_REQUEST['dfrom'] != DOB_FORMAT_STRING)) {
     $where_str .= " and p.`products_date_added` >= '" . zen_date_raw($dfrom) . "'";
   }
 
-  if (isset($_GET['dto']) && zen_not_null($_GET['dto']) && ($_GET['dto'] != DOB_FORMAT_STRING)) {
+  if (isset($_REQUEST['dto']) && zen_not_null($_REQUEST['dto']) && ($_REQUEST['dto'] != DOB_FORMAT_STRING)) {
     $where_str .= " and p.`products_date_added` <= '" . zen_date_raw($dto) . "'";
   }
 
   $rate = $currencies->get_value($_SESSION['currency']);
   if ($rate) {
-    $pfrom = $_GET['pfrom'] / $rate;
-    $pto = $_GET['pto'] / $rate;
+    $pfrom = $_REQUEST['pfrom'] / $rate;
+    $pto = $_REQUEST['pto'] / $rate;
   }
 
   if (DISPLAY_PRICE_WITH_TAX == 'true') {
@@ -165,19 +165,19 @@
     if ($pto)   $where_str .= " and (p.`products_price_sorter` <= " . $pto . ")";
   }
 
-  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_GET['pfrom']) && zen_not_null($_GET['pfrom'])) || (isset($_GET['pto']) && zen_not_null($_GET['pto'])))) {
+  if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     $where_str .= " group by p.`products_id`, tr.tax_priority";
   }
 
 // set the default sort order setting from the Admin when not defined by customer
-    if (!isset($_GET['sort']) and PRODUCT_LISTING_DEFAULT_SORT_ORDER != '') {
-      $_GET['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;
+    if (!isset($_REQUEST['sort']) and PRODUCT_LISTING_DEFAULT_SORT_ORDER != '') {
+      $_REQUEST['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;
     }
-//die('I SEE ' . $_GET['sort'] . ' - ' . PRODUCT_LISTING_DEFAULT_SORT_ORDER);
-  if ((!isset($_GET['sort'])) || (!ereg('[1-8][ad]', $_GET['sort'])) || (substr($_GET['sort'], 0 , 1) > sizeof($column_list))) {
+//die('I SEE ' . $_REQUEST['sort'] . ' - ' . PRODUCT_LISTING_DEFAULT_SORT_ORDER);
+  if ((!isset($_REQUEST['sort'])) || (!ereg('[1-8][ad]', $_REQUEST['sort'])) || (substr($_REQUEST['sort'], 0 , 1) > sizeof($column_list))) {
     for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
       if ($column_list[$col] == 'PRODUCT_LIST_NAME') {
-        $_GET['sort'] = $col+1 . 'a';
+        $_REQUEST['sort'] = $col+1 . 'a';
         $order_str = ' order by pd.`products_name`';
         break;
         } else {
@@ -190,11 +190,11 @@
     }
 // if set to nothing use products_sort_order and PRODUCTS_LIST_NAME is off
       if (PRODUCT_LISTING_DEFAULT_SORT_ORDER == '') {
-        $_GET['sort'] = '20a';
+        $_REQUEST['sort'] = '20a';
       }
   } else {
-    $sort_col = substr($_GET['sort'], 0 , 1);
-    $sort_order = substr($_GET['sort'], 1);
+    $sort_col = substr($_REQUEST['sort'], 0 , 1);
+    $sort_order = substr($_REQUEST['sort'], 1);
     $order_str = ' order by ';
     switch ($column_list[$sort_col-1]) {
       case 'PRODUCT_LIST_MODEL':
