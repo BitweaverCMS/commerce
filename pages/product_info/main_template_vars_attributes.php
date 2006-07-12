@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.18 2006/06/10 12:13:16 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.19 2006/07/12 04:12:41 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -94,7 +94,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
 					$productSettings['show_onetime_charges_description'] = 'true';
 					$new_onetime_charges = zen_get_attributes_price_final_onetime( $vals["products_attributes_id"], 1, '');
-					$price_onetime = TEXT_ONETIME_CHARGE_SYMBOL . $currencies->display_price($new_onetime_charges,
+					$price_onetime = ' *'. $currencies->display_price($new_onetime_charges,
 					zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id']));
 				} else {
 					$price_onetime = '';

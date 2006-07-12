@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.4 2005/12/02 20:16:10 spiderr Exp $
+// $Id: account_history_info.php,v 1.5 2006/07/12 04:12:59 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -103,7 +103,7 @@
   for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
     echo '        <tr>' . "\n" .
          '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$i]['id'], $order->products[$i]['type_handler'] ) .'">'. $order->products[$i]['name'] . '</a>';
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$i]['id'] ) .'">'. $order->products[$i]['name'] . '</a>';
 
     if ( !empty( $order->products[$i]['attributes'] ) ) {
       for ($j=0, $n2=sizeof($order->products[$i]['attributes']); $j<$n2; $j++) {
