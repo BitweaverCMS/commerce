@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.33 2006/03/17 03:24:12 spiderr Exp $
+// $Id: application_top.php,v 1.34 2006/07/23 16:28:26 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -32,6 +32,8 @@ if( defined( 'IS_LIVE' ) ) {
 if( empty( $_REQUEST['main_page'] ) ) {
 	$_REQUEST['main_page'] = NULL;
 }
+
+define( 'BITCOMMERCE_ADMIN', FALSE );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
