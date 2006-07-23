@@ -1,5 +1,7 @@
 {if $productOptions}
 
+	<div class="product options">
+
 {foreach from=$productOptions key=optionsId item=opts}
 	<div class="row">
 		{formlabel label=$opts.name}
@@ -29,5 +31,7 @@
 {/if}
 
 {/foreach}
+
+	</div>
 
 {/if}

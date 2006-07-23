@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: stylesheet.css,v 1.8 2005/08/28 18:13:25 squareing Exp $
+// $Id: stylesheet.css,v 1.9 2006/07/23 17:59:48 spiderr Exp $
 */
 .centershop {
 	padding: 0px;
@@ -25,11 +25,6 @@
 	position: relative;
 	text-align: left;
 	width: 750px !important;
-}
-
-TD.main, P.main {
-  font-size: 11px;
-  line-height: 1.5;
 }
 
 .banners {
@@ -160,32 +155,17 @@ TR.leftboxheading, TR.rightboxheading, TR.centerboxheading, TR.singleboxheading 
   padding: 11px 5px 5px;
 }
 .productListing-heading {
-  background-color: #abbbd3;
-  font-size: 10px;
   font-weight: bold;
-  color: #ffffff;
   padding: 3px;
   height: 20px;
 }
 TD.productlisting {
-  border:1px solid #9a9a9a;
 }
 
 TD.productListing-data {
-  font-size: 10px;
   padding: 5px;
 }
 
-/*center main section
------------------------------------*/
-/* deactivate some stuff which interferes with the bitweaver styling
-TD.pageHeading, DIV.pageHeading, h1 {
-  font-size: 16px;
-  font-weight: bold;
-  color: #9a9a9a;
-  padding-top: 11px;
-}
-*/
 
 .center_column {
   padding: 8px;
@@ -205,7 +185,6 @@ TD.pageHeading, DIV.pageHeading, h1 {
 TABLE.footer {
   background: #ffffff;
   text-align: center;
-  font-size: 10px;
   border-right: 1px solid #9a9a9a;
   border-left: 1px solid #9a9a9a;
   border-bottom: 1px solid #9a9a9a;
@@ -213,7 +192,6 @@ TABLE.footer {
 
 TR.footertop {
   background: #abbbd3;
-  font-size: 11px;
 }
 
 TD.footertop, TD.footerbottom {
@@ -223,15 +201,15 @@ TD.footertop, TD.footerbottom {
 /*miscellaneous areas
 -------------------------------------*/
 .cartBox, .addtocart {
-	clear:both;
-	margin: auto;
-	width: 150px;
+	width: 300px;
 	background: #eff4f8;
-	font-size: 10px;
 	padding: 5px;
 	border: 1px dotted #ffb062;
-	text-align: center;
 }
+
+.cartBox .row { margin:0; }
+.cartBox .formlabel { padding:0; width:auto; text-align:left; display:block; float:none; clear:both }
+.cartBox .forminput { margin:0; padding:0; width:auto; display: block; float:none; }
 
 TR.productListing-odd, TR.upcomingProducts-odd {
   background: #ffffff;
@@ -243,7 +221,6 @@ TR.productListing-even, TR.upcomingProducts-even, .productsNotifications {
 
 TD.productListing-data-description-odd {
   background: #ffffff;
-  font-size: 10px;
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 12px;
@@ -252,7 +229,6 @@ TD.productListing-data-description-odd {
 
 TD.productListing-data-description-even {
   background: #eff4f8;
-  font-size: 10px;
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 12px;
@@ -273,17 +249,12 @@ SPAN.newItemInCart {
 }
 
 TD.smallText, SPAN.smallText, P.smallText, td.pageresults{
-   font-size: 10px;
 }
 
 TD.fieldKey {
-  font-size: 12px;
   font-weight: bold;
 }
 
-TD.fieldValue {
-  font-size: 12px;
-}
 
 /* deactivate some stuff which interferes with the bitweaver styling
 CHECKBOX, INPUT, RADIO, SELECT {
@@ -300,7 +271,6 @@ TEXTAREA {
 
 .greetUser {
    font-weight: bold;
-   font-size: 12px;
    padding-top: 5px;
    padding-bottom: 5px;
 }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.8 2006/02/25 08:51:57 spiderr Exp $
+// $Id: product_info_display.php,v 1.9 2006/07/23 17:59:48 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -52,14 +52,14 @@ echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['produ
   }
 ?>
     </td>
-    <td class="pageHeading">
+    <td>
 
 <div class="header">
 	<h1><?=$products_name;?></h1>
 </div>
 
 
-<div class="box price">
+<div class="cartBox">
 	<div class="row">
 <?php
 // base price
@@ -86,15 +86,11 @@ echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['produ
 	</div>
 <?php
 	}
-?>
-	<div class="row">
-<?php
+
 
 	$gBitSmarty->display( 'bitpackage:bitcommerce/product_options_inc.tpl' );
 
-?>
-	</div>
-<?php
+
 	if( SHOW_PRODUCT_INFO_QUANTITY == '1' && !$gBitProduct->getField( 'products_virtual' ) ) {
 ?>
 	<div class="row">
@@ -118,7 +114,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
 	<div class="row">
       <table border="0" style="width:150px" cellspacing="2" cellpadding="2">
         <tr>
-          <td align="center" class="cartBox">
+          <td>
             <?php echo ((SHOW_PRODUCT_INFO_IN_CART_QTY == '1' and $_SESSION['cart']->in_cart($_GET['products_id'])) ? PRODUCTS_ORDER_QTY_TEXT_IN_CART . $_SESSION['cart']->get_quantity($_GET['products_id']) . '<br /><br />' : '&nbsp;'); ?>
             <?php
             if ($products_qty_box_status == '0' or $products_quantity_order_max== '1') {
@@ -150,7 +146,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
 
 
 <?php if ($products_description != '') { ?>
-    <p><?php echo stripslashes($products_description); ?></p>
+    <?php echo stripslashes($products_description); ?>
 <?php } ?>
 
     </td>
