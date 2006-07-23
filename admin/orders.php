@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.34 2006/04/10 06:48:21 spiderr Exp $
+//  $Id: orders.php,v 1.35 2006/07/23 04:57:54 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -118,35 +118,9 @@
         break;
     }
   }
-
-?>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
-<script language="javascript" src="includes/menu.js"></script>
-<script language="javascript" src="includes/general.js"></script>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
-</script>
-</head>
-<body onload="init()">
-<!-- header //-->
-<?php
-  require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+  
+	$gBitSystem->setOnloadScript( 'init()' );
+	require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
 	if (($_GET['action'] == 'edit') && ($order_exists == true)) {
 		if ($order->info['payment_module_code']) {
