@@ -1143,9 +1143,9 @@ Skip deleting of images for now
 		}
 	}
 
-	function loadAttributes() {
-		$this->mOptions = array();
-		if( $this->isValid() ) {
+	function loadAttributes( $pRefresh=FALSE ) {
+		if( $this->isValid() && (empty( $this->mOptions ) || $pRefresh) ) {
+			$this->mOptions = array();
 			if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
 				$options_order_by= ' ORDER BY popt.`products_options_sort_order`';
 			} else {
