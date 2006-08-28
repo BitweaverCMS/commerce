@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.36 2006/04/20 03:46:17 spiderr Exp $
+//  $Id: general.php,v 1.37 2006/08/28 05:00:57 spiderr Exp $
 //
 
 ////
@@ -943,6 +943,7 @@
 
   function zen_remove_order($order_id, $restock = false) {
     global $db;
+	$db->StartTrans();
     if ($restock == 'on') {
       $order = $db->Execute("SELECT `products_id`, `products_quantity`
                              FROM " . TABLE_ORDERS_PRODUCTS . "
@@ -955,13 +956,10 @@
       }
     }
 
-    $db->Execute("delete FROM " . TABLE_ORDERS . "
-    			  WHERE `orders_id` = '" . (int)$order_id . "'");
-
-    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS . "
+    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
+    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");
 
     $db->Execute("delete FROM " . TABLE_ORDERS_STATUS_HISTORY . "
@@ -970,6 +968,10 @@
     $db->Execute("delete FROM " . TABLE_ORDERS_TOTAL . "
                   WHERE orders_id = '" . (int)$order_id . "'");
 
+    $db->Execute("delete FROM " . TABLE_ORDERS . "
+    			  WHERE `orders_id` = '" . (int)$order_id . "'");
+
+	$db->CompleteTrans();
   }
 
   function zen_get_file_permissions($mode) {
@@ -1307,6 +1309,7 @@
     return $id1;
   }
 ////
+/* DUPLICATE from includes/functions/functions_gvcoupons.php
 // Update the Customers GV account
   function zen_gv_account_update($customer_id, $gv_id) {
     global $db;
@@ -1328,6 +1331,7 @@
       $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount) values ('" . $customer_id . "', '" . $coupon_gv->fields['coupon_amount'] . "')");
     }
   }
+*/
 ////
 // Output a day/month/year dropdown selector
   function zen_draw_date_selector($prefix, $date='') {

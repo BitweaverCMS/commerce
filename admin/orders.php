@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.35 2006/07/23 04:57:54 spiderr Exp $
+//  $Id: orders.php,v 1.36 2006/08/28 05:00:54 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -41,8 +41,8 @@
     $orders_status->MoveNext();
   }
 
-	if( !empty( $_GET['oID'] ) && is_numeric( $_GET['oID'] ) ) {
-		$oID = zen_db_prepare_input($_GET['oID']);
+	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
+		$oID = zen_db_prepare_input($_REQUEST['oID']);
 		if( $order_exists = $db->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
 		    $order = new order($oID);
 		} else {
@@ -50,21 +50,21 @@
 		}
 	}
 
-  if( empty( $_GET['action'] ) ) {
+  if( empty( $_REQUEST['action'] ) ) {
   		require_once( BITCOMMERCE_PKG_PATH.'admin/orders_list_inc.php' );
   } else {
   
-    switch( $_GET['action'] ) {
+    switch( $_REQUEST['action'] ) {
       case 'edit':
       // reset single download to on
         if( !empty( $_GET['download_reset_on'] ) ) {
           // adjust download_maxdays based on current date
           $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
-                                      where `orders_id` = '" . $_GET['oID'] . "'");
+                                      where `orders_id` = '" . $_REQUEST['oID'] . "'");
           $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
-          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
+          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
           $db->Execute($update_downloads_query);
           unset($_GET['download_reset_on']);
 
@@ -74,7 +74,7 @@
       // reset single download to off
         if( !empty( $_GET['download_reset_off'] ) ) {
           // adjust download_maxdays based on current date
-          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
+          $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
           unset($_GET['download_reset_off']);
           $db->Execute($update_downloads_query);
 
@@ -105,6 +105,11 @@
 
         zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
         break;
+	  case 'delete':
+		$formHash['action'] = 'deleteconfirm';
+		$formHash['oID'] = $oID;
+		$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete order #'.$oID.'?', 'error' => 'This cannot be undone!' ) );
+		break;
       case 'deleteconfirm':
         // demo active test
         if (zen_admin_demo()) {
@@ -112,9 +117,9 @@
           $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
           zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
         }
+		$gBitUser->verifyTicket();
         zen_remove_order($oID, $_POST['restock']);
-
-        zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
+        bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
         break;
     }
   }
@@ -136,9 +141,9 @@
 		}
 ?>
 	  <div class="floaticon">
-        		<?php echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_INVOICE, 'oID=' . $_GET['oID']) . '" TARGET="_blank">' . zen_image_button('button_invoice.gif', IMAGE_ORDERS_INVOICE) . '</a>
-				<a href="' . zen_href_link_admin(FILENAME_ORDERS_PACKINGSLIP, 'oID=' . $_GET['oID']) . '" TARGET="_blank">' . zen_image_button('button_packingslip.gif', IMAGE_ORDERS_PACKINGSLIP) . '</a>
-				<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_GET['oID'] . '&action=delete', 'NONSSL') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>
+        		<?php echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_INVOICE, 'oID=' . $_REQUEST['oID']) . '" TARGET="_blank">' . zen_image_button('button_invoice.gif', IMAGE_ORDERS_INVOICE) . '</a>
+				<a href="' . zen_href_link_admin(FILENAME_ORDERS_PACKINGSLIP, 'oID=' . $_REQUEST['oID']) . '" TARGET="_blank">' . zen_image_button('button_packingslip.gif', IMAGE_ORDERS_PACKINGSLIP) . '</a>
+				<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_REQUEST['oID'] . '&action=delete', 'NONSSL') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>
 				<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action'))) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?>
 	  </div>
 	  
@@ -346,9 +351,9 @@
 // check if order has open gv
 		$gv_check = $db->query("select `order_id`, `unique_id`
 								from " . TABLE_COUPON_GV_QUEUE ."
-								where `order_id` = '" . $_GET['oID'] . "' and `release_flag`='N'");
+								where `order_id` = '" . $_REQUEST['oID'] . "' and `release_flag`='N'");
 		if ($gv_check->RecordCount() > 0) {
-			$goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_GET['oID']) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
+			$goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_REQUEST['oID']) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
 			echo '      <tr><td align="right"><table width="225"><tr>';
 			echo '        <td align="center">';
 			echo $goto_gv . '&nbsp;&nbsp;';
