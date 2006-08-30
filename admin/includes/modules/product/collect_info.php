@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.19 2006/02/09 20:57:13 spiderr Exp $
+//  $Id: collect_info.php,v 1.20 2006/08/30 20:52:39 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -54,7 +54,8 @@
                        'products_discount_type' => '0',
                        'products_discount_type_from' => '0',
                        'products_price_sorter' => '0',
-                       'master_categories_id' => ''
+                       'master_categories_id' => '',
+                       'purchase_group_id' => ''
                        );
 
     $pInfo = new objectInfo($parameters);
