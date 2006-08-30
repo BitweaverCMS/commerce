@@ -17,31 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_free_shipping.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
+//  $Id: product_free_shipping.php,v 1.4 2006/08/30 21:15:25 spiderr Exp $
 //
-
-define('HEADING_TITLE', 'Categories / Products');
-define('HEADING_TITLE_GOTO', 'Go To:');
-
-define('TABLE_HEADING_ID', 'ID');
-define('TABLE_HEADING_CATEGORIES_PRODUCTS', 'Categories / Products');
-define('TABLE_HEADING_CATEGORIES_SORT_ORDER', 'Sort');
-
-define('TABLE_HEADING_PRICE','Price/Special/Sale');
-define('TABLE_HEADING_QUANTITY','Quantity');
-
-
-
-
-define('TEXT_CATEGORIES', 'Categories:');
-define('TEXT_SUBCATEGORIES', 'Subcategories:');
-
-define('TEXT_PRODUCTS_PRICE_INFO', 'Price:');
-define('TEXT_PRODUCTS_TAX_CLASS', 'Tax Class:');
-define('TEXT_PRODUCTS_AVERAGE_RATING', 'Average Rating:');
-define('TEXT_PRODUCTS_QUANTITY_INFO', 'Quantity:');
-
-define('TEXT_DATE_AVAILABLE', 'Date Available:');
 
 
 define('TEXT_NO_CHILD_CATEGORIES_OR_PRODUCTS', 'Please insert a new category or product in this level.');

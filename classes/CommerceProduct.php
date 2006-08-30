@@ -718,7 +718,7 @@ class CommerceProduct extends LibertyAttachable {
 				}
 			}
 
-		// add meta tags
+			// add meta tags
 			$languages = zen_get_languages();
 			for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 				$language_id = $languages[$i]['id'];
@@ -744,7 +744,7 @@ class CommerceProduct extends LibertyAttachable {
 
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				file_exists( $pParamHash['products_image'] );
-				$fileHash['dest_path']		= STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
+				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
  				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['source_file']	= $pParamHash['products_image'];
 				$fileHash['name']			= basename( $fileHash['source_file'] );

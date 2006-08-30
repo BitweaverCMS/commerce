@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.8 2005/11/23 17:58:40 gilesw Exp $
+//  $Id: product.php,v 1.9 2006/08/30 21:15:25 spiderr Exp $
 //
 
 define('HEADING_TITLE', 'Categories / Products');
@@ -192,7 +192,6 @@ define('ERROR_CANNOT_MOVE_CATEGORY_TO_PARENT', 'Error: Category cannot be moved 
 
   define('TEXT_PRODUCTS_MIXED','Product Qty Min/Unit Mix:');
 
-  define('PRODUCTS_PRICE_IS_FREE_TEXT', 'Product is Free');
   define('TEXT_PRODUCT_IS_FREE','Product is Free:');
   define('TEXT_PRODUCTS_IS_FREE_PREVIEW','*Product is marked as FREE');
   define('TEXT_PRODUCTS_IS_FREE_EDIT','*Product is marked as FREE');

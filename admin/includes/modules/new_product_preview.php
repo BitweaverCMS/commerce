@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: new_product_preview.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
+//  $Id: new_product_preview.php,v 1.3 2006/08/30 21:15:25 spiderr Exp $
 
 // copy image only if modified
-        if (!$_GET['read']) {
+        if( empty( $_GET['read'] ) ) {
           $products_image = new upload('products_image');
           $products_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
           if ($products_image->parse() && $products_image->save($_POST['overwrite'])) {
