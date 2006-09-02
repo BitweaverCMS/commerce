@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.8 2005/12/05 16:47:02 squareing Exp $
+// $Id: html_output.php,v 1.9 2006/09/02 23:37:33 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -254,12 +254,16 @@
 ////
 // Creates a pull-down list of countries
   function zen_get_country_list($name, $selected = '', $parameters = '') {
-    $countries_array = array(array('id' => '', 'text' => PULL_DOWN_DEFAULT));
+    $countries_array = array(array('id' => '', 'text' => tra('Please Choose Your Country') ));
     $countries = zen_get_countries();
 
     for ($i=0, $n=sizeof($countries); $i<$n; $i++) {
       $countries_array[] = array('id' => $countries[$i]['countries_id'], 'text' => $countries[$i]['countries_name']);
     }
+
+	if( !empty( $selected ) && !is_numeric( $selected ) ) {
+		$selected = zen_get_country_id( $selected );
+	}
 
     return zen_draw_pull_down_menu($name, $countries_array, $selected, $parameters);
   }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: mail.php,v 1.5 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: mail.php,v 1.6 2006/09/02 23:35:33 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -231,7 +231,7 @@ function check_form(form_name) {
 // toggle switch for editor
         $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
                               array('id' => '1', 'text' => TEXT_HTML_AREA));
-        echo TEXT_EDITOR_INFO . zen_draw_form('set_editor_form', FILENAME_MAIL, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
+        echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_MAIL, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
 ?>
@@ -287,7 +287,7 @@ function check_form(form_name) {
               <tr>
                 <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
-              <tr><?php echo zen_draw_form('mail', FILENAME_MAIL, 'action=send_email_to_user'); ?>
+              <tr><?php echo zen_draw_form_admin('mail', FILENAME_MAIL, 'action=send_email_to_user'); ?>
                 <td>
 <?php
 /* Re-Post all POST'ed variables */
@@ -314,7 +314,7 @@ function check_form(form_name) {
 <?php
   } else {
 ?>
-          <tr><?php echo zen_draw_form('mail', FILENAME_MAIL,'action=preview','post', 'onsubmit="return check_form(mail);" enctype="multipart/form-data"'); ?>
+          <tr><?php echo zen_draw_form_admin('mail', FILENAME_MAIL,'action=preview','post', 'onsubmit="return check_form(mail);" enctype="multipart/form-data"'); ?>
             <td><table border="0" cellpadding="0" cellspacing="2">
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.12 2006/02/08 23:24:26 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -440,7 +440,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       </tr>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
-          <tr><?php echo zen_draw_form('mail', FILENAME_COUPON_ADMIN, 'action=send_email_to_user&cid=' . $_GET['cid']); ?>
+          <tr><?php echo zen_draw_form_admin('mail', FILENAME_COUPON_ADMIN, 'action=send_email_to_user&cid=' . $_GET['cid']); ?>
             <td><table border="0" width="100%" cellpadding="0" cellspacing="2">
               <tr>
                 <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
@@ -520,7 +520,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       </tr>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
-          <tr><?php echo zen_draw_form('mail', FILENAME_COUPON_ADMIN, 'action=preview_email&cid='. $_GET['cid'],'post', 'onsubmit="return check_form(mail);"'); ?>
+          <tr><?php echo zen_draw_form_admin('mail', FILENAME_COUPON_ADMIN, 'action=preview_email&cid='. $_GET['cid'],'post', 'onsubmit="return check_form(mail);"'); ?>
             <td><table border="0" width="100%" cellpadding="0" cellspacing="2">
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
@@ -611,7 +611,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       </tr>
       <tr>
       <td>
-<?php echo zen_draw_form('coupon', FILENAME_COUPON_ADMIN, 'action=update_confirm&oldaction=' . $_GET['oldaction'] . '&cid=' . $_GET['cid']); ?>
+<?php echo zen_draw_form_admin('coupon', FILENAME_COUPON_ADMIN, 'action=update_confirm&oldaction=' . $_GET['oldaction'] . '&cid=' . $_GET['cid']); ?>
       <table border="0" width="100%" cellspacing="0" cellpadding="6">
 <?php
         $languages = zen_get_languages();
@@ -779,7 +779,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       <tr>
       <td>
 <?php
-    echo zen_draw_form('coupon', FILENAME_COUPON_ADMIN, 'action=update&oldaction='.$_GET['action'] . '&cid=' . $_GET['cid']);
+    echo zen_draw_form_admin('coupon', FILENAME_COUPON_ADMIN, 'action=update&oldaction='.$_GET['action'] . '&cid=' . $_GET['cid']);
 ?>
       <table border="0" width="100%" cellspacing="0" cellpadding="6">
 <?php
@@ -880,7 +880,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
         <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="main"><?php echo zen_draw_form('status', FILENAME_COUPON_ADMIN, '', 'get'); ?>
+            <td class="main"><?php echo zen_draw_form_admin('status', FILENAME_COUPON_ADMIN, '', 'get'); ?>
 <?php
     $status_array[] = array('id' => 'Y', 'text' => TEXT_COUPON_ACTIVE);
     $status_array[] = array('id' => 'N', 'text' => TEXT_COUPON_INACTIVE);
@@ -900,7 +900,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 // toggle switch for editor
         $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
                               array('id' => '1', 'text' => TEXT_HTML_AREA));
-        echo TEXT_EDITOR_INFO . zen_draw_form('set_editor_form', FILENAME_COUPON_ADMIN, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
+        echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_COUPON_ADMIN, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
 ?>

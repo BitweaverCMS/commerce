@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_company.php,v 1.6 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: record_company.php,v 1.7 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -237,7 +237,7 @@
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_RECORD_COMPANY . '</b>');
 
-      $contents = array('form' => zen_draw_form('record_company', FILENAME_RECORD_COMPANY, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('record_company', FILENAME_RECORD_COMPANY, 'action=insert', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_RECORD_COMPANY_NAME . '<br>' . zen_draw_input_field('record_company_name', '', zen_set_field_length(TABLE_RECORD_COMPANY, 'record_company_name')));
       $contents[] = array('text' => '<br>' . TEXT_RECORD_COMPANY_IMAGE . '<br>' . zen_draw_file_field('record_company_image'));
@@ -265,7 +265,7 @@
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_RECORD_COMPANY . '</b>');
 
-      $contents = array('form' => zen_draw_form('record_company', FILENAME_RECORD_COMPANY, 'page=' . $_GET['page'] . '&mID=' . $aInfo->record_company_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('record_company', FILENAME_RECORD_COMPANY, 'page=' . $_GET['page'] . '&mID=' . $aInfo->record_company_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_RECORD_COMPANY_NAME . '<br>' . zen_draw_input_field('record_company_name', $aInfo->record_company_name, zen_set_field_length(TABLE_RECORD_COMPANY, 'record_company_name')));
       $contents[] = array('text' => '<br />' . TEXT_RECORD_COMPANY_IMAGE . '<br>' . zen_draw_file_field('record_company_image') . '<br />' . $aInfo->record_company_image);
@@ -291,7 +291,7 @@
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_RECORD_COMPANY . '</b>');
 
-      $contents = array('form' => zen_draw_form('record_company', FILENAME_RECORD_COMPANY, 'page=' . $_GET['page'] . '&mID=' . $aInfo->record_company_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('record_company', FILENAME_RECORD_COMPANY, 'page=' . $_GET['page'] . '&mID=' . $aInfo->record_company_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $aInfo->record_company_name . '</b>');
       $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('delete_image', '', true) . ' ' . TEXT_DELETE_IMAGE);

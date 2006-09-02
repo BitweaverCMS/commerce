@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.8 2005/11/10 06:53:37 spiderr Exp $
+//  $Id: option_name.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
 //
 ?>
 <?php
@@ -106,7 +106,7 @@ if ($_GET['action'] == "update_sort_order") {
             </tr>
             <tr class="dataTableHeadingRow">
               <td colspan="3" align="center" class="dataTableHeadingContent"><?php echo ($_GET['lng_id'] !=$_SESSION['languages_id'] ? 'Current Language' : '&nbsp;'); ?></td>
-              <?php echo zen_draw_form('lng', FILENAME_PRODUCTS_OPTIONS_NAME, '', 'get'); ?>
+              <?php echo zen_draw_form_admin('lng', FILENAME_PRODUCTS_OPTIONS_NAME, '', 'get'); ?>
               <td colspan="<?php echo ($_GET['lng_id']==$_SESSION['languages_id'] ? '2' : '5'); ?>" class="dataTableHeadingContent" align="center" valign="top"><?php echo  TEXT_SELECTED_LANGUAGE . zen_get_language_icon($_GET['lng_id']); ?>&nbsp;&nbsp;&nbsp;<?php echo zen_draw_pull_down_menu('lng_id', $languages_array, $_GET['lng_id'], 'onChange="this.form.submit();"'); ?></td>
               </form>
             </tr>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_artists.php,v 1.7 2005/10/31 16:19:58 lsces Exp $
+//  $Id: record_artists.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -236,7 +236,7 @@
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_RECORD_ARTIST . '</b>');
 
-      $contents = array('form' => zen_draw_form('artists', FILENAME_RECORD_ARTISTS, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('artists', FILENAME_RECORD_ARTISTS, 'action=insert', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_RECORD_ARTIST_NAME . '<br>' . zen_draw_input_field('artists_name', '', zen_set_field_length(TABLE_RECORD_ARTISTS, 'artists_name')));
       $contents[] = array('text' => '<br>' . TEXT_RECORD_ARTIST_IMAGE . '<br>' . zen_draw_file_field('artists_image'));
@@ -264,7 +264,7 @@
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_RECORD_ARTIST . '</b>');
 
-      $contents = array('form' => zen_draw_form('artists', FILENAME_RECORD_ARTISTS, 'page=' . $_GET['page'] . '&mID=' . $aInfo->artists_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('artists', FILENAME_RECORD_ARTISTS, 'page=' . $_GET['page'] . '&mID=' . $aInfo->artists_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_RECORD_ARTIST_NAME . '<br>' . zen_draw_input_field('artists_name', $aInfo->artists_name, zen_set_field_length(TABLE_RECORD_ARTISTS, 'artists_name')));
       $contents[] = array('text' => '<br />' . TEXT_RECORD_ARTIST_IMAGE . '<br>' . zen_draw_file_field('artists_image') . '<br />' . $aInfo->artists_image);
@@ -290,7 +290,7 @@
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_RECORD_ARTIST . '</b>');
 
-      $contents = array('form' => zen_draw_form('artists', FILENAME_RECORD_ARTISTS, 'page=' . $_GET['page'] . '&mID=' . $aInfo->artists_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('artists', FILENAME_RECORD_ARTISTS, 'page=' . $_GET['page'] . '&mID=' . $aInfo->artists_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $aInfo->artists_name . '</b>');
       $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('delete_image', '', true) . ' ' . TEXT_DELETE_IMAGE);

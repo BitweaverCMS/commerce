@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.12 2005/12/20 17:13:03 gilesw Exp $
+//  $Id: specials.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -180,7 +180,7 @@
 
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-         <tr><?php echo zen_draw_form('search', FILENAME_SPECIALS, '', 'get'); ?>
+         <tr><?php echo zen_draw_form_admin('search', FILENAME_SPECIALS, '', 'get'); ?>
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
             <td class="smallText" align="right">
@@ -403,7 +403,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_SPECIALS . '</b>');
 
-      $contents = array('form' => zen_draw_form('specials', FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('specials', FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $sInfo->products_name . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

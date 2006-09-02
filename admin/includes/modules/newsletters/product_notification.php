@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.7 2005/10/31 16:20:00 lsces Exp $
+//  $Id: product_notification.php,v 1.8 2006/09/02 23:35:37 spiderr Exp $
 //
 
   class product_notification {
@@ -181,7 +181,7 @@ function selectAll(FormName, SelectBox) {
                         '  <tr>' . "\n" .
                         '    <td>' . zen_draw_separator('pixel_trans.gif', '1', '10') . '</td>' . "\n" .
                         '  </tr>' . "\n" .
-                        '  <tr>' . zen_draw_form('confirm', FILENAME_NEWSLETTERS, 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=confirm_send') . "\n" .
+                        '  <tr>' . zen_draw_form_admin('confirm', FILENAME_NEWSLETTERS, 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=confirm_send') . "\n" .
                         '    <td align="right">';
       if (sizeof($audience) > 0) {
         if (isset($_GET['global']) && ($_GET['global'] == 'true')) {

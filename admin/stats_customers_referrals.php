@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers_referrals.php,v 1.8 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: stats_customers_referrals.php,v 1.9 2006/09/02 23:35:34 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -94,7 +94,7 @@
                 <td class="main"><?php echo TEXT_INFO_SELECT_REFERRAL; ?></td>
                 <td class="main">
                   <?php
-                    echo zen_draw_form('new_date', FILENAME_STATS_CUSTOMERS_REFERRALS, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('referral_code', $customers_referrals, $_GET['referral_code'], 'onChange="this.form.submit();"') .
+                    echo zen_draw_form_admin('new_date', FILENAME_STATS_CUSTOMERS_REFERRALS, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('referral_code', $customers_referrals, $_GET['referral_code'], 'onChange="this.form.submit();"') .
                      zen_draw_hidden_field('action', 'new_date') .
                      zen_draw_hidden_field('start_date', $_GET['start_date']) .
                      zen_draw_hidden_field('end_date', $_GET['end_date']) . '&nbsp;&nbsp;</form>';
@@ -106,7 +106,7 @@
 
           <tr>
             <td><table border="0" width="100%" cellspacing="2" cellpadding="2">
-              <tr><?php echo zen_draw_form('search', FILENAME_STATS_CUSTOMERS_REFERRALS, '', 'get'); echo zen_draw_hidden_field('referral_code', $_GET['referral_code']); ?>
+              <tr><?php echo zen_draw_form_admin('search', FILENAME_STATS_CUSTOMERS_REFERRALS, '', 'get'); echo zen_draw_hidden_field('referral_code', $_GET['referral_code']); ?>
                 <td class="main" align="right"><?php echo TEXT_INFO_START_DATE . ' ' . zen_draw_input_field('start_date', $_GET['start_date']); ?></td>
                 <td class="main" align="right"><?php echo TEXT_INFO_END_DATE . ' ' . zen_draw_input_field('end_date', $_GET['end_date']); ?></td>
                 <td class="main" align="right"><?php echo zen_image_submit('button_display.gif', IMAGE_DISPLAY); ?></td>

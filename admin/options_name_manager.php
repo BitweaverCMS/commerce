@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_name_manager.php,v 1.17 2005/12/01 03:03:50 spiderr Exp $
+//  $Id: options_name_manager.php,v 1.18 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -401,7 +401,7 @@ function go_option() {
                   $option_names_values_copier_array = array(array('id' => '0', 'text' => TEXT_SHOW_OPTION_NAMES_VALUES_COPIER_OFF),
                                         array('id' => '1', 'text' => TEXT_SHOW_OPTION_NAMES_VALUES_COPIER_ON),
                                         );
-                  echo zen_draw_form('set_option_names_values_copier_form', FILENAME_OPTIONS_NAME_MANAGER, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_option_names_values_copier', $option_names_values_copier_array, $reset_option_names_values_copier, 'onChange="this.form.submit();"') .
+                  echo zen_draw_form_admin('set_option_names_values_copier_form', FILENAME_OPTIONS_NAME_MANAGER, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_option_names_values_copier', $option_names_values_copier_array, $reset_option_names_values_copier, 'onChange="this.form.submit();"') .
                   zen_draw_hidden_field('action', 'set_option_names_values_copier') .
                   '</form>';
                 ?>

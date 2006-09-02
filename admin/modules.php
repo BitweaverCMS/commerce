@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.17 2006/05/07 16:01:02 spiderr Exp $
+//  $Id: modules.php,v 1.18 2006/09/02 23:35:33 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -280,7 +280,7 @@
       }
       $keys = substr($keys, 0, strrpos($keys, '<br><br>'));
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
-      $contents = array('form' => zen_draw_form('modules', FILENAME_MODULES, 'set=' . $set . (!empty($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
+      $contents = array('form' => zen_draw_form_admin('modules', FILENAME_MODULES, 'set=' . $set . (!empty($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
       if (ADMIN_CONFIGURATION_KEY_ON == 1) {
         $contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
       }

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.36 2006/08/28 05:00:54 spiderr Exp $
+//  $Id: orders.php,v 1.37 2006/09/02 23:35:33 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -45,6 +45,7 @@
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
 		if( $order_exists = $db->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
 		    $order = new order($oID);
+			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
 		} else {
 			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
 		}
@@ -309,7 +310,7 @@
             <th align="right"><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></th>
           </tr>
 		</table>
-<?php echo zen_draw_form('status', FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=update_order', 'post', '', true); ?>
+<?php echo zen_draw_form_admin('status', FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=update_order', 'post', '', true); ?>
 		<strong><?php echo ENTRY_STATUS; ?></strong> <?php echo zen_draw_pull_down_menu('status', $orders_statuses, $order->getStatus() ); ?>
 		<br/><strong><?php echo TABLE_HEADING_COMMENTS; ?></strong>
         <br/><?php echo zen_draw_textarea_field('comments', 'soft', '60', '5'); ?>

@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.5 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: paypal.php,v 1.6 2006/09/02 23:35:33 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -78,7 +78,7 @@
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
             <td class="smallText" align="right">
 <?php
-echo zen_draw_form('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING_PAYMENT_STATUS . ' ' . zen_draw_pull_down_menu('payment_status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_IPNS)), $payment_statuses), $HTTP_GET_VARS['payment_status'], 'onChange="this.form.submit();"').'</form>';
+echo zen_draw_form_admin('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING_PAYMENT_STATUS . ' ' . zen_draw_pull_down_menu('payment_status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_IPNS)), $payment_statuses), $HTTP_GET_VARS['payment_status'], 'onChange="this.form.submit();"').'</form>';
 ?>
             </td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>

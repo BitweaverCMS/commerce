@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: template_select.php,v 1.6 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: template_select.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
 //
   require('includes/application_top.php');
 // get an array of template info
@@ -172,7 +172,7 @@
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_NEW_TEMPLATE . '</b>');
 
-      $contents = array('form' => zen_draw_form('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&action=insert'));
+      $contents = array('form' => zen_draw_form_admin('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&action=insert'));
       $contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
       while (list ($key, $value) = each($template_info) ) {
         $template_array[] = array('id' => $key, 'text' => $value['name']);
@@ -189,7 +189,7 @@
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_TEMPLATE . '</b>');
 
-      $contents = array('form' => zen_draw_form('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=save'));
+      $contents = array('form' => zen_draw_form_admin('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=save'));
       $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
       reset($template_info);
       while (list ($key, $value) = each($template_info) ) {
@@ -201,7 +201,7 @@
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_TEMPLATE . '</b>');
 
-      $contents = array('form' => zen_draw_form('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $template_info[$tInfo->template_dir]['name'] . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

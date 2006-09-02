@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: define_pages_editor.php,v 1.7 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: define_pages_editor.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -163,14 +163,14 @@
               $za_lookup[] = array('id' => $i, 'text' => $directory_files[$i]);
             }
 
-            echo zen_draw_form('new_page', FILENAME_DEFINE_PAGES_EDITOR, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('define_it', $za_lookup, '-1', 'onChange="this.form.submit();"') .
+            echo zen_draw_form_admin('new_page', FILENAME_DEFINE_PAGES_EDITOR, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('define_it', $za_lookup, '-1', 'onChange="this.form.submit();"') .
             zen_draw_hidden_field('action', 'new_page') . '&nbsp;&nbsp;</form>';
           ?>
 <?php
 // toggle switch for editor
         $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
                               array('id' => '1', 'text' => TEXT_HTML_AREA));
-        echo TEXT_EDITOR_INFO . zen_draw_form('set_editor_form', FILENAME_DEFINE_PAGES_EDITOR, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
+        echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_DEFINE_PAGES_EDITOR, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
 ?>
@@ -200,7 +200,7 @@ if (isset($_GET['filename'])) {
               <tr>
             <td class="main"><b><?php echo TEXT_INFO_CAUTION . '<br /><br />' . TEXT_INFO_EDITING . '<br />' . $file . '<br />'; ?></b></td>
               </tr>
-          <tr><?php echo zen_draw_form('language', FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitCustomer->getLanguage() . '&filename=' . $_GET['filename'] . '&action=save'); ?>
+          <tr><?php echo zen_draw_form_admin('language', FILENAME_DEFINE_PAGES_EDITOR, 'lngdir=' . $gBitCustomer->getLanguage() . '&filename=' . $_GET['filename'] . '&action=save'); ?>
             <td><table border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main">

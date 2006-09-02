@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.11 2006/02/08 23:24:26 spiderr Exp $
+//  $Id: manufacturers.php,v 1.12 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -238,7 +238,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_MANUFACTURER . '</b>');
 
-      $contents = array('form' => zen_draw_form('manufacturers', FILENAME_MANUFACTURERS, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('manufacturers', FILENAME_MANUFACTURERS, 'action=insert', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_MANUFACTURERS_NAME . '<br>' . zen_draw_input_field('manufacturers_name', '', zen_set_field_length(TABLE_MANUFACTURERS, 'manufacturers_name')));
       $contents[] = array('text' => '<br>' . TEXT_MANUFACTURERS_IMAGE . '<br>' . zen_draw_file_field('manufacturers_image'));
@@ -266,7 +266,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_MANUFACTURER . '</b>');
 
-      $contents = array('form' => zen_draw_form('manufacturers', FILENAME_MANUFACTURERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->manufacturers_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('manufacturers', FILENAME_MANUFACTURERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->manufacturers_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_MANUFACTURERS_NAME . '<br>' . zen_draw_input_field('manufacturers_name', $mInfo->manufacturers_name, zen_set_field_length(TABLE_MANUFACTURERS, 'manufacturers_name')));
       $contents[] = array('text' => '<br />' . TEXT_MANUFACTURERS_IMAGE . '<br>' . zen_draw_file_field('manufacturers_image') . '<br />' . $mInfo->manufacturers_image);
@@ -292,7 +292,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_MANUFACTURER . '</b>');
 
-      $contents = array('form' => zen_draw_form('manufacturers', FILENAME_MANUFACTURERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->manufacturers_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('manufacturers', FILENAME_MANUFACTURERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->manufacturers_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $mInfo->manufacturers_name . '</b>');
       $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('delete_image', '', true) . ' ' . TEXT_DELETE_IMAGE);

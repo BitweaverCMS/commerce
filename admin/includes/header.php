@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.9 2006/02/22 03:54:06 spiderr Exp $
+//  $Id: header.php,v 1.10 2006/09/02 23:35:34 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -135,7 +135,7 @@ SPIDERKILL for obvious reasons...
     <td class="headerBarContent" align="left">
       <?php
       if (!$hide_languages) {
-        echo zen_draw_form('languages', basename($PHP_SELF), '', 'get');
+        echo zen_draw_form_admin('languages', basename($PHP_SELF), '', 'get');
         echo DEFINE_LANGUAGE . '&nbsp;&nbsp;' . (sizeof($languages) > 1 ? zen_draw_pull_down_menu('language', $languages_array, $languages_selected, 'onChange="this.form.submit();"') : '');
         echo '</form>';
       } else {

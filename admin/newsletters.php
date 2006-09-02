@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.8 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: newsletters.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -224,7 +224,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 // toggle switch for editor
         $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
                               array('id' => '1', 'text' => TEXT_HTML_AREA));
-        echo TEXT_EDITOR_INFO . zen_draw_form('set_editor_form', FILENAME_NEWSLETTERS, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
+        echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_NEWSLETTERS, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
 ?>
@@ -278,7 +278,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
       <tr>
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
-      <tr><?php echo zen_draw_form('newsletter', FILENAME_NEWSLETTERS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'action=' . $form_action,'post', 'onsubmit="return check_form(newsletter);"'); if ($form_action == 'update') echo zen_draw_hidden_field('newsletter_id', $nID); ?>
+      <tr><?php echo zen_draw_form_admin('newsletter', FILENAME_NEWSLETTERS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'action=' . $form_action,'post', 'onsubmit="return check_form(newsletter);"'); if ($form_action == 'update') echo zen_draw_hidden_field('newsletter_id', $nID); ?>
 
         <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr>
@@ -488,7 +488,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
     case 'delete':
       $heading[] = array('text' => '<b>' . $nInfo->title . '</b>');
 
-      $contents = array('form' => zen_draw_form('newsletters', FILENAME_NEWSLETTERS, 'page=' . $_GET['page'] . '&nID=' . $nInfo->newsletters_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('newsletters', FILENAME_NEWSLETTERS, 'page=' . $_GET['page'] . '&nID=' . $nInfo->newsletters_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br /><b>' . $nInfo->title . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_NEWSLETTERS, 'page=' . $_GET['page'] . '&nID=' . $_GET['nID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info_meta_tags.php,v 1.5 2005/10/31 23:46:34 lsces Exp $
+//  $Id: preview_info_meta_tags.php,v 1.6 2006/09/02 23:35:38 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -43,7 +43,7 @@
 
     $form_action = (isset($_GET['pID'])) ? 'update_product_meta_tags' : 'insert_product_meta_tags';
 
-    echo zen_draw_form($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
+    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
     $languages = zen_get_languages();
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {

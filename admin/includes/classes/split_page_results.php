@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: split_page_results.php,v 1.4 2005/08/24 15:06:37 lsces Exp $
+//  $Id: split_page_results.php,v 1.5 2006/09/02 23:35:34 spiderr Exp $
 //
 
   class splitPageResults {
@@ -68,7 +68,7 @@
       }
 
       if ($num_pages > 1) {
-        $display_links = zen_draw_form('pages', basename($PHP_SELF), '', 'get');
+        $display_links = zen_draw_form_admin('pages', basename($PHP_SELF), '', 'get');
 
         if ($current_page_number > 1) {
           $display_links .= '<a href="' . zen_href_link_admin(basename($PHP_SELF), $parameters . $page_name . '=' . ($current_page_number - 1), 'NONSSL') . '" class="splitPageLink">' . PREVNEXT_BUTTON_PREV . '</a>&nbsp;&nbsp;';

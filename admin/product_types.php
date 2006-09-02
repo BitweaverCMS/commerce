@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.12 2006/02/24 23:18:49 lsces Exp $
+//  $Id: product_types.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -263,7 +263,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
         $value_field = zen_draw_input_field('configuration_value', $cInfo->configuration_value, 'size="60"');
       }
 
-      $contents = array('form' => zen_draw_form('configuration', FILENAME_PRODUCT_TYPES, 'ptID=' . $_GET['ptID'] . '&cID=' . $cInfo->configuration_id . '&action=layout_save'));
+      $contents = array('form' => zen_draw_form_admin('configuration', FILENAME_PRODUCT_TYPES, 'ptID=' . $_GET['ptID'] . '&cID=' . $cInfo->configuration_id . '&action=layout_save'));
       if (ADMIN_CONFIGURATION_KEY_ON == 1) {
         $contents[] = array('text' => '<strong>Key: ' . $cInfo->configuration_key . '</strong><br />');
       }
@@ -372,13 +372,13 @@ if ( $action == 'layout' || $action == 'layout_edit') {
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_PRODUCT_TYPE . '</b>');
 
-      $contents = array('form' => zen_draw_form('new_product_type', FILENAME_PRODUCT_TYPES, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('new_product_type', FILENAME_PRODUCT_TYPES, 'action=insert', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_NEW_INTRO);
       break;
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_PRODUCT_TYPE . ' :: ' . $ptInfo->type_name . '</b>');
 
-      $contents = array('form' => zen_draw_form('product_types', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=save', 'get', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('product_types', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=save', 'get', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_NAME . '<br>' . zen_draw_input_field('type_name', $ptInfo->type_name, zen_set_field_length(TABLE_PRODUCT_TYPES, 'type_name')));
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_IMAGE . '<br>' . zen_draw_file_field('default_image') . '<br />' . $ptInfo->default_image);
@@ -407,7 +407,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_PRODUCT_TYPE . '</b>');
 
-      $contents = array('form' => zen_draw_form('manufacturers', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('manufacturers', FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&ptID=' . $ptInfo->type_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $ptInfo->type_name . '</b>');
       $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('delete_image', '', true) . ' ' . TEXT_DELETE_IMAGE);

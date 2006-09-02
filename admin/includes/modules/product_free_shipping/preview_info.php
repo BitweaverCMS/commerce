@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.6 2005/12/20 17:13:07 gilesw Exp $
+//  $Id: preview_info.php,v 1.7 2006/09/02 23:35:38 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -45,7 +45,7 @@
 
     $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
 
-    echo zen_draw_form($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
+    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
     $languages = zen_get_languages();
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {

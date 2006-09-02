@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: sqlpatch.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -718,7 +718,7 @@ $linebreak = '
 <?php
   }
 ?>
-    <tr><?php echo zen_draw_form('getquery', FILENAME_SQLPATCH, 'action=execute' . (($debug==true)?'&debug=ON':''),'post', ''); ?>
+    <tr><?php echo zen_draw_form_admin('getquery', FILENAME_SQLPATCH, 'action=execute' . (($debug==true)?'&debug=ON':''),'post', ''); ?>
       <td><table border="0" cellpadding="0" cellspacing="2">
         <tr>
           <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '5'); ?></td>
@@ -734,7 +734,7 @@ $linebreak = '
     </form></tr>
 
 
-    <tr><?php echo zen_draw_form('getqueryfile', FILENAME_SQLPATCH, 'action=uploadquery' . (($debug==true)?'&debug=ON':''),'post', 'enctype="multipart/form-data"'); ?>
+    <tr><?php echo zen_draw_form_admin('getqueryfile', FILENAME_SQLPATCH, 'action=uploadquery' . (($debug==true)?'&debug=ON':''),'post', 'enctype="multipart/form-data"'); ?>
 <?php if (isset($_GET['nogrants'])) echo '<input type="hidden" id="nogrants" name="nogrants" value="'.$_GET['nogrants'].'" />'; ?>
       <td><table border="0" cellpadding="0" cellspacing="2">
         <tr>

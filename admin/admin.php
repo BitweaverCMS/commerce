@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to |
 // | license@zen-cart.com so we can mail you a copy immediately.|
 // +----------------------------------------------------------------------+
-//$Id: admin.php,v 1.6 2005/09/28 22:38:57 spiderr Exp $
+//$Id: admin.php,v 1.7 2006/09/02 23:35:32 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -247,7 +247,7 @@ case 'new':
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_ADMIN . '</b>');
 
-$contents = array('form' => zen_draw_form('new_admin', FILENAME_ADMIN, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+$contents = array('form' => zen_draw_form_admin('new_admin', FILENAME_ADMIN, 'action=insert', 'post', 'enctype="multipart/form-data"'));
 $contents[] = array('text' => TEXT_NEW_INTRO);
 
 $contents[] = array(
@@ -300,7 +300,7 @@ case 'edit':
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_ADMIN . '</b>');
 
-$contents = array('form' => zen_draw_form('edit_admin', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+$contents = array('form' => zen_draw_form_admin('edit_admin', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
 
 $contents[] = array('text' => TEXT_EDIT_INTRO);
 
@@ -357,7 +357,7 @@ case 'resetpassword':
 $heading[] = array('text' => '<b>' . TEXT_HEADING_RESET_PASSWORD . '</b>');
 
 $contents = array(
-'form' => zen_draw_form('reset_password', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=reset',
+'form' => zen_draw_form_admin('reset_password', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=reset',
 'post', 'enctype="multipart/form-data"') . zen_draw_hidden_field('admin_name', $adminInfo->admin_name) . zen_draw_hidden_field('admin_email', $adminInfo->admin_email) . zen_draw_hidden_field('admin_level', $adminInfo->admin_level));
 
 $contents[] = array('text' => TEXT_EDIT_INTRO);
@@ -394,7 +394,7 @@ case 'delete':
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_ADMIN . '</b>');
 
-$contents = array('form' => zen_draw_form('delete_admin', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=deleteconfirm'));
+$contents = array('form' => zen_draw_form_admin('delete_admin', FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $adminInfo->admin_id . '&action=deleteconfirm'));
 $contents[] = array('text' => TEXT_DELETE_INTRO);
 $contents[] = array('text' => '<br><b>' . $adminInfo->admin_name . '</b>');
 

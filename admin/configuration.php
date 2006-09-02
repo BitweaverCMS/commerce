@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.7 2006/02/24 22:45:08 lsces Exp $
+//  $Id: configuration.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
 //
 
   define('HEADING_TITLE', 'Configuration Settings');
@@ -194,7 +194,7 @@ if ($gID == 7) {
         $value_field = zen_draw_input_field('configuration_value', $cInfo->configuration_value, 'size="60"');
       }
 
-      $contents = array('form' => zen_draw_form('configuration', FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=save'));
+      $contents = array('form' => zen_draw_form_admin('configuration', FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=save'));
       if (ADMIN_CONFIGURATION_KEY_ON == 1) {
         $contents[] = array('text' => '<strong>Key: ' . $cInfo->configuration_key . '</strong><br />');
       }

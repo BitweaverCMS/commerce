@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.8 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: layout_controller.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
 //
 
 
@@ -275,7 +275,7 @@ if ($warning_new_box) {
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_NEW_BOX . '</b>');
 
-      $contents = array('form' => zen_draw_form('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&action=insert'));
+      $contents = array('form' => zen_draw_form_admin('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&action=insert'));
       $contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_INFO_LAYOUT_BOX_NAME . '<br />' . zen_draw_input_field('layout_box_name'));
       $contents[] = array('text' => '<br />' . TEXT_INFO_LAYOUT_BOX_STATUS . '<br />' . zen_draw_input_field('layout_box_status'));
@@ -305,7 +305,7 @@ if ($warning_new_box) {
 
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_BOX . '</b>');
 
-      $contents = array('form' => zen_draw_form('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=save' . '&layout_box_name=' . $bInfo->layout_box_name));
+      $contents = array('form' => zen_draw_form_admin('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=save' . '&layout_box_name=' . $bInfo->layout_box_name));
       $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
       $contents[] = array('text' => TEXT_INFO_LAYOUT_BOX_NAME . ' ' . $bInfo->layout_box_name);
       $contents[] = array('text' => '<br />' . TEXT_INFO_LAYOUT_BOX_STATUS . '<br />' . zen_draw_radio_field('layout_box_status', '1', $in_status) . TEXT_ON . zen_draw_radio_field('layout_box_status', '0', $out_status) . TEXT_OFF);
@@ -318,7 +318,7 @@ if ($warning_new_box) {
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_BOX . '</b>');
 
-      $contents = array('form' => zen_draw_form('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=deleteconfirm' . '&layout_box_name=' . $bInfo->layout_box_name));
+      $contents = array('form' => zen_draw_form_admin('column_controller', FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=deleteconfirm' . '&layout_box_name=' . $bInfo->layout_box_name));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br /><b>' . $bInfo->layout_box_name . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.9 2005/10/31 16:19:58 lsces Exp $
+//  $Id: salemaker.php,v 1.10 2006/09/02 23:35:33 spiderr Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -515,7 +515,7 @@ echo '</table></tr>';
     case 'copy':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_COPY_SALE . '</b>');
 
-      $contents = array('form' => zen_draw_form('sales', FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=copyconfirm'));
+      $contents = array('form' => zen_draw_form_admin('sales', FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=copyconfirm'));
       $contents[] = array('text' => sprintf(TEXT_INFO_COPY_INTRO, $sInfo->sale_name));
       $contents[] = array('text' => '<br>&nbsp;' . zen_draw_input_field('newname', $sInfo->sale_name . '_', 'size="31"'));
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_copy.gif', IMAGE_COPY) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
@@ -523,7 +523,7 @@ echo '</table></tr>';
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_SALE . '</b>');
 
-      $contents = array('form' => zen_draw_form('sales', FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('sales', FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $sInfo->sale_name . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

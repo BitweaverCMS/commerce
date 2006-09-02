@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.12 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: option_values.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
 //
 ?>
 <?php
@@ -139,7 +139,7 @@ if ($_GET['options_id']=='') {
       <td colspan="3" align="center" class="dataTableHeadingContent"><?php echo TEXT_UPDATE_OPTION_VALUES; ?></td>
     </tr>
     <tr class="dataTableHeadingRow">
-<?php echo zen_draw_form('quick_jump', FILENAME_PRODUCTS_OPTIONS_VALUES, '', 'get'); ?>
+<?php echo zen_draw_form_admin('quick_jump', FILENAME_PRODUCTS_OPTIONS_VALUES, '', 'get'); ?>
       <td class="dataTableHeadingContent"> <?php echo TEXT_SELECT_OPTION; ?> </td>
       <td class="dataTableHeadingContent">&nbsp;<select name="options_id">
 <?php
@@ -161,8 +161,8 @@ if ($_GET['options_id']=='') {
     <tr class="dataTableHeadingRow">
       <td colspan="3" class="dataTableHeadingContent" align="center"><?php echo TEXT_EDIT_OPTION_NAME; ?> <?php echo zen_options_name($_GET['options_id']); ?></td>
     </tr>
-<?php // echo zen_draw_form('update', zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_VALUES, 'action=update_sort_order&options_id=' . $_GET['options_id'], 'NONSSL'), '', 'post'); ?>
-<?php echo zen_draw_form('update', FILENAME_PRODUCTS_OPTIONS_VALUES, 'action=update_sort_order&options_id=' . $_GET['options_id'], 'post'); ?>
+<?php // echo zen_draw_form_admin('update', zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_VALUES, 'action=update_sort_order&options_id=' . $_GET['options_id'], 'NONSSL'), '', 'post'); ?>
+<?php echo zen_draw_form_admin('update', FILENAME_PRODUCTS_OPTIONS_VALUES, 'action=update_sort_order&options_id=' . $_GET['options_id'], 'post'); ?>
 <?php
     echo '    <tr class="dataTableHeadingRow"><td class="dataTableHeadingContent">Option ID</td><td class="dataTableHeadingContent">Option Value Name</td><td class="dataTableHeadingContent">Sort Order</td></tr><tr>';
 

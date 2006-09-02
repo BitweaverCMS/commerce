@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.14 2005/12/20 17:13:03 gilesw Exp $
+//  $Id: products_to_categories.php,v 1.15 2006/09/02 23:35:33 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -459,7 +459,7 @@ function go_option() {
           <tr>
             <td class="main"><?php echo TEXT_INFO_PRODUCTS_TO_CATEGORIES_LINKER_INTRO; ?></td>
           </tr>
-          <tr><?php echo zen_draw_form('restrict_product', FILENAME_PRODUCTS_TO_CATEGORIES, '', 'get', '', true) . zen_draw_hidden_field('action', 'set_master_categories_id') . zen_draw_hidden_field('products_id', $productsId); ?>
+          <tr><?php echo zen_draw_form_admin('restrict_product', FILENAME_PRODUCTS_TO_CATEGORIES, '', 'get', '', true) . zen_draw_hidden_field('action', 'set_master_categories_id') . zen_draw_hidden_field('products_id', $productsId); ?>
             <td class="main">
               <?php
                 echo '&nbsp;&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
@@ -497,7 +497,7 @@ function go_option() {
       }
     }
     $selected_categories = explode(',', $selected_categories_check);
-    echo zen_draw_form('update', FILENAME_PRODUCTS_TO_CATEGORIES, 'action=update_product&products_id=' . $productsId, 'post');
+    echo zen_draw_form_admin('update', FILENAME_PRODUCTS_TO_CATEGORIES, 'action=update_product&products_id=' . $productsId, 'post');
 ?>
           <tr class="dataTableHeadingRow">
             <td colspan="<?php echo MAX_DISPLAY_PRODUCTS_TO_CATEGORIES_COLUMNS*2; ?>" height="50" align="center" valign="middle" class="dataTableHeadingContent"><input type="submit" value="<?php echo BUTTON_UPDATE_CATEGORY_LINKS; ?>"></td>
@@ -664,7 +664,7 @@ function go_option() {
   switch ($action) {
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_PRODUCTS_TO_CATEGORIES . '</b>');
-      $contents = array('form' => zen_draw_form('products_downloads_edit', FILENAME_PRODUCTS_TO_CATEGORIES, ''));
+      $contents = array('form' => zen_draw_form_admin('products_downloads_edit', FILENAME_PRODUCTS_TO_CATEGORIES, ''));
       if ($productsId > 0) {
         $contents[] = array('text' => zen_image(DIR_WS_CATALOG_IMAGES . $product_to_copy->fields['products_image'], $product_to_copy->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT));
       }

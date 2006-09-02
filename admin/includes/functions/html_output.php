@@ -17,9 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.6 2005/08/24 02:48:58 lsces Exp $
+//  $Id: html_output.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
 //
 
+require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 ////
 // The HTML href link wrapper function
   function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
@@ -94,37 +95,11 @@
   }
 
 ////
-// The HTML image wrapper function
-  function zen_image($src, $alt = '', $width = '', $height = '', $params = '') {
-    $image = '<img src="' . $src . '" border="0" alt="' . $alt . '"';
-    if ($alt) {
-      $image .= ' title=" ' . $alt . ' "';
-    }
-    if ($width) {
-      $image .= ' width="' . $width . '"';
-    }
-    if ($height) {
-      $image .= ' height="' . $height . '"';
-    }
-    if ($params) {
-      $image .= ' ' . $params;
-    }
-    $image .= '>';
-
-    return $image;
-  }
-
-////
 // Draw a 1 pixel black line
   function zen_black_line() {
     return zen_image(DIR_WS_IMAGES . 'pixel_black.gif', '', '100%', '1');
   }
 
-////
-// Output a separator either through whitespace, or with an image
-  function zen_draw_separator($image = 'pixel_black.gif', $width = '100%', $height = '1') {
-    return zen_image(DIR_WS_IMAGES . $image, '', $width, $height);
-  }
 
 ////
 // javascript to dynamically update the states/provinces list when the country is changed
@@ -169,7 +144,7 @@
 
 ////
 // Output a form
-  function zen_draw_form($name, $action, $parameters = '', $method = 'post', $params = '', $usessl = 'false') {
+  function zen_draw_form_admin($name, $action, $parameters = '', $method = 'post', $params = '', $usessl = 'false') {
     $form = '<form name="' . zen_output_string($name) . '" action="';
     if (zen_not_null($parameters)) {
       if ($usessl) {
@@ -190,6 +165,34 @@
     }
     $form .= '>';
     return $form;
+  }
+
+/* DUPLICATE
+////
+// The HTML image wrapper function
+  function zen_image($src, $alt = '', $width = '', $height = '', $params = '') {
+    $image = '<img src="' . $src . '" border="0" alt="' . $alt . '"';
+    if ($alt) {
+      $image .= ' title=" ' . $alt . ' "';
+    }
+    if ($width) {
+      $image .= ' width="' . $width . '"';
+    }
+    if ($height) {
+      $image .= ' height="' . $height . '"';
+    }
+    if ($params) {
+      $image .= ' ' . $params;
+    }
+    $image .= '>';
+
+    return $image;
+  }
+
+////
+// Output a separator either through whitespace, or with an image
+  function zen_draw_separator($image = 'pixel_black.gif', $width = '100%', $height = '1') {
+    return zen_image(DIR_WS_IMAGES . $image, '', $width, $height);
   }
 
 ////
@@ -239,5 +242,7 @@
 
     return $field;
   }
+*/
+
 
 ?>

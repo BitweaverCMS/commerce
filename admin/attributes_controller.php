@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.26 2006/06/10 12:13:15 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.27 2006/09/02 23:35:32 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -581,7 +581,7 @@ function popupWindow(url) {
               <tr>
                 <td class="smallText" align="right">
 <?php
-    echo zen_draw_form('search', FILENAME_CATEGORIES, '', 'get');
+    echo zen_draw_form_admin('search', FILENAME_CATEGORIES, '', 'get');
 // show reset search
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';

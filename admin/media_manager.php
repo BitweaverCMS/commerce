@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
+//  $Id: media_manager.php,v 1.11 2006/09/02 23:35:33 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -236,7 +236,7 @@
     case 'new':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_NEW_MEDIA_COLLECTION . '</b>');
 
-      $contents = array('form' => zen_draw_form('collections', FILENAME_MEDIA_MANAGER, 'action=insert', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('collections', FILENAME_MEDIA_MANAGER, 'action=insert', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_NEW_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_MEDIA_COLLECTION_NAME . '<br>' . zen_draw_input_field('media_name', '', zen_set_field_length(TABLE_MEDIA_MANAGER, 'media_name')));
 
@@ -245,7 +245,7 @@
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_EDIT_MEDIA_COLLECTION . '</b>');
 
-      $contents = array('form' => zen_draw_form('collections', FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
+      $contents = array('form' => zen_draw_form_admin('collections', FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=save', 'post', 'enctype="multipart/form-data"'));
       $contents[] = array('text' => TEXT_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_MEDIA_COLLECTION_NAME . '<br>' . zen_draw_input_field('media_name', $mInfo->media_name, zen_set_field_length(TABLE_MEDIA_MANAGER, 'media_name')));
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
@@ -282,7 +282,7 @@
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_HEADING_DELETE_MEDIA_COLLECTION . '</b>');
 
-      $contents = array('form' => zen_draw_form('collections', FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=deleteconfirm'));
+      $contents = array('form' => zen_draw_form_admin('collections', FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id . '&action=deleteconfirm'));
       $contents[] = array('text' => TEXT_DELETE_INTRO);
       $contents[] = array('text' => '<br><b>' . $mInfo->media_name . '</b>');
 
@@ -297,11 +297,11 @@
       $new_product_query = $db->Execute("select ptc.*, pd.`products_name` from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $heading[] = array('text' => '<b>' . TEXT_HEADING_ASSIGN_MEDIA_COLLECTION . '</b>');
       $contents[] = array('text' => TEXT_PRODUCTS_INTRO . '<br /><br />');
-      $contents[] = array('text' => zen_draw_form('new_category', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .
+      $contents[] = array('text' => zen_draw_form_admin('new_category', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .
                            zen_draw_pull_down_menu('current_category_id', zen_get_category_tree('', '', '0'), '', 'onChange="this.form.submit();"') . zen_draw_hidden_field('products_id', $_GET['products_id']) . zen_draw_hidden_field('action', 'new_cat') . zen_draw_hidden_field('mID', $mInfo->media_id) . '&nbsp;&nbsp;</form>');
       $product_array = $zc_products->get_products_in_category($current_category_id);
       if ($product_array) {
-        $contents[] = array('text' => zen_draw_form('new_product', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .
+        $contents[] = array('text' => zen_draw_form_admin('new_product', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .
                            zen_draw_pull_down_menu('current_product_id', $product_array) . '&nbsp;' . '<input type="submit" name="add_product" value="Add">' .
                            zen_draw_hidden_field('current_category_id', $current_category_id) .
                            zen_draw_hidden_field('action', 'add_product') .

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.9 2005/12/20 17:13:00 gilesw Exp $
+//  $Id: category_product_listing.php,v 1.10 2006/09/02 23:35:35 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -30,7 +30,7 @@
               <tr>
                 <td class="smallText" align="right">
 <?php
-    echo zen_draw_form('search', FILENAME_CATEGORIES, '', 'get');
+    echo zen_draw_form_admin('search', FILENAME_CATEGORIES, '', 'get');
 // show reset search
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
       echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';
@@ -47,7 +47,7 @@
               <tr>
                 <td class="smallText" align="right">
 <?php
-    echo zen_draw_form('goto', FILENAME_CATEGORIES, '', 'get');
+    echo zen_draw_form_admin('goto', FILENAME_CATEGORIES, '', 'get');
     echo HEADING_TITLE_GOTO . ' ' . zen_draw_pull_down_menu('cPath', zen_get_category_tree(), $current_category_id, 'onChange="this.form.submit();"');
     echo '</form>';
 ?>

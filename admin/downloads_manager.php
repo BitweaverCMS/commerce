@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: downloads_manager.php,v 1.8 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: downloads_manager.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -82,7 +82,7 @@ function go_option() {
     <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="0">
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-         <tr><?php echo zen_draw_form('search', FILENAME_DOWNLOADS_MANAGER, '', 'get'); ?>
+         <tr><?php echo zen_draw_form_admin('search', FILENAME_DOWNLOADS_MANAGER, '', 'get'); ?>
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
             <td class="smallText" align="right">
@@ -225,7 +225,7 @@ function go_option() {
     case 'confirm':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_PRODUCTS_DOWNLOAD . '</b>');
 
-      $contents = array('form' => zen_draw_form('products_downloads_delete', FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=deleteconfirm' . '&page=' . $_GET['page']));
+      $contents = array('form' => zen_draw_form_admin('products_downloads_delete', FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=deleteconfirm' . '&page=' . $_GET['page']));
       $contents[] = array('text' => TEXT_DELETE_INTRO . '<br /><br /><b>' . $padInfo->products_name . ' - ' . $padInfo->products_attributes_filename . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id) . '&page=' . $_GET['page'] . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -233,7 +233,7 @@ function go_option() {
     case 'edit':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_PRODUCTS_DOWNLOAD . '</b>');
 
-      $contents = array('form' => zen_draw_form('products_downloads_edit', FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=save' . '&page=' . $_GET['page']));
+      $contents = array('form' => zen_draw_form_admin('products_downloads_edit', FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=save' . '&page=' . $_GET['page']));
       $contents[] = array('text' => '<b>' . TEXT_PRODUCTS_NAME . $padInfo->products_name . '<br />' . TEXT_PRODUCTS_MODEL . $padInfo->products_model . '</b>');
       $contents[] = array('text' => '<br />' . TEXT_INFO_EDIT_INTRO);
       $contents[] = array('text' => '<br />' . TEXT_INFO_FILENAME . '<br />' . zen_draw_input_field('products_attributes_filename', $padInfo->products_attributes_filename));

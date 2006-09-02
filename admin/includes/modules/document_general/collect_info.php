@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.8 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: collect_info.php,v 1.9 2006/09/02 23:35:37 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -187,7 +187,7 @@ var tax_rates = new Array();
 //--></script>
     <?php
 //  echo $type_admin_handler;
-echo zen_draw_form('new_product', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
+echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
 
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
       <tr>
