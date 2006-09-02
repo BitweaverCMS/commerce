@@ -5,7 +5,6 @@
 		<h4><a href="{$sideboxFeature.display_url}">{$sideboxFeature.products_name}</a></h4>
 		{$sideboxFeature.display_price}
 		<br/><a class="moreinfo" href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=featured_products">{tr}See more...{/tr}</a>
-		</div>
 	{/bitmodule}
 {/if}
 {/strip}
