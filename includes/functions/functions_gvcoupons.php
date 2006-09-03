@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_gvcoupons.php,v 1.3 2005/11/03 15:12:26 spiderr Exp $
+// $Id: functions_gvcoupons.php,v 1.4 2006/09/03 03:19:08 spiderr Exp $
 //
 //
 ////
@@ -45,8 +45,7 @@
 
     } else {
 
-      $gv_query = "insert into " . TABLE_COUPON_GV_CUSTOMER . "
-                                   (customer_id, amount)
+      $gv_query = "insert into " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount)
                           values ('" . $c_id . "', '" . $coupon_gv->fields['coupon_amount'] . "')";
 
       $gBitDb->Execute($gv_query);
