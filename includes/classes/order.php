@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.41 2006/07/10 03:43:58 spiderr Exp $
+// $Id: order.php,v 1.42 2006/09/03 03:22:50 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -43,6 +43,16 @@ class order extends BitBase {
 
 	function getField( $pField ) {
 		$ret = (isset( $this->info[$pField] ) ? $this->info[$pField] : NULL );
+		return $ret;
+	}
+
+	function getTotal( $pClass, $pKey ) {
+		$ret = '';
+		for( $i = 0; $i < count( $this->totals ); $i++ ) {
+			if( $this->totals[$i]['class'] == $pClass && !empty( $this->totals[$i][$pKey] ) ) {
+				$ret = $this->totals[$i][$pKey];
+			}
+		}
 		return $ret;
 	}
 
