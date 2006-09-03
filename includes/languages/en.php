@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: en.php,v 1.10 2006/02/25 04:01:10 spiderr Exp $
+// $Id: en.php,v 1.11 2006/09/03 03:24:01 spiderr Exp $
 //
 
 // bof: removed for meta tags
@@ -197,7 +197,6 @@ define('CATEGORY_CONTACT', 'Your Contact Information');
 define('CATEGORY_OPTIONS', 'Options');
 define('CATEGORY_PASSWORD', 'Your Password');
 define('CATEGORY_LOGIN', 'Login');
-define('PULL_DOWN_DEFAULT', 'Please Choose Your Country');
 
 define('ENTRY_COMPANY', 'Company Name:');
 define('ENTRY_COMPANY_ERROR', '');
