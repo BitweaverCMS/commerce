@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.6 2006/07/10 03:43:58 spiderr Exp $
+// $Id: functions_email.php,v 1.7 2006/09/03 03:20:50 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -131,7 +131,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
       // send the actual email
       $result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
-      if (!$result) {
+      if (!$result && $messageStack) {
         $messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
       }
 
