@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.8 2006/02/24 04:13:08 spiderr Exp $
+// $Id: usps.php,v 1.9 2006/09/03 08:22:08 spiderr Exp $
 //
 
 class usps {
@@ -185,8 +185,8 @@ class usps {
 				}
 			}
 		} else {
-			$this->quotes = array('module' => $this->title,
-								'error' => MODULE_SHIPPING_USPS_TEXT_ERROR);
+			// Lack of quotes is not necessarily an error
+//			$this->quotes = array('module' => $this->title, 'error' => MODULE_SHIPPING_USPS_TEXT_ERROR);
 		}
 
 		if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
