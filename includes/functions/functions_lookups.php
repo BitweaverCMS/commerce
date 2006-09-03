@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.21 2006/09/02 23:38:11 spiderr Exp $
+// $Id: functions_lookups.php,v 1.22 2006/09/03 08:25:15 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -35,6 +35,25 @@
     return $status->fields['orders_status_name'] . ' [' . (int)$order_status_id . ']';
   }
 
+
+	function commerce_get_statuses( $pHash=FALSE ) {
+		global $gBitDb;
+		$ret = array();
+		$orders_status = $gBitDb->query("select `orders_status_id`, `orders_status_name`
+									 from " . TABLE_ORDERS_STATUS . "
+									 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
+
+		while (!$orders_status->EOF) {
+			if( $pHash ) {
+				$ret[$orders_status->fields['orders_status_id']] = $orders_status->fields['orders_status_name'] . ' [' . $orders_status->fields['orders_status_id'] . ']';
+			} else {
+				$ret[] = array('id' => $orders_status->fields['orders_status_id'],
+							   'text' => $orders_status->fields['orders_status_name'] . ' [' . $orders_status->fields['orders_status_id'] . ']');
+			}
+			$orders_status->MoveNext();
+		}
+		return $ret;
+	}
 
 /**
  * Returns an array with countries
