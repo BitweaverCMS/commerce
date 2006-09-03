@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.30 2006/05/07 16:01:09 spiderr Exp $
+// $Id: shopping_cart.php,v 1.31 2006/09/03 03:21:46 spiderr Exp $
 //
 
   class shoppingCart {
@@ -49,9 +49,8 @@
 
           if ($product->RecordCount()<=0) {
             $sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
-                                (`customers_id`, `products_id`, `customers_basket_quantity`,
-                                 `customers_basket_date_added`)
-                                 values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
+                    (`customers_id`, `products_id`, `customers_basket_quantity`, `customers_basket_date_added`)
+                    values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
                                  $qty . "', '" . date('Ymd') . "')";
 
             $gBitDb->Execute($sql);
@@ -77,12 +76,11 @@
               }
             }
           } else {
-            $sql = "update " . TABLE_CUSTOMERS_BASKET . "
-                    set `customers_basket_quantity` = '" . $qty . "'
-                    where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                    and `products_id` = '" . zen_db_input($products_id) . "'";
+            $sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . "
+                    SET `customers_basket_quantity` = ?
+                    WHERE `customers_id` = ? AND `products_id` = ?";
 
-            $gBitDb->Execute($sql);
+            $gBitDb->query( $sql, array( $qty, (int)$_SESSION['customer_id'],  zen_db_input($products_id) ) );
 
           }
         }
@@ -247,12 +245,11 @@
       $this->contents[$products_id] = array('quantity' => $quantity);
 // update database
       if ($_SESSION['customer_id']) {
-        $sql = "update " . TABLE_CUSTOMERS_BASKET . "
-                set `customers_basket_quantity` = '" . $quantity . "'
-                where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-                and `products_id` = '" . zen_db_input($products_id) . "'";
+        $sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . "
+                SET `customers_basket_quantity` = ?
+                WHERE `customers_id` = ? AND `products_id` = ?";
 
-        $gBitDb->Execute($sql);
+        $gBitDb->query($sql, array( $quantity, (int)$_SESSION['customer_id'], zen_db_input($products_id) ) );
 
       }
 
