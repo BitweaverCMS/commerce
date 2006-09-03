@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.9 2006/09/02 23:37:33 spiderr Exp $
+// $Id: html_output.php,v 1.10 2006/09/03 08:24:51 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -27,7 +27,7 @@
 ////
 // The HTML image wrapper function
   function zen_image_OLD($src, $alt = '', $width = '', $height = '', $parameters = '') {
-    global $template_dir;
+    global $template_dir, $gBitSmarty;
 
 //auto replace with defined missing image
     if ($src == DIR_WS_IMAGES and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
@@ -267,4 +267,12 @@
 
     return zen_draw_pull_down_menu($name, $countries_array, $selected, $parameters);
   }
+
+	function commerce_country_select( $pParams ) {
+		return zen_get_country_list( $pParams['name'], $pParams['selected'] );
+	}
+
+	$gBitSmarty->register_function( 'commerce_country_select', 'commerce_country_select' );
+
+
 ?>
