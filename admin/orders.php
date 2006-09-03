@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.37 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: orders.php,v 1.38 2006/09/03 08:20:43 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -26,20 +26,6 @@
 
 
   $currencies = new currencies();
-
-  $orders_statuses = array();
-  $orders_status_array = array();
-  $orders_status = $db->Execute("select `orders_status_id`, `orders_status_name`
-                                 from " . TABLE_ORDERS_STATUS . "
-                                 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
-
-
-  while (!$orders_status->EOF) {
-    $orders_statuses[] = array('id' => $orders_status->fields['orders_status_id'],
-                               'text' => $orders_status->fields['orders_status_name'] . ' [' . $orders_status->fields['orders_status_id'] . ']');
-    $orders_status_array[$orders_status->fields['orders_status_id']] = $orders_status->fields['orders_status_name'];
-    $orders_status->MoveNext();
-  }
 
 	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
@@ -304,51 +290,13 @@
 </div>
 
 <div style="width:33%; float:right; padding: 6px;">
-		<table class="data">
-          <tr>
-            <th align="left">Order Status History</th>
-            <th align="right"><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></th>
-          </tr>
-		</table>
-<?php echo zen_draw_form_admin('status', FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=update_order', 'post', '', true); ?>
-		<strong><?php echo ENTRY_STATUS; ?></strong> <?php echo zen_draw_pull_down_menu('status', $orders_statuses, $order->getStatus() ); ?>
-		<br/><strong><?php echo TABLE_HEADING_COMMENTS; ?></strong>
-        <br/><?php echo zen_draw_textarea_field('comments', 'soft', '60', '5'); ?>
-		<br/><strong><?php echo ENTRY_NOTIFY_CUSTOMER; ?></strong> <?php echo zen_draw_checkbox_field('notify', '', false); ?>
-        <?php echo zen_draw_hidden_field('notify_comments', 'on'); ?>
-        <?php echo zen_image_submit('button_update.gif', IMAGE_UPDATE); ?>
-      </form>
+	
 <?php
-    $orders_history = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments`
-                                    from " . TABLE_ORDERS_STATUS_HISTORY . "
-                                    where `orders_id` = '" . zen_db_input($oID) . "'
-                                    order by `date_added` DESC");
 
-    if ($orders_history->RecordCount() > 0) {
-?>
-		<ul class="data">
-<?php
-	$lastOrderStatus = NULL;
-      while (!$orders_history->EOF) {
-        echo '<li class="item" style="clear:both">'; 
-        if ($orders_history->fields['customer_notified'] == '1') {
-          echo zen_image(DIR_WS_ICONS . 'tick.gif', ICON_TICK, NULL, NULL, 'class="floaticon"');
-        }
-        echo '<strong>'.$orders_status_array[$orders_history->fields['orders_status_id']].'</strong>';
-		echo '<div class="date">'.zen_datetime_short($orders_history->fields['date_added']).'</div>';
-		if( !empty( $orders_history->fields['comments'] ) ) {
-	        echo nl2br(zen_db_output($orders_history->fields['comments']));
-		}
-        echo '</li>' . "\n";
-        $orders_history->MoveNext();
-      }
-    } else {
-        echo TEXT_NO_ORDER_HISTORY;
-    }
-?>
-        </ul>
-		
-<?php
+	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
+
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' );
+
 // check if order has open gv
 		$gv_check = $db->query("select `order_id`, `unique_id`
 								from " . TABLE_COUPON_GV_QUEUE ."

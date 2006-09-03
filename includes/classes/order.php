@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.42 2006/09/03 03:22:50 spiderr Exp $
+// $Id: order.php,v 1.43 2006/09/03 08:21:13 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -299,7 +299,9 @@ class order extends BitBase {
 		$this->mHistory = array();
 		if( $this->isValid() ) {
 			$sql = "SELECT *
-					FROM   " . TABLE_ORDERS_STATUS . " os INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON( osh.`orders_status_id` = os.`orders_status_id` )
+					FROM   " . TABLE_ORDERS_STATUS . " os
+						INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON( osh.`orders_status_id` = os.`orders_status_id` )
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=osh.`user_id` )
 					WHERE osh.`orders_id` = ? AND os.`language_id` = ?
 					ORDER BY osh.`date_added`";
 
@@ -1000,6 +1002,7 @@ class order extends BitBase {
 	}
 
 	function updateStatus( $pParamHash ) {
+		global $gBitUser;
 
 		$order_updated = false;
 
@@ -1020,7 +1023,7 @@ class order extends BitBase {
 			$customer_notified = '0';
 			if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
 				$notify_comments = '';
-				if( isset($pParamHash['notify_comments']) && ( $pParamHash['notify_comments'] == 'on' ) && zen_not_null( $comments ) ) {
+				if( !empty( $comments ) ) {
 					$notify_comments = $comments . "\n\n";
 				}
 
@@ -1056,13 +1059,24 @@ class order extends BitBase {
 			}
 
 			$this->mDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . "
-						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`)
-						values ( ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments ) );
+						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
+						values ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
 
 			$this->mDb->CompleteTrans();
 			$order_updated = true;
 		}
 		return $order_updated;
+	}
+
+	function updateOrder( $pParamHash ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$this->mDb->StartTrans();
+			$this->mDb->associateUpdate( TABLE_ORDERS, $pParamHash, array( 'orders_id' => $this->mOrdersId ) );
+			$this->mDb->CompleteTrans();
+			$ret = TRUE;
+		}
+		return $ret;
 	}
 
 	function isValid() {
