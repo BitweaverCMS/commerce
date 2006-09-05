@@ -8,28 +8,23 @@
 </head>
 <body{if $gBitSystem->mOnload} onload="{foreach from=$gBitSystem->mOnload item=loadString}{$loadString}{/foreach}"{/if}>
 
-<!-- body_text //-->
-{$smarty.const.STORE_NAME_ADDRESS|nl2br}
+<p>&nbsp;</p>
+
+<div class="row">
+	{formlabel label="Return Address"}
+	{forminput}
+		<div style="font-size:larger;">{$smarty.const.STORE_NAME_ADDRESS|nl2br}</div>
+	{/forminput}
+</div>
+
 <table>
   <tr>
 	<td valign="top" style="width:50%">
-{*		<h2>{tr}Sold To{/tr}:</h2>
-		{$gBitOrder->getFormattedAddress('billing')}
-		{$gBitOrder->customer.telephone}
-		<br/><a href="mailto:{$gBitOrder->customer.email_address}">{$gBitOrder->customer.email_address}</a>
-*}
-	</td>
-	<td valign="top" style="width:50%">
-		<h2>{tr}Ship To{/tr}:</h2>
-		{$gBitOrder->getFormattedAddress('delivery')}
-	</td>
-  </tr>
-</table>
 
 <div class="row">
 	{formlabel label="Order #"}
 	{forminput}
-		{$gBitOrder->mOrdersId}
+		<div style="font-size:large">{$gBitOrder->mOrdersId}</div>
 	{/forminput}
 </div>
 
@@ -40,6 +35,23 @@
 	{/forminput}
 </div>
 
+{*		<h2>{tr}Sold To{/tr}:</h2>
+		{$gBitOrder->getFormattedAddress('billing')}
+		{$gBitOrder->customer.telephone}
+		<br/><a href="mailto:{$gBitOrder->customer.email_address}">{$gBitOrder->customer.email_address}</a>
+*}
+	</td>
+	<td valign="top" style="width:50%;">
+		<div style="border:1px solid #ccc; padding: 10px;"> 
+			<h2>{tr}Ship To{/tr}:</h2>
+			<div style="font-size:large;">{$gBitOrder->getFormattedAddress('delivery')}</div>
+		</div>
+	</td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+
 <div class="row">
 	{formlabel label="Products"}
 	{forminput}
@@ -47,9 +59,9 @@
 {section loop=$gBitOrder->products name=ix}
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
-	<td class="item {$oddeven}" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($gBitOrder->products[ix].products_id,'icon')}" />
-	<td class="item {$oddeven}" valign="top" align="right">{$gBitOrder->products[ix].quantity}&nbsp;x</td>
-	<td class="item {$oddeven}" valign="top" width="90%">
+	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($gBitOrder->products[ix].products_id,'icon')}" />
+	<td class="item" valign="top" align="right">{$gBitOrder->products[ix].quantity}&nbsp;x</td>
+	<td class="item" valign="top" width="90%">
 		{$gBitOrder->products[ix].name} [ {$gBitOrder->products[ix].model} ]
 		{if !empty($gBitOrder->products[ix].attributes)}
 			{section loop=$gBitOrder->products[ix].attributes name=ax}
@@ -62,6 +74,7 @@
 </table>
 	{/forminput}
 </div>
+
 
 </body>
 </html>
