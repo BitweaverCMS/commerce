@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.20 2006/07/31 02:35:43 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.21 2006/09/06 08:53:51 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -564,7 +564,7 @@ if ( $gBitProduct->loadAttributes() ) {
 //      zen_draw_hidden_field('number_of_uploads', $_GET['number_of_uploads']);
       zen_draw_hidden_field('number_of_uploads', $number_of_uploads);
       $gBitSmarty->assign( 'productSettings', $productSettings );
-      $gBitSmarty->assign( 'productOptions', $productOptions );
+      $gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
     }
 
 //////////////////////////////////////////////////

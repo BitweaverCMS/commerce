@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.43 2006/09/03 08:21:13 spiderr Exp $
+// $Id: order.php,v 1.44 2006/09/06 08:53:51 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -992,6 +992,14 @@ class order extends BitBase {
          $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg, 'checkout_extra');
       }
     }
+
+	function getFormattedAddress( $pAddressHash, $pBreak='<br>' ) {
+		$ret = '';
+		if( $this->isValid() ) {
+			$ret = zen_address_format( $this->customer['format_id'], $this->$pAddressHash, 1, '', $pBreak );
+		}
+		return $ret;
+	}
 
 	function getStatus() {
 		$ret = NULL;
