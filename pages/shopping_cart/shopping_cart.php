@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.10 2006/03/17 03:24:12 spiderr Exp $
+// $Id: shopping_cart.php,v 1.11 2006/09/06 09:01:56 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -150,7 +150,7 @@ function popupWindow(url) {
 
       switch (true) {
         case (SHOW_SHOPPING_CART_DELETE == 1):
-          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '"> ' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT) . '</a> ';
+          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '"> ' . zen_image( THEMES_PKG_URL.'icon_styles/gnome/small/edit-delete.png', BUTTON_DELETE_SMALL_ALT) . '</a> ';
           $zc_del_checkbox = '';
           break;
         case (SHOW_SHOPPING_CART_DELETE == 2):
@@ -158,7 +158,7 @@ function popupWindow(url) {
           $zc_del_checkbox = zen_draw_checkbox_field('cart_delete[]', $products[$i]['id']);
           break;
         default:
-          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '">' . zen_image( LIBERTY_PKG_URL.'icons/delete.png', BUTTON_DELETE_SMALL_ALT, NULL, NULL, 'align=center') . '</a> ';
+          $zc_del_button = '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, 'action=remove_product&product_id=' . $products[$i]['id']) . '">' . zen_image( THEMES_PKG_URL.'icon_styles/gnome/small/edit-delete.png', BUTTON_DELETE_SMALL_ALT, NULL, NULL, 'align=center') . '</a> ';
           $zc_del_checkbox = zen_draw_checkbox_field('cart_delete[]', $products[$i]['id']);
           break;
       }
