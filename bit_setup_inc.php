@@ -5,6 +5,7 @@ $registerHash = array(
 	'package_name' => 'bitcommerce',
 	'package_path' => dirname( __FILE__ ).'/',
 	'service' => LIBERTY_SERVICE_COMMERCE,
+	'homeable' => TRUE,
 );
 $gBitSystem->registerPackage( $registerHash );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {

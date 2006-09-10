@@ -1222,8 +1222,6 @@ $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#GPL">GPL</a>',
 ) );
 
-$gBitInstaller->makePackageHomeable( BITCOMMERCE_PKG_NAME );
-
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_commerce_admin', 'Can administer commerce.', 'admin', 'bitcommerce'),
