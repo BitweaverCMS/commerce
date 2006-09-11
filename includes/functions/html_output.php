@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.10 2006/09/03 08:24:51 spiderr Exp $
+// $Id: html_output.php,v 1.11 2006/09/11 07:31:11 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -170,7 +170,7 @@
 
     // set default to use from template - zen_image will translate if not found in current template
     if ($image == 'true') {
-      $image = DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_BLACK_SEPARATOR;
+      $image = BITCOMMERCE_PKG_URL . 'images/' . OTHER_IMAGE_BLACK_SEPARATOR;
     } else {
       if (!strstr($image, DIR_WS_TEMPLATE_IMAGES)) {
         $image = DIR_WS_TEMPLATE_IMAGES . $image;
