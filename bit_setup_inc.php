@@ -9,7 +9,12 @@ $registerHash = array(
 );
 $gBitSystem->registerPackage( $registerHash );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
-	$gBitSystem->registerAppMenu( BITCOMMERCE_PKG_DIR, 'Shopping', BITCOMMERCE_PKG_URL.'index.php', 'bitpackage:bitcommerce/menu_bitcommerce.tpl' );
+	$menuHash = array(
+		'package_name'  => BITCOMMERCE_PKG_NAME,
+		'index_url'     => BITCOMMERCE_PKG_URL.'index.php',
+		'menu_template' => 'bitpackage:bitcommerce/menu_bitcommerce.tpl',
+	);
+	$gBitSystem->registerAppMenu( $menuHash );
 }
 
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
