@@ -7,6 +7,7 @@ define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 class CommerceProduct extends LibertyAttachable {
 	var $mProductsId;
 	var $mOptions;
+	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
 		LibertyAttachable::LibertyAttachable();
@@ -23,23 +24,27 @@ class CommerceProduct extends LibertyAttachable {
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
 		$this->mAdminContentPerm = 'p_commerce_admin';
 		$this->mOptions = NULL;
+		$this->mRelatedContent = NULL;
 	}
 
 	function load() {
 		global $gBitUser;
+		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
+			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM `".TABLE_PRODUCTS."` WHERE `content_id`=?", array( $this->mContentId ) );
+		}
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->mInfo['content_id'];
 			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
 				$this->mInfo = array();
-				unset( $this->mContent );
+				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
 			} else {
 				$this->loadPricing();
 			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
-				if( $this->mContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
-					$this->mInfo['display_link'] = $this->mContent->getDisplayLink( $this->mContent->getTitle(), $this->mContent->mInfo );
+				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
+					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
 				}
 			}
 		}
@@ -419,6 +424,10 @@ class CommerceProduct extends LibertyAttachable {
 		return $ret;
 	}
 
+	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
+		return( CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
+	}
+
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
@@ -514,11 +523,17 @@ class CommerceProduct extends LibertyAttachable {
 			}
 		}
 
+		if( empty( $pListHash['all_status'] ) ) {
+			$whereSql .= " AND p.`products_status` = '1' ";
+		}
+
 		$joinSql .= ' AND pd.`language_id`=?';
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
 		}
+
+		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 
 		$countQuery = "select COUNT( p.`products_id` )
 				  from " . TABLE_PRODUCTS . " p
@@ -526,7 +541,7 @@ class CommerceProduct extends LibertyAttachable {
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 					$joinSql
-				  where p.`products_status` = '1' $whereSql ";
+				  where $whereSql ";
 		$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
 
 		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
@@ -536,7 +551,7 @@ class CommerceProduct extends LibertyAttachable {
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 				  	INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
-				  where p.`products_status` = '1' $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
+				  where $whereSql ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			$ret = $rs->GetAssoc();
 			global $currencies;
@@ -558,6 +573,7 @@ class CommerceProduct extends LibertyAttachable {
 			}
 		}
 
+		$pListHash['page'] = !empty( $pListHash['page'] ) && is_numeric( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_count'] / $pListHash['max_records'] );
 		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'] + 1;
@@ -646,6 +662,8 @@ class CommerceProduct extends LibertyAttachable {
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
 		if( is_array( $pParamHash['products_name'] ) ) {
 			$pParamHash['title'] = current( $pParamHash['products_name'] );
+		} elseif( is_string( $pParamHash['products_name'] ) ) {
+			$pParamHash['title'] = $pParamHash['products_name'];
 		}
 
 		if( empty( $pParamHash['content_id'] ) ) {
@@ -663,7 +681,6 @@ class CommerceProduct extends LibertyAttachable {
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
-
 
 		return( TRUE );
 	}
@@ -1018,7 +1035,7 @@ Skip deleting of images for now
 				LibertyAttachable::expunge();
 
 				$this->mInfo = array();
-				unset( $this->mContent );
+				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
 
 				$this->mDb->CompleteTrans();
