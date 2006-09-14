@@ -289,15 +289,18 @@
 
 ////
 // Output a function button in the selected language
-  function zen_image_button($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base, $gBitCustomer;
-// return '<span class="button">'.$alt.'</span>';
-	if( $template ) {
-	    return zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
-	} else {
-      return zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $parameters);
-    }
-  }
+	function zen_image_button($image, $alt = '', $parameters = '') {
+		global $template, $current_page_base, $gBitCustomer;
+		// return '<span class="button">'.$alt.'</span>';
+		if( is_string( $alt ) ) {
+			$ret = '<input type="button" class="bcbutton" name="'.$alt.'" value="'.$alt.'" />';
+		} elseif( $template ) {
+			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
+		} else {
+			$ret = zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $parameters);
+		}
+		return $ret;
+	}
 
 
 ////
@@ -306,20 +309,28 @@
   function zen_image_submit($image, $alt = '', $parameters = '') {
     global $template, $current_page_base, $gBitCustomer;
 
-	if( $template ) {
-		$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
+	if( is_string( $alt ) ) {
+		$ret = '<input type="submit" class="bcsubmit" name="'.$alt.'" value="'.$alt.'" />';
 	} else {
-      $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image);
-    }
-    $image_submit = '<input type="image" src="'.$imgSrc. '" alt="' . zen_output_string($alt) . '"';
-
-    if (zen_not_null($alt)) $image_submit .= ' title=" ' . zen_output_string($alt) . ' "';
-
-    if (zen_not_null($parameters)) $image_submit .= ' ' . $parameters;
-
-    $image_submit .= ' />';
-
-    return $image_submit;
+		if( $template ) {
+			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
+		} else {
+		  $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image);
+		}
+		$ret = '<input type="image" src="'.$imgSrc. '" alt="' . zen_output_string($alt) . '"';
+	
+		if (zen_not_null($alt)) { 
+			$ret .= ' title=" ' . zen_output_string($alt) . ' "';
+		}
+	
+		if (zen_not_null($parameters)) {
+			$ret .= ' ' . $parameters;
+		}
+	
+		$ret .= ' />';
+	}
+	
+	return $ret;
   }
 
   function bit_get_images_dir( $pDir ) {
