@@ -20,8 +20,12 @@
 {/literal}
 </script>
 	{else}
+{if defined($smarty.const.META_TAG_KEYWORDS)}
 <meta name="keywords" content="{$smarty.const.META_TAG_KEYWORDS}" />
+{/if}
+{if defined($smarty.const.META_TAG_DESCRIPTION)}
 <meta name="description" content="{$smarty.const.META_TAG_DESCRIPTION}" />
+{/if}
 <link rel="stylesheet" type="text/css" href="{$smarty.const.BITCOMMERCE_PKG_URL}includes/templates/template_default/css/stylesheet.css" />
 <script type="text/javascript">//<![CDATA[
 		function clearText( thefield ) {ldelim}
