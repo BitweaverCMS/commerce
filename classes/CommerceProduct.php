@@ -34,13 +34,13 @@ class CommerceProduct extends LibertyAttachable {
 		}
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->mInfo['content_id'];
-			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
-				$this->mInfo = array();
-				unset( $this->mRelatedContent );
-				unset( $this->mProductsId );
-			} else {
+//			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+//				$this->mInfo = array();
+//				unset( $this->mRelatedContent );
+//				unset( $this->mProductsId );
+//			} else {
 				$this->loadPricing();
-			}
+//			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
@@ -691,9 +691,7 @@ class CommerceProduct extends LibertyAttachable {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
 			}
-// $this->debug();
-	// when set to none remove from database
-	//          if (isset($pParamHash['products_image']) && zen_not_null($pParamHash['products_image']) && ($pParamHash['products_image'] != 'none')) {
+
 			if( $this->isValid() ) {
 				$action = 'update_product';
 				$this->mDb->associateUpdate( TABLE_PRODUCTS, $pParamHash['product_store'], array( 'products_id' =>$this->mProductsId ) );
@@ -784,7 +782,6 @@ class CommerceProduct extends LibertyAttachable {
 			$this->mDb->CompleteTrans();
 			$this->load();
 		}
-
 		return( $this->mProductsId );
 	}
 
@@ -897,6 +894,13 @@ $check_duplicate = $gBitDb->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES .
 
 	}
 
+	function expungeAttribute( $pProductsAttributesId ) {
+		if( $this->isValid() && BitBase::verifyId( $pProductsAttributesId ) ) {
+			// The products_id is redundant for safety purposes
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`=? AND `products_attributes_id` = ?", array( $this->mProductsId, $pProductsAttributesId ));
+		}
+		return( count( $this->mErrors ) == 0 );		
+	}
 
 	function getDiscount( $pQuantity, $pDiscount ) {
 		$ret = NULL;
