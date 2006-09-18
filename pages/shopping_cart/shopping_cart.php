@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.11 2006/09/06 09:01:56 spiderr Exp $
+// $Id: shopping_cart.php,v 1.12 2006/09/18 05:58:19 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -269,12 +269,11 @@ function popupWindow(url) {
   if (SHOW_SHOPPING_CART_UPDATE == 2 or SHOW_SHOPPING_CART_UPDATE == 3) {
 ?>
     <td class="main" align="left"><?php echo zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT); ?></td>
-    <td class="main" align="center"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_CONTINUE_SHOPPING, BUTTON_CONTINUE_SHOPPING_ALT) . '</a>'; ?></td>
 <?php  } else { // don't show update button below cart ?>
-    <td class="main" align="left"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_CONTINUE_SHOPPING, BUTTON_CONTINUE_SHOPPING_ALT) . '</a>'; ?></td>
     <td class="main" align="left"> </td>
   <?php } // show update cart button ?>
-    <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHECKOUT, BUTTON_CHECKOUT_ALT) . '</a>'; ?></td>
+    <td class="main" align="center"><a href="<?=BITCOMMERCE_PKG_URL?>" class="button"><?=tra('Continue Shopping')?></a></td>
+    <td class="main" align="right"><a href="<?=zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL')?>" class="button"><?=tra('Checkout')?></a></td>
   </tr>
 </form>
 
@@ -284,7 +283,7 @@ function popupWindow(url) {
 ?>
   <tr>
     <td colspan="3"><br />
-       <?php echo '<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_SHIPPING_ESTIMATOR,'&site_style=basic') . '\')">' . zen_image_button(BUTTON_IMAGE_SHIPPING_ESTIMATOR, BUTTON_SHIPPING_ESTIMATOR_ALT) . '</a>'; ?>
+       <?php echo '<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_SHIPPING_ESTIMATOR,'&site_style=basic') . '\')" class="button">' . tra('Shipping Estimator') . '</a>'; ?>
     </td>
   </tr>
 <?php

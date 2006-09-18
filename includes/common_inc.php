@@ -293,7 +293,7 @@
 		global $template, $current_page_base, $gBitCustomer;
 		// return '<span class="button">'.$alt.'</span>';
 		if( is_string( $alt ) ) {
-			$ret = '<input type="button" class="bcbutton" name="'.$alt.'" value="'.$alt.'" />';
+			$ret = '<span class="button">'.$alt.'</span>';
 		} elseif( $template ) {
 			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 		} else {
@@ -310,7 +310,7 @@
     global $template, $current_page_base, $gBitCustomer;
 
 	if( is_string( $alt ) ) {
-		$ret = '<input type="submit" class="bcsubmit" name="'.$alt.'" value="'.$alt.'" />';
+		$ret = '<input type="submit" class="button" name="'.$alt.'" value="'.$alt.'" />';
 	} else {
 		if( $template ) {
 			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
