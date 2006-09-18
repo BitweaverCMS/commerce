@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.4 2005/11/16 12:12:51 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.5 2006/09/18 06:27:31 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -27,11 +27,11 @@
   <tr>
     <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
-  <tr>
+  <tr valign="top">
     <td class="main">
 	    <h4><?php echo HEADING_BILLING_ADDRESS; ?></h4>
 		<?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?>
-		<div><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></div>
+		<p><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></p>
 	</td>
     <td class="main">
 <?php
@@ -39,7 +39,7 @@
 ?>
 		<h4><?php echo HEADING_DELIVERY_ADDRESS; ?></h4>
     	<?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?>
-		<div><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></div>
+		<p><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></p>
 <?php
   }
 ?>

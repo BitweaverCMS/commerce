@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment.php,v 1.2 2005/11/15 22:01:22 spiderr Exp $
+// $Id: checkout_payment.php,v 1.3 2006/09/18 06:27:31 spiderr Exp $
 //
 ?>
 <?php echo $payment_modules->javascript_validation(); ?>
@@ -52,7 +52,7 @@
 ?>
   <tr>
     <td class="main" align="center" valign="top"><?php echo TITLE_BILLING_ADDRESS; ?><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?></td>
-    <td class="main" valign="top"><?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?><br /><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></td>
+    <td class="main" style="width:200px;" valign="top"><?php echo zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, ' ', '<br />'); ?><p><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></p></td>
     <td class="main" valign="top"><?php echo TEXT_SELECTED_BILLING_DESTINATION; ?></td>
   </tr>
   <tr>
