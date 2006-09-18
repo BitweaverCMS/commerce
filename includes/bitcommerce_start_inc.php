@@ -312,7 +312,7 @@
 			}
 */
 		}
-	} else {
+	} elseif( class_exists( 'CommerceProduct' ) ) {
 		$gBitProduct = new CommerceProduct();
 	}
 
@@ -325,10 +325,10 @@
 		$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
 	}
 
- 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	if( !empty( $gBitProduct ) ) {
+	 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	}
+
 	$gBitSmarty->assign( 'runNormal', zen_run_normal() );
-
-
-
 
 ?>

@@ -1,6 +1,10 @@
 <?php
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
+if( !defined( 'TABLE_PRODUCTS' ) ) {
+	// we might be coming in from LibertyBase::getLibertyObject
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+}
 
 define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 
