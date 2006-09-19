@@ -19,6 +19,7 @@
 // +----------------------------------------------------------------------+
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/common_inc.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceSystem.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProduct.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCategory.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );

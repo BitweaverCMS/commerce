@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.2 2006/02/05 21:36:08 spiderr Exp $
+// $Id: index.php,v 1.3 2006/09/19 03:37:06 spiderr Exp $
 //
 ?>
     <h1><?php echo HEADING_TITLE; ?></h1>
@@ -34,9 +34,11 @@
 	<br />
 <?php
 $rs = $db->query(SQL_SHOW_PRODUCT_INFO_MAIN);
-
 while ( $show_display_category = $rs->fetchRow() ) {
 	if( !empty( $show_display_category['configuration_value'] ) ) {
+		if ($show_display_category['configuration_key'] == 'SHOW_PRODUCT_INFO_MAIN_COMMISSIONED_PRODUCTS' ) {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_COMMISSIONED_PRODUCTS_MODULE));
+		}
 		if ($show_display_category['configuration_key'] == 'SHOW_PRODUCT_INFO_MAIN_FEATURED_PRODUCTS' ) {
 			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));
 		}

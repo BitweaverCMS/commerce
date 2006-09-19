@@ -494,6 +494,10 @@ class CommerceProduct extends LibertyAttachable {
 			$whereSql .= " AND p.`products_ordered` > 0 ";
 		}
 
+		if( !empty( $pListHash['commissioned'] ) ) {
+			$whereSql .= " AND (p.`products_commission` IS NOT NULL AND p.`products_commission` > 0) ";
+		}
+
 		if( !empty( $pListHash['user_id'] ) ) {
 			$whereSql .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );

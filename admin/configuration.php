@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: configuration.php,v 1.9 2006/09/19 03:37:06 spiderr Exp $
 //
 
   define('HEADING_TITLE', 'Configuration Settings');
@@ -135,10 +135,10 @@ if ($gID == 7) {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $configuration = $db->Execute("SELECT `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
+  $configuration = $db->query("SELECT `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
                                         `use_function` FROM " . TABLE_CONFIGURATION . "
-                                        WHERE `configuration_group_id` = '" . (int)$gID . "'
-                                        ORDER BY `sort_order`");
+                                        WHERE `configuration_group_id` = ?
+                                        ORDER BY `sort_order`", array( $gID ) );
   while (!$configuration->EOF) {
     if (zen_not_null($configuration->fields['use_function'])) {
       $use_function = $configuration->fields['use_function'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: filenames.php,v 1.4 2005/11/22 11:05:21 gilesw Exp $
+// $Id: filenames.php,v 1.5 2006/09/19 03:37:06 spiderr Exp $
 //
 
 
@@ -171,6 +171,11 @@
   define('FILENAME_OTHER_IMAGES_NAMES','other_images_names.php');
 
   define('FILENAME_TIME_OUT','time_out');
+
+  define('FILENAME_COMMISSIONED','commissioned');
+  define('FILENAME_COMMISSIONED_PRODUCTS','commissioned_products');
+  define('FILENAME_COMMISSIONED_PRODUCTS_MODULE','commissioned_products.php');
+  define('FILENAME_COMMISSIONED_PRODUCTS_LISTING','commissioned_products_listing.php');
 
   define('FILENAME_FEATURED','featured');
   define('FILENAME_FEATURED_PRODUCTS','featured_products');
