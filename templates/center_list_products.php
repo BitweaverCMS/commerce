@@ -1,15 +1,21 @@
 <?php
-	global $gCommerceSystem, $gBitProduct, $gBitSmarty;
-
-	$title = $gCommerceSystem->getConfig( 'TABLE_HEADING_COMMISSIONED_PRODUCTS', tra('Member Products') );
+	global $gBitProduct;
 
 	$listHash = array();
-	$columnCount = $gCommerceSystem->getConfig( 'SHOW_PRODUCT_INFO_COLUMNS_COMMISSIONED_PRODUCTS', 3 );
-	$listHash['max_records'] = $gCommerceSystem->getConfig( 'MAX_DISPLAY_PRODUCTS_COMMISSIONED_PRODUCTS', $columnCount * 3 );
-	$listHash['offset'] = $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-	$listHash['sort_mode'] = 'random';
-	$listHash['commissioned'] = TRUE;
-
+	$title						= !empty( $module_title ) ? $module_title : tra( 'Products' );
+	$columnCount 				= !empty( $module_params['columns'] ) ? $module_params['columns'] : 3;
+	$listHash['max_records']	= !empty( $module_rows ) ? $module_rows : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
+	$listHash['offset'] 		= $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
+	$listHash['sort_mode']		= !empty( $module_params['sort_mode'] ) ? $module_params['sort_mode'] : 'random';
+	if( !empty( $gQueryUser ) && $gQueryUser->mUserId ) {
+		$listHash['user_id'] = $gQueryUser->mUserId;
+	}
+	if( !empty( $module_params['category_id'] ) ) {
+		$listHash['category_id'] = $module_params['category_id'];
+	}
+	if( !empty( $module_params['commissioned'] ) ) {
+		$listHash['commissioned'] = TRUE;
+	}
 	$row = 0;
 	$col = 0;
 	$listBoxContents = '';
@@ -41,7 +47,6 @@
 		}
 		$gBitSmarty->assign( 'listBoxContents', $listBoxContents );
 		$gBitSmarty->assign( 'productListTitle', $title );
-		$gBitSmarty->display( 'bitpackage:bitcommerce/list_box_content_inc.tpl' );
 	}
 
 ?>

@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.17 2006/03/01 04:03:23 spiderr Exp $
+// $Id: new_products.php,v 1.18 2006/09/19 07:12:59 spiderr Exp $
 //
+	global $gBitProduct, $gBitSmarty;
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
 
 	$listHash = array();
@@ -33,7 +34,7 @@
   $new_products = $gBitProduct->getList( $listHash );
   $row = 0;
   $col = 0;
-  $list_box_contents = '';
+  $listBoxContents = '';
 
   $num_products_count = count( $new_products );
 
@@ -44,11 +45,11 @@
     } else {
       $col_width = 100/SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS;
     }
-// $gBitProduct->debug();
+
     foreach( $new_products as $product ) {
       $products_price = CommerceProduct::getDisplayPrice($product['products_id']);
 
-      $list_box_contents[$row][$col] = array('align' => 'center',
+      $listBoxContents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
                                              'text' => '<a href="' .  CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . $product['products_name'] . '</a><br />' . $products_price);
 
@@ -66,8 +67,11 @@
       } else {
         $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
       }
-      require( DIR_FS_MODULES . 'tpl_modules_whats_new.php' );
+		$gBitSmarty->assign( 'listBoxContents', $listBoxContents );
+		$gBitSmarty->assign( 'productListTitle', $title );
+		$gBitSmarty->display( 'bitpackage:bitcommerce/list_box_content_inc.tpl' );
+
     }
-// $gBitProduct->debug( 0 );
+
   }
 ?>

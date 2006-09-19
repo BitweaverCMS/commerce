@@ -470,8 +470,6 @@ class CommerceProduct extends LibertyAttachable {
 		$joinSql = '';
 		$whereSql = '';
 
-		// This needs to go first since it puts a bindvar in the joinSql
-		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 
 // 		$selectSql .= ' , s.* ';
 		if( !empty( $pListHash['specials'] ) ) {
@@ -526,7 +524,7 @@ class CommerceProduct extends LibertyAttachable {
 			}
 			if( is_numeric( $pListHash['category_id'] ) ) {
 				$joinSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
-				$whereSql .= " AND c.`parent_id`=? ";
+				$whereSql .= " AND c.`categories_id`=? ";
 				array_push( $bindVars, $pListHash['category_id'] );
 			}
 		}
@@ -535,7 +533,9 @@ class CommerceProduct extends LibertyAttachable {
 			$whereSql .= " AND p.`products_status` = '1' ";
 		}
 
-		$joinSql .= ' AND pd.`language_id`=?';
+		// This needs to go first since it puts a bindvar in the joinSql
+		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
+		$whereSql .= ' AND pd.`language_id`=?';
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
@@ -587,6 +587,7 @@ class CommerceProduct extends LibertyAttachable {
 		$pListHash['offset'] = $pListHash['offset'] + 1;
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['offset'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
+$this->debug(0);
 
 		return( $ret );
 	}

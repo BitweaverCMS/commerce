@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.11 2005/12/20 17:13:01 gilesw Exp $
+// $Id: specials_index.php,v 1.12 2006/09/19 07:12:59 spiderr Exp $
 //
+	global $gBitProduct, $gBitSmarty;
 
   $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
 
@@ -54,7 +55,7 @@
 
   $row = 0;
   $col = 0;
-  $list_box_contents = '';
+  $listBoxContents = '';
 
 // show only when 1 or more
   if ( $specialProducts = $gBitProduct->getList( $listHash ) ) {
@@ -68,7 +69,7 @@
 	foreach( array_keys( $specialProducts ) AS $productsId ) {
 		$products_price = CommerceProduct::getDisplayPrice( $productsId );
 		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
-		$list_box_contents[$row][$col] = array('align' => 'center',
+		$listBoxContents[$row][$col] = array('align' => 'center',
 												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
 												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( CommerceProduct::getImageUrl( $productsId, 'avatar' ), $specialProducts['products_name']) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
 
@@ -79,9 +80,8 @@
 		}
     }
 
-    if( !empty( $specialProducts ) ) {
-      $title = sprintf(TABLE_HEADING_SPECIALS_INDEX, strftime('%B'));
-      require( DIR_FS_MODULES . 'tpl_modules_specials.php');
-    }
+		$gBitSmarty->assign( 'listBoxContents', $listBoxContents );
+		$gBitSmarty->assign( 'productListTitle', $title );
+		$gBitSmarty->display( 'bitpackage:bitcommerce/list_box_content_inc.tpl' );
   }
 ?>

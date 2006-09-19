@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.20 2006/02/24 04:13:03 spiderr Exp $
+// $Id: index.php,v 1.21 2006/09/19 07:12:58 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -122,7 +122,16 @@ ob_end_clean();
 if( !empty( $gCommercePopupTemplate ) ) {
 	$gBitSmarty->display( $gCommercePopupTemplate );
 } else {
-	$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl' );
+	if( $current_page_base == 'index' ) {
+		// Display the template
+		$gDefaultCenter = 'bitpackage:bitcommerce/default_index.tpl';
+		$gBitSmarty->assign_by_ref( 'gDefaultCenter', $gDefaultCenter );
+
+		// Display the template
+		$gBitSystem->display( 'bitpackage:kernel/dynamic.tpl', 'Shopping' );
+	} else {
+		$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl', 'Shopping' );
+	}
 }
 
 ?>

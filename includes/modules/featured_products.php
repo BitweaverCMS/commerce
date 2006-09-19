@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.11 2006/03/01 04:03:23 spiderr Exp $
+// $Id: featured_products.php,v 1.12 2006/09/19 07:12:59 spiderr Exp $
 //
-
+	global $gBitProduct, $gBitSmarty;
 
 	$title = TABLE_HEADING_FEATURED_PRODUCTS;
 
@@ -31,7 +31,7 @@
 
 	$row = 0;
 	$col = 0;
-	$list_box_contents = '';
+	$listBoxContents = '';
 
 	// show only when 1 or more
 	if( $featuredProducts = $gBitProduct->getList( $listHash ) ) {
@@ -43,7 +43,7 @@
 		}
 		foreach( array_keys( $featuredProducts ) as $productsId ) {
 			$products_price = CommerceProduct::getDisplayPrice( $productsId );
-			$list_box_contents[$row][$col] = array('align' => 'center',
+			$listBoxContents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
 													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . zen_image( CommerceProduct::getImageUrl( $featuredProducts[$productsId]['products_id'], 'avatar' ), $featuredProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $featuredProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
 
@@ -60,6 +60,8 @@
 		} else {
 			$title = TABLE_HEADING_FEATURED_PRODUCTS;
 		}
-		require( DIR_FS_MODULES . '/tpl_modules_featured_products.php');
+		$gBitSmarty->assign( 'listBoxContents', $listBoxContents );
+		$gBitSmarty->assign( 'productListTitle', $title );
+		$gBitSmarty->display( 'bitpackage:bitcommerce/list_box_content_inc.tpl' );
 	}
 ?>

@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.7 2006/02/01 21:16:17 spiderr Exp $
+// $Id: upcoming_products.php,v 1.8 2006/09/19 07:12:59 spiderr Exp $
 //
+	global $db;
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
     $expected_query = "select p.`products_id`, pd.`products_name`, `products_date_available` as `date_expected`
