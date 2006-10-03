@@ -148,6 +148,8 @@
 			<div class="clear"></div>
 		</div>	<!-- end .body -->
 
+	{include file="bitpackage:bitcommerce/commerce_pagination.tpl"}
+
 {*
 		{if $smarty.const.PREV_NEXT_BAR_LOCATION == '2' || $smarty.const.PREV_NEXT_BAR_LOCATION == '3'}
 			<tr>
