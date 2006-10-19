@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.44 2006/09/06 08:53:51 spiderr Exp $
+// $Id: order.php,v 1.45 2006/10/19 23:58:07 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -1082,6 +1082,7 @@ class order extends BitBase {
 			$this->mDb->StartTrans();
 			$this->mDb->associateUpdate( TABLE_ORDERS, $pParamHash, array( 'orders_id' => $this->mOrdersId ) );
 			$this->mDb->CompleteTrans();
+			$this->load( $this->mOrdersId );
 			$ret = TRUE;
 		}
 		return $ret;
