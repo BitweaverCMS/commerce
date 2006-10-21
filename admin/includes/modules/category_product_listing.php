@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.10 2006/09/02 23:35:35 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.11 2006/10/21 14:26:10 lsces Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -212,7 +212,7 @@
     }
 // Split Page
 // reset page when page is unknown
-if ($_GET['page'] == '' and $_GET['pID'] != '') {
+if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
   $old_page = $_GET['page'];
   $check_page = $db->Execute($products_query_raw);
   if ($check_page->RecordCount() > MAX_DISPLAY_RESULTS_CATEGORIES) {
