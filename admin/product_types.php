@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: product_types.php,v 1.14 2006/10/21 20:24:01 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -444,7 +444,12 @@ if ( $action == 'layout' || $action == 'layout_edit') {
   }
 ?>
           </tr>
-        </table></td>
+        </table>
+<?php 
+// not working in original zen cart
+//		echo( '<a href="' . zen_href_link_admin(FILENAME_PRODUCT_TYPES, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_new.gif', 'New') . '</a>'  );
+?>	
+		</td>
       </tr>
     </table></td>
 <!-- body_text_eof //-->
