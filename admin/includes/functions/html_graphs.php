@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_graphs.php,v 1.4 2006/02/19 20:56:50 lsces Exp $
+// $Id: html_graphs.php,v 1.5 2006/10/21 14:26:51 lsces Exp $
 //
 
 ////
@@ -382,7 +382,7 @@
 	                                     `banners_shown` as `svalue`, `banners_clicked` as `dvalue`
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where `banners_id` = '" . $banner_id . "'
-										 and ".$db->OffsetDate( $days, '`banners_history_date`' )." > 'NOW'
+										 and ".$db->OffsetDate( $days, '`banners_history_date`' )." > ".$db->NOW()."
 										 order by `banners_history_date`");
 
     while (!$banner_stats->EOF) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.7 2005/10/31 21:19:23 lsces Exp $
+//  $Id: copy_to_confirm.php,v 1.8 2006/10/21 14:26:51 lsces Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -67,7 +67,7 @@
                                   '" . zen_db_input($product->fields['products_image']) . "',
                                   '" . zen_db_input($product->fields['products_price']) . "',
                                   '" . zen_db_input($product->fields['products_virtual']) . "',
-                                  'NOW',
+                                  ".$db->NOW().",
                                   '" . zen_db_input($product->fields['products_date_available']) . "',
                                   '" . (int)zen_db_input($product->fields['products_weight']) . "', '0',
                                   '" . (int)$product->fields['products_tax_class_id'] . "',

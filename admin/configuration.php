@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.9 2006/09/19 03:37:06 spiderr Exp $
+//  $Id: configuration.php,v 1.10 2006/10/21 14:26:51 lsces Exp $
 //
 
   define('HEADING_TITLE', 'Configuration Settings');
@@ -39,7 +39,7 @@
 
         $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
 					SET `configuration_value` = '" . zen_db_input($configuration_value) . "',
-					`last_modified` = 'NOW' WHERE `configuration_id` = '" . (int)$cID . "'");
+					`last_modified` = ".$db->NOW()." WHERE `configuration_id` = '" . (int)$cID . "'");
 		$configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` as `cfgvalue`
                           FROM ' . TABLE_CONFIGURATION;
 

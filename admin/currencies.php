@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.16 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: currencies.php,v 1.17 2006/10/21 14:26:51 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -112,7 +112,7 @@
 
           if (zen_not_null($rate)) {
             $db->Execute("UPDATE " . TABLE_CURRENCIES . "
-                          SET `currency_value` = '" . $rate . "', `last_updated` = 'NOW'
+                          SET `currency_value` = '" . $rate . "', `last_updated` = ".$db->NOW()."
                           WHERE `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
 
             $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
