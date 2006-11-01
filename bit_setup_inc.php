@@ -23,6 +23,7 @@ if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 // include shopping cart class
 // 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
+	define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
 		'content_expunge_function' => 'bitcommerce_expunge',
 	) );

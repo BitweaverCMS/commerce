@@ -6,8 +6,6 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 }
 
-define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
-
 class CommerceProduct extends LibertyAttachable {
 	var $mProductsId;
 	var $mOptions;
