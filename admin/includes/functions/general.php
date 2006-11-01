@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.38 2006/10/21 14:26:51 lsces Exp $
+//  $Id: general.php,v 1.39 2006/11/01 19:15:30 lsces Exp $
 //
 
 ////
@@ -665,12 +665,12 @@
     global $db;
     if ($status == '1') {
       return $db->Execute("update " . TABLE_PRODUCTS . "
-                           set `products_status` = '1', `products_last_modified` = ".$db->NOW()."
+                           set `products_status` = '1', `products_last_modified` = ".$db->qtNOW()."
                            WHERE `products_id` = '" . (int)$products_id . "'");
 
     } elseif ($status == '0') {
       return $db->Execute("update " . TABLE_PRODUCTS . "
-                           set `products_status` = '0', `products_last_modified` = ".$db->NOW()."
+                           set `products_status` = '0', `products_last_modified` = ".$db->qtNOW()."
                            WHERE `products_id` = '" . (int)$products_id . "'");
 
     } else {

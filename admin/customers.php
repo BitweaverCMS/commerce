@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: customers.php,v 1.14 2006/11/01 19:15:30 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -211,7 +211,6 @@
 
         if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $customers_gender;
         if (ACCOUNT_DOB == 'true') $sql_data_array['customers_dob'] = zen_date_raw($customers_dob);
-
         $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "'");
 
         $db->Execute("update " . TABLE_CUSTOMERS_INFO . "
@@ -310,10 +309,10 @@
                                           c.`customers_authorization`, c.`customers_referral`
                                   from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a
                                   on c.`customers_default_address_id` = a.`address_book_id`
-                                  where a.`customers_id` = c.`customers_id`
-                                  and c.`customers_id` = '" . (int)$_GET['cID'] . "'");
-
-        $cInfo = new objectInfo($customers->fields);
+                                  and a.`customers_id` = c.`customers_id`
+                                  WHERE c.`customers_id` = '" . (int)$_GET['cID'] . "'");
+								$cust = $customers->FetchRow();
+		$cInfo = new objectInfo($cust);
     }
   }
 ?>

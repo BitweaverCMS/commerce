@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.16 2006/09/02 23:35:32 spiderr Exp $
+//  $Id: categories.php,v 1.17 2006/11/01 19:15:29 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -395,7 +395,7 @@
             zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $categories_id));
           } else {
             $db->Execute("update " . TABLE_CATEGORIES . "
-                          set `parent_id` = '" . (int)$new_parent_id . "', `last_modified` = ".$db->NOW()."
+                          set `parent_id` = '" . (int)$new_parent_id . "', `last_modified` = ".$db->qtNOW()."
                           where `categories_id` = '" . (int)$categories_id . "'");
 
 // fix here - if this is a category with subcats it needs to know to loop through

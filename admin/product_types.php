@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.14 2006/10/21 20:24:01 spiderr Exp $
+//  $Id: product_types.php,v 1.15 2006/11/01 19:15:29 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@
 
         $db->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
                       set `configuration_value` = '" . zen_db_input($configuration_value) . "',
-                          `last_modified` = ".$db->NOW()." where configuration_id = '" . (int)$cID . "'");
+                          `last_modified` = ".$db->qtNOW()." where configuration_id = '" . (int)$cID . "'");
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT;
 

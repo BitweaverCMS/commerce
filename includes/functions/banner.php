@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.9 2006/02/05 22:11:12 spiderr Exp $
+// $Id: banner.php,v 1.10 2006/11/01 19:15:29 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -29,14 +29,14 @@
     global $db;
     if ($status == '1') {
       $sql = "UPDATE " . TABLE_BANNERS . "
-              SET `status` = '1', `date_status_change` = ".$db->NOW().", `date_scheduled` = ''
+              SET `status` = '1', `date_status_change` = ".$db->qtNOW().", `date_scheduled` = ''
               WHERE `banners_id` = '" . (int)$banners_id . "'";
 
       return $db->Execute($sql);
 
     } elseif ($status == '0') {
       $sql = "UPDATE " . TABLE_BANNERS . "
-              SET `status` = '0', `date_status_change` = ".$db->NOW()."
+              SET `status` = '0', `date_status_change` = ".$db->qtNOW()."
               WHERE `banners_id` = '" . (int)$banners_id . "'";
 
       return $db->Execute($sql);
@@ -195,7 +195,7 @@ return;
     } else {
       $sql = "insert into " . TABLE_BANNERS_HISTORY . "
                      (`banners_id`, `banners_shown`, `banners_history_date`)
-              values ('" . (int)$banner_id . "', 1, $db->NOW())";
+              values ('" . (int)$banner_id . "', 1, $db->qtNOW())";
 
       $db->Execute($sql);
     }

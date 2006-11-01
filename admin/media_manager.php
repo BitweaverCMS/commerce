@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.11 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: media_manager.php,v 1.12 2006/11/01 19:15:29 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -71,7 +71,7 @@
                                 (`media_id`, `clip_type`, `clip_filename`, `date_added`) values (
                                  '" . $_GET['mID'] . "',
                                  '" . $media_type . "',
-                                 '" . $media_upload_filename . "', ".$db->NOW().")");
+                                 '" . $media_upload_filename . "', ".$db->qtNOW().")");
                 }
               }
 

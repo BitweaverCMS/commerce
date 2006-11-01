@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: specials.php,v 1.14 2006/11/01 19:15:29 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -68,7 +68,7 @@
                     (`products_id`, `specials_new_products_price`, `specials_date_added`, `expires_date`, `status`, `specials_date_available`)
                     values ('" . (int)$products_id . "',
                             '" . zen_db_input($specials_price) . "',
-                            ".$db->NOW().",
+                            ".$db->qtNOW().",
                             '" . zen_db_input($expires_date) . "', '1', '" . zen_db_input($specials_date_available) . "')");
 
         $new_special = $db->Execute("select `specials_id` from " . TABLE_SPECIALS . " where `products_id` ='" . (int)$products_id . "'");
@@ -101,7 +101,7 @@
 
         $db->Execute("update " . TABLE_SPECIALS . "
                       set `specials_new_products_price` = '" . zen_db_input($specials_price) . "',
-                          `specials_last_modified` = ".$db->NOW().",
+                          `specials_last_modified` = ".$db->qtNOW().",
                           `expires_date` = '" . zen_db_input($expires_date) . "',
                           `specials_date_available` = '" . zen_db_input($specials_date_available) . "'
                       where `specials_id` = '" . (int)$specials_id . "'");

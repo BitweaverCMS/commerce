@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.5 2006/02/05 22:51:33 lsces Exp $
+// $Id: specials.php,v 1.6 2006/11/01 19:15:29 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -28,7 +28,7 @@
   function zen_set_specials_status($specials_id, $status) {
     global $db;
     $sql = "update " . TABLE_SPECIALS . "
-            set status = '" . $status . "', date_status_change = '".$db->NOW()."'
+            set status = '" . $status . "', date_status_change = '".$db->qtNOW()."'
             where specials_id = '" . (int)$specials_id . "'";
 
     return $db->Execute($sql);

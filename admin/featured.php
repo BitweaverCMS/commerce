@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: featured.php,v 1.11 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: featured.php,v 1.12 2006/11/01 19:15:29 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -46,7 +46,7 @@
         $db->Execute("insert into " . TABLE_FEATURED . "
                     (`products_id`, `featured_date_added`, `expires_date`, `status`, `featured_date_available`)
                     values ('" . (int)$products_id . "',
-                            ".$db->NOW().",
+                            ".$db->qtNOW().",
                             '" . zen_db_input($expires_date) . "', '1', '" . zen_db_input($featured_date_available) . "')");
 
         $new_featured = $db->Execute("select `featured_id` from " . TABLE_FEATURED . " where `products_id` ='" . (int)$products_id . "'");
@@ -64,7 +64,7 @@
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
         $db->Execute("update " . TABLE_FEATURED . "
-                      set `featured_last_modified` = ".$db->NOW().",
+                      set `featured_last_modified` = ".$db->qtNOW().",
                           `expires_date` = '" . zen_db_input($expires_date) . "',
                           `featured_date_available` = '" . zen_db_input($featured_date_available) . "'
                       where `featured_id` = '" . (int)$featured_id . "'");
