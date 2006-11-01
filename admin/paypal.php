@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.6 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: paypal.php,v 1.7 2006/11/01 19:18:10 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -103,11 +103,11 @@ echo zen_draw_form_admin('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING
       case 'Pending':
       case 'Completed':
       default:
-        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p`.mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " as p, " .TABLE_ORDERS . " as o  where o.`orders_id` = p.`zen_order_id` " . $ipn_search . " order by o.`orders_id` DESC";
+        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p`.mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " p, " .TABLE_ORDERS . " o  where o.`orders_id` = p.`zen_order_id` " . $ipn_search . " order by o.`orders_id` DESC";
       break;
     }
   } else {
-        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p.`mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " as p left join " .TABLE_ORDERS . " as o on o.`orders_id` = p.`zen_order_id` order by p.`paypal_ipn_id` DESC";
+        $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p.`mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " p left join " .TABLE_ORDERS . " o on o.`orders_id` = p.`zen_order_id` order by p.`paypal_ipn_id` DESC";
   }
   $ipn_split = new splitPageResults($HTTP_GET_VARS['page'], MAX_DISPLAY_SEARCH_RESULTS, $ipn_query_raw, $ipn_query_numrows);
   $ipn_trans = $db->Execute($ipn_query_raw);
