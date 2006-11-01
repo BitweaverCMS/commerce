@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.19 2006/10/21 14:26:51 lsces Exp $
+//  $Id: modules.php,v 1.20 2006/11/01 19:17:15 lsces Exp $
 //
   require('includes/application_top.php');
 
@@ -247,7 +247,7 @@
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
       $db->Execute("update " . TABLE_CONFIGURATION . "
-                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$db->NOW()."
+                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$db->qtNOW()."
           where `configuration_key` = '" . $module_key . "'");
     }
   } else {
