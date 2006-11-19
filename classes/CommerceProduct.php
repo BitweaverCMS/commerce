@@ -437,7 +437,11 @@ class CommerceProduct extends LibertyAttachable {
 
 		if( is_numeric( $pMixed ) ) {
 			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize.'.jpg';
-			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path;
+			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path;
+			} else {
+				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+			}
 		} else {
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
