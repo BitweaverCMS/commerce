@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.19 2006/07/10 03:43:58 spiderr Exp $
+//  $Id: index.php,v 1.20 2006/11/27 04:40:43 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -103,22 +103,35 @@ global $language;
   echo $orders_contents;
 ?>
 </table>
-<table class="data">
-<tr><th colspan="4"><?php echo BOX_ENTRY_NEW_ORDERS; ?> </th></tr>
-  <?php
+<?php
 	require_once( DIR_FS_CLASSES.'order.php' );
 
 	$listHash = array( 'max_records' => '250' );
-	$orders = order::getList( $listHash );
+	if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
+		$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+		$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+	} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+		unset( $_SESSION['orders_status_comparison'] );
+	} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
+		$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
+	} 
 
-	foreach( array_keys( $orders ) as $orderId ) {
-		$orderAnchor = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $orderId . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '&action=edit" class="contentlink"> ';
-		echo '<tr><td>' . $orderAnchor . $orderId . ' - '. $gBitUser->getDisplayName( FALSE, $orders[$orderId] ) . '</a> ' . '</td><td>' . round( $orders[$orderId]['order_total'], 2) . '</td><td align="right">' . "\n";
-		echo zen_date_short( $orders[$orderId]['date_purchased'] );
-		echo '</td><td>'.$orders[$orderId]['orders_status_name'].'</td></tr>' . "\n";
+	if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
+		$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
+		$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
+	} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+		unset( $_SESSION['orders_status_id'] );
+	} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
+		$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
 	}
+
+	$orders = order::getList( $listHash );
+	$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+	$statuses = commerce_get_statuses( TRUE );
+	$statuses['all'] = 'All';
+	$gBitSmarty->assign( 'commerceStatuses', $statuses );
+	$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 ?>
-</table>
 </div>
 
 <?php

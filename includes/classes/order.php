@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.45 2006/10/19 23:58:07 spiderr Exp $
+// $Id: order.php,v 1.46 2006/11/27 04:40:43 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -62,8 +62,10 @@ class order extends BitBase {
 		$ret = array();
 		$whereSql = '';
 
+		$comparison = (!empty( $pListHash['orders_status_comparison'] ) && strlen( $pListHash['orders_status_comparison'] ) <= 2) ? $pListHash['orders_status_comparison'] : '=';
+
 		if( !empty( $pListHash['orders_status_id'] ) ) {
-			$whereSql = ' AND `orders_status`=? ';
+			$whereSql = ' AND `orders_status`'.$comparison.'? ';
 			$bindVars[] = $pListHash['orders_status_id'];
 		}
 
