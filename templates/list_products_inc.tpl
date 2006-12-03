@@ -36,7 +36,7 @@
 
 			<ul class="clear data">
 				{foreach from=$listProducts key=productsId item=prod}
-					<li class="item {cycle values='odd,even'} {$prod.content_type_guid}">
+					<li class="item {cycle values='odd,even'} {$prod.content_type_guid} {if !$prod.products_status}unavailable{/if}">
 						<div class="floaticon">
 							{if $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART && $prod.products_qty_box_status != '0' && $prod.products_quantity_order_max != '1'}
 								{tr}Purchase Multiple:{/tr} <input type="text" name="products_id[{$prod.products_id}]" value=0 size="4"><br/>
@@ -69,6 +69,7 @@
 
 						<div class="details">
 							<h2><a href="{$prod.display_url}">{$prod.products_name}</a></h2>
+							{if !$prod.products_status}<em>{tr}Not Publically Available{/tr}</em><br/>{/if}
 
 							{if !$gQueryUser}
 								By {displayname hash=$prod}</br>

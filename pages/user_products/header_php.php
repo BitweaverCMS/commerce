@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.6 2006/03/15 14:19:18 spiderr Exp $
+// $Id: header_php.php,v 1.7 2006/12/03 21:01:20 spiderr Exp $
 //
 
 if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId ) {
@@ -15,6 +15,10 @@ define('HEADING_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FA
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
+
+if( $gQueryUser->mUserId == $gBitUser->mUserId ) {
+	$listHash['all_status'] = TRUE;
+}
 
 $listHash['user_id'] = $gQueryUser->mUserId;
 $listHash['thumbnail_size'] = 'small';
