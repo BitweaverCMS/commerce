@@ -19,7 +19,7 @@
 <tr>
 	<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}&amp;origin=index&amp;action=edit" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
 	<td>{$order.order_total|round:2}</td>
-	<td align="right">{$order.date_purchased|bit_short_date}</td>
+	<td align="right">{$order.date_purchased}</td>
 	<td>{$order.orders_status_name}</td>
 </tr>
 {/foreach}

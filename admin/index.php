@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.20 2006/11/27 04:40:43 spiderr Exp $
+//  $Id: index.php,v 1.21 2006/12/03 22:11:41 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -90,17 +90,17 @@ global $language;
 <div id="colone">
 <table class="data">
    <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
-  <?php   $orders_contents = '';
-  if( $rs = $db->Execute("SELECT `orders_status_name`, `orders_status_id` FROM " . TABLE_ORDERS_STATUS . " WHERE `language_id` = '" . $_SESSION['languages_id'] . "'") ) {
-
+<?php   $orders_contents = '';
+	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
+			  FROM " . TABLE_ORDERS . " co
+				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
+			  GROUP BY `orders_status_name`, `orders_status_id`
+			  ORDER BY `orders_status_id` DESC";
+  if( $rs = $gBitDb->query( $query ) ) {
 	  while( $orders_status = $rs->fetchRow() ) {
-		$orders_pending = $db->GetOne("SELECT COUNT(*) FROM " . TABLE_ORDERS . " WHERE `orders_status` = '" . $orders_status['orders_status_id'] . "'");
-		$orders_contents .= '<tr><td><a href="' . zen_href_link_admin(FILENAME_ORDERS, 'selected_box=customers&status=' . $orders_status['orders_status_id'], 'NONSSL') . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_pending . '</td></tr>';
-		$rs->MoveNext();
+		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
 	  }
   }
-
-  echo $orders_contents;
 ?>
 </table>
 <?php
