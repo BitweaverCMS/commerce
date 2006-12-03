@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.10 2006/02/22 03:54:08 spiderr Exp $
+// $Id: payflowpro.php,v 1.11 2006/12/03 19:39:17 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -419,7 +419,7 @@ function placeholder_for_so_call(){
 
 	function after_process() {
 		global $insert_id, $order, $gBitDb, $gBitUser, $result;
-		$gBitDb->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . " (comments, orders_id, orders_status_id, `date_added`) values ('Credit Card processed', '". (int)$insert_id . "','1', 'NOW' )");
+		$gBitDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . " (comments, orders_id, orders_status_id, `date_added`) values ('Credit Card processed', ?,?, 'NOW' )", array( (int)$insert_id, DEFAULT_ORDERS_STATUS_ID ) );
 		$gBitDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->result_list ), number_format( $order->info['total'], 2, '.', '' ) ) );
 		return false;
 	}
