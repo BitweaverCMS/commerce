@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.38 2006/09/03 08:20:43 spiderr Exp $
+//  $Id: orders.php,v 1.39 2006/12/04 10:07:19 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -136,7 +136,9 @@
 	  
 <h1 class="header"><?php echo HEADING_TITLE; ?></h1>
 
-<div style="width:65%; float:left;">
+<table>
+<tr>
+<td style="width:65%;" valign="top">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="2">
 	  <tr>
@@ -287,9 +289,27 @@
   require(DIR_WS_MODULES . 'orders_download.php');
 ?>
 	</table>
+
+<div>
+<?php
+
+	// scan fulfillment modules
+	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
+	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+		while( $ffFile = readdir( $fulfillHandle ) ) {
+			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
+				include( $fulfillDir.$ffFile.'/admin_order_inc.php' );
+			}
+		}
+	}
+	
+}
+
+?>
 </div>
 
-<div style="width:33%; float:right; padding: 6px;">
+</td>
+<td style="width:33%;">
 	
 <?php
 
@@ -310,23 +330,9 @@
 			echo '      </tr></table></td></tr>';
 		}
 ?>
-</div>
-
-<?php
-
-	// scan fulfillment modules
-	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
-	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
-		while( $ffFile = readdir( $fulfillHandle ) ) {
-			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
-				include( $fulfillDir.$ffFile.'/admin_order_inc.php' );
-			}
-		}
-	}
-	
-}
-
-?>
+	</td>
+</tr>
+</table>
 
 <!-- body_eof //-->
 
