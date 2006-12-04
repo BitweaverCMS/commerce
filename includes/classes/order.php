@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.46 2006/11/27 04:40:43 spiderr Exp $
+// $Id: order.php,v 1.47 2006/12/04 06:28:37 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -60,7 +60,7 @@ class order extends BitBase {
 		global $gBitDb;
 		$bindVars = array();
 		$ret = array();
-		$whereSql = '';
+		$selectSql = ''; $joinSql = ''; $whereSql = '';
 
 		$comparison = (!empty( $pListHash['orders_status_comparison'] ) && strlen( $pListHash['orders_status_comparison'] ) <= 2) ? $pListHash['orders_status_comparison'] : '=';
 
@@ -76,16 +76,20 @@ class order extends BitBase {
 			$pListHash['max_records'] = -1;
 		}
 
-		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.*
+		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.* $selectSql
 				  FROM " . TABLE_ORDERS . " o
 				  	INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`)
 				  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
 				  	LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
+					$joinSql
 				  WHERE `class` = 'ot_total' $whereSql
 				  ORDER BY ".$gBitDb->convert_sortmode( $pListHash['sort_mode'] );
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
+				if( !empty( $pListHash['recent_comment'] ) ) {
+					$ret[$row['orders_id']]['comments'] = $gBitDb->getOne( "SELECT `comments` FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) );
+				}
 			}
 		}
 

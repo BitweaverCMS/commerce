@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.21 2006/12/03 22:11:41 spiderr Exp $
+//  $Id: index.php,v 1.22 2006/12/04 06:28:37 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -106,7 +106,7 @@ global $language;
 <?php
 	require_once( DIR_FS_CLASSES.'order.php' );
 
-	$listHash = array( 'max_records' => '250' );
+	$listHash = array( 'max_records' => '250', 'recent_comment' => TRUE );
 	if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
 		$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
 		$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];

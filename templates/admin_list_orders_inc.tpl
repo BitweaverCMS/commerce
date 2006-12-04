@@ -22,6 +22,11 @@
 	<td align="right">{$order.date_purchased}</td>
 	<td>{$order.orders_status_name}</td>
 </tr>
+{if $order.comments && $order.comments!='Credit Card processed'}
+<tr>
+	<td colspan="4">{$order.comments}</td>
+</tr>
+{/if}
 {/foreach}
 
 </table>
