@@ -905,6 +905,14 @@ $check_duplicate = $gBitDb->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES .
 
 	}
 
+	function expungeAllAttributes() {
+		if( $this->isValid() ) {
+			// The products_id is redundant for safety purposes
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`=?", array( $this->mProductsId ));
+		}
+		return( count( $this->mErrors ) == 0 );		
+	}
+
 	function expungeAttribute( $pProductsAttributesId ) {
 		if( $this->isValid() && BitBase::verifyId( $pProductsAttributesId ) ) {
 			// The products_id is redundant for safety purposes
