@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: layout_controller.php,v 1.10 2006/12/11 08:56:26 spiderr Exp $
 //
 
 
@@ -131,7 +131,7 @@
 
 		reset_bitcommerce_layout();
         $messageStack->add_session(SUCCESS_BOX_RESET . $template_dir, 'success');
-        zen_redirect( KERNEL_PKG_URL.'admin/index.php?page=layout&amp;fPackage='.BITCOMMERCE_PKG_NAME );
+        zen_redirect( KERNEL_PKG_URL.'admin/index.php?page=layout&amp;module_package='.BITCOMMERCE_PKG_NAME );
         break;
     }
   }

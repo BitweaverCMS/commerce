@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tools_dhtml.php,v 1.7 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: tools_dhtml.php,v 1.8 2006/12/11 08:56:26 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_TOOLS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_TOOLS_TEMPLATE_SELECT, 'link' => zen_href_link_admin(FILENAME_TEMPLATE_SELECT, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_TOOLS_LAYOUT_CONTROLLER, 'link' => KERNEL_PKG_URL.'admin/index.php?page=layout&amp;fPackage='.BITCOMMERCE_PKG_NAME, '', 'NONSSL');
+  $za_contents[] = array('text' => BOX_TOOLS_LAYOUT_CONTROLLER, 'link' => KERNEL_PKG_URL.'admin/index.php?page=layout&amp;module_package='.BITCOMMERCE_PKG_NAME, '', 'NONSSL');
   $za_contents[] = array('text' => 'RESET LAYOUT', 'link' => FILENAME_LAYOUT_CONTROLLER.'.php?action=reset_defaults', '', 'NONSSL');
 // removed broken
 //  $za_contents[] = array('text' => BOX_TOOLS_BACKUP, 'link' => zen_href_link_admin(FILENAME_BACKUP, '', 'NONSSL'));
