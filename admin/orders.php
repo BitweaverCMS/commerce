@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.40 2006/12/11 06:24:48 spiderr Exp $
+//  $Id: orders.php,v 1.41 2006/12/11 23:21:05 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -137,7 +137,7 @@
 	  <tr>
 		<td valign="top">
 			<?php echo zen_date_long($order->info['date_purchased']); ?><br/>
-			<?php echo $gBitUser->getDisplayName( TRUE, $order->customer ).' (ID: '.$order->customer['user_id'].')'; ?><br/>
+			<?php echo $gBitUser->getDisplayName( TRUE, $order->customer ).' (ID: '.$order->customer['user_id'].' <a href="list_orders.php?user_id='.$order->customer['user_id'].'&amp;orders_status_id=all&amp;list_filter=all">customer orders</a>)'; ?><br/>
 <?php if( !empty( $order->customer['telephone'] ) ) { ?>
 		<?php echo $order->customer['telephone']; ?><br/>
 <?php } ?>

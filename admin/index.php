@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.22 2006/12/04 06:28:37 spiderr Exp $
+//  $Id: index.php,v 1.23 2006/12/11 23:21:04 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -116,6 +116,10 @@ global $language;
 		$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
 	} 
 
+	if( !empty( $_REQUEST['search'] ) ) {
+		$listHash['search'] = $_REQUEST['search'];
+	}
+
 	if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 		$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
 		$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
@@ -134,27 +138,7 @@ global $language;
 ?>
 </div>
 
-<?php
-/*
-data is linked with users_users
 <div id="coltwo">
-<table class="data">
-<tr><th><?php echo BOX_ENTRY_NEW_CUSTOMERS; ?> </th></tr>
-  <?php  $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`, a.`date_account_created`, a.`customers_info_id` from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " a on c.`customers_id` = a.`customers_info_id` order by a.`date_account_created` DESC", 5);
-
-  while (!$customers->EOF) {
-    echo '<tr><td><a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, 'search=' . $customers->fields['customers_lastname'] . '&origin=' . FILENAME_DEFAULT, 'NONSSL') . '" class="contentlink">'. $customers->fields['customers_firstname'] . ' ' . $customers->fields['customers_lastname'] . '</a>' . "\n";
-    echo zen_date_short($customers->fields['date_account_created']);
-    echo '</tr></td>' . "\n";
-    $customers->MoveNext();
-  }
-?>
-</table>
-</div>
-*/
-?>
-
-<div id="colthree">
 <table class="data">
 <tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
 <?php

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.47 2006/12/04 06:28:37 spiderr Exp $
+// $Id: order.php,v 1.48 2006/12/11 23:21:05 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -64,8 +64,13 @@ class order extends BitBase {
 
 		$comparison = (!empty( $pListHash['orders_status_comparison'] ) && strlen( $pListHash['orders_status_comparison'] ) <= 2) ? $pListHash['orders_status_comparison'] : '=';
 
+		if( !empty( $pListHash['user_id'] ) ) {
+			$whereSql .= ' AND `customers_id`=? ';
+			$bindVars[] = $pListHash['user_id'];
+		}
+
 		if( !empty( $pListHash['orders_status_id'] ) ) {
-			$whereSql = ' AND `orders_status`'.$comparison.'? ';
+			$whereSql .= ' AND `orders_status`'.$comparison.'? ';
 			$bindVars[] = $pListHash['orders_status_id'];
 		}
 
@@ -76,7 +81,20 @@ class order extends BitBase {
 			$pListHash['max_records'] = -1;
 		}
 
-		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.* $selectSql
+		if( !empty( $pListHash['search'] ) ) {
+			$whereSql .= " AND ( ";
+			$whereSql .= " LOWER(`delivery_name`) like ? OR ";
+			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+			$whereSql .= " LOWER(`billing_name`) like ? OR ";
+			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+			$whereSql .= " LOWER(uu.`email`) like ? OR ";
+			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+			$whereSql .= " LOWER(uu.`real_name`) like ? ";
+			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+			$whereSql .= " ) ";
+		}
+
+		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'o.`date_purchased`' )." AS `purchase_time` $selectSql
 				  FROM " . TABLE_ORDERS . " o
 				  	INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`)
 				  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
