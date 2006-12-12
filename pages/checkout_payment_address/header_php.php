@@ -17,13 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.9 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.10 2006/12/12 03:23:52 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the login page
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 	if ($_SESSION['cart']->count_contents() <= 0) {
 		zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 	}
+
+	define( 'HEADING_TITLE', 'Step 2 of 3 - Change Payment Address' );
 
 	require_once(DIR_FS_MODULES . 'require_languages.php');
 	$errors = array();

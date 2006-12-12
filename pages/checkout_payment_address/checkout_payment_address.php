@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment_address.php,v 1.3 2006/02/19 17:14:26 spiderr Exp $
+// $Id: checkout_payment_address.php,v 1.4 2006/12/12 03:23:52 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('checkout_address', zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), 'post', 'onsubmit="return check_form_optional(checkout_address);"'); ?>
@@ -69,7 +69,7 @@ if ($messageStack->size('checkout_address') > 0) {
 </tr>
 <tr>
 	<td class="main" valign="top" colspan="2"><?php echo TEXT_SELECT_OTHER_PAYMENT_DESTINATION; ?></td>
-	<td class="main" valign="top" align="right"><?php echo TITLE_PLEASE_SELECT . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_EAST_SOUTH); ?></td>
+	<td class="main" valign="top" align="right"><?php echo tra( 'Please Select' ) . '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_EAST_SOUTH); ?></td>
 </tr>
 <tr>
 	<td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
