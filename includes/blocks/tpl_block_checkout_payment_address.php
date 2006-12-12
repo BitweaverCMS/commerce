@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_block_checkout_payment_address.php,v 1.1 2005/08/04 07:24:04 spiderr Exp $
+// $Id: tpl_block_checkout_payment_address.php,v 1.2 2006/12/12 03:19:18 spiderr Exp $
 //
 ?>
  <tr>
@@ -29,11 +29,12 @@
           echo '      <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
         }
 ?>
-        <td class="main" colspan="2"><?php echo zen_output_string_protected($addresses->fields['firstname'] . ' ' . $addresses->fields['lastname']); ?></td>
+        <td class="main" colspan="2"><?php echo zen_output_string_protected($addresses->fields['firstname'] . ' ' . $addresses->fields['lastname']); ?> [ <a href="<?=BITCOMMERCE_PKG_URL?>?main_page=address_book_process&edit=<?=$addresses->fields['address_book_id']?>">Edit</a> ]</td>
         <td class="main" align="right"><?php echo zen_draw_radio_field('address', $addresses->fields['address_book_id'], ($addresses->fields['address_book_id'] == $_SESSION['sendto'])); ?></td>
       </tr>
       <tr>
-        <td class="main"><?php echo zen_address_format($format_id, $addresses->fields, true, ' ', ', '); ?></td>
+        <td class="main" colspan="2"><?php echo zen_address_format($format_id, $addresses->fields, true, ' ', ', '); ?></td>
+		<td class="main" align="right"></td>
       </tr>
     </table></td>
   </tr>
