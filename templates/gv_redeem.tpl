@@ -13,7 +13,7 @@
 		</div>
 
 {if !$smarty.get.gv_no || $feedback.error}
-    <form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send" method="post">
+    <form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_redeem" method="post">
 		<div class="row">
 			{formlabel label="Enter `$smarty.const.TEXT_GV_NAME` Code"}
 			{forminput}<input type="text" name="gv_no" size="10" maxlength="32" />{/forminput}

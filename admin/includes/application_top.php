@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.21 2006/07/23 04:57:54 spiderr Exp $
+//  $Id: application_top.php,v 1.22 2006/12/13 18:20:00 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -169,6 +169,7 @@ ob_start();
 
 // define our general functions used application-wide
   require_once(DIR_WS_FUNCTIONS . 'general.php');
+  require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
   require_once(DIR_WS_FUNCTIONS . 'functions_prices.php');
   require_once(DIR_WS_FUNCTIONS . 'html_output.php');
   require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_email.php');

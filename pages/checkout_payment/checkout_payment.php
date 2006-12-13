@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_payment.php,v 1.3 2006/09/18 06:27:31 spiderr Exp $
+// $Id: checkout_payment.php,v 1.4 2006/12/13 18:20:01 spiderr Exp $
 //
 ?>
 <?php echo $payment_modules->javascript_validation(); ?>
@@ -224,6 +224,6 @@
   </tr>
   <tr>
     <td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
-    <td class="main" align="right"><?php echo zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT, 'onClick="submitFunction('.zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'].')"'); ?></td>
+    <td class="main" align="right"><?php echo zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT, 'onClick="submitFunction('.$gBitCustomer=>getGiftBalance().','.$order->info['total'].')"'); ?></td>
   </tr>
 </table></form>

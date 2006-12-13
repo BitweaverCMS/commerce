@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.39 2006/11/01 19:15:30 lsces Exp $
+//  $Id: general.php,v 1.40 2006/12/13 18:20:00 spiderr Exp $
 //
 
 ////
@@ -1285,53 +1285,6 @@
     return (int)$string;
   }
 
-////
-// Create a Coupon Code. length may be between 1 and 16 Characters
-// $salt needs some thought.
-
-  function create_coupon_code($salt="secret", $length=SECURITY_CODE_LENGTH) {
-    global $db;
-    $ccid = md5(uniqid("","salt"));
-    $ccid .= md5(uniqid("","salt"));
-    $ccid .= md5(uniqid("","salt"));
-    $ccid .= md5(uniqid("","salt"));
-    srand((double)microtime()*1000000); // seed the random number generator
-    $random_start = @rand(0, (128-$length));
-    $good_result = 0;
-    while ($good_result == 0) {
-      $id1=substr($ccid, $random_start,$length);
-      $query = $db->query("SELECT `coupon_code`
-                             FROM " . TABLE_COUPONS . "
-                             WHERE `coupon_code` = ?", array( $id1 ) );
-
-      if ($query->RecordCount() < 1 ) $good_result = 1;
-    }
-    return $id1;
-  }
-////
-/* DUPLICATE from includes/functions/functions_gvcoupons.php
-// Update the Customers GV account
-  function zen_gv_account_update($customer_id, $gv_id) {
-    global $db;
-    $customer_gv = $db->Execute("SELECT `amount`
-                                 FROM " . TABLE_COUPON_GV_CUSTOMER . "
-                                 WHERE `customer_id` = '" . $customer_id . "'");
-
-    $coupon_gv = $db->Execute("SELECT `coupon_amount`
-                               FROM " . TABLE_COUPONS . "
-                               WHERE `coupon_id` = '" . $gv_id . "'");
-
-    if ($customer_gv->RecordCount() > 0) {
-      $new_gv_amount = $customer_gv->fields['amount'] + $coupon_gv->fields['coupon_amount'];
-      $gv_query = $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . "
-                                set `amount` = '" . $new_gv_amount . "'
-                                WHERE `customer_id` = '" . $customer_id . "'");
-
-    } else {
-      $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount) values ('" . $customer_id . "', '" . $coupon_gv->fields['coupon_amount'] . "')");
-    }
-  }
-*/
 ////
 // Output a day/month/year dropdown selector
   function zen_draw_date_selector($prefix, $date='') {

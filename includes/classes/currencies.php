@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: currencies.php,v 1.17 2006/02/24 22:31:53 lsces Exp $
+// $Id: currencies.php,v 1.18 2006/12/13 18:20:01 spiderr Exp $
 //
 
 ////
@@ -76,12 +76,13 @@
     }
 
     function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
-
-      if (empty($currency_type)) $currency_type = $_SESSION['currency'];
+    	if (empty($currency_type)) {
+			$currency_type = !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+		}
 
       if ($calculate_currency_value == true) {
         if ($currency_type == DEFAULT_CURRENCY) {
-          $rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$_SESSION['currency']]['currency_value'];
+          $rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$currency_type]['currency_value'];
         } else {
           $rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
         }

@@ -34,6 +34,26 @@ class CommerceVoucher extends BitBase {
 		return( !empty( $this->mCouponId ) && is_numeric( $this->mCouponId ) );
 	}
 
+	////
+	// Create a Coupon Code. length may be between 1 and 16 Characters
+	// $salt needs some thought.
+
+	function generateCouponCode( $salt="secret", $length = SECURITY_CODE_LENGTH ) {
+		global $gBitDb;
+		$ccid = md5(uniqid("","salt"));
+		$ccid .= md5(uniqid("","salt"));
+		$ccid .= md5(uniqid("","salt"));
+		$ccid .= md5(uniqid("","salt"));
+		srand((double)microtime()*1000000); // seed the random number generator
+		$random_start = @rand(0, (128-$length));
+		do {
+			$code = substr($ccid, $random_start,$length);
+			$query = "SELECT coupon_code FROM " . TABLE_COUPONS . " WHERE coupon_code = ?";
+			$exists = $gBitDb->getOne( $query, array( $code ) );
+		} while( $exists );
+		return $code;
+	}
+
 	function isRedeemable() {
 		if( $this->isValid() ) {
 			$couponStart = $this->mDb->getOne("select coupon_start_date from " . TABLE_COUPONS . "
@@ -96,8 +116,39 @@ class CommerceVoucher extends BitBase {
 		return $ret;
 	}
 
-	function redeemCoupon( $pCode ) {
-		global $gBitDb, $gBitUser;
+	function customerSendCoupon( $pFromUser, $pToEmail, $pAmount ) {
+		global $gBitDb;
+		$ret = NULL;
+
+		$gBitDb->StartTrans();
+
+		$code = CommerceVoucher::generateCouponCode();
+		$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
+		$newBalance = $gvBalance - $pAmount;
+		if ($new_amount < 0) {
+			$error = ERROR_ENTRY_AMOUNT_CHECK;
+		} else {
+
+			$gv_query = "UPDATE " . TABLE_COUPON_GV_CUSTOMER . "
+						 SET `amount` = ?
+						 WHERE `customer_id` = ?";
+			$gBitDb->query( $gv_query, array( $newBalance, $pFromUser->mUserId ) );
+
+			$gv_query = "INSERT INTO " . TABLE_COUPONS . " (`coupon_type`, `coupon_code`, `date_created`, `coupon_amount`) values ('G', ?, NOW(), ?)";
+			$gv = $gBitDb->query($gv_query, array( $code, $pAmount ) );
+			$gvId = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
+
+			$gv_query="insert into " . TABLE_COUPON_EMAIL_TRACK . "	(`coupon_id`, `customer_id_sent`, `emailed_to`, `date_sent`)
+						values ( ?, ?, ?, now())";
+			$gBitDb->query( $gv_query, array( $gvId, $pFromUser->mUserId, $pToEmail ) );
+			$ret = $code;
+		}
+		$gBitDb->CompleteTrans();
+		return $ret;
+	}
+
+	function redeemCoupon( $pCustomerId, $pCode ) {
+		global $gBitDb;
 		$ret = FALSE;
 		if( !empty( $pCode ) ) {
 			$error = true;
@@ -121,20 +172,41 @@ class CommerceVoucher extends BitBase {
 				$gBitDb->StartTrans();
 				$gv_query = "insert into  " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, customer_id, redeem_date, redeem_ip)
 							values ( ?, ?, now(), ? )";
-				$gBitDb->query($gv_query, array( $coupon['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
+				$gBitDb->query($gv_query, array( $coupon['coupon_id'], $pCustomerId, $_SERVER['REMOTE_ADDR'] ) );
 
 				$gv_update = "update " . TABLE_COUPONS . "
 							set coupon_active = 'N'
 							where coupon_id = ?";
 				$gBitDb->query($gv_update, array( $coupon['coupon_id'] ) );
 
-				zen_gv_account_update( $_SESSION['customer_id'], $_SESSION['gv_id'] );
+				CommerceVoucher::updateCustomerBalance( $pCustomerId, $_SESSION['gv_id'] );
 				$gBitDb->CompleteTrans();
 				$ret = $coupon['coupon_amount'];
 			}
 		}
 		return $ret;
 	}
+
+	function updateCustomerBalance( $pCustomerId, $pCouponId ) {
+		global $gBitDb;
+		if( BitBase::verifyId( $pCustomerId ) ) {
+			$query = "SELECT amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?";
+			$customerBalance = $gBitDb->getOne( $query, array( $pCustomerId ) );
+
+			$coupon_gv_query = "SELECT coupon_amount FROM " . TABLE_COUPONS . " WHERE coupon_id = ?";
+			$couponAmount = $gBitDb->getOne($coupon_gv_query, array( $pCouponId ) );
+
+			if( $customerBalance ) {
+				$newAmount = $customerBalance + $couponAmount;
+				$gv_query = "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET amount = ? WHERE `customer_id` = ?";
+				$gBitDb->query($gv_query, array( $newAmount, $pCustomerId ) );
+			} else {
+				$gv_query = "INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (customer_id, amount) VALUES (?,?)";
+				$gBitDb->query($gv_query, array( $pCustomerId, $couponAmount ) );
+			}
+		}
+	}
+
 }
 
 ?>

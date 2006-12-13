@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.14 2006/12/13 18:20:00 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -143,7 +143,7 @@
         $messageStack->add(ERROR_NO_COUPON_AMOUNT, 'error');
       }
       if (!$_POST['coupon_code']) {
-        $coupon_code = create_coupon_code();
+        $coupon_code = CommerceCoupon::generateCouponCode();
       }
       if ($_POST['coupon_code']) $coupon_code = $_POST['coupon_code'];
       $query1 = $db->Execute("select coupon_code
@@ -1040,10 +1040,11 @@ $category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where 
                      DATE_CREATED . '&nbsp;::&nbsp; ' . zen_date_short($cInfo->date_created) . '<br />' .
                      DATE_MODIFIED . '&nbsp;::&nbsp; ' . zen_date_short($cInfo->date_modified) . '<br /><br />' .
                      ($cInfo->coupon_id != '' ?
-                     '<center><a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=email&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_email.gif','Email ' . TEXT_GV_NAME).'</a>' .
-                     '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucheredit&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_edit.gif','Edit ' . TEXT_GV_NAME).'</a>' .
-                     '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherdelete&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_delete.gif','Delete ' . TEXT_GV_NAME).'</a>' .
-                     '<br /><a href="'.zen_href_link_admin('coupon_restrict.php','cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_restrict.gif','Restrict').'</a><a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherreport&cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_report.gif',TEXT_GV_NAME . ' Report').'</a></center>'
+                     '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=email&cid='.$cInfo->coupon_id,'NONSSL').'" class="button">Email</a>
+                     	<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucheredit&cid='.$cInfo->coupon_id,'NONSSL').'" class="button">Edit</a>
+                    	<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherdelete&cid='.$cInfo->coupon_id,'NONSSL').'" class="button">Delete</a>
+                    	<a href="'.zen_href_link_admin('coupon_restrict.php','cid='.$cInfo->coupon_id,'NONSSL').'" class="button">Restrict</a> 
+						<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=voucherreport&cid='.$cInfo->coupon_id,'NONSSL').'" class="button">Report</a>'
                      : ' who ' . $cInfo->coupon_id . ' - ' . $_GET['cid'])
                      );
         }

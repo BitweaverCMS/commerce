@@ -23,6 +23,16 @@
 			return( count( $this->mInfo ) );
 		}
 
+		function getGiftBalance() {
+			$ret = '0.00';
+			if( $this->isValid() ) {
+				if( $couponAmount = $this->getOne( "SELECT amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $this->mCustomerId ) ) ) {
+					$ret = $couponAmount;
+				}
+			}
+			return $ret;
+		}
+
 		function getCommissions() {
 			$ret = array();
 			if( $this->isValid() ) {

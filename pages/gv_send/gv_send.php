@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_send.php,v 1.3 2005/11/30 07:17:24 spiderr Exp $
+// $Id: gv_send.php,v 1.4 2006/12/13 18:20:04 spiderr Exp $
 //
 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -33,7 +33,6 @@
 	$feedback = array();
 
 	// do a fresh calculation after sending an email
-	$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
 
 	$requestAction = !empty( $_REQUEST['action'] ) ? strtolower( $_REQUEST['action'] ) : NULL;
 
@@ -43,25 +42,20 @@
 		$requestAmountValue = $currencies->value( $requestAmount, true, DEFAULT_CURRENCY );
 	}
 
+	$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
 	if( $requestAction == 'send' ) {
 		$_SESSION['complete'] = '';
 		if (!zen_validate_email(trim($_POST['email']))) {
 			$feedback['error']['error_email'] = ERROR_ENTRY_EMAIL_ADDRESS_CHECK;
 		}
-		$customer_amount = $gvBalance;
 
-		if( !is_numeric( $requestAmount ) || $requestAmountValue > $customer_amount ) {
+		if( !is_numeric( $requestAmount ) || $requestAmountValue > $gvBalance ) {
 			$feedback['error']['error_amount'] = ERROR_ENTRY_AMOUNT_CHECK;
 		}
 	} elseif ($requestAction == 'process') {
-		$id1 = zen_create_coupon_code();
-		$new_amount = $gvBalance - $requestAmountValue;
-		$new_db_amount = $gvBalance - $requestAmountValue;
-		if ($new_amount < 0) {
-			$feedback['error']['error_amount'] = ERROR_ENTRY_AMOUNT_CHECK;
-			$requestAction = 'send';
-		} else {
+		if( $couponCode = CommerceVoucher::customerSendCoupon( $gBitUser, $_POST['email'], $requestAmountValue ) ) {
 			$requestAction = 'complete';
+/*
 			$gv_query="update " . TABLE_COUPON_GV_CUSTOMER . "
 						set `amount` = '" .  $new_amount . "'
 						where `customer_id` = '" . $_SESSION['customer_id'] . "'";
@@ -74,7 +68,7 @@
 			$gv_customer=$db->query($gv_query, array( $_SESSION['customer_id'] ) );
 
 			$gv_query="insert into " . TABLE_COUPONS . " (`coupon_type`, `coupon_code`, `date_created`, `coupon_amount`) values ('G', ?, NOW(), ?)";
-			$gv = $db->query($gv_query, array( $id1, $requestAmountValue ) );
+			$gv = $db->query($gv_query, array( $couponCode, $requestAmountValue ) );
 			$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
 			$gv_query="insert into " . TABLE_COUPON_EMAIL_TRACK . "
@@ -83,38 +77,37 @@
 								$gv_customer->fields['customers_firstname'] . "', '" .
 								$gv_customer->fields['customers_lastname'] . "', '" .
 								$_POST['email'] . "', now())";
-
 			$db->Execute($gv_query);
-
+*/
 			$gv_email = STORE_NAME . "\n" .
 					EMAIL_SEPARATOR . "\n" .
 					sprintf(EMAIL_GV_TEXT_HEADER, $currencies->format( $requestAmount, false ) ) . "\n" .
 					EMAIL_SEPARATOR . "\n\n" .
 					sprintf( EMAIL_GV_FROM, $gBitUser->getDisplayName() ) . "\n";
 
-				$html_msg['EMAIL_GV_TEXT_HEADER'] =  sprintf(EMAIL_GV_TEXT_HEADER, '');
-				$html_msg['EMAIL_GV_AMOUNT'] =  $currencies->format( $requestAmount, false );
-				$html_msg['EMAIL_GV_FROM'] =  sprintf(EMAIL_GV_FROM, $gBitUser->getDisplayName() ) ;
+			$html_msg['EMAIL_GV_TEXT_HEADER'] =  sprintf(EMAIL_GV_TEXT_HEADER, '');
+			$html_msg['EMAIL_GV_AMOUNT'] =  $currencies->format( $requestAmount, false );
+			$html_msg['EMAIL_GV_FROM'] =  sprintf(EMAIL_GV_FROM, $gBitUser->getDisplayName() ) ;
 
 			if (isset($_POST['message'])) {
 				$gv_email .= EMAIL_GV_MESSAGE . "\n\n";
 				$html_msg['EMAIL_GV_MESSAGE'] = EMAIL_GV_MESSAGE . '<br />';
 
 				if (isset($_POST['to_name'])) {
-				$gv_email .= sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']) . "\n\n";
-				$html_msg['EMAIL_GV_SEND_TO'] = '<tt>'.sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']). '</tt><br />';
+					$gv_email .= sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']) . "\n\n";
+					$html_msg['EMAIL_GV_SEND_TO'] = '<tt>'.sprintf(EMAIL_GV_SEND_TO, $_POST['to_name']). '</tt><br />';
 				}
 				$gv_email .= stripslashes($_POST['message']) . "\n\n";
 				$gv_email .= EMAIL_SEPARATOR . "\n\n";
 				$html_msg['EMAIL_MESSAGE_HTML'] = stripslashes($_POST['message']);
 			}
 
-			$html_msg['GV_REDEEM_HOW'] = sprintf(EMAIL_GV_REDEEM, '<strong>' . $id1 . '</strong>');
-			$html_msg['GV_REDEEM_URL'] = '<a href="'.zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $id1, 'NONSSL').'">'.EMAIL_GV_LINK.'</a>';
-			$html_msg['GV_REDEEM_CODE'] = $id1;
+			$html_msg['GV_REDEEM_HOW'] = sprintf(EMAIL_GV_REDEEM, '<strong>' . $couponCode . '</strong>');
+			$html_msg['GV_REDEEM_URL'] = '<a href="'.zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $couponCode, 'NONSSL').'">'.EMAIL_GV_LINK.'</a>';
+			$html_msg['GV_REDEEM_CODE'] = $couponCode;
 
-			$gv_email .= sprintf(EMAIL_GV_REDEEM, $id1) . "\n\n";
-			$gv_email .= EMAIL_GV_LINK . ' ' . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $id1, 'NONSSL');;
+			$gv_email .= sprintf(EMAIL_GV_REDEEM, $couponCode) . "\n\n";
+			$gv_email .= EMAIL_GV_LINK . ' ' . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $couponCode, 'NONSSL');;
 			$gv_email .= "\n\n";
 			$gv_email .= EMAIL_GV_FIXED_FOOTER . "\n\n";
 			$gv_email .= EMAIL_GV_SHOP_FOOTER;
@@ -133,11 +126,11 @@
 		// send additional emails
 			if (SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_STATUS == '1' and SEND_EXTRA_GV_CUSTOMER_EMAILS_TO !='') {
 				if ($_SESSION['customer_id']) {
-				$account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
-									from " . TABLE_CUSTOMERS . "
-									where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
+					$account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
+										from " . TABLE_CUSTOMERS . "
+										where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-				$account = $db->Execute($account_query);
+					$account = $db->Execute($account_query);
 				}
 				$extra_info=email_collect_extra_info($_POST['to_name'],$_POST['email'], $account->fields['customers_firstname'] . ' ' . $account->fields['customers_lastname'] , $account->fields['customers_email_address'] );
 				$html_msg['EXTRA_INFO'] = $extra_info['HTML'];
@@ -147,6 +140,9 @@
 
 			// do a fresh calculation after sending an email
 			$gvBalance = CommerceVoucher::getGiftAmount( FALSE );
+		} else {
+			$feedback['error']['error_amount'] = ERROR_ENTRY_AMOUNT_CHECK;
+			$requestAction = 'send';
 		}
 	}
 

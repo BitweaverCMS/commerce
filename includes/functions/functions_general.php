@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.29 2006/07/10 03:43:58 spiderr Exp $
+// $Id: functions_general.php,v 1.30 2006/12/13 18:20:01 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -1042,7 +1042,7 @@
 // prices and quantities
   require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
 // gv and coupons
-  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php');
+  require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php');
 // categories, paths, pulldowns
   require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_categories.php');
 // customers and addresses

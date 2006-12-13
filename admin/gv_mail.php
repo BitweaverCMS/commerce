@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.11 2006/09/16 04:43:13 spiderr Exp $
+//  $Id: gv_mail.php,v 1.12 2006/12/13 18:20:00 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,68 +38,73 @@
 			$action='';
 			zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL));
 		}
-
 		if ( ($_GET['action'] == 'send_email_to_user') && (!empty( $_POST['customers_email_address'] ) || !empty( $_POST['email_to'] )) && (empty( $_POST['back_x'] ) ) ) {
-			$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
-			$mail = $db->Execute($audience_select['query_string']);
-			$mail_sent_to = $audience_select['query_name'];
-
 			$from = zen_db_prepare_input($_POST['from']);
 			$subject = zen_db_prepare_input($_POST['subject']);
-			$recip_count=0;
-			while (!$mail->EOF) {
+/*
+This code is just too damned dangerous to be useful - possibly send every customer a gift certificate! - spiderr
 
-				$id1 = create_coupon_code($mail->fields['customers_email_address']);
-				$insert_query = $db->Execute("insert into " . TABLE_COUPONS . "
-											(coupon_code, coupon_type, coupon_amount, date_created)
-											values ('" . $id1 . "', 'G', '" . $_POST['amount'] . "', now())");
+			if( !empty( $_POST['customers_email_address'] ) ) {
+				$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
+				$mail = $db->Execute($audience_select['query_string']);
+				$mail_sent_to = $audience_select['query_name'];
 
-				$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
+				$recip_count=0;
+				
+				while (!$mail->EOF) {
+					$id1 = CommerceVoucher::generateCouponCode( $mail->fields['customers_email_address'] );
+					$insert_query = $db->Execute("insert into " . TABLE_COUPONS . "
+												(coupon_code, coupon_type, coupon_amount, date_created)
+												values ('" . $id1 . "', 'G', '" . $_POST['amount'] . "', now())");
 
-				$db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
-							(coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)
-							values ('" . $insert_id ."', '0', 'Admin',
-									'" . $mail->fields['customers_email_address'] . "', now() )");
+					$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
-				$message = $_POST['message'];
-				$html_msg['EMAIL_MESSAGE_HTML'] = zen_db_prepare_input($_POST['message_html']);
-				$message .= "\n\n" . TEXT_GV_WORTH  . $currencies->format($_POST['amount']) . "\n\n";
-				$message .= TEXT_TO_REDEEM;
-				$message .= TEXT_WHICH_IS . ' ' . $id1 . ' ' . TEXT_IN_CASE . "\n\n";
+					$db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
+								(coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)
+								values ('" . $insert_id ."', '0', 'Admin',
+										'" . $mail->fields['customers_email_address'] . "', now() )");
 
-				$html_msg['GV_WORTH']  = TEXT_GV_WORTH;
-				$html_msg['GV_AMOUNT']  = $currencies->format($_POST['amount']);
-				$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE;
+					$message = $_POST['message'];
+					$html_msg['EMAIL_MESSAGE_HTML'] = zen_db_prepare_input($_POST['message_html']);
+					$message .= "\n\n" . TEXT_GV_WORTH  . $currencies->format($_POST['amount']) . "\n\n";
+					$message .= TEXT_TO_REDEEM;
+					$message .= TEXT_WHICH_IS . ' ' . $id1 . ' ' . TEXT_IN_CASE . "\n\n";
 
-				if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
-					$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1 . "\n\n";
-					$html_msg['GV_CODE_URL'] = '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>'. "&nbsp;";
-				} else {
-					$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 . "\n\n";
-					$html_msg['GV_CODE_URL'] =  '<a href="'. HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>' . "&nbsp;";
+					$html_msg['GV_WORTH']  = TEXT_GV_WORTH;
+					$html_msg['GV_AMOUNT']  = $currencies->format($_POST['amount']);
+					$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE;
+
+					if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
+						$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1 . "\n\n";
+						$html_msg['GV_CODE_URL'] = '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>'. "&nbsp;";
+					} else {
+						$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 . "\n\n";
+						$html_msg['GV_CODE_URL'] =  '<a href="'. HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>' . "&nbsp;";
+					}
+
+					$message .= TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG . TEXT_ENTER_CODE . "\n\n";
+					$html_msg['GV_CODE_URL'] .= TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE;
+					$html_msg['EMAIL_FIRST_NAME'] = $mail->fields['customers_firstname'];
+					$html_msg['EMAIL_LAST_NAME']  = $mail->fields['customers_lastname'];
+
+					// disclaimer
+					$message .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
+
+					zen_mail($mail->fields['customers_firstname'] . ' ' . $mail->fields['customers_lastname'], $mail->fields['customers_email_address'], $subject , $message, $from, $from, $html_msg, 'gv_mail');
+					$recip_count++;
+					if (SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_STATUS== '1' and SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO != '') {
+						zen_mail('', SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO, SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_SUBJECT . ' ' . $subject, $message, $from, $from, $html_msg, 'gv_mail_extra');
+					}
+
+					// Now create the coupon main and email entry
+					$mail->MoveNext();
 				}
-
-				$message .= TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG . TEXT_ENTER_CODE . "\n\n";
-				$html_msg['GV_CODE_URL'] .= TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE;
-				$html_msg['EMAIL_FIRST_NAME'] = $mail->fields['customers_firstname'];
-				$html_msg['EMAIL_LAST_NAME']  = $mail->fields['customers_lastname'];
-
-				// disclaimer
-				$message .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
-
-				zen_mail($mail->fields['customers_firstname'] . ' ' . $mail->fields['customers_lastname'], $mail->fields['customers_email_address'], $subject , $message, $from, $from, $html_msg, 'gv_mail');
-				$recip_count++;
-				if (SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_STATUS== '1' and SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO != '') {
-					zen_mail('', SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO, SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_SUBJECT . ' ' . $subject, $message, $from, $from, $html_msg, 'gv_mail_extra');
-				}
-
-				// Now create the coupon main and email entry
-				$mail->MoveNext();
 			}
+*/
 
 			if ( !empty( $_POST['email_to'] ) ) {
 				$mail_sent_to = $_POST['email_to'];
-				$id1 = create_coupon_code($_POST['email_to']);
+				$id1 = CommerceVoucher::generateCouponCode( $_POST['email_to'] );
 				$message = zen_db_prepare_input($_POST['message']);
 				$message .= "\n\n" . TEXT_GV_WORTH  . $currencies->format($_POST['amount']) . "\n\n";
 				$message .= TEXT_TO_REDEEM;
@@ -367,6 +372,9 @@ function check_form(form_name) {
 <?php
     $customerGroups = get_audiences_list( NULL );
 ?>
+<?php
+/*
+Dangerous code to email every customer
               <tr>
                 <td class="main"><?php echo tra( 'Customer Group' ); ?>:</td>
                 <td><?php echo zen_draw_pull_down_menu('customers_email_address', $customerGroups, $_GET['customer']);?></td>
@@ -374,6 +382,8 @@ function check_form(form_name) {
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
               </tr>
+*/
+?>
                <tr>
                 <td class="main"><?php echo TEXT_TO; ?></td>
                 <td><?php echo zen_draw_input_field('email_to', '', 'size="50"'); ?><?php echo '&nbsp;&nbsp;' . TEXT_SINGLE_EMAIL; ?></td>
@@ -390,7 +400,7 @@ function check_form(form_name) {
               </tr>
               <tr>
                 <td class="main"><?php echo TEXT_SUBJECT; ?></td>
-                <td><?php echo zen_draw_input_field('subject', '', 'size="50"'); ?></td>
+                <td><?php echo zen_draw_input_field('subject', trim( $gBitSystem->getConfig( 'site_title' ).' '.tra( 'Gift Certificate' ) ) , 'size="50"'); ?></td>
               </tr>
               <tr>
                 <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>

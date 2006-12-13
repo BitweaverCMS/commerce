@@ -17,27 +17,26 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.11 2005/11/30 07:17:24 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.12 2006/12/13 18:20:01 spiderr Exp $
 //
 	global $db, $gBitProduct, $currencies, $gBitUser;
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-	require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_gvcoupons.php' );
 if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):
       $show_shopping_cart_box = true;
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '1'):
-      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && (zen_user_has_gv_account( $gBitUser->mUserId ) > 0) ) ) {
+      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && ($gBitCustomer->getGiftBalance() > 0) ) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;
       }
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '2'):
-      if ( ( ($_SESSION['cart']->count_contents() > 0) || (zen_user_has_gv_account($_SESSION['customer_id']) > 0) ) && ($_GET['main_page'] != FILENAME_SHOPPING_CART) ) {
+      if ( ( ($_SESSION['cart']->count_contents() > 0) || ($gBitCustomer->getGiftBalance() > 0) ) && ($_GET['main_page'] != FILENAME_SHOPPING_CART) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;
