@@ -26,7 +26,7 @@
 		function getGiftBalance() {
 			$ret = '0.00';
 			if( $this->isValid() ) {
-				if( $couponAmount = $this->getOne( "SELECT amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $this->mCustomerId ) ) ) {
+				if( $couponAmount = $this->mDb->getOne( "SELECT amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $this->mCustomerId ) ) ) {
 					$ret = $couponAmount;
 				}
 			}

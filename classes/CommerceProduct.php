@@ -259,7 +259,7 @@ class CommerceProduct extends LibertyAttachable {
 	// Specials and Tax Included
 	function getDisplayPrice( $pProductsId=NULL ) {
 		global $gBitDb;
-		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
+		if( empty( $pProductsId ) && !empty( $this ) && !empty( $this->mProductsId ) ) {
 			$pProductsId = $this->mProductsId;
 		}
 		// 0 = normal shopping

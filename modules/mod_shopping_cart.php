@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.12 2006/12/13 18:20:01 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.13 2006/12/13 19:16:07 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies, $gBitUser;
+	global $db, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
@@ -29,7 +29,7 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
       $show_shopping_cart_box = true;
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '1'):
-      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && ($gBitCustomer->getGiftBalance() > 0) ) ) {
+      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && !empty( $gBitCustomer ) &&  ($gBitCustomer->getGiftBalance() > 0) ) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;
