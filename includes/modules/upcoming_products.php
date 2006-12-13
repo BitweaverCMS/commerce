@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.8 2006/09/19 07:12:59 spiderr Exp $
+// $Id: upcoming_products.php,v 1.9 2006/12/13 19:33:44 lsces Exp $
 //
 	global $db;
 
@@ -40,7 +40,8 @@
                        and `products_date_available` >= 'NOW'
                        and p.`products_id` = pd.`products_id`
                        and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                       order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
+                      order by `products_date_available` " . EXPECTED_PRODUCTS_SORT;
+//                       order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
   }
 
   $expected = $db->query($expected_query, NULL, MAX_DISPLAY_UPCOMING_PRODUCTS);
