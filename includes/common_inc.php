@@ -1690,13 +1690,13 @@ If a special exist * 10+9
 // TABLES: categories
   function zen_has_category_subcategories($category_id) {
     global $gBitDb;
-    $child_category_query = "select count(*) as `count`
+    $child_category_query = "select count(*) as `ccount`
                              from " . TABLE_CATEGORIES . "
                              where `parent_id` = '" . (int)$category_id . "'";
 
     $child_category = $gBitDb->query($child_category_query);
 
-    if ($child_category->fields['count'] > 0) {
+    if ($child_category->fields['ccount'] > 0) {
       return true;
     } else {
       return false;
