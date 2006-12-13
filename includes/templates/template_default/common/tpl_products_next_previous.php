@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.10 2005/11/30 06:28:04 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.11 2006/12/13 20:35:48 lsces Exp $
 //
   /*
 
@@ -64,13 +64,17 @@
 			}
 
 			if (!$current_category_id) {
-			$sql = "SELECT `categories_id`
+				$sql = "SELECT `categories_id`
 					from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
 					where  `products_id` ='" .  (int)$_GET['products_id']
 					. "'";
 
-			$cPath_row = $db->Execute($sql);
-			$current_category_id = $cPath_row->fields['categories_id'];
+				$cPath_row = $db->Execute($sql);
+				if ( $cPath_row->fields['categories_id'] ) {
+				$current_category_id = $cPath_row->fields['categories_id'];
+				} else {
+				$current_category_id = 0;
+				}
 			}
 
 			$sql = "select p.`products_id`, p.`products_model`, p.`products_price_sorter`, pd.`products_name`, p.`products_sort_order`
