@@ -17,37 +17,38 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_music_genres.php,v 1.2 2005/08/24 11:52:22 lsces Exp $
+// $Id: mod_music_genres.php,v 1.3 2006/12/14 12:15:24 lsces Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-  $music_genres_query = "select music_genre_id, music_genre_name
-                          from " . TABLE_MUSIC_GENRE . "
-                          order by `music_genre_name`";
+	$music_genres_query = "select music_genre_id, music_genre_name
+		from " . TABLE_MUSIC_GENRE . "
+		order by `music_genre_name`";
 
-  $music_genres = $db->Execute($music_genres_query);
+	$music_genres = $gBitDb->Execute($music_genres_query);
 
-  if ($music_genres->RecordCount()>0) {
-    $number_of_rows = $music_genres->RecordCount()+1;
+	if ($music_genres->RecordCount()>0) {
+		$number_of_rows = $music_genres->RecordCount()+1;
 
-// Display a list
-    $music_genres_array = array();
-    if ($_GET['music_genre_id'] == '' ) {
-      $music_genres_array[] = array('id' => '', 'text' => PULL_DOWN_ALL);
-    } else {
-      $music_genres_array[] = array('id' => '', 'text' => PULL_DOWN_MUSIC_GENRES);
-    }
+		// Display a list
+		$music_genres_array = array();
+		if ( !isset($_GET['music_genre_id']) or
+			$_GET['music_genre_id'] == '' ) {
+			$music_genres_array[] = tra( 'Please Select' );
+		} else {
+			$music_genres_array[] = tra( '- Reset -' );
+		}
 
-    while (!$music_genres->EOF) {
-      $music_genre_name = ((strlen($music_genres->fields['music_genre_name']) > MAX_DISPLAY_MUSIC_GENRES_NAME_LEN) ? substr($music_genres->fields['music_genre_name'], 0, MAX_DISPLAY_MUSIC_GENRES_NAME_LEN) . '..' : $music_genres->fields['music_genre_name']);
-      $music_genres_array[] = array('id' => $music_genres->fields['music_genre_id'],
-                                       'text' => $music_genre_name);
+		while (!$music_genres->EOF) {
+		$music_genre_name = ((strlen($music_genres->fields['music_genre_name']) > MAX_DISPLAY_MUSIC_GENRES_NAME_LEN) ? substr($music_genres->fields['music_genre_name'], 0, MAX_DISPLAY_MUSIC_GENRES_NAME_LEN) . '..' : $music_genres->fields['music_genre_name']);
+      		$music_genres_array[$music_genres->fields['music_genre_id']] = $music_genre_name;
 
-      $music_genres->MoveNext();
-    }
-  //	require($template->get_template_dir('tpl_music_genres_select.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_music_genres_select.php');
+		$music_genres->MoveNext();
+		}
+		$gBitSmarty->assign( 'box_genres_array', $music_genres_array );
 
-  }
+  	}
 	if( empty( $moduleTitle ) ) {
 		$gBitSmarty->assign( 'moduleTitle', tra( 'Music Genres' ) );
 	}

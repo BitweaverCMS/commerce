@@ -17,9 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.8 2006/05/06 22:15:13 bitweaver Exp $
+// $Id: mod_manufacturers.php,v 1.9 2006/12/14 12:15:24 lsces Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 // test if manufacturers sidebox should show
   $show_manufacturers= true;
@@ -48,11 +49,11 @@ if ($show_manufacturers) {
                             order by `manufacturers_name`";
   }
 
-  if( $manufacturers = $db->query($manufacturer_sidebox_query) ) {
+  if( $manufacturers = $gBitDb->Execute($manufacturer_sidebox_query) ) {
 	  $number_of_rows = count( $manufacturers->RecordCount() )+1;
 
 // Display a list
-$manufacturer_sidebox_array = array( '' => PULL_DOWN_ALL );
+$manufacturer_sidebox_array = array( '' => tra('Please Select') );
 
 	while( $manufacturer_sidebox = $manufacturers->fetchRow() ) {
       $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox['manufacturers_name']);
@@ -60,12 +61,10 @@ $manufacturer_sidebox_array = array( '' => PULL_DOWN_ALL );
     }
 	//$gBitSmarty->assign( 'manufacturersPulldown', zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, (isset($_GET['manufacturers_id']) ? $_GET['manufacturers_id'] : ''), 'onchange="this.form.submit();" size="' . MAX_MANUFACTURERS_LIST . '" style="width: 100%"') . zen_hide_session_id() );
 	$gBitSmarty->assign( 'manufacturers', $manufacturer_sidebox_array );
-  //	require($template->get_template_dir('tpl_manufacturers_select.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturers_select.php');
 	if( empty( $moduleTitle ) ) {
 		$gBitSmarty->assign( 'moduleTitle', tra( 'Manufacturers' ) );
 	}
 
-//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
   }
-} // $show_manufacturers
+} 
 ?>

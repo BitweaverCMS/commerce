@@ -17,43 +17,38 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_record_companies.php,v 1.2 2005/08/24 11:52:22 lsces Exp $
+// $Id: mod_record_companies.php,v 1.3 2006/12/14 12:15:24 lsces Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-  $record_company_query = "select record_company_id, record_company_name
-                          from " . TABLE_RECORD_COMPANY . "
-                          order by `record_company_name`";
+	$record_company_query = "select record_company_id, record_company_name
+			from " . TABLE_RECORD_COMPANY . "
+			order by `record_company_name`";
 
-  $record_company = $db->Execute($record_company_query);
+	$record_company = $gBitDb->Execute($record_company_query);
 
-  if ($record_company->RecordCount()>0) {
-    $number_of_rows = $record_company->RecordCount()+1;
-
+	if ($record_company->RecordCount()>0) {
+		$number_of_rows = $record_company->RecordCount()+1;
+	}
+	
 // Display a list
-    $record_company_array = array();
-    if ($_GET['record_company_id'] == '' ) {
-      $record_company_array[] = array('id' => '', 'text' => PULL_DOWN_ALL);
-    } else {
-      $record_company_array[] = array('id' => '', 'text' => PULL_DOWN_RECORD_COMPANIES);
-    }
+	$record_company_array = array();
+	if ( !isset($_GET['record_company_id']) or
+			$_GET['record_company_id'] == '' ) {
+		$record_company_array[] = tra( 'Please Select' );
+	} else {
+		$record_company_array[] = tra( '- Reset -' );
+	}
 
-    while (!$record_company->EOF) {
-      $record_company_name = ((strlen($record_company->fields['record_company_name']) > MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) ? substr($record_company->fields['record_company_name'], 0, MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) . '..' : $record_company->fields['record_company_name']);
-      $record_company_array[] = array('id' => $record_company->fields['record_company_id'],
-                                       'text' => $record_company_name);
+	while (!$record_company->EOF) {
+		$record_company_name = ((strlen($record_company->fields['record_company_name']) > MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) ? substr($record_company->fields['record_company_name'], 0, MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) . '..' : $record_company->fields['record_company_name']);
+		$record_company_array[$record_company->fields['record_company_id']] = $record_company_name;
+		$record_company->MoveNext();
+	}
 
-      $record_company->MoveNext();
-    }
-  //	require($template->get_template_dir('tpl_record_company_select.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_record_company_select.php');
+	$gBitSmarty->assign( 'record_company', $record_company_array );
 
-    $title =  BOX_HEADING_RECORD_COMPANY;
-    $left_corner = false;
-    $right_corner = false;
-    $right_arrow = false;
-    $title_link = false;
-//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-  }
 	if( empty( $moduleTitle ) ) {
 		$gBitSmarty->assign( 'moduleTitle', tra( 'Record Companies' ) );
 	}
