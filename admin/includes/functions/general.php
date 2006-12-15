@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.40 2006/12/13 18:20:00 spiderr Exp $
+//  $Id: general.php,v 1.41 2006/12/15 21:42:47 spiderr Exp $
 //
 
 ////
@@ -955,6 +955,9 @@
         $order->MoveNext();
       }
     }
+
+    $db->query("delete FROM " . TABLE_COUPON_GV_QUEUE . "
+                WHERE `order_id` = ?", array( (int)$order_id ) );
 
     $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");

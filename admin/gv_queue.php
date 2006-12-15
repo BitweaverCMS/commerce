@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.13 2006/12/15 19:25:17 spiderr Exp $
+//  $Id: gv_queue.php,v 1.14 2006/12/15 21:42:47 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -70,6 +70,7 @@
 						  set `release_flag`= 'Y'
 						  where `unique_id`='" . $_GET['gid'] . "'");
 			}
+			bit_redirect( BITCOMMERCE_PKG_URL.'admin/gv_queue.php' );
       }
   }
 ?>
