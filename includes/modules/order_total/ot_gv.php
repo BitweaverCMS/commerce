@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.11 2006/02/24 04:13:06 spiderr Exp $
+// $Id: ot_gv.php,v 1.12 2006/12/15 20:08:14 spiderr Exp $
 //
 
   class ot_gv {
@@ -112,34 +112,38 @@
       }
     }
 
-    function update_credit_account($i) {
-      global $db, $order, $insert_id;
-      if (ereg('^GIFT', addslashes($order->products[$i]['model']))) {
-        $gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['quantity']);
-        if ($this->credit_tax=='true') $gv_order_amount = $gv_order_amount * (100 + $order->products[$i]['tax']) / 100;
-        $gv_order_amount = $gv_order_amount * 100 / 100;
-        if (MODULE_ORDER_TOTAL_GV_QUEUE == 'false') {
-          // GV_QUEUE is false so release amount to account immediately
-          $gv_result = $this->user_has_gv_account($_SESSION['customer_id']);
-          $customer_gv = false;
-          $total_gv_amount = 0;
-          if ($gv_result) {
-//            $total_gv_amount = $gv_result->fields['amount'];
-            $total_gv_amount = $gv_result;
-            $customer_gv = true;
-          }
-          $total_gv_amount = $total_gv_amount + $gv_order_amount;
-          if ($customer_gv) {
-            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
-          } else {
-            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
-          }
-        } else {
-         // GV_QUEUE is true - so queue the gv for release by store owner
-          $db->Execute("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ('" . $_SESSION['customer_id'] . "', '" . $insert_id . "', '" . $gv_order_amount . "', NOW(), '" . $_SERVER['REMOTE_ADDR'] . "')");
-        }
-      }
-    }
+	function update_credit_account($i) {
+		global $db, $order, $insert_id;
+		if (ereg('^GIFT', addslashes($order->products[$i]['model']))) {
+			$gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['quantity']);
+			if ($this->credit_tax=='true') {
+				$gv_order_amount = $gv_order_amount * (100 + $order->products[$i]['tax']) / 100;
+			}
+			$gv_order_amount = $gv_order_amount * 100 / 100;
+			if (MODULE_ORDER_TOTAL_GV_QUEUE == 'false') {
+				// GV_QUEUE is false so release amount to account immediately
+				$gv_result = $this->user_has_gv_account($_SESSION['customer_id']);
+				$customer_gv = false;
+				$total_gv_amount = 0;
+				if ($gv_result) {
+					//            $total_gv_amount = $gv_result->fields['amount'];
+					$total_gv_amount = $gv_result;
+					$customer_gv = true;
+				}
+				$total_gv_amount = $total_gv_amount + $gv_order_amount;
+				if ($customer_gv) {
+					$db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+				} else {
+					$db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
+				}
+			} else {
+				for( $j = 0; $j < $order->products[$i]['quantity']; $j++ ) {
+					// GV_QUEUE is true - so queue the gv for release by store owner
+					$db->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$i]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
+				}
+			}
+		}
+	}
 
     function credit_selection() {
       global $db, $currencies;
