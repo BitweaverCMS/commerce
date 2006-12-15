@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.12 2006/12/15 19:17:28 spiderr Exp $
+//  $Id: gv_queue.php,v 1.13 2006/12/15 19:25:17 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -125,7 +125,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $gv_query_raw =  "SELECT co.`billing_name`, uu.`real_name`, uu.`login`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` 
+  $gv_query_raw =  "SELECT co.`billing_name`, uu.`real_name`, uu.`login`, uu.`email`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` 
 					FROM " . TABLE_COUPON_GV_QUEUE . " gv 
 						INNER JOIN " . TABLE_ORDERS . " co ON(gv.`order_id`=co.`orders_id`) 
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (gv.`customer_id`=uu.`user_id`) 
@@ -141,7 +141,7 @@
       echo '              <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin('gv_queue.php', zen_get_all_get_params(array('gid', 'action')) . 'gid=' . $gv_list->fields['unique_id']) . '\'">' . "\n";
     }
 ?>
-                <td class="dataTableContent"><?php echo $gv_list->fields['billing_name'] . ' ( ' . $gv_list->fields['login']; ?> ) </td>
+                <td class="dataTableContent"><?php echo $gv_list->fields['billing_name'] . ' ( ' . $gv_list->fields['email']; ?> ) </td>
                 <td class="dataTableContent" align="center"><?php echo $gv_list->fields['order_id']; ?></td>
                 <td class="dataTableContent" align="right"><?php echo $currencies->format($gv_list->fields['amount']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo zen_datetime_short($gv_list->fields['date_created']); ?></td>
