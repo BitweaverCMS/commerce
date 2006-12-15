@@ -116,8 +116,8 @@ class CommerceVoucher extends BitBase {
 		return $ret;
 	}
 
-	function customerSendCoupon( $pFromUser, $pToEmail, $pAmount ) {
-		global $gBitDb;
+	function customerSendCoupon( $pFromUser, $pRecipient, $pAmount ) {
+		global $gBitDb, $gBitSmarty, $gCommerceSystem, $currencies;
 		$ret = NULL;
 
 		$gBitDb->StartTrans();
@@ -128,7 +128,6 @@ class CommerceVoucher extends BitBase {
 		if ($new_amount < 0) {
 			$error = ERROR_ENTRY_AMOUNT_CHECK;
 		} else {
-
 			$gv_query = "UPDATE " . TABLE_COUPON_GV_CUSTOMER . "
 						 SET `amount` = ?
 						 WHERE `customer_id` = ?";
@@ -140,8 +139,41 @@ class CommerceVoucher extends BitBase {
 
 			$gv_query="insert into " . TABLE_COUPON_EMAIL_TRACK . "	(`coupon_id`, `customer_id_sent`, `emailed_to`, `date_sent`)
 						values ( ?, ?, ?, now())";
-			$gBitDb->query( $gv_query, array( $gvId, $pFromUser->mUserId, $pToEmail ) );
+			$gBitDb->query( $gv_query, array( $gvId, $pFromUser->mUserId, $pRecipient['email'] ) );
 			$ret = $code;
+
+			$gv_email_subject = tra( 'A gift from' ).' '.$pFromUser->getDisplayName().' '.tra( 'to' ).' '.$gCommerceSystem->getConfig( 'STORE_NAME' );
+
+			$gBitSmarty->assign( 'gvCode', $code );
+			$gBitSmarty->assign( 'gvSender', $pFromUser->getDisplayName() );
+			$gBitSmarty->assign( 'gvAmount', $currencies->format( $pAmount, false ) );
+			$gBitSmarty->assign( 'gvRedeemUrl', BITCOMMERCE_PKG_URI.'index.php?main_page=gv_redeem&gv_no='.$code );
+			if( !empty( $pRecipient['message'] ) ) {
+				$gBitSmarty->assign( 'gvMessage', $pRecipient['message'] );
+			}
+
+			$textMessage = $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_send_email_text.tpl' );
+			$htmlMessage = $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_send_email_html.tpl' );
+
+		// send the email
+			zen_mail('', $pRecipient['email'], $gv_email_subject, $textMessage, STORE_NAME, EMAIL_FROM, $htmlMessage,'gv_send');
+
+		// send additional emails
+			if (SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_STATUS == '1' and SEND_EXTRA_GV_CUSTOMER_EMAILS_TO !='') {
+				if ($_SESSION['customer_id']) {
+					$account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
+										from " . TABLE_CUSTOMERS . "
+										where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
+
+					$account = $gBitDb->Execute($account_query);
+				}
+				$extra_info=email_collect_extra_info($pRecipient['to_name'],$pRecipient['email'], $pFromUser->getDisplayName() , $pFromUser->getField( 'email' ) );
+				$html_msg['EXTRA_INFO'] = $gCommerceSystem->getConfig('TEXT_GV_NAME').' Code: '.$code.'<br/>'.$extra_info['HTML'];
+				zen_mail('', SEND_EXTRA_GV_CUSTOMER_EMAILS_TO, tra( '[GV CUSTOMER SENT]' ). ' ' . $gv_email_subject,
+					$gCommerceSystem->getConfig('TEXT_GV_NAME').' Code: '.$code."\n".$gv_email . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg,'gv_send_extra');
+			}
+
+
 		}
 		$gBitDb->CompleteTrans();
 		return $ret;

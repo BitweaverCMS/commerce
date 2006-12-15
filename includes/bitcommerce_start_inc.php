@@ -82,6 +82,7 @@
 	// Load db classes
 	global $gCommerceSystem, $gBitDb, $gBitSmarty;
 	$gCommerceSystem = new CommerceSystem();
+	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
 	$db = &$gBitDb;
 
   // set the language

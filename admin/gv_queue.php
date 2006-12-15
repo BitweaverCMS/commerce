@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.11 2005/11/03 21:17:38 spiderr Exp $
+//  $Id: gv_queue.php,v 1.12 2006/12/15 19:17:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -49,73 +49,28 @@
   }
 // eof: find gv for a particular order and set page
 
-  if ($_GET['action'] == 'confirmrelease' && isset($_GET['gid'])) {
-    $gv_result = $db->Execute("select release_flag
-                               from " . TABLE_COUPON_GV_QUEUE . "
-                               where unique_id='" . $_GET['gid'] . "'");
+	if ($_GET['action'] == 'confirmrelease' && BitBase::verifyId( $_GET['gid'] ) ) {
+		$gv = $db->getRow("select release_flag from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) );
 
-    if ($gv_result->fields['release_flag'] == 'N') {
-      $gv_resulta = $db->Execute("select customer_id, amount, order_id
-                                  from " . TABLE_COUPON_GV_QUEUE . "
-                                  where unique_id='" . $_GET['gid'] . "'");
+		if( $gv['release_flag'] == 'N' && ($gv = $db->getRow( "select customer_id, amount, order_id from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) )) ) {
+			$fromUser = new BitUser( $gv['customer_id'] );
+			$fromUser->load();
 
-      if ($gv_resulta->RecordCount() > 0) {
-      $gv_amount = $gv_resulta->fields['amount'];
+			if( $couponCode = CommerceVoucher::customerSendCoupon( $fromUser, array( 'email'=>$fromUser->getField( 'email' ), 'to_name'=>$fromUser->getDisplayName() ), $gv['amount'] ) ) {
 
-	// Begin composing email content
-//      //Let's build a message object using the email class
-      $mail = $db->Execute("select `customers_firstname`, `customers_lastname`, `customers_email_address`
-                           from " . TABLE_CUSTOMERS . "
-                           where `customers_id` = '" . $gv_resulta->fields['customer_id'] . "'");
+				$gBitSmarty->assign( 'gvAmount', $currencies->format( $gv['amount'] ) );
 
-      $message  = TEXT_REDEEM_GV_MESSAGE_HEADER . "\n" . HTTP_CATALOG_SERVER . DIR_WS_CATALOG . "\n\n" . TEXT_REDEEM_GV_MESSAGE_RELEASED;
-      $message .= sprintf(TEXT_REDEEM_GV_MESSAGE_AMOUNT, $currencies->format($gv_amount)) . "\n\n";
-      $message .= TEXT_REDEEM_GV_MESSAGE_THANKS . "\n" . STORE_OWNER . "\n\n" . HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
-      $message .= TEXT_REDEEM_GV_MESSAGE_BODY;
-      $message .= TEXT_REDEEM_GV_MESSAGE_FOOTER;
-	  $message .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
+				//send the message
+				$textMessage = $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_purchase_email_text.tpl' );
+				$htmlMessage = $gBitSmarty->fetch( 'bitpackage:bitcommerce/gv_purchase_email_html.tpl' );
 
-      $html_msg['EMAIL_FIRST_NAME'] = $mail->fields['customers_firstname'];
-      $html_msg['EMAIL_LAST_NAME']  = $mail->fields['customers_lastname'];
-      $html_msg['GV_NOTICE_HEADER']  = TEXT_REDEEM_GV_MESSAGE_HEADER;
-      $html_msg['GV_NOTICE_RELEASED']  = TEXT_REDEEM_GV_MESSAGE_RELEASED;
-      $html_msg['GV_NOTICE_AMOUNT_REDEEM'] = sprintf(TEXT_REDEEM_GV_MESSAGE_AMOUNT, '<strong>' . $currencies->format($gv_amount) . '</strong>');
-      $html_msg['GV_NOTICE_VALUE'] = $currencies->format($gv_amount);
-      $html_msg['GV_NOTICE_THANKS'] = TEXT_REDEEM_GV_MESSAGE_THANKS;
-      $html_msg['TEXT_REDEEM_GV_MESSAGE_BODY'] = TEXT_REDEEM_GV_MESSAGE_BODY;
-      $html_msg['TEXT_REDEEM_GV_MESSAGE_FOOTER'] = TEXT_REDEEM_GV_MESSAGE_FOOTER;
+				zen_mail( $fromUser->getDisplayName(), $fromUser->getField('email'), TEXT_REDEEM_GV_SUBJECT . TEXT_REDEEM_GV_SUBJECT_ORDER . $gv['order_id'] , $textMessage, STORE_NAME, EMAIL_FROM, $htmlMessage, 'gv_queue');
 
-//send the message
-      	zen_mail($mail->fields['customers_firstname'] . ' ' . $mail->fields['customers_lastname'], $mail->fields['customers_email_address'], TEXT_REDEEM_GV_SUBJECT . TEXT_REDEEM_GV_SUBJECT_ORDER . $gv_resulta->fields['order_id'] , $message, STORE_NAME, EMAIL_FROM, $html_msg, 'gv_queue');
-
-
-
-      $gv_amount=$gv_resulta->fields['amount'];
-      $gv_result=$db->Execute("select `amount`
-                               from " . TABLE_COUPON_GV_CUSTOMER . "
-                               where `customer_id`='" . $gv_resulta->fields['customer_id'] . "'");
-
-      $customer_gv=false;
-      $total_gv_amount=0;
-      if ($gv_result->RecordCount() > 0) {
-        $total_gv_amount=$gv_result->fields['amount'];
-        $customer_gv=true;
+				$db->Execute("update " . TABLE_COUPON_GV_QUEUE . "
+						  set `release_flag`= 'Y'
+						  where `unique_id`='" . $_GET['gid'] . "'");
+			}
       }
-      $total_gv_amount=$total_gv_amount+$gv_amount;
-      if ($customer_gv) {
-        $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . "
-                      set `amount`='" . $total_gv_amount . "'
-                      where `customer_id`='" . $gv_resulta->fields['customer_id'] . "'");
-      } else {
-        $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . "
-                    (`customer_id`, `amount`)
-                    values ('" . $gv_resulta->fields['customer_id']. "', '" . $total_gv_amount . "')");
-      }
-        $db->Execute("update " . TABLE_COUPON_GV_QUEUE . "
-                      set `release_flag`= 'Y'
-                      where `unique_id`='" . $_GET['gid'] . "'");
-      }
-    }
   }
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -170,9 +125,12 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $gv_query_raw = "select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, " . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')" . " order by gv.`order_id`, gv.`unique_id`";
-  $gv_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $gv_query_raw, $gv_query_numrows);
-  $gv_list = $db->Execute($gv_query_raw);
+  $gv_query_raw =  "SELECT co.`billing_name`, uu.`real_name`, uu.`login`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` 
+					FROM " . TABLE_COUPON_GV_QUEUE . " gv 
+						INNER JOIN " . TABLE_ORDERS . " co ON(gv.`order_id`=co.`orders_id`) 
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (gv.`customer_id`=uu.`user_id`) 
+					WHERE gv.`release_flag` = 'N' ORDER BY gv.`order_id`, gv.`unique_id`";
+  $gv_list = $db->query($gv_query_raw, array(), $gv_query_numrows, ((int)($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS) );
   while (!$gv_list->EOF) {
     if (((!$_GET['gid']) || (@$_GET['gid'] == $gv_list->fields['unique_id'])) && (!$gInfo)) {
       $gInfo = new objectInfo($gv_list->fields);
@@ -183,7 +141,7 @@
       echo '              <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin('gv_queue.php', zen_get_all_get_params(array('gid', 'action')) . 'gid=' . $gv_list->fields['unique_id']) . '\'">' . "\n";
     }
 ?>
-                <td class="dataTableContent"><?php echo $gv_list->fields['customers_firstname'] . ' ' . $gv_list->fields['customers_lastname']; ?></td>
+                <td class="dataTableContent"><?php echo $gv_list->fields['billing_name'] . ' ( ' . $gv_list->fields['login']; ?> ) </td>
                 <td class="dataTableContent" align="center"><?php echo $gv_list->fields['order_id']; ?></td>
                 <td class="dataTableContent" align="right"><?php echo $currencies->format($gv_list->fields['amount']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo zen_datetime_short($gv_list->fields['date_created']); ?></td>
@@ -192,6 +150,7 @@
 <?php
     $gv_list->MoveNext();
   }
+/*
 ?>
               <tr>
                 <td colspan="5"><table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -201,8 +160,12 @@
                   </tr>
                 </table></td>
               </tr>
+*/
+?>
             </table></td>
 <?php
+
+
   $heading = array();
   $contents = array();
   switch ($_GET['action']) {
