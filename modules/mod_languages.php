@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_languages.php,v 1.5 2005/12/05 17:48:51 squareing Exp $
+// $Id: mod_languages.php,v 1.6 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $lng;
+	global $gBitDb, $gBitProduct, $lng;
 
 	$show_languages= false;
 	if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {

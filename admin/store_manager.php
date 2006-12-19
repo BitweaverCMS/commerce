@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.11 2005/10/31 16:19:58 lsces Exp $
+//  $Id: store_manager.php,v 1.12 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,7 +39,7 @@
 
 // update all products in catalog
     case ('update_all_products_attributes_sort_order'):
-      $all_products_attributes= $db->Execute("select p.`products_id`, pa.products_attributes_id from " .
+      $all_products_attributes= $gBitDb->Execute("select p.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS . " p, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
       where p.`products_id`= pa.`products_id`"
@@ -58,7 +58,7 @@
     case ('update_all_products_price_sorter'):
     // reset products_price_sorter for searches etc.
     $sql = "select `products_id` from " . TABLE_PRODUCTS;
-    $update_prices = $db->Execute($sql);
+    $update_prices = $gBitDb->Execute($sql);
 
     while (!$update_prices->EOF) {
       zen_update_products_price_sorter($update_prices->fields['products_id']);
@@ -72,7 +72,7 @@
     case ('update_all_products_viewed'):
     // reset products_viewed to 0
     $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . " set `products_viewed` = '0'";
-    $update_viewed = $db->Execute($sql);
+    $update_viewed = $gBitDb->Execute($sql);
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_VIEWED, 'success');
     $action='';
@@ -82,7 +82,7 @@
     case ('update_all_products_ordered'):
     // reset products_ordered to 0
     $sql = "update " . TABLE_PRODUCTS . " set `products_ordered` = '0'";
-    $update_viewed = $db->Execute($sql);
+    $update_viewed = $gBitDb->Execute($sql);
 
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_ORDERED, 'success');
     $action='';
@@ -92,7 +92,7 @@
     case ('update_counter'):
     // reset products_viewed to 0
     $sql = "update " . TABLE_COUNTER . " set `counter` = '" . $_POST['new_counter'] . "'";
-    $update_counter = $db->Execute($sql);
+    $update_counter = $gBitDb->Execute($sql);
 
     $messageStack->add_session(SUCCESS_UPDATE_COUNTER . $_POST['new_counter'], 'success');
     $action='';
@@ -103,14 +103,14 @@
     // reset products master categories ID
 
     $sql = "select `products_id` from " . TABLE_PRODUCTS;
-    $check_products = $db->Execute($sql);
+    $check_products = $gBitDb->Execute($sql);
     while (!$check_products->EOF) {
 
       $sql = "select `products_id`, `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` ='" . $check_products->fields['products_id'] . "'";
-      $check_category = $db->Execute($sql);
+      $check_category = $gBitDb->Execute($sql);
 
       $sql = "update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $check_category->fields['categories_id'] . "' where `products_id` ='" . $check_products->fields['products_id'] . "'";
-      $update_viewed = $db->Execute($sql);
+      $update_viewed = $gBitDb->Execute($sql);
 
       $check_products->MoveNext();
     }
@@ -124,12 +124,12 @@
       $old_orders_id = zen_db_prepare_input($_POST['old_orders_id']);
       $new_orders_id = zen_db_prepare_input($_POST['new_orders_id']);
 
-      $db->Execute("update " . TABLE_ORDERS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
-      $db->Execute("update " . TABLE_ORDERS_TOTAL . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS_PRODUCTS . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS_STATUS_HISTORY . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
+      $gBitDb->Execute("update " . TABLE_ORDERS_TOTAL . " set `orders_id` ='" . $new_orders_id . "' where `orders_id`='" . $old_orders_id . "'");
     break;
 
     case ('locate_configuration'):
@@ -268,9 +268,9 @@
       $found = 'false';
       $language_files_group = $_POST['language_files'];
 
-      $check_configure = $db->Execute("select * from " . TABLE_CONFIGURATION . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
+      $check_configure = $gBitDb->Execute("select * from " . TABLE_CONFIGURATION . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
       if ($check_configure->RecordCount() < 1) {
-        $check_configure = $db->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
+        $check_configure = $gBitDb->Execute("select * from " . TABLE_PRODUCT_TYPE_LAYOUT . " where `configuration_key`='" . $_POST['configuration_key'] . "'");
         if ($check_configure->RecordCount() < 1) {
 
         } else {
@@ -360,9 +360,9 @@ if ($show_configuration_info == 'true') {
           </tr>
 <?php
   if ($show_products_type_layout == 'true') {
-    $check_configure_group = $db->Execute("select * from " . TABLE_PRODUCT_TYPES . " where `type_id`='" . $check_configure->fields['product_type_id'] . "'");
+    $check_configure_group = $gBitDb->Execute("select * from " . TABLE_PRODUCT_TYPES . " where `type_id`='" . $check_configure->fields['product_type_id'] . "'");
   } else {
-    $check_configure_group = $db->Execute("select * from " . TABLE_CONFIGURATION_GROUP . " where configuration_group_id='" . $check_configure->fields['configuration_group_id'] . "'");
+    $check_configure_group = $gBitDb->Execute("select * from " . TABLE_CONFIGURATION_GROUP . " where configuration_group_id='" . $check_configure->fields['configuration_group_id'] . "'");
   }
 ?>
 <?php

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker.php,v 1.10 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: salemaker.php,v 1.11 2006/12/19 00:11:29 spiderr Exp $
 //
 define('AUTOCHECK', 'False');
 
@@ -40,10 +40,10 @@ define('AUTOCHECK', 'False');
     switch ($action) {
       case 'setflag':
         $salemaker_data_array = array('sale_status' => zen_db_prepare_input($_GET['flag']),
-	                                  'sale_date_last_modified' => $db->NOW(),
-	                                  'sale_date_status_change' => $db->NOW());
+	                                  'sale_date_last_modified' => $gBitDb->NOW(),
+	                                  'sale_date_status_change' => $gBitDb->NOW());
 
-        $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_data_array, 'update', "sale_id = '" . zen_db_prepare_input($_GET['sID']) . "'");
+        $gBitDb->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_data_array, 'update', "sale_id = '" . zen_db_prepare_input($_GET['sID']) . "'");
 
         // update prices for products in sale
         zen_update_salemaker_product_prices($_GET['sID']);
@@ -90,16 +90,16 @@ define('AUTOCHECK', 'False');
 
         if ($action == 'insert') {
           $salemaker_sales['sale_status'] = 0;
-          $salemaker_sales_data_array['sale_date_added'] = $db->NOW();
+          $salemaker_sales_data_array['sale_date_added'] = $gBitDb->NOW();
           $salemaker_sales_data_array['sale_date_last_modified'] = '0001-01-01';
           $salemaker_sales_data_array['sale_date_status_change'] = '0001-01-01';
-          $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
+          $gBitDb->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'insert');
 
           $_POST['sID'] = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' );
 
         } else {
-	        $salemaker_sales_data_array['sale_date_last_modified'] = $db->NOW();
-          $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'update', "sale_id = '" . zen_db_input($_POST['sID']) . "'");
+	        $salemaker_sales_data_array['sale_date_last_modified'] = $gBitDb->NOW();
+          $gBitDb->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales_data_array, 'update', "sale_id = '" . zen_db_input($_POST['sID']) . "'");
         }
 
         // update prices for products in sale
@@ -110,16 +110,16 @@ define('AUTOCHECK', 'False');
       case 'copyconfirm':
         $newname = zen_db_prepare_input($_POST['newname']);
         if (zen_not_null($newname)) {
-          $salemaker_sales = $db->Execute("select * from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . zen_db_input($_GET['sID']) . "'");
+          $salemaker_sales = $gBitDb->Execute("select * from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . zen_db_input($_GET['sID']) . "'");
           if ($salemaker_sales->RecordCount() > 0) {
             $salemaker_sales->fields['sale_id'] = 'null';
             $salemaker_sales->fields['sale_name'] = $newname;
             $salemaker_sales->fields['sale_status'] = 0;
-            $salemaker_sales->fields['sale_date_added'] = $db->NOW();
+            $salemaker_sales->fields['sale_date_added'] = $gBitDb->NOW();
             $salemaker_sales->fields['sale_date_last_modified'] = '0001-01-01';
             $salemaker_sales->fields['sale_date_status_change'] = '0001-01-01';
 
-            $db->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales, 'insert');
+            $gBitDb->associateInsert(TABLE_SALEMAKER_SALES, $salemaker_sales, 'insert');
 
             $sale_id = zen_db_insert_id( TABLE_SALEMAKER_SALES, 'sale_id' );
             // update prices for products in sale
@@ -133,12 +133,12 @@ define('AUTOCHECK', 'False');
   	    $sale_id = zen_db_prepare_input($_GET['sID']);
 
         // set sale off to update prices before removing
-        $db->Execute("update " . TABLE_SALEMAKER_SALES . " set sale_status=0 where sale_id='" . $sale_id . "'");
+        $gBitDb->Execute("update " . TABLE_SALEMAKER_SALES . " set sale_status=0 where sale_id='" . $sale_id . "'");
 
         // update prices for products in sale
         zen_update_salemaker_product_prices($sale_id);
 
-        $db->Execute("delete from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$sale_id . "'");
+        $gBitDb->Execute("delete from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$sale_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page']));
         break;
@@ -287,7 +287,7 @@ function SetCategories() {
     if ( ($action == 'edit') && ($_GET['sID']) ) {
 	  $form_action = 'update';
 
-      $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_categories_all`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$_GET['sID'] . "'");
+      $salemaker_sales = $gBitDb->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_categories_all`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . (int)$_GET['sID'] . "'");
 
       $sInfo = new objectInfo($salemaker_sales->fields);
     } else {
@@ -339,7 +339,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2"
     $categories_array = zen_get_category_tree('0','&nbsp;&nbsp;','0');
     $n = sizeof($categories_array);
     for($i = 0; $i < $n; $i++) {
-      $parents = $db->Execute("select `parent_id` from " . TABLE_CATEGORIES . " where `categories_id` = '" . $categories_array[$i]['id'] . "' ");
+      $parents = $gBitDb->Execute("select `parent_id` from " . TABLE_CATEGORIES . " where `categories_id` = '" . $categories_array[$i]['id'] . "' ");
       $categories_array[$i]['parent_id'] = $parents->fields['parent_id'];
       $categories_array[$i]['categories_id'] = $categories_array[$i]['id'];
       $categories_array[$i]['path'] = $categories_array[$i]['categories_id'];
@@ -364,7 +364,7 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2"
       $selected = false;
     }
 
-	$prev_sales = $db->Execute("select sale_categories_all from " . TABLE_SALEMAKER_SALES);
+	$prev_sales = $gBitDb->Execute("select sale_categories_all from " . TABLE_SALEMAKER_SALES);
 	while (!$prev_sales->EOF) {
 	  $prev_categories = explode(',', $prev_sales->fields['sale_categories_all']);
 	  while(list($key,$value) = each($prev_categories)) {
@@ -456,7 +456,7 @@ echo '</table></tr>';
 <?php
     $salemaker_sales_query_raw = "select `sale_id`, `sale_status`, `sale_name`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_categories_all`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " order by `sale_name`";
     $salemaker_sales_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $salemaker_sales_query_raw, $salemaker_sales_query_numrows);
-    $salemaker_sales = $db->Execute($salemaker_sales_query_raw);
+    $salemaker_sales = $gBitDb->Execute($salemaker_sales_query_raw);
     while (!$salemaker_sales->EOF) {
       if ((!isset($_GET['sID']) || (isset($_GET['sID']) && ($_GET['sID'] == $salemaker_sales->fields['sale_id']))) && !isset($sInfo)) {
         $sInfo_array = $salemaker_sales->fields;

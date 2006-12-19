@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.11 2006/11/01 19:15:29 lsces Exp $
+//  $Id: configuration.php,v 1.12 2006/12/19 00:11:28 spiderr Exp $
 //
 
   define('HEADING_TITLE', 'Configuration Settings');
@@ -37,24 +37,24 @@
         $configuration_value = zen_db_prepare_input($_POST['configuration_value']);
         $cID = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+        $gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
 					SET `configuration_value` = '" . zen_db_input($configuration_value) . "',
-					`last_modified` = ".$db->qtNOW()." WHERE `configuration_id` = '" . (int)$cID . "'");
+					`last_modified` = ".$gBitDb->qtNOW()." WHERE `configuration_id` = '" . (int)$cID . "'");
 		$configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` as `cfgvalue`
                           FROM ' . TABLE_CONFIGURATION;
 
-        $configuration = $db->Execute($configuration_query);
+        $configuration = $gBitDb->Execute($configuration_query);
 
         // set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
         if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
-        $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+        $gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
                       SET `configuration_value` = 'false', `last_modified` = '" . NOW . "'
                       WHERE `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
         $configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
                           FROM ' . TABLE_CONFIGURATION;
 
-        $configuration = $db->Execute($configuration_query);
+        $configuration = $gBitDb->Execute($configuration_query);
 
         zen_redirect(zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cID));
         break;
@@ -63,7 +63,7 @@
 
   $gID = (isset($_GET['gID'])) ? $_GET['gID'] : 1;
   $_GET['gID'] = $gID;
-  $cfg_group = $db->Execute("SELECT `configuration_group_title`
+  $cfg_group = $gBitDb->Execute("SELECT `configuration_group_title`
                              FROM " . TABLE_CONFIGURATION_GROUP . "
                              WHERE `configuration_group_id` = '" . (int)$gID . "'");
 
@@ -135,7 +135,7 @@ if ($gID == 7) {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $configuration = $db->query("SELECT `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
+  $configuration = $gBitDb->query("SELECT `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
                                         `use_function` FROM " . TABLE_CONFIGURATION . "
                                         WHERE `configuration_group_id` = ?
                                         ORDER BY `sort_order`", array( $gID ) );
@@ -157,7 +157,7 @@ if ($gID == 7) {
     }
 
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $configuration->fields['configuration_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
-      $cfg_extra = $db->Execute("SELECT `configuration_key`, `configuration_description`, `date_added`,
+      $cfg_extra = $gBitDb->Execute("SELECT `configuration_key`, `configuration_description`, `date_added`,
                                         `last_modified`, `use_function`, `set_function`
                                  FROM " . TABLE_CONFIGURATION . "
                                  WHERE `configuration_id` = '" . (int)$configuration->fields['configuration_id'] . "'");

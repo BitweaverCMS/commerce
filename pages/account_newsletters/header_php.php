@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2006/01/15 00:03:24 lsces Exp $
+// $Id: header_php.php,v 1.6 2006/12/19 00:11:35 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -30,7 +30,7 @@
                        from   " . TABLE_CUSTOMERS . "
                        where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-  $newsletter = $db->Execute($newsletter_query);
+  $newsletter = $gBitDb->Execute($newsletter_query);
 
   if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
     if (isset($_POST['newsletter_general']) && is_numeric($_POST['newsletter_general'])) {
@@ -46,7 +46,7 @@
               set    `customers_newsletter` = '" . (int)$newsletter_general . "'
               where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
     }
 
     $messageStack->add_session('account', SUCCESS_NEWSLETTER_UPDATED, 'success');

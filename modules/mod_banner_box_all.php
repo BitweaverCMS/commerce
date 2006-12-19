@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box_all.php,v 1.6 2006/02/05 21:36:08 spiderr Exp $
+// $Id: mod_banner_box_all.php,v 1.7 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
 // INSERT INTO configuration (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) VALUES ('Banner Display Group - Side Box banner_box_all', 'SHOW_BANNERS_GROUP_SET_ALL', 'BannersAll', 'The Banner Display Group may only be from one (1) Banner Group for the Banner All sidebox<br /><br />Default Group is BannersAll<br /><br />What Banner Group do you want to use in the Side Box - banner_box_all?<br />Leave blank for none', '19', '72', '', '', 'NOW');
 // ALTER TABLE `banners` ADD `banners_sort_order` INT( 11 ) DEFAULT '0' NOT NULL;
@@ -37,7 +37,7 @@
     }
 
 	$sql = "select banners_id from " . TABLE_BANNERS . " where status = '1' " . $new_banner_search . $my_banner_filter . " order by banners_sort_order";
-	if( $rs = $db->Execute($sql) ) {
+	if( $rs = $gBitDb->Execute($sql) ) {
 		$sideboxBannersAll = array();
 		// if no active banner in the specified banner group then the box will not show
 		// uses banners in the defined group $banner_box_group

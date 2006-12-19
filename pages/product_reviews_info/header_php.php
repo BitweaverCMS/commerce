@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.9 2005/12/20 17:13:07 gilesw Exp $
+// $Id: header_php.php,v 1.10 2006/12/19 00:11:38 spiderr Exp $
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 
@@ -32,7 +32,7 @@
                        and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
                        $review_status;
 
-    $reviews_count = $db->Execute($reviews_count_query);
+    $reviews_count = $gBitDb->Execute($reviews_count_query);
 
     $reviews_counter = $reviews_count->fields['count'];
 
@@ -47,7 +47,7 @@
                            and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
                            $review_status;
 
-    $review_info_check = $db->Execute($review_info_check_query);
+    $review_info_check = $gBitDb->Execute($review_info_check_query);
 
     if ($review_info_check->fields['total'] < 1) {
       zen_redirect(zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params(array('reviews_id'))));
@@ -60,7 +60,7 @@
           set reviews_read = reviews_read+1
           where reviews_id = '" . (int)$_GET['reviews_id'] . "'";
 
-  $db->Execute($sql);
+  $gBitDb->Execute($sql);
 
   $review_info_query = "select rd.reviews_text, r.reviews_rating, r.`reviews_id`, r.customers_name,
                           r.`date_added`, r.reviews_read, p.`products_id`, p.`products_price`,
@@ -76,7 +76,7 @@
                    and pd.`language_id` = '". (int)$_SESSION['languages_id'] . "'" .
                    $review_status;
 
-  $review_info = $db->Execute($review_info_query);
+  $review_info = $gBitDb->Execute($review_info_query);
 
   $products_price = CommerceProduct::getDisplayPrice($review_info->fields['products_id']);
 

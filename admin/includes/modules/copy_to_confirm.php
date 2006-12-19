@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.9 2006/11/01 19:15:30 lsces Exp $
+//  $Id: copy_to_confirm.php,v 1.10 2006/12/19 00:11:30 spiderr Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -28,12 +28,12 @@
 
           if ($_POST['copy_as'] == 'link') {
             if ($categories_id != $current_category_id) {
-              $check = $db->Execute("select count(*) as `total`
+              $check = $gBitDb->Execute("select count(*) as `total`
                                      from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                      where `products_id` = '" . (int)$products_id . "'
                                      and `categories_id` = '" . (int)$categories_id . "'");
               if ($check->fields['total'] < '1') {
-                $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
+                $gBitDb->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                           (`products_id`, `categories_id`)
                               values ('" . (int)$products_id . "', '" . (int)$categories_id . "')");
               }
@@ -42,7 +42,7 @@
             }
           } elseif ($_POST['copy_as'] == 'duplicate') {
             $old_products_id = (int)$products_id;
-            $product = $db->Execute("select `products_type`, `products_quantity`, `products_model`, `products_image`,
+            $product = $gBitDb->Execute("select `products_type`, `products_quantity`, `products_model`, `products_image`,
                                             `products_price`, `products_virtual`, `products_date_available`, `products_weight`,
                                             `products_tax_class_id`, `manufacturers_id`,
                                             `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
@@ -51,7 +51,7 @@
                                             `products_price_sorter`, `master_categories_id`
                                      from " . TABLE_PRODUCTS . "
                                      where `products_id` = '" . (int)$products_id . "'");
-            $db->Execute("insert into " . TABLE_PRODUCTS . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS . "
                                       (`products_type`, `products_quantity`, `products_model`, `products_image`,
                                        `products_price`, `products_virtual`, `products_date_added`, `products_date_available`,
                                        `products_weight`, `products_status`, `products_tax_class_id`,
@@ -67,7 +67,7 @@
                                   '" . zen_db_input($product->fields['products_image']) . "',
                                   '" . zen_db_input($product->fields['products_price']) . "',
                                   '" . zen_db_input($product->fields['products_virtual']) . "',
-                                  ".$db->qtNOW().",
+                                  ".$gBitDb->qtNOW().",
                                   '" . zen_db_input($product->fields['products_date_available']) . "',
                                   '" . (int)zen_db_input($product->fields['products_weight']) . "', '0',
                                   '" . (int)$product->fields['products_tax_class_id'] . "',
@@ -88,12 +88,12 @@
 
             $dup_products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
-            $description = $db->Execute("select `language_id`, `products_name`, `products_description`,
+            $description = $gBitDb->Execute("select `language_id`, `products_name`, `products_description`,
                                                              `products_url`
                                          from " . TABLE_PRODUCTS_DESCRIPTION . "
                                          where `products_id` = '" . (int)$products_id . "'");
             while (!$description->EOF) {
-              $db->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
+              $gBitDb->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
                                         (`products_id`, `language_id`, `products_name`, `products_description`,
                                          `products_url`, `products_viewed`)
                             values ('" . (int)$dup_products_id . "',
@@ -104,7 +104,7 @@
               $description->MoveNext();
             }
 
-            $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                       (`products_id`, `categories_id`)
                           values ('" . (int)$dup_products_id . "', '" . (int)$categories_id . "')");
             $products_id = $dup_products_id;

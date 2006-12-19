@@ -32,7 +32,7 @@
                         where `zone_country_id` = '" . (int)$country . "'
                         order by `zone_name`";
 
-        $zones_values = $db->Execute($zones_query);
+        $zones_values = $gBitDb->Execute($zones_query);
 
         while (!$zones_values->EOF) {
           $zones_array[] = array('id' =>$zones_values->fields['zone_name'], 'text' =>$zones_values->fields['zone_name']);

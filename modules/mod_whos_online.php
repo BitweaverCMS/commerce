@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whos_online.php,v 1.4 2005/10/06 21:01:49 spiderr Exp $
+// $Id: mod_whos_online.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
 // test if box should display
   $show_whos_online= false;
@@ -36,9 +36,9 @@
 // Set expiration time, default is 1200 secs (20 mins)
   $xx_mins_ago = (time() - 1200);
 
-  $db->Execute("delete from " . TABLE_WHOS_ONLINE . " where time_last_click < '" . $xx_mins_ago . "'");
+  $gBitDb->Execute("delete from " . TABLE_WHOS_ONLINE . " where time_last_click < '" . $xx_mins_ago . "'");
 
-  $whos_online_query = $db->Execute("select customer_id from " . TABLE_WHOS_ONLINE);
+  $whos_online_query = $gBitDb->Execute("select customer_id from " . TABLE_WHOS_ONLINE);
   $user_total = $whos_online_query->RecordCount();
   while (!$whos_online_query->EOF) {
     if (!$whos_online_query->fields['customer_id'] == 0) {

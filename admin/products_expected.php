@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_expected.php,v 1.8 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: products_expected.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
 //
   require('includes/application_top.php');
 
-  $db->Execute("update " . TABLE_PRODUCTS . "
+  $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                 set `products_date_available` = ''
-                where " . $db->mDb->sysTimeStamp . " > `products_date_available`");
+                where " . $gBitDb->mDb->sysTimeStamp . " > `products_date_available`");
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -78,7 +78,7 @@
 <?php
   $products_query_raw = "select pd.`products_id`, pd.`products_name`, p.`products_date_available` from " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS . " p where p.`products_id` = pd.`products_id` and p.`products_date_available` != '' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' order by p.`products_date_available` DESC";
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $products_query_raw, $products_query_numrows);
-  $products = $db->Execute($products_query_raw);
+  $products = $gBitDb->Execute($products_query_raw);
   while (!$products->EOF) {
     if ((!isset($_GET['pID']) || (isset($_GET['pID']) && ($_GET['pID'] == $products->fields['products_id']))) && !isset($pInfo)) {
       $pInfo = new objectInfo($products->fields);

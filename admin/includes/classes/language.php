@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: language.php,v 1.2 2005/08/24 02:48:58 lsces Exp $
+//  $Id: language.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
 
   class language {
     var $languages, $catalog_languages, $browser_languages, $language;
 
     function language($lng = '') {
-      global $db;
+      global $gBitDb;
       $this->languages = array('ar' => 'ar([-_][[:alpha:]]{2})?|arabic',
                                'bg' => 'bg|bulgarian',
                                'br' => 'pt[-_]br|brazilian portuguese',
@@ -64,7 +64,7 @@
                                'zh' => 'zh|chinese simplified');
 
       $this->catalog_languages = array();
-      $languages = $db->Execute("select languages_id, name, code, image, directory 
+      $languages = $gBitDb->Execute("select languages_id, name, code, image, directory 
                                  from " . TABLE_LANGUAGES . " 
                                  order by `sort_order`");
 

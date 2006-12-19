@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: easypopulate.php,v 1.1 2005/11/22 12:51:29 gilesw Exp $
+// $Id: easypopulate.php,v 1.2 2006/12/19 00:11:28 spiderr Exp $
 //
 
 //*******************************
@@ -2301,7 +2301,7 @@ if ((isset($_POST['localfile']) or $_GET['split']==2) or ((isset($_FILES['usrfl'
 					
 					if ($v_specials_price == '0') {
 						// delete of existing requested
-						$db->Execute("delete from " . TABLE_SPECIALS . "
+						$gBitDb->Execute("delete from " . TABLE_SPECIALS . "
 									 where products_id = '" . (int)$v_products_id . "'");
 						$specials_print .= sprintf(EASYPOPULATE_SPECIALS_DELETE, $v_products_model);
 						continue;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.2 2005/12/20 17:13:07 gilesw Exp $
+// $Id: specials.php,v 1.3 2006/12/19 00:11:39 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -49,7 +49,7 @@
 <?php
     $row = 0;
 	$offset = MAX_DISPLAY_SPECIAL_PRODUCTS * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-    $specials = $db->query($specials_split->sql_query, NULL, MAX_DISPLAY_SPECIAL_PRODUCTS, $offset );
+    $specials = $gBitDb->query($specials_split->sql_query, NULL, MAX_DISPLAY_SPECIAL_PRODUCTS, $offset );
     while (!$specials->EOF) {
       $row++;
 

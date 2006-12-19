@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_all.php,v 1.2 2005/10/31 23:46:33 lsces Exp $
+// $Id: products_all.php,v 1.3 2006/12/19 00:11:38 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -45,7 +45,7 @@
     // bof: multiple products
 
 // check how many rows
-    $check_products_all = $db->Execute($products_all_split->sql_query);
+    $check_products_all = $gBitDb->Execute($products_all_split->sql_query);
     $how_many = 0;
     while (!$check_products_all->EOF) {
       if (zen_has_product_attributes($check_products_all->fields['products_id'])) {

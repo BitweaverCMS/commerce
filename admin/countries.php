@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: countries.php,v 1.7 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: countries.php,v 1.8 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -32,7 +32,7 @@
         $countries_iso_code_3 = zen_db_prepare_input($_POST['countries_iso_code_3']);
         $address_format_id = zen_db_prepare_input($_POST['address_format_id']);
 
-        $db->Execute("insert into " . TABLE_COUNTRIES . "
+        $gBitDb->Execute("insert into " . TABLE_COUNTRIES . "
                     (`countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id`)
                     values ('" . zen_db_input($countries_name) . "',
                             '" . zen_db_input($countries_iso_code_2) . "',
@@ -48,7 +48,7 @@
         $countries_iso_code_3 = zen_db_prepare_input($_POST['countries_iso_code_3']);
         $address_format_id = zen_db_prepare_input($_POST['address_format_id']);
 
-        $db->Execute("update " . TABLE_COUNTRIES . "
+        $gBitDb->Execute("update " . TABLE_COUNTRIES . "
                       set `countries_name` = '" . zen_db_input($countries_name) . "',
                           `countries_iso_code_2` = '" . zen_db_input($countries_iso_code_2) . "',
                           `countries_iso_code_3` = '" . zen_db_input($countries_iso_code_3) . "',
@@ -66,7 +66,7 @@
         }
         $countries_id = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("delete from " . TABLE_COUNTRIES . "
+        $gBitDb->Execute("delete from " . TABLE_COUNTRIES . "
                       where `countries_id` = '" . (int)$countries_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_COUNTRIES, 'page=' . $_GET['page']));
@@ -129,7 +129,7 @@
 	$countries_query_raw = "select `countries_id`, `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id` from " . TABLE_COUNTRIES . " order by `countries_name`";
 	$countries_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $countries_query_raw, $countries_query_numrows);
 	$offset = (isset($_GET['page']) ? (($_GET['page']-1) * MAX_DISPLAY_SEARCH_RESULTS) : 0);
-	$countries = $db->query( $countries_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS, $offset );
+	$countries = $gBitDb->query( $countries_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS, $offset );
 	while (!$countries->EOF) {
 		if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $countries->fields['countries_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 			$cInfo = new objectInfo($countries->fields);

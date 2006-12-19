@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_popup.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: salemaker_popup.php,v 1.7 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require("includes/application_top.php");
@@ -52,7 +52,7 @@
 <?php
 //print_r($_GET);
   $salemaker_sales_query_raw = "select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " order by `sale_name`";
-  $salemaker_sales = $db->Execute($salemaker_sales_query_raw);
+  $salemaker_sales = $gBitDb->Execute($salemaker_sales_query_raw);
   while (!$salemaker_sales->EOF) {
     $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
 	while (list($key,$value) = each($categories)) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.12 2005/10/31 23:46:32 lsces Exp $
+// $Id: main_template_vars.php,v 1.13 2006/12/19 00:11:37 spiderr Exp $
 //
 //die($category_depth);
 //die($_REQUEST['music_genre_id']);
@@ -59,7 +59,7 @@
             and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
             and        c.`categories_status`= '1'";
 
-    $category = $db->Execute($sql);
+    $category = $gBitDb->Execute($sql);
 
     if (isset($cPath) && strpos($cPath, '_')) {
 // check to see if there are deeper categories within the current category
@@ -73,7 +73,7 @@
                 and        cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                 and        c.`categories_status`= '1'";
 
-        $categories = $db->Execute($sql);
+        $categories = $gBitDb->Execute($sql);
 
         if ($categories->fields['total'] < 1) {
         // do nothing, go through the loop
@@ -98,7 +98,7 @@
                            and        c.`categories_status`= '1'
                            order by   `sort_order`, cd.`categories_name`";
     }
-    $categories = $db->Execute($categories_query);
+    $categories = $gBitDb->Execute($categories_query);
     $number_of_categories = $categories->RecordCount();
     $new_products_category_id = $current_category_id;
 
@@ -186,7 +186,7 @@ if (isset($_REQUEST['typefilter'])) {
             where `categories_id` = '" . $current_category_id . "'
             and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $categories_description_lookup= $db->Execute($sql);
+    $categories_description_lookup= $gBitDb->Execute($sql);
 
     $current_categories_description = $categories_description_lookup->fields['categories_description'];
 	}

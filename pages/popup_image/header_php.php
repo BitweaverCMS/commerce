@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/08/24 15:31:17 spiderr Exp $
+// $Id: header_php.php,v 1.6 2006/12/19 00:11:37 spiderr Exp $
 //
   $_SESSION['navigation']->remove_current_page();
 /*
-  $products_values = $db->Execute("select pd.`products_name`, p.`products_image`
+  $products_values = $gBitDb->Execute("select pd.`products_name`, p.`products_image`
                                   from " . TABLE_PRODUCTS . " p
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                   on p.`products_id` = pd.`products_id`

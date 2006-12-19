@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.12 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.13 2006/12/19 00:11:36 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {
@@ -66,12 +66,12 @@
   $breadcrumb->add(NAVBAR_TITLE_2);
 
 	global $zv_orders_id;
-	$zv_orders_id = $db->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
+	$zv_orders_id = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
 
   $global_query = "select `global_product_notifications` from " . TABLE_CUSTOMERS_INFO . "
                    where `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-  $global = $db->Execute($global_query);
+  $global = $gBitDb->Execute($global_query);
 
   if ($global->fields['global_product_notifications'] != '1') {
 
@@ -81,7 +81,7 @@
                        where `orders_id` = ?
                        order by `products_name`";
 
-    $products = $db->query($products_query, array($zv_orders_id) );
+    $products = $gBitDb->query($products_query, array($zv_orders_id) );
 
     while (!$products->EOF) {
       $products_array[] = array('id' => $products->fields['products_id'],

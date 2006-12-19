@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.8 2006/11/14 05:21:59 spiderr Exp $
+// $Id: ot_coupon.php,v 1.9 2006/12/19 00:11:33 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -43,7 +43,7 @@
     }
 
   function process() {
-    global $order, $currencies, $db;
+    global $order, $currencies, $gBitDb;
     if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
 		$this->deduction = $od_amount['total'];
 		if ($od_amount['total'] > 0) {
@@ -56,7 +56,7 @@
 		  }
 		  if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
 		  $sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
-		  $zq_coupon_code = $db->Execute($sql);
+		  $zq_coupon_code = $gBitDb->Execute($sql);
 		  $this->coupon_code = $zq_coupon_code->fields['coupon_code'];
 		  $order->info['total'] = $order->info['total'] - $od_amount['total'];
 		  $this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
@@ -64,7 +64,7 @@
 						 'value' => $od_amount['total']);
 		}
 	}
-$db->debug( 0 );
+$gBitDb->debug( 0 );
 //die;
   }
 
@@ -101,7 +101,7 @@ $db->debug( 0 );
 
 
 	function collect_posts() {
-		global $db, $currencies;
+		global $gBitDb, $currencies;
 		if ( !empty( $_POST['dc_redeem_code'] ) ) {
 			$coupon = new CommerceVoucher();
 			if ( !$coupon->load( $_POST['dc_redeem_code'] ) ) {
@@ -151,10 +151,10 @@ $db->debug( 0 );
 	}
 
 	function apply_credit() {
-		global $db, $insert_id;
+		global $gBitDb, $insert_id;
 		$cc_id = $_SESSION['cc_id'];
 		if ($this->deduction !=0) {
-			$db->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . "
+			$gBitDb->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . "
 									(coupon_id, redeem_date, redeem_ip, customer_id, order_id)
 						values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
 		}
@@ -162,7 +162,7 @@ $db->debug( 0 );
 	}
 
   function calculate_deductions($order_total) {
-    global $db, $order;
+    global $gBitDb, $order;
     $tax_address = zen_get_tax_locations();
     $od_amount['total'] = 0;
     $od_amount['tax'] = 0;
@@ -203,7 +203,7 @@ $db->debug( 0 );
                       $products = $_SESSION['cart']->get_products();
                       for ($i=0; $i<sizeof($products); $i++) {
                         $t_prid = zen_get_prid($products[$i]['id']);
-                        $cc_result = $db->Execute("select `products_tax_class_id`
+                        $cc_result = $gBitDb->Execute("select `products_tax_class_id`
                                                    from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
 
                         if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
@@ -232,7 +232,7 @@ $db->debug( 0 );
                       $products = $_SESSION['cart']->get_products();
                       for ($i=0; $i<sizeof($products); $i++) {
                         $t_prid = zen_get_prid($products[$i]['id']);
-                        $cc_result = $db->Execute("select `products_tax_class_id`
+                        $cc_result = $gBitDb->Execute("select `products_tax_class_id`
                                                    from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
 
                         if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
@@ -275,18 +275,18 @@ $db->debug( 0 );
   }
 
   function get_product_price($product_id) {
-    global $db, $order;
+    global $gBitDb, $order;
     $products_id = zen_get_prid($product_id);
  // products price
     $qty = $_SESSION['cart']->contents[$product_id]['quantity'];
-    $product = $db->Execute("select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`
+    $product = $gBitDb->Execute("select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`
                              from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id . "'");
 
     if ($product->RecordCount() > 0) {
       $prid = $product->fields['products_id'];
       $products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
       $products_price = $product->fields['products_price'];
-      $specials = $db->Execute("select `specials_new_products_price`
+      $specials = $gBitDb->Execute("select `specials_new_products_price`
                                 from " . TABLE_SPECIALS . " where `products_id` = '" . $prid . "' and `status` = '1'");
 
       if ($specials->RecordCount() > 0 ) {
@@ -302,7 +302,7 @@ $db->debug( 0 );
       if (isset($_SESSION['cart']->contents[$product_id]['attributes'])) {
         reset($_SESSION['cart']->contents[$product_id]['attributes']);
         while (list($option, $value) = each($_SESSION['cart']->contents[$product_id]['attributes'])) {
-          $attribute_price = $db->Execute("select `options_values_price`, `price_prefix`
+          $attribute_price = $gBitDb->Execute("select `options_values_price`, `price_prefix`
                                            from " . TABLE_PRODUCTS_ATTRIBUTES . "
                                            where `products_id` = '" . $prid . "'
                                            and `options_id` = '" . $option . "'
@@ -328,9 +328,9 @@ $db->debug( 0 );
   }
 
     function check() {
-      global $db;
+      global $gBitDb;
       if (!isset($this->check)) {
-        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_COUPON_STATUS'");
+        $check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_COUPON_STATUS'");
         $this->check = $check_query->RecordCount();
       }
 
@@ -342,17 +342,17 @@ $db->debug( 0 );
     }
 
     function install() {
-      global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_COUPON_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', 'NOW')");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_COUPON_SORT_ORDER', '280', 'Sort order of display.', '6', '2', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'false', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', 'NOW')");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', 'NOW')");
+      global $gBitDb;
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_COUPON_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', 'NOW')");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_COUPON_SORT_ORDER', '280', 'Sort order of display.', '6', '2', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'false', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', 'NOW')");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', 'NOW')");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', 'NOW')");
     }
 
     function remove() {
-      global $db;
+      global $gBitDb;
       $keys = '';
       $keys_array = $this->keys();
       for ($i=0; $i<sizeof($keys_array); $i++) {
@@ -360,7 +360,7 @@ $db->debug( 0 );
       }
       $keys = substr($keys, 0, -1);
 
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in (" . $keys . ")");
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in (" . $keys . ")");
     }
   }
 ?>

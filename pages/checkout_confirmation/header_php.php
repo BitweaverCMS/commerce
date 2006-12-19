@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -109,14 +109,14 @@
                  from " . TABLE_COUPONS . "
                  where `coupon_id` = '" . $_SESSION['cc_id'] . "'";
 
-    $discount_coupon = $db->Execute($discount_coupon_query);
+    $discount_coupon = $gBitDb->Execute($discount_coupon_query);
 
     $customers_referral_query = "select `customers_referral` from " . TABLE_CUSTOMERS . " where `customers_id`='" . $_SESSION['customer_id'] . "'";
-    $customers_referral = $db->Execute($customers_referral_query);
+    $customers_referral = $gBitDb->Execute($customers_referral_query);
 
 // only use discount coupon if set by coupon
     if ($customers_referral->fields['customers_referral'] == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
-      $db->Execute("update " . TABLE_CUSTOMERS . " set `customers_referral` ='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id` ='" . $_SESSION['customer_id'] . "'");
+      $gBitDb->Execute("update " . TABLE_CUSTOMERS . " set `customers_referral` ='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id` ='" . $_SESSION['customer_id'] . "'");
     } else {
       // do not update referral was added before
     }

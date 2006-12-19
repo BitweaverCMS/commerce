@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturer_info.php,v 1.4 2005/10/31 23:46:33 lsces Exp $
+// $Id: mod_manufacturer_info.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
   if (isset($_GET['products_id'])) {
     $manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.`manufacturers_name`, m.`manufacturers_image`,
@@ -31,7 +31,7 @@
                            where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                            and p.`manufacturers_id` = m.`manufacturers_id`";
 
-    $manufacturer_info_sidebox = $db->Execute($manufacturer_info_sidebox_query);
+    $manufacturer_info_sidebox = $gBitDb->Execute($manufacturer_info_sidebox_query);
 
 	if ($manufacturer_info_sidebox->RecordCount() > 0) {
 		$sideboxManufacturerInfo = $manufacturer_info_sidebox->fields;

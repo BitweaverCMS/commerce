@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: categories_tabs.php,v 1.2 2005/08/24 02:52:18 lsces Exp $
+// $Id: categories_tabs.php,v 1.3 2006/12/19 00:11:33 spiderr Exp $
 //
 
   $order_by = " order by c.`sort_order`, cd.`categories_name` ";
@@ -26,7 +26,7 @@
                           TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                           where c.`categories_id`=cd.`categories_id` and c.`parent_id`= '0' and cd.`language_id`='" . $_SESSION['languages_id'] . "' and c.`categories_status`='1'" .
                           $order_by;
-  $categories_tab = $db->Execute($categories_tab_query);
+  $categories_tab = $gBitDb->Execute($categories_tab_query);
 
 
   while (!$categories_tab->EOF) {

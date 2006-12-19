@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.6 2005/10/31 22:53:09 lsces Exp $
+// $Id: main_template_vars_attributes.php,v 1.7 2006/12/19 00:11:36 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -30,7 +30,7 @@
             and      patrib.`options_id` = popt.`products_options_id`
             and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $pr_attr = $db->getOne($sql);
+    $pr_attr = $gBitDb->getOne($sql);
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
@@ -49,7 +49,7 @@
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
-      $products_options_names = $db->Execute($sql);
+      $products_options_names = $gBitDb->Execute($sql);
 
 // iii 030813 added: initialize $number_of_uploads
       $number_of_uploads = 0;
@@ -84,7 +84,7 @@
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
-        $products_options = $db->Execute($sql);
+        $products_options = $gBitDb->Execute($sql);
 
         $products_options_value_id = '';
         $products_options_details = '';

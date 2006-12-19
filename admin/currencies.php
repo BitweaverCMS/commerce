@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: currencies.php,v 1.18 2006/11/01 19:15:29 lsces Exp $
+//  $Id: currencies.php,v 1.19 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -51,14 +51,14 @@
                                 'currency_value' => $currency_value);
 
         if ($action == 'insert') {
-          $db->associateInsert(TABLE_CURRENCIES, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_CURRENCIES, $sql_data_array);
           $currency_id = zen_db_insert_id( TABLE_CURRENCIES, 'currencies_id' );
         } elseif ($action == 'save') {
-          $db->associateUpdate(TABLE_CURRENCIES, $sql_data_array, array( 'currencies_id'=> $currency_id ) );
+          $gBitDb->associateUpdate(TABLE_CURRENCIES, $sql_data_array, array( 'currencies_id'=> $currency_id ) );
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-          $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
                         SET `configuration_value` = '" . zen_db_input($code) . "'
                         WHERE `configuration_key` = 'DEFAULT_CURRENCY'");
         }
@@ -74,18 +74,18 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("SELECT `currencies_id`
+        $currency = $gBitDb->Execute("SELECT `currencies_id`
                                   FROM " . TABLE_CURRENCIES . "
                                   WHERE `code` = '" . DEFAULT_CURRENCY . "'");
 
 
         if ($currency->fields['currencies_id'] == $currencies_id) {
-          $db->Execute("UPDATE " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
                         SET `configuration_value` = ''
                         WHERE `configuration_key` = 'DEFAULT_CURRENCY'");
         }
 
-        $db->Execute("DELETE FROM " . TABLE_CURRENCIES . "
+        $gBitDb->Execute("DELETE FROM " . TABLE_CURRENCIES . "
                       WHERE `currencies_id` = '" . (int)$currencies_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
@@ -96,7 +96,7 @@
       case 'update':
         $server_used = CURRENCY_SERVER_PRIMARY;
 
-        $currency = $db->Execute("SELECT `currencies_id`, `code`, `title` FROM " . TABLE_CURRENCIES);
+        $currency = $gBitDb->Execute("SELECT `currencies_id`, `code`, `title` FROM " . TABLE_CURRENCIES);
         while (!$currency->EOF) {
           $quote_function = 'quote_' . CURRENCY_SERVER_PRIMARY . '_currency';
           $rate = $quote_function($currency->fields['code']);
@@ -111,8 +111,8 @@
           }
 
           if (zen_not_null($rate)) {
-            $db->Execute("UPDATE " . TABLE_CURRENCIES . "
-                          SET `currency_value` = '" . $rate . "', `last_updated` = ".$db->qtNOW()."
+            $gBitDb->Execute("UPDATE " . TABLE_CURRENCIES . "
+                          SET `currency_value` = '" . $rate . "', `last_updated` = ".$gBitDb->qtNOW()."
                           WHERE `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
 
             $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
@@ -133,7 +133,7 @@
         }
         $currencies_id = zen_db_prepare_input($_GET['cID']);
 
-        $currency = $db->Execute("SELECT `code`
+        $currency = $gBitDb->Execute("SELECT `code`
                                   FROM " . TABLE_CURRENCIES . "
                                   WHERE `currencies_id` = '" . (int)$currencies_id . "'");
 
@@ -200,7 +200,7 @@
 <?php
   $currency_query_raw = "select `currencies_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `last_updated`, `currency_value` from " . TABLE_CURRENCIES . " order by `title`";
   $currency_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $currency_query_raw, $currency_query_numrows);
-  $currency = $db->Execute($currency_query_raw);
+  $currency = $gBitDb->Execute($currency_query_raw);
   while (!$currency->EOF) {
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $currency->fields['currencies_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
       $cInfo = new objectInfo($currency->fields);

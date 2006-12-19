@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.8 2006/02/01 21:16:17 spiderr Exp $
+// $Id: functions_prices.php,v 1.9 2006/12/19 00:11:33 spiderr Exp $
 //
 //
 ////
 /*  function zen_get_products_special_price($product_id, $specials_price_only=false) {
-    global $db;
-    $product = $db->Execute("select products_price, products_model, products_priced_by_attribute from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    global $gBitDb;
+    $product = $gBitDb->Execute("select products_price, products_model, products_priced_by_attribute from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
 
     if ($product->RecordCount() > 0) {
 //  	  $product_price = $product->fields['products_price'];
@@ -32,7 +32,7 @@
   	  return false;
     }
 
-    $specials = $db->Execute("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and status='1'");
+    $specials = $gBitDb->Execute("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and status='1'");
     if ($specials->RecordCount() > 0) {
 //      if ($product->fields['products_priced_by_attribute'] == 1) {
     	  $special_price = $specials->fields['specials_new_products_price'];
@@ -59,13 +59,13 @@
 // get sale price
 
 // changed to use master_categories_id
-//      $product_to_categories = $db->Execute("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
+//      $product_to_categories = $gBitDb->Execute("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
 //      $category = $product_to_categories->fields['categories_id'];
 
-      $product_to_categories = $db->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+      $product_to_categories = $gBitDb->Execute("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
       $category = $product_to_categories->fields['master_categories_id'];
 
-      $sale = $db->Execute("select sale_specials_condition, sale_deduction_value, sale_deduction_type from " . TABLE_SALEMAKER_SALES . " where sale_categories_all like '%," . $category . ",%' and sale_status = '1' and (sale_date_start <= now() or sale_date_start = '0001-01-01') and (sale_date_end >= now() or sale_date_end = '0001-01-01') and (sale_pricerange_from <= '" . $product_price . "' or sale_pricerange_from = '0') and (sale_pricerange_to >= '" . $product_price . "' or sale_pricerange_to = '0')");
+      $sale = $gBitDb->Execute("select sale_specials_condition, sale_deduction_value, sale_deduction_type from " . TABLE_SALEMAKER_SALES . " where sale_categories_all like '%," . $category . ",%' and sale_status = '1' and (sale_date_start <= now() or sale_date_start = '0001-01-01') and (sale_date_end >= now() or sale_date_end = '0001-01-01') and (sale_pricerange_from <= '" . $product_price . "' or sale_pricerange_from = '0') and (sale_pricerange_to >= '" . $product_price . "' or sale_pricerange_to = '0')");
       if ($sale->RecordCount() < 1) {
          return $special_price;
       }
@@ -173,7 +173,7 @@
 // this gets the discount amount this does not determin when to apply the discount
   function zen_get_products_sale_discount($product_id = false, $categories_id = false, $display_type = false) {
     global $currencies;
-    global $db;
+    global $gBitDb;
 
 // NOT USED
 echo '<br />' . 'I SHOULD use zen_get_discount_calc' . '<br />';
@@ -220,7 +220,7 @@ If a special exist * 10
                                   array('id' => '2', 'text' => DEDUCTION_TYPE_DROPDOWN_2));
 
     $sale_maker_discount = 0;
-    $salemaker_sales = $db->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
+    $salemaker_sales = $gBitDb->Execute("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
     while (!$salemaker_sales->EOF) {
       $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
   	  while (list($key,$value) = each($categories)) {
@@ -293,13 +293,13 @@ If a special exist * 10
 ////
 // update salemaker product prices per category per product
   function zen_update_salemaker_product_prices($salemaker_id) {
-    global $db;
-    $zv_categories = $db->Execute("select `sale_categories_selected` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . $salemaker_id . "'");
+    global $gBitDb;
+    $zv_categories = $gBitDb->Execute("select `sale_categories_selected` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . $salemaker_id . "'");
 
     $za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
     $n = sizeof($za_salemaker_categories);
     for ($i=0; $i<$n; $i++) {
-      $update_products_price = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $za_salemaker_categories[$i] . "'");
+      $update_products_price = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $za_salemaker_categories[$i] . "'");
       while (!$update_products_price->EOF) {
         zen_update_products_price_sorter($update_products_price->fields['products_id']);
         $update_products_price->MoveNext();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.11 2006/10/21 14:26:10 lsces Exp $
+//  $Id: category_product_listing.php,v 1.12 2006/12/19 00:11:30 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -80,7 +80,7 @@
     if (isset($_GET['search'])) {
       $search = zen_db_prepare_input($_GET['search']);
 
-      $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
+      $categories = $gBitDb->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
                                          c.`parent_id`, c.`sort_order`, c.`date_added`, c.`last_modified`,
                                          c.`categories_status`
                                   from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
@@ -89,7 +89,7 @@
                                   and cd.`categories_name` like '%" . zen_db_input($search) . "%'
                                   order by c.`sort_order`, cd.`categories_name`");
     } else {
-      $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
+      $categories = $gBitDb->Execute("select c.`categories_id`, cd.`categories_name`, cd.`categories_description`, c.`categories_image`,
                                          c.`parent_id`, c.`sort_order`, c.`date_added`, c.`last_modified`,
                                          c.`categories_status`
                                   from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
@@ -214,7 +214,7 @@
 // reset page when page is unknown
 if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
   $old_page = $_GET['page'];
-  $check_page = $db->Execute($products_query_raw);
+  $check_page = $gBitDb->Execute($products_query_raw);
   if ($check_page->RecordCount() > MAX_DISPLAY_RESULTS_CATEGORIES) {
     $check_count=1;
     while (!$check_page->EOF) {
@@ -234,7 +234,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
   }
 }
     $offset = new splitPageResults($_GET['page'], MAX_DISPLAY_RESULTS_CATEGORIES, $products_query_raw, $products_query_numrows);
-    $products = $db->query($products_query_raw, NULL, MAX_DISPLAY_RESULTS_CATEGORIES, $offset);
+    $products = $gBitDb->query($products_query_raw, NULL, MAX_DISPLAY_RESULTS_CATEGORIES, $offset);
 // Split Page
 
     while (!$products->EOF) {
@@ -246,7 +246,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
 
       if ( (!isset($_GET['pID']) && !isset($_GET['cID']) || (isset($_GET['pID']) && ($_GET['pID'] == $products->fields['products_id']))) && !isset($pInfo) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 // find out the rating average from customer reviews
-        $reviews = $db->Execute("select (avg(`reviews_rating`) / 5 * 100) as `average_rating`
+        $reviews = $gBitDb->Execute("select (avg(`reviews_rating`) / 5 * 100) as `average_rating`
                                  from " . TABLE_REVIEWS . "
                                  where `products_id` = '" . (int)$products->fields['products_id'] . "'");
         $pInfo_array = array_merge($products->fields, $reviews->fields);
@@ -345,7 +345,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
   $sql = "select ptc.`product_type_id`, pt.`type_name` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc, " . TABLE_PRODUCT_TYPES . " pt
           where ptc.`category_id` = '" . $current_category_id . "'
           and pt.`type_id` = ptc.`product_type_id`";
-  $restrict_types = $db->Execute($sql);
+  $restrict_types = $gBitDb->Execute($sql);
   if ($restrict_types->RecordCount() >0 ) {
     $product_restrict_types_array = array();
     while (!$restrict_types->EOF) {

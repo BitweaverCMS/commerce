@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured.php,v 1.4 2006/02/05 22:51:33 lsces Exp $
+// $Id: featured.php,v 1.5 2006/12/19 00:11:32 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -26,25 +26,25 @@
 ////
 // Sets the status of a featured product
   function zen_set_featured_status($featured_id, $status) {
-    global $db;
+    global $gBitDb;
     $sql = "update " . TABLE_FEATURED . "
             set `status` = '" . $status . "', `date_status_change` = 'NOW'
             where `featured_id` = '" . (int)$featured_id . "'";
 
-    return $db->Execute($sql);
+    return $gBitDb->Execute($sql);
    }
 
 ////
 // Auto expire products on featured
   function zen_expire_featured() {
-    global $db;
+    global $gBitDb;
     $featured_query = "select `featured_id`
                        from " . TABLE_FEATURED . "
                        where `status` = '1'
                        and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
                        or ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01'))";
 
-    if( $rs = $db->Execute($featured_query) ) {
+    if( $rs = $gBitDb->Execute($featured_query) ) {
       while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '0');
       }
@@ -54,7 +54,7 @@
 ////
 // Auto start products on featured
   function zen_start_featured() {
-    global $db;
+    global $gBitDb;
 
     $featured_query = "select `featured_id`
                        from " . TABLE_FEATURED . "
@@ -64,7 +64,7 @@
                        or (`featured_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
-    if( $rs = $db->Execute($featured_query) ) {
+    if( $rs = $gBitDb->Execute($featured_query) ) {
       while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '1');
       }
@@ -77,7 +77,7 @@
                        and ('NOW' < `featured_date_available` and `featured_date_available` != '0001-01-01')
                        ";
 
-    if( $rs = $db->Execute($featured_query) ) {
+    if( $rs = $gBitDb->Execute($featured_query) ) {
       while( $featured = $rs->FetchRow() ) {
         zen_set_featured_status($featured['featured_id'], '0');
       }

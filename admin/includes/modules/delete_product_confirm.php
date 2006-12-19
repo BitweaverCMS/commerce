@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: delete_product_confirm.php,v 1.3 2005/08/24 15:06:38 lsces Exp $
+//  $Id: delete_product_confirm.php,v 1.4 2006/12/19 00:11:30 spiderr Exp $
 //
 //
         // demo active test
@@ -31,12 +31,12 @@
           $product_categories = $_POST['product_categories'];
 
           for ($i=0, $n=sizeof($product_categories); $i<$n; $i++) {
-            $db->Execute("delete from " . TABLE_PRODUCTS_TO_CATEGORIES . "
+            $gBitDb->Execute("delete from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                           where `products_id` = '" . (int)$product_id . "'
                           and `categories_id` = '" . (int)$product_categories[$i] . "'");
           }
 
-          $product_categories = $db->Execute("select count(*) as `total`
+          $product_categories = $gBitDb->Execute("select count(*) as `total`
                                               from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                               where `products_id` = '" . (int)$product_id . "'");
 

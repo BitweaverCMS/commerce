@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.11 2006/12/13 20:35:48 lsces Exp $
+// $Id: tpl_products_next_previous.php,v 1.12 2006/12/19 00:11:34 spiderr Exp $
 //
   /*
 
@@ -69,7 +69,7 @@
 					where  `products_id` ='" .  (int)$_GET['products_id']
 					. "'";
 
-				$cPath_row = $db->Execute($sql);
+				$cPath_row = $gBitDb->Execute($sql);
 				if ( $cPath_row->fields['categories_id'] ) {
 				$current_category_id = $cPath_row->fields['categories_id'];
 				} else {
@@ -82,7 +82,7 @@
 					where  p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id`= ? and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = ?
 					$prev_next_order ";
 
-			$products_ids = $db->query( $sql, array( $_SESSION['languages_id'], $current_category_id ) );
+			$products_ids = $gBitDb->query( $sql, array( $_SESSION['languages_id'], $current_category_id ) );
 		}
 
 		while (!$products_ids->EOF) {
@@ -121,7 +121,7 @@
 					from   " . TABLE_CATEGORIES_DESCRIPTION . "
 					where `categories_id` =? AND `language_id` =?";
 
-			$category_name_row = $db->query( $sql, array( $current_category_id, $_SESSION['languages_id'] ) );
+			$category_name_row = $gBitDb->query( $sql, array( $current_category_id, $_SESSION['languages_id'] ) );
 		} // if is_array
 
 		// previous_next button and product image settings

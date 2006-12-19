@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_address_book_details.php,v 1.6 2006/02/24 04:13:06 spiderr Exp $
+// $Id: tpl_modules_address_book_details.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -95,7 +95,7 @@
       if ($entry_state_has_zones == true) {
 
         $zones_array = array();
-        $zones_values = $db->Execute("select `zone_name`
+        $zones_values = $gBitDb->Execute("select `zone_name`
                                      from " . TABLE_ZONES . "
                                      where `zone_country_id` = '" . (int)$country_id . "'
                                      order by `zone_name`");

@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_music_functions.php,v 1.2 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: product_music_functions.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
  
 ////
 // Return the artists URL in the needed language
   function zen_get_artists_url($artists_id, $language_id) {
-    global $db;
-    $artist = $db->Execute("select artists_url
+    global $gBitDb;
+    $artist = $gBitDb->Execute("select artists_url
                                   from " . TABLE_RECORD_ARTISTS_INFO . "
                                   where artists_id = '" . (int)$artists_id . "'
                                   and languages_id = '" . (int)$language_id . "'");
@@ -34,8 +34,8 @@
 ////
 // Return the Record Company URL in the needed language
   function zen_get_record_company_url($record_company_id, $language_id) {
-    global $db;
-    $record_company = $db->Execute("select record_company_url
+    global $gBitDb;
+    $record_company = $gBitDb->Execute("select record_company_url
                                   from " . TABLE_RECORD_COMPANY_INFO . "
                                   where record_company_id = '" . (int)$record_company_id . "'
                                   and languages_id = '" . (int)$language_id . "'");
@@ -46,8 +46,8 @@
 ////
 // Return the Music Genre URL in the needed language
   function zen_get_music_genre_url($music_genre_id, $language_id) {
-    global $db;
-    $music_genre = $db->Execute("select music_genre_url
+    global $gBitDb;
+    $music_genre = $gBitDb->Execute("select music_genre_url
                                   from " . TABLE_RECORD_COMPANY_INFO . "
                                   where music_genre_id = '" . (int)$music_genre_id . "'
                                   and languages_id = '" . (int)$language_id . "'");

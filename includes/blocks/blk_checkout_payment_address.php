@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_checkout_payment_address.php,v 1.3 2005/08/24 15:06:38 lsces Exp $
+// $Id: blk_checkout_payment_address.php,v 1.4 2006/12/19 00:11:32 spiderr Exp $
 //
       $radio_buttons = 0;
 
@@ -29,7 +29,7 @@
                           from " . TABLE_ADDRESS_BOOK . "
                           where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $addresses = $db->Execute($addresses_query);
+      $addresses = $gBitDb->Execute($addresses_query);
 
       while (!$addresses->EOF) {
         $format_id = zen_get_address_format_id($addresses->fields['country_id']);

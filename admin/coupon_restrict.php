@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.8 2006/07/10 03:43:58 spiderr Exp $
+//  $Id: coupon_restrict.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -25,41 +25,41 @@
   $restrict_array[] = array('id'=>'Deny', text=>'Deny');
   $restrict_array[] = array('id'=>'Allow', text=>'Allow');
   if ($_GET['action']=='switch_status') {
-    $status = $db->Execute("select coupon_restrict
+    $status = $gBitDb->Execute("select coupon_restrict
                             from " . TABLE_COUPON_RESTRICT . "
                             where restrict_id = '" . $_GET['info'] . "'");
 
     $new_status = 'N';
     if ($status->fields['coupon_restrict'] == 'N') $new_status = 'Y';
-    $db->Execute("update " . TABLE_COUPON_RESTRICT . "
+    $gBitDb->Execute("update " . TABLE_COUPON_RESTRICT . "
                   set coupon_restrict = '" . $new_status . "'
                   where restrict_id = '" . $_GET['info'] . "'");
   }
   if ($_GET['action']=='add_category' && $_POST['cPath']) {
-    $test_query=$db->Execute("select * from " . TABLE_COUPON_RESTRICT . "
+    $test_query=$gBitDb->Execute("select * from " . TABLE_COUPON_RESTRICT . "
                               where coupon_id = '" . $_GET['cid'] . "'
                               and category_id = '" . $_POST['cPath'] . "'");
 
     if ($test_query->RecordCount() < 1) {
       $status = 'N';
       if ($_POST['restrict_status']=='Deny') $status = 'Y';
-      $db->Execute("insert into " . TABLE_COUPON_RESTRICT . "
+      $gBitDb->Execute("insert into " . TABLE_COUPON_RESTRICT . "
                   (coupon_id, category_id, coupon_restrict)
                   values ('" . $_GET['cid'] . "', '" . $_POST['cPath'] . "', '" . $status . "')");
     }
   }
   if ($_GET['action']=='add_product' && $_POST['products']) {
-    $test_query=$db->Execute("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and product_id = '" . $_POST['products'] . "'");
+    $test_query=$gBitDb->Execute("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and product_id = '" . $_POST['products'] . "'");
     if ($test_query->RecordCount() < 1) {
       $status = 'N';
       if ($_POST['restrict_status']=='Deny') $status = 'Y';
-      $db->Execute("insert into " . TABLE_COUPON_RESTRICT . "
+      $gBitDb->Execute("insert into " . TABLE_COUPON_RESTRICT . "
                   (coupon_id, product_id, coupon_restrict)
                   values ('" . $_GET['cid'] . "', '" . $_POST['products'] . "', '" . $status . "')");
     }
   }
   if ($_GET['action']=='remove' && $_GET['info']) {
-    $db->Execute("delete from " . TABLE_COUPON_RESTRICT . " where restrict_id = '" . $_GET['info'] . "'");
+    $gBitDb->Execute("delete from " . TABLE_COUPON_RESTRICT . " where restrict_id = '" . $_GET['info'] . "'");
   }
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -127,7 +127,7 @@
 <?php
     $cr_query_raw = "select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and category_id != '0'";
     $cr_split = new splitPageResults($_GET['cpage'], MAX_DISPLAY_RESTRICT_ENTRIES, $cr_query_raw, $cr_query_numrows);
-    $cr_list = $db->Execute($cr_query_raw);
+    $cr_list = $gBitDb->Execute($cr_query_raw);
     while (!$cr_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
@@ -138,7 +138,7 @@
       }
         echo '          <tr class="dataTableRow">' . "\n";
 
-     $coupon = $db->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . "
+     $coupon = $gBitDb->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . "
                              where `coupon_id` = '" . $_GET['cid'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
      $category_name = zen_get_category_name($cr_list->fields['category_id'], $_SESSION['languages_id']);
 ?>
@@ -218,7 +218,7 @@
 <?php
     $pr_query_raw = "select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and product_id != '0'";
     $pr_split = new splitPageResults($_GET['ppage'], MAX_DISPLAY_RESTRICT_ENTRIES, $pr_query_raw, $pr_query_numrows);
-    $pr_list = $db->Execute($pr_query_raw);
+    $pr_list = $gBitDb->Execute($pr_query_raw);
     while (!$pr_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
@@ -229,7 +229,7 @@
       }
         echo '          <tr class="dataTableRow">' . "\n";
 
-     $coupon = $db->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cid'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
+     $coupon = $gBitDb->Execute("select `coupon_name` from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cid'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
      $product_name = zen_get_products_name($pr_list->fields['product_id'], $_SESSION['languages_id']);
 ?>
                 <td class="dataTableContent"><?php echo $_GET['cid']; ?></td>
@@ -267,7 +267,7 @@
                   <tr>
 <?php
       if (isset($_POST['cPath_prod'])) $current_category_id = $_POST['cPath_prod'];
-      $products = $db->query("select p.`products_id`, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = ? and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = ? order by pd.`products_name`", array( $_SESSION['languages_id'], $_POST['cPath_prod'] ) );
+      $products = $gBitDb->query("select p.`products_id`, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = ? and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = ? order by pd.`products_name`", array( $_SESSION['languages_id'], $_POST['cPath_prod'] ) );
       $products_array = array();
       while (!$products->EOF) {
         $products_array[] = array('id'=>$products->fields['products_id'],

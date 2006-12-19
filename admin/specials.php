@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.14 2006/11/01 19:15:29 lsces Exp $
+//  $Id: specials.php,v 1.15 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -33,7 +33,7 @@
         zen_set_specials_status($_GET['id'], $_GET['flag']);
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $_GET['id'] . "'");
+        $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $_GET['id'] . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'sID=' . $_GET['id'], 'NONSSL'));
@@ -47,7 +47,7 @@
         $specials_price = zen_db_prepare_input($_POST['specials_price']);
 
         if (substr($specials_price, -1) == '%') {
-          $new_special_insert = $db->Execute("select `products_id`, `products_price`, `products_priced_by_attribute`
+          $new_special_insert = $gBitDb->Execute("select `products_id`, `products_price`, `products_priced_by_attribute`
                                               from " . TABLE_PRODUCTS . "
                                               where `products_id` = '" . (int)$products_id . "'");
 
@@ -64,14 +64,14 @@
         $specials_date_available = ((zen_db_prepare_input($_POST['start']) == '') ? '0001-01-01' : zen_date_raw($_POST['start']));
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
-        $db->Execute("insert into " . TABLE_SPECIALS . "
+        $gBitDb->Execute("insert into " . TABLE_SPECIALS . "
                     (`products_id`, `specials_new_products_price`, `specials_date_added`, `expires_date`, `status`, `specials_date_available`)
                     values ('" . (int)$products_id . "',
                             '" . zen_db_input($specials_price) . "',
-                            ".$db->qtNOW().",
+                            ".$gBitDb->qtNOW().",
                             '" . zen_db_input($expires_date) . "', '1', '" . zen_db_input($specials_date_available) . "')");
 
-        $new_special = $db->Execute("select `specials_id` from " . TABLE_SPECIALS . " where `products_id` ='" . (int)$products_id . "'");
+        $new_special = $gBitDb->Execute("select `specials_id` from " . TABLE_SPECIALS . " where `products_id` ='" . (int)$products_id . "'");
 
         // reset products_price_sorter for searches etc.
         zen_update_products_price_sorter((int)$products_id);
@@ -99,15 +99,15 @@
         $specials_date_available = ((zen_db_prepare_input($_POST['start']) == '') ? '0001-01-01' : zen_date_raw($_POST['start']));
         $expires_date = ((zen_db_prepare_input($_POST['end']) == '') ? '0001-01-01' : zen_date_raw($_POST['end']));
 
-        $db->Execute("update " . TABLE_SPECIALS . "
+        $gBitDb->Execute("update " . TABLE_SPECIALS . "
                       set `specials_new_products_price` = '" . zen_db_input($specials_price) . "',
-                          `specials_last_modified` = ".$db->qtNOW().",
+                          `specials_last_modified` = ".$gBitDb->qtNOW().",
                           `expires_date` = '" . zen_db_input($expires_date) . "',
                           `specials_date_available` = '" . zen_db_input($specials_date_available) . "'
                       where `specials_id` = '" . (int)$specials_id . "'");
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . (int)$specials_id . "'");
+        $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . (int)$specials_id . "'");
         zen_update_products_price_sorter($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials_id));
@@ -122,10 +122,10 @@
         $specials_id = zen_db_prepare_input($_GET['sID']);
 
         // reset products_price_sorter for searches etc.
-        $update_price = $db->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $specials_id . "'");
+        $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $specials_id . "'");
         $update_price_id = $update_price->fields['products_id'];
 
-        $db->Execute("delete from " . TABLE_SPECIALS . "
+        $gBitDb->Execute("delete from " . TABLE_SPECIALS . "
                       where specials_id = '" . (int)$specials_id . "'");
 
         zen_update_products_price_sorter($update_price_id);
@@ -208,7 +208,7 @@
     if ( ($action == 'edit') && isset($_GET['sID']) ) {
       $form_action = 'update';
 
-      $product = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
+      $product = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_priced_by_attribute`,
                                       s.`specials_new_products_price`, s.`expires_date`, s.`specials_date_available`
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                         TABLE_SPECIALS . " s
@@ -229,7 +229,7 @@
 // create an array of products on special, which will be excluded from the pull down menu of products
 // (when creating a new product on special)
       $specials_array = array();
-      $specials = $db->Execute("select p.`products_id`, p.`products_model`
+      $specials = $gBitDb->Execute("select p.`products_id`, p.`products_model`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
                                 where s.`products_id` = p.`products_id`");
 
@@ -239,7 +239,7 @@
       }
 
 // never include Gift Vouchers for specials
-      $gift_vouchers = $db->Execute("select distinct p.`products_id`, p.`products_model`
+      $gift_vouchers = $gBitDb->Execute("select distinct p.`products_id`, p.`products_model`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s
                                 where UPPER( p.`products_model` ) like '%GIFT%'");
 
@@ -251,7 +251,7 @@
       }
 
 // do not include things that cannot go in the cart
-      $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
+      $not_for_cart = $gBitDb->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
 
       while (!$not_for_cart->EOF) {
         $specials_array[] = $not_for_cart->fields['products_id'];
@@ -326,10 +326,10 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
 
     $specials_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_price`, p.`products_priced_by_attribute`, s.`specials_id`, s.`specials_new_products_price`, s.`specials_date_added`, s.`specials_last_modified`, s.`expires_date`, s.`date_status_change`, s.`status`, s.`specials_date_available` from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = s.`products_id`" . $search . $order_by;
     $specials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $specials_query_raw, $specials_query_numrows);
-    $specials = $db->Execute($specials_query_raw);
+    $specials = $gBitDb->Execute($specials_query_raw);
     while (!$specials->EOF) {
       if ((!isset($_GET['sID']) || (isset($_GET['sID']) && ($_GET['sID'] == $specials->fields['specials_id']))) && !isset($sInfo)) {
-        $products = $db->Execute("select `products_image`
+        $products = $gBitDb->Execute("select `products_image`
                                   from " . TABLE_PRODUCTS . "
                                   where `products_id` = '" . (int)$specials->fields['products_id'] . "'");
 

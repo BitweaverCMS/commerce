@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.12 2005/10/31 23:46:33 lsces Exp $
+// $Id: main_template_vars.php,v 1.13 2006/12/19 00:11:38 spiderr Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -29,7 +29,7 @@
           and      pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
 
-  $res = $db->Execute($sql);
+  $res = $gBitDb->Execute($sql);
 
   if ( $res->fields['total'] < 1 ) {
 
@@ -42,42 +42,42 @@
     $sql = "select * from " . TABLE_PRODUCT_MUSIC_EXTRA . "
             where `products_id` = '" . (int)$_GET['products_id'] . "'";
 
-    $music_extras = $db->Execute($sql);
+    $music_extras = $gBitDb->Execute($sql);
 
     $sql = "select * from " . TABLE_RECORD_ARTISTS . "
             where `artists_id` = '" . $music_extras->fields['artists_id'] . "'";
 
-    $artist = $db->Execute($sql);
+    $artist = $gBitDb->Execute($sql);
 
     $sql = "select * from " . TABLE_RECORD_ARTISTS_INFO . "
             where `artists_id` = '" . $music_extras->fields['artists_id'] . "'
             and `languages_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $artist_info = $db->Execute($sql);
+    $artist_info = $gBitDb->Execute($sql);
 
     $sql = "select * from " . TABLE_RECORD_COMPANY . "
             where `record_company_id` = '" . $music_extras->fields['record_company_id'] . "'";
 
-    $record_company = $db->Execute($sql);
+    $record_company = $gBitDb->Execute($sql);
 
     $sql = "select * from " . TABLE_RECORD_COMPANY_INFO . "
             where record_company_id = '" . $music_extras->fields['record_company_id'] . "'
             and languages_id = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $record_company_info = $db->Execute($sql);
+    $record_company_info = $gBitDb->Execute($sql);
 
 
     $sql = "select * from " . TABLE_MUSIC_GENRE . "
             where music_genre_id = '" . $music_extras->fields['music_genre_id'] . "'";
 
-    $music_genre = $db->Execute($sql);
+    $music_genre = $gBitDb->Execute($sql);
 
     $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . "
             set        `products_viewed` = `products_viewed` + 1
             where      `products_id` = '" . (int)$_GET['products_id'] . "'
             and        `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $res = $db->Execute($sql);
+    $res = $gBitDb->Execute($sql);
 
     $sql = "select p.`products_id`, pd.`products_name`,
                   pd.`products_description`, p.`products_model`,
@@ -95,7 +95,7 @@
            and    pd.`products_id` = p.`products_id`
            and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $product_info = $db->Execute($sql);
+    $product_info = $gBitDb->Execute($sql);
 
     $products_price_sorter = $product_info->fields['products_price_sorter'];
 
@@ -124,7 +124,7 @@
                        and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
                        $review_status;
 
-    $reviews = $db->Execute($reviews_query);
+    $reviews = $gBitDb->Execute($reviews_query);
 
   }
 
@@ -167,7 +167,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
               where  `products_id` ='" .  (int)$_GET['products_id']
               . "'";
 
-      $cPath_row = $db->Execute($sql);
+      $cPath_row = $gBitDb->Execute($sql);
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
@@ -179,7 +179,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
             $prev_next_order
             ;
 
-    $products_ids = $db->Execute($sql);
+    $products_ids = $gBitDb->Execute($sql);
   }
 
   while (!$products_ids->EOF) {
@@ -216,7 +216,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
             where  `categories_id` = $current_category_id AND `language_id` = '" . $_SESSION['languages_id']
             . "'";
 
-    $category_name_row = $db->Execute($sql);
+    $category_name_row = $gBitDb->Execute($sql);
   } // if is_array
 
 // previous_next button and product image settings

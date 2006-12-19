@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header.php,v 1.2 2005/10/06 21:01:49 spiderr Exp $
+// $Id: header.php,v 1.3 2006/12/19 00:11:33 spiderr Exp $
 //
 
 // check if the 'install' directory exists, and warn of its existence
@@ -80,7 +80,7 @@
 // check database version against source code
   $zv_db_patch_ok = true; // we start with true
   if (WARN_DATABASE_VERSION_PROBLEM != 'false') {
-    $result = $db->Execute("SELECT project_version_major, project_version_minor FROM " . TABLE_PROJECT_VERSION . " WHERE project_version_key = 'Zen-Cart Database'");
+    $result = $gBitDb->Execute("SELECT project_version_major, project_version_minor FROM " . TABLE_PROJECT_VERSION . " WHERE project_version_key = 'Zen-Cart Database'");
     $zv_db_patch_level_found = $result->fields['project_version_major']. '.' . $result->fields['project_version_minor'];
     $zv_db_patch_level_expected = EXPECTED_DATABASE_VERSION_MAJOR . '.' . EXPECTED_DATABASE_VERSION_MINOR;
     if ($zv_db_patch_level_expected=='.' || ($zv_db_patch_level_found < $zv_db_patch_level_expected) ) {

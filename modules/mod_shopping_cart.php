@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.13 2006/12/13 19:16:07 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.14 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
+	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );

@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.9 2005/11/15 22:13:56 spiderr Exp $
+// $Id: functions_categories.php,v 1.10 2006/12/19 00:11:32 spiderr Exp $
 //
 //
 ////
 // Generate a path to categories
   function zen_get_path($current_category_id = '') {
-    global $cPath_array, $db;
+    global $cPath_array, $gBitDb;
 
     if (zen_not_null($current_category_id)) {
       $cp_size = sizeof($cPath_array);
@@ -35,13 +35,13 @@
                                 from " . TABLE_CATEGORIES . "
                                 where `categories_id` = '" . (int)$cPath_array[($cp_size-1)] . "'";
 
-        $last_category = $db->Execute($last_category_query);
+        $last_category = $gBitDb->Execute($last_category_query);
 
         $current_category_query = "select `parent_id`
                                    from " . TABLE_CATEGORIES . "
                                    where `categories_id` = '" . (int)$current_category_id . "'";
 
-        $current_category = $db->Execute($current_category_query);
+        $current_category = $gBitDb->Execute($current_category_query);
 
         if ($last_category->fields['parent_id'] == $current_category->fields['parent_id']) {
           for ($i=0; $i<($cp_size-1); $i++) {
@@ -69,7 +69,7 @@
 // Return the number of products in a category
 // TABLES: products, products_to_categories, categories
   function zen_count_products_in_category($category_id, $include_inactive = false) {
-    global $db, $gBitProduct;
+    global $gBitDb, $gBitProduct;
     $products_count = 0;
 
 	$selectSql=''; $joinSql=''; $whereSql='';
@@ -81,14 +81,14 @@
                          from " . TABLE_PRODUCTS . " p
 						  INNER JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON (p.`products_id` = p2c.`products_id`) $joinSql
                          where p2c.`categories_id` = ? $whereSql";
-    $products = $db->query($products_query, array( $category_id ) );
+    $products = $gBitDb->query($products_query, array( $category_id ) );
     $products_count += $products->fields['total'];
 
     $child_categories_query = "select `categories_id`
                                from " . TABLE_CATEGORIES . "
                                where `parent_id` = '" . (int)$category_id . "'";
 
-    $child_categories = $db->Execute($child_categories_query);
+    $child_categories = $gBitDb->Execute($child_categories_query);
 
     if ($child_categories->RecordCount() > 0) {
       while (!$child_categories->EOF) {
@@ -102,7 +102,7 @@
 
 ////
   function zen_get_categories($categories_array = '', $parent_id = '0', $indent = '', $status_setting = '') {
-    global $db;
+    global $gBitDb;
 
     if (!is_array($categories_array)) $categories_array = array();
 
@@ -121,7 +121,7 @@
                          and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                          order by `sort_order`, cd.`categories_name`";
 
-    $categories = $db->Execute($categories_query);
+    $categories = $gBitDb->Execute($categories_query);
 
     while (!$categories->EOF) {
       $categories_array[] = array('id' => $categories->fields['categories_id'],
@@ -140,12 +140,12 @@
 // Return all subcategory IDs
 // TABLES: categories
   function zen_get_subcategories(&$subcategories_array, $parent_id = 0) {
-    global $db;
+    global $gBitDb;
     $subcategories_query = "select `categories_id`
                             from " . TABLE_CATEGORIES . "
                             where `parent_id` = '" . (int)$parent_id . "'";
 
-    $subcategories = $db->Execute($subcategories_query);
+    $subcategories = $gBitDb->Execute($subcategories_query);
 
     while (!$subcategories->EOF) {
       $subcategories_array[sizeof($subcategories_array)] = $subcategories->fields['categories_id'];
@@ -161,12 +161,12 @@
 // Recursively go through the categories and retreive all parent categories IDs
 // TABLES: categories
   function zen_get_parent_categories(&$categories, $categories_id) {
-    global $db;
+    global $gBitDb;
     $parent_categories_query = "select `parent_id`
                                 from " . TABLE_CATEGORIES . "
                                 where `categories_id` = '" . (int)$categories_id . "'";
 
-    $parent_categories = $db->Execute($parent_categories_query);
+    $parent_categories = $gBitDb->Execute($parent_categories_query);
 
     while (!$parent_categories->EOF) {
       if ($parent_categories->fields['parent_id'] == 0) return true;
@@ -182,7 +182,7 @@
 // Construct a category path to the product
 // TABLES: products_to_categories
   function zen_get_product_path($products_id) {
-    global $db;
+    global $gBitDb;
     $cPath = '';
 
     $category_query = "select p2c.`categories_id`
@@ -191,7 +191,7 @@
                        and p.`products_status` = '1'
                        and p.`products_id` = p2c.`products_id`";
 
-    if ($category = $db->getOne($category_query) ) {
+    if ($category = $gBitDb->getOne($category_query) ) {
 
       $categories = array();
       zen_get_parent_categories($categories, $category);
@@ -226,12 +226,12 @@
   }
 
   function zen_product_in_category($product_id, $cat_id) {
-    global $db;
+    global $gBitDb;
     $in_cat=false;
     $category_query_raw = "select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                            where `products_id` = '" . (int)$product_id . "'";
 
-    $category = $db->Execute($category_query_raw);
+    $category = $gBitDb->Execute($category_query_raw);
 
     while (!$category->EOF) {
       if ($category->fields['categories_id'] == $cat_id) $in_cat = true;
@@ -239,7 +239,7 @@
         $parent_categories_query = "select `parent_id` from " . TABLE_CATEGORIES . "
                                     where `categories_id` = '" . $category->fields['categories_id'] . "'";
 
-        $parent_categories = $db->Execute($parent_categories_query);
+        $parent_categories = $gBitDb->Execute($parent_categories_query);
 //echo 'cat='.$category->fields['categories_id'].'#'. $cat_id;
 
         while (!$parent_categories->EOF) {
@@ -255,7 +255,7 @@
   }
 
   function zen_product_in_parent_category($product_id, $cat_id, $parent_cat_id) {
-    global $db;
+    global $gBitDb;
 //echo $cat_id . '#' . $parent_cat_id;
     if ($cat_id == $parent_cat_id) {
       $in_cat = true;
@@ -263,7 +263,7 @@
       $parent_categories_query = "select `parent_id` from " . TABLE_CATEGORIES . "
                                   where `categories_id` = '" . $parent_cat_id . "'";
 
-      $parent_categories = $db->Execute($parent_categories_query);
+      $parent_categories = $gBitDb->Execute($parent_categories_query);
 
       while (!$parent_categories->EOF) {
         if ($parent_categories->fields['parent_id'] !=0 && !$incat) {
@@ -279,7 +279,7 @@
 ////
 // products with name, model and price pulldown
   function zen_draw_products_pull_down($name, $parameters = '', $exclude = '') {
-    global $currencies, $db;
+    global $currencies, $gBitDb;
 
     if ($exclude == '') {
       $exclude = array();
@@ -293,7 +293,7 @@
 
     $select_string .= '>';
 
-    $products = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`
+    $products = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`products_price`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
@@ -315,7 +315,7 @@
 ////
 // product pulldown with attributes
   function zen_draw_products_pull_down_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -331,7 +331,7 @@
 
     $new_fields=', p.`products_model`';
 
-    $products = $db->Execute("select distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields ."
+    $products = $gBitDb->Execute("select distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields ."
                               from " . TABLE_PRODUCTS . " p, " .
                                        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
                                        TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
@@ -356,7 +356,7 @@
 ////
 // categories pulldown with products
   function zen_draw_products_pull_down_categories($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -370,7 +370,7 @@
 
     $select_string .= '>';
 
-    $categories = $db->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
+    $categories = $gBitDb->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
                                 from " . TABLE_CATEGORIES . " c, " .
                                          TABLE_CATEGORIES_DESCRIPTION . " cd, " .
                                          TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " ."
@@ -394,7 +394,7 @@
 ////
 // categories pulldown with products with attributes
   function zen_draw_products_pull_down_categories_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -408,7 +408,7 @@
 
     $select_string .= '>';
 
-    $categories = $db->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
+    $categories = $gBitDb->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
                                 from " . TABLE_CATEGORIES . " c, " .
                                          TABLE_CATEGORIES_DESCRIPTION . " cd, " .
                                          TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
@@ -434,25 +434,25 @@
 ////
 // look up categories product_type
   function zen_get_product_types_to_category($lookup) {
-    global $db;
+    global $gBitDb;
 
     $lookup = str_replace('cPath=','',$lookup);
 
     $sql = "select product_type_id from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` ='" . $lookup . "' and `product_type_id` ='3'";
-    $look_up = $db->Execute($sql);
+    $look_up = $gBitDb->Execute($sql);
 
     return $look_up->fields['product_type_id'];
   }
 
 //// look up parent categories name
   function zen_get_categories_parent_name($categories_id) {
-    global $db;
+    global $gBitDb;
 
     $lookup_query = "select `parent_id` from " . TABLE_CATEGORIES . " where `categories_id` ='" . $categories_id . "'";
-    $lookup = $db->Execute($lookup_query);
+    $lookup = $gBitDb->Execute($lookup_query);
 
     $lookup_query = "select `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id` ='" . $lookup->fields['parent_id'] . "'";
-    $lookup = $db->Execute($lookup_query);
+    $lookup = $gBitDb->Execute($lookup_query);
 
     return $lookup->fields['categories_name'];
   }

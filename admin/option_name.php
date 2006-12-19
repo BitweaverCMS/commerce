@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_name.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: option_name.php,v 1.10 2006/12/19 00:11:28 spiderr Exp $
 //
 ?>
 <?php
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
+  $chk_option_names = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
 		" where `language_id` ='" . $_SESSION['languages_id'] . "'");
   if ( !$chk_option_names ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
@@ -49,7 +49,7 @@
 if ($_GET['action'] == "update_sort_order") {
     foreach($_POST['products_options_sort_order'] as $id => $new_sort_order) {
       $row++;
-      $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS . " set `products_options_sort_order` = " . $_POST['products_options_sort_order'][$id] . " where `products_options_id` = $id and `language_id` =" . $_GET['lng_id']);
+      $gBitDb->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS . " set `products_options_sort_order` = " . $_POST['products_options_sort_order'][$id] . " where `products_options_id` = $id and `language_id` =" . $_GET['lng_id']);
     }
         $messageStack->add_session(SUCCESS_OPTION_SORT_ORDER, 'success');
         $_GET['action']='';
@@ -127,7 +127,7 @@ if ($_GET['action'] == "update_sort_order") {
             <td class="dataTableHeadingContent">' . TEXT_SORT_ORDER . '</td>
           </tr>
           <tr>';
-    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `language_id` = '" . $_GET['lng_id'] . "' ORDER BY `products_options_sort_order`, `products_options_id`");
+    $row = $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `language_id` = '" . $_GET['lng_id'] . "' ORDER BY `products_options_sort_order`, `products_options_id`");
     while (!$row->EOF) {
       switch (true) {
         case ($row->fields['products_options_type']==PRODUCTS_OPTIONS_TYPE_RADIO):

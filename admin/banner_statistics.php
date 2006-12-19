@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_statistics.php,v 1.7 2006/09/02 23:35:32 spiderr Exp $
+//  $Id: banner_statistics.php,v 1.8 2006/12/19 00:11:28 spiderr Exp $
 //
 
 
@@ -41,12 +41,12 @@
     }
   }
 
-  $banner = $db->Execute("select banners_title
+  $banner = $gBitDb->Execute("select banners_title
                                 from " . TABLE_BANNERS . "
                                 where banners_id = '" . (int)$_GET['bID'] . "'");
 
   $years_array = array();
-  $years = $db->Execute("select distinct ".$db->SQLDate( 'Y', 'banners_history_date' )." as banner_year
+  $years = $gBitDb->Execute("select distinct ".$gBitDb->SQLDate( 'Y', 'banners_history_date' )." as banner_year
                               from " . TABLE_BANNERS_HISTORY . "
                               where banners_id = '" . (int)$_GET['bID'] . "'");
   while (!$years->EOF) {

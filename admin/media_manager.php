@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_manager.php,v 1.12 2006/11/01 19:15:29 lsces Exp $
+//  $Id: media_manager.php,v 1.13 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -28,14 +28,14 @@
   if (zen_not_null($action)) {
     switch ($action) {
       case 'remove_product':
-        $db->Execute("delete from " . TABLE_MEDIA_TO_PRODUCTS . "
+        $gBitDb->Execute("delete from " . TABLE_MEDIA_TO_PRODUCTS . "
                       where media_id = '" . (int)$_GET['mID'] . "'
                       and product_id = '" . (int)$_GET['product_id'] . "'");
        zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . (int)$_GET['mID']);
 
       break;
       case 'add_product':
-        $product_add_query = $db->Execute("insert into " . TABLE_MEDIA_TO_PRODUCTS . " (media_id, product_id) values
+        $product_add_query = $gBitDb->Execute("insert into " . TABLE_MEDIA_TO_PRODUCTS . " (media_id, product_id) values
                                            ('" . (int)$_GET['mID'] . "', '" . (int)$_GET['current_product_id'] . "')");
          zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=products&current_category_id=' . $current_category_id) . '&mID=' . $_GET['mID']);
 
@@ -47,7 +47,7 @@
       break;
       case 'remove_clip':
         $delete_query = "delete from " . TABLE_MEDIA_CLIPS . " where clip_id  = '" . $_GET['clip_id'] . "'";
-        $db->Execute($delete_query);
+        $gBitDb->Execute($delete_query);
         zen_redirect(zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=edit&page=' . $_GET['page']));
       break;
       case 'insert':
@@ -57,7 +57,7 @@
           $clip_name = zen_db_prepare_input($clip_name['name']);
           if ($clip_name) {
             $media_type = $_POST['media_type'];
-            $ext = $db->Execute("select type_ext from " . TABLE_MEDIA_TYPES . " where `type_id` = '" . $_POST['media_type'] . "'");
+            $ext = $gBitDb->Execute("select type_ext from " . TABLE_MEDIA_TYPES . " where `type_id` = '" . $_POST['media_type'] . "'");
             if (ereg($ext->fields['type_ext'], $clip_name)) {
 
               if ($media_upload = new upload('clip_filename')) {
@@ -67,11 +67,11 @@
                 }
                 if ($media_upload->filename != 'none' && $media_upload->filename != '') {
 
-                  $db->Execute("insert into " . TABLE_MEDIA_CLIPS . "
+                  $gBitDb->Execute("insert into " . TABLE_MEDIA_CLIPS . "
                                 (`media_id`, `clip_type`, `clip_filename`, `date_added`) values (
                                  '" . $_GET['mID'] . "',
                                  '" . $media_type . "',
-                                 '" . $media_upload_filename . "', ".$db->qtNOW().")");
+                                 '" . $media_upload_filename . "', ".$gBitDb->qtNOW().")");
                 }
               }
 
@@ -87,18 +87,18 @@
           $messageStack->add_session(ERROR_UNKNOWN_DATA, 'caution');
         } else {
           if ($action == 'insert') {
-            $insert_sql_data = array('date_added' => $db->NOW());
+            $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_MEDIA_MANAGER, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_MEDIA_MANAGER, $sql_data_array);
             $media_id = zen_db_insert_id( TABLE_MEDIA_MANAGER, 'media_id' );
           } elseif ($action == 'save') {
-            $update_sql_data = array('last_modified' => $db->NOW());
+            $update_sql_data = array('last_modified' => $gBitDb->NOW());
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-            $db->associateInsert(TABLE_MEDIA_MANAGER, $sql_data_array, 'update', "media_id = '" . (int)$media_id . "'");
+            $gBitDb->associateInsert(TABLE_MEDIA_MANAGER, $sql_data_array, 'update', "media_id = '" . (int)$media_id . "'");
           }
         }
 
@@ -114,7 +114,7 @@
         $media_id = zen_db_prepare_input($_GET['mID']);
 
 
-        $db->Execute("delete from " . TABLE_MEDIA_MANAGER . "
+        $gBitDb->Execute("delete from " . TABLE_MEDIA_MANAGER . "
                       where media_id = '" . (int)$media_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
@@ -124,7 +124,7 @@
 //            $products->MoveNext();
 //          }
         } else {
-//          $db->Execute("update " . TABLE_PRODUCTS . "
+//          $gBitDb->Execute("update " . TABLE_PRODUCTS . "
 //                        set manufacturers_id = ''
 //                        where manufacturers_id = '" . (int)$manufacturers_id . "'");
         }
@@ -186,7 +186,7 @@
 <?php
   $media_query_raw = "select * from " . TABLE_MEDIA_MANAGER . " order by `media_name`";
   $media_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $media_query_raw, $media_query_numrows);
-  $media = $db->Execute($media_query_raw);
+  $media = $gBitDb->Execute($media_query_raw);
   while (!$media->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $media->fields['media_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
 
@@ -264,7 +264,7 @@
       $contents[] = array('text' => '<br />' . TEXT_ADD_MEDIA_CLIP . zen_draw_file_field('clip_filename'));
       $contents[] = array('text' => TEXT_MEDIA_CLIP_DIR . ' ' . zen_draw_pull_down_menu('media_dir', $dir_info));
       $media_type_query = "select `type_id`, `type_name`, type_ext from " . TABLE_MEDIA_TYPES;
-      $media_types = $db->Execute($media_type_query);
+      $media_types = $gBitDb->Execute($media_type_query);
       while (!$media_types->EOF) {
         $media_types_array[] = array('id' => $media_types->fields['type_id'], 'text' => $media_types->fields['type_name'] . ' (' . $media_types->fields['type_ext'] . ')');
         $media_types->MoveNext();
@@ -273,7 +273,7 @@
 
       $contents[] = array('text' => '<input type="submit" name="add_clip" value="Add">');
       $clip_query = "select * from " . TABLE_MEDIA_CLIPS . " where media_id = '" . $mInfo->media_id . "'";
-      $clips = $db->Execute($clip_query);
+      $clips = $gBitDb->Execute($clip_query);
       while (!$clips->EOF) {
         $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=remove_clip&mID='.$mInfo->media_id.'&clip_id='.$clips->fields['clip_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $clips->fields['clip_filename'] . '<br />');
         $clips->MoveNext();
@@ -294,7 +294,7 @@
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'page=' . $_GET['page'] . '&mID=' . $mInfo->media_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'products':
-      $new_product_query = $db->Execute("select ptc.*, pd.`products_name` from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+      $new_product_query = $gBitDb->Execute("select ptc.*, pd.`products_name` from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $heading[] = array('text' => '<b>' . TEXT_HEADING_ASSIGN_MEDIA_COLLECTION . '</b>');
       $contents[] = array('text' => TEXT_PRODUCTS_INTRO . '<br /><br />');
       $contents[] = array('text' => zen_draw_form_admin('new_category', FILENAME_MEDIA_MANAGER, '', 'get') . '&nbsp;&nbsp;' .
@@ -311,7 +311,7 @@
       }
       $products_linked_query = "select * from " . TABLE_MEDIA_TO_PRODUCTS . "
                                 where media_id = '" . $mInfo->media_id . "'";
-      $products_linked = $db->Execute($products_linked_query);
+      $products_linked = $gBitDb->Execute($products_linked_query);
       while (!$products_linked->EOF) {
         $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_MEDIA_MANAGER, 'action=remove_product&mID='.$mInfo->media_id.'&product_id='. $products_linked->fields['product_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $zc_products->products_name($products_linked->fields['product_id']) . '<br />');
         $products_linked->MoveNext();

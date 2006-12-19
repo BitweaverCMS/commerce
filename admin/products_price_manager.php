@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.20 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.21 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify products exist
-  $chk_products = $db->getOne("select * from " . TABLE_PRODUCTS);
+  $chk_products = $gBitDb->getOne("select * from " . TABLE_PRODUCTS);
   if( empty( $chk_products ) ) {
     $messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -40,14 +40,14 @@
 
   if ($action == 'new_cat') {
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
 // set categories and products if not set
   if ( empty( $productsId ) && $current_category_id != '') {
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     if ($productsId != '') {
       zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -56,7 +56,7 @@
     if ($productsId == '' and $current_category_id == '') {
       $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
       $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+      $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $productsId = $new_product_query->fields['products_id'];
       $_GET['products_id'] = $productsId;
     }
@@ -65,7 +65,7 @@
   require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
   if ($action == 'delete_special') {
-    $delete_special = $db->Execute("delete from " . TABLE_SPECIALS . " where `products_id`='" . $productsId . "'");
+    $delete_special = $gBitDb->Execute("delete from " . TABLE_SPECIALS . " where `products_id`='" . $productsId . "'");
 
     // reset products_price_sorter for searches etc.
     zen_update_products_price_sorter($productsId);
@@ -74,7 +74,7 @@
   }
 
   if ($action == 'delete_featured') {
-    $delete_featured = $db->Execute("delete from " . TABLE_FEATURED . " where `products_id`='" . $productsId . "'");
+    $delete_featured = $gBitDb->Execute("delete from " . TABLE_FEATURED . " where `products_id`='" . $productsId . "'");
 
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
@@ -97,11 +97,11 @@
 			$featured_date_available = ((zen_db_prepare_input($_POST['featured_start']) == '') ? '0001-01-01' : zen_date_raw($_POST['featured_start']));
 			$featured_expires_date = ((zen_db_prepare_input($_POST['featured_end']) == '') ? '0001-01-01' : zen_date_raw($_POST['featured_end']));
 
-			$db->query("update " . TABLE_PRODUCTS . " set
+			$gBitDb->query("update " . TABLE_PRODUCTS . " set
 				`products_price`='" . zen_db_prepare_input($_POST['products_price']) . "',
 				`products_tax_class_id`=?,
 				`products_date_available`=?,
-				`products_last_modified`=" . $db->mDb->sysTimeStamp . ",
+				`products_last_modified`=" . $gBitDb->mDb->sysTimeStamp . ",
 				`products_status`='" . zen_db_prepare_input($_POST['products_status']) . "',
 				`products_quantity_order_min`=?,
 				`products_quantity_order_units`=?,
@@ -130,10 +130,10 @@
 
 				$specials_price = zen_db_prepare_input($_POST['specials_price']);
 				if (substr($specials_price, -1) == '%') $specials_price = ($products_price - (($specials_price / 100) * $products_price));
-				$db->Execute("update " . TABLE_SPECIALS . " set
+				$gBitDb->Execute("update " . TABLE_SPECIALS . " set
 					`specials_new_products_price`='" . zen_db_input($specials_price) . "',
 					`specials_date_available`='" . zen_db_input($specials_date_available) . "',
-					`specials_last_modified`=" . $db->mDb->sysTimeStamp . ",
+					`specials_last_modified`=" . $gBitDb->mDb->sysTimeStamp . ",
 					`expires_date`='" . zen_db_input($specials_expires_date) . "',
 					`status`='" . zen_db_input($_POST['special_status']) . "'
 					where `products_id` ='" . $productsId . "'");
@@ -141,10 +141,10 @@
 
 			if( !empty( $_POST['featured_id'] ) ) {
 
-			$db->Execute("update " . TABLE_FEATURED . " set
+			$gBitDb->Execute("update " . TABLE_FEATURED . " set
 				`featured_date_available`='" . zen_db_input($featured_date_available) . "',
 				`expires_date`='" . zen_db_input($featured_expires_date) . "',
-				`featured_last_modified`=" . $db->mDb->sysTimeStamp . ",
+				`featured_last_modified`=" . $gBitDb->mDb->sysTimeStamp . ",
 				`status`='" . zen_db_input($_POST['featured_status']) . "'
 				where `products_id` ='" . $productsId . "'");
 			}
@@ -159,7 +159,7 @@
 			}
 
 			if( !$discounted ) {
-				$db->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
+				$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
 			}
 
 			// reset products_price_sorter for searches etc.
@@ -182,7 +182,7 @@
         }
         $featured_id = zen_db_prepare_input($_GET['fID']);
 
-        $db->Execute("delete from " . TABLE_FEATURED . "
+        $gBitDb->Execute("delete from " . TABLE_FEATURED . "
                       where featured_id = '" . (int)$featured_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'page=' . $_GET['page']));
@@ -284,7 +284,7 @@ if ($_GET['products_id'] != '') {
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
   echo CommerceProduct::getDisplayPrice($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
-  $not_for_cart = $db->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
+  $not_for_cart = $gBitDb->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
   while (!$not_for_cart->EOF) {
     $not_for_cart_array[] = $not_for_cart->fields['products_id'];
     $not_for_cart->MoveNext();
@@ -360,7 +360,7 @@ if ($productsId == '') {
 
 <?php
 // featured information
-      $product = $db->Execute("select p.`products_id`,
+      $product = $gBitDb->Execute("select p.`products_id`,
                                       f.`featured_id`, f.`expires_date`, f.`featured_date_available`, f.`status`
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_FEATURED . " f
@@ -373,7 +373,7 @@ if ($productsId == '') {
       }
 
 // specials information
-      $product = $db->Execute("select p.`products_id`,
+      $product = $gBitDb->Execute("select p.`products_id`,
                                       s.`specials_id`, s.`specials_new_products_price`, s.`expires_date`, s.`specials_date_available`, s.`status`
                                from " . TABLE_PRODUCTS . " p, " .
                                         TABLE_SPECIALS . " s
@@ -385,7 +385,7 @@ if ($productsId == '') {
       }
 
 // products information
-      $product = $db->Execute("select p.`products_id`, p.`products_model`,
+      $product = $gBitDb->Execute("select p.`products_id`, p.`products_model`,
                                       p.`products_price`, p.`products_date_available`,
                                       p.`products_tax_class_id`,
                                       p.`products_quantity_order_min`, `products_quantity_order_units`, p.`products_quantity_order_max`,
@@ -472,7 +472,7 @@ if ($productsId == '') {
 
 // tax class id
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("select `tax_class_id`, `tax_class_title`
+    $tax_class = $gBitDb->Execute("select `tax_class_id`, `tax_class_title`
                                      from " . TABLE_TAX_CLASS . " order by `tax_class_title`");
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],
@@ -504,7 +504,7 @@ var SpecialEndDate = new ctlSpiffyCalendarBox("SpecialEndDate", "new_prices", "s
 // auto fix bad or missing products master_categories_id
   if (zen_get_product_is_linked($productsId) == 'false' and $pInfo->master_categories_id != zen_get_products_category_id($productsId)) {
     $sql = "update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . zen_get_products_category_id($productsId) . "' where `products_id` ='" . $productsId . "'";
-    $db->Execute($sql);
+    $gBitDb->Execute($sql);
     $pInfo->master_categories_id = zen_get_products_category_id($productsId);
   }
 ?>

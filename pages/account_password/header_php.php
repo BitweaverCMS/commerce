@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/11/30 07:46:26 spiderr Exp $
+// $Id: header_php.php,v 1.8 2006/12/19 00:11:35 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -52,29 +52,17 @@
                                from   " . TABLE_CUSTOMERS . "
                                where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $check_customer = $db->Execute($check_customer_query);
+      $check_customer = $gBitDb->Execute($check_customer_query);
 
       if (zen_validate_password($password_current, $check_customer->fields['customers_password'])) {
         $nickname = $check_customer->fields['customers_nick'];
-        $db->Execute("update " . TABLE_CUSTOMERS . " set `customers_password` = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
+        $gBitDb->Execute("update " . TABLE_CUSTOMERS . " set `customers_password` = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
-                set    `date_account_last_modified` = " . $db-mDb->sysTimeStamp . "
+                set    `date_account_last_modified` = " . $gBitDb-mDb->sysTimeStamp . "
                 where   `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-        $db->Execute($sql);
-
-        if ($sniffer->phpBB['installed'] == true) {
-          if (zen_not_null($nickname) && $nickname != '') {
-//            require($sniffer->phpBB['phpbb_path'] . 'config.php');
-            $db_phpbb = new queryFactory();
-            $db_phpbb->connect($sniffer->phpBB['dbhost'], $sniffer->phpBB['dbuser'], $sniffer->phpBB['dbpasswd'], $sniffer->phpBB['dbname'], USE_PCONNECT, false);
-            $sql = "update " . $sniffer->phpBB['users_table'] . " set user_password='" . MD5($password_new) . "'
-                    where username = '" . $nickname . "'";
-            $phpbb_users = $db_phpbb->Execute($sql);
-	    $db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false);
-          }
-        }
+        $gBitDb->Execute($sql);
 
         $messageStack->add_session('account', SUCCESS_PASSWORD_UPDATED, 'success');
 

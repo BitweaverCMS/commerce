@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_manager.php,v 1.11 2006/09/02 23:35:32 spiderr Exp $
+//  $Id: banner_manager.php,v 1.12 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -42,7 +42,7 @@
 
       case 'setbanners_on_ssl':
         if ( ($_GET['flagbanners_on_ssl'] == '0') || ($_GET['flagbanners_on_ssl'] == '1') ) {
-          $db->Execute("update " . TABLE_BANNERS . " set banners_on_ssl='" . $_GET['flagbanners_on_ssl'] . "' where banners_id='" . $_GET['bID'] . "'");
+          $gBitDb->Execute("update " . TABLE_BANNERS . " set banners_on_ssl='" . $_GET['flagbanners_on_ssl'] . "' where banners_id='" . $_GET['bID'] . "'");
 
           $messageStack->add_session(SUCCESS_BANNER_ON_SSL_UPDATED, 'success');
         } else {
@@ -53,7 +53,7 @@
         break;
       case 'setbanners_open_new_windows':
         if ( ($_GET['flagbanners_open_new_windows'] == '0') || ($_GET['flagbanners_open_new_windows'] == '1') ) {
-          $db->Execute("update " . TABLE_BANNERS . " set banners_open_new_windows='" . $_GET['flagbanners_open_new_windows'] . "' where banners_id='" . $_GET['bID'] . "'");
+          $gBitDb->Execute("update " . TABLE_BANNERS . " set banners_open_new_windows='" . $_GET['flagbanners_open_new_windows'] . "' where banners_id='" . $_GET['bID'] . "'");
 
           $messageStack->add_session(SUCCESS_BANNER_OPEN_NEW_WINDOW_UPDATED, 'success');
         } else {
@@ -72,7 +72,7 @@
         $banners_html_text = zen_db_prepare_input($_POST['banners_html_text']);
         $banners_image_local = zen_db_prepare_input($_POST['banners_image_local']);
         $banners_image_target = zen_db_prepare_input($_POST['banners_image_target']);
-        $db_image_location = '';
+        $gBitDb_image_location = '';
         $expires_date = zen_db_prepare_input($_POST['expires_date']);
         $expires_impressions = zen_db_prepare_input($_POST['expires_impressions']);
         $date_scheduled = zen_db_prepare_input($_POST['date_scheduled']);
@@ -104,10 +104,10 @@
         }
 
         if ($banner_error == false) {
-          $db_image_location = (zen_not_null($banners_image_local)) ? $banners_image_local : $banners_image_target . $banners_image->filename;
+          $gBitDb_image_location = (zen_not_null($banners_image_local)) ? $banners_image_local : $banners_image_target . $banners_image->filename;
           $sql_data_array = array('banners_title' => $banners_title,
                                   'banners_url' => $banners_url,
-                                  'banners_image' => $db_image_location,
+                                  'banners_image' => $gBitDb_image_location,
                                   'banners_group' => $banners_group,
                                   'banners_html_text' => $banners_html_text,
                                   'status' => $status,
@@ -116,18 +116,18 @@
                                   'banners_sort_order' => $banners_sort_order);
 
           if ($action == 'insert') {
-            $insert_sql_data = array('date_added' => $db->NOW(),
+            $insert_sql_data = array('date_added' => $gBitDb->NOW(),
                                      'status' => '1');
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_BANNERS, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_BANNERS, $sql_data_array);
 
             $banners_id = zen_db_insert_id( TABLE_BANNERS, 'banners_id' );
 
             $messageStack->add_session(SUCCESS_BANNER_INSERTED, 'success');
           } elseif ($action == 'update') {
-            $db->associateInsert(TABLE_BANNERS, $sql_data_array, 'update', "banners_id = '" . (int)$banners_id . "'");
+            $gBitDb->associateInsert(TABLE_BANNERS, $sql_data_array, 'update', "banners_id = '" . (int)$banners_id . "'");
 
             $messageStack->add_session(SUCCESS_BANNER_UPDATED, 'success');
           }
@@ -140,13 +140,13 @@
                             ((strlen($month) == 1) ? '0' . $month : $month) .
                             ((strlen($day) == 1) ? '0' . $day : $day);
 
-            $db->Execute("update " . TABLE_BANNERS . "
+            $gBitDb->Execute("update " . TABLE_BANNERS . "
                           set `expires_date` = '" . zen_db_input($expires_date) . "',
                               `expires_impressions` = null
                           where `banners_id` = '" . (int)$banners_id . "'");
 
           } elseif (zen_not_null($expires_impressions)) {
-            $db->Execute("update " . TABLE_BANNERS . "
+            $gBitDb->Execute("update " . TABLE_BANNERS . "
                           set `expires_impressions` = '" . zen_db_input($expires_impressions) . "',
                               `expires_date` = null
                           where `banners_id` = '" . (int)$banners_id . "'");
@@ -160,11 +160,11 @@
                               ((strlen($month) == 1) ? '0' . $month : $month) .
                               ((strlen($day) == 1) ? '0' . $day : $day);
 
-            $db->Execute("update " . TABLE_BANNERS . "
+            $gBitDb->Execute("update " . TABLE_BANNERS . "
                           set `date_scheduled` = '" . zen_db_input($date_scheduled) . "'
                           where `banners_id` = '" . (int)$banners_id . "'");
           } else {
-            $db->Execute("update " . TABLE_BANNERS . "
+            $gBitDb->Execute("update " . TABLE_BANNERS . "
                           set `date_scheduled` = null
                           where `banners_id` = '" . (int)$banners_id . "'");
           }
@@ -178,7 +178,7 @@
         $banners_id = zen_db_prepare_input($_GET['bID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $banner = $db->Execute("select `banners_image`
+          $banner = $gBitDb->Execute("select `banners_image`
                                  from " . TABLE_BANNERS . "
                                  where `banners_id` = '" . (int)$banners_id . "'");
 
@@ -193,9 +193,9 @@
           }
         }
 
-        $db->Execute("delete from " . TABLE_BANNERS . "
+        $gBitDb->Execute("delete from " . TABLE_BANNERS . "
                       where `banners_id` = '" . (int)$banners_id . "'");
-        $db->Execute("delete from " . TABLE_BANNERS_HISTORY . "
+        $gBitDb->Execute("delete from " . TABLE_BANNERS_HISTORY . "
                       where `banners_id` = '" . (int)$banners_id . "'");
 
         if (function_exists('imagecreate') && zen_not_null($banner_extension)) {
@@ -326,7 +326,7 @@ function popupImageWindow(url) {
 
       $bID = zen_db_prepare_input($_GET['bID']);
 
-      $banner = $db->Execute("select `banners_title`, `banners_url`, `banners_image`, `banners_group`,
+      $banner = $gBitDb->Execute("select `banners_title`, `banners_url`, `banners_image`, `banners_group`,
                                      `banners_html_text`, `status`,
                                      date_format(`date_scheduled`, '%d/%m/%Y') as `date_scheduled`,
                                      date_format(`expires_date`, '%d/%m/%Y') as `expires_date`,
@@ -359,7 +359,7 @@ function popupImageWindow(url) {
     }
 
     $groups_array = array();
-    $groups = $db->Execute("select distinct `banners_group`
+    $groups = $gBitDb->Execute("select distinct `banners_group`
                             from " . TABLE_BANNERS . "
                             order by `banners_group`");
     while (!$groups->EOF) {
@@ -489,9 +489,9 @@ function popupImageWindow(url) {
 <?php
     $banners_query_raw = "select `banners_id`, `banners_title`, `banners_image`, `banners_group`, `status`, `expires_date`, `expires_impressions`, `date_status_change`, `date_scheduled`, `date_added`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order` from " . TABLE_BANNERS . " order by `banners_title`, `banners_group`";
     $banners_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $banners_query_raw, $banners_query_numrows);
-    $banners = $db->Execute($banners_query_raw);
+    $banners = $gBitDb->Execute($banners_query_raw);
     while (!$banners->EOF) {
-      $info = $db->Execute("select sum(`banners_shown`) as `banners_shown`,
+      $info = $gBitDb->Execute("select sum(`banners_shown`) as `banners_shown`,
                                    sum(`banners_clicked`) as `banners_clicked`
                             from " . TABLE_BANNERS_HISTORY . "
                             where `banners_id` = '" . (int)$banners->fields['banners_id'] . "'");

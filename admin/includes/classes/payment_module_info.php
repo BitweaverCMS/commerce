@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: payment_module_info.php,v 1.2 2005/08/24 02:48:58 lsces Exp $
+//  $Id: payment_module_info.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
 
 
@@ -26,11 +26,11 @@
 
 // class constructor
     function paymentModuleInfo($pmInfo_array) {
-      global $db;
+      global $gBitDb;
       $this->payment_code = $pmInfo_array['payment_code'];
 
       for ($i = 0, $n = sizeof($pmInfo_array) - 1; $i < $n; $i++) {
-        $key_value = $db->Execute("select configuration_title, configuration_value,
+        $key_value = $gBitDb->Execute("select configuration_title, configuration_value,
                                           configuration_description
                                    from " . TABLE_CONFIGURATION . "
                                    where `configuration_key` = '" . $pmInfo_array[$i] . "'");

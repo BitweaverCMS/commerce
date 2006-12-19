@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -62,7 +62,7 @@
                             where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                             and `address_book_id` = '" . (int)$_SESSION['billto'] . "'";
 
-    $check_address = $db->Execute($check_address_query);
+    $check_address = $gBitDb->Execute($check_address_query);
 
     if ($check_address->fields['total'] != '1') {
       $_SESSION['billto'] = $_SESSION['customer_default_address_id'];

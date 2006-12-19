@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rm1stpacket.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
   based upon
-  $Id: rm1stpacket.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
   based upon
-  $Id: rm1stpacket.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -134,29 +134,29 @@
     }
 
     function check() {
-    global $db;
+    global $gBitDb;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select configuration_value from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_RM1STPACKET_STATUS'");
+        $check_query = $gBitDb->Execute("select configuration_value from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_RM1STPACKET_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;
     }
 
     function install() {
-    global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Enable Zones Method', 'MODULE_SHIPPING_RM1STPACKET_STATUS', 'True', 'You must enable Zone shipping for this module to work', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Tax Class', 'MODULE_SHIPPING_RM1STPACKET_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_SHIPPING_RM1STPACKET_SORT_ORDER', '0', 'Sort order of display.', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_RM1STPACKET_ZONES_HANDLING_1', '0', 'The amount it costs you to package the items for first class delivery.', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Zone 1 Countries', 'MODULE_SHIPPING_RM1STPACKET_ZONES_COUNTRIES_1', 'GB', 'two character ISO country codes for Great Britain and Northern Ireland " . $i . ".', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Shipping rates to GB &amp; Northern Ireland', 'MODULE_SHIPPING_RM1STPACKET_ZONES_COST0_1', '0.1:1.00, 0.25:1.27, 0.5:1.70, 0.75:2.20, 1.0:2.70, 1.25:4.74, 1.5:5.59, 1.75:6.44, 2:7.29, 2.25:8.14, 2.5:8.99, 2.75:9.84, 3:10.69, 3.25:11.54, 3.5:12.39, 3.75:13.24, 4:14.09, 4.25:14.94, 4.5:15.79, 4.75:16.64, 5:17.49', 'Correct on 13<sup>th</sup> September 2006, from information published August 2006. <br />Example: 0.1:1.00 means weights less than or equal to 0.1 Kg would cost &pound;1.00.', '6', '0', 'zen_cfg_textarea(', now())");
+    global $gBitDb;
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Enable Zones Method', 'MODULE_SHIPPING_RM1STPACKET_STATUS', 'True', 'You must enable Zone shipping for this module to work', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Tax Class', 'MODULE_SHIPPING_RM1STPACKET_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_SHIPPING_RM1STPACKET_SORT_ORDER', '0', 'Sort order of display.', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_RM1STPACKET_ZONES_HANDLING_1', '0', 'The amount it costs you to package the items for first class delivery.', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Zone 1 Countries', 'MODULE_SHIPPING_RM1STPACKET_ZONES_COUNTRIES_1', 'GB', 'two character ISO country codes for Great Britain and Northern Ireland " . $i . ".', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Shipping rates to GB &amp; Northern Ireland', 'MODULE_SHIPPING_RM1STPACKET_ZONES_COST0_1', '0.1:1.00, 0.25:1.27, 0.5:1.70, 0.75:2.20, 1.0:2.70, 1.25:4.74, 1.5:5.59, 1.75:6.44, 2:7.29, 2.25:8.14, 2.5:8.99, 2.75:9.84, 3:10.69, 3.25:11.54, 3.5:12.39, 3.75:13.24, 4:14.09, 4.25:14.94, 4.5:15.79, 4.75:16.64, 5:17.49', 'Correct on 13<sup>th</sup> September 2006, from information published August 2006. <br />Example: 0.1:1.00 means weights less than or equal to 0.1 Kg would cost &pound;1.00.', '6', '0', 'zen_cfg_textarea(', now())");
 
     }
 
     function remove() {
-    global $db;
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_RM1STPACKET_ZONES_COUNTRIES_1'");
+    global $gBitDb;
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_RM1STPACKET_ZONES_COUNTRIES_1'");
     }
 
     function keys() {

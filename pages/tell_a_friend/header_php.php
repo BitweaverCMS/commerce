@@ -18,7 +18,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.6 2005/11/30 07:46:31 spiderr Exp $
+// $Id: header_php.php,v 1.7 2006/12/19 00:11:39 spiderr Exp $
 
 //
 	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
@@ -103,7 +103,7 @@
                             from " . TABLE_CUSTOMERS . "
                             where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-          $account = $db->Execute($account_query);
+          $account = $gBitDb->Execute($account_query);
         }
 	$extra_info=email_collect_extra_info($from_name,$from_email_address, $account->fields['customers_firstname'] . ' ' . $account->fields['customers_lastname'] , $account->fields['customers_email_address'] );
 
@@ -121,7 +121,7 @@
                       from " . TABLE_CUSTOMERS . "
                       where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-    $account = $db->Execute($account_query);
+    $account = $gBitDb->Execute($account_query);
 
     $from_name = $account->fields['customers_firstname'] . ' ' . $account->fields['customers_lastname'];
     $from_email_address = $account->fields['customers_email_address'];

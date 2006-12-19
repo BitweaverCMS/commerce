@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:31 spiderr Exp $
+// $Id: header_php.php,v 1.5 2006/12/19 00:11:39 spiderr Exp $
 //
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
@@ -38,12 +38,12 @@
  	$unsubscribe_address = zen_db_prepare_input($_GET['unsubscribe_address']);
 	/// Check and see if the email exists in the database, and is subscribed to the newsletter.
      $unsubscribe_count_query = "select 1 from " . TABLE_CUSTOMERS . " where customers_newsletter = '1' and customers_email_address = '" . $unsubscribe_address . "'";
-     $unsubscribe = $db->Execute($unsubscribe_count_query);
+     $unsubscribe = $gBitDb->Execute($unsubscribe_count_query);
 	
 	// If we found the customer's email address, and they currently subscribe
 	  if ($unsubscribe->RecordCount() >0) {
 		  $unsubscribe_query = "UPDATE " . TABLE_CUSTOMERS . " SET customers_newsletter = '0' WHERE customers_email_address = '" . $unsubscribe_address . "'";
-		  $unsubscribe = $db->Execute($unsubscribe_query);
+		  $unsubscribe = $gBitDb->Execute($unsubscribe_query);
 		  $status_display= UNSUBSCRIBE_DONE_TEXT_INFORMATION . $unsubscribe_address;
 	  } else {
 		// If not found, we want to display an error message (This should never occur, unless they try to unsubscribe twice)

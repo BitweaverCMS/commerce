@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.14 2006/11/01 19:15:30 lsces Exp $
+//  $Id: customers.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,7 +38,7 @@
         } else {
           $sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`='" . CUSTOMERS_APPROVAL_AUTHORIZATION . "' where `customers_id`='" . $_GET['cID'] . "'";
         }
-        $db->Execute($sql);
+        $gBitDb->Execute($sql);
         $action = '';
         zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, 'cID=' . $_GET['cID'] . '&page=' . $_GET['page'], 'NONSSL'));
         break;
@@ -150,13 +150,13 @@
           } else {
             $zone_id = 0;
             $entry_state_error = false;
-            $check_value = $db->Execute("select count(*) as `total`
+            $check_value = $gBitDb->Execute("select count(*) as `total`
                                          from " . TABLE_ZONES . "
                                          where `zone_country_id` = '" . (int)$entry_country_id . "'");
 
             $entry_state_has_zones = ($check_value->fields['total'] > 0);
             if ($entry_state_has_zones == true) {
-              $zone_query = $db->Execute("select `zone_id
+              $zone_query = $gBitDb->Execute("select `zone_id
                                           from " . TABLE_ZONES . "
                                           where `zone_country_id` = '" . (int)$entry_country_id . "'
                                           and `zone_name` = '" . zen_db_input($entry_state) . "'");
@@ -183,7 +183,7 @@
         $entry_telephone_error = false;
       }
 
-      $check_email = $db->Execute("select `customers_email_address`
+      $check_email = $gBitDb->Execute("select `customers_email_address`
                                    from " . TABLE_CUSTOMERS . "
                                    where `customers_email_address` = '" . zen_db_input($customers_email_address) . "'
                                    and `customers_id` != '" . (int)$customers_id . "'");
@@ -211,10 +211,10 @@
 
         if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $customers_gender;
         if (ACCOUNT_DOB == 'true') $sql_data_array['customers_dob'] = zen_date_raw($customers_dob);
-        $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "'");
+        $gBitDb->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "'");
 
-        $db->Execute("update " . TABLE_CUSTOMERS_INFO . "
-                      set `date_account_last_modified` = " . $db->mDb->sysTimeStamp . "
+        $gBitDb->Execute("update " . TABLE_CUSTOMERS_INFO . "
+                      set `date_account_last_modified` = " . $gBitDb->mDb->sysTimeStamp . "
                       where `customers_info_id` = '" . (int)$customers_id . "'");
 
         if ($entry_zone_id > 0) $entry_state = '';
@@ -239,7 +239,7 @@
           }
         }
 
-        $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$default_address_id . "'");
+        $gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$default_address_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $customers_id, 'NONSSL'));
 
@@ -259,47 +259,47 @@
         $customers_id = zen_db_prepare_input($_GET['cID']);
 
         if (isset($_POST['delete_reviews']) && ($_POST['delete_reviews'] == 'on')) {
-          $reviews = $db->Execute("select reviews_id
+          $reviews = $gBitDb->Execute("select reviews_id
                                    from " . TABLE_REVIEWS . "
                                    where `customers_id` = '" . (int)$customers_id . "'");
 
           while (!$reviews->EOF) {
-            $dbExecute("delete from " . TABLE_REVIEWS_DESCRIPTION . "
+            $gBitDbExecute("delete from " . TABLE_REVIEWS_DESCRIPTION . "
                         where `reviews_id` = '" . (int)$reviews['reviews_id'] . "'");
             $reviews->MoveNext();
           }
 
-          $db->Execute("delete from " . TABLE_REVIEWS . "
+          $gBitDb->Execute("delete from " . TABLE_REVIEWS . "
                         where `customers_id` = '" . (int)$customers_id . "'");
         } else {
-          $db->Execute("update " . TABLE_REVIEWS . "
+          $gBitDb->Execute("update " . TABLE_REVIEWS . "
                         set `customers_id` = null
                         where `customers_id` = '" . (int)$customers_id . "'");
         }
 
-        $db->Execute("delete from " . TABLE_ADDRESS_BOOK . "
+        $gBitDb->Execute("delete from " . TABLE_ADDRESS_BOOK . "
                       where `customers_id` = '" . (int)$customers_id . "'");
 
-        $db->Execute("delete from " . TABLE_CUSTOMERS . "
+        $gBitDb->Execute("delete from " . TABLE_CUSTOMERS . "
                       where `customers_id` = '" . (int)$customers_id . "'");
 
-        $db->Execute("delete from " . TABLE_CUSTOMERS_INFO . "
+        $gBitDb->Execute("delete from " . TABLE_CUSTOMERS_INFO . "
                       where customers_info_id = '" . (int)$customers_id . "'");
 
-        $db->Execute("delete from " . TABLE_CUSTOMERS_BASKET . "
+        $gBitDb->Execute("delete from " . TABLE_CUSTOMERS_BASKET . "
                       where `customers_id` = '" . (int)$customers_id . "'");
 
-        $db->Execute("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
+        $gBitDb->Execute("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                       where `customers_id` = '" . (int)$customers_id . "'");
 
-        $db->Execute("delete from " . TABLE_WHOS_ONLINE . "
+        $gBitDb->Execute("delete from " . TABLE_WHOS_ONLINE . "
                       where `customer_id` = '" . (int)$customers_id . "'");
 
 
         zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')), 'NONSSL'));
         break;
       default:
-        $customers = $db->Execute("select c.`customers_id`, c.`customers_gender`, c.`customers_firstname`,
+        $customers = $gBitDb->Execute("select c.`customers_id`, c.`customers_gender`, c.`customers_firstname`,
                                           c.`customers_lastname`, c.`customers_dob`, c.`customers_email_address`,
                                           a.`entry_company`, a.`entry_street_address`, a.`entry_suburb`,
                                           a.`entry_postcode`, a.`entry_city`, a.`entry_state`, a.`entry_zone_id`,
@@ -694,7 +694,7 @@ function check_form() {
       if ($entry_state_error == true) {
         if ($entry_state_has_zones == true) {
           $zones_array = array();
-          $zones_values = $db->Execute("select `zone_name`
+          $zones_values = $gBitDb->Execute("select `zone_name`
                                         from " . TABLE_ZONES . "
                                         where `zone_country_id` = '" . zen_db_input($cInfo->entry_country_id) . "'
                                         order by `zone_name`");
@@ -818,14 +818,14 @@ if ($processed == true) {
 <?php
   if ($processed == true) {
     if ($cInfo->customers_group_pricing) {
-      $group_query = $db->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = '" . $cInfo->customers_group_pricing . "'");
+      $group_query = $gBitDb->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = '" . $cInfo->customers_group_pricing . "'");
       echo $group_query->fields['group_name'].'&nbsp;'.$group_query->fields['group_percentage'].'%';
     } else {
       echo ENTRY_NONE;
     }
     echo zen_draw_hidden_field('customers_newsletter');
   } else {
-    $group_array_query = $db->Execute("select `group_id`, `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING);
+    $group_array_query = $gBitDb->Execute("select `group_id`, `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING);
     $group_array[] = array('id'=>0, 'text'=>TEXT_NONE);
     while (!$group_array_query->EOF) {
       $group_array[] = array('id'=>$group_array_query->fields['group_id'], 'text'=>$group_array_query->fields['group_name'].'&nbsp;'.$group_array_query->fields['group_percentage'].'%');
@@ -983,7 +983,7 @@ if ($processed == true) {
 // Split Page
 // reset page when page is unknown
 if ($_GET['page'] == '' and $_GET['cID'] != '') {
-  $check_page = $db->Execute($customers_query_raw);
+  $check_page = $gBitDb->Execute($customers_query_raw);
   $check_count=1;
   if ($check_page->RecordCount() > MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER) {
     while (!$check_page->EOF) {
@@ -1001,9 +1001,9 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
 }
 
     $customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $customers_query_raw, $customers_query_numrows);
-    $customers = $db->Execute($customers_query_raw);
+    $customers = $gBitDb->Execute($customers_query_raw);
     while (!$customers->EOF) {
-      $info = $db->Execute("select `date_account_created`,
+      $info = $gBitDb->Execute("select `date_account_created`,
                                    `date_account_last_modified`,
                                    `date_of_last_logon` as `date_last_logon`,
                                    `number_of_logons`
@@ -1011,11 +1011,11 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
                             where `customers_info_id` = '" . $customers->fields['customers_id'] . "'");
 
       if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $customers->fields['customers_id']))) && !isset($cInfo)) {
-        $country = $db->Execute("select `countries_name`
+        $country = $gBitDb->Execute("select `countries_name`
                                  from " . TABLE_COUNTRIES . "
                                  where `countries_id` = '" . (int)$customers->fields['entry_country_id'] . "'");
 
-        $reviews = $db->Execute("select count(*) as `number_of_reviews`
+        $reviews = $gBitDb->Execute("select count(*) as `number_of_reviews`
                                  from " . TABLE_REVIEWS . " where `customers_id` = '" . (int)$customers->fields['customers_id'] . "'");
 
 		$cInfo_array = $customers->fields;
@@ -1030,7 +1030,7 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
       }
 
 		if ( !empty($customers->fields['customers_group_pricing']) ) {
-			$group_query = $db->query( "select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = ?", array( $customers->fields['customers_group_pricing'] ) );
+			$group_query = $gBitDb->query( "select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = ?", array( $customers->fields['customers_group_pricing'] ) );
 
 			if ($group_query->RecordCount() < 1) {
 				$group_name_entry = TEXT_NONE;
@@ -1092,7 +1092,7 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
       break;
     default:
       if (isset($cInfo) && is_object($cInfo)) {
-        $customers_orders = $db->Execute("select `orders_id`, `date_purchased`, `order_total`, `currency`, `currency_value` from " . TABLE_ORDERS . " where `customers_id`='" . $cInfo->customers_id . "' order by `date_purchased` desc");
+        $customers_orders = $gBitDb->Execute("select `orders_id`, `date_purchased`, `order_total`, `currency`, `currency_value` from " . TABLE_ORDERS . " where `customers_id`='" . $cInfo->customers_id . "' order by `date_purchased` desc");
 
         $heading[] = array('text' => '<b>' . TABLE_HEADING_ID . $cInfo->customers_id . ' ' . $cInfo->customers_firstname . ' ' . $cInfo->customers_lastname . '</b>');
 

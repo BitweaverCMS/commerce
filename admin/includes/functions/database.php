@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: database.php,v 1.4 2005/08/18 22:56:15 lsces Exp $
+//  $Id: database.php,v 1.5 2006/12/19 00:11:30 spiderr Exp $
 //
 
 
   function associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
-    global $db;
+    global $gBitDb;
     reset($data);
     if ($action == 'insert') {
       $query = 'insert into ' . $table . ' (';
@@ -63,7 +63,7 @@
       $query = substr($query, 0, -2) . ' where ' . $parameters;
     }
 
-    return $db->Execute($query);
+    return $gBitDb->Execute($query);
   }
 
   function zen_db_insert_id() {

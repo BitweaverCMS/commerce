@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_product_list.php,v 1.3 2006/12/11 08:55:43 spiderr Exp $
+// $Id: index_product_list.php,v 1.4 2006/12/19 00:11:37 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -73,12 +73,12 @@
 //// bof: categories error
 if ($error_categories==true) {
   // verify lost category and reset category
-  $check_category = $db->Execute("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_id` ='" . $current_category_id . "'");
+  $check_category = $gBitDb->Execute("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_id` ='" . $current_category_id . "'");
   if ($check_category->RecordCount() == 0) {
     $new_products_category_id = '0';
     $cPath= '';
   }
-	$show_display_category = $db->Execute(SQL_SHOW_PRODUCT_INFO_MISSING);
+	$show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_MISSING);
 
 	while (!$show_display_category->EOF) {
 	  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_FEATURED_PRODUCTS') {
@@ -99,9 +99,9 @@ if ($error_categories==true) {
 } //// eof: categories error 
 
 //// bof: categories
-$show_display_category = $db->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
+$show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
 if ($error_categories == false and $show_display_category->RecordCount() > 0) {
-  $show_display_category = $db->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
+  $show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
   while (!$show_display_category->EOF) {
     if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_FEATURED_PRODUCTS') {
       include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));

@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_banner_box.php,v 1.4 2006/02/05 21:36:08 spiderr Exp $
+// $Id: mod_banner_box.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $banner;
+	global $gBitDb, $gBitProduct, $banner;
 	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
 	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
 

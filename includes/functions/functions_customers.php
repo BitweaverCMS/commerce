@@ -17,19 +17,19 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_customers.php,v 1.5 2006/01/18 21:43:57 lsces Exp $
+// $Id: functions_customers.php,v 1.6 2006/12/19 00:11:32 spiderr Exp $
 //
 //
 ////
 // Returns the address_format_id for the given country
 // TABLES: countries;
   function zen_get_address_format_id($country_id) {
-    global $db;
+    global $gBitDb;
     $address_format_query = "select `address_format_id` as `format_id`
                              from " . TABLE_COUNTRIES . "
                              where `countries_id` = '" . (int)$country_id . "'";
 
-    $address_format = $db->Execute($address_format_query);
+    $address_format = $gBitDb->Execute($address_format_query);
 
     if ($address_format->RecordCount() > 0) {
       return $address_format->fields['format_id'];
@@ -43,7 +43,7 @@
 // Return a formatted address
 // TABLES: customers, address_book
   function zen_address_label($customers_id, $address_id = 1, $html = false, $boln = '', $eoln = "\n") {
-    global $db;
+    global $gBitDb;
     $address_query = "select `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
                              `entry_company` as `company`, `entry_street_address` as `street_address`,
                              `entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
@@ -53,14 +53,14 @@
                       where `customers_id` = '" . (int)$customers_id . "'
                       and `address_book_id` = '" . (int)$address_id . "'";
 
-    $address = $db->Execute($address_query);
+    $address = $gBitDb->Execute($address_query);
 
     $format_id = zen_get_address_format_id($address->fields['country_id']);
     return zen_address_format($format_id, $address->fields, $html, $boln, $eoln);
   }
 
   function zen_count_customer_orders($id = '', $check_session = true) {
-    global $db;
+    global $gBitDb;
 
     if (is_numeric($id) == false) {
       if ($_SESSION['customer_id']) {
@@ -80,13 +80,13 @@
                            from " . TABLE_ORDERS . "
                            where `customers_id` = '" . (int)$id . "'";
 
-    $orders_check = $db->Execute($orders_check_query);
+    $orders_check = $gBitDb->Execute($orders_check_query);
 
     return $orders_check->fields['total'];
   }
 
   function zen_count_customer_address_book_entries($id = '', $check_session = true) {
-    global $db;
+    global $gBitDb;
 
     if (is_numeric($id) == false) {
       if ($_SESSION['customer_id']) {
@@ -106,7 +106,7 @@
                         from " . TABLE_ADDRESS_BOOK . "
                         where `customers_id` = '" . (int)$id . "'";
 
-    $addresses = $db->Execute($addresses_query);
+    $addresses = $gBitDb->Execute($addresses_query);
 
     return $addresses->fields['total'];
   }

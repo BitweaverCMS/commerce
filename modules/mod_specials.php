@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_specials.php,v 1.5 2005/12/20 17:13:02 gilesw Exp $
+// $Id: mod_specials.php,v 1.6 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies;
+	global $gBitDb, $gBitProduct, $currencies;
 
 // test if box should display
 	$listHash['max_records'] = 1;

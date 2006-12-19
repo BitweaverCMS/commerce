@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: column_single.php,v 1.2 2005/09/27 22:33:53 spiderr Exp $
+// $Id: column_single.php,v 1.3 2006/12/19 00:11:33 spiderr Exp $
 //
   // Check if there are boxes for the column
-  $column_single_display= $db->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where (layout_box_location=0 or layout_box_location=1) and layout_box_status_single=1 and layout_template ='" . $template_dir . "'" . ' order by LPAD(layout_box_sort_order_single,11,"0")');
+  $column_single_display= $gBitDb->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where (layout_box_location=0 or layout_box_location=1) and layout_box_status_single=1 and layout_template ='" . $template_dir . "'" . ' order by LPAD(layout_box_sort_order_single,11,"0")');
   // safety row stop
   $box_cnt=0;
   while (!$column_single_display->EOF and $box_cnt < 100) {

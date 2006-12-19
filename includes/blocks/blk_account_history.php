@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.6 2005/09/27 22:33:52 spiderr Exp $
+// $Id: blk_account_history.php,v 1.7 2006/12/19 00:11:32 spiderr Exp $
 //
   $orders_total = zen_count_customer_orders();
 
@@ -34,14 +34,14 @@
                           order by   `orders_id` DESC";
 
     $history_split = new splitPageResults($history_query_raw, MAX_DISPLAY_ORDER_HISTORY);
-    $history = $db->Execute($history_split->sql_query);
+    $history = $gBitDb->Execute($history_split->sql_query);
 
     while (!$history->EOF) {
       $products_query = "select count(*) as `count`
                          from   " . TABLE_ORDERS_PRODUCTS . "
                          where      `orders_id` = '" . (int)$history->fields['orders_id'] . "'";
 
-      $products = $db->Execute($products_query);
+      $products = $gBitDb->Execute($products_query);
       if (zen_not_null($history->fields['delivery_name'])) {
         $order_type = TEXT_ORDER_SHIPPED_TO;
         $order_name = $history->fields['delivery_name'];

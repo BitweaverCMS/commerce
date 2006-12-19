@@ -17,27 +17,27 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: move_product_confirm.php,v 1.4 2005/10/31 16:20:01 lsces Exp $
+//  $Id: move_product_confirm.php,v 1.5 2006/12/19 00:11:30 spiderr Exp $
 //
 
         $products_id = zen_db_prepare_input($_POST['products_id']);
         $new_parent_id = zen_db_prepare_input($_POST['move_to_category_id']);
 
-        $duplicate_check = $db->Execute("select count(*) as `total`
+        $duplicate_check = $gBitDb->Execute("select count(*) as `total`
                                         from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                         where `products_id` = '" . (int)$products_id . "'
                                         and `categories_id` = '" . (int)$new_parent_id . "'");
 
         if ($duplicate_check->fields['total'] < 1) {
-          $db->Execute("update " . TABLE_PRODUCTS_TO_CATEGORIES . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_TO_CATEGORIES . "
                         set `categories_id` = '" . (int)$new_parent_id . "'
                         where `products_id` = '" . (int)$products_id . "'
                         and `categories_id` = '" . (int)$current_category_id . "'");
 
           // reset master_categories_id if moved from original master category
-          $check_master = $db->Execute("select `products_id`, `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` ='" .  (int)$products_id . "'");
+          $check_master = $gBitDb->Execute("select `products_id`, `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id` ='" .  (int)$products_id . "'");
           if ($check_master->fields['master_categories_id'] == (int)$current_category_id) {
-            $db->Execute("update " . TABLE_PRODUCTS . "
+            $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                           set `master_categories_id`='" . (int)$new_parent_id . "'
                           where `products_id` = '" . (int)$products_id . "'");
           }

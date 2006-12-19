@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_notifications.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
+// $Id: blk_account_notifications.php,v 1.6 2006/12/19 00:11:32 spiderr Exp $
 //
   $counter = 0;
   $products_query = "select pd.`products_id`, pd.`products_name`
@@ -28,7 +28,7 @@
                      and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                      order by pd.`products_name`";
 
-  $products = $db->Execute($products_query);
+  $products = $gBitDb->Execute($products_query);
   while (!$products->EOF) {
 
     require( DIR_FS_BLOCKS . 'tpl_block_account_notifications.php');

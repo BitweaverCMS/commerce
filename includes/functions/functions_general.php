@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.30 2006/12/13 18:20:01 spiderr Exp $
+// $Id: functions_general.php,v 1.31 2006/12/19 00:11:32 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -596,14 +596,14 @@
 // Checks to see if the currency code exists as a currency
 // TABLES: currencies
   function zen_currency_exists($code) {
-    global $db;
+    global $gBitDb;
     $code = zen_db_prepare_input($code);
 
     $currency_code = "select `currencies_id`
                       from " . TABLE_CURRENCIES . "
                       where `code` = '" . zen_db_input($code) . "'";
 
-    $currency = $db->Execute($currency_code);
+    $currency = $gBitDb->Execute($currency_code);
 
     if ($currency->RecordCount()) {
       return strtoupper($code);
@@ -679,17 +679,17 @@
 
 ////
   function is_product_valid($product_id, $coupon_id) {
-    global $db;
+    global $gBitDb;
 	$product_valid = false;
 	$product_id = zen_get_prid( $product_id );
 	if( is_numeric( $coupon_id ) ) {
 		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
 						WHERE `coupon_id` = ?
-						ORDER BY ".$db->convert_sortmode( 'coupon_restrict_asc' );
-		$couponsRs = $db->query($coupons_query, array( $coupon_id ) );
+						ORDER BY ".$gBitDb->convert_sortmode( 'coupon_restrict_asc' );
+		$couponsRs = $gBitDb->query($coupons_query, array( $coupon_id ) );
 
 		$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
-		$productModel = $db->getOne($product_query, array( $product_id ) );
+		$productModel = $gBitDb->getOne($product_query, array( $product_id ) );
 
 		if (ereg('^GIFT', $productModel)) {
 			return false;
@@ -732,8 +732,8 @@
 
 ////
 /*
-  function $db->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
-    global $db;
+  function $gBitDb->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
+    global $gBitDb;
     reset($data);
     if ($action == 'insert') {
       $query = 'insert into ' . $table . ' (';
@@ -774,7 +774,7 @@
       $query = substr($query, 0, -2) . ' where ' . $parameters;
     }
 
-    return $db->Execute($query);
+    return $gBitDb->Execute($query);
   }
 */
 ////
@@ -822,9 +822,9 @@
 ////
 // Return a random row from a database query
   function zen_random_select($query) {
-    global $db;
+    global $gBitDb;
     $random_product = '';
-    $random_query = $db->Execute($query);
+    $random_query = $gBitDb->Execute($query);
     $num_rows = $random_query->RecordCount();
     if ($num_rows > 1) {
       $random_row = zen_rand(0, ($num_rows - 1));
@@ -877,7 +877,7 @@
 //get specials price or sale price
 // Switch buy now button based on call for price sold out etc.
   function zen_get_buy_now_button($product_id, $link, $additional_link = false) {
-    global $db;
+    global $gBitDb;
 
 
 // 0 = normal shopping
@@ -925,7 +925,7 @@
       return '<a href="' . zen_href_link(FILENAME_CONTACT_US) . '">' .  TEXT_SHOWCASE_ONLY . '</a>';
     }
 
-    $button_check = $db->getRow( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
+    $button_check = $gBitDb->getRow( "select `product_is_call`, `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     switch (true) {
 // cannot be added to the cart
     case (zen_get_products_allow_add_to_cart($product_id) == 'N'):
@@ -1021,10 +1021,10 @@
 
 // check to see if database stored GET terms are in the URL as $_GET parameters
   function zen_check_url_get_terms() {
-    global $db;
+    global $gBitDb;
     $zp_sql = "select * from " . TABLE_GET_TERMS_TO_FILTER;
     $zp_result = false;
-	if( $rs = $db->Execute($zp_sql) ) {
+	if( $rs = $gBitDb->Execute($zp_sql) ) {
     	while( $zp_filter_terms = $rs->fetchRow() ) {
     		if ( !empty( $_GET[$zp_filter_terms['get_term_name']] ) ) {
 				$zp_result = true;

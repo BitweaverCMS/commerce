@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_sent.php,v 1.7 2006/07/10 03:43:58 spiderr Exp $
+//  $Id: gv_sent.php,v 1.8 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -80,7 +80,7 @@
 <?php
   $gv_query_raw = "select c.coupon_amount, c.coupon_code, c.coupon_id, et.sent_firstname, et.sent_lastname, et.customer_id_sent, et.emailed_to, et.date_sent, c.coupon_id from " . TABLE_COUPONS . " c, " . TABLE_COUPON_EMAIL_TRACK . " et where c.coupon_id = et.coupon_id" . " order by date_sent desc";
   $gv_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $gv_query_raw, $gv_query_numrows);
-  $gv_list = $db->Execute($gv_query_raw);
+  $gv_list = $gBitDb->Execute($gv_query_raw);
   while (!$gv_list->EOF) {
     if (((!$_GET['gid']) || (@$_GET['gid'] == $gv_list->fields['coupon_id'])) && (!$gInfo)) {
     $gInfo = new objectInfo($gv_list->fields);
@@ -116,7 +116,7 @@
   $contents = array();
 
   $heading[] = array('text' => '[' . $gInfo->coupon_id . '] ' . ' ' . $currencies->format($gInfo->coupon_amount));
-  $redeem = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
+  $redeem = $gBitDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
                           where coupon_id = '" . $gInfo->coupon_id . "'");
   $redeemed = 'No';
   if ($redeem->RecordCount() > 0) $redeemed = 'Yes';

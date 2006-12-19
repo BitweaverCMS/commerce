@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_best_sellers.php,v 1.7 2006/02/25 00:25:19 lsces Exp $
+// $Id: mod_best_sellers.php,v 1.8 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
 // test if box should display
   $show_best_sellers= false;
@@ -31,7 +31,7 @@
                       where `customers_info_id` = ?
                       and `global_product_notifications` = '1'";
 
-      $check = $db->query( $check_query, array( $gBitUser->mUserId ) );
+      $check = $gBitDb->query( $check_query, array( $gBitUser->mUserId ) );
 
       if ($check->fields['count'] > 0) {
         $show_best_sellers= true;
@@ -56,7 +56,7 @@
                              and '" . (int)$current_category_id . "' in (c.`categories_id`, c.`parent_id`)
                              order by p.products_ordered desc, pd.`products_name`";
 
-      $best_sellers = $db->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
+      $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
 
     } else {
       $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
@@ -67,7 +67,7 @@
                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                              order by p.products_ordered desc, pd.`products_name`";
 
-      $best_sellers = $db->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
+      $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
     }
 
     if ($best_sellers->RecordCount() >= MIN_DISPLAY_BESTSELLERS) {

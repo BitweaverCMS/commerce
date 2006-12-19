@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_categories.php,v 1.2 2005/11/26 15:03:02 spiderr Exp $
+// $Id: index_categories.php,v 1.3 2006/12/19 00:11:37 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -77,7 +77,7 @@ if( !empty( $show_welcome ) && $show_welcome == 'true') {
 </table>
 
 <?php
-$show_display_category = $db->Execute(SQL_SHOW_PRODUCT_INFO_CATEGORY);
+$show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_CATEGORY);
 
 while (!$show_display_category->EOF) {
   // //  echo 'I found ' . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS);

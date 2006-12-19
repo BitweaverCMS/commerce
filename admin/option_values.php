@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: option_values.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: option_values.php,v 1.14 2006/12/19 00:11:28 spiderr Exp $
 //
 ?>
 <?php
   require('includes/application_top.php');
 
   // verify option values exist
-  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
+  $chk_option_values = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
 		" where `products_options_values_id` != '0' and `language_id` ='" . $_SESSION['languages_id'] . "'");
   if ( empty( $chk_option_values ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
@@ -39,7 +39,7 @@
       foreach($_POST['options_values_new_sort_order'] as $id => $new_sort_order) {
         $row++;
 
-        $db->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_ov_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where `products_options_values_id` = $id");
+        $gBitDb->Execute("UPDATE " . TABLE_PRODUCTS_OPTIONS_VALUES . " set products_ov_sort_order= " . $_POST['options_values_new_sort_order'][$id] . " where `products_options_values_id` = $id");
       }
       $messageStack->add_session(SUCCESS_OPTION_VALUES_SORT_ORDER . ' ' . zen_options_name($_GET['options_id']), 'success');
       $_GET['action']='';
@@ -54,7 +54,7 @@
       break;
 // update by category
     case ('update_categories_attributes'):
-      $all_products_attributes= $db->Execute("select ptoc.`products_id`, pa.products_attributes_id from " .
+      $all_products_attributes= $gBitDb->Execute("select ptoc.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
       where ptoc.`categories_id` = '" . $_POST['categories_update_id'] . "' and
@@ -72,7 +72,7 @@
       break;
 // update all products in catalog
     case ('update_all_products_attributes_sort_order'):
-      $all_products_attributes= $db->Execute("select p.`products_id`, pa.products_attributes_id from " .
+      $all_products_attributes= $gBitDb->Execute("select p.`products_id`, pa.products_attributes_id from " .
       TABLE_PRODUCTS . " p, " .
       TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
       where p.`products_id`= pa.`products_id`"
@@ -143,7 +143,7 @@ if ($_GET['options_id']=='') {
       <td class="dataTableHeadingContent"> <?php echo TEXT_SELECT_OPTION; ?> </td>
       <td class="dataTableHeadingContent">&nbsp;<select name="options_id">
 <?php
-        $options_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_name` !='' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_FILE . "' order by `products_options_name`");
+        $options_values = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_name` !='' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_FILE . "' order by `products_options_name`");
         while(!$options_values->EOF) {
             echo "\n" . '<option name="' . $options_values->fields['products_options_name'] . '" value="' . $options_values->fields['products_options_id'] . '">' . $options_values->fields['products_options_name'] . '</option>';
             $options_values->MoveNext();
@@ -166,7 +166,7 @@ if ($_GET['options_id']=='') {
 <?php
     echo '    <tr class="dataTableHeadingRow"><td class="dataTableHeadingContent">Option ID</td><td class="dataTableHeadingContent">Option Value Name</td><td class="dataTableHeadingContent">Sort Order</td></tr><tr>';
 
-    $row = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.`products_options_values_id` = pov.`products_options_values_id` and povtpo.`products_options_id`='" . $_GET['options_id'] . "' and pov.`language_id` = '" . $_SESSION['languages_id'] . "' ORDER BY pov.`products_ov_sort_order`, pov.`products_options_values_id`");
+    $row = $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov, " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo WHERE povtpo.`products_options_values_id` = pov.`products_options_values_id` and povtpo.`products_options_id`='" . $_GET['options_id'] . "' and pov.`language_id` = '" . $_SESSION['languages_id'] . "' ORDER BY pov.`products_ov_sort_order`, pov.`products_options_values_id`");
 
     if (!$row->EOF) {
        $option_values_exist = true;

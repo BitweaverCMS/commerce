@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_daily.php,v 1.2 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: banner_daily.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
 
   include(DIR_WS_CLASSES . 'phplot.php');
@@ -31,7 +31,7 @@
     $stats[] = array($i, '0', '0');
   }
 
-  $banner_stats = $db->Execute("select dayofmonth(banners_history_date) as banner_day, banners_shown as value, banners_clicked as dvalue from " . TABLE_BANNERS_HISTORY . " where banners_id = '" . $banner_id . "' and month(banners_history_date) = '" . $month . "' and year(banners_history_date) = '" . $year . "'");
+  $banner_stats = $gBitDb->Execute("select dayofmonth(banners_history_date) as banner_day, banners_shown as value, banners_clicked as dvalue from " . TABLE_BANNERS_HISTORY . " where banners_id = '" . $banner_id . "' and month(banners_history_date) = '" . $month . "' and year(banners_history_date) = '" . $year . "'");
   while (!$banner_stats->EOF) {
     $stats[($banner_stats->fields['banner_day']-1)] = array($banner_stats->fields['banner_day'], (($banner_stats->fields['value']) ? $banner_stats->fields['value'] : '0'), (($banner_stats->fields['dvalue']) ? $banner_stats->fields['dvalue'] : '0'));
     $banner_stats->MoveNext();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers.php,v 1.8 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: stats_customers.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -79,13 +79,13 @@
   $customers_query_raw = "select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`, sum(op.`products_quantity` * op.`final_price`)+sum(op.`onetime_charges`)  as `ordersum` from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and o.`orders_id` = op.`orders_id` group by c.`customers_id`, c.`customers_firstname`, c.`customers_lastname` order by 4 DESC";
   $customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $customers_query_raw, $customers_query_numrows);
 // fix counted customers
-  $customers_query_m = $db->Execute("select `customers_id`
+  $customers_query_m = $gBitDb->Execute("select `customers_id`
                                            from " . TABLE_ORDERS . " group by `customers_id`");
 
   $customers_query_numrows = $customers_query_m->RecordCount();
 
   $rows = 0;
-  $customers = $db->Execute($customers_query_raw);
+  $customers = $gBitDb->Execute($customers_query_raw);
   while (!$customers->EOF) {
     $rows++;
 

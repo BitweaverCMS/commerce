@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_infobox.php,v 1.2 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: banner_infobox.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
 
   include(DIR_WS_CLASSES . 'phplot.php');
 
   $stats = array();
-  $banner_stats = $db->Execute("select dayofmonth(banners_history_date) as name, banners_shown as value, banners_clicked as dvalue from " . TABLE_BANNERS_HISTORY . " where banners_id = '" . $banner_id . "' and to_days(now()) - to_days(banners_history_date) < " . $days . " order by banners_history_date");
+  $banner_stats = $gBitDb->Execute("select dayofmonth(banners_history_date) as name, banners_shown as value, banners_clicked as dvalue from " . TABLE_BANNERS_HISTORY . " where banners_id = '" . $banner_id . "' and to_days(now()) - to_days(banners_history_date) < " . $days . " order by banners_history_date");
   while (!$banner_stats->EOF) {
     $stats[] = array($banner_stats->fields['name'], $banner_stats->fields['value'], $banner_stats->fields['dvalue']);
     $banner_stats->MoveNext();

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.8 2006/11/01 19:15:29 lsces Exp $
+// $Id: functions_email.php,v 1.9 2006/12/19 00:11:32 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -37,7 +37,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 // $attachments_list  Array of attachment names/mime-types to be included  (this portion still in testing, and not fully reliable)
 
   function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='' ) {
-    global $db, $messageStack;
+    global $gBitDb, $messageStack;
     if (SEND_EMAILS != 'true') return false;  // if sending email is disabled in Admin, just exit
     if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
 
@@ -92,7 +92,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 // eof: body of the email clean-up
 
 //determine customer's email preference type: HTML or TEXT-ONLY  (HTML assumed if not specified)
-    $customers_email_format_read = $db->Execute("select customers_email_format from " . TABLE_CUSTOMERS . " where customers_email_address= '" . $to_email_address . "'");
+    $customers_email_format_read = $gBitDb->Execute("select customers_email_format from " . TABLE_CUSTOMERS . " where customers_email_address= '" . $to_email_address . "'");
     $customers_email_format = $customers_email_format_read->fields['customers_email_format'];
     if ($customers_email_format=='NONE' || $customers_email_format=='OUT') return; //if requested no mail, then don't send.
     if ($customers_email_format =='HTML') $customers_email_format='HTML'; // if they opted-in to HTML messages, then send HTML format
@@ -145,7 +145,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
   function zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $email_text, $module) {
   // this function stores sent emails into a table in the database as a log record of email activity.  This table CAN get VERY big!
   // To disable this function, set the "Email Archives" switch to 'false' in ADMIN!
-    global $db;
+    global $gBitDb;
     $to_name = zen_db_prepare_input($to_name);
     $to_email_address = zen_db_prepare_input($to_email_address);
     $from_email_name = zen_db_prepare_input($from_email_name);
@@ -155,7 +155,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
     $email_text = zen_db_prepare_input($email_text);
     $module = zen_db_prepare_input($module);
 
-    $db->Execute("insert into " . TABLE_EMAIL_ARCHIVE . "
+    $gBitDb->Execute("insert into " . TABLE_EMAIL_ARCHIVE . "
                 (email_to_name, email_to_address, email_from_name, email_from_address, email_subject, email_html, email_text, date_sent, module)
                 values ('" . zen_db_input($to_name) . "',
                         '" . zen_db_input($to_email_address) . "',
@@ -164,9 +164,9 @@ define('EMAIL_SYSTEM_DEBUG','off');
                         '" . zen_db_input($email_subject) . "',
                         '" . zen_db_input($email_html) . "',
                         '" . zen_db_input($email_text) . "',
-                        ".$db->qtNOW()." ,
+                        ".$gBitDb->qtNOW()." ,
                         '" . zen_db_input($module) . "')");
-    return $db;
+    return $gBitDb;
   }
 
   //DEFINE EMAIL-ARCHIVABLE-MODULES LIST // this array will likely be used by the email archive log VIEWER module in future

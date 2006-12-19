@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2005/11/30 07:46:26 spiderr Exp $
+// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -84,7 +84,7 @@
                           where      `customers_email_address` = '" . zen_db_input($email_address) . "'
                           and        `customers_id` != '" . (int)$_SESSION['customer_id'] . "'";
 
-    $check_email = $db->Execute($check_email_query);
+    $check_email = $gBitDb->Execute($check_email_query);
 
     if ($check_email->fields['total'] > 0) {
       $error = true;
@@ -110,18 +110,18 @@
       if (ACCOUNT_GENDER == 'true') $sql_data_array['customers_gender'] = $gender;
       if (ACCOUNT_DOB == 'true') $sql_data_array['customers_dob'] = zen_date_raw($dob);
 
-      $db->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
+      $gBitDb->associateInsert(TABLE_CUSTOMERS, $sql_data_array, 'update', "customers_id = '" . (int)$_SESSION['customer_id'] . "'");
 
       $sql = "update " . TABLE_CUSTOMERS_INFO . "
-              set        `date_account_last_modified` = " . $db->mDb->sysTimeStamp . "
+              set        `date_account_last_modified` = " . $gBitDb->mDb->sysTimeStamp . "
               where      `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
 
       $sql_data_array = array('entry_firstname' => $firstname,
                               'entry_lastname' => $lastname);
 
-      $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "`customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `address_book_id` = '" . (int)$_SESSION['customer_default_address_id'] . "'");
+      $gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "`customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `address_book_id` = '" . (int)$_SESSION['customer_default_address_id'] . "'");
 
 // reset the session variables
       $_SESSION['customer_first_name'] = $firstname;
@@ -138,7 +138,7 @@
                     from   " . TABLE_CUSTOMERS . "
                     where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-  $account = $db->Execute($account_query);
+  $account = $gBitDb->Execute($account_query);
   if (ACCOUNT_GENDER == 'true') {
     if (isset($gender)) {
       $male = ($gender == 'm') ? true : false;

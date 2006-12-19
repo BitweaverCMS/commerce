@@ -117,7 +117,7 @@
     }
     $orders_query_numrows = '';
     $orders_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_ORDERS, $orders_query_raw, $orders_query_numrows);
-    $orders = $db->Execute($orders_query_raw);
+    $orders = $gBitDb->Execute($orders_query_raw);
     while (!$orders->EOF) {
     if ((!isset($_GET['oID']) || (isset($_GET['oID']) && ($_GET['oID'] == $orders->fields['orders_id']))) && !isset($oInfo)) {
         $oInfo = new objectInfo($orders->fields);
@@ -203,7 +203,7 @@
         $contents[] = array('text' => TEXT_INFO_IP_ADDRESS . ' ' . $oInfo->ip_address);
 
 // check if order has open gv
-        $gv_check = $db->getOne("select `order_id`, `unique_id`
+        $gv_check = $gBitDb->getOne("select `order_id`, `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE ."
                                   where `order_id` = '" . $oInfo->orders_id . "' and `release_flag` ='N'");
         if( $gv_check ) {
@@ -215,7 +215,7 @@
 
 // indicate if comments exist
 		if ( !empty($oInfo->orders_id) ) {
-			$orders_history_query = $db->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments` from " . TABLE_ORDERS_STATUS_HISTORY . " where `orders_id` = '" . $oInfo->orders_id . "' and `comments` !='" . "'" );
+			$orders_history_query = $gBitDb->Execute("select `orders_status_id`, `date_added`, `customer_notified`, `comments` from " . TABLE_ORDERS_STATUS_HISTORY . " where `orders_id` = '" . $oInfo->orders_id . "' and `comments` !='" . "'" );
 			if ($orders_history_query->RecordCount() > 0) {
 				$contents[] = array('align' => 'left', 'text' => '<br />' . TABLE_HEADING_COMMENTS);
 			}

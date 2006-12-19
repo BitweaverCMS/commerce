@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: query_factory.php,v 1.1 2005/07/05 05:59:01 bitweaver Exp $
+// $Id: query_factory.php,v 1.2 2006/12/19 00:11:32 spiderr Exp $
 //
 
 
@@ -318,7 +318,7 @@ class queryFactoryResult {
   }
 
   function Move($zp_row) {
-    global $db;
+    global $gBitDb;
     if (@mysql_data_seek($this->resource, $zp_row)) {
       $zp_result_array = @mysql_fetch_array($this->resource);
         while (list($key, $value) = each($zp_result_array)) {
@@ -329,7 +329,7 @@ class queryFactoryResult {
       return;
     } else {
       $this->EOF = true;
-      $db->set_error(mysql_errno(),mysql_error());
+      $gBitDb->set_error(mysql_errno(),mysql_error());
     }
   }
 }

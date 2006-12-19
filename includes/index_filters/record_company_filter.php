@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: record_company_filter.php,v 1.6 2005/10/31 23:46:32 lsces Exp $
+// $Id: record_company_filter.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
 //
 // show the products of a specified music_genre
     if (isset($_GET['record_company_id']))
@@ -108,7 +108,7 @@
         $filterlist_sql= "select distinct m.`music_genre_id` as `id`, m.`music_genre_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_PRODUCT_MUSIC_EXTRA . " pme, " . TABLE_RECORD_COMPANY . " m where p.`products_status` = '1' and pme.`record_company_id` = m.`record_company_id` and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.`record_company_name`";
       }
       $getoption_set =  false;
-      $filterlist = $db->Execute($filterlist_sql);
+      $filterlist = $gBitDb->Execute($filterlist_sql);
       if ($filterlist->RecordCount() > 1)
       {
           $do_filter_list = true;
@@ -134,7 +134,7 @@
       $sql = "select `categories_image` from " . TABLE_CATEGORIES . "
               where  `categories_id` = '" . (int)$current_category_id . "'";
 
-      $image_name = $db->Execute($sql);
+      $image_name = $gBitDb->Execute($sql);
       $image = $image_name->fields['categories_image'];
     }
 ?>

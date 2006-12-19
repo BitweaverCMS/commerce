@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: music_genre.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: music_genre.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -34,18 +34,18 @@
         $sql_data_array = array('music_genre_name' => $music_genre_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => $db->NOW());
+          $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array);
           $music_genre_id = zen_db_insert_id( TABLE_MUSIC_GENRE, 'music_genre_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => $db->NOW());
+          $update_sql_data = array('last_modified' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          $db->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array, 'update', "music_genre_id = '" . (int)$music_genre_id . "'");
+          $gBitDb->associateInsert(TABLE_MUSIC_GENRE, $sql_data_array, 'update', "music_genre_id = '" . (int)$music_genre_id . "'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_MUSIC_GENRE, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'mID=' . $music_genre_id));
@@ -60,7 +60,7 @@
         $music_genre_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $music_genre = $db->Execute("select music_genre_image
+          $music_genre = $gBitDb->Execute("select music_genre_image
                                         from " . TABLE_MUSIC_GENRE . "
                                         where music_genre_id = '" . (int)$music_genre_id . "'");
 
@@ -69,13 +69,13 @@
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_MUSIC_GENRE . "
+        $gBitDb->Execute("delete from " . TABLE_MUSIC_GENRE . "
                       where music_genre_id = '" . (int)$music_genre_id . "'");
-//        $db->Execute("delete from " . TABLE_MUSIC_GENRE_INFO . "
+//        $gBitDb->Execute("delete from " . TABLE_MUSIC_GENRE_INFO . "
 //                      where music_genre_id = '" . (int)$music_genre_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $gBitDb->Execute("select products_id
                                     from " . TABLE_PRODUCTS_MUSIC_EXTRA . "
                                     where music_genre_id = '" . (int)$music_genre_id . "'");
 
@@ -84,7 +84,7 @@
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
+          $gBitDb->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
                         set music_genre_id = ''
                         where music_genre_id = '" . (int)$music_genre_id . "'");
         }
@@ -146,12 +146,12 @@
 <?php
   $music_genre_query_raw = "select * from " . TABLE_MUSIC_GENRE . " order by `music_genre_name`";
   $music_genre_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $music_genre_query_raw, $music_genre_query_numrows);
-  $music_genre = $db->Execute($music_genre_query_raw);
+  $music_genre = $gBitDb->Execute($music_genre_query_raw);
 
   while (!$music_genre->EOF) {
 
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $music_genre->fields['music_genre_id']))) && !isset($aInfo) && (substr($action, 0, 3) != 'new')) {
-      $music_genre_products = $db->Execute("select count(*) as products_count
+      $music_genre_products = $gBitDb->Execute("select count(*) as products_count
                                              from " . TABLE_PRODUCT_MUSIC_EXTRA . "
                                              where music_genre_id = '" . (int)$music_genre->fields['music_genre_id'] . "'");
 

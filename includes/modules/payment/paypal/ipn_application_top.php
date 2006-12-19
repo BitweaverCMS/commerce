@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ipn_application_top.php,v 1.5 2005/10/06 21:01:49 spiderr Exp $
+// $Id: ipn_application_top.php,v 1.6 2006/12/19 00:11:34 spiderr Exp $
 //
 
 // start the timer for the page parse time log
@@ -40,8 +40,8 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
 
 
   require('includes/classes/db/' .DB_TYPE . '/query_factory.php');
-  $db = new queryFactory();
-  if ( (!$db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false)) && (file_exists('zc_install/index.php')) ) {
+  $gBitDb = new queryFactory();
+  if ( (!$gBitDb->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false)) && (file_exists('zc_install/index.php')) ) {
     header('location: zc_install/index.php');
     exit;
   };
@@ -78,7 +78,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
   require(DIR_FS_CLASSES . 'cache.php');
   $zc_cache = new cache;
 
-  $configuration = $db->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
+  $configuration = $gBitDb->Execute('select configuration_key as cfgkey, configuration_value as cfgvalue
                                  from ' . TABLE_CONFIGURATION, '', true, 150);
 
   while (!$configuration->EOF) {
@@ -169,7 +169,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   }
 if (!$_SESSION['customer_id']) {
   $sql = "select * from " . TABLE_PAYPAL_SESSION . " where session_id = '" . $session_stuff[1] . "'";
-  $stored_session = $db->Execute($sql);
+  $stored_session = $gBitDb->Execute($sql);
   $_SESSION = unserialize(base64_decode($stored_session->fields['saved_session']));
 }
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.2. Got past Session Start ' . $PHP_SELF);
@@ -212,7 +212,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
           from " . TABLE_TEMPLATE_SELECT .
          " where template_language = '0'";
 
-  $template_query = $db->Execute($sql);
+  $template_query = $gBitDb->Execute($sql);
 
   $template_dir = $template_query->fields['template_dir'];
 
@@ -220,7 +220,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
           from " . TABLE_TEMPLATE_SELECT .
          " where template_language = '" . $_SESSION['languages_id'] . "'";
 
-  $template_query = $db->Execute($sql);
+  $template_query = $gBitDb->Execute($sql);
 
   if ($template_query->RecordCount() > 0) {
       $template_dir = $template_query->fields['template_dir'];

@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_featured.php,v 1.7 2005/12/20 17:13:02 gilesw Exp $
+// $Id: mod_featured.php,v 1.8 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies;
+	global $gBitDb, $gBitProduct, $currencies;
 
     $random_featured_products_query = "select p.`products_id`, p.`products_image`, pd.`products_name`
                            from " . TABLE_PRODUCTS . " p

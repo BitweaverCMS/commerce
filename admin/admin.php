@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to |
 // | license@zen-cart.com so we can mail you a copy immediately.|
 // +----------------------------------------------------------------------+
-//$Id: admin.php,v 1.7 2006/09/02 23:35:32 spiderr Exp $
+//$Id: admin.php,v 1.8 2006/12/19 00:11:27 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -73,19 +73,19 @@ if ($error == false) {
 
 		$insert_sql_data = array('admin_pass' => zen_encrypt_password($password_new));
 		$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-		$db->associateInsert(TABLE_ADMIN, $sql_data_array);
+		$gBitDb->associateInsert(TABLE_ADMIN, $sql_data_array);
 		$admin_id = zen_db_insert_id();
 
 	} elseif ($action == 'save') {
 
-		$db->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
-    $db->Execute("Update " . TABLE_CONFIGURATION . " set `configuration_value`='" . $_POST['demo_status'] . "' where `configuration_key`='ADMIN_DEMO'");
+		$gBitDb->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
+    $gBitDb->Execute("Update " . TABLE_CONFIGURATION . " set `configuration_value`='" . $_POST['demo_status'] . "' where `configuration_key`='ADMIN_DEMO'");
 
 	} elseif ($action == 'reset') {
 
 		$update_sql_data = array('admin_pass' => zen_encrypt_password($password_new));
 		$sql_data_array = array_merge($sql_data_array, $update_sql_data);
-		$db->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
+		$gBitDb->associateInsert(TABLE_ADMIN, $sql_data_array, 'update', "admin_id = '" . (int)$admins_id . "'");
 
 	} // end action check
 
@@ -105,7 +105,7 @@ case 'deleteconfirm':
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 $admin_id = zen_db_prepare_input($_GET['adminID']);
 
-$db->Execute("delete from " . TABLE_ADMIN . " where admin_id = '" . (int)$admin_id . "'");
+$gBitDb->Execute("delete from " . TABLE_ADMIN . " where admin_id = '" . (int)$admin_id . "'");
 
 
 	zen_redirect(zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page']));
@@ -178,7 +178,7 @@ $admins_query_raw = "select admin_id, admin_name, admin_email, admin_pass, admin
 
 $admins_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $admins_query_raw, $admins_query_numrows);
 
-$admins = $db->Execute($admins_query_raw);
+$admins = $gBitDb->Execute($admins_query_raw);
 
 
 while (!$admins->EOF) {
@@ -318,7 +318,7 @@ $contents[] = array(
 ' . TEXT_ADMINS_EMAIL . '<br>' . zen_draw_input_field('admin_email', $adminInfo->admin_email, zen_set_field_length(TABLE_ADMIN, 'admin_email', $max=30))
 );
 
-$admin_current = $db->Execute("select admin_level from " . TABLE_ADMIN . " where admin_id='" . $_SESSION['admin_id'] . "'");
+$admin_current = $gBitDb->Execute("select admin_level from " . TABLE_ADMIN . " where admin_id='" . $_SESSION['admin_id'] . "'");
 if ($admin_current->fields['admin_level'] == '1') {
   $contents[] = array('text' => '<br>' . TEXT_ADMIN_LEVEL_INSTRUCTIONS);
   $contents[] = array(

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info_meta_tags.php,v 1.6 2006/09/02 23:35:37 spiderr Exp $
+//  $Id: preview_info_meta_tags.php,v 1.7 2006/12/19 00:11:31 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -26,7 +26,7 @@
       $metatags_keywords = $_POST['metatags_keywords'];
       $metatags_description = $_POST['metatags_description'];
     } else {
-      $product = $db->Execute("select pd.`products_name`, p.`products_model`,
+      $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`,
                                       p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
                                       mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description`

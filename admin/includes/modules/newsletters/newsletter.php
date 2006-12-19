@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletter.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
+//  $Id: newsletter.php,v 1.4 2006/12/19 00:11:31 spiderr Exp $
 //
 
   class newsletter {
@@ -51,7 +51,7 @@
 
 
     function confirm() {
-      global $_GET, $_POST, $db;
+      global $_GET, $_POST, $gBitDb;
 
     if ($_POST['audience_selected']) {
           $this->query_name=$_POST['audience_selected'];
@@ -59,7 +59,7 @@
       }
 
       $query_array = get_audience_sql_query($this->query_name, 'newsletters');
-      $mail = $db->Execute($query_array['query_string'] );
+      $mail = $gBitDb->Execute($query_array['query_string'] );
       $confirm_string = '<table border="0" cellspacing="0" cellpadding="2">' . "\n" .
                         '  <tr>' . "\n" .
                         '    <td class="main"><font color="#ff0000"><b>' . sprintf(TEXT_COUNT_CUSTOMERS, $mail->RecordCount() ) . '</b></font></td>' . "\n" .
@@ -98,9 +98,9 @@
     }
 
     function send($newsletter_id) {
-      global $db;
+      global $gBitDb;
       $audience_select = get_audience_sql_query($this->query_name, 'newsletters');
-      $audience = $db->Execute($audience_select['query_string']);
+      $audience = $gBitDb->Execute($audience_select['query_string']);
       $records = $audience->RecordCount();
       if ($records==0) return 0;
     $i=0;
@@ -121,7 +121,7 @@
       }
 
       $newsletter_id = zen_db_prepare_input($newsletter_id);
-      $db->Execute("update " . TABLE_NEWSLETTERS . "
+      $gBitDb->Execute("update " . TABLE_NEWSLETTERS . "
                     set date_sent = now(), status = '1'
                     where newsletters_id = '" . zen_db_input($newsletter_id) . "'");
      return $records;  //return number of records processed whether successful or not

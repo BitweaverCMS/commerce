@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: featured_products.php,v 1.2 2005/10/31 23:46:33 lsces Exp $
+// $Id: featured_products.php,v 1.3 2006/12/19 00:11:37 spiderr Exp $
 //
 ?>
 
@@ -51,7 +51,7 @@
 
 // check how many rows
 	$offset = MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-    $check_products_all = $db->Execute( $featured_products_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
+    $check_products_all = $gBitDb->Execute( $featured_products_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
     $how_many = 0;
     while (!$check_products_all->EOF) {
       if (zen_has_product_attributes($check_products_all->fields['products_id'])) {

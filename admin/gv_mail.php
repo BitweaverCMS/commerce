@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.12 2006/12/13 18:20:00 spiderr Exp $
+//  $Id: gv_mail.php,v 1.13 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -46,20 +46,20 @@ This code is just too damned dangerous to be useful - possibly send every custom
 
 			if( !empty( $_POST['customers_email_address'] ) ) {
 				$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
-				$mail = $db->Execute($audience_select['query_string']);
+				$mail = $gBitDb->Execute($audience_select['query_string']);
 				$mail_sent_to = $audience_select['query_name'];
 
 				$recip_count=0;
 				
 				while (!$mail->EOF) {
 					$id1 = CommerceVoucher::generateCouponCode( $mail->fields['customers_email_address'] );
-					$insert_query = $db->Execute("insert into " . TABLE_COUPONS . "
+					$insert_query = $gBitDb->Execute("insert into " . TABLE_COUPONS . "
 												(coupon_code, coupon_type, coupon_amount, date_created)
 												values ('" . $id1 . "', 'G', '" . $_POST['amount'] . "', now())");
 
 					$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
-					$db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
+					$gBitDb->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
 								(coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)
 								values ('" . $insert_id ."', '0', 'Admin',
 										'" . $mail->fields['customers_email_address'] . "', now() )");
@@ -137,13 +137,13 @@ This code is just too damned dangerous to be useful - possibly send every custom
 				}
 
 				// Now create the coupon main entry
-				$insert_query = $db->Execute("insert into " . TABLE_COUPONS . "
+				$insert_query = $gBitDb->Execute("insert into " . TABLE_COUPONS . "
 											(coupon_code, coupon_type, coupon_amount, date_created)
 											values ('" . $id1 . "', 'G', '" . $_POST['amount'] . "', now())");
 
 				$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 
-				$insert_query = $db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
+				$insert_query = $gBitDb->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . "
 											(coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)
 											values ('" . $insert_id ."', '0', 'Admin',
 													'" . $_POST['email_to'] . "', now() )");

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_reviews.php,v 1.2 2005/10/31 23:46:33 lsces Exp $
+// $Id: product_reviews.php,v 1.3 2006/12/19 00:11:38 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -75,7 +75,7 @@
     }
 
 	$offset = MAX_DISPLAY_NEW_REVIEWS * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-    $reviews = $db->query($reviews_split->sql_query, NULL, MAX_DISPLAY_NEW_REVIEWS, $offset);
+    $reviews = $gBitDb->query($reviews_split->sql_query, NULL, MAX_DISPLAY_NEW_REVIEWS, $offset);
 
     while (!$reviews->EOF) {
 ?>

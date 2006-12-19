@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/11/30 07:46:26 spiderr Exp $
+// $Id: header_php.php,v 1.6 2006/12/19 00:11:35 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -32,7 +32,7 @@
                           from   " . TABLE_ORDERS . "
                           where  orders_id = '". (int)$_GET['order_id'] . "'";
 
-  $customer_info = $db->Execute($customer_info_query);
+  $customer_info = $gBitDb->Execute($customer_info_query);
 
   if ($customer_info->fields['customers_id'] != $_SESSION['customer_id']) {
     zen_redirect(zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL'));

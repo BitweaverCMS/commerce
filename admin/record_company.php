@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_company.php,v 1.7 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: record_company.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,14 +38,14 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_RECORD_COMPANY, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_RECORD_COMPANY, $sql_data_array);
           $record_company_id = zen_db_insert_id( TABLE_RECORD_COMPANY, 'record_company_id' );
         } elseif ($action == 'save') {
           $update_sql_data = array('last_modified' => 'now()');
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          $db->associateInsert(TABLE_RECORD_COMPANY, $sql_data_array, 'update', "record_company_id = '" . (int)$record_company_id . "'");
+          $gBitDb->associateInsert(TABLE_RECORD_COMPANY, $sql_data_array, 'update', "record_company_id = '" . (int)$record_company_id . "'");
         }
 
         $record_company_image = new upload('record_company_image');
@@ -54,11 +54,11 @@
           // remove image from database if none
           if ($record_company_image->filename != 'none') {
           // remove image from database if none
-            $db->Execute("update " . TABLE_RECORD_COMPANY . "
+            $gBitDb->Execute("update " . TABLE_RECORD_COMPANY . "
                           set record_company_image = '" .  $_POST['img_dir'] . $record_company_image->filename . "'
                           where record_company_id = '" . (int)$record_company_id . "'");
           } else {
-            $db->Execute("update " . TABLE_RECORD_COMPANY . "
+            $gBitDb->Execute("update " . TABLE_RECORD_COMPANY . "
                           set record_company_image = ''
                           where record_company_id = '" . (int)$record_company_id . "'");
           }
@@ -77,9 +77,9 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_RECORD_COMPANY_INFO, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_RECORD_COMPANY_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateInsert(TABLE_RECORD_COMPANY_INFO, $sql_data_array, 'update', "record_company_id = '" . (int)$record_company_id . "' and languages_id = '" . (int)$language_id . "'");
+            $gBitDb->associateInsert(TABLE_RECORD_COMPANY_INFO, $sql_data_array, 'update', "record_company_id = '" . (int)$record_company_id . "' and languages_id = '" . (int)$language_id . "'");
           }
         }
 
@@ -95,7 +95,7 @@
         $record_company_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $record_company = $db->Execute("select record_company_image
+          $record_company = $gBitDb->Execute("select record_company_image
                                         from " . TABLE_RECORD_COMPANY . "
                                         where record_company_id = '" . (int)$record_company_id . "'");
 
@@ -104,13 +104,13 @@
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_RECORD_COMPANY . "
+        $gBitDb->Execute("delete from " . TABLE_RECORD_COMPANY . "
                       where record_company_id = '" . (int)$record_company_id . "'");
-        $db->Execute("delete from " . TABLE_RECORD_COMPANY_INFO . "
+        $gBitDb->Execute("delete from " . TABLE_RECORD_COMPANY_INFO . "
                       where record_company_id = '" . (int)$record_company_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $gBitDb->Execute("select products_id
                                     from " . TABLE_PRODUCTS_MUSIC_EXTRA . "
                                     where record_company_id = '" . (int)$record_company_id . "'");
 
@@ -119,7 +119,7 @@
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
+          $gBitDb->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
                         set record_company_id = ''
                         where record_company_id = '" . (int)$record_company_id . "'");
         }
@@ -181,12 +181,12 @@
 <?php
   $record_company_query_raw = "select * from " . TABLE_RECORD_COMPANY . " order by `record_company_name`";
   $record_company_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $record_company_query_raw, $record_company_query_numrows);
-  $record_company = $db->Execute($record_company_query_raw);
+  $record_company = $gBitDb->Execute($record_company_query_raw);
 
   while (!$record_company->EOF) {
 
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $record_company->fields['record_company_id']))) && !isset($aInfo) && (substr($action, 0, 3) != 'new')) {
-      $record_company_products = $db->Execute("select count(*) as products_count
+      $record_company_products = $gBitDb->Execute("select count(*) as products_count
                                              from " . TABLE_PRODUCT_MUSIC_EXTRA . "
                                              where record_company_id = '" . (int)$record_company->fields['record_company_id'] . "'");
 

@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.7 2006/11/01 19:18:10 lsces Exp $
+//  $Id: paypal.php,v 1.8 2006/12/19 00:11:28 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -30,7 +30,7 @@
 //  require_once(DIR_FS_CATALOG_MODULES . 'payment/paypal/database_tables.inc.php');
 
   $payment_statuses = array();
-  $payment_status_trans = $db->Execute("select payment_status_name as payment_status from " . TABLE_PAYPAL_PAYMENT_STATUS );
+  $payment_status_trans = $gBitDb->Execute("select payment_status_name as payment_status from " . TABLE_PAYPAL_PAYMENT_STATUS );
   while (!$payment_status_trans->EOF) {
     $payment_statuses[] = array('id' => $payment_status_trans->fields['payment_status'],
                                'text' => $payment_status_trans->fields['payment_status']);
@@ -110,7 +110,7 @@ echo zen_draw_form_admin('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING
         $ipn_query_raw = "select p.`zen_order_id`, p.`paypal_ipn_id`, p.`txn_type`, p.`payment_type`, p.`payment_status`, p.`pending_reason`, p.`mc_currency`, p.`payer_status`, p.`mc_currency`, p.`date_added`, p.`mc_gross` from " . TABLE_PAYPAL . " p left join " .TABLE_ORDERS . " o on o.`orders_id` = p.`zen_order_id` order by p.`paypal_ipn_id` DESC";
   }
   $ipn_split = new splitPageResults($HTTP_GET_VARS['page'], MAX_DISPLAY_SEARCH_RESULTS, $ipn_query_raw, $ipn_query_numrows);
-  $ipn_trans = $db->Execute($ipn_query_raw);
+  $ipn_trans = $gBitDb->Execute($ipn_query_raw);
   while (!$ipn_trans->EOF) {
     if ((!isset($HTTP_GET_VARS['ipnID']) || (isset($HTTP_GET_VARS['ipnID']) && ($HTTP_GET_VARS['ipnID'] == $ipn_trans->fields['paypal_ipn_id']))) && !isset($ipnInfo) ) {
       $ipnInfo = new objectInfo($ipn_trans->fields);
@@ -155,7 +155,7 @@ echo zen_draw_form_admin('payment_status', FILENAME_PAYPAL, '', 'get') . HEADING
     default:
       if (is_object($ipnInfo)) {
         $heading[] = array('text' => '<b>' . TEXT_INFO_PAYPAL_IPN_HEADING.' #' . $ipnInfo->paypal_ipn_id . '</b>');
-        $ipn = $db->Execute("select * from " . TABLE_PAYPAL_PAYMENT_STATUS_HISTORY . " where paypal_ipn_id = '" . $ipnInfo->paypal_ipn_id . "'");
+        $ipn = $gBitDb->Execute("select * from " . TABLE_PAYPAL_PAYMENT_STATUS_HISTORY . " where paypal_ipn_id = '" . $ipnInfo->paypal_ipn_id . "'");
         $ipn_count = $ipn->RecordCount();
 
         $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('ipnID', 'action')) . 'oID=' . $ipnInfo->zen_order_id .'&' . 'ipnID=' . $ipnInfo->paypal_ipn_id .'&action=edit' . '&referer=ipn') . '">' . zen_image_button('button_orders.gif', IMAGE_ORDERS) . '</a>');

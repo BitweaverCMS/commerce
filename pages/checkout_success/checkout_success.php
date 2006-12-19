@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_success.php,v 1.2 2005/11/02 22:26:54 spiderr Exp $
+// $Id: checkout_success.php,v 1.3 2006/12/19 00:11:36 spiderr Exp $
 //
 global $zv_orders_id;
 ?>
@@ -69,7 +69,7 @@ global $zv_orders_id;
   $gv_query="select `amount` from " . TABLE_COUPON_GV_CUSTOMER . "
              where `customer_id`='".$_SESSION['customer_id'] . "'";
 
-  $gv_result = $db->Execute($gv_query);
+  $gv_result = $gBitDb->Execute($gv_query);
 
   if (!$gv_result->EOF) {
     if ($gv_result->fields['amount'] > 0) {

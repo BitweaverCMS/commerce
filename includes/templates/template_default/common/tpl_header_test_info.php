@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_header_test_info.php,v 1.3 2005/10/11 03:50:11 spiderr Exp $
+// $Id: tpl_header_test_info.php,v 1.4 2006/12/19 00:11:34 spiderr Exp $
 //
 ?>
     <table class="centershop" border="0" cellspacing="0" cellpadding="0">
@@ -72,7 +72,7 @@
 
 <?php
 if (isset($_SESSION['SSL_SESSION_ID'])) {
-  $show_session_expire = $db->Execute("select * from " . TABLE_SESSIONS . " where sessions_id= '" . $_SESSION['SSL_SESSION_ID'] . "'");
+  $show_session_expire = $gBitDb->Execute("select * from " . TABLE_SESSIONS . " where sessions_id= '" . $_SESSION['SSL_SESSION_ID'] . "'");
 }
 echo '<br /><b>TESTING INFO:</b> Time page: <strong>' . $_GET['main_page'] . '</strong> was loaded is: <strong>' . date('H:i:s', time()) . '</strong><br><br>';
 echo 'Session ID: ' . zen_session_id() . '<br / >';

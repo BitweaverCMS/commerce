@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:28 spiderr Exp $
+// $Id: header_php.php,v 1.5 2006/12/19 00:11:36 spiderr Exp $
 //
 
   $sql = "select `customers_authorization` from " . TABLE_CUSTOMERS . " where `customers_id` ='" . $_SESSION['customer_id'] . "'";
-  $check_customer = $db->Execute($sql);
+  $check_customer = $gBitDb->Execute($sql);
 
   $_SESSION['customers_authorization'] = $check_customer->fields['customers_authorization'];
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: group_pricing.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -37,12 +37,12 @@
           if ($action == 'insert') {
             $insert_sql_data = array('date_added' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-            $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_GROUP_PRICING, $sql_data_array);
             $group_id = zen_db_insert_id( TABLE_GROUP_PRICING, 'group_id' );
           } elseif ($action == 'save') {
             $update_sql_data = array('last_modified' => 'now()');
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-            $db->associateInsert(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
+            $gBitDb->associateInsert(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
           }
         }
         zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'gID=' . $group_id));
@@ -54,10 +54,10 @@
           zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
         }
         $group_id = zen_db_prepare_input($_GET['gID']);
-        $db->Execute("delete from " . TABLE_GROUP_PRICING . " where `group_id` = '" . (int)$group_id . "'");
-        $customers_query = $db->Execute("select customers_id from " . TABLE_CUSTOMERS . " where customers_group_pricing = '" . (int)$group_id . "'");
+        $gBitDb->Execute("delete from " . TABLE_GROUP_PRICING . " where `group_id` = '" . (int)$group_id . "'");
+        $customers_query = $gBitDb->Execute("select customers_id from " . TABLE_CUSTOMERS . " where customers_group_pricing = '" . (int)$group_id . "'");
         while (!$customers_query->EOF) {
-          $db->Execute("update " . TABLE_CUSTOMERS ." set `customers_group_pricing` = '0'");
+          $gBitDb->Execute("update " . TABLE_CUSTOMERS ." set `customers_group_pricing` = '0'");
           $customers_query->MoveNext();
         }
         zen_redirect(zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page']));
@@ -120,10 +120,10 @@
 <?php
   $groups_query_raw = "select * from " . TABLE_GROUP_PRICING;
   $groups_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $groups_query_raw, $groups_query_numrows);
-  $groups = $db->Execute($groups_query_raw);
+  $groups = $gBitDb->Execute($groups_query_raw);
   while (!$groups->EOF) {
     if ((!isset($_GET['gID']) || (isset($_GET['gID']) && ($_GET['gID'] == $groups->fields['group_id']))) && !isset($gInfo) && (substr($action, 0, 3) != 'new')) {
-      $group_customers = $db->Execute("select count(*) as customer_count from " . TABLE_CUSTOMERS .
+      $group_customers = $gBitDb->Execute("select count(*) as customer_count from " . TABLE_CUSTOMERS .
                                        " where customers_group_pricing = '" . (int)$groups->fields['group_id'] . "'");
       $gInfo_array = array_merge($groups->fields, $group_customers->fields);
       $gInfo = new objectInfo($gInfo_array);

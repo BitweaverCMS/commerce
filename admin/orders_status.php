@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.11 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: orders_status.php,v 1.12 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,7 +39,7 @@
 
           if ($action == 'insert') {
             if (empty($orders_status_id)) {
-              $next_id = $db->Execute("select max(orders_status_id)
+              $next_id = $gBitDb->Execute("select max(orders_status_id)
                                              as orders_status_id from " . TABLE_ORDERS_STATUS . "");
 
               $orders_status_id = $next_id->fields['orders_status_id'] + 1;
@@ -50,14 +50,14 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array, 'update', "`orders_status_id` = '" . (int)$orders_status_id . "' and `language_id` = '" . (int)$language_id . "'");
+            $gBitDb->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array, 'update', "`orders_status_id` = '" . (int)$orders_status_id . "' and `language_id` = '" . (int)$language_id . "'");
           }
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
                         set `configuration_value` = '" . zen_db_input($orders_status_id) . "'
                         where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
@@ -73,17 +73,17 @@
         }
         $oID = zen_db_prepare_input($_GET['oID']);
 
-        $orders_status = $db->Execute("select `configuration_value`
+        $orders_status = $gBitDb->Execute("select `configuration_value`
                                        from " . TABLE_CONFIGURATION . "
                                        where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 
         if ($orders_status->fields['configuration_value'] == $oID) {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
                         set `configuration_value` = ''
                         where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
         }
 
-        $db->Execute("delete from " . TABLE_ORDERS_STATUS . "
+        $gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . "
                       where orders_status_id = '" . zen_db_input($oID) . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
@@ -91,7 +91,7 @@
       case 'delete':
         $oID = zen_db_prepare_input($_GET['oID']);
 
-        $status = $db->Execute("select count(*) as count
+        $status = $gBitDb->Execute("select count(*) as count
                                 from " . TABLE_ORDERS . "
                                 where orders_status = '" . (int)$oID . "'");
 
@@ -103,7 +103,7 @@
           $remove_status = false;
           $messageStack->add(ERROR_STATUS_USED_IN_ORDERS, 'error');
         } else {
-          $history = $db->Execute("select count(*) as count
+          $history = $gBitDb->Execute("select count(*) as count
                                    from " . TABLE_ORDERS_STATUS_HISTORY . "
                                    where orders_status_id = '" . (int)$oID . "'");
 
@@ -168,7 +168,7 @@
 <?php
   $orders_status_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
   $orders_status_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $orders_status_query_raw, $orders_status_query_numrows);
-  $orders_status = $db->Execute($orders_status_query_raw);
+  $orders_status = $gBitDb->Execute($orders_status_query_raw);
   while (!$orders_status->EOF) {
     if ((!isset($_GET['oID']) || (isset($_GET['oID']) && ($_GET['oID'] == $orders_status->fields['orders_status_id']))) && !isset($oInfo) && (substr($action, 0, 3) != 'new')) {
       $oInfo = new objectInfo($orders_status->fields);

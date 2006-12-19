@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: prod_cat_header_code.php,v 1.5 2005/08/24 12:16:09 lsces Exp $
+//  $Id: prod_cat_header_code.php,v 1.6 2006/12/19 00:11:30 spiderr Exp $
 //
   
   $currencies = new currencies();
@@ -32,8 +32,8 @@
   $type_admin_handler = $zc_products->get_admin_handler($product_type);
 
   function zen_reset_page() {
-    global $db, $current_category_id;
-    $look_up = $db->Execute("select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_quantity`, p.`products_image`, p.`products_price`, p.`products_date_added`, p.products_last_modified, p.`products_date_available`, p.`products_status, p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`, p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed, p.product_is_always_free_ship, p.`products_quantity_order_max` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . $current_category_id . "' order by pd.`products_name`");
+    global $gBitDb, $current_category_id;
+    $look_up = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_quantity`, p.`products_image`, p.`products_price`, p.`products_date_added`, p.products_last_modified, p.`products_date_available`, p.`products_status, p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`, p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed, p.product_is_always_free_ship, p.`products_quantity_order_max` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . $current_category_id . "' order by pd.`products_name`");
     while (!$look_up->EOF) {
       $look_count ++;
       if ($look_up->fields['products_id']== $_GET['pID']) {
@@ -47,7 +47,7 @@
 // make array for product types
 
   $sql = "select * from " . TABLE_PRODUCT_TYPES;
-  $product_types = $db->Execute($sql);
+  $product_types = $gBitDb->Execute($sql);
   while (!$product_types->EOF) {
     $product_types_array[] = array('id' => $product_types->fields['type_id'],
                                      'text' => $product_types->fields['type_name']);

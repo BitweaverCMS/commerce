@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_notification.php,v 1.8 2006/09/02 23:35:37 spiderr Exp $
+//  $Id: product_notification.php,v 1.9 2006/12/19 00:11:31 spiderr Exp $
 //
 
   class product_notification {
@@ -31,10 +31,10 @@
     }
 
     function choose_audience() {
-      global $_GET, $db;
+      global $_GET, $gBitDb;
 
       $products_array = array();
-      $products = $db->Execute("select pd.`products_id`, pd.`products_name`
+      $products = $gBitDb->Execute("select pd.`products_id`, pd.`products_name`
                                 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                 where pd.`language_id` = '" . $_SESSION['languages_id'] . "'
                                 and pd.`products_id` = p.`products_id`
@@ -111,12 +111,12 @@ function selectAll(FormName, SelectBox) {
     }
 
     function confirm() {
-      global $_GET, $_POST, $db;
+      global $_GET, $_POST, $gBitDb;
 
       $audience = array();
 
       if (isset($_GET['global']) && ($_GET['global'] == 'true')) {
-        $products = $db->Execute("select distinct customers_id
+        $products = $gBitDb->Execute("select distinct customers_id
                                   from " . TABLE_PRODUCTS_NOTIFICATIONS);
 
         while (!$products->EOF) {
@@ -124,7 +124,7 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select customers_info_id
+        $customers = $gBitDb->Execute("select customers_info_id
                                    from " . TABLE_CUSTOMERS_INFO . "
                                    where global_product_notifications = '1'");
 
@@ -137,7 +137,7 @@ function selectAll(FormName, SelectBox) {
 
         $ids = implode(',', $chosen);
 
-        $products = $db->Execute("select distinct `customers_id`
+        $products = $gBitDb->Execute("select distinct `customers_id`
                                   from " . TABLE_PRODUCTS_NOTIFICATIONS . "
                                   where `products_id` in (" . $ids . ")");
 
@@ -146,7 +146,7 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select `customers_info`_id
+        $customers = $gBitDb->Execute("select `customers_info`_id
                                    from " . TABLE_CUSTOMERS_INFO . "
                                    where `global_product_notifications` = '1'");
 
@@ -201,12 +201,12 @@ function selectAll(FormName, SelectBox) {
     }
 
     function send($newsletter_id) {
-      global $_POST, $db;
+      global $_POST, $gBitDb;
 
       $audience = array();
 
       if (isset($_POST['global']) && ($_POST['global'] == 'true')) {
-        $products = $db->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
+        $products = $gBitDb->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
                                                   c.`customers_lastname`, c.`customers_email_address`
                                   from " . TABLE_CUSTOMERS . " c, " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
                                   where c.`customers_id` = pn.`customers_id`");
@@ -218,7 +218,7 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
+        $customers = $gBitDb->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
                                           c.`customers_email_address`
                                    from " . TABLE_CUSTOMERS . " c, " . TABLE_CUSTOMERS_INFO . " ci
                                    where c.`customers_id` = ci.`customers_info_id`
@@ -235,7 +235,7 @@ function selectAll(FormName, SelectBox) {
 
         $ids = implode(',', $chosen);
 
-        $products = $db->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
+        $products = $gBitDb->Execute("select distinct pn.`customers_id`, c.`customers_firstname`,
                                                   c.`customers_lastname`, c.`customers_email_address`
                                   from " . TABLE_CUSTOMERS . " c, " . TABLE_PRODUCTS_NOTIFICATIONS . " pn
                                   where c.`customers_id` = pn.`customers_id`
@@ -248,7 +248,7 @@ function selectAll(FormName, SelectBox) {
           $products->MoveNext();
         }
 
-        $customers = $db->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
+        $customers = $gBitDb->Execute("select c.`customers_id`, c.`customers_firstname`, c.`customers_lastname`,
                                           c.`customers_email_address`
                                    from " . TABLE_CUSTOMERS . " c, " . TABLE_CUSTOMERS_INFO . " ci
                                    where c.`customers_id` = ci.`customers_info_id`
@@ -280,7 +280,7 @@ function selectAll(FormName, SelectBox) {
       }
 
       $newsletter_id = zen_db_prepare_input($newsletter_id);
-      $db->Execute("update " . TABLE_NEWSLETTERS . "
+      $gBitDb->Execute("update " . TABLE_NEWSLETTERS . "
                     set date_sent = now(), status = '1'
                     where newsletters_id = '" . zen_db_input($newsletter_id) . "'");
      return $i;  //return number of records processed whether successful or not

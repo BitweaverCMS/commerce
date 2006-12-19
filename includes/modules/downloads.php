@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.8 2005/11/15 22:01:21 spiderr Exp $
+// $Id: downloads.php,v 1.9 2006/12/19 00:11:33 spiderr Exp $
 //
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
@@ -26,13 +26,13 @@
                      where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                      order by `orders_id` desc";
 
-    $last_order = $db->getOne($orders_lookup_query);
+    $last_order = $gBitDb->getOne($orders_lookup_query);
   } else {
     $last_order = $_GET['order_id'];
   }
 
 // Now get all downloadable products in that order
-  $downloads_query = "select ".$db->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`,
+  $downloads_query = "select ".$gBitDb->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`,
                              opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`,
                              opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
                       from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, "
@@ -45,7 +45,7 @@
                 	      and op.`orders_products_id` = opd.`orders_products_id`
                     	  and opd.`orders_products_filename` != ''";
 
-  $downloads = $db->query($downloads_query, array( $_SESSION['customer_id'], $last_order) );
+  $downloads = $gBitDb->query($downloads_query, array( $_SESSION['customer_id'], $last_order) );
 
   if ($downloads->RecordCount() > 0) {
 ?>
@@ -120,7 +120,7 @@
 ?>
 <?php
 // If there is a download in the order and they cannot get it, tell customer about download rules
-  $downloads_check_query = $db->query("select o.`orders_id`, opd.orders_products_download_id
+  $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_products_download_id
 				                       from " .  TABLE_ORDERS . " o, " .  TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
                 				       where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
 

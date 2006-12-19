@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upcoming_products.php,v 1.9 2006/12/13 19:33:44 lsces Exp $
+// $Id: upcoming_products.php,v 1.10 2006/12/19 00:11:33 spiderr Exp $
 //
-	global $db;
+	global $gBitDb;
 
   if ( (!isset($new_products_category_id)) || ($new_products_category_id == '0') ) {
     $expected_query = "select p.`products_id`, pd.`products_name`, `products_date_available` as `date_expected`
@@ -44,7 +44,7 @@
 //                       order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
   }
 
-  $expected = $db->query($expected_query, NULL, MAX_DISPLAY_UPCOMING_PRODUCTS);
+  $expected = $gBitDb->query($expected_query, NULL, MAX_DISPLAY_UPCOMING_PRODUCTS);
 
   if ($expected->RecordCount() > 0) {
     require( DIR_FS_MODULES . 'tpl_modules_upcoming_products.php');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: split_page_results.php,v 1.5 2005/08/24 15:06:38 lsces Exp $
+// $Id: split_page_results.php,v 1.6 2006/12/19 00:11:32 spiderr Exp $
 //
 
   class splitPageResults {
@@ -25,7 +25,7 @@
 
 /* class constructor */
     function splitPageResults($query, $max_rows, $count_key = '*', $page_holder = 'page', $debug = false) {
-      global $db;
+      global $gBitDb;
 
       $this->sql_query = $query;
       $this->page_name = $page_holder;
@@ -65,7 +65,7 @@
 
       $count_query = "select count(" . $count_string . ") as `total` " .
                                    substr($searchQuery, $pos_from, ($pos_to - $pos_from));
-      $count = $db->Execute($count_query);
+      $count = $gBitDb->Execute($count_query);
 
       $this->number_of_rows = $count->fields['total'];
       $this->number_of_pages = ceil($this->number_of_rows / $this->number_of_rows_per_page);

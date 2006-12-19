@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.12 2006/02/07 01:19:19 spiderr Exp $
+// $Id: meta_tags.php,v 1.13 2006/12/19 00:11:33 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -37,7 +37,7 @@
 	$keywords_string_metatags = '';
 // Get all top category names for use with web site keywords
   $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`parent_id` = '0' and c.`categories_id` = cd.`categories_id` and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
-	if( $rs = $db->query($sql) ) {
+	if( $rs = $gBitDb->query($sql) ) {
 		while( $keywords_metatags = $rs->fetchRow() ) {
 			$keywords_string_metatags .= $keywords_metatags['categories_name'] . ' ';
 		}
@@ -91,7 +91,7 @@
   case 'index':
     if ($category_depth == 'nested') {
       $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`categories_id` = cd.`categories_id` and cd.`categories_id` = '" . (int)$current_category_id . "' and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
-      $category_metatags = $db->Execute($sql);
+      $category_metatags = $gBitDb->Execute($sql);
       if ($category_metatags->EOF) {
         $meta_tags_over_ride = true;
       } else {
@@ -102,7 +102,7 @@
     } elseif ($category_depth == 'products') {
 	    if (isset($_REQUEST['manufacturers_id'])) {
         $sql = "select manufacturers_name from " . TABLE_MANUFACTURERS . " where manufacturers_id = '" . (int)$_REQUEST['manufacturers_id'] . "'";
-        $manufacturer_metatags = $db->Execute($sql);
+        $manufacturer_metatags = $gBitDb->Execute($sql);
         if ($manufacturer_metatags->EOF) {
           $meta_tags_over_ride = true;
         } else {
@@ -112,7 +112,7 @@
         } // EOF
    	  } else {
         $sql = "select cd.`categories_name` from " . TABLE_CATEGORIES . ' c, ' . TABLE_CATEGORIES_DESCRIPTION . " cd where c.`categories_id` = cd.`categories_id` and cd.`categories_id` = '" . (int)$current_category_id . "' and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and c.`categories_status`='1'";
-        $category_metatags = $db->Execute($sql);
+        $category_metatags = $gBitDb->Execute($sql);
         if ($category_metatags->EOF) {
           $meta_tags_over_ride = true;
         } else {
@@ -169,7 +169,7 @@
                               where p.`products_id` = '" . (int)$_REQUEST['products_id'] . "'
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-    $product_info_metatags = $db->Execute($sql);
+    $product_info_metatags = $gBitDb->Execute($sql);
     if ($product_info_metatags->EOF) {
       $meta_tags_over_ride = true;
     } else {
@@ -247,7 +247,7 @@
 
   case 'product_reviews_info_OFF':
     $sql = "select rd.reviews_text, r.reviews_rating, r.`reviews_id`, r.`customers_name`, p.`products_id`, p.`products_price`, p.`products_tax_class_id`, p.`products_model`, pd.`products_name`, p.`product_is_free` from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd, " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where r.`reviews_id` = '" . (int)$_REQUEST['reviews_id'] . "' and r.`reviews_id` = rd.`reviews_id` and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "' and r.`products_id` = p.`products_id` and p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id` = '". (int)$_SESSION['languages_id'] . "'";
-    $review_metatags = $db->Execute($sql);
+    $review_metatags = $gBitDb->Execute($sql);
     if ($review_metatags->EOF) {
       $meta_tags_over_ride = true;
     } else {

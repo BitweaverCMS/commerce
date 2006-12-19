@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.14 2006/12/15 21:42:47 spiderr Exp $
+//  $Id: gv_queue.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -27,13 +27,13 @@
 
 // bof: find gv for a particular order and set page
   if ($_GET['order'] != '') {
-    $gv_id = $db->getOne("select `unique_id`
+    $gv_id = $gBitDb->getOne("select `unique_id`
                                   from " . TABLE_COUPON_GV_QUEUE . "
                                   where `order_id` = '" . $_GET['order'] . "' and `release_flag` = 'N'");
 
     $_GET['gid'] = $gv_id;
 
-    $gv_page = $db->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, "
+    $gv_page = $gBitDb->Execute("select c.`customers_firstname`, c.`customers_lastname`, gv.`unique_id`, gv.`date_created`, gv.`amount`, gv.`order_id` from " . TABLE_CUSTOMERS . " c, "
 		 . TABLE_COUPON_GV_QUEUE . " gv where (gv.`customer_id` = c.`customers_id` and gv.`release_flag` = 'N')"
 		 . " order by gv.`order_id`, gv.`unique_id`");
     $page_cnt=1;
@@ -50,9 +50,9 @@
 // eof: find gv for a particular order and set page
 
 	if ($_GET['action'] == 'confirmrelease' && BitBase::verifyId( $_GET['gid'] ) ) {
-		$gv = $db->getRow("select release_flag from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) );
+		$gv = $gBitDb->getRow("select release_flag from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) );
 
-		if( $gv['release_flag'] == 'N' && ($gv = $db->getRow( "select customer_id, amount, order_id from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) )) ) {
+		if( $gv['release_flag'] == 'N' && ($gv = $gBitDb->getRow( "select customer_id, amount, order_id from " . TABLE_COUPON_GV_QUEUE . " where unique_id=?", array( $_GET['gid'] ) )) ) {
 			$fromUser = new BitUser( $gv['customer_id'] );
 			$fromUser->load();
 
@@ -66,7 +66,7 @@
 
 				zen_mail( $fromUser->getDisplayName(), $fromUser->getField('email'), TEXT_REDEEM_GV_SUBJECT . TEXT_REDEEM_GV_SUBJECT_ORDER . $gv['order_id'] , $textMessage, STORE_NAME, EMAIL_FROM, $htmlMessage, 'gv_queue');
 
-				$db->Execute("update " . TABLE_COUPON_GV_QUEUE . "
+				$gBitDb->Execute("update " . TABLE_COUPON_GV_QUEUE . "
 						  set `release_flag`= 'Y'
 						  where `unique_id`='" . $_GET['gid'] . "'");
 			}
@@ -131,7 +131,7 @@
 						INNER JOIN " . TABLE_ORDERS . " co ON(gv.`order_id`=co.`orders_id`) 
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (gv.`customer_id`=uu.`user_id`) 
 					WHERE gv.`release_flag` = 'N' ORDER BY gv.`order_id`, gv.`unique_id`";
-  $gv_list = $db->query($gv_query_raw, array(), $gv_query_numrows, ((int)($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS) );
+  $gv_list = $gBitDb->query($gv_query_raw, array(), $gv_query_numrows, ((int)($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS) );
   while (!$gv_list->EOF) {
     if (((!$_GET['gid']) || (@$_GET['gid'] == $gv_list->fields['unique_id'])) && (!$gInfo)) {
       $gInfo = new objectInfo($gv_list->fields);

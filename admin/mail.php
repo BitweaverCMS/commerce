@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: mail.php,v 1.6 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: mail.php,v 1.7 2006/12/19 00:11:28 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -41,7 +41,7 @@ if (EMAIL_ATTACHMENT_UPLOADS_ENABLED=='EMAIL_ATTACHMENT_UPLOADS_ENABLED') define
 
   if ( ($action == 'send_email_to_user') && isset($_POST['customers_email_address']) && !isset($_POST['back_x']) ) {
 	$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
-        $mail = $db->Execute($audience_select['query_string']);
+        $mail = $gBitDb->Execute($audience_select['query_string']);
         $mail_sent_to = $audience_select['query_name'];
       if ($_POST['email_to']) {
         $mail_sent_to = $_POST['email_to'];

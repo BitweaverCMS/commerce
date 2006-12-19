@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_customers_referrals.php,v 1.9 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: stats_customers_referrals.php,v 1.10 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -74,7 +74,7 @@
 <?php
 // select all customer_referrals
   $customers_referral_query = "select distinct `customers_referral` from " . TABLE_CUSTOMERS . " where `customers_referral` != ''";
-  $customers_referral = $db->Execute($customers_referral_query);
+  $customers_referral = $gBitDb->Execute($customers_referral_query);
 
   $customers_referrals = array();
   $customers_referrals_array = array();
@@ -136,7 +136,7 @@
   } else {
     $customers_orders_query = "select c.`customers_id`, c.`customers_referral`, o.`orders_id`, o.`date_purchased`, o.`order_total`, o.`coupon_code` from " . TABLE_CUSTOMERS . " c, " . TABLE_ORDERS . " o where c.`customers_id` = o.`customers_id` and c.`customers_referral`='" . $_GET['referral_code'] . "' and (o.`date_purchased` >= '" . $sd . "' and o.`date_purchased` <= '" . $ed . "') order by o.`date_purchased`, o.`orders_id`";
   }
-  $customers_orders = $db->Execute($customers_orders_query);
+  $customers_orders = $gBitDb->Execute($customers_orders_query);
 ?>
           <tr>
             <td><table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -147,7 +147,7 @@
     $current_orders_id = $customers_orders->fields['orders_id'];
 
     $orders_total_query = "select * from " . TABLE_ORDERS_TOTAL . " where `orders_id`='" . $current_orders_id . "'";
-    $orders_total = $db->Execute($orders_total_query);
+    $orders_total = $gBitDb->Execute($orders_total_query);
 
     $order = new order($customers_orders->fields['orders_id']);
 ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.10 2006/09/02 23:35:38 spiderr Exp $
+//  $Id: collect_info.php,v 1.11 2006/12/19 00:11:31 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -55,11 +55,11 @@
     $pInfo = new objectInfo($parameters);
 
     if (isset($_GET['pID']) && empty($_POST)) {
-      $product = $db->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
+      $product = $gBitDb->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
                                       p.`products_id`, p.`products_quantity`, p.`products_model`,
                                       p.`products_image`, p.`products_price`, p.`products_virtual`, p.`products_weight`,
                                       p.`products_date_added`, p.`products_last_modified`,
-                                      ".$db->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
+                                      ".$gBitDb->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
                                       `products_date_available`, p.`products_status`, p.`products_tax_class_id`,
                                       pe.`artists_id`, pe.`record_company_id`,pe.`music_genre_id`,
                                       p.`products_quantity_order_min`, p.`products_quantity_order_units`, p.`products_priced_by_attribute`,
@@ -83,7 +83,7 @@
     }
 
     $artists_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $artists = $db->Execute("select `artists_id`, `artists_name`
+    $artists = $gBitDb->Execute("select `artists_id`, `artists_name`
                                    from " . TABLE_RECORD_ARTISTS . " order by `artists_name`");
     while (!$artists->EOF) {
       $artists_array[] = array('id' => $artists->fields['artists_id'],
@@ -92,7 +92,7 @@
     }
 
     $record_company_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $record_company = $db->Execute("select `record_company_id`, `record_company_name`
+    $record_company = $gBitDb->Execute("select `record_company_id`, `record_company_name`
                                    from " . TABLE_RECORD_COMPANY . " order by `record_company_name`");
     while (!$record_company->EOF) {
       $record_company_array[] = array('id' => $record_company->fields['record_company_id'],
@@ -101,7 +101,7 @@
     }
 
     $music_genre_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $music_genre = $db->Execute("select `music_genre_id`, `music_genre_name`
+    $music_genre = $gBitDb->Execute("select `music_genre_id`, `music_genre_name`
                                    from " . TABLE_MUSIC_GENRE . " order by `music_genre_name`");
     while (!$music_genre->EOF) {
       $music_genre_array[] = array('id' => $music_genre->fields['music_genre_id'],
@@ -110,7 +110,7 @@
     }
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("select `tax_class_id`, `tax_class_title`
+    $tax_class = $gBitDb->Execute("select `tax_class_id`, `tax_class_title`
                                      from " . TABLE_TAX_CLASS . " order by `tax_class_title`");
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],

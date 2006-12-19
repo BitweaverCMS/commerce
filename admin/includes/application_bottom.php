@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_bottom.php,v 1.2 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: application_bottom.php,v 1.3 2006/12/19 00:11:29 spiderr Exp $
 //
 
 // close session (store variables)
@@ -30,7 +30,7 @@
 
   // breaks things
   // pconnect disabled safety switch
-  //  $db->close();
+  //  $gBitDb->close();
 
 // Gzip for Admin
   if ( (GZIP_LEVEL == '1') && ($ext_zlib_loaded == true) && ($ini_zlib_output_compression < 1) ) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: query_factory.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
+// $Id: query_factory.php,v 1.3 2006/12/19 00:11:32 spiderr Exp $
 //
 
 class queryFactory {
@@ -243,11 +243,11 @@ class queryFactoryResult {
   }
 
   function Move($zp_row) {
-    global $db;
+    global $gBitDb;
     if (@pg_result_seek($this->resource, $zp_row)) {
       return;
     } else {
-      $db->set_error(pg_last_error());
+      $gBitDb->set_error(pg_last_error());
     }   
   }
 }

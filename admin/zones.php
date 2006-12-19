@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: zones.php,v 1.8 2006/11/01 19:23:36 lsces Exp $
+//  $Id: zones.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -30,7 +30,7 @@
         $zone_code = zen_db_prepare_input($_POST['zone_code']);
         $zone_name = zen_db_prepare_input($_POST['zone_name']);
 
-        $db->Execute("insert into " . TABLE_ZONES . "
+        $gBitDb->Execute("insert into " . TABLE_ZONES . "
                     (`zone_country_id`, `zone_code`, `zone_name`)
                     values ('" . (int)$zone_country_id . "',
                             '" . zen_db_input($zone_code) . "',
@@ -44,7 +44,7 @@
         $zone_code = zen_db_prepare_input($_POST['zone_code']);
         $zone_name = zen_db_prepare_input($_POST['zone_name']);
 
-        $db->Execute("update " . TABLE_ZONES . "
+        $gBitDb->Execute("update " . TABLE_ZONES . "
                       set `zone_country_id` = '" . (int)$zone_country_id . "',
                           `zone_code` = '" . zen_db_input($zone_code) . "',
                           `zone_name` = '" . zen_db_input($zone_name) . "'
@@ -61,7 +61,7 @@
         }
         $zone_id = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("delete from " . TABLE_ZONES . " where `zone_id` = '" . (int)$zone_id . "'");
+        $gBitDb->Execute("delete from " . TABLE_ZONES . " where `zone_id` = '" . (int)$zone_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_ZONES, 'page=' . $_GET['page']));
         break;
@@ -122,7 +122,7 @@
 	$zones_query_raw = "select z.`zone_id`, c.`countries_id`, c.`countries_name`, z.`zone_name`, z.`zone_code`, z.`zone_country_id` from " . TABLE_ZONES . " z, " . TABLE_COUNTRIES . " c where z.`zone_country_id` = c.`countries_id` order by c.`countries_name`, z.`zone_name`";
 	$zones_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
 	$offset = (isset($_GET['page']) ? (($_GET['page']-1) * MAX_DISPLAY_SEARCH_RESULTS) : 0);
-	$zones = $db->query( $zones_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS, $offset );
+	$zones = $gBitDb->query( $zones_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS, $offset );
 	while (!$zones->EOF) {
 		if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $zones->fields['zone_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 			$cInfo = new objectInfo($zones->fields);

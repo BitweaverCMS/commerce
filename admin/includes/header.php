@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: header.php,v 1.10 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: header.php,v 1.11 2006/12/19 00:11:29 spiderr Exp $
 //
 // $messageStack->add('REGISTERED GLOBALS ARE TURNED OFF IN .htaccess ','caution');
 
@@ -61,7 +61,7 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
 // check database version against source code
   $zv_db_patch_ok = true; // we start with true
   if (WARN_DATABASE_VERSION_PROBLEM != 'false') {
-    $result = $db->Execute("SELECT `project_version_major`, `project_version_minor` FROM " . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database'");
+    $result = $gBitDb->Execute("SELECT `project_version_major`, `project_version_minor` FROM " . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database'");
     $zv_db_patch_level_found = $result->fields['project_version_major']. '.' . $result->fields['project_version_minor'];
     $zv_db_patch_level_expected = EXPECTED_DATABASE_VERSION_MAJOR . '.' . EXPECTED_DATABASE_VERSION_MINOR;
     if ($zv_db_patch_level_expected=='.' || ($zv_db_patch_level_found < $zv_db_patch_level_expected) ) {
@@ -122,7 +122,7 @@ SPIDERKILL for obvious reasons...
 */
 // check GV release queue and alert store owner
   if (SHOW_GV_QUEUE==true) {
-    if( $new_gv_queue= $db->getOne("select COUNT(*) from " . TABLE_COUPON_GV_QUEUE . " where `release_flag`='N'") ) {
+    if( $new_gv_queue= $gBitDb->getOne("select COUNT(*) from " . TABLE_COUPON_GV_QUEUE . " where `release_flag`='N'") ) {
       $new_gv_queue_cnt= $new_gv_queue;
       $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
     }

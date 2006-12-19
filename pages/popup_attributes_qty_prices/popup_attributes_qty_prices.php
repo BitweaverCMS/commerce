@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_attributes_qty_prices.php,v 1.2 2005/10/31 23:46:34 lsces Exp $
+// $Id: popup_attributes_qty_prices.php,v 1.3 2006/12/19 00:11:37 spiderr Exp $
 //
 ?>
 <body>
@@ -52,7 +52,7 @@ $show_onetime= 'false';
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
-      $products_options_names_lookup = $db->Execute($sql);
+      $products_options_names_lookup = $gBitDb->Execute($sql);
 
       while (!$products_options_names_lookup->EOF) {
 
@@ -72,7 +72,7 @@ $show_onetime= 'false';
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
-        $products_options_lookup = $db->Execute($sql);
+        $products_options_lookup = $gBitDb->Execute($sql);
         $cnt_qty_prices= 0;
         while (!$products_options_lookup->EOF) {
           // set for attributes_qty_prices_onetime
@@ -153,7 +153,7 @@ $show_onetime= 'false';
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
-      $products_options_names_lookup = $db->Execute($sql);
+      $products_options_names_lookup = $gBitDb->Execute($sql);
 
       while (!$products_options_names_lookup->EOF) {
 
@@ -173,7 +173,7 @@ $show_onetime= 'false';
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
-        $products_options_lookup = $db->Execute($sql);
+        $products_options_lookup = $gBitDb->Execute($sql);
         $cnt_qty_prices= 0;
         while (!$products_options_lookup->EOF) {
           if ($products_options_lookup->fields['attributes_qty_prices_onetime'] != '') {

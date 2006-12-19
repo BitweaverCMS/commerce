@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.12 2006/09/19 07:12:59 spiderr Exp $
+// $Id: specials_index.php,v 1.13 2006/12/19 00:11:33 spiderr Exp $
 //
 	global $gBitProduct, $gBitSmarty;
 
@@ -49,7 +49,7 @@
                            and p.`products_id` = s.`products_id` and p.`products_id` = pd.`products_id` and p.`products_status` = '1' and s.status = '1' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
   }
-  $specials_index = $db->query($specials_index_query.' ORDER BY '.$db->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);
+  $specials_index = $gBitDb->query($specials_index_query.' ORDER BY '.$gBitDb->convert_sortmode( 'random' ), NULL, MAX_DISPLAY_SPECIAL_PRODUCTS_INDEX);
 */
 
 

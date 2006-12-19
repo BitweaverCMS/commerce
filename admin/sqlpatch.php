@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: sqlpatch.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -96,7 +96,7 @@ $linebreak = '
    if (!get_cfg_var('safe_mode')) {
      @set_time_limit(1200);
    }
-   global $db, $debug;
+   global $gBitDb, $debug;
    $sql_file='SQLPATCH';
    $newline = '';
    $saveline = '';
@@ -258,7 +258,7 @@ $linebreak = '
         if ($complete_line) {
           if ($debug==true) echo ((!$ignore_line) ? '<br />About to execute.': 'Ignoring statement. This command WILL NOT be executed.').'<br />Debug info:<br>$ line='.$line.'<br>$ complete_line='.$complete_line.'<br>$ keep_together='.$keep_together.'<br>SQL='.$newline.'<br><br>';
           if (get_magic_quotes_runtime() > 0) $newline=stripslashes($newline);
-          if (trim(str_replace(';','',$newline)) != '' && !$ignore_line) $output=$db->Execute($newline);
+          if (trim(str_replace(';','',$newline)) != '' && !$ignore_line) $output=$gBitDb->Execute($newline);
           $results++;
           $string .= $newline.'<br />';
           $return_output[]=$output;
@@ -291,8 +291,8 @@ $linebreak = '
   } //end function
 
   function zen_table_exists($tablename, $pre_install=false) {
-    global $db;
-    $tables = $db->Execute("SHOW TABLES like '" . BITCOMMERCE_DB_PREFIX . $tablename . "'");
+    global $gBitDb;
+    $tables = $gBitDb->Execute("SHOW TABLES like '" . BITCOMMERCE_DB_PREFIX . $tablename . "'");
     if (ZC_UPG_DEBUG3==true) echo 'Table check ('.$tablename.') = '. $tables->RecordCount() .'<br>';
     if ($tables->RecordCount() > 0) {
       return true;
@@ -314,8 +314,8 @@ $linebreak = '
       //GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, FILE, INDEX, ALTER ON *.* TO 'xyz'@'localhost' IDENTIFIED BY PASSWORD '2344'	
       //GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `db1`.* TO 'xyz'@'localhost'
       //GRANT SELECT (id) ON db1.tablename TO 'xyz'@'localhost
-    global $db;
-    global $db_test;
+    global $gBitDb;
+    global $gBitDb_test;
     $granted_privs_list='';
     if (ZC_UPG_DEBUG3==true) echo '<br />Checking for priv: ['.(zen_not_null($priv) ? $priv : 'none specified').']<br />';
     if (!defined('DB_SERVER'))          define('DB_SERVER',$zdb_server);
@@ -325,7 +325,7 @@ $linebreak = '
     if ($user == 'DB_SERVER_USERNAME@DB_SERVER' || DB_DATABASE=='DB_DATABASE') return true; // bypass if constants not set properly
     $sql = "show grants for ".$user;
     if (ZC_UPG_DEBUG3==true) echo $sql.'<br />';
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     while (!$result->EOF) {
       if (ZC_UPG_DEBUG3==true) echo $result->fields['Grants for '.$user].'<br />';
       $grant_syntax = $result->fields['Grants for '.$user] . ' ';
@@ -334,28 +334,28 @@ $linebreak = '
       $granted_db = str_replace(array('`','\\'),'',substr($granted_privs,strpos($granted_privs,' ON ')+4) ); //remove backquote and find "ON" string
       if (ZC_UPG_DEBUG3==true) echo 'privs_list = '.$granted_privs.'<br />';
       if (ZC_UPG_DEBUG3==true) echo 'granted_db = '.$granted_db.'<br />';
-      $db_priv_ok += ($granted_db == '*.*' || $granted_db==DB_DATABASE.'.*' || $granted_db==DB_DATABASE.'.'.$table) ? true : false;
-      if (ZC_UPG_DEBUG3==true) echo 'db-priv-ok='.$db_priv_ok.'<br />';
+      $gBitDb_priv_ok += ($granted_db == '*.*' || $granted_db==DB_DATABASE.'.*' || $granted_db==DB_DATABASE.'.'.$table) ? true : false;
+      if (ZC_UPG_DEBUG3==true) echo 'db-priv-ok='.$gBitDb_priv_ok.'<br />';
 
-      if ($db_priv_ok) {  // if the privs list pertains to the current database, or is *.*, carry on
+      if ($gBitDb_priv_ok) {  // if the privs list pertains to the current database, or is *.*, carry on
         $granted_privs = substr($granted_privs,0,strpos($granted_privs,' ON ')); //remove anything after the "ON" keyword
         $granted_privs_list .= ($granted_privs_list=='') ? $granted_privs : ', '.$granted_privs;
 
         $specific_priv_found = (zen_not_null($priv) && substr_count($granted_privs,$priv)==1);
         if (ZC_UPG_DEBUG3==true) echo 'specific priv['.$priv.'] found ='.$specific_priv_found.'<br />';
 
-        if (ZC_UPG_DEBUG3==true) echo 'spec+db='.($specific_priv_found && $db_priv_ok == true).' ||| ';
-        if (ZC_UPG_DEBUG3==true) echo 'all+db='.($granted_privs == 'ALL PRIVILEGES' && $db_priv_ok==true).'<br /><br />';
+        if (ZC_UPG_DEBUG3==true) echo 'spec+db='.($specific_priv_found && $gBitDb_priv_ok == true).' ||| ';
+        if (ZC_UPG_DEBUG3==true) echo 'all+db='.($granted_privs == 'ALL PRIVILEGES' && $gBitDb_priv_ok==true).'<br /><br />';
 
-        if (($specific_priv_found && $db_priv_ok == true) || ($granted_privs == 'ALL PRIVILEGES' && $db_priv_ok==true)) {
+        if (($specific_priv_found && $gBitDb_priv_ok == true) || ($granted_privs == 'ALL PRIVILEGES' && $gBitDb_priv_ok==true)) {
           return true; // privs found
         }
-      } // endif $db_priv_ok
+      } // endif $gBitDb_priv_ok
       $result->MoveNext();
     }
     if ($show_privs) {
       if (ZC_UPG_DEBUG3==true) echo 'LIST OF PRIVS='.$granted_privs_list.'<br />';
-      return $db_priv_ok . '|||'. $granted_privs_list;
+      return $gBitDb_priv_ok . '|||'. $granted_privs_list;
     } else {
     return false; // if not found, return false
     }
@@ -364,11 +364,11 @@ $linebreak = '
   function zen_drop_index_command($param) {
     if (!$checkprivs = zen_check_database_privs('INDEX')) return sprintf(REASON_NO_PRIVILEGES,'INDEX');
     //this is only slightly different from the ALTER TABLE DROP INDEX command
-    global $db;
+    global $gBitDb;
     if (!zen_not_null($param)) return "Empty SQL Statement";
     $index = $param[2];
     $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[4];
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     while (!$result->EOF) {
       if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
       if  ($result->fields['Key_name'] == $index) {
@@ -384,13 +384,13 @@ $linebreak = '
   function zen_create_index_command($param) {
     //this is only slightly different from the ALTER TABLE CREATE INDEX command
     if (!$checkprivs = zen_check_database_privs('INDEX')) return sprintf(REASON_NO_PRIVILEGES,'INDEX');
-    global $db;
+    global $gBitDb;
     if (!zen_not_null($param)) return "Empty SQL Statement";
     $index = (strtoupper($param[1])=='INDEX') ? $param[2] : $param[3];
     if (in_array('USING',$param)) return 'USING parameter found. Cannot validate syntax. Please run manually in phpMyAdmin.';
     $table = (strtoupper($param[2])=='INDEX' && strtoupper($param[4])=='ON') ? $param[5] : $param[4];
     $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $table;
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     while (!$result->EOF) {
       if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
       if (strtoupper($result->fields['Key_name']) == strtoupper($index)) {
@@ -406,7 +406,7 @@ $linebreak = '
   }
 
   function zen_check_alter_command($param) {
-    global $db;
+    global $gBitDb;
     if (!zen_not_null($param)) return "Empty SQL Statement";
     if (!$checkprivs = zen_check_database_privs('ALTER')) return sprintf(REASON_NO_PRIVILEGES,'ALTER');
     switch (strtoupper($param[3])) {
@@ -415,7 +415,7 @@ $linebreak = '
           // check that the index to be added doesn't already exist
           $index = $param[5];
           $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo 'KEY: '.$result->fields['Key_name'].'<br />';
             if  ($result->fields['Key_name'] == $index) {
@@ -427,7 +427,7 @@ $linebreak = '
           // check that the primary key to be added doesn't exist
           if ($param[5] != 'KEY') return;
           $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
             if  ($result->fields['Key_name'] == 'PRIMARY') {
@@ -440,7 +440,7 @@ $linebreak = '
         // check that the column to be added does not exist
           $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
           $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
             if  ($result->fields['Field'] == $colname) {
@@ -459,7 +459,7 @@ $linebreak = '
           // check that the index to be dropped exists
           $index = $param[5];
           $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
             if  ($result->fields['Key_name'] == $index) {
@@ -474,7 +474,7 @@ $linebreak = '
           // check that the primary key to be dropped exists
           if ($param[5] != 'KEY') return;
           $sql = "show index from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Key_name'].'<br />';
             if  ($result->fields['Key_name'] == 'PRIMARY') {
@@ -489,7 +489,7 @@ $linebreak = '
           // check that the column to be dropped exists
           $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
           $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
-          $result = $db->Execute($sql);
+          $result = $gBitDb->Execute($sql);
           while (!$result->EOF) {
             if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
             if  ($result->fields['Field'] == $colname) {
@@ -507,7 +507,7 @@ $linebreak = '
         // just check that the column to be changed 'exists'
         $colname = ($param[4]=='COLUMN') ? $param[5] : $param[4];
         $sql = "show fields from " . BITCOMMERCE_DB_PREFIX . $param[2];
-        $result = $db->Execute($sql);
+        $result = $gBitDb->Execute($sql);
         while (!$result->EOF) {
           if (ZC_UPG_DEBUG3==true) echo $result->fields['Field'].'<br />';
           if  ($result->fields['Field'] == $colname) {
@@ -526,7 +526,7 @@ $linebreak = '
   }
 
   function zen_check_config_key($line) {
-    global $db;
+    global $gBitDb;
     $values=array();
     $values=explode("'",$line);
      //INSERT INTO configuration blah blah blah VALUES ('title','key', blah blah blah);
@@ -538,41 +538,41 @@ $linebreak = '
     $title = $values[1];
     $key  =  $values[3];
     $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "configuration where `configuration_key`='".$key."'";
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_CONFIG_KEY_ALREADY_EXISTS,$key);
   }
 
   function zen_check_product_type_layout_key($line) {
-    global $db;
+    global $gBitDb;
     $values=array();
     $values=explode("'",$line);
     $title = $values[1];
     $key  =  $values[3];
     $sql = "select configuration_title from " . BITCOMMERCE_DB_PREFIX . "product_type_layout where `configuration_key`='".$key."'";
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     if ($result->RecordCount() >0 ) return sprintf(REASON_PRODUCT_TYPE_LAYOUT_KEY_ALREADY_EXISTS,$key);
   }
 
   function zen_write_to_upgrade_exceptions_table($line, $reason, $sql_file) {
-    global $db;
+    global $gBitDb;
     zen_create_exceptions_table();
     $sql="INSERT INTO " . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS . " VALUES ('','". $sql_file."','".$reason."', now(), '".addslashes($line)."')";
      if (ZC_UPG_DEBUG3==true) echo '<br />sql='.$sql.'<br />';
-    $result = $db->Execute($sql);
+    $result = $gBitDb->Execute($sql);
     return $result;
   }
 
   function zen_purge_exceptions_table() {
-    global $db;
+    global $gBitDb;
     zen_create_exceptions_table();
-    $result = $db->Execute("TRUNCATE TABLE " . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS );
+    $result = $gBitDb->Execute("TRUNCATE TABLE " . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS );
     return $result;
   }
 
   function zen_create_exceptions_table() {
-    global $db;
+    global $gBitDb;
     if (!zen_table_exists(TABLE_UPGRADE_EXCEPTIONS)) {  
-      $result = $db->Execute("CREATE TABLE `" . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS ."` (
+      $result = $gBitDb->Execute("CREATE TABLE `" . BITCOMMERCE_DB_PREFIX . TABLE_UPGRADE_EXCEPTIONS ."` (
             `upgrade_exception_id` smallint(5) NOT NULL auto_increment,
             `sql_file` varchar(50) default NULL,
             `reason` varchar(200) default NULL,

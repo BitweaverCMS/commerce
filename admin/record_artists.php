@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_artists.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: record_artists.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -34,18 +34,18 @@
         $sql_data_array = array('artists_name' => $artists_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => $db->NOW());
+          $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_RECORD_ARTISTS, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_RECORD_ARTISTS, $sql_data_array);
           $artists_id = zen_db_insert_id( TABLE_RECORD_ARTISTS, 'artists_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => $db->NOW());
+          $update_sql_data = array('last_modified' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          $db->associateInsert(TABLE_RECORD_ARTISTS, $sql_data_array, 'update', "artists_id = '" . (int)$artists_id . "'");
+          $gBitDb->associateInsert(TABLE_RECORD_ARTISTS, $sql_data_array, 'update', "artists_id = '" . (int)$artists_id . "'");
         }
 
         $artists_image = new upload('artists_image');
@@ -53,11 +53,11 @@
         if ( $artists_image->parse() &&  $artists_image->save()) {
           // remove image from database if none
           if ($artists_image->filename != 'none') {
-            $db->Execute("update " . TABLE_RECORD_ARTISTS . "
+            $gBitDb->Execute("update " . TABLE_RECORD_ARTISTS . "
                           set artists_image = '" .  $_POST['img_dir'] . $artists_image->filename . "'
                           where artists_id = '" . (int)$artists_id . "'");
           } else {
-            $db->Execute("update " . TABLE_RECORD_ARTISTS . "
+            $gBitDb->Execute("update " . TABLE_RECORD_ARTISTS . "
                           set artists_image = ''
                           where artists_id = '" . (int)$artists_id . "'");
           }
@@ -76,9 +76,9 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_RECORD_ARTISTS_INFO, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_RECORD_ARTISTS_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateInsert(TABLE_RECORD_ARTISTS_INFO, $sql_data_array, 'update', "artists_id = '" . (int)$artists_id . "' and languages_id = '" . (int)$language_id . "'");
+            $gBitDb->associateInsert(TABLE_RECORD_ARTISTS_INFO, $sql_data_array, 'update', "artists_id = '" . (int)$artists_id . "' and languages_id = '" . (int)$language_id . "'");
           }
         }
 
@@ -95,7 +95,7 @@
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
 
-          $manufacturer = $db->Execute("select artists_image
+          $manufacturer = $gBitDb->Execute("select artists_image
                                         from " . TABLE_RECORD_ARTISTS . "
                                         where artists_id = '" . (int)$artists_id . "'");
           $image_location = DIR_FS_CATALOG_IMAGES . $manufacturer->fields['artists_image'];
@@ -103,13 +103,13 @@
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_RECORD_ARTISTS . "
+        $gBitDb->Execute("delete from " . TABLE_RECORD_ARTISTS . "
                       where artists_id = '" . (int)$artists_id . "'");
-        $db->Execute("delete from " . TABLE_RECORD_ARTISTS_INFO . "
+        $gBitDb->Execute("delete from " . TABLE_RECORD_ARTISTS_INFO . "
                       where artists_id = '" . (int)$artists_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $gBitDb->Execute("select products_id
                                     from " . TABLE_PRODUCT_MUSIC_EXTRA . "
                                     where artists_id = '" . (int)$artists_id . "'");
 
@@ -118,7 +118,7 @@
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
+          $gBitDb->Execute("update " . TABLE_PRODUCT_MUSIC_EXTRA . "
                         set artists_id = ''
                         where artists_id = '" . (int)$artists_id . "'");
         }
@@ -180,12 +180,12 @@
 <?php
   $artists_query_raw = "select * from " . TABLE_RECORD_ARTISTS . " order by `artists_name`";
   $artists_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $artists_query_raw, $artists_query_numrows);
-  $artists = $db->Execute($artists_query_raw);
+  $artists = $gBitDb->Execute($artists_query_raw);
 
   while (!$artists->EOF) {
 
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $artists->fields['artists_id']))) && !isset($aInfo) && (substr($action, 0, 3) != 'new')) {
-      $artists_products = $db->Execute("select count(*) as products_count
+      $artists_products = $gBitDb->Execute("select count(*) as products_count
                                              from " . TABLE_PRODUCT_MUSIC_EXTRA . "
                                              where artists_id = '" . (int)$artists->fields['artists_id'] . "'");
 

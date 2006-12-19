@@ -17,11 +17,11 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: also_purchased_products.php,v 1.6 2006/04/11 04:18:00 spiderr Exp $
+// $Id: also_purchased_products.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
 //
   if (isset($_GET['products_id']) && SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS > 0) {
 
-    $orders = $db->query( SQL_ALSO_PURCHASED, array( (int)$_GET['products_id'], (int)$_GET['products_id']), MAX_DISPLAY_ALSO_PURCHASED );
+    $orders = $gBitDb->query( SQL_ALSO_PURCHASED, array( (int)$_GET['products_id'], (int)$_GET['products_id']), MAX_DISPLAY_ALSO_PURCHASED );
 
     $num_products_ordered = $orders->RecordCount();
 

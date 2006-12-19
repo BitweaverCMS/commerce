@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: audience.php,v 1.6 2005/11/17 18:20:18 spiderr Exp $
+//  $Id: audience.php,v 1.7 2006/12/19 00:11:30 spiderr Exp $
 //
 // This should be turned into a class...
 
@@ -26,14 +26,14 @@
 		// ie: mail, gv_main, coupon_admin... and eventually newsletters too.
 		// gets info from query_builder table
 
-		global $db, $gBitCustomer, $gBitUser;
+		global $gBitDb, $gBitCustomer, $gBitUser;
 		include_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . 'audience.php');  //$current_page
 		$count_array = array();
 		$count=0;
 		if ($display_count=="") $display_count=AUDIENCE_SELECT_DISPLAY_COUNTS;
 
 		// get list of queries in database table, based on category supplied
-		$queries_list = $db->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
+		$queries_list = $gBitDb->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
 						"where query_category like '%" . $query_category . "%'");
 
 			$audience_list = array();
@@ -46,7 +46,7 @@
 			// if requested, show recordcounts at end of descriptions of each entry
 			// This could slow things down considerably, so use sparingly !!!!
 			if ($display_count=='true' || $display_count ==true ) {  // if it's literal 'true' or logical true
-			$count_array = $db->Execute(parsed_query_string($queries_list->fields['query_string']) );
+			$count_array = $gBitDb->Execute(parsed_query_string($queries_list->fields['query_string']) );
 			$count = $count_array->RecordCount();
 			}
 
@@ -59,7 +59,7 @@
 
 		//if this is called by an emailing module which offers individual customers as an option, add all customers email addresses as well.
 		if ($query_category=='email') {
-			$customers_values = $db->Execute("select uu.`email`, customers_firstname, customers_lastname, uu.`real_name`, uu.`login`
+			$customers_values = $gBitDb->Execute("select uu.`email`, customers_firstname, customers_lastname, uu.`real_name`, uu.`login`
 											 FROM " . TABLE_CUSTOMERS . " cc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(cc.`customers_id`=uu.`user_id`)
 											 WHERE customers_email_format != 'NONE' " .
 											 "order by customers_lastname, customers_firstname, `real_name`, `login`, `email`");
@@ -77,10 +77,10 @@
     // This is used to take the query_name selected in the drop-down menu or singular customer email address and
   // generate the SQL Select query to be used to build the list of email addresses to be sent to
   // it only returns a query name and query string (SQL SELECT statement)
-  // the query string is then used in a $db->Execute() command for later parsing and emailing.
-  global $db;
+  // the query string is then used in a $gBitDb->Execute() command for later parsing and emailing.
+  global $gBitDb;
   $query_name='';
-  $queries_list = $db->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
+  $queries_list = $gBitDb->Execute("select query_name, query_string from " . TABLE_QUERY_BUILDER . " " .
                  "where query_category like '%" . $query_category . "%'");
 //                 "where query_category = '" . $query_category . "'");
 
@@ -125,8 +125,8 @@ function parsed_query_string($read_string) {
    $days = array();
 
    if( preg_match( '/zen_db_offset_date\(\s*(\d*)\s*\)*/', $good_string, $days ) ) {
-     global $db;
-     $offsetSql = $db->OffsetDate( $days[1] );
+     global $gBitDb;
+     $offsetSql = $gBitDb->OffsetDate( $days[1] );
    }
    $good_string = preg_replace( '/zen_db_offset_date\(\s*\d*\s*\)*/', $offsetSql, $good_string );
    return $good_string;
@@ -140,7 +140,7 @@ function parsed_query_string($read_string) {
     $customers[] = array('id' => '', 'text' => TEXT_SELECT_AN_OPTION);
     $customers[] = array('id' => '***', 'text' => TEXT_ALL_CUSTOMERS);
     $customers[] = array('id' => '**D', 'text' => TEXT_NEWSLETTER_CUSTOMERS);
-    $customers_values = $db->Execute("select customers_email_address, customers_firstname, customers_lastname
+    $customers_values = $gBitDb->Execute("select customers_email_address, customers_firstname, customers_lastname
                                 from " . TABLE_CUSTOMERS . "
                                 order by customers_lastname, customers_firstname, customers_email_address");
 

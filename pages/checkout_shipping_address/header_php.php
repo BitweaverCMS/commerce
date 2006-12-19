@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/11/30 07:46:27 spiderr Exp $
+// $Id: header_php.php,v 1.8 2006/12/19 00:11:36 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -118,7 +118,7 @@
                         from " . TABLE_ZONES . "
                         where `zone_country_id` = '" . (int)$country . "'";
 
-        $check = $db->Execute($check_query);
+        $check = $gBitDb->Execute($check_query);
 
         $entry_state_has_zones = ($check->fields['total'] > 0);
 
@@ -128,7 +128,7 @@
                          and (zone_name like '" . zen_db_input($state) . "%'
                          or zone_code like '%" . zen_db_input($state) . "%')";
 
-          $zone = $db->Execute($zone_query);
+          $zone = $gBitDb->Execute($zone_query);
 
           if ($zone->RecordCount() == 1) {
             $zone_id = $zone->fields['zone_id'];
@@ -175,12 +175,12 @@
         }
 
         $sql = "select * from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '-1'";
-        $rs = $db->Execute($sql);
+        $rs = $gBitDb->Execute($sql);
         $sql_data_array['customers_id'] = (int)$_SESSION['customer_id'];
-//        $insertSQL = $db->GetInsertSQL($rs, $sql_data_array);
-//        $rs = $db->Execute($insertSQL);
+//        $insertSQL = $gBitDb->GetInsertSQL($rs, $sql_data_array);
+//        $rs = $gBitDb->Execute($insertSQL);
 
-        $db->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array);
 
         $_SESSION['sendto'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 
@@ -206,7 +206,7 @@
                               where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                               and `address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
 
-      $check_address = $db->Execute($check_address_query);
+      $check_address = $gBitDb->Execute($check_address_query);
 
       if ($check_address->fields['total'] == '1') {
         if ($reset_shipping == true) $_SESSION['shipping'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cache.php,v 1.4 2005/10/06 21:01:48 spiderr Exp $
+// $Id: cache.php,v 1.5 2006/12/19 00:11:32 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -96,7 +96,7 @@
 //    if (($refresh == true)|| !read_cache($var, $filename)) {
 // Didn' get cache so go to the database.
 //      $conn = mysql_connect("localhost", "apachecon", "apachecon");
-//      $res = $db->Execute($sql);
+//      $res = $gBitDb->Execute($sql);
 //      if ($err = mysql_error()) trigger_error($err, E_USER_ERROR);
 // loop through the results and add them to an array
 //      while ($rec = zen_db_fetch_array($res)) {

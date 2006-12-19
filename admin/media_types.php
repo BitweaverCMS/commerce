@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: media_types.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: media_types.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -38,14 +38,14 @@
 
           $sql_data_array = array_merge($sql_data_array, $insert_data_array);
 
-          $db->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array);
           $type_id = zen_db_insert_id( TABLE_MEDIA_TYPES, 'type_id' );
 
         } elseif ($action == 'save') {
           $insert_data_array = array('type_name' => $type_name);
           $sql_data_array = array_merge($sql_data_array, $insert_data_array);
 
-          $db->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
+          $gBitDb->associateInsert(TABLE_MEDIA_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_MEDIA_TYPES, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'mID=' . $type_id));
@@ -59,7 +59,7 @@
         }
         $type_id = zen_db_prepare_input($_GET['mID']);
 
-        $db->Execute("delete from " . TABLE_MEDIA_TYPES . "
+        $gBitDb->Execute("delete from " . TABLE_MEDIA_TYPES . "
                       where `type_id` = '" . (int)$type_id . "'");
 
 
@@ -121,7 +121,7 @@
 <?php
   $media_type_query_raw = "select * from " . TABLE_MEDIA_TYPES . " order by `type_name`";
   $media_type_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $media_type_query_raw, $media_type_query_numrows);
-  $media_type = $db->Execute($media_type_query_raw);
+  $media_type = $gBitDb->Execute($media_type_query_raw);
   while (!$media_type->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $media_type->fields['type_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
       $mInfo = new objectInfo($media_type->fields);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.20 2006/11/01 19:17:15 lsces Exp $
+//  $Id: modules.php,v 1.21 2006/12/19 00:11:28 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -60,12 +60,12 @@
             $value = ereg_replace (", --none--", "", $value);
           }
 // EOF: UPS USPS
-          $db->query("update " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = ?", array( $value, $key ) );
+          $gBitDb->query("update " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = ?", array( $value, $key ) );
         }
         $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                           from ' . TABLE_CONFIGURATION;
 
-        $configuration = $db->Execute($configuration_query);
+        $configuration = $gBitDb->Execute($configuration_query);
 
         zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
         break;
@@ -83,7 +83,7 @@
     $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
                                 from ' . TABLE_CONFIGURATION;
 
-          $configuration = $db->Execute($configuration_query);
+          $configuration = $gBitDb->Execute($configuration_query);
           include( $moduleFile );
           $module = new $class;
           if ($action == 'install') {
@@ -198,7 +198,7 @@
         $module_keys = $module->keys();
         $keys_extra = array();
         for ($j=0, $k=sizeof($module_keys); $j<$k; $j++) {
-          $key_value = $db->Execute("select `configuration_title`, `configuration_value`, `configuration_key`,
+          $key_value = $gBitDb->Execute("select `configuration_title`, `configuration_value`, `configuration_key`,
                                         `configuration_description`, `use_function`, `set_function`
                      from " . TABLE_CONFIGURATION . "
                    where `configuration_key` = '" . $module_keys[$j] . "'");
@@ -227,7 +227,7 @@
                 <td class="dataTableContent" align="right"><?php if( !empty( $module->sort_order ) && is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
 <?php
   if ($set == 'payment' and !empty($module->order_status)) {
-		$orders_status_name = $db->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );
+		$orders_status_name = $gBitDb->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );
 ?>
                 <td class="dataTableContent" align="left">&nbsp;&nbsp;&nbsp;<?php echo (is_numeric($module->sort_order) ? (($orders_status_name->fields['orders_status_id'] < 1) ? TEXT_DEFAULT : $orders_status_name->fields['orders_status_name']) : ''); ?>&nbsp;&nbsp;&nbsp;</td>
 <?php
@@ -243,19 +243,19 @@
     }
   }
   ksort($installed_modules);
-  $check = $db->query("select `configuration_value` FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $module_key ) );
+  $check = $gBitDb->query("select `configuration_value` FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $module_key ) );
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
-      $db->Execute("update " . TABLE_CONFIGURATION . "
-                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$db->qtNOW()."
+      $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
+                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$gBitDb->qtNOW()."
           where `configuration_key` = '" . $module_key . "'");
     }
   } else {
-    $db->Execute("insert into " . TABLE_CONFIGURATION . "
+    $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . "
                 (`configuration_title`, `configuration_key`, `configuration_value`,
                  `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`)
                 values ('Installed Modules', '" . $module_key . "', '" . implode(';', $installed_modules) . "',
-                        'This is automatically updated. No need to edit.', '6', '0', ".$db->NOW().")");
+                        'This is automatically updated. No need to edit.', '6', '0', ".$gBitDb->NOW().")");
   }
 ?>
               <tr>

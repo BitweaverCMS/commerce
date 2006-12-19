@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: layout_controller.php,v 1.10 2006/12/11 08:56:26 spiderr Exp $
+//  $Id: layout_controller.php,v 1.11 2006/12/19 00:11:28 spiderr Exp $
 //
 
 
@@ -72,10 +72,10 @@
     $file = $directory_array[$i];
 
 // Verify Definitions
-    $definitions = $db->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where layout_box_name='" . $file . "' and layout_template='" . $template_dir . "'");
+    $definitions = $gBitDb->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where layout_box_name='" . $file . "' and layout_template='" . $template_dir . "'");
     if ($definitions->EOF) {
       $warning_new_box .= $file . ' ';
-      $db->Execute("insert into " . TABLE_LAYOUT_BOXES . "
+      $gBitDb->Execute("insert into " . TABLE_LAYOUT_BOXES . "
                   (layout_id, layout_template, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single)
                   values ('',
                   '" . $template_dir  . "', '" . $file . "', 0, 0, 0, 0, 0)");
@@ -93,7 +93,7 @@
         $layout_box_sort_order_single = zen_db_prepare_input($_POST['layout_box_sort_order_single']);
         $layout_box_status_single = zen_db_prepare_input($_POST['layout_box_status_single']);
 
-        $db->Execute("insert into " . TABLE_LAYOUT_BOXES . "
+        $gBitDb->Execute("insert into " . TABLE_LAYOUT_BOXES . "
                     (layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single)
                     values ('" . zen_db_input($layout_box_name) . "',
                             '" . zen_db_input($layout_box_status) . "',
@@ -114,7 +114,7 @@
         $layout_box_sort_order_single = zen_db_prepare_input($_POST['layout_box_sort_order_single']);
         $layout_box_status_single = zen_db_prepare_input($_POST['layout_box_status_single']);
 
-        $db->query( "update " . TABLE_LAYOUT_BOXES . " set layout_box_status = ?, layout_box_location = ?, layout_box_sort_order = ?, layout_box_sort_order_single = ?, layout_box_status_single = ? where layout_id = ?", array( $layout_box_status, $layout_box_location, $layout_box_sort_order, $layout_box_sort_order_single, $layout_box_status_single, $box_id  ) );
+        $gBitDb->query( "update " . TABLE_LAYOUT_BOXES . " set layout_box_status = ?, layout_box_location = ?, layout_box_sort_order = ?, layout_box_sort_order_single = ?, layout_box_status_single = ? where layout_id = ?", array( $layout_box_status, $layout_box_location, $layout_box_sort_order, $layout_box_sort_order_single, $layout_box_status_single, $box_id  ) );
 
         $messageStack->add_session(SUCCESS_BOX_UPDATED . $_GET['layout_box_name'], 'success');
         zen_redirect(zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $box_id));
@@ -122,7 +122,7 @@
       case 'deleteconfirm':
         $box_id = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("delete from " . TABLE_LAYOUT_BOXES . " where layout_id = '" . zen_db_input($box_id) . "'");
+        $gBitDb->Execute("delete from " . TABLE_LAYOUT_BOXES . " where layout_id = '" . zen_db_input($box_id) . "'");
 
         $messageStack->add_session(SUCCESS_BOX_DELETED . $_GET['layout_box_name'], 'success');
         zen_redirect(zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page']));
@@ -212,7 +212,7 @@ if ($warning_new_box) {
   $boxes_directory = BITCOMMERCE_PKG_PATH . 'modules/mod_';
   $boxes_directory_template = BITCOMMERCE_PKG_PATH . 'modules/mod_';
 
-  $column_controller = $db->Execute("select layout_id, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single from " . TABLE_LAYOUT_BOXES . " where layout_template='" . $template_dir . "' order by  layout_box_location, layout_box_sort_order");
+  $column_controller = $gBitDb->Execute("select layout_id, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single from " . TABLE_LAYOUT_BOXES . " where layout_template='" . $template_dir . "' order by  layout_box_location, layout_box_sort_order");
   while (!$column_controller->EOF) {
 //    if (((!$_GET['cID']) || (@$_GET['cID'] == $column_controller->fields['layout_id'])) && (!$bInfo) && (substr($_GET['action'], 0, 3) != 'new')) {
   if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $column_controller->fields['layout_id']))) && !isset($bInfo) && (substr($action, 0, 3) != 'new')) {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2005/11/30 07:46:29 spiderr Exp $
+// $Id: header_php.php,v 1.6 2006/12/19 00:11:37 spiderr Exp $
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
@@ -28,7 +28,7 @@
                                     customers_id from " . TABLE_CUSTOMERS . "
                              where customers_email_address = '" . zen_db_input($email_address) . "'";
 
-    $check_customer = $db->Execute($check_customer_query);
+    $check_customer = $gBitDb->Execute($check_customer_query);
 
     if ($check_customer->RecordCount() > 0) {
 
@@ -39,7 +39,7 @@
               set `customers_password` = '" . zen_db_input($crypted_password) . "'
               where `customers_id` = '" . (int)$check_customer->fields['customers_id'] . "'";
 
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
 
       $html_msg['EMAIL_CUSTOMERS_NAME'] = $check_customer->fields['customers_firstname'] . ' ' . $check_customer->fields['customers_lastname'];
       $html_msg['EMAIL_MESSAGE_HTML'] = sprintf(EMAIL_PASSWORD_REMINDER_BODY, $new_password);

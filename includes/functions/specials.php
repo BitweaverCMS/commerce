@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.6 2006/11/01 19:15:29 lsces Exp $
+// $Id: specials.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -26,18 +26,18 @@
 ////
 // Sets the status of a special product
   function zen_set_specials_status($specials_id, $status) {
-    global $db;
+    global $gBitDb;
     $sql = "update " . TABLE_SPECIALS . "
-            set status = '" . $status . "', date_status_change = '".$db->qtNOW()."'
+            set status = '" . $status . "', date_status_change = '".$gBitDb->qtNOW()."'
             where specials_id = '" . (int)$specials_id . "'";
 
-    return $db->Execute($sql);
+    return $gBitDb->Execute($sql);
    }
 
 ////
 // Auto expire products on special
   function zen_expire_specials() {
-    global $db;
+    global $gBitDb;
 
     $specials_query = "select `specials_id`, `products_id`
                        from " . TABLE_SPECIALS . "
@@ -45,7 +45,7 @@
                        and (('NOW' >= `expires_date` and `expires_date` != '0001-01-01')
                        or ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01'))";
 
-    if( $rs = $db->Execute($specials_query) ) {
+    if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
         zen_update_products_price_sorter($specials['products_id']);
@@ -56,7 +56,7 @@
 ////
 // Auto start products on special
   function zen_start_specials() {
-    global $db;
+    global $gBitDb;
 
 // turn on special if active
     $specials_query = "select `specials_id`, `products_id`
@@ -67,7 +67,7 @@
                        or (`specials_date_available` = '0001-01-01' and `expires_date` >= 'NOW'))
                        ";
 
-    if( $rs = $db->Execute($specials_query) ) {
+    if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '1');
         zen_update_products_price_sorter($specials['products_id']);
@@ -81,7 +81,7 @@
                        and ('NOW' < `specials_date_available` and `specials_date_available` != '0001-01-01')
                        ";
 
-    if( $rs = $db->Execute($specials_query) ) {
+    if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
         zen_update_products_price_sorter($specials['products_id']);

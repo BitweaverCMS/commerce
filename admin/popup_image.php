@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: popup_image.php,v 1.2 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: popup_image.php,v 1.3 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -28,7 +28,7 @@
       case 'banner':
         $banners_id = zen_db_prepare_input($_GET['banner']);
 
-        $banner = $db->Execute("select banners_title, banners_image, banners_html_text
+        $banner = $gBitDb->Execute("select banners_title, banners_image, banners_html_text
                                 from " . TABLE_BANNERS . "
                                 where banners_id = '" . (int)$banners_id . "'");
 

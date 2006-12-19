@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product_types.php,v 1.15 2006/11/01 19:15:29 lsces Exp $
+//  $Id: product_types.php,v 1.16 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -36,15 +36,15 @@
         $configuration_value = zen_db_prepare_input($_POST['configuration_value']);
         $cID = zen_db_prepare_input($_GET['cID']);
 
-        $db->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
+        $gBitDb->Execute("update " . TABLE_PRODUCT_TYPE_LAYOUT . "
                       set `configuration_value` = '" . zen_db_input($configuration_value) . "',
-                          `last_modified` = ".$db->qtNOW()." where configuration_id = '" . (int)$cID . "'");
+                          `last_modified` = ".$gBitDb->qtNOW()." where configuration_id = '" . (int)$cID . "'");
         $configuration_query = 'select configuration_key as cfgkey, configuration_value as cfgvalue
                           from ' . TABLE_PRODUCT_TYPE_LAYOUT;
 
         // set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
         if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
-        $db->Execute("update " . TABLE_CONFIGURATION . "
+        $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
                       set `configuration_value` = 'false', `last_modified` = '" . NOW . "'
                       where `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
 
@@ -66,22 +66,22 @@
                                 'allow_add_to_cart' => $allow_add_to_cart);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => $db->NOW());
+          $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array);
           $type_id = zen_db_insert_id( TABLE_PRODUCT_TYPES, 'type_id' );
         } elseif ($action == 'save') {
           $master_type = zen_db_prepare_input($_POST['master_type']);
 
-          $update_sql_data = array('last_modified' => $db->NOW(),
+          $update_sql_data = array('last_modified' => $gBitDb->NOW(),
                                    'type_master_type' => $master_type
            );
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-          $db->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
+          $gBitDb->associateInsert(TABLE_PRODUCT_TYPES, $sql_data_array, 'update', "type_id = '" . (int)$type_id . "'");
         }
 
         $type_image = new upload('default_image');
@@ -89,11 +89,11 @@
         if ( $type_image->parse() &&  $type_image->save()) {
           // remove image from database if none
           if ($type_image->filename != 'none') {
-            $db->Execute("update " . TABLE_PRODUCT_TYPES . "
+            $gBitDb->Execute("update " . TABLE_PRODUCT_TYPES . "
                           set `default_image` = '" .  $_POST['img_dir'] . $type_image->filename . "'
                           where `type_id` = '" . (int)$type_id . "'");
           } else {
-            $db->Execute("update " . TABLE_PRODUCT_TYPES . "
+            $gBitDb->Execute("update " . TABLE_PRODUCT_TYPES . "
                           set `default_image` = ''
                           where `type_id` = '" . (int)$type_id . "'");
           }
@@ -111,7 +111,7 @@
         $type_id = zen_db_prepare_input($_GET['ptID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $product_type = $db->Execute("select default_image
+          $product_type = $gBitDb->Execute("select default_image
                                         from " . TABLE_PRODUCT_TYPES . "
                                         where `type_id` = '" . (int)$type_id . "'");
 
@@ -120,13 +120,13 @@
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_PRODUCT_TYPES . "
+        $gBitDb->Execute("delete from " . TABLE_PRODUCT_TYPES . "
                       where `type_id` = '" . (int)$type_id . "'");
-//        $db->Execute("delete from " . TABLE_PRODUCT_TYPES_INFO . "
+//        $gBitDb->Execute("delete from " . TABLE_PRODUCT_TYPES_INFO . "
 //                      where manufacturers_id = '" . (int)$manufacturers_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select `products_id`
+          $products = $gBitDb->Execute("select `products_id`
                                     from " . TABLE_PRODUCTS . "
                                     where `products_type` = '" . (int)$type_id . "'");
 
@@ -135,7 +135,7 @@
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                         set `products_type` = '1'
                         where `products_type` = '" . (int)$type_id . "'");
         }
@@ -178,7 +178,7 @@
 if ( $action == 'layout' || $action == 'layout_edit') {
   $sql = "SELECT `type_name` FROM " . TABLE_PRODUCT_TYPES . "
           WHERE `type_id` = '"   . (int)$_GET['ptID'] . "'";
-  $type_name = $db->Execute($sql);
+  $type_name = $gBitDb->Execute($sql);
 
 
 ?>
@@ -204,7 +204,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $configuration = $db->Execute("select `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
+  $configuration = $gBitDb->Execute("select `configuration_id`, `configuration_title`, `configuration_value`, `configuration_key`,
                                         `use_function` from " . TABLE_PRODUCT_TYPE_LAYOUT . "
                                         where `product_type_id` = '" . (int)$_GET['ptID'] . "'
                                         order by `sort_order`");
@@ -226,7 +226,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
     }
 
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $configuration->fields['configuration_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
-      $cfg_extra = $db->Execute("select `configuration_key`, `configuration_description`, `date_added`,
+      $cfg_extra = $gBitDb->Execute("select `configuration_key`, `configuration_description`, `date_added`,
                                         `last_modified`, `use_function`, `set_function`
                                  from " . TABLE_PRODUCT_TYPE_LAYOUT . "
                                  where `configuration_id` = '" . (int)$configuration->fields['configuration_id'] . "'");
@@ -329,10 +329,10 @@ if ( $action == 'layout' || $action == 'layout_edit') {
 <?php
   $product_types_query_raw = "select * from " . TABLE_PRODUCT_TYPES;
   $product_types_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $product_types_query_raw, $product_types_query_numrows);
-  $product_types = $db->Execute($product_types_query_raw);
+  $product_types = $gBitDb->Execute($product_types_query_raw);
   while (!$product_types->EOF) {
     if ((!isset($_GET['ptID']) || (isset($_GET['ptID']) && ($_GET['ptID'] == $product_types->fields['type_id']))) && !isset($ptInfo) && (substr($action, 0, 3) != 'new')) {
-      $product_type_products = $db->Execute("select count(*) as `products_count`
+      $product_type_products = $gBitDb->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
                                              where `products_type` = '" . (int)$product_types->fields['type_id'] . "'");
 
@@ -395,7 +395,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
       $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_HANDLER . '<br>' . zen_draw_input_field('handler', $ptInfo->type_handler, zen_set_field_length(TABLE_PRODUCT_TYPES, 'type_handler')));
        $contents[] = array('text' => '<br />' . TEXT_PRODUCT_TYPES_ALLOW_ADD_CART . '<br>' . zen_draw_checkbox_field('catalog_add_to_cart', $ptInfo->allow_add_to_cart, ($ptInfo->allow_add_to_cart == 'Y' ? true : false)));
        $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
-       $product_type_list = $db->Execute($sql);
+       $product_type_list = $gBitDb->Execute($sql);
        while (!$product_type_list->EOF) {
          $product_type_array[] = array('text' => $product_type_list->fields['type_name'], 'id' => $product_type_list->fields['type_id']);
          $product_type_list->MoveNext();

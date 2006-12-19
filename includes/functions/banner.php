@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.10 2006/11/01 19:15:29 lsces Exp $
+// $Id: banner.php,v 1.11 2006/12/19 00:11:32 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -26,20 +26,20 @@
 ////
 // Sets the status of a banner
   function zen_set_banner_status($banners_id, $status) {
-    global $db;
+    global $gBitDb;
     if ($status == '1') {
       $sql = "UPDATE " . TABLE_BANNERS . "
-              SET `status` = '1', `date_status_change` = ".$db->qtNOW().", `date_scheduled` = ''
+              SET `status` = '1', `date_status_change` = ".$gBitDb->qtNOW().", `date_scheduled` = ''
               WHERE `banners_id` = '" . (int)$banners_id . "'";
 
-      return $db->Execute($sql);
+      return $gBitDb->Execute($sql);
 
     } elseif ($status == '0') {
       $sql = "UPDATE " . TABLE_BANNERS . "
-              SET `status` = '0', `date_status_change` = ".$db->qtNOW()."
+              SET `status` = '0', `date_status_change` = ".$gBitDb->qtNOW()."
               WHERE `banners_id` = '" . (int)$banners_id . "'";
 
-      return $db->Execute($sql);
+      return $gBitDb->Execute($sql);
 
     } else {
       return -1;
@@ -49,14 +49,14 @@
 ////
 // Auto activate banners
   function zen_activate_banners() {
-    global $db;
+    global $gBitDb;
     $banners_query = "SELECT `banners_id`, `date_scheduled`
                       FROM " . TABLE_BANNERS . "
                       WHERE `date_scheduled` IS NOT NULL";
 
-    $banners = $db->query($banners_query);
+    $banners = $gBitDb->query($banners_query);
 
-    if( $banners = $db->query($banners_query) ) {
+    if( $banners = $gBitDb->query($banners_query) ) {
       while( $row = $banners->fetchRow() ) {
         if (date('Y-m-d H:i:s') >= $row['date_scheduled'] ) {
           zen_set_banner_status( $row['banners_id'], '1' );
@@ -68,7 +68,7 @@
 ////
 // Auto expire banners
   function zen_expire_banners() {
-    global $db;
+    global $gBitDb;
     $banners_query = "select b.`banners_id`, b.`expires_date`, b.`expires_impressions`,
                              sum(bh.`banners_shown`) as `banners_shown`
                       from " . TABLE_BANNERS . " b, " . TABLE_BANNERS_HISTORY . " bh
@@ -76,9 +76,9 @@
                       and b.`banners_id` = bh.`banners_id`
                       group by b.`banners_id`, b.`expires_date`, b.`expires_impressions`";
 
-    $banners = $db->Execute($banners_query);
+    $banners = $gBitDb->Execute($banners_query);
 
-    if( $banners = $db->Execute($banners_query) ) {
+    if( $banners = $gBitDb->Execute($banners_query) ) {
       while ( $row = $banners->fetchRow() ) {
         if (zen_not_null($row['expires_date'])) {
           if (date('Y-m-d H:i:s') >= $row['expires_date']) {
@@ -96,7 +96,7 @@
 ////
 // Display a banner from the specified group or banner id ($identifier)
   function zen_display_banner($action, $identifier) {
-    global $db;
+    global $gBitDb;
 
 	if( !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] =='on' ) ) {
         $my_banner_filter=" and banners_on_ssl= " . "'1' ";
@@ -112,11 +112,11 @@
                            WHERE `status` = '1' " .
                            $new_banner_search . $my_banner_filter;
 
-      if( $bannerCount = $db->getOne($banners_query) ) {
-        $banner = $db->getRow("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
+      if( $bannerCount = $gBitDb->getOne($banners_query) ) {
+        $banner = $gBitDb->getRow("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                                FROM " . TABLE_BANNERS . "
                                WHERE `status` = '1' " .
-                               $new_banner_search . $my_banner_filter . " order by ".$db->convert_sortmode( 'random' ));
+                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convert_sortmode( 'random' ));
 
       } else {
         return '<strong>ZEN ERROR! (zen_display_banner(' . $action . ', ' . $identifier . ') -> No banners with group \'' . $identifier . '\' found!</strong>';
@@ -130,7 +130,7 @@
                          where `status` = '1'
                          and `banners_id` = '" . (int)$identifier . "'" . $my_banner_filter;
 
-        if( $banner = $db->getRow($banner_query) ) {
+        if( $banner = $gBitDb->getRow($banner_query) ) {
           //return '<strong>ZEN ERROR! (zen_display_banner(' . $action . ', ' . $identifier . ') -> Banner with ID \'' . $identifier . '\' not found, or status inactive</strong>';
         }
       }
@@ -155,7 +155,7 @@
 ////
 // Check to see if a banner exists
   function zen_banner_exists($action, $identifier) {
-    global $db;
+    global $gBitDb;
 
 	if( !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] =='on' ) ) {
         $my_banner_filter=" and `banners_on_ssl`= " . "'1' ";
@@ -165,17 +165,17 @@
 
     if ($action == 'dynamic') {
       $new_banner_search = zen_build_banners_group($identifier);
-      return $db->Execute("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
+      return $gBitDb->Execute("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                            FROM " . TABLE_BANNERS . "
                                WHERE `status` = '1' " .
-                               $new_banner_search . $my_banner_filter . " order by ".$db->convert_sortmode( 'random' ));
+                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convert_sortmode( 'random' ));
     } elseif ($action == 'static') {
       $banner_query = "select `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                        from " . TABLE_BANNERS . "
                        where `status` = '1'
                        and `banners_id` = '" . (int)$identifier . "'" . $my_banner_filter;
 
-      return $banner = $db->Execute($banner_query);
+      return $banner = $gBitDb->Execute($banner_query);
     } else {
       return false;
     }
@@ -184,28 +184,28 @@
 ////
 // Update the banner display statistics
   function zen_update_banner_display_count($banner_id) {
-    global $db;
+    global $gBitDb;
 return;
-    $banner_check = $db->Execute(sprintf(SQL_BANNER_CHECK_QUERY, (int)$banner_id));
+    $banner_check = $gBitDb->Execute(sprintf(SQL_BANNER_CHECK_QUERY, (int)$banner_id));
 
     if ($banner_check->fields['count'] > 0) {
 
-      $db->Execute(sprintf(SQL_BANNER_CHECK_UPDATE, (int)$banner_id));
+      $gBitDb->Execute(sprintf(SQL_BANNER_CHECK_UPDATE, (int)$banner_id));
 
     } else {
       $sql = "insert into " . TABLE_BANNERS_HISTORY . "
                      (`banners_id`, `banners_shown`, `banners_history_date`)
-              values ('" . (int)$banner_id . "', 1, $db->qtNOW())";
+              values ('" . (int)$banner_id . "', 1, $gBitDb->qtNOW())";
 
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
     }
   }
 
 ////
 // Update the banner click statistics
   function zen_update_banner_click_count($banner_id) {
-    global $db;
-    $db->Execute(sprintf(SQL_BANNER_UPDATE_CLICK_COUNT, (int)$banner_id));
+    global $gBitDb;
+    $gBitDb->Execute(sprintf(SQL_BANNER_UPDATE_CLICK_COUNT, (int)$banner_id));
   }
 
 ////

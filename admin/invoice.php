@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.7 2005/09/28 22:38:57 spiderr Exp $
+//  $Id: invoice.php,v 1.8 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -57,7 +57,7 @@
       </tr>
 
 <?php
-      $order_check = $db->Execute("select cc_cvv, customers_name, customers_company, customers_street_address,
+      $order_check = $gBitDb->Execute("select cc_cvv, customers_name, customers_company, customers_street_address,
                                     customers_suburb, customers_city, customers_postcode,
                                     customers_state, customers_country, customers_telephone,
                                     customers_email_address, customers_address_format_id, delivery_name,

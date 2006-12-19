@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.34 2006/07/23 16:28:26 spiderr Exp $
+// $Id: application_top.php,v 1.35 2006/12/19 00:11:31 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -91,7 +91,7 @@ function clean_input( &$pArray ) {
     $check_customer_query = "SELECT customers_id, customers_authorization
                              FROM " . TABLE_CUSTOMERS . "
                              WHERE customers_id = '" . $_SESSION['customer_id'] . "'";
-    $check_customer = $db->Execute($check_customer_query);
+    $check_customer = $gBitDb->Execute($check_customer_query);
     $_SESSION['customers_authorization'] = $check_customer->fields['customers_authorization'];
   }
 
@@ -315,9 +315,9 @@ function clean_input( &$pArray ) {
                 if ($products_options_file->parse(TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i])) {
                   $products_image_extention = substr($products_options_file->filename, strrpos($products_options_file->filename, '.'));
                   if ($_SESSION['customer_id']) {
-                    $db->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, customers_id, files_uploaded_name) values('" . zen_session_id() . "', '" . $_SESSION['customer_id'] . "', '" . zen_db_input($products_options_file->filename) . "')");
+                    $gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, customers_id, files_uploaded_name) values('" . zen_session_id() . "', '" . $_SESSION['customer_id'] . "', '" . zen_db_input($products_options_file->filename) . "')");
                   } else {
-                    $db->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
+                    $gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
                   }
                   $insert_id = zen_db_insert_id( TABLE_FILES_UPLOADED, 'files_uploaded_id' );
                   $real_ids[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
@@ -447,7 +447,7 @@ function clean_input( &$pArray ) {
                                 if (zen_has_product_attributes($_REQUEST['pid'])) {
                                   zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));
                                 } else {
-                                  $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
+                                  $gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
                                   $_SESSION['cart']->add_cart($_REQUEST['pid'], $_SESSION['cart']->get_quantity($_REQUEST['pid'])+1);
                                 }
                               }
@@ -457,8 +457,8 @@ function clean_input( &$pArray ) {
 
       case 'add_wishlist' :  if (ereg('^[0-9]+$', $_REQUEST['products_id'])) {
                                if  ($_REQUEST['products_id']) {
-                                 $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['products_id'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
-                                 $db->Execute("insert into " . TABLE_WISHLIST . " (`customers_id`, `products_id`, `products_model`, `products_name`, `products_price`) values ('" . $_SESSION['customer_id'] . "', '" . $_REQUEST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
+                                 $gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['products_id'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
+                                 $gBitDb->Execute("insert into " . TABLE_WISHLIST . " (`customers_id`, `products_id`, `products_model`, `products_name`, `products_price`) values ('" . $_SESSION['customer_id'] . "', '" . $_REQUEST['products_id'] . "', '" . $products_model . "', '" . $products_name . "', '" . $products_price . "' )");
                                }
                              }
 
@@ -471,9 +471,9 @@ case 'wishlist_add_cart': reset ($lvnr);
                                  while (list($key,$elem) =each ($lvnr))
                                        {
                                         (list($key1,$elem1) =each ($lvanz));
-                                        $db->Execute("update " . TABLE_WISHLIST . " SET `products_quantity`=$elem1 WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id`=$elem");
-                                        $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_quantity`='999'");
-                                        $products_in_wishlist = $db->Execute("SELECT * FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id` = $elem AND `products_quantity` <> '0'");
+                                        $gBitDb->Execute("update " . TABLE_WISHLIST . " SET `products_quantity`=$elem1 WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id`=$elem");
+                                        $gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_quantity`='999'");
+                                        $products_in_wishlist = $gBitDb->Execute("SELECT * FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id` = $elem AND `products_quantity` <> '0'");
 
                                         while (!$products_in_wishlist->EOF)
                                               {
@@ -488,7 +488,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 // remove item FROM the wishlist
 ///// CHANGES TO case 'remove_wishlist' BY DREAMSCAPE /////
       case 'remove_wishlist' :
-                             $db->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $HTTP_GET_VARS['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
+                             $gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $HTTP_GET_VARS['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
                             zen_redirect(zen_href_link(FILENAME_WISHLIST));
                              break;
     }

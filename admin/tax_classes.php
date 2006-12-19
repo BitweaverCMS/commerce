@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_classes.php,v 1.9 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: tax_classes.php,v 1.10 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -29,11 +29,11 @@
         $tax_class_title = zen_db_prepare_input($_POST['tax_class_title']);
         $tax_class_description = zen_db_prepare_input($_POST['tax_class_description']);
 
-        $db->Execute("INSERT INTO " . TABLE_TAX_CLASS . "
+        $gBitDb->Execute("INSERT INTO " . TABLE_TAX_CLASS . "
                     (`tax_class_title`, `tax_class_description`, `date_added`)
                     VALUES ('" . zen_db_input($tax_class_title) . "',
                             '" . zen_db_input($tax_class_description) . "',
-                            " . $db->mDb->sysTimeStamp . ")");
+                            " . $gBitDb->mDb->sysTimeStamp . ")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES));
         break;
@@ -42,11 +42,11 @@
         $tax_class_title = zen_db_prepare_input($_POST['tax_class_title']);
         $tax_class_description = zen_db_prepare_input($_POST['tax_class_description']);
 
-        $db->Execute("UPDATE " . TABLE_TAX_CLASS . "
+        $gBitDb->Execute("UPDATE " . TABLE_TAX_CLASS . "
                       SET `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_class_title` = '" . zen_db_input($tax_class_title) . "',
                           `tax_class_description` = '" . zen_db_input($tax_class_description) . "',
-                          `last_modified` = " . $db->mDb->sysTimeStamp . "
+                          `last_modified` = " . $gBitDb->mDb->sysTimeStamp . "
                       WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page'] . '&tID=' . $tax_class_id));
@@ -60,7 +60,7 @@
         }
         $tax_class_id = zen_db_prepare_input($_GET['tID']);
 
-        $db->Execute("DELETE FROM " . TABLE_TAX_CLASS . "
+        $gBitDb->Execute("DELETE FROM " . TABLE_TAX_CLASS . "
                       WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_CLASSES, 'page=' . $_GET['page']));
@@ -120,7 +120,7 @@
 <?php
   $classes_query_raw = "select `tax_class_id`, `tax_class_title`, `tax_class_description`, `last_modified`, `date_added` from " . TABLE_TAX_CLASS . " order by `tax_class_title`";
   $classes_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $classes_query_raw, $classes_query_numrows);
-  $classes = $db->Execute($classes_query_raw);
+  $classes = $gBitDb->Execute($classes_query_raw);
   while (!$classes->EOF) {
     if ((!isset($_GET['tID']) || (isset($_GET['tID']) && ($_GET['tID'] == $classes->fields['tax_class_id']))) && !isset($tcInfo) && (substr($action, 0, 3) != 'new')) {
       $tcInfo = new objectInfo($classes->fields);

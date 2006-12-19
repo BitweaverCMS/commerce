@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: split_page_results.php,v 1.5 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: split_page_results.php,v 1.6 2006/12/19 00:11:30 spiderr Exp $
 //
 
   class splitPageResults {
     function splitPageResults(&$current_page_number, $max_rows_per_page, &$sql_query, &$query_num_rows) {
-      global $db;
+      global $gBitDb;
       if (empty($current_page_number)) $current_page_number = 1;
 
       $pos_to = strlen($sql_query);
@@ -37,7 +37,7 @@
       $pos_order_by = strpos($sql_query, ' order by', $pos_from);
       if (($pos_order_by < $pos_to) && ($pos_order_by != false)) $pos_to = $pos_order_by;
 
-      $reviews_count = $db->Execute("select count(*) as `total` " .
+      $reviews_count = $gBitDb->Execute("select count(*) as `total` " .
                                             substr($sql_query, $pos_from, ($pos_to - $pos_from)));
 
       $query_num_rows = $reviews_count->fields['total'];

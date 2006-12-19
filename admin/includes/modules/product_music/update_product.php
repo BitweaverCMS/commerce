@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.7 2005/10/31 16:19:59 lsces Exp $
+//  $Id: update_product.php,v 1.8 2006/12/19 00:11:31 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -67,13 +67,13 @@
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_PRODUCTS, $sql_data_array);
             $products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
             // reset products_price_sorter for searches etc.
             zen_update_products_price_sorter($products_id);
 
-            $db->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                       (`products_id`, `categories_id`)
                           values ('" . (int)$products_id . "', '" . (int)$current_category_id . "')");
 
@@ -83,7 +83,7 @@
                                     'record_company_id' => zen_db_prepare_input($_POST['record_company_id']),
                                     'music_genre_id' => zen_db_prepare_input($_POST['music_genre_id']));
 
-            $db->associateInsert(TABLE_PRODUCT_MUSIC_EXTRA, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_PRODUCT_MUSIC_EXTRA, $sql_data_array);
 
           } elseif ($action == 'update_product') {
             $update_sql_data = array( 'products_last_modified' => 'now()',
@@ -91,7 +91,7 @@
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 
-            $db->associateInsert(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+            $gBitDb->associateInsert(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
 
             // reset products_price_sorter for searches etc.
             zen_update_products_price_sorter((int)$products_id);
@@ -100,7 +100,7 @@
                                     'record_company_id' => zen_db_prepare_input($_POST['record_company_id']),
                                     'music_genre_id' => zen_db_prepare_input($_POST['music_genre_id']));
 
-            $db->associateInsert(TABLE_PRODUCT_MUSIC_EXTRA, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+            $gBitDb->associateInsert(TABLE_PRODUCT_MUSIC_EXTRA, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
           }
 
           $languages = zen_get_languages();
@@ -117,9 +117,9 @@
 
               $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array);
+              $gBitDb->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product') {
-              $db->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
+              $gBitDb->associateInsert(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
             }
           }
 
@@ -139,9 +139,9 @@
 
               $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
+              $gBitDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array);
             } elseif ($action == 'update_product_meta_tags') {
-              $db->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
+              $gBitDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "`products_id` = '" . (int)$products_id . "' and `language_id` = '" . (int)$language_id . "'");
             }
           }
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tax_rates.php,v 1.11 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: tax_rates.php,v 1.12 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -32,14 +32,14 @@
         $tax_description = zen_db_prepare_input($_POST['tax_description']);
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
-        $db->Execute("INSERT INTO " . TABLE_TAX_RATES . "
+        $gBitDb->Execute("INSERT INTO " . TABLE_TAX_RATES . "
                     (`tax_zone_id`, `tax_class_id`, `tax_rate`, `tax_description`, `tax_priority`, `date_added`)
                     VALUES ('" . (int)$tax_zone_id . "',
                             '" . (int)$tax_class_id . "',
                             '" . zen_db_input($tax_rate) . "',
                             '" . zen_db_input($tax_description) . "',
                             '" . (int)zen_db_input($tax_priority) . "',
-                            ". $db->mDb->sysTimeStamp .")");
+                            ". $gBitDb->mDb->sysTimeStamp .")");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES));
         break;
@@ -51,14 +51,14 @@
         $tax_description = zen_db_prepare_input($_POST['tax_description']);
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
 
-        $db->Execute("UPDATE " . TABLE_TAX_RATES . "
+        $gBitDb->Execute("UPDATE " . TABLE_TAX_RATES . "
                       SET `tax_rates_id` = '" . (int)$tax_rates_id . "',
                           `tax_zone_id` = '" . (int)$tax_zone_id . "',
                           `tax_class_id` = '" . (int)$tax_class_id . "',
                           `tax_rate`= '" . zen_db_input($tax_rate) . "',
                           `tax_description` = '" . zen_db_input($tax_description) . "',
                           `tax_priority` = '" . (int)zen_db_input($tax_priority) . "',
-                          `last_modified` = ". $db->mDb->sysTimeStamp ." WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
+                          `last_modified` = ". $gBitDb->mDb->sysTimeStamp ." WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;
@@ -71,7 +71,7 @@
         }
         $tax_rates_id = zen_db_prepare_input($_GET['tID']);
 
-        $db->Execute("DELETE FROM " . TABLE_TAX_RATES . "
+        $gBitDb->Execute("DELETE FROM " . TABLE_TAX_RATES . "
                       WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page']));
@@ -134,7 +134,7 @@
 <?php
   $rates_query_raw = "select r.`tax_rates_id`, z.`geo_zone_id`, z.`geo_zone_name`, tc.`tax_class_title`, tc.`tax_class_id`, r.`tax_priority`, r.`tax_rate`, r.`tax_description`, r.`date_added`, r.`last_modified` from " . TABLE_TAX_CLASS . " tc, " . TABLE_TAX_RATES . " r left join " . TABLE_GEO_ZONES . " z on r.`tax_zone_id` = z.`geo_zone_id` where r.`tax_class_id` = tc.`tax_class_id`";
   $rates_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $rates_query_raw, $rates_query_numrows);
-  $rates = $db->Execute($rates_query_raw);
+  $rates = $gBitDb->Execute($rates_query_raw);
   while (!$rates->EOF) {
     if ((!isset($_GET['tID']) || (isset($_GET['tID']) && ($_GET['tID'] == $rates->fields['tax_rates_id']))) && !isset($trInfo) && (substr($action, 0, 3) != 'new')) {
       $trInfo = new objectInfo($rates->fields);

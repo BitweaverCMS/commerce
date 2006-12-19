@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: whos_online.php,v 1.7 2006/02/19 21:20:46 lsces Exp $
+// $Id: whos_online.php,v 1.8 2006/12/19 00:11:33 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
 */
 
   function zen_update_whos_online() {
-    global $db;
+    global $gBitDb;
 
     if( !empty( $_SESSION['customer_id'] ) ) {
       $wo_customer_id = $_SESSION['customer_id'];
@@ -33,7 +33,7 @@
                          from " . TABLE_CUSTOMERS . "
                          where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $customer = $db->Execute($customer_query);
+      $customer = $gBitDb->Execute($customer_query);
 
       $wo_full_name = $customer->fields['customers_firstname'] . ' ' . $customer->fields['customers_lastname'];
     } else {
@@ -53,13 +53,13 @@
     $sql = "delete from " . TABLE_WHOS_ONLINE . "
             where `time_last_click` < '" . $xx_mins_ago . "'";
 
-    $db->Execute($sql);
+    $gBitDb->Execute($sql);
 
     $stored_customer_query = 'select count(*) as "count"
                               from ' . TABLE_WHOS_ONLINE . "
                               where `session_id` = '" . zen_db_input($wo_session_id) . "'";
 
-    $stored_customer = $db->Execute($stored_customer_query);
+    $stored_customer = $gBitDb->Execute($stored_customer_query);
 
 	if( empty( $wo_customer_id ) ) {
 		$wo_customer_id = NULL;
@@ -70,7 +70,7 @@
               set `customer_id` = ?, `full_name` = ?, `ip_address` = ?, `time_last_click` = ?, `last_page_url` = ?, `host_address` = ?, `user_agent` = ?
               where `session_id` = ?";
 
-      $db->query($sql, array( $wo_customer_id, $wo_full_name, $wo_ip_address, $current_time, substr($wo_last_page_url, 0, 255), $_SESSION['customers_host_address'], substr($wo_user_agent, 0, 255), $wo_session_id ) );
+      $gBitDb->query($sql, array( $wo_customer_id, $wo_full_name, $wo_ip_address, $current_time, substr($wo_last_page_url, 0, 255), $_SESSION['customers_host_address'], substr($wo_user_agent, 0, 255), $wo_session_id ) );
 
     } else {
       $sql = "insert into " . TABLE_WHOS_ONLINE . "
@@ -78,7 +78,7 @@
                                `time_last_click`, `last_page_url`, `host_address`, `user_agent`)
               values ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
-       $db->query( $sql, array( $wo_customer_id, $wo_full_name, $wo_session_id, $wo_ip_address, $current_time, $current_time, $wo_last_page_url, $_SESSION['customers_host_address'], $wo_user_agent ) );
+       $gBitDb->query( $sql, array( $wo_customer_id, $wo_full_name, $wo_session_id, $wo_ip_address, $current_time, $current_time, $wo_last_page_url, $_SESSION['customers_host_address'], $wo_user_agent ) );
     }
   }
 ?>

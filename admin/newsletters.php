@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.9 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: newsletters.php,v 1.10 2006/12/19 00:11:28 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -40,7 +40,7 @@
         $newsletter_id = zen_db_prepare_input($_GET['nID']);
         $status = (($action == 'lock') ? '1' : '0');
 
-        $db->Execute("update " . TABLE_NEWSLETTERS . "
+        $gBitDb->Execute("update " . TABLE_NEWSLETTERS . "
                       set locked = '" . $status . "'
                       where newsletters_id = '" . (int)$newsletter_id . "'");
 
@@ -76,10 +76,10 @@
             $sql_data_array['status'] = '0';
             $sql_data_array['locked'] = '0';
 
-            $db->associateInsert(TABLE_NEWSLETTERS, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_NEWSLETTERS, $sql_data_array);
             $newsletter_id = zen_db_insert_id( TABLE_NEWSLETTERS, 'newsletter_id' );
           } elseif ($action == 'update') {
-            $db->associateInsert(TABLE_NEWSLETTERS, $sql_data_array, 'update', "newsletters_id = '" . (int)$newsletter_id . "'");
+            $gBitDb->associateInsert(TABLE_NEWSLETTERS, $sql_data_array, 'update', "newsletters_id = '" . (int)$newsletter_id . "'");
           }
 
           zen_redirect(zen_href_link_admin(FILENAME_NEWSLETTERS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'nID=' . $newsletter_id));
@@ -90,7 +90,7 @@
       case 'deleteconfirm':
         $newsletter_id = zen_db_prepare_input($_GET['nID']);
 
-        $db->Execute("delete from " . TABLE_NEWSLETTERS . "
+        $gBitDb->Execute("delete from " . TABLE_NEWSLETTERS . "
                       where newsletters_id = '" . (int)$newsletter_id . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_NEWSLETTERS, 'page=' . $_GET['page']));
@@ -107,7 +107,7 @@
       case 'confirm_send':
         $newsletter_id = zen_db_prepare_input($_GET['nID']);
 
-        $check = $db->Execute("select locked
+        $check = $gBitDb->Execute("select locked
                                from " . TABLE_NEWSLETTERS . "
                                where newsletters_id = '" . (int)$newsletter_id . "'");
 
@@ -248,7 +248,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
       $nID = zen_db_prepare_input($_GET['nID']);
 
 
-      $newsletter = $db->Execute("select title, content, content_html, module
+      $newsletter = $gBitDb->Execute("select title, content, content_html, module
                                   from " . TABLE_NEWSLETTERS . "
                                   where newsletters_id = '" . (int)$nID . "'");
 
@@ -328,7 +328,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
   } elseif ($action == 'preview') {
     $nID = zen_db_prepare_input($_GET['nID']);
 
-    $newsletter = $db->Execute("select title, content, content_html, module
+    $newsletter = $gBitDb->Execute("select title, content, content_html, module
                                 from " . TABLE_NEWSLETTERS . "
                                 where newsletters_id = '" . (int)$nID . "'");
 
@@ -350,7 +350,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
   } elseif ($action == 'send') {
     $nID = zen_db_prepare_input($_GET['nID']);
 
-    $newsletter = $db->Execute("select title, content, content_html, module
+    $newsletter = $gBitDb->Execute("select title, content, content_html, module
                                 from " . TABLE_NEWSLETTERS . "
                                 where newsletters_id = '" . (int)$nID . "'");
 
@@ -368,7 +368,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
   } elseif ($action == 'confirm') { // show count of customers to receive messages, and preview of contents.
     $nID = zen_db_prepare_input($_GET['nID']);
 
-    $newsletter = $db->Execute("select title, content, content_html, module
+    $newsletter = $gBitDb->Execute("select title, content, content_html, module
                                 from " . TABLE_NEWSLETTERS . "
                                 where newsletters_id = '" . (int)$nID . "'");
 
@@ -386,7 +386,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
   } elseif ($action == 'confirm_send') { // confirmed, now go ahead and send the messages
     $nID = zen_db_prepare_input($_GET['nID']);
 
-    $newsletter = $db->Execute("select newsletters_id, title, content, content_html, module
+    $newsletter = $gBitDb->Execute("select newsletters_id, title, content, content_html, module
                                 from " . TABLE_NEWSLETTERS . "
                                 where newsletters_id = '" . (int)$nID . "'");
 
@@ -444,7 +444,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 <?php
     $newsletters_query_raw = "select `newsletters_id`, `title`, length(`content`) as `content_length`, length(`content_html`) as `content_html_length`, `module`, `date_added`, `date_sent`, `status`, `locked` from " . TABLE_NEWSLETTERS . " order by `date_added` desc";
     $newsletters_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $newsletters_query_raw, $newsletters_query_numrows);
-    $newsletters = $db->Execute($newsletters_query_raw);
+    $newsletters = $gBitDb->Execute($newsletters_query_raw);
     while (!$newsletters->EOF) {
     if ((!isset($_GET['nID']) || (isset($_GET['nID']) && ($_GET['nID'] == $newsletters->fields['newsletters_id']))) && !isset($nInfo) && (substr($action, 0, 3) != 'new')) {
         $nInfo = new objectInfo($newsletters->fields);

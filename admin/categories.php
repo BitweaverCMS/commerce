@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.17 2006/11/01 19:15:29 lsces Exp $
+//  $Id: categories.php,v 1.18 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -59,7 +59,7 @@
           $categories = zen_get_category_tree($categories_id, '', '0', '', true);
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select `products_id`
+            $product_ids = $gBitDb->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                          where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
@@ -82,7 +82,7 @@
 
               $sql = "update " . TABLE_CATEGORIES . " set `categories_status` ='" . $categories_status . "'
                       where `categories_id` ='" . $categories[$i]['id'] . "'";
-              $db->Execute($sql);
+              $gBitDb->Execute($sql);
 
             // set products_status based on selection
             if ($_POST['set_products_status'] == 'set_products_status_nochange') {
@@ -95,11 +95,11 @@
               }
 
               $sql = "select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $categories[$i]['id'] . "'";
-              $category_products = $db->Execute($sql);
+              $category_products = $gBitDb->Execute($sql);
 
               while (!$category_products->EOF) {
                 $sql = "update " . TABLE_PRODUCTS . " set `products_status` ='" . $products_status . "' where `products_id` ='" . $category_products->fields['products_id'] . "'";
-                $db->Execute($sql);
+                $gBitDb->Execute($sql);
                 $category_products->MoveNext();
               }
             }
@@ -114,7 +114,7 @@
                   where category_id = '" . zen_db_prepare_input($_GET['cID']) . "'
                   and product_type_id = '" . zen_db_prepare_input($_GET['type_id']) . "'";
 
-          $db->Execute($sql);
+          $gBitDb->Execute($sql);
 
           zen_remove_restrict_sub_categories($_GET['cID'], $_GET['type_id']);
 
@@ -139,14 +139,14 @@
                            where `category_id` = '" . zen_db_prepare_input($_POST['categories_id']) . "'
                            and `product_type_id` = '" . zen_db_prepare_input($_POST['restrict_type']) . "'";
 
-          $type_to_cat = $db->Execute($sql);
+          $type_to_cat = $gBitDb->Execute($sql);
           if ($type_to_cat->RecordCount() < 1) {
 //@@TODO find all sub-categories and restrict them as well.
 
             $insert_sql_data = array('category_id' => zen_db_prepare_input($_POST['categories_id']),
                                      'product_type_id' => zen_db_prepare_input($_POST['restrict_type']));
 
-            $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
+            $gBitDb->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
 /*
 // moved below so evaluated separately from current category
             if (isset($_POST['add_type_all'])) {
@@ -168,42 +168,42 @@
 
         if ($action == 'insert_category') {
           $insert_sql_data = array('parent_id' => $current_category_id,
-                                   'date_added' => $db->NOW() );
+                                   'date_added' => $gBitDb->NOW() );
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_CATEGORIES, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_CATEGORIES, $sql_data_array);
 
           $categories_id = zen_db_insert_id( TABLE_CATEGORIES, 'categories_id' );
 // check if [arent is restricted
           $sql = "select `parent_id` from " . TABLE_CATEGORIES . "
                   where `categories_id` = '" . $categories_id . "'";
 
-          $parent_cat = $db->Execute($sql);
+          $parent_cat = $gBitDb->Execute($sql);
           if ($parent_cat->fields['parent_id'] != '0') {
             $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
                      where `category_id` = '" . $parent_cat->fields['parent_id'] . "'";
-            $parent_product_type = $db->Execute($sql);
+            $parent_product_type = $gBitDb->Execute($sql);
 
             if ($parent_product_type->RecordCount() > 0) {
               $sql = "select * from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
                              where `category_id` = '" . $parent_cat->fields['parent_id'] . "'
                              and `product_type_id` = '" . $parent_product_type->fields['product_type_id'] . "'";
-              $has_type = $db->Execute($sql);
+              $has_type = $gBitDb->Execute($sql);
 
               if ($has_type->RecordCount() < 1) {
                 $insert_sql_data = array('category_id' => $categories_id,
                                          'product_type_id' => $parent_product_type->fields['product_type_id']);
 
-                $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
+                $gBitDb->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $insert_sql_data);
 
               }
 		    }
           }
         } elseif ($action == 'update_category') {
-          $update_sql_data = array('last_modified' => $db->NOW());
+          $update_sql_data = array('last_modified' => $gBitDb->NOW());
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-          $db->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'categories_id' => $categories_id ) );
+          $gBitDb->associateUpdate( TABLE_CATEGORIES, $sql_data_array, array( 'categories_id' => $categories_id ) );
         }
 
         $languages = zen_get_languages();
@@ -225,7 +225,7 @@
 
 					$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-					$db->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
+					$gBitDb->associateInsert(TABLE_CATEGORIES_DESCRIPTION, $sql_data_array);
 				} elseif ($action == 'update_category') {
 					$setSql = ( '`'.implode( array_keys( $sql_data_array ), '`=?, `' ).'`=?' );
 					$bindVars = array_values( $sql_data_array );
@@ -233,7 +233,7 @@
 					array_push( $bindVars, $languages[$i]['id'] );
 
 					$query = "UPDATE " . TABLE_CATEGORIES_DESCRIPTION . " SET $setSql WHERE `categories_id`=? AND `language_id`=? ";
-					$db->query( $query, $bindVars );
+					$gBitDb->query( $query, $bindVars );
 				}
 			}
         }
@@ -244,14 +244,14 @@
             $categories_image_name = $_POST['img_dir'] . $categories_image->filename;
           }
           if (($categories_image->filename != 'none' && $categories_image->filename != '') && (!is_numeric(strpos($categories_image->filename,'none')))) {
-            $db->Execute("update " . TABLE_CATEGORIES . "
+            $gBitDb->Execute("update " . TABLE_CATEGORIES . "
                           set `categories_image` = '" . $categories_image_name . "'
                           where `categories_id` = '" . (int)$categories_id . "'");
           } else {
             // remove when set to none
 //            if ($categories_image->filename == 'none' or (!is_numeric(strpos($categories_image->filename,'none'))) ) {
             if (($categories_image->filename != '') && ($categories_image->filename == 'none' or (!is_numeric(strpos($categories_image->filename,'none')))) ) {
-              $db->Execute("update " . TABLE_CATEGORIES . "
+              $gBitDb->Execute("update " . TABLE_CATEGORIES . "
                             set `categories_image` = ''
                             where `categories_id` = '" . (int)$categories_id . "'");
             }
@@ -276,7 +276,7 @@
           $products_delete = array();
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select `products_id`
+            $product_ids = $gBitDb->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                          where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
@@ -295,7 +295,7 @@
             }
             $category_ids = substr($category_ids, 0, -2);
 
-            $check = $db->Execute("select count(*) as `total`
+            $check = $gBitDb->Execute("select count(*) as `total`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                          where `products_id` = '" . (int)$key . "'
                                          and `categories_id` not in (" . $category_ids . ")");
@@ -346,7 +346,7 @@
           $categories = zen_get_category_tree($categories_id, '', '0', '', true);
 
           for ($i=0, $n=sizeof($categories); $i<$n; $i++) {
-            $product_ids = $db->Execute("select `products_id`
+            $product_ids = $gBitDb->Execute("select `products_id`
                                          from " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                          where `categories_id` = '" . (int)$categories[$i]['id'] . "'");
 
@@ -363,7 +363,7 @@
             // set products_status based on selection
 
               $sql = "select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $categories[$i]['id'] . "'";
-              $category_products = $db->Execute($sql);
+              $category_products = $gBitDb->Execute($sql);
 
               while (!$category_products->EOF) {
                 // future cat specific use for
@@ -394,13 +394,13 @@
 
             zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $categories_id));
           } else {
-            $db->Execute("update " . TABLE_CATEGORIES . "
-                          set `parent_id` = '" . (int)$new_parent_id . "', `last_modified` = ".$db->qtNOW()."
+            $gBitDb->Execute("update " . TABLE_CATEGORIES . "
+                          set `parent_id` = '" . (int)$new_parent_id . "', `last_modified` = ".$gBitDb->qtNOW()."
                           where `categories_id` = '" . (int)$categories_id . "'");
 
 // fix here - if this is a category with subcats it needs to know to loop through
             // reset all products_price_sorter for moved category products
-            $reset_price_sorter = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . (int)$categories_id . "'");
+            $reset_price_sorter = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . (int)$categories_id . "'");
             while (!$reset_price_sorter->EOF) {
               zen_update_products_price_sorter($reset_price_sorter->fields['products_id']);
               $reset_price_sorter->MoveNext();
@@ -450,7 +450,7 @@
       $copy_attributes_delete_first = ($_POST['copy_attributes'] == 'copy_attributes_delete' ? '1' : '0');
       $copy_attributes_duplicates_skipped = ($_POST['copy_attributes'] == 'copy_attributes_ignore' ? '1' : '0');
       $copy_attributes_duplicates_overwrite = ($_POST['copy_attributes'] == 'copy_attributes_update' ? '1' : '0');
-      $copy_to_category = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
+      $copy_to_category = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
       while (!$copy_to_category->EOF) {
         zen_copy_products_attributes($_POST['products_id'], $copy_to_category->fields['products_id']);
         $copy_to_category->MoveNext();
@@ -467,13 +467,13 @@
         $cat_id = $pieces[sizeof($pieces)-1];
 //	echo $cat_id;
         $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` = '" . (int)$cat_id . "'";
-        $product_type_list = $db->Execute($sql);
+        $product_type_list = $gBitDb->Execute($sql);
         $sql = "select `product_type_id` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " where `category_id` = '" . (int)$cat_id . "' and `product_type_id` = '" . $_GET['product_type'] . "'";
-        $product_type_good = $db->Execute($sql);
+        $product_type_good = $gBitDb->Execute($sql);
         if ($product_type_list->RecordCount() < 1 || $product_type_good->RecordCount() > 0) {
           $url = zen_get_all_get_params();
           $sql = "select `type_handler` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $_GET['product_type'] . "'";
-          $handler = $db->Execute($sql);
+          $handler = $gBitDb->Execute($sql);
           zen_redirect(zen_href_link_admin($handler->fields['type_handler'] . '.php', zen_get_all_get_params()));
         } else {
           $messageStack->add(ERROR_CANNOT_ADD_PRODUCT_TYPE, 'error');
@@ -565,7 +565,7 @@
     $contents = array();
 // Make an array of product types
     $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
-    $product_types = $db->Execute($sql);
+    $product_types = $gBitDb->Execute($sql);
     while (!$product_types->EOF) {
       $type_array[] = array('id' => $product_types->fields['type_id'], 'text' => $product_types->fields['type_name']);
       $product_types->MoveNext();
@@ -681,12 +681,12 @@
         $sql = "select * from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
                          where `category_id` = '" . $cInfo->categories_id . "'";
 
-        $restrict_types = $db->Execute($sql);
+        $restrict_types = $gBitDb->Execute($sql);
         if ($restrict_types->RecordCount() > 0 ) {
           $contents[] = array('text' => '<br />' . TEXT_CATEGORY_HAS_RESTRICTIONS . '<br />');
           while (!$restrict_types->EOF) {
             $sql = "select `type_name` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $restrict_types->fields['product_type_id'] . "'";
-            $type = $db->Execute($sql);
+            $type = $gBitDb->Execute($sql);
             $contents[] = array('text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=remove_type&cPath=' . $cPath . '&cID='.$cInfo->categories_id.'&type_id='.$restrict_types->fields['product_type_id']) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>&nbsp;' . $type->fields['type_name'] . '<br />');
             $restrict_types->MoveNext();
           }

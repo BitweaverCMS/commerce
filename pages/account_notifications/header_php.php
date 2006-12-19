@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2006/01/15 00:03:24 lsces Exp $
+// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
 //
   if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
@@ -30,7 +30,7 @@
                    from   " . TABLE_CUSTOMERS_INFO . "
                    where  `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-  $global = $db->Execute($global_query);
+  $global = $gBitDb->Execute($global_query);
 
 	if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
 		if (isset($_POST['product_global']) && is_numeric($_POST['product_global'])) {
@@ -48,7 +48,7 @@
 					set    `global_product_notifications` = '" . (int)$product_global . "'
 					where  `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-			$db->Execute($sql);
+			$gBitDb->Execute($sql);
 
 		}
 		if( count($products) > 0 ) {
@@ -64,14 +64,14 @@
 								where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
 								and    `products_id` not in (" . implode(',', $products_parsed) . ")";
 
-				$check = $db->Execute($check_query);
+				$check = $gBitDb->Execute($check_query);
 
 				if ($check->fields['total'] > 0) {
 				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
 						where       `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
 						and         `products_id` not in (" . implode(',', $products_parsed) . ")";
 
-				$db->Execute($sql);
+				$gBitDb->Execute($sql);
 				}
 			}
 		} else {
@@ -80,13 +80,13 @@
 							where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 
-			$check = $db->Execute($check_query);
+			$check = $gBitDb->Execute($check_query);
 
 			if ($check->fields['total'] > 0) {
 				$sql = "delete from " . TABLE_PRODUCTS_NOTIFICATIONS . "
 						where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-				$db->Execute($sql);
+				$gBitDb->Execute($sql);
 
 			}
 		}
@@ -100,7 +100,7 @@
                            from   " . TABLE_PRODUCTS_NOTIFICATIONS . "
                            where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-  $products_check = $db->Execute($products_check_query);
+  $products_check = $gBitDb->Execute($products_check_query);
   if ($products_check->fields['total'] > 0) $flag_products_check = true;
 
   $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:28 spiderr Exp $
+// $Id: header_php.php,v 1.5 2006/12/19 00:11:36 spiderr Exp $
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
@@ -37,7 +37,7 @@
   }
 
 // Check that order_id, customer_id and filename match
-  $downloads = $db->Execute("select date_format(o.`date_purchased`, '%Y-%m-%d') as `date_purchased_day`, opd.`download_maxdays`, opd.`download_count`, opd.`download_maxdays`, opd.`orders_products_filename` from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd where o.`customers_id` = '" . $_SESSION['customer_id'] . "' and o.`orders_id` = '" . (int)$_GET['order'] . "' and o.`orders_id` = op.`orders_id` and op.`orders_products_id` = opd.`orders_products_id` and opd.`orders_products_download_id` = '" . (int)$_GET['id'] . "' and opd.`orders_products_filename` != ''");
+  $downloads = $gBitDb->Execute("select date_format(o.`date_purchased`, '%Y-%m-%d') as `date_purchased_day`, opd.`download_maxdays`, opd.`download_count`, opd.`download_maxdays`, opd.`orders_products_filename` from " . TABLE_ORDERS . " o, " . TABLE_ORDERS_PRODUCTS . " op, " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd where o.`customers_id` = '" . $_SESSION['customer_id'] . "' and o.`orders_id` = '" . (int)$_GET['order'] . "' and o.`orders_id` = op.`orders_id` and op.`orders_products_id` = opd.`orders_products_id` and opd.`orders_products_download_id` = '" . (int)$_GET['id'] . "' and opd.`orders_products_filename` != ''");
   if ($downloads->RecordCount() <= 0 ) die;
 // MySQL 3.22 does not have INTERVAL
   list($dt_year, $dt_month, $dt_day) = explode('-', $downloads->fields['date_purchased_day']);
@@ -57,7 +57,7 @@
   if (!file_exists(DIR_FS_DOWNLOAD . $downloads->fields['orders_products_filename'])) die;
 
 // Now decrement counter
-  $db->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_count = download_count-1 where orders_products_download_id = '" . (int)$_GET['id'] . "'");
+  $gBitDb->Execute("update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_count = download_count-1 where orders_products_download_id = '" . (int)$_GET['id'] . "'");
 
 // Returns a random name, 16 to 20 characters long
 // There are more than 10^28 combinations

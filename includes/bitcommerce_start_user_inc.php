@@ -72,7 +72,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
           FROM " . TABLE_TEMPLATE_SELECT .
          " WHERE `template_language` = '0'";
 
-  $template_query = $db->Execute($sql);
+  $template_query = $gBitDb->Execute($sql);
 
   $template_dir = $template_query->fields['template_dir'];
 
@@ -80,7 +80,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
           FROM " . TABLE_TEMPLATE_SELECT .
          " WHERE `template_language` = '" . $_SESSION['languages_id'] . "'";
 
-  if( $langDir = $db->getOne($sql) ) {
+  if( $langDir = $gBitDb->getOne($sql) ) {
       $template_dir = $langDir;
   }
 //if (template_switcher_available=="YES") $template_dir = templateswitch_custom($current_domain);

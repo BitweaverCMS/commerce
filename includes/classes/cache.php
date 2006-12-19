@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cache.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
+// $Id: cache.php,v 1.4 2006/12/19 00:11:32 spiderr Exp $
 //
 
 class cache {
 
   function sql_cache_exists($zf_query) {
-    global $db;
+    global $gBitDb;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
@@ -37,7 +37,7 @@ class cache {
       break;
       case 'database':
         $sql = "select * from " . TABLE_DB_CACHE . " where cache_entry_name = '" . $zp_cache_name . "'";
-	$zp_cache_exists = $db->Execute($sql);
+	$zp_cache_exists = $gBitDb->Execute($sql);
 	if ($zp_cache_exists->RecordCount() > 0) {
 	  return true;
 	} else {
@@ -54,7 +54,7 @@ class cache {
   }
 
   function sql_cache_is_expired($zf_query, $zf_cachetime) {
-    global $db;
+    global $gBitDb;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
@@ -66,7 +66,7 @@ class cache {
       break;
       case 'database':
         $sql = "select * from " . TABLE_DB_CACHE . " where cache_entry_name = '" . $zp_cache_name ."'";
-	$cache_result = $db->Execute($sql);
+	$cache_result = $gBitDb->Execute($sql);
 	if ($cache_result->RecordCount() > 0) {
 	  $start_time = $cache_result->fields['cache_entry_created'];
 	  if (time() - $start_time > $zf_cachetime) return true;
@@ -85,7 +85,7 @@ class cache {
   }
 
   function sql_cache_expire_now($zf_query) {
-    global $db;
+    global $gBitDb;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
@@ -94,7 +94,7 @@ class cache {
       break;
       case 'database':
         $sql = "delete from " . TABLE_DB_CACHE . " where cache_entry_name = '" . $zp_cache_name . "'";
-	$db->Execute($sql);
+	$gBitDb->Execute($sql);
         return true;
       break;
       case 'memory':
@@ -108,7 +108,7 @@ class cache {
   }
 
   function sql_cache_store($zf_query, $zf_result_array) {
-    global $db;
+    global $gBitDb;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
@@ -119,11 +119,11 @@ class cache {
         return true;
       break;
       case 'database':
-        $result_serialize = $db->prepare_input(serialize($zf_result_array));
+        $result_serialize = $gBitDb->prepare_input(serialize($zf_result_array));
 	$sql = "insert into " . TABLE_DB_CACHE . " set cache_entry_name = '" . $zp_cache_name . "',
 	                                               cache_data = '" . $result_serialize . "',
 						       cache_entry_created = '" . time() . "'";
-	$db->Execute($sql);
+	$gBitDb->Execute($sql);
         return true;
       break;
       case 'memory':
@@ -136,7 +136,7 @@ class cache {
   }
 
   function sql_cache_read($zf_query) {
-    global $db;
+    global $gBitDb;
     $zp_cache_name = $this->cache_generate_cache_name($zf_query);
     switch (SQL_CACHE_METHOD) {
       case 'file':
@@ -146,7 +146,7 @@ class cache {
       break;
       case 'database':
 	$sql = "select * from " . TABLE_DB_CACHE . " where cache_entry_name = '" . $zp_cache_name . "'";
-	$zp_cache_result = $db->Execute($sql);
+	$zp_cache_result = $gBitDb->Execute($sql);
 	$zp_result_array = unserialize($zp_cache_result->fields['cache_data']);
         return $zp_result_array;
       break;
@@ -160,7 +160,7 @@ class cache {
   }
 
   function sql_cache_flush_cache() {
-    global $db;
+    global $gBitDb;
     switch (SQL_CACHE_METHOD) {
       case 'file':
         if ($za_dir = @dir(DIR_FS_SQL_CACHE)) {
@@ -174,7 +174,7 @@ class cache {
       break;
       case 'database':
         $sql = "delete from " . TABLE_DB_CACHE;
-	$db->Execute($sql);
+	$gBitDb->Execute($sql);
         return true;
       break;
       case 'memory':

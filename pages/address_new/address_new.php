@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.3 2006/03/23 08:05:04 spiderr Exp $
+// $Id: address_new.php,v 1.4 2006/12/19 00:11:35 spiderr Exp $
 //
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
 
-	global $gBitSmarty, $db, $gBitCustomer;
+	global $gBitSmarty, $gBitDb, $gBitCustomer;
 	$gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
 	$gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
 	$gBitSmarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );

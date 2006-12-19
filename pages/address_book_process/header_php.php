@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.13 2006/02/24 04:13:08 spiderr Exp $
+// $Id: header_php.php,v 1.14 2006/12/19 00:11:35 spiderr Exp $
 //
 
   if (!$_SESSION['customer_id']) {
@@ -35,7 +35,7 @@ if( empty( $country_id ) ) {
                    where  address_book_id = '" . (int)$_GET['delete'] . "'
                    and    customers_id = '" . (int)$_SESSION['customer_id'] . "'";
 
-    $db->Execute($sql);
+    $gBitDb->Execute($sql);
 
     $messageStack->add_session('addressbook', SUCCESS_ADDRESS_BOOK_ENTRY_DELETED, 'success');
 
@@ -73,7 +73,7 @@ if( empty( $country_id ) ) {
                       where `address_book_id` = '" . (int)$_GET['delete'] . "'
                       and `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $check = $db->Execute($check_query);
+      $check = $gBitDb->Execute($check_query);
 
       if ($check->fields['total'] < 1) {
         $messageStack->add_session('addressbook', ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY);
@@ -112,7 +112,7 @@ if( empty( $country_id ) ) {
                         from " . TABLE_ZONES . "
 						where `zone_country_id` = '" . (int)$country_id . "'";
 
-        $check = $db->Execute($check_query);           
+        $check = $gBitDb->Execute($check_query);           
         $entry_state_has_zones = ($check->fields['total'] > 0);    
       }
   

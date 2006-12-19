@@ -5,13 +5,13 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php' );
 class Bitcart
 {
 	function manufacturerExists( $pManufacturersId ) {
-		global $db;
+		global $gBitDb;
 		$ret = NULL;
 		if( is_numeric( $pManufacturersId ) ) {
 			$sql = "SELECT COUNT(*) as `total`
 					FROM " . TABLE_MANUFACTURERS . "
 					WHERE `manufacturers_id` = '" . zen_db_input( $pManufacturersId ) . "'";
-			$rs = $db->Execute($sql);
+			$rs = $gBitDb->Execute($sql);
 			$ret = !empty( $rs['fields']['total'] );
 		}
 		return( $ret );
@@ -23,15 +23,15 @@ class Bitcart
 		$sql_data_array['manufacturers_image'] = !empty( $pParamHash['manufacturers_image'] ) ? $pParamHash['manufacturers_image'] : NULL;
 		
 		if( !empty( $pParamHash['manufacturers_id'] ) && $this->manufacturerExists( $pParamHash['manufacturers_id'] ) ) {
-			$sql_data_array['last_modified'] = $db->NOW();
+			$sql_data_array['last_modified'] = $gBitDb->NOW();
 			$manufacturers_id = zen_db_prepare_input($pParamHash['manufacturers_id']);
-			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
+			$gBitDb->associateInsert(TABLE_MANUFACTURERS, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "'");
 		} else {
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];
 			}
-			$sql_data_array['date_added'] = $db->NOW();
-			$db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
+			$sql_data_array['date_added'] = $gBitDb->NOW();
+			$gBitDb->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
 			if( !empty( $pParamHash['manufacturers_id'] ) ) {
 				$sql_data_array['manufacturers_id'] = $pParamHash['manufacturers_id'];
 			}
@@ -47,9 +47,9 @@ vd( $languages );
 			if ($action == 'insert') {
 				$insert_sql_data = array('manufacturers_id' => $manufacturers_id, 'languages_id' => $language_id);
 				$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
-				$db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
+				$gBitDb->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
 			} elseif ($action == 'save') {
-				$db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "' and languages_id = '" . (int)$language_id . "'");
+				$gBitDb->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array, 'update', "manufacturers_id = '" . (int)$manufacturers_id . "' and languages_id = '" . (int)$language_id . "'");
 			}
 		}
 	}

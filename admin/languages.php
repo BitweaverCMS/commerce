@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: languages.php,v 1.14 2006/12/19 00:11:28 spiderr Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -29,12 +29,12 @@
         $image = zen_db_prepare_input($_POST['image']);
         $directory = zen_db_prepare_input($_POST['directory']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
-        $check = $db->Execute("select * from " . TABLE_LANGUAGES . " where `code` = '" . $code . "'");
+        $check = $gBitDb->Execute("select * from " . TABLE_LANGUAGES . " where `code` = '" . $code . "'");
         if ($check->RecordCount() > 0) {
           $messageStack->add(ERROR_DUPLICATE_LANGUAGE_CODE, 'error');
         } else {
 
-          $db->Execute("insert into " . TABLE_LANGUAGES . "
+          $gBitDb->Execute("insert into " . TABLE_LANGUAGES . "
                         (`name`, `code`, `image`, `directory`, `sort_order`)
                         values ('" . zen_db_input($name) . "', '" . zen_db_input($code) . "',
                                 '" . zen_db_input($image) . "', '" . zen_db_input($directory) . "',
@@ -44,7 +44,7 @@
 
 // create additional categories_description records
 
-          $categories = $db->Execute("select c.`categories_id`, cd.`categories_name`,
+          $categories = $gBitDb->Execute("select c.`categories_id`, cd.`categories_name`,
                                     `categories_description`
                                       from " . TABLE_CATEGORIES . " c
                                       left join " . TABLE_CATEGORIES_DESCRIPTION . " cd
@@ -52,7 +52,7 @@
                                       where cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$categories->EOF) {
-            $db->Execute("insert into " . TABLE_CATEGORIES_DESCRIPTION . "
+            $gBitDb->Execute("insert into " . TABLE_CATEGORIES_DESCRIPTION . "
                           (`categories_id`, `language_id`, `categories_name`,
                           `categories_description`)
                           values ('" . (int)$categories->fields['categories_id'] . "', '" . (int)$insert_id . "',
@@ -62,7 +62,7 @@
           }
 
 // create additional products_description records
-          $products = $db->Execute("select p.`products_id`, pd.`products_name`, pd.`products_description`,
+          $products = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, pd.`products_description`,
                                            pd.`products_url`
                                     from " . TABLE_PRODUCTS . " p
                                     left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -70,7 +70,7 @@
                                     where pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products->EOF) {
-            $db->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_DESCRIPTION . "
                         (`products_id`, `language_id`, `products_name`, `products_description`, `products_url`)
                         values ('" . (int)$products->fields['products_id'] . "',
                                 '" . (int)$insert_id . "',
@@ -81,14 +81,14 @@
           }
 
 // create additional products_options records
-          $products_options = $db->Execute("select `products_options_id`, `products_options_name`,
+          $products_options = $gBitDb->Execute("select `products_options_id`, `products_options_name`,
                               `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`,
                               `products_options_images_per_row`, `products_options_images_style`
                                            from " . TABLE_PRODUCTS_OPTIONS . "
                                            where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options->EOF) {
-            $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
 		                    (`products_options_id`, `language_id`, `products_options_name`,
 		                    `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`, `products_options_images_per_row`, `products_options_images_style`)
       						      values ('" . (int)$products_options->fields['products_options_id'] . "',
@@ -106,13 +106,13 @@
           }
 
 // create additional products_options_values records
-          $products_options_values = $db->Execute("select `products_options_values_id`,
+          $products_options_values = $gBitDb->Execute("select `products_options_values_id`,
 		                                                `products_options_values_name`, `products_ov_sort_order`
 						   from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
 						   where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$products_options_values->EOF) {
-            $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                         (`products_options_values_id`, `language_id`, `products_options_values_name`, `products_ov_sort_order`)
 				                values ('" . (int)$products_options_values->fields['products_options_values_id'] . "',
 						                    '" . (int)$insert_id . "', '" . zen_db_input($products_options_values->fields['products_options_values_name']) . "', '" . zen_db_input($products_options_values->fields['products_ov_sort_order']) . "')");
@@ -121,14 +121,14 @@
           }
 
 // create additional manufacturers_info records
-          $manufacturers = $db->Execute("select m.`manufacturers_id`, mi.`manufacturers_url`
+          $manufacturers = $gBitDb->Execute("select m.`manufacturers_id`, mi.`manufacturers_url`
 		                               from " . TABLE_MANUFACTURERS . " m
 						   left join " . TABLE_MANUFACTURERS_INFO . " mi
 						   on m.`manufacturers_id` = mi.`manufacturers_id`
 						   where mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$manufacturers->EOF) {
-            $db->Execute("insert into " . TABLE_MANUFACTURERS_INFO . "
+            $gBitDb->Execute("insert into " . TABLE_MANUFACTURERS_INFO . "
 		                    (`manufacturers_id`, `languages_id`, `manufacturers_url`)
 					              values ('" . $manufacturers->fields['manufacturers_id'] . "', '" . (int)$insert_id . "',
 					                      '" . zen_db_input($manufacturers->fields['manufacturers_url']) . "')");
@@ -137,14 +137,14 @@
           }
 
 // create additional suppliers_info records
-          $suppliers = $db->Execute("select m.`suppliers_id`, mi.`suppliers_url`
+          $suppliers = $gBitDb->Execute("select m.`suppliers_id`, mi.`suppliers_url`
 		                               from " . TABLE_SUPPLIERS . " m
 						   left join " . TABLE_SUPPLIERS_INFO . " mi
 						   on m.`suppliers_id` = mi.`suppliers_id`
 						   where mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$suppliers->EOF) {
-            $db->Execute("insert into " . TABLE_SUPPLIERS_INFO . "
+            $gBitDb->Execute("insert into " . TABLE_SUPPLIERS_INFO . "
 		                    (`suppliers_id`, `languages_id`, `suppliers_url`)
 					              values ('" . $suppliers->fields['suppliers_id'] . "', '" . (int)$insert_id . "',
 					                      '" . zen_db_input($suppliers->fields['suppliers_url']) . "')");
@@ -154,12 +154,12 @@
 
 
 // create additional orders_status records
-          $orders_status = $db->Execute("select `orders_status_id`, `orders_status_name`
+          $orders_status = $gBitDb->Execute("select `orders_status_id`, `orders_status_name`
 		                               from " . TABLE_ORDERS_STATUS . "
 					   where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$orders_status->EOF) {
-            $db->Execute("insert into " . TABLE_ORDERS_STATUS . "
+            $gBitDb->Execute("insert into " . TABLE_ORDERS_STATUS . "
 		                      (`orders_status_id`, `language_id`, `orders_status_name`)
 					                values ('" . (int)$orders_status->fields['orders_status_id'] . "',
 				                          '" . (int)$insert_id . "',
@@ -167,20 +167,20 @@
             $orders_status->MoveNext();
           }
           if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-            $db->Execute("update " . TABLE_CONFIGURATION . "
+            $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
        	                set `configuration_value` = '" . zen_db_input($code) . "'
 			where `configuration_key` = 'DEFAULT_LANGUAGE'");
           }
 
 // create additional coupons_description records
-          $coupons = $db->Execute("select c.`coupon_id`, cd.`coupon_name`, cd.`coupon_description`
+          $coupons = $gBitDb->Execute("select c.`coupon_id`, cd.`coupon_name`, cd.`coupon_description`
                                     from " . TABLE_COUPONS . " c
                                     left join " . TABLE_COUPONS_DESCRIPTION . " cd
                                     on c.`coupon_id` = cd.`coupon_id`
                                     where cd.`coupon_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
           while (!$coupons->EOF) {
-            $db->Execute("insert into " . TABLE_COUPONS_DESCRIPTION . "
+            $gBitDb->Execute("insert into " . TABLE_COUPONS_DESCRIPTION . "
                         (`coupon_id`, language_id, `coupon_name`, `coupon_description`)
                         values ('" . (int)$coupons->fields['coupon_id'] . "',
                                 '" . (int)$insert_id . "',
@@ -200,14 +200,14 @@
         $image = zen_db_prepare_input($_POST['image']);
         $directory = zen_db_prepare_input($_POST['directory']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
-        $db->Execute("update " . TABLE_LANGUAGES . "
+        $gBitDb->Execute("update " . TABLE_LANGUAGES . "
 		              set name = '" . zen_db_input($name) . "', `code` = `" . zen_db_input($code) . "',
 					  image = '" . zen_db_input($image) . "', directory = '" . zen_db_input($directory) . "',
 					  `sort_order` = '" . zen_db_input($sort_order) . "'
 					  where languages_id = '" . (int)$lID . "'");
 
         if ($_POST['default'] == 'on') {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
 		                set `configuration_value` = '" . zen_db_input($code) . "'
 						where `configuration_key` = 'DEFAULT_LANGUAGE'");
         }
@@ -221,28 +221,28 @@
           zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page']));
         }
         $lID = zen_db_prepare_input($_GET['lID']);
-        $lng = $db->Execute("select `languages_id`
+        $lng = $gBitDb->Execute("select `languages_id`
 		                     from " . TABLE_LANGUAGES . "
 							 where `code` = `" . DEFAULT_CURRENCY . "'");
 
         if ($lng->fields['languages_id'] == $lID) {
-          $db->Execute("update " . TABLE_CONFIGURATION . "
+          $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
 		                set `configuration_value` = ''
 						where `configuration_key` = 'DEFAULT_CURRENCY'");
         }
-        $db->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_MANUFACTURERS_INFO . " where `languages_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
-        $db->Execute("delete from " . TABLE_COUPONS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_MANUFACTURERS_INFO . " where `languages_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
+        $gBitDb->Execute("delete from " . TABLE_COUPONS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
         zen_redirect(zen_href_link_admin(FILENAME_LANGUAGES, 'page=' . $_GET['page']));
         break;
       case 'delete':
         $lID = zen_db_prepare_input($_GET['lID']);
-        $lng = $db->Execute("select `code` from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
+        $lng = $gBitDb->Execute("select `code` from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");
         $remove_language = true;
         if ($lng->fields['code'] == DEFAULT_LANGUAGE) {
           $remove_language = false;
@@ -304,7 +304,7 @@
 <?php
   $languages_query_raw = "select `languages_id`, `name`, `code`, `image`, `directory`, `sort_order` from " . TABLE_LANGUAGES . " order by `sort_order`";
   $languages_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $languages_query_raw, $languages_query_numrows);
-  $languages = $db->Execute($languages_query_raw);
+  $languages = $gBitDb->Execute($languages_query_raw);
   while (!$languages->EOF) {
     if ((!isset($_GET['lID']) || (isset($_GET['lID']) && ($_GET['lID'] == $languages->fields['languages_id']))) && !isset($lInfo) && (substr($action, 0, 3) != 'new')) {
       $lInfo = new objectInfo($languages->fields);

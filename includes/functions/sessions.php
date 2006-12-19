@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sessions.php,v 1.5 2006/02/19 20:56:49 lsces Exp $
+// $Id: sessions.php,v 1.6 2006/12/19 00:11:33 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -43,13 +43,13 @@
     }
 
     function _sess_read($key) {
-      global $db;
+      global $gBitDb;
       $qid = "select `sess_value`
               from " . TABLE_SESSIONS . "
               where `sesskey` = '" . zen_db_input($key) . "'
               and `expiry` > '" . time() . "'";
 
-      $value = $db->Execute($qid);
+      $value = $gBitDb->Execute($qid);
 
       if ($value->fields['sess_value']) {
         return $value->fields['sess_value'];
@@ -59,7 +59,7 @@
     }
 
     function _sess_write($key, $val) {
-      global $db;
+      global $gBitDb;
       global $SESS_LIFE;
 
       $expiry = time() + $SESS_LIFE;
@@ -69,35 +69,35 @@
               from " . TABLE_SESSIONS . "
               where `sesskey` = '" . zen_db_input($key) . "'";
 
-      $total = $db->Execute($qid);
+      $total = $gBitDb->Execute($qid);
 
       if ($total->fields['total'] > 0) {
         $sql = "update " . TABLE_SESSIONS . "
                 set `expiry` = '" . zen_db_input($expiry) . "', `sess_value` = '" . zen_db_input($value) . "'
                 where `sesskey` = '" . zen_db_input($key) . "'";
 
-        return $db->Execute($sql);
+        return $gBitDb->Execute($sql);
 
       } else {
         $sql = "insert into " . TABLE_SESSIONS . "
                 values ('" . zen_db_input($key) . "', '" . zen_db_input($expiry) . "', '" .
                          zen_db_input($value) . "')";
 
-        return $db->Execute($sql);
+        return $gBitDb->Execute($sql);
 
       }
     }
 
     function _sess_destroy($key) {
-      global $db;
+      global $gBitDb;
       $sql = "delete from " . TABLE_SESSIONS . " where `sesskey` = '" . zen_db_input($key) . "'";
-      return $db->Execute($sql);
+      return $gBitDb->Execute($sql);
     }
 
     function _sess_gc($maxlifetime) {
-      global $db;
+      global $gBitDb;
       $sql = "delete from " . TABLE_SESSIONS . " where `expiry` < '" . time() . "'";
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
       return true;
     }
 

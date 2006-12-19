@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: sniffer.php,v 1.3 2005/10/06 21:01:47 spiderr Exp $
+// $Id: sniffer.php,v 1.4 2006/12/19 00:11:32 spiderr Exp $
 //
 /**
  * Sniffer Class.
@@ -75,10 +75,10 @@
           if (substr_count($line,"'")>1) $delim="'"; // determine whether single or double quotes used in this line.
           $def_string=array();
           $def_string=explode($delim,$line);
-          if (substr($line,0,7)=='$dbhost') $this->phpBB['dbhost'] = $def_string[1];
-          if (substr($line,0,7)=='$dbname') $this->phpBB['dbname'] = $def_string[1];
-          if (substr($line,0,7)=='$dbuser') $this->phpBB['dbuser'] = $def_string[1];
-          if (substr($line,0,9)=='$dbpasswd') $this->phpBB['dbpasswd'] = $def_string[1];
+          if (substr($line,0,7)=='$gBitDbhost') $this->phpBB['dbhost'] = $def_string[1];
+          if (substr($line,0,7)=='$gBitDbname') $this->phpBB['dbname'] = $def_string[1];
+          if (substr($line,0,7)=='$gBitDbuser') $this->phpBB['dbuser'] = $def_string[1];
+          if (substr($line,0,9)=='$gBitDbpasswd') $this->phpBB['dbpasswd'] = $def_string[1];
           if (substr($line,0,13)=='$table_prefix') $this->phpBB['table_prefix'] = $def_string[1];
         }//end foreach $line
        // find phpbb table-names without INCLUDEing file:
@@ -139,18 +139,18 @@
     }
 
     function table_exists($table_name) {
-      global $db;
+      global $gBitDb;
 
     // Check to see if the requested Zen Cart table exists
       $sql = "SHOW TABLES like '".$table_name."'";
-      $tables = $db->Execute($sql);
+      $tables = $gBitDb->Execute($sql);
 //echo 'tables_found = '. $tables->RecordCount() .'<br>';
       if ($tables->RecordCount() > 0) {
         $found_table = true;
       }
 
 //      $sql = "SHOW TABLES";
-////      $tables = $db->execute($sql);
+////      $tables = $gBitDb->execute($sql);
 //      $found_table = false;
 ////      while (!$tables->EOF) {
 ////        list(,$table) = each($tables->fields);
@@ -164,17 +164,17 @@
       return $found_table;
     }
     function table_exists_phpbb($table_name) {
-      global $db;
+      global $gBitDb;
     // Check to see if the requested PHPBB table exists, regardless of which database it's set to use
       $sql = "SHOW TABLES like '".$table_name."'";
-      $db_phpbb = new queryFactory();
-      $db_phpbb->connect($this->phpBB['dbhost'], $this->phpBB['dbuser'], $this->phpBB['dbpasswd'], $this->phpBB['dbname'], USE_PCONNECT, false);
-      $tables = $db_phpbb->Execute($sql);
+      $gBitDb_phpbb = new queryFactory();
+      $gBitDb_phpbb->connect($this->phpBB['dbhost'], $this->phpBB['dbuser'], $this->phpBB['dbpasswd'], $this->phpBB['dbname'], USE_PCONNECT, false);
+      $tables = $gBitDb_phpbb->Execute($sql);
 //echo 'tables_found = '. $tables->RecordCount() .'<br>';
       if ($tables->RecordCount() > 0) {
         $found_table = true;
       }
-      $db->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false);
+      $gBitDb->connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE, USE_PCONNECT, false);
       return $found_table;
     }
 

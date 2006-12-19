@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.41 2006/12/11 23:21:05 spiderr Exp $
+//  $Id: orders.php,v 1.42 2006/12/19 00:11:28 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -29,7 +29,7 @@
 
 	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
-		if( $order_exists = $db->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
+		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
 		    $order = new order($oID);
 			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
 		} else {
@@ -46,13 +46,13 @@
       // reset single download to on
         if( !empty( $_GET['download_reset_on'] ) ) {
           // adjust download_maxdays based on current date
-          $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
+          $check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
                                       where `orders_id` = '" . $_REQUEST['oID'] . "'");
           $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
           $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
-          $db->Execute($update_downloads_query);
+          $gBitDb->Execute($update_downloads_query);
           unset($_GET['download_reset_on']);
 
           $messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_ON, 'success');
@@ -63,7 +63,7 @@
           // adjust download_maxdays based on current date
           $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
           unset($_GET['download_reset_off']);
-          $db->Execute($update_downloads_query);
+          $gBitDb->Execute($update_downloads_query);
 
           $messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF, 'success');
           zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
@@ -83,7 +83,7 @@
             $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
             $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . (int)$oID . "'";
-            $db->Execute($update_downloads_query);
+            $gBitDb->Execute($update_downloads_query);
           }
           $messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
         } else {
@@ -317,7 +317,7 @@
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' );
 
 // check if order has open gv
-		$gv_check = $db->query("select `order_id`, `unique_id`
+		$gv_check = $gBitDb->query("select `order_id`, `unique_id`
 								from " . TABLE_COUPON_GV_QUEUE ."
 								where `order_id` = '" . $_REQUEST['oID'] . "' and `release_flag`='N'");
 		if ($gv_check->RecordCount() > 0) {

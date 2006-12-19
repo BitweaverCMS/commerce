@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.3 2005/08/24 09:33:37 lsces Exp $
+// $Id: header_php.php,v 1.4 2006/12/19 00:11:38 spiderr Exp $
 //
 
   switch ($_GET['action']) {
@@ -25,7 +25,7 @@
       $banner_query = "select `banners_url` 
                        from " . TABLE_BANNERS . " 
                        where `banners_id` = '" . (int)$_GET['goto'] . "'";
-      $banner = $db->Execute($banner_query);
+      $banner = $gBitDb->Execute($banner_query);
 
       if ($banner->RecordCount() > 0) {
 
@@ -43,7 +43,7 @@
 
     case 'manufacturer':
       if (isset($_GET['manufacturers_id']) && zen_not_null($_GET['manufacturers_id'])) {
-        $manufacturer = $db->Execute("select `manufacturers_url` 
+        $manufacturer = $gBitDb->Execute("select `manufacturers_url` 
                                       from " . TABLE_MANUFACTURERS_INFO . " 
                                       where `manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "' 
                                       and `languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -52,7 +52,7 @@
 // url exists in selected language
 
           if (zen_not_null($manufacturer->fields['manufacturers_url'])) {
-            $db->Execute("update " . TABLE_MANUFACTURERS_INFO . " 
+            $gBitDb->Execute("update " . TABLE_MANUFACTURERS_INFO . " 
                           set `url_clicked` = url_clicked+1, `date_last_click` = now() 
                           where `manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "' 
                           and `languages_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -62,7 +62,7 @@
           }
         } else {
 // no url exists for the selected language, lets use the default language then
-          $manufacturer = $db->Execute("select mi.`languages_id`, mi.`manufacturers_url` 
+          $manufacturer = $gBitDb->Execute("select mi.`languages_id`, mi.`manufacturers_url` 
                                         from " . TABLE_MANUFACTURERS_INFO . " mi, " . TABLE_LANGUAGES . " l 
                                         where mi.`manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "' 
                                         and mi.`languages_id` = l.`languages_id`
@@ -71,7 +71,7 @@
           if ($manufacturer->RecordCount > 0) {
 
             if (zen_not_null($manufacturer->fields['manufacturers_url'])) {
-              $db->Execute("update " . TABLE_MANUFACTURERS_INFO . " 
+              $gBitDb->Execute("update " . TABLE_MANUFACTURERS_INFO . " 
                             set `url_clicked` = url_clicked+1, `date_last_click` = now() 
                             where `manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "' 
                             and `languages_id` = '" . (int)$manufacturer['languages_id'] . "'");

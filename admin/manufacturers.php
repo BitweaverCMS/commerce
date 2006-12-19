@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: manufacturers.php,v 1.12 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: manufacturers.php,v 1.13 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -37,18 +37,18 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
         $sql_data_array = array('manufacturers_name' => $manufacturers_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => $db->NOW());
+          $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_MANUFACTURERS, $sql_data_array);
           $manufacturers_id = zen_db_insert_id( TABLE_MANUFACTURERS, 'manufacturers_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => $db->NOW());
+          $update_sql_data = array('last_modified' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
                
-          $db->associateUpdate(TABLE_MANUFACTURERS, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id ) );
+          $gBitDb->associateUpdate(TABLE_MANUFACTURERS, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id ) );
         }
 
         $manufacturers_image = new upload('manufacturers_image');
@@ -56,11 +56,11 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
         if ( $manufacturers_image->parse() &&  $manufacturers_image->save()) {
           // remove image from database if none
          if ($manufacturers_image->filename != 'none') {
-            $db->Execute("update " . TABLE_MANUFACTURERS . "
+            $gBitDb->Execute("update " . TABLE_MANUFACTURERS . "
                           set `manufacturers_image` = '" .  $_POST['img_dir'] . $manufacturers_image->filename . "'
                           where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
           } else {
-            $db->Execute("update " . TABLE_MANUFACTURERS . "
+            $gBitDb->Execute("update " . TABLE_MANUFACTURERS . "
                           set `manufacturers_image` = ''
                           where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
           }
@@ -79,9 +79,9 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_MANUFACTURERS_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateUpdate(TABLE_MANUFACTURERS_INFO, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id , 'languages_id' => (int)$language_id) );
+            $gBitDb->associateUpdate(TABLE_MANUFACTURERS_INFO, $sql_data_array, array( 'manufacturers_id' => (int)$manufacturers_id , 'languages_id' => (int)$language_id) );
             
           }
         }
@@ -98,7 +98,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
         $manufacturers_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $manufacturer = $db->Execute("select `manufacturers_image`
+          $manufacturer = $gBitDb->Execute("select `manufacturers_image`
                                         from " . TABLE_MANUFACTURERS . "
                                         where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
 
@@ -107,13 +107,13 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_MANUFACTURERS . "
+        $gBitDb->Execute("delete from " . TABLE_MANUFACTURERS . "
                       where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
-        $db->Execute("delete from " . TABLE_MANUFACTURERS_INFO . "
+        $gBitDb->Execute("delete from " . TABLE_MANUFACTURERS_INFO . "
                       where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $gBitDb->Execute("select products_id
                                     from " . TABLE_PRODUCTS . "
                                     where manufacturers_id = '" . (int)$manufacturers_id . "'");
 
@@ -122,7 +122,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                         set `manufacturers_id` = ''
                         where `manufacturers_id` = '" . (int)$manufacturers_id . "'");
         }
@@ -184,10 +184,10 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
 <?php
   $manufacturers_query_raw = "select `manufacturers_id`, `manufacturers_name`, `manufacturers_image`, `date_added`, `last_modified` from " . TABLE_MANUFACTURERS . " order by `manufacturers_name`";
   $manufacturers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $manufacturers_query_raw, $manufacturers_query_numrows);
-  $manufacturers = $db->Execute($manufacturers_query_raw);
+  $manufacturers = $gBitDb->Execute($manufacturers_query_raw);
   while (!$manufacturers->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $manufacturers->fields['manufacturers_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
-      $manufacturer_products = $db->Execute("select count(*) as `products_count`
+      $manufacturer_products = $gBitDb->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
                                              where `manufacturers_id` = '" . (int)$manufacturers->fields['manufacturers_id'] . "'");
 

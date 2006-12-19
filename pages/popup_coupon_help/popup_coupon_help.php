@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_coupon_help.php,v 1.3 2006/02/28 18:43:03 spiderr Exp $
+// $Id: popup_coupon_help.php,v 1.4 2006/12/19 00:11:37 spiderr Exp $
 //
 ?>
 <body onload="resize();">
 <?php
-  $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where `coupon_id` = '" . $_GET['cID'] . "'");
-  $coupon_desc = $db->Execute("select * from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cID'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
+  $coupon = $gBitDb->Execute("select * from " . TABLE_COUPONS . " where `coupon_id` = '" . $_GET['cID'] . "'");
+  $coupon_desc = $gBitDb->Execute("select * from " . TABLE_COUPONS_DESCRIPTION . " where `coupon_id` = '" . $_GET['cID'] . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
   $text_coupon_help = TEXT_COUPON_HELP_HEADER;
   $text_coupon_help .= sprintf(TEXT_COUPON_HELP_NAME, $coupon_desc->fields['coupon_name']);
   if (zen_not_null($coupon_desc->fields['coupon_description'])) $text_coupon_help .= sprintf(TEXT_COUPON_HELP_DESC, $coupon_desc->fields['coupon_description']);
@@ -44,11 +44,11 @@
   $text_coupon_help .= sprintf(TEXT_COUPON_HELP_DATE, zen_date_short($coupon->fields['coupon_start_date']),zen_date_short($coupon->fields['coupon_expire_date']));
   $text_coupon_help .= '<b>' . TEXT_COUPON_HELP_RESTRICT . '</b>';
   $text_coupon_help .= '<br><br>' .  TEXT_COUPON_HELP_CATEGORIES;
-  $get_result=$db->Execute("select `restrict_to_categories` from " . TABLE_COUPONS . " where `coupon_id` ='".$_GET['cID']."'");
+  $get_result=$gBitDb->Execute("select `restrict_to_categories` from " . TABLE_COUPONS . " where `coupon_id` ='".$_GET['cID']."'");
 
   $cat_ids = split("[,]", $get_result->fields['restrict_to_categories']);
   for ($i = 0; $i < count($cat_ids); $i++) {
-    $result = $db->query("SELECT * FROM " . TABLE_CATEGORIES . " cat, " . TABLE_CATEGORIES_DESCRIPTION . " catd  WHERE cat.`categories_id` = catd.`categories_id` and catd.`language_id` = ? and cat.`categories_id`=?", array( $_SESSION['languages_id'], (int)$cat_ids[$i] ) );
+    $result = $gBitDb->query("SELECT * FROM " . TABLE_CATEGORIES . " cat, " . TABLE_CATEGORIES_DESCRIPTION . " catd  WHERE cat.`categories_id` = catd.`categories_id` and catd.`language_id` = ? and cat.`categories_id`=?", array( $_SESSION['languages_id'], (int)$cat_ids[$i] ) );
     if ($result->RecordCount() > 0) {
     $cats .= '<br>' . $result->fields["categories_name"];
     }
@@ -56,11 +56,11 @@
   if ($cats=='') $cats = '<br>NONE';
   $text_coupon_help .= $cats;
   $text_coupon_help .= '<br><br>' .  TEXT_COUPON_HELP_PRODUCTS;
-  $get_result=$db->Execute("select restrict_to_products from " . TABLE_COUPONS . "  where coupon_id='".$_GET['cID']."'");
+  $get_result=$gBitDb->Execute("select restrict_to_products from " . TABLE_COUPONS . "  where coupon_id='".$_GET['cID']."'");
 
   $pr_ids = split("[,]", $get_result->fields['restrict_to_products']);
   for ($i = 0; $i < count($pr_ids); $i++) {
-    $result = $db->query("SELECT * FROM " . TABLE_PRODUCTS ." pr, " . TABLE_PRODUCTS_DESCRIPTION . " prd WHERE pr.`products_id` = prd.`products_id` and prd.`language_id` = ? AND pr.`products_id` = ?", array( $_SESSION['languages_id'], (int)$pr_ids[$i] ) );
+    $result = $gBitDb->query("SELECT * FROM " . TABLE_PRODUCTS ." pr, " . TABLE_PRODUCTS_DESCRIPTION . " prd WHERE pr.`products_id` = prd.`products_id` and prd.`language_id` = ? AND pr.`products_id` = ?", array( $_SESSION['languages_id'], (int)$pr_ids[$i] ) );
     if ($result->RecordCount() > 0 )  {
       $prods .= '<br>' . $result->fields["products_name"];
     }

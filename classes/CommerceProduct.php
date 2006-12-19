@@ -171,7 +171,7 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getQuantityPrice( $pQuantity, $check_amount=0 ) {
-		global $db, $cart;
+		global $gBitDb, $cart;
 		if( is_object( $_SESSION['cart'] ) ) {
 			$new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity( $this->mProductsId );
 			// check for discount qty mix
@@ -180,7 +180,7 @@ class CommerceProduct extends LibertyAttachable {
 			}
 		}
 
-		$discountPrice = $db->getOne( "SELECT `discount_price` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`=? and `discount_qty` <= ? ORDER BY `discount_qty` DESC", array( $this->mProductsId, $pQuantity ) );
+		$discountPrice = $gBitDb->getOne( "SELECT `discount_price` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`=? and `discount_qty` <= ? ORDER BY `discount_qty` DESC", array( $this->mProductsId, $pQuantity ) );
 
 		$display_price = zen_get_products_base_price(  $this->mProductsId );
 		$display_specials_price = zen_get_products_special_price( $this->mProductsId, true);

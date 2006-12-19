@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.12 2006/12/15 20:08:14 spiderr Exp $
+// $Id: ot_gv.php,v 1.13 2006/12/19 00:11:33 spiderr Exp $
 //
 
   class ot_gv {
@@ -113,7 +113,7 @@
     }
 
 	function update_credit_account($i) {
-		global $db, $order, $insert_id;
+		global $gBitDb, $order, $insert_id;
 		if (ereg('^GIFT', addslashes($order->products[$i]['model']))) {
 			$gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['quantity']);
 			if ($this->credit_tax=='true') {
@@ -132,23 +132,23 @@
 				}
 				$total_gv_amount = $total_gv_amount + $gv_order_amount;
 				if ($customer_gv) {
-					$db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+					$gBitDb->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
 				} else {
-					$db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
+					$gBitDb->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
 				}
 			} else {
 				for( $j = 0; $j < $order->products[$i]['quantity']; $j++ ) {
 					// GV_QUEUE is true - so queue the gv for release by store owner
-					$db->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$i]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
+					$gBitDb->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$i]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
 				}
 			}
 		}
 	}
 
     function credit_selection() {
-      global $db, $currencies;
+      global $gBitDb, $currencies;
 		$selection = array();
-      $gv_query = $db->Execute("select coupon_id from " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
+      $gv_query = $gBitDb->Execute("select coupon_id from " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
       if ($gv_query->RecordCount() > 0 || $this->use_credit_amount()) {
         $selection = array('id' => $this->code,
                        'module' => $this->title,
@@ -161,12 +161,12 @@
     }
 
     function apply_credit() {
-      global $db, $order;
+      global $gBitDb, $order;
       if ($_SESSION['cot_gv'] != 0) {
-        $gv_result = $db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+        $gv_result = $gBitDb->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
         $gv_payment_amount = $this->deduction;
         $gv_amount = $gv_result->fields['amount'] - $gv_payment_amount;
-        $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+        $gBitDb->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
       }
       $_SESSION['cot_gv'] = false;
       return $gv_payment_amount;
@@ -174,14 +174,14 @@
 
 
     function collect_posts() {
-      global $db, $currencies;
+      global $gBitDb, $currencies;
     	if ( empty( $_POST['cot_gv'] ) ) {
 			 $_SESSION['cot_gv'] = '0.00';
 		}
       if ( !empty( $_POST['gv_redeem_code'] ) ) {
-        $gv_result = $db->Execute("select `coupon_id`, `coupon_type`, `coupon_amount` from " . TABLE_COUPONS . " where `coupon_code` = '" . $_POST['gv_redeem_code'] . "'");
+        $gv_result = $gBitDb->Execute("select `coupon_id`, `coupon_type`, `coupon_amount` from " . TABLE_COUPONS . " where `coupon_code` = '" . $_POST['gv_redeem_code'] . "'");
         if ($gv_result->RecordCount() > 0) {
-          $redeem_query = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
+          $redeem_query = $gBitDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
           if ( ($redeem_query->RecordCount() > 0) && ($gv_result->fields['coupon_type'] == 'G')  ) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_INVALID_REDEEM_GV), 'SSL'));
           }
@@ -196,21 +196,21 @@
           // date
           // redemption flag
           // now update customer account with gv_amount
-          $gv_amount_result=$db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+          $gv_amount_result=$gBitDb->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
           $customer_gv = false;
           $total_gv_amount = $gv_amount;;
           if ($gv_amount_result->RecordCount() > 0) {
             $total_gv_amount = $gv_amount_result->fields['amount'] + $gv_amount;
             $customer_gv = true;
           }
-          $db->Execute("update " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
-          $db->Execute("insert into  " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, customer_id, redeem_date, redeem_ip) values ('" . $gv_result->fields['coupon_id'] . "', '" . $_SESSION['customer_id'] . "', now(),'" . $_SERVER['REMOTE_ADDR'] . "')");
+          $gBitDb->Execute("update " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
+          $gBitDb->Execute("insert into  " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, customer_id, redeem_date, redeem_ip) values ('" . $gv_result->fields['coupon_id'] . "', '" . $_SESSION['customer_id'] . "', now(),'" . $_SERVER['REMOTE_ADDR'] . "')");
           if ($customer_gv) {
             // already has gv_amount so update
-            $db->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
+            $gBitDb->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
           } else {
             // no gv_amount so insert
-            $db->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
+            $gBitDb->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
           }
           zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
        }
@@ -219,7 +219,7 @@
    }
 
     function calculate_credit($amount) {
-      global $db, $order;
+      global $gBitDb, $order;
       $gv_payment_amount = $_SESSION['cot_gv'];
       $gv_amount = $gv_payment_amount;
       $save_total_cost = $amount;
@@ -272,8 +272,8 @@
     }
 
     function user_has_gv_account($c_id) {
-      global $db;
-      $gv_result = $db->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $c_id . "'");
+      global $gBitDb;
+      $gv_result = $gBitDb->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $c_id . "'");
       if ($gv_result->RecordCount() > 0) {
 //        if ($gv_result->fields['amount'] > 0) {
           return $gv_result->fields['amount'];
@@ -293,9 +293,9 @@
     }
 
     function check() {
-      global $db;
+      global $gBitDb;
       if (!isset($this->check)) {
-        $check_query = $db->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GV_STATUS'");
+        $check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_GV_STATUS'");
         $this->check = $check_query->RecordCount();
       }
 
@@ -307,21 +307,21 @@
     }
 
     function install() {
-      global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_GV_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_GV_SORT_ORDER', '840', 'Sort order of display.', '6', '2', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Queue Purchases', 'MODULE_ORDER_TOTAL_GV_QUEUE', 'true', 'Do you want to queue purchases of the Gift Voucher?', '6', '3','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'None', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', '0', 'Use the following tax class when treating Gift Voucher as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Credit including Tax', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'false', 'Add tax to purchased Gift Voucher when crediting to Account', '6', '8','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID', '0', 'Set the status of orders made where GV covers full payment', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+      global $gBitDb;
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_GV_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_GV_SORT_ORDER', '840', 'Sort order of display.', '6', '2', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Queue Purchases', 'MODULE_ORDER_TOTAL_GV_QUEUE', 'true', 'Do you want to queue purchases of the Gift Voucher?', '6', '3','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'None', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', '0', 'Use the following tax class when treating Gift Voucher as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Credit including Tax', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'false', 'Add tax to purchased Gift Voucher when crediting to Account', '6', '8','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID', '0', 'Set the status of orders made where GV covers full payment', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
     }
 
     function remove() {
-      global $db;
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in ('" . implode("', '", $this->keys()) . "')");
+      global $gBitDb;
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in ('" . implode("', '", $this->keys()) . "')");
     }
   }
 ?>

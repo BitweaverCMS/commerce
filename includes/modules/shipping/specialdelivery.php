@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: specialdelivery.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: specialdelivery.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
   based upon
-  $Id: specialdelivery.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: specialdelivery.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
   based upon
-  $Id: specialdelivery.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id: specialdelivery.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -136,33 +136,33 @@
     }
 
     function check() {
-    global $db;
+    global $gBitDb;
       if (!isset($this->_check)) {
-        $check_query = $db->Execute("select configuration_value from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_SPECIALDELIVERY_STATUS'");
+        $check_query = $gBitDb->Execute("select configuration_value from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_SPECIALDELIVERY_STATUS'");
         $this->_check = $check_query->RecordCount();
       }
       return $this->_check;
     }
 
     function install() {
-    global $db;
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Enable Zones Method', 'MODULE_SHIPPING_SPECIALDELIVERY_STATUS', 'True', 'You must enable Zone shipping for this module to work', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Tax Class', 'MODULE_SHIPPING_SPECIALDELIVERY_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_SHIPPING_SPECIALDELIVERY_SORT_ORDER', '0', 'Sort order of display.', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_HANDLING_1', '0', 'The amount it costs you to package the items and get to the post office to get the items into <b>special</b><span style=\"font-weight:normal\">delivery</span>&reg;.', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Zone 1 Countries', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COUNTRIES_1', 'GB', 'two character ISO country codes for Great Britain and Northern Ireland " . $i . ".', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Shipping rates to GB &amp; Northern Ireland', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST0_1', '0.1:4.05', 'Correct on 13<sup>th</sup> September 2006, from information published April 2006. <br />Example: 0.1:4.05 means weights less than or equal to 0.1 Kg would cost &pound;4.05.', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST1_1', '0.5:4.45', 'Rates cont\'d (2):', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST2_1', '1:5.60', 'Rates cont\'d (3):', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST3_1', '2:7.30', 'Rates cont\'d (4):', '6', '0', now())");
-      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST4_1', '10:18.40', 'Rates cont\'d (5):', '6', '0', now())");
+    global $gBitDb;
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Enable Zones Method', 'MODULE_SHIPPING_SPECIALDELIVERY_STATUS', 'True', 'You must enable Zone shipping for this module to work', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Tax Class', 'MODULE_SHIPPING_SPECIALDELIVERY_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_SHIPPING_SPECIALDELIVERY_SORT_ORDER', '0', 'Sort order of display.', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_HANDLING_1', '0', 'The amount it costs you to package the items and get to the post office to get the items into <b>special</b><span style=\"font-weight:normal\">delivery</span>&reg;.', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Zone 1 Countries', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COUNTRIES_1', 'GB', 'two character ISO country codes for Great Britain and Northern Ireland " . $i . ".', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Shipping rates to GB &amp; Northern Ireland', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST0_1', '0.1:4.05', 'Correct on 13<sup>th</sup> September 2006, from information published April 2006. <br />Example: 0.1:4.05 means weights less than or equal to 0.1 Kg would cost &pound;4.05.', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST1_1', '0.5:4.45', 'Rates cont\'d (2):', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST2_1', '1:5.60', 'Rates cont\'d (3):', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST3_1', '2:7.30', 'Rates cont\'d (4):', '6', '0', now())");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('', 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COST4_1', '10:18.40', 'Rates cont\'d (5):', '6', '0', now())");
 
     }
 
     function remove() {
-    global $db;
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
-      $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COUNTRIES_1'"); 
+    global $gBitDb;
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
+      $gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_SPECIALDELIVERY_ZONES_COUNTRIES_1'"); 
     }
 
     function keys() {

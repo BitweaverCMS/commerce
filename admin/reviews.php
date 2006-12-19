@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.8 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: reviews.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,11 +39,11 @@
         $reviews_rating = zen_db_prepare_input($_POST['reviews_rating']);
         $reviews_text = zen_db_prepare_input($_POST['reviews_text']);
 
-        $db->Execute("update " . TABLE_REVIEWS . "
+        $gBitDb->Execute("update " . TABLE_REVIEWS . "
                       set reviews_rating = '" . zen_db_input($reviews_rating) . "',
                       `last_modified` = now() where reviews_id = '" . (int)$reviews_id . "'");
 
-        $db->Execute("update " . TABLE_REVIEWS_DESCRIPTION . "
+        $gBitDb->Execute("update " . TABLE_REVIEWS_DESCRIPTION . "
                       set reviews_text = '" . zen_db_input($reviews_text) . "'
                       where reviews_id = '" . (int)$reviews_id . "'");
 
@@ -58,10 +58,10 @@
         }
         $reviews_id = zen_db_prepare_input($_GET['rID']);
 
-        $db->Execute("delete from " . TABLE_REVIEWS . "
+        $gBitDb->Execute("delete from " . TABLE_REVIEWS . "
                       where reviews_id = '" . (int)$reviews_id . "'");
 
-        $db->Execute("delete from " . TABLE_REVIEWS_DESCRIPTION . "
+        $gBitDb->Execute("delete from " . TABLE_REVIEWS_DESCRIPTION . "
                       where reviews_id = '" . (int)$reviews_id . "'");
 
 
@@ -135,16 +135,16 @@
   if ($action == 'edit') {
     $rID = zen_db_prepare_input($_GET['rID']);
 
-    $reviews = $db->Execute("select r.`reviews_id`, r.`products_id`, r.customers_name, r.`date_added`,
+    $reviews = $gBitDb->Execute("select r.`reviews_id`, r.`products_id`, r.customers_name, r.`date_added`,
                                     r.`last_modified`, r.reviews_read, rd.reviews_text, r.reviews_rating
                              from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                              where r.`reviews_id` = '" . (int)$rID . "' and r.`reviews_id` = rd.`reviews_id`");
 
-    $products = $db->Execute("select `products_image`
+    $products = $gBitDb->Execute("select `products_image`
                               from " . TABLE_PRODUCTS . "
                               where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
-    $products_name = $db->Execute("select `products_name`
+    $products_name = $gBitDb->Execute("select `products_name`
                                    from " . TABLE_PRODUCTS_DESCRIPTION . "
                                    where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
                                    and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -189,18 +189,18 @@
     } else {
       $rID = zen_db_prepare_input($_GET['rID']);
 
-      $reviews = $db->Execute("select r.`reviews_id`, r.`products_id`, r.`customers_name`, r.`date_added`,
+      $reviews = $gBitDb->Execute("select r.`reviews_id`, r.`products_id`, r.`customers_name`, r.`date_added`,
                                       r.`last_modified`, r.`reviews_read`, rd.`reviews_text`,
                                       r.`reviews_rating`
                                from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                                where r.`reviews_id` = '" . (int)$rID . "'
                                and r.`reviews_id` = rd.`reviews_id`");
 
-      $products = $db->Execute("select `products_image`
+      $products = $gBitDb->Execute("select `products_image`
                                 from " . TABLE_PRODUCTS . "
                                 where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
-      $products_name = $db->Execute("select `products_name`
+      $products_name = $gBitDb->Execute("select `products_name`
                                      from " . TABLE_PRODUCTS_DESCRIPTION . "
                                      where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
                                      and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -288,26 +288,26 @@
 
 //    $reviews_query_raw = "select `reviews_id`, `products_id`, `date_added`, `last_modified`, `reviews_rating`, `status` from " . TABLE_REVIEWS . " order by `date_added` DESC";
     $reviews_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $reviews_query_raw, $reviews_query_numrows);
-    $reviews = $db->Execute($reviews_query_raw);
+    $reviews = $gBitDb->Execute($reviews_query_raw);
     while (!$reviews->EOF) {
       if ((!isset($_GET['rID']) || (isset($_GET['rID']) && ($_GET['rID'] == $reviews->fields['reviews_id']))) && !isset($rInfo)) {
-        $reviews_text = $db->Execute("select r.`reviews_read`, r.`customers_name`,
+        $reviews_text = $gBitDb->Execute("select r.`reviews_read`, r.`customers_name`,
                                              length(rd.`reviews_text`) as `reviews_text_size`
                                       from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                                       where r.`reviews_id` = '" . (int)$reviews->fields['reviews_id'] . "'
                                       and r.`reviews_id` = rd.`reviews_id`");
 
-        $products_image = $db->Execute("select `products_image`
+        $products_image = $gBitDb->Execute("select `products_image`
                                         from " . TABLE_PRODUCTS . "
                                         where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 
 
-        $products_name = $db->Execute("select `products_name`
+        $products_name = $gBitDb->Execute("select `products_name`
                                        from " . TABLE_PRODUCTS_DESCRIPTION . "
                                        where `products_id` = '" . (int)$reviews->fields['products_id'] . "'
                                        and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
-        $reviews_average = $db->Execute("select (avg(`reviews_rating`) / 5 * 100) as average_rating
+        $reviews_average = $gBitDb->Execute("select (avg(`reviews_rating`) / 5 * 100) as average_rating
                                          from " . TABLE_REVIEWS . "
                                          where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
 

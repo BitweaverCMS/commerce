@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_purchased.php,v 1.9 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: stats_products_purchased.php,v 1.10 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -86,7 +86,7 @@ $products_query_raw = "select sum(op.`products_quantity`) as `products_ordered`,
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
 
   $rows = 0;
-  $products = $db->query($products_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $offset);
+  $products = $gBitDb->query($products_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $offset);
   while (!$products->EOF) {
     $rows++;
 

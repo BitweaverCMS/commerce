@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.14 2006/12/13 18:20:00 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -31,17 +31,17 @@
 
   if (($_GET['action'] == 'send_email_to_user') && ($_POST['customers_email_address']) && (!$_POST['back_x'])) {
 	$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
-        $mail = $db->Execute($audience_select['query_string']);
+        $mail = $gBitDb->Execute($audience_select['query_string']);
         $mail_sent_to = $audience_select['query_name'];
       if ($_POST['email_to']) {
         $mail_sent_to = $_POST['email_to'];
         }
 
-    $coupon_result = $db->Execute("select `coupon_code`
+    $coupon_result = $gBitDb->Execute("select `coupon_code`
                                    from " . TABLE_COUPONS . "
                                    where `coupon_id` = '" . $_GET['cid'] . "'");
 
-    $coupon_name = $db->Execute("select `coupon_name`, `coupon_description`
+    $coupon_name = $gBitDb->Execute("select `coupon_name`, `coupon_description`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
                                  where `coupon_id` = '" . $_GET['cid'] . "'
                                  and `language_id` = '" . $_SESSION['languages_id'] . "'");
@@ -115,7 +115,7 @@
         $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
         zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN));
       }
-      $db->Execute("update " . TABLE_COUPONS . "
+      $gBitDb->Execute("update " . TABLE_COUPONS . "
                     set coupon_active = 'N'
                     where coupon_id='".$_GET['cid']."'");
       break;
@@ -146,7 +146,7 @@
         $coupon_code = CommerceCoupon::generateCouponCode();
       }
       if ($_POST['coupon_code']) $coupon_code = $_POST['coupon_code'];
-      $query1 = $db->Execute("select coupon_code
+      $query1 = $gBitDb->Execute("select coupon_code
                               from " . TABLE_COUPONS . "
                               where coupon_code = '" . zen_db_prepare_input($coupon_code) . "'");
 
@@ -183,8 +183,8 @@
                                 'restrict_to_categories' => zen_db_prepare_input($_POST['coupon_categories']),
                                 'coupon_start_date' => $_POST['coupon_startdate'],
                                 'coupon_expire_date' => $_POST['coupon_finishdate'],
-                                'date_created' => $db->NOW(),
-                                'date_modified' => $db->NOW());
+                                'date_created' => $gBitDb->NOW(),
+                                'date_modified' => $gBitDb->NOW());
         $languages = zen_get_languages();
         for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
           $language_id = $languages[$i]['id'];
@@ -193,17 +193,17 @@
                                  );
         }
         if ($_GET['oldaction']=='voucheredit') {
-          $db->associateUpdate( TABLE_COUPONS, $sql_data_array, array( "coupon_id"=>$_GET['cid'] ) );
+          $gBitDb->associateUpdate( TABLE_COUPONS, $sql_data_array, array( "coupon_id"=>$_GET['cid'] ) );
           for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
             $language_id = $languages[$i]['id'];
-            $db->Execute("update " . TABLE_COUPONS_DESCRIPTION . "
+            $gBitDb->Execute("update " . TABLE_COUPONS_DESCRIPTION . "
                           set `coupon_name` = '" . zen_db_prepare_input($_POST['coupon_name'][$language_id]) . "',
                           `coupon_description` = '" . zen_db_prepare_input($_POST['coupon_desc'][$language_id]) . "'
                           where `coupon_id` = '" . $_GET['cid'] . "'
                           and `language_id` = '" . $language_id . "'");
           }
         } else {
-          $db->associateInsert(TABLE_COUPONS, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_COUPONS, $sql_data_array);
           $insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
           $cid = $insert_id;
           $_GET['cid'] = $cid;
@@ -212,7 +212,7 @@
             $language_id = $languages[$i]['id'];
             $sql_data_marray[$i]['coupon_id'] = $insert_id;
             $sql_data_marray[$i]['language_id'] = $language_id;
-            $db->associateInsert(TABLE_COUPONS_DESCRIPTION, $sql_data_marray[$i]);
+            $gBitDb->associateInsert(TABLE_COUPONS_DESCRIPTION, $sql_data_marray[$i]);
           }
         }
       }
@@ -347,7 +347,7 @@ function check_form(form_name) {
 <?php
     $cc_query_raw = "select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $_GET['cid'] . "'";
     $cc_split = new splitPageResults($_GET['reports_page'], MAX_DISPLAY_SEARCH_RESULTS_DISCOUNT_COUPONS_REPORTS, $cc_query_raw, $cc_query_numrows);
-    $cc_list = $db->Execute($cc_query_raw);
+    $cc_list = $gBitDb->Execute($cc_query_raw);
     while (!$cc_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
@@ -361,7 +361,7 @@ function check_form(form_name) {
       } else {
         echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action', 'uid')) . 'cid=' . $cc_list->fields['coupon_id'] . '&action=voucherreport&uid=' . $cc_list->fields['unique_id']) . '\'">' . "\n";
       }
-$customer = $db->Execute("select `customers_firstname`, `customers_lastname`
+$customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
                           from " . TABLE_CUSTOMERS . "
                           where `customers_id` = '" . $cc_list->fields['customer_id'] . "'");
 
@@ -392,11 +392,11 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     $heading = array();
     $contents = array();
-      $coupon_desc = $db->Execute("select `coupon_name`
+      $coupon_desc = $gBitDb->Execute("select `coupon_name`
                                    from " . TABLE_COUPONS_DESCRIPTION . "
                                    where `coupon_id` = '" . $_GET['cid'] . "'
                                    and `language_id` = '" . $_SESSION['languages_id'] . "'");
-      $count_customers = $db->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
+      $count_customers = $gBitDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
                                        where `coupon_id` = '" . $_GET['cid'] . "'
                                        and `customer_id` = '" . $cInfo->customer_id . "'");
 
@@ -416,11 +416,11 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     break;
   case 'preview_email':
-    $coupon_result = $db->Execute("select `coupon_code`
+    $coupon_result = $gBitDb->Execute("select `coupon_code`
                                    from " .TABLE_COUPONS . "
                                    where `coupon_id` = '" . $_GET['cid'] . "'");
 
-    $coupon_name = $db->Execute("select `coupon_name`
+    $coupon_name = $gBitDb->Execute("select `coupon_name`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
                                  where `coupon_id` = '" . $_GET['cid'] . "'
                                  and `language_id` = '" . $_SESSION['languages_id'] . "'");
@@ -501,10 +501,10 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
 <?php
     break;
   case 'email':
-    $coupon_result = $db->Execute("select `coupon_code`
+    $coupon_result = $gBitDb->Execute("select `coupon_code`
                                    from " . TABLE_COUPONS . "
                                    where `coupon_id` = '" . $_GET['cid'] . "'");
-    $coupon_name = $db->Execute("select `coupon_name`
+    $coupon_name = $gBitDb->Execute("select `coupon_name`
                                  from " . TABLE_COUPONS_DESCRIPTION . "
                                  where `coupon_id` = '" . $_GET['cid'] . "'
                                  and `language_id` = '" . $_SESSION['languages_id'] . "'");
@@ -733,7 +733,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
     $languages = zen_get_languages();
     for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
       $language_id = $languages[$i]['id'];
-      $coupon = $db->Execute("select `coupon_name`, `coupon_description`
+      $coupon = $gBitDb->Execute("select `coupon_name`, `coupon_description`
                               from " . TABLE_COUPONS_DESCRIPTION . "
                               where `coupon_id` = '" .  $_GET['cid'] . "'
                               and `language_id` = '" . $language_id . "'");
@@ -742,7 +742,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       $_POST['coupon_desc'][$language_id] = $coupon->fields['coupon_description'];
     }
 
-    $coupon = $db->Execute("select `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_minimum_order`,
+    $coupon = $gBitDb->Execute("select `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_minimum_order`,
                                    `coupon_start_date`, `coupon_expire_date`, `uses_per_coupon`,
                                    `uses_per_user`, `restrict_to_products`, `restrict_to_categories`
                             from " . TABLE_COUPONS . "
@@ -926,7 +926,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       $cc_query_raw = "select `coupon_id`, `coupon_code`, `coupon_amount`, `coupon_type`, `coupon_start_date`, `coupon_expire_date`, `uses_per_user`, `uses_per_coupon`, `restrict_to_products`, `restrict_to_categories`, `date_created`, `date_modified` from " . TABLE_COUPONS . " where `coupon_type` != 'G'";
     }
     $cc_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_DISCOUNT_COUPONS, $cc_query_raw, $cc_query_numrows);
-    $cc_list = $db->Execute($cc_query_raw);
+    $cc_list = $gBitDb->Execute($cc_query_raw);
     while (!$cc_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
@@ -940,7 +940,7 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       } else {
         echo '          <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_COUPON_ADMIN, zen_get_all_get_params(array('cid', 'action')) . 'cid=' . $cc_list->fields['coupon_id']) . '\'">' . "\n";
       }
-      $coupon_desc = $db->Execute("select `coupon_name`
+      $coupon_desc = $gBitDb->Execute("select `coupon_name`
                                    from " . TABLE_COUPONS_DESCRIPTION . "
                                    where `coupon_id` = '" . $cc_list->fields['coupon_id'] . "'
                                    and `language_id` = '" . $_SESSION['languages_id'] . "'");
@@ -1014,15 +1014,15 @@ $customer = $db->Execute("select `customers_firstname`, `customers_lastname`
       } else {
         $prod_details = NONE;
 //bof 12-6ke
-$product_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `product_id` != '0'", array( $cInfo->coupon_id ) );
+$product_query = $gBitDb->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `product_id` != '0'", array( $cInfo->coupon_id ) );
 		if ($product_query->RecordCount() > 0) $prod_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
         $cat_details = NONE;
 //bof 12-6ke
-$category_query = $db->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `category_id` != '0'", array( $cInfo->coupon_id ));
+$category_query = $gBitDb->query("select * from " . TABLE_COUPON_RESTRICT . " where `coupon_id` = ? and `category_id` != '0'", array( $cInfo->coupon_id ));
         if ($category_query->RecordCount() > 0) $cat_details = TEXT_SEE_RESTRICT;
 //eof 12-6ke
-        $coupon_name = $db->query("select `coupon_name`
+        $coupon_name = $gBitDb->query("select `coupon_name`
                                      from " . TABLE_COUPONS_DESCRIPTION . "
                                      where `coupon_id` = ? and `language_id` = ?", array( $cInfo->coupon_id, $_SESSION['languages_id'] ) );
         $uses_coupon = $cInfo->uses_per_coupon;

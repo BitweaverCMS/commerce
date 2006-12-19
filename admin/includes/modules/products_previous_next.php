@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next.php,v 1.7 2006/06/10 12:13:15 spiderr Exp $
+//  $Id: products_previous_next.php,v 1.8 2006/12/19 00:11:30 spiderr Exp $
 //
 
 /////
@@ -26,7 +26,7 @@
   if( empty( $prev_next_list ) ) {
 // calculate the previous and next
 
-    $check_type = $db->query("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` =?", array( $productsId ) );
+    $check_type = $gBitDb->query("select `products_type` from " . TABLE_PRODUCTS . " where `products_id` =?", array( $productsId ) );
 	if( !defined( 'PRODUCT_INFO_PREVIOUS_NEXT_SORT' ) ) {
 	    define('PRODUCT_INFO_PREVIOUS_NEXT_SORT', zen_get_configuration_key_value_layout('PRODUCT_INFO_PREVIOUS_NEXT_SORT', $check_type->fields['products_type']));
 	}
@@ -65,7 +65,7 @@
               from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
               where  `products_id` ='" .  $productsId . "'";
 
-      $cPath_row = $db->Execute($sql);
+      $cPath_row = $gBitDb->Execute($sql);
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
@@ -77,7 +77,7 @@
             $prev_next_order
             ;
 
-    $products_ids = $db->Execute($sql);
+    $products_ids = $gBitDb->Execute($sql);
   }
 
   while (!$products_ids->EOF) {
@@ -113,7 +113,7 @@
             from   " . TABLE_CATEGORIES_DESCRIPTION . "
             where  `categories_id` = $current_category_id AND `language_id` = '" . $_SESSION['languages_id'] . "'";
 
-    $category_name_row = $db->Execute($sql);
+    $category_name_row = $gBitDb->Execute($sql);
   } // if is_array
 
   if (strstr($PHP_SELF, FILENAME_PRODUCTS_PRICE_MANAGER)) {

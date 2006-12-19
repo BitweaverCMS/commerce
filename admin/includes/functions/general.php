@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.41 2006/12/15 21:42:47 spiderr Exp $
+//  $Id: general.php,v 1.42 2006/12/19 00:11:30 spiderr Exp $
 //
 
 ////
@@ -41,8 +41,8 @@
   }
 
   function zen_customers_name($customers_id) {
-    global $db;
-    $customers_values = $db->Execute("SELECT `customers_firstname`,` customers_lastname`
+    global $gBitDb;
+    $customers_values = $gBitDb->Execute("SELECT `customers_firstname`,` customers_lastname`
                                FROM " . TABLE_CUSTOMERS . "
                                WHERE `customers_id` = '" . (int)$customers_id . "'");
 
@@ -51,7 +51,7 @@
 
 /*
   function zen_get_path($current_category_id = '') {
-    global $cPath_array, $db;
+    global $cPath_array, $gBitDb;
 // set to 0 if Top Level
     if ($current_category_id == '') {
       if (empty($cPath_array)) {
@@ -64,11 +64,11 @@
         $cPath_new = $current_category_id;
       } else {
         $cPath_new = '';
-        $last_category = $db->Execute("SELECT `parent_id`
+        $last_category = $gBitDb->Execute("SELECT `parent_id`
                                        FROM " . TABLE_CATEGORIES . "
                                        WHERE `categories_id` = '" . (int)$cPath_array[(sizeof($cPath_array)-1)] . "'");
 
-        $current_category = $db->Execute("SELECT `parent_id`
+        $current_category = $gBitDb->Execute("SELECT `parent_id`
                                           FROM " . TABLE_CATEGORIES . "
                                            WHERE `categories_id` = '" . (int)$current_category_id . "'");
 
@@ -125,7 +125,7 @@
 
 
   function zen_get_category_tree($parent_id = '0', $spacing = '', $exclude = '', $category_tree_array = '', $include_itself = false, $category_has_products = false, $limit = false) {
-    global $db;
+    global $gBitDb;
 
     if ($limit) {
       $limit_count = 1;
@@ -137,7 +137,7 @@
     if ( (sizeof($category_tree_array) < 1) && ($exclude != '0') ) $category_tree_array[] = array('id' => '0', 'text' => TEXT_TOP);
 
     if ($include_itself) {
-      $category = $db->Execute("SELECT cd.`categories_name`
+      $category = $gBitDb->Execute("SELECT cd.`categories_name`
                                 FROM " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                 WHERE cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 and cd.`categories_id` = '" . (int)$parent_id . "'");
@@ -145,7 +145,7 @@
       $category_tree_array[] = array('id' => $parent_id, 'text' => $category->fields['categories_name']);
     }
 
-    $categories = $db->Execute("SELECT c.`categories_id`, cd.`categories_name`, c.`parent_id`
+    $categories = $gBitDb->Execute("SELECT c.`categories_id`, cd.`categories_name`, c.`parent_id`
                                 FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                 WHERE c.`categories_id` = cd.`categories_id`
                                 and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
@@ -170,7 +170,7 @@
 ////
 // products with name, model and price pulldown
   function zen_draw_products_pull_down($name, $parameters = '', $exclude = '', $show_id = false, $set_selected = false, $show_model = false, $show_current_category = false) {
-    global $currencies, $db, $current_category_id;
+    global $currencies, $gBitDb, $current_category_id;
 
     if ($exclude == '') {
       $exclude = array();
@@ -186,14 +186,14 @@
 
     if ($show_current_category) {
 // only show $current_categories_id
-      $products = $db->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`, ptc.`categories_id`
+      $products = $gBitDb->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`, ptc.`categories_id`
                                 FROM " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON( p.`products_id` = pd.`products_id` )
                                 	LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc on ptc.`products_id` = p.`products_id`
                                 WHERE pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                 and ptc.`categories_id` = '" . $current_category_id . "'
                                 ORDER BY `products_name`");
     } else {
-      $products = $db->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`
+      $products = $gBitDb->Execute("SELECT p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_model`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                 WHERE p.`products_id` = pd.`products_id`
                                 and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
@@ -249,8 +249,8 @@
 
 
   function zen_get_country_name_cfg() {
-    global $db;
-    $country = $db->Execute("SELECT `countries_name`
+    global $gBitDb;
+    $country = $gBitDb->Execute("SELECT `countries_name`
                              FROM " . TABLE_COUNTRIES . "
                              WHERE `countries_id` = '" . (int)$country_id . "'");
 
@@ -269,9 +269,9 @@
 
 
   function zen_tax_classes_pull_down($parameters, $selected = '') {
-    global $db;
+    global $gBitDb;
     $select_string = '<SELECT ' . $parameters . '>';
-    $classes = $db->Execute("SELECT `tax_class_id`, `tax_class_title`
+    $classes = $gBitDb->Execute("SELECT `tax_class_id`, `tax_class_title`
                              FROM " . TABLE_TAX_CLASS . "
                              ORDER BY `tax_class_title`");
 
@@ -288,9 +288,9 @@
 
 
   function zen_geo_zones_pull_down($parameters, $selected = '') {
-    global $db;
+    global $gBitDb;
     $select_string = '<SELECT ' . $parameters . '>';
-    $zones = $db->Execute("SELECT `geo_zone_id`, `geo_zone_name`
+    $zones = $gBitDb->Execute("SELECT `geo_zone_id`, `geo_zone_name`
                                  FROM " . TABLE_GEO_ZONES . "
                                  ORDER BY `geo_zone_name`");
 
@@ -307,8 +307,8 @@
 
 
   function zen_get_geo_zone_name($geo_zone_id) {
-    global $db;
-    $zones = $db->Execute("SELECT `geo_zone_name`
+    global $gBitDb;
+    $zones = $gBitDb->Execute("SELECT `geo_zone_name`
                            FROM " . TABLE_GEO_ZONES . "
                            WHERE `geo_zone_id` = '" . (int)$geo_zone_id . "'");
 
@@ -335,10 +335,10 @@
 
 
   function zen_get_orders_status_name($orders_status_id, $language_id = '') {
-    global $db;
+    global $gBitDb;
 
     if (!$language_id) $language_id = $_SESSION['languages_id'];
-    $orders_status = $db->Execute("SELECT `orders_status_name`
+    $orders_status = $gBitDb->Execute("SELECT `orders_status_name`
                                    FROM " . TABLE_ORDERS_STATUS . "
                                    WHERE `orders_status_id` = '" . (int)$orders_status_id . "'
                                    and `language_id` = '" . (int)$language_id . "'");
@@ -348,10 +348,10 @@
 
 
   function zen_get_orders_status() {
-    global $db;
+    global $gBitDb;
 
     $orders_status_array = array();
-    $orders_status = $db->Execute("SELECT `orders_status_id`, `orders_status_name`
+    $orders_status = $gBitDb->Execute("SELECT `orders_status_id`, `orders_status_name`
                                    FROM " . TABLE_ORDERS_STATUS . "
                                    WHERE `language_id` = '" . (int)$_SESSION['languages_id'] . "'
                                    ORDER BY `orders_status_id`");
@@ -367,8 +367,8 @@
 
 
   function zen_get_products_url($product_id, $language_id) {
-    global $db;
-    $product = $db->Execute("SELECT `products_url`
+    global $gBitDb;
+    $product = $gBitDb->Execute("SELECT `products_url`
                              FROM " . TABLE_PRODUCTS_DESCRIPTION . "
                              WHERE `products_id` = '" . (int)$product_id . "'
                              and `language_id` = '" . (int)$language_id . "'");
@@ -381,8 +381,8 @@
 // Return the manufacturers URL in the needed language
 // TABLES: manufacturers_info
   function zen_get_manufacturer_url($manufacturer_id, $language_id) {
-    global $db;
-    $manufacturer = $db->Execute("SELECT `manufacturers_url`
+    global $gBitDb;
+    $manufacturer = $gBitDb->Execute("SELECT `manufacturers_url`
                                   FROM " . TABLE_MANUFACTURERS_INFO . "
                                   WHERE `manufacturers_id` = '" . (int)$manufacturer_id . "'
                                   and `languages_id` = '" . (int)$language_id . "'");
@@ -394,8 +394,8 @@
 // Return the suppliers URL in the needed language
 // TABLES: suppliers_info
   function zen_get_supplier_url($supplier_id, $language_id) {
-    global $db;
-    $supplier = $db->Execute("SELECT `suppliers_url`
+    global $gBitDb;
+    $supplier = $gBitDb->Execute("SELECT `suppliers_url`
                                   FROM " . TABLE_SUPPLIERS_INFO . "
                                   WHERE `suppliers_id` = '" . (int)$supplier_id . "'
                                   and `languages_id` = '" . (int)$language_id . "'");
@@ -420,7 +420,7 @@
 // Count how many products exist in a category
 // TABLES: products, products_to_categories, categories
   function zen_products_in_category_count($categories_id, $include_deactivated = false, $include_child = true, $limit = false) {
-    global $db;
+    global $gBitDb;
     $products_count = 0;
 
     if ($limit) {
@@ -431,12 +431,12 @@
 
     if ($include_deactivated) {
 
-      $products = $db->Execute("SELECT count(*) as `total`
+      $products = $gBitDb->Execute("SELECT count(*) as `total`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
                                 and p2c.`categories_id` = '" . (int)$categories_id . "'", NULL, $limit_count);
     } else {
-      $products = $db->Execute("SELECT count(*) as `total`
+      $products = $gBitDb->Execute("SELECT count(*) as `total`
                                 FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
                                 WHERE p.`products_id` = p2c.`products_id`
                                 and p.`products_status` = '1'
@@ -447,7 +447,7 @@
     $products_count += $products->fields['total'];
 
     if ($include_child) {
-      $childs = $db->Execute("SELECT `categories_id` FROM " . TABLE_CATEGORIES . "
+      $childs = $gBitDb->Execute("SELECT `categories_id` FROM " . TABLE_CATEGORIES . "
                               WHERE `parent_id` = '" . (int)$categories_id . "'");
       if ($childs->RecordCount() > 0 ) {
         while (!$childs->EOF) {
@@ -464,10 +464,10 @@
 // Count how many subcategories exist in a category
 // TABLES: categories
   function zen_childs_in_category_count($categories_id) {
-    global $db;
+    global $gBitDb;
     $categories_count = 0;
 
-    $categories = $db->Execute("SELECT `categories_id`
+    $categories = $gBitDb->Execute("SELECT `categories_id`
                                 FROM " . TABLE_CATEGORIES . "
                                 WHERE `parent_id` = '" . (int)$categories_id . "'");
 
@@ -485,13 +485,13 @@
 // Returns an array with countries
 // TABLES: countries
   function zen_get_countries_admin($default = '') {
-    global $db;
+    global $gBitDb;
     $countries_array = array();
     if ($default) {
       $countries_array[] = array('id' => '',
                                  'text' => $default);
     }
-    $countries = $db->Execute("SELECT `countries_id`, `countries_name`
+    $countries = $gBitDb->Execute("SELECT `countries_id`, `countries_name`
                                FROM " . TABLE_COUNTRIES . "
                                ORDER BY `countries_name`");
 
@@ -508,9 +508,9 @@
 ////
 // return an array with country zones
   function zen_get_country_zones($country_id) {
-    global $db;
+    global $gBitDb;
     $zones_array = array();
-    $zones = $db->Execute("SELECT `zone_id`, `zone_name`
+    $zones = $gBitDb->Execute("SELECT `zone_id`, `zone_name`
                            FROM " . TABLE_ZONES . "
                            WHERE `zone_country_id` = '" . (int)$country_id . "'
                            ORDER BY `zone_name`");
@@ -554,8 +554,8 @@
 ////
 // Get list of address_format_id's
   function zen_get_address_formats() {
-    global $db;
-    $address_format_values = $db->Execute("SELECT `address_format_id`
+    global $gBitDb;
+    $address_format_values = $gBitDb->Execute("SELECT `address_format_id`
                                            FROM " . TABLE_ADDRESS_FORMAT . "
                                            ORDER BY `address_format_id`");
 
@@ -571,9 +571,9 @@
 
 ////
   function zen_cfg_select_coupon_id($coupon_id, $key = '') {
-    global $db;
+    global $gBitDb;
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
-    $coupons = $db->execute("SELECT cd.`coupon_name`, c.`coupon_id` FROM " . TABLE_COUPONS ." c, ". TABLE_COUPONS_DESCRIPTION . " cd WHERE cd.`coupon_id` = c.`coupon_id` and cd.`language_id` = '" . $_SESSION['languages_id'] . "'");
+    $coupons = $gBitDb->execute("SELECT cd.`coupon_name`, c.`coupon_id` FROM " . TABLE_COUPONS ." c, ". TABLE_COUPONS_DESCRIPTION . " cd WHERE cd.`coupon_id` = c.`coupon_id` and cd.`language_id` = '" . $_SESSION['languages_id'] . "'");
     $coupon_array[] = array('id' => '0',
                               'text' => 'None');
 
@@ -611,11 +611,11 @@
 
 ////
   function zen_cfg_pull_down_tax_classes($tax_class_id, $key = '') {
-    global $db;
+    global $gBitDb;
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("SELECT `tax_class_id`, `tax_class_title`
+    $tax_class = $gBitDb->Execute("SELECT `tax_class_id`, `tax_class_title`
                                FROM " . TABLE_TAX_CLASS . "
                                ORDER BY `tax_class_title`");
 
@@ -646,8 +646,8 @@
 
 
   function zen_cfg_get_zone_name($zone_id) {
-    global $db;
-    $zone = $db->Execute("SELECT `zone_name`
+    global $gBitDb;
+    $zone = $gBitDb->Execute("SELECT `zone_name`
                           FROM " . TABLE_ZONES . "
                           WHERE `zone_id` = '" . (int)$zone_id . "'");
 
@@ -662,15 +662,15 @@
 ////
 // Sets the status of a product
   function zen_set_product_status($products_id, $status) {
-    global $db;
+    global $gBitDb;
     if ($status == '1') {
-      return $db->Execute("update " . TABLE_PRODUCTS . "
-                           set `products_status` = '1', `products_last_modified` = ".$db->qtNOW()."
+      return $gBitDb->Execute("update " . TABLE_PRODUCTS . "
+                           set `products_status` = '1', `products_last_modified` = ".$gBitDb->qtNOW()."
                            WHERE `products_id` = '" . (int)$products_id . "'");
 
     } elseif ($status == '0') {
-      return $db->Execute("update " . TABLE_PRODUCTS . "
-                           set `products_status` = '0', `products_last_modified` = ".$db->qtNOW()."
+      return $gBitDb->Execute("update " . TABLE_PRODUCTS . "
+                           set `products_status` = '0', `products_last_modified` = ".$gBitDb->qtNOW()."
                            WHERE `products_id` = '" . (int)$products_id . "'");
 
     } else {
@@ -732,9 +732,9 @@
 ////
 // Retreive server information
   function zen_get_system_information() {
-    global $db, $_SERVER, $gBitDbHost, $gBitDbType;
+    global $gBitDb, $_SERVER, $gBitDbHost, $gBitDbType;
 
-//    $db_query = $db->Execute("SELECT now() as datetime");
+//    $gBitDb_query = $gBitDb->Execute("SELECT now() as datetime");
     list($system, $host, $kernel) = preg_split('/[\s,]+/', @exec('uname -a'), 5);
 
     return array('date' => zen_datetime_short(date('Y-m-d H:i:s')),
@@ -749,16 +749,16 @@
                  'db_server' => $gBitDbHost,
                  'db_ip' => gethostbyname($gBitDbHost),
                  'db_version' => $gBitDbType,
-                 'db_date' => zen_datetime_short($db_query->fields['datetime']));
+                 'db_date' => zen_datetime_short($gBitDb_query->fields['datetime']));
   }
 
   function zen_generate_category_path($id, $from = 'category', $categories_array = '', $index = 0) {
-    global $db;
+    global $gBitDb;
 
     if (!is_array($categories_array)) $categories_array = array();
 
     if ($from == 'product') {
-      $categories = $db->Execute("SELECT `categories_id`
+      $categories = $gBitDb->Execute("SELECT `categories_id`
                                   FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                   WHERE `products_id` = '" . (int)$id . "'");
 
@@ -766,7 +766,7 @@
         if ($categories->fields['categories_id'] == '0') {
           $categories_array[$index][] = array('id' => '0', 'text' => TEXT_TOP);
         } else {
-          $category = $db->Execute("SELECT cd.`categories_name`, c.`parent_id`
+          $category = $gBitDb->Execute("SELECT cd.`categories_name`, c.`parent_id`
                                     FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                     WHERE c.`categories_id` = '" . (int)$categories->fields['categories_id'] . "'
                                     and c.`categories_id` = cd.`categories_id`
@@ -780,7 +780,7 @@
         $categories->MoveNext();
       }
     } elseif ($from == 'category') {
-      $category = $db->Execute("SELECT cd.`categories_name`, c.`parent_id`
+      $category = $gBitDb->Execute("SELECT cd.`categories_name`, c.`parent_id`
                                 FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                 WHERE c.`categories_id` = '" . (int)$id . "'
                                 and c.`categories_id` = cd.`categories_id`
@@ -810,7 +810,7 @@
   }
 
   function zen_get_generated_category_path_ids($id, $from = 'category') {
-    global $db;
+    global $gBitDb;
     $calculated_category_path_string = '';
     $calculated_category_path = zen_generate_category_path($id, $from);
     for ($i=0, $n=sizeof($calculated_category_path); $i<$n; $i++) {
@@ -827,12 +827,12 @@
   }
 
   function zen_remove_category($category_id) {
-    global $db;
-    $category_image = $db->Execute("SELECT `categories_image`
+    global $gBitDb;
+    $category_image = $gBitDb->Execute("SELECT `categories_image`
                                     FROM " . TABLE_CATEGORIES . "
                                     WHERE `categories_id` = '" . (int)$category_id . "'");
 
-    $duplicate_image = $db->query("SELECT count(*) as `total`
+    $duplicate_image = $gBitDb->query("SELECT count(*) as `total`
                                      FROM " . TABLE_CATEGORIES . "
                                      WHERE `categories_image` = ?", array( $category_image->fields['categories_image'] ) );
     if ($duplicate_image->fields['total'] < 2) {
@@ -841,25 +841,25 @@
       }
     }
 
-    $db->Execute("delete FROM " . TABLE_CATEGORIES_DESCRIPTION . "
+    $gBitDb->Execute("delete FROM " . TABLE_CATEGORIES_DESCRIPTION . "
                   WHERE `categories_id` = '" . (int)$category_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
                   WHERE `categories_id` = '" . (int)$category_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_CATEGORIES . "
+    $gBitDb->Execute("delete FROM " . TABLE_CATEGORIES . "
                   WHERE `categories_id` = '" . (int)$category_id . "'");
 
 
   }
 
   function zen_remove_product($product_id, $ptc = 'true') {
-    global $db;
-    $product_image = $db->Execute("SELECT `products_image`
+    global $gBitDb;
+    $product_image = $gBitDb->Execute("SELECT `products_image`
                                    FROM " . TABLE_PRODUCTS . "
                                    WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $duplicate_image = $db->Execute("SELECT count(*) as `total`
+    $duplicate_image = $gBitDb->Execute("SELECT count(*) as `total`
                                      FROM " . TABLE_PRODUCTS . "
                                      WHERE `products_image` = '" . zen_db_input($product_image->fields['products_image']) . "'");
 
@@ -882,99 +882,99 @@
       }
     }
 
-    $db->Execute("delete FROM " . TABLE_SPECIALS . "
+    $gBitDb->Execute("delete FROM " . TABLE_SPECIALS . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
 //    if ($ptc == 'true') {
-      $db->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
+      $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
                     WHERE `products_id` = '" . (int)$product_id . "'");
 //    }
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
+    $gBitDb->Execute("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
     zen_products_attributes_download_delete($product_id);
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET . "
+    $gBitDb->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
+    $gBitDb->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
 
-    $product_reviews = $db->Execute("SELECT `reviews_id`
+    $product_reviews = $gBitDb->Execute("SELECT `reviews_id`
                                      FROM " . TABLE_REVIEWS . "
                                      WHERE `products_id` = '" . (int)$product_id . "'");
 
     while (!$product_reviews->EOF) {
-      $db->Execute("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
+      $gBitDb->Execute("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
                     WHERE `reviews_id` = '" . (int)$product_reviews->fields['reviews_id'] . "'");
       $product_reviews->MoveNext();
     }
-    $db->Execute("delete FROM " . TABLE_REVIEWS . "
+    $gBitDb->Execute("delete FROM " . TABLE_REVIEWS . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_FEATURED . "
+    $gBitDb->Execute("delete FROM " . TABLE_FEATURED . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
   }
 
   function zen_products_attributes_download_delete($product_id) {
-    global $db;
+    global $gBitDb;
   // remove downloads if they exist
-    $remove_downloads= $db->Execute("SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $product_id . "'");
+    $remove_downloads= $gBitDb->Execute("SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $product_id . "'");
     while (!$remove_downloads->EOF) {
-      $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` = '" . $remove_downloads->fields['products_attributes_id'] . "'");
+      $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` = '" . $remove_downloads->fields['products_attributes_id'] . "'");
       $remove_downloads->MoveNext();
     }
   }
 
   function zen_remove_order($order_id, $restock = false) {
-    global $db;
-	$db->StartTrans();
+    global $gBitDb;
+	$gBitDb->StartTrans();
     if ($restock == 'on') {
-      $order = $db->Execute("SELECT `products_id`, `products_quantity`
+      $order = $gBitDb->Execute("SELECT `products_id`, `products_quantity`
                              FROM " . TABLE_ORDERS_PRODUCTS . "
                              WHERE `orders_id` = '" . (int)$order_id . "'");
 
       while (!$order->EOF) {
-        $db->Execute("update " . TABLE_PRODUCTS . "
+        $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                       set `products_quantity` = `products_quantity` + " . $order->fields['products_quantity'] . ", `products_ordered` = `products_ordered` - " . $order->fields['products_quantity'] . " WHERE `products_id` = '" . (int)$order->fields['products_id'] . "'");
         $order->MoveNext();
       }
     }
 
-    $db->query("delete FROM " . TABLE_COUPON_GV_QUEUE . "
+    $gBitDb->query("delete FROM " . TABLE_COUPON_GV_QUEUE . "
                 WHERE `order_id` = ?", array( (int)$order_id ) );
 
-    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
+    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS . "
+    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_ORDERS_STATUS_HISTORY . "
+    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_STATUS_HISTORY . "
                   WHERE `orders_id` = '" . (int)$order_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_ORDERS_TOTAL . "
+    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_TOTAL . "
                   WHERE orders_id = '" . (int)$order_id . "'");
 
-    $db->Execute("delete FROM " . TABLE_ORDERS . "
+    $gBitDb->Execute("delete FROM " . TABLE_ORDERS . "
     			  WHERE `orders_id` = '" . (int)$order_id . "'");
 
-	$db->CompleteTrans();
+	$gBitDb->CompleteTrans();
   }
 
   function zen_get_file_permissions($mode) {
@@ -1092,11 +1092,11 @@
   }
 
   function zen_get_tax_class_title($tax_class_id) {
-    global $db;
+    global $gBitDb;
     if ($tax_class_id == '0') {
       return TEXT_NONE;
     } else {
-      $classes = $db->Execute("SELECT `tax_class_title`
+      $classes = $gBitDb->Execute("SELECT `tax_class_title`
                                FROM " . TABLE_TAX_CLASS . "
                                WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
 
@@ -1129,7 +1129,7 @@
 // TABLES: tax_rates, zones_to_geo_zones
 /*
   function zen_get_tax_rate($class_id, $country_id = -1, $zone_id = -1) {
-    global $db;
+    global $gBitDb;
     global $customer_zone_id, $customer_country_id;
 
     if ( ($country_id == -1) && ($zone_id == -1) ) {
@@ -1142,7 +1142,7 @@
       }
     }
 
-    $tax = $db->Execute("SELECT SUM(tax_rate) as tax_rate
+    $tax = $gBitDb->Execute("SELECT SUM(tax_rate) as tax_rate
                          FROM " . TABLE_TAX_RATES . " tr
                          left join " . TABLE_ZONES_TO_GEO_ZONES . " za
                          ON tr.tax_zone_id = za.geo_zone_id
@@ -1173,8 +1173,8 @@
 // Returns the tax rate for a tax class
 // TABLES: tax_rates
   function zen_get_tax_rate_value($class_id) {
-    global $db;
-    $tax = $db->Execute("SELECT SUM(`tax_rate`) as `tax_rate`
+    global $gBitDb;
+    $tax = $gBitDb->Execute("SELECT SUM(`tax_rate`) as `tax_rate`
                          FROM " . TABLE_TAX_RATES . "
                          WHERE `tax_class_id` = '" . (int)$class_id . "'
                          group by `tax_priority`");
@@ -1202,11 +1202,11 @@
   }
 
   function zen_get_zone_class_title($zone_class_id) {
-    global $db;
+    global $gBitDb;
     if ($zone_class_id == '0') {
       return TEXT_NONE;
     } else {
-      $classes = $db->Execute("SELECT `geo_zone_name`
+      $classes = $gBitDb->Execute("SELECT `geo_zone_name`
                                FROM " . TABLE_GEO_ZONES . "
                                WHERE `geo_zone_id` = '" . (int)$zone_class_id . "'");
 
@@ -1216,11 +1216,11 @@
 
 ////
   function zen_cfg_pull_down_zone_classes($zone_class_id, $key = '') {
-    global $db;
+    global $gBitDb;
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
     $zone_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $zone_class = $db->Execute("SELECT `geo_zone_id`, `geo_zone_name`
+    $zone_class = $gBitDb->Execute("SELECT `geo_zone_id`, `geo_zone_name`
                                 FROM " . TABLE_GEO_ZONES . "
                                 ORDER BY `geo_zone_name`");
 
@@ -1236,11 +1236,11 @@
 
 ////
   function zen_cfg_pull_down_order_statuses($order_status_id, $key = '') {
-    global $db;
+    global $gBitDb;
     $name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
     $statuses_array = array(array('id' => '0', 'text' => TEXT_DEFAULT));
-    $statuses = $db->Execute("SELECT `orders_status_id`, `orders_status_name`
+    $statuses = $gBitDb->Execute("SELECT `orders_status_id`, `orders_status_name`
                               FROM " . TABLE_ORDERS_STATUS . "
                               WHERE `language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               ORDER BY `orders_status_name`");
@@ -1335,8 +1335,8 @@
 ////
 // Validate Option Name and Option Type Match
   function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
-    global $db;
-    $check_options_to_values_query= $db->getOne("SELECT `products_options_id`
+    global $gBitDb;
+    $check_options_to_values_query= $gBitDb->getOne("SELECT `products_options_id`
 		FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
 		WHERE `products_options_id` = ?
 		AND `products_options_values_id` =?" , array( $products_options_id, $products_options_values_id ) );
@@ -1346,17 +1346,17 @@
 ////
 // look-up Attributues Options Name products_options_values_to_products_options
   function zen_get_products_options_name_from_value($lookup) {
-    global $db;
+    global $gBitDb;
 
     if ($lookup==0) {
       return 'RESERVED FOR TEXT/FILES ONLY ATTRIBUTES';
     }
 
-    $check_options_to_values = $db->Execute("SELECT `products_options_id`
+    $check_options_to_values = $gBitDb->Execute("SELECT `products_options_id`
                     FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                     WHERE `products_options_values_id` ='" . $lookup . "'");
 
-    $check_options = $db->Execute("SELECT `products_options_name`
+    $check_options = $gBitDb->Execute("SELECT `products_options_name`
                       FROM " . TABLE_PRODUCTS_OPTIONS . "
                       WHERE `products_options_id` ='" . $check_options_to_values->fields['products_options_id']
                       . "' and `language_id` ='" . $_SESSION['languages_id'] . "'");
@@ -1368,8 +1368,8 @@
 ////
 // lookup attributes model
   function zen_get_products_model($products_id) {
-    global $db;
-    $check = $db->Execute("SELECT `products_model`
+    global $gBitDb;
+    $check = $gBitDb->Execute("SELECT `products_model`
                     FROM " . TABLE_PRODUCTS . "
                     WHERE `products_id` ='" . $products_id . "'");
 
@@ -1380,8 +1380,8 @@
 ////
 // Check if product has attributes
   function zen_has_product_attributes_OLD($products_id) {
-    global $db;
-    $attributes = $db->Execute("SELECT count(*) as `count`
+    global $gBitDb;
+    $attributes = $gBitDb->Execute("SELECT count(*) as `count`
                          FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
                          WHERE `products_id` = '" . (int)$products_id . "'");
 
@@ -1393,7 +1393,7 @@
   }
 
 function zen_copy_products_attributes($products_id_from, $products_id_to) {
-  global $db;
+  global $gBitDb;
   global $messageStack;
   global $copy_attributes_delete_first, $copy_attributes_duplicates_skipped, $copy_attributes_duplicates_overwrite, $copy_attributes_include_downloads, $copy_attributes_include_filename;
 
@@ -1421,18 +1421,18 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // die('DELETE FIRST - Copying FROM ' . $products_id_from . ' to ' . $products_id_to . ' Do I delete first? ' . $copy_attributes_delete_first);
       // delete all attributes first FROM products_id_to
       zen_products_attributes_download_delete($products_id_to);
-      $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $products_id_to . "'");
+      $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $products_id_to . "'");
     }
 
 // get attributes to copy from
-    $products_copy_from= $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`='" . $products_id_from . "'" . " ORDER BY `products_attributes_id`");
+    $products_copy_from= $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`='" . $products_id_from . "'" . " ORDER BY `products_attributes_id`");
 
     while ( !$products_copy_from->EOF ) {
 // This must match the structure of your products_attributes table
 
       $update_attribute = false;
       $add_attribute = true;
-      $check_duplicate = $db->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` ='" . $products_id_to . "'" . " and `options_id` = '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] .  "'");
+      $check_duplicate = $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` ='" . $products_id_to . "'" . " and `options_id` = '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] .  "'");
       if ($check_attributes == true) {
         if ($check_duplicate->RecordCount() == 0) {
           $update_attribute = false;
@@ -1459,7 +1459,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       } else {
         if ($add_attribute == true) {
           // New attribute - insert it
-          $db->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES . " values ('', '" . $products_id_to . "',
+          $gBitDb->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES . " values ('', '" . $products_id_to . "',
           '" . $products_copy_from->fields['options_id'] . "',
           '" . $products_copy_from->fields['options_values_id'] . "',
           '" . $products_copy_from->fields['options_values_price'] . "',
@@ -1489,7 +1489,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
         }
         if ($update_attribute == true) {
           // Update attribute - Just attribute settings not ids
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set
           `options_values_price` ='" . $products_copy_from->fields['options_values_price'] . "',
           `price_prefix` ='" . $products_copy_from->fields['price_prefix'] . "',
           `products_options_sort_order` ='" . $products_copy_from->fields['products_options_sort_order'] . "',
@@ -1537,8 +1537,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Lookup Languages Icon
   function zen_get_language_icon($lookup) {
-    global $db;
-    $languages_icon = $db->Execute("SELECT `directory`, `image` FROM " . TABLE_LANGUAGES . " WHERE `languages_id` = '" . $lookup . "'");
+    global $gBitDb;
+    $languages_icon = $gBitDb->Execute("SELECT `directory`, `image` FROM " . TABLE_LANGUAGES . " WHERE `languages_id` = '" . $lookup . "'");
     $icon= zen_image(DIR_WS_CATALOG_LANGUAGES . $languages_icon->fields['directory'] . '/images/' . $languages_icon->fields['image']);
     return $icon;
   }
@@ -1546,24 +1546,24 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Get the Option Name for a particular language
   function zen_get_option_name_language($option, $language) {
-    global $db;
-    $lookup = $db->query("SELECT `products_options_id`, `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = ? AND `language_id` = ?", array( $option, $language ) );
+    global $gBitDb;
+    $lookup = $gBitDb->query("SELECT `products_options_id`, `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = ? AND `language_id` = ?", array( $option, $language ) );
     return $lookup->fields['products_options_name'];
   }
 
 ////
 // Get the Option Name for a particular language
   function zen_get_option_name_language_sort_order($option, $language) {
-    global $db;
-    $lookup = $db->Execute("SELECT `products_options_id`, `products_options_name`, `products_options_sort_order` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = '" . $option . "' and `language_id` = '" . $language . "'");
+    global $gBitDb;
+    $lookup = $gBitDb->Execute("SELECT `products_options_id`, `products_options_name`, `products_options_sort_order` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id` = '" . $option . "' and `language_id` = '" . $language . "'");
     return $lookup->fields['products_options_sort_order'];
   }
 
 ////
 // lookup attributes model
   function zen_get_language_name($lookup) {
-    global $db;
-    $check_language= $db->Execute("SELECT `directory` FROM " . TABLE_LANGUAGES . " WHERE `languages_id` = '" . $lookup . "'");
+    global $gBitDb;
+    $check_language= $gBitDb->Execute("SELECT `directory` FROM " . TABLE_LANGUAGES . " WHERE `languages_id` = '" . $lookup . "'");
     return $check_language->fields['directory'];
   }
 
@@ -1571,25 +1571,25 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Delete all product attributes
   function zen_delete_products_attributes($delete_product_id) {
-    global $db;
+    global $gBitDb;
     // delete associated downloads
-    $products_delete_from= $db->Execute("SELECT pa.`products_id`, pad.`products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad  WHERE pa.`products_id`='" . $delete_product_id . "' and pad.`products_attributes_id` = pa.`products_attributes_id`");
+    $products_delete_from= $gBitDb->Execute("SELECT pa.`products_id`, pad.`products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad  WHERE pa.`products_id`='" . $delete_product_id . "' and pad.`products_attributes_id` = pa.`products_attributes_id`");
     while (!$products_delete_from->EOF) {
-      $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` = '" . $products_delete_from['products_attributes_id'] . "'");
+      $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` = '" . $products_delete_from['products_attributes_id'] . "'");
       $products_delete_from->MoveNext();
     }
 
-    $db->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $delete_product_id . "'");
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $delete_product_id . "'");
 }
 
 
 ////
 // Set Product Attributes Sort Order to Products Option Value Sort Order
   function zen_update_attributes_products_option_values_sort_order($products_id) {
-    global $db;
-    $attributes_sort_order = $db->Execute("SELECT distinct pa.`products_attributes_id`, pa.`options_id`, pa.`options_values_id`, pa.`products_options_sort_order`, pov.`products_ov_sort_order` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.`products_id` = '" . $products_id . "' and pa.`options_values_id` = pov.`products_options_values_id`");
+    global $gBitDb;
+    $attributes_sort_order = $gBitDb->Execute("SELECT distinct pa.`products_attributes_id`, pa.`options_id`, pa.`options_values_id`, pa.`products_options_sort_order`, pov.`products_ov_sort_order` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.`products_id` = '" . $products_id . "' and pa.`options_values_id` = pov.`products_options_values_id`");
     while (!$attributes_sort_order->EOF) {
-      $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `products_options_sort_order` = '" . $attributes_sort_order->fields['products_ov_sort_order'] . "' WHERE `products_id` = '" . $products_id . "' and `products_attributes_id` = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
+      $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `products_options_sort_order` = '" . $attributes_sort_order->fields['products_ov_sort_order'] . "' WHERE `products_id` = '" . $products_id . "' and `products_attributes_id` = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
       $attributes_sort_order->MoveNext();
     }
   }
@@ -1597,9 +1597,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Check if a demo is active
   function zen_admin_demo() {
-    global $db;
+    global $gBitDb;
     if (ADMIN_DEMO == '1') {
-      $admin_current = $db->Execute("SELECT `admin_level` FROM " . TABLE_ADMIN . " WHERE `admin_id` ='" . $_SESSION['admin_id'] . "'");
+      $admin_current = $gBitDb->Execute("SELECT `admin_level` FROM " . TABLE_ADMIN . " WHERE `admin_id` ='" . $_SESSION['admin_id'] . "'");
       if ($admin_current->fields['admin_level'] == '1') {
         $demo_on = false;
       } else {
@@ -1614,12 +1614,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 //
   function zen_has_product_attributes_downloads($products_id, $check_valid=false) {
-    global $db;
+    global $gBitDb;
     if (DOWNLOAD_ENABLED == 'true') {
       $download_display_query_raw ="SELECT pa.`products_attributes_id`, pad.`products_attributes_filename`
                                     FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                     WHERE pa.`products_id`='" . $products_id . "' and pad.`products_attributes_id`= pa.`products_attributes_id`";
-      $download_display = $db->Execute($download_display_query_raw);
+      $download_display = $gBitDb->Execute($download_display_query_raw);
       if ($check_valid == true) {
         $valid_downloads = '';
         while (!$download_display->EOF) {
@@ -1651,9 +1651,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // TABLES: categories
 // old name zen_get_parent_category_name
   function zen_get_products_master_categories_name($categories_id) {
-    global $db;
+    global $gBitDb;
 
-    $categories_lookup = $db->Execute("SELECT `parent_id`
+    $categories_lookup = $gBitDb->Execute("SELECT `parent_id`
                                 FROM " . TABLE_CATEGORIES . "
                                 WHERE `categories_id` = '" . (int)$categories_id . "'");
 
@@ -1664,10 +1664,10 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
 
   function zen_get_handler_from_type($product_type) {
-    global $db;
+    global $gBitDb;
 
     $sql = "SELECT `type_handler` FROM " . TABLE_PRODUCT_TYPES . " WHERE `type_id` = '" . $product_type . "'";
-    $handler = $db->Execute($sql);
+    $handler = $gBitDb->Execute($sql);
 	return $handler->fields['type_handler'];
   }
 
@@ -1675,14 +1675,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Sets the status of a featured product
   function zen_set_featured_status($featured_id, $status) {
-    global $db;
+    global $gBitDb;
     if ($status == '1') {
-      return $db->Execute("update " . TABLE_FEATURED . "
+      return $gBitDb->Execute("update " . TABLE_FEATURED . "
                            set status = '1', expires_date = NULL, date_status_change = NULL
                            WHERE featured_id = '" . (int)$featured_id . "'");
 
     } elseif ($status == '0') {
-      return $db->Execute("update " . TABLE_FEATURED . "
+      return $gBitDb->Execute("update " . TABLE_FEATURED . "
                            set status = '0', date_status_change = now()
                            WHERE featured_id = '" . (int)$featured_id . "'");
 
@@ -1695,14 +1695,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Sets the status of a product review
   function zen_set_reviews_status($review_id, $status) {
-    global $db;
+    global $gBitDb;
     if ($status == '1') {
-      return $db->Execute("update " . TABLE_REVIEWS . "
+      return $gBitDb->Execute("update " . TABLE_REVIEWS . "
                            set `status` = '1'
                            WHERE `reviews_id` = '" . (int)$review_id . "'");
 
     } elseif ($status == '0') {
-      return $db->Execute("update " . TABLE_REVIEWS . "
+      return $gBitDb->Execute("update " . TABLE_REVIEWS . "
                            set `status` = '0'
                            WHERE `reviews_id` = '" . (int)$review_id . "'");
 
@@ -1715,28 +1715,28 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Get the status of a category
   function zen_get_categories_status($categories_id) {
-    global $db;
+    global $gBitDb;
     $sql = "SELECT `categories_status` FROM " . TABLE_CATEGORIES . " WHERE `categories_id` ='" . (int)$categories_id . "'";
-    $check_status = $db->Execute($sql);
+    $check_status = $gBitDb->Execute($sql);
     return $check_status->fields['categories_status'];
   }
 
 ////
 // Get the status of a product
   function zen_get_products_status($product_id) {
-    global $db;
+    global $gBitDb;
     $sql = "SELECT `products_status` FROM " . TABLE_PRODUCTS . " WHERE `products_id` ='" . (int)$product_id . "'";
-    $check_status = $db->Execute($sql);
+    $check_status = $gBitDb->Execute($sql);
     return $check_status->fields['products_status'];
   }
 
 ////
 // check if linked
   function zen_get_product_is_linked($product_id, $show_count = 'false') {
-    global $db;
+    global $gBitDb;
 
     $sql = "SELECT * FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id`='" . (int)$product_id . "'";
-    $check_linked = $db->Execute($sql);
+    $check_linked = $gBitDb->Execute($sql);
     if ($check_linked->RecordCount() > 1) {
       if ($show_count == 'true') {
         return $check_linked->RecordCount();
@@ -1754,7 +1754,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // syntax for count: zen_get_products_to_categories($categories->fields['categories_id'], true)
 // syntax for linked products: zen_get_products_to_categories($categories->fields['categories_id'], true, 'products_active')
   function zen_get_products_to_categories($category_id, $include_inactive = false, $counts_what = 'products') {
-    global $db;
+    global $gBitDb;
 
     $products_count = 0;
 	$cat_products_count = 0;
@@ -1793,7 +1793,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
       }
 
     }
-    $cat_products = $db->Execute($cat_products_query);
+    $cat_products = $gBitDb->Execute($cat_products_query);
       switch ($counts_what) {
         case ('products'):
           $cat_products_count += $cat_products->fields['total'];
@@ -1812,7 +1812,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
                                FROM " . TABLE_CATEGORIES . "
                                WHERE `parent_id` = '" . (int)$category_id . "'";
 
-    $cat_child_categories = $db->Execute($cat_child_categories_query);
+    $cat_child_categories = $gBitDb->Execute($cat_child_categories_query);
 
     if ($cat_child_categories->RecordCount() > 0) {
       while (!$cat_child_categories->EOF) {
@@ -1844,11 +1844,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // master category selection
   function zen_get_master_categories_pulldown($product_id) {
-    global $db;
+    global $gBitDb;
 
     $master_category_array = array();
 
-    $master_categories_query = $db->Execute("SELECT ptc.`products_id`, cd.`categories_name`, cd.`categories_id`
+    $master_categories_query = $gBitDb->Execute("SELECT ptc.`products_id`, cd.`categories_name`, cd.`categories_id`
                                     FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
                                     left join " . TABLE_CATEGORIES_DESCRIPTION . " cd
                                     on cd.`categories_id` = ptc.`categories_id`
@@ -1868,9 +1868,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // get products type
   function zen_get_products_type($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $check_products_type = $db->Execute("SELECT `products_type` FROM " . TABLE_PRODUCTS . " WHERE `products_id`='" . $product_id . "'");
+    $check_products_type = $gBitDb->Execute("SELECT `products_type` FROM " . TABLE_PRODUCTS . " WHERE `products_id`='" . $product_id . "'");
     return $check_products_type->fields['products_type'];
   }
 
@@ -1934,20 +1934,20 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Recursive algorithim to restrict all sub_categories to a rpoduct type
   function zen_restrict_sub_categories($zf_cat_id, $zf_type) {
-    global $db;
+    global $gBitDb;
     $zp_sql = "SELECT `categories_id` FROM " . TABLE_CATEGORIES . " WHERE `parent_id` = '" . $zf_cat_id . "'";
-    $zq_sub_cats = $db->Execute($zp_sql);
+    $zq_sub_cats = $gBitDb->Execute($zp_sql);
     while (!$zq_sub_cats->EOF) {
       $zp_sql = "SELECT * FROM " . TABLE_PRODUCT_TYPES_TO_CATEGORY . "
                          WHERE `category_id` = '" . $zq_sub_cats->fields['categories_id'] . "'
                          and `product_type_id` = '" . $zf_type . "'";
 
-      $zq_type_to_cat = $db->Execute($zp_sql);
+      $zq_type_to_cat = $gBitDb->Execute($zp_sql);
 
       if ($zq_type_to_cat->RecordCount() < 1) {
         $za_insert_sql_data = array('category_id' => $zq_sub_cats->fields['categories_id'],
                                     'product_type_id' => $zf_type);
-        $db->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $za_insert_sql_data);
+        $gBitDb->associateInsert(TABLE_PRODUCT_TYPES_TO_CATEGORY, $za_insert_sql_data);
       }
       zen_restrict_sub_categories($zq_sub_cats->fields['categories_id'], $zf_type);
       $zq_sub_cats->MoveNext();
@@ -1958,15 +1958,15 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // Recursive algorithim to restrict all sub_categories to a rpoduct type
   function zen_remove_restrict_sub_categories($zf_cat_id, $zf_type) {
-    global $db;
+    global $gBitDb;
     $zp_sql = "SELECT `categories_id` FROM " . TABLE_CATEGORIES . " WHERE `parent_id` = '" . $zf_cat_id . "'";
-    $zq_sub_cats = $db->Execute($zp_sql);
+    $zq_sub_cats = $gBitDb->Execute($zp_sql);
     while (!$zq_sub_cats->EOF) {
         $sql = "delete FROM " .  TABLE_PRODUCT_TYPES_TO_CATEGORY . "
                 WHERE `category_id` = '" . $zq_sub_cats->fields['categories_id'] . "'
                 and `product_type_id` = '" . $zf_type . "'";
 
-        $db->Execute($sql);
+        $gBitDb->Execute($sql);
       zen_remove_restrict_sub_categories($zq_sub_cats->fields['categories_id'], $zf_type);
       $zq_sub_cats->MoveNext();
     }
@@ -1998,7 +1998,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // check that a download filename exists
   function zen_orders_products_downloads($check_filename) {
-    global $db;
+    global $gBitDb;
 
     $valid_downloads = true;
     // Could go into /admin/includes/configure.php
@@ -2032,13 +2032,13 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // update salemaker product prices per category per product
   function zen_update_salemaker_product_prices($salemaker_id) {
-    global $db;
-    $zv_categories = $db->Execute("SELECT `sale_categories_selected` FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_id` = '" . $salemaker_id . "'");
+    global $gBitDb;
+    $zv_categories = $gBitDb->Execute("SELECT `sale_categories_selected` FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_id` = '" . $salemaker_id . "'");
 
     $za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
     $n = sizeof($za_salemaker_categories);
     for ($i=0; $i<$n; $i++) {
-      $update_products_price = $db->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
+      $update_products_price = $gBitDb->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
       while (!$update_products_price->EOF) {
         zen_update_products_price_sorter($update_products_price->fields['products_id']);
         $update_products_price->MoveNext();
@@ -2049,10 +2049,10 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // check if products has discounts
   function zen_has_product_discounts($look_up) {
-    global $db;
+    global $gBitDb;
 
     $check_discount_query = "SELECT `products_id` FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id`='" . $look_up . "'";
-    $check_discount = $db->Execute($check_discount_query);
+    $check_discount = $gBitDb->Execute($check_discount_query);
 
     if ($check_discount->RecordCount() > 0) {
       return 'true';
@@ -2064,18 +2064,18 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 //copy discounts FROM product to another
   function zen_copy_discounts_to_product($copy_from, $copy_to) {
-    global $db;
+    global $gBitDb;
 
     $check_discount_type_query = "SELECT `products_discount_type`, `products_discount_type_from`, `products_mixed_discount_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id`='" . $copy_from . "'";
-    $check_discount_type = $db->Execute($check_discount_type_query);
+    $check_discount_type = $gBitDb->Execute($check_discount_type_query);
 
-    $db->query("update " . TABLE_PRODUCTS . " set `products_discount_type`=?, `products_discount_type_from`=?, `products_mixed_discount_quantity`=? WHERE `products_id` =?", array( $check_discount_type->fields['products_discount_type'], $check_discount_type->fields['products_discount_type_from'], $check_discount_type->fields['products_mixed_discount_quantity'], $copy_to ) );
+    $gBitDb->query("update " . TABLE_PRODUCTS . " set `products_discount_type`=?, `products_discount_type_from`=?, `products_mixed_discount_quantity`=? WHERE `products_id` =?", array( $check_discount_type->fields['products_discount_type'], $check_discount_type->fields['products_discount_type_from'], $check_discount_type->fields['products_mixed_discount_quantity'], $copy_to ) );
 
     $check_discount_query = "SELECT * FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` ='" . $copy_from . "' ORDER BY `discount_id`";
-    $check_discount = $db->Execute($check_discount_query);
+    $check_discount = $gBitDb->Execute($check_discount_query);
     $cnt_discount=1;
     while (!$check_discount->EOF) {
-      $db->associateInsert( TABLE_PRODUCTS_DISCOUNT_QUANTITY, ( array( "discount_id" => $cnt_discount, "products_id" => $copy_to, "discount_qty" => $check_discount->fields['discount_qty'], "discount_price" => $check_discount->fields['discount_price'] ) ) );
+      $gBitDb->associateInsert( TABLE_PRODUCTS_DISCOUNT_QUANTITY, ( array( "discount_id" => $cnt_discount, "products_id" => $copy_to, "discount_qty" => $check_discount->fields['discount_qty'], "discount_price" => $check_discount->fields['discount_price'] ) ) );
       $cnt_discount++;
       $check_discount->MoveNext();
     }
@@ -2084,8 +2084,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // meta tags
   function zen_get_metatags_title($product_id, $language_id) {
-    global $db;
-    $product = $db->Execute("SELECT `metatags_title`
+    global $gBitDb;
+    $product = $gBitDb->Execute("SELECT `metatags_title`
                              FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
                              WHERE `products_id` = '" . (int)$product_id . "'
                              and `language_id` = '" . (int)$language_id . "'");
@@ -2094,8 +2094,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   }
 
   function zen_get_metatags_keywords($product_id, $language_id) {
-    global $db;
-    $product = $db->Execute("SELECT `metatags_keywords`
+    global $gBitDb;
+    $product = $gBitDb->Execute("SELECT `metatags_keywords`
                              FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
                              WHERE `products_id` = '" . (int)$product_id . "'
                              and `language_id` = '" . (int)$language_id . "'");
@@ -2104,8 +2104,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   }
 
   function zen_get_metatags_description($product_id, $language_id) {
-    global $db;
-    $product = $db->Execute("SELECT `metatags_description`
+    global $gBitDb;
+    $product = $gBitDb->Execute("SELECT `metatags_description`
                              FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
                              WHERE `products_id` = '" . (int)$product_id . "'
                              and `language_id` = '" . (int)$language_id . "'");
@@ -2117,9 +2117,9 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // return products master_categories_id
 // TABLES: categories
   function zen_get_parent_category_id($product_id) {
-    global $db;
+    global $gBitDb;
 
-    $categories_lookup = $db->Execute("SELECT `master_categories_id`
+    $categories_lookup = $gBitDb->Execute("SELECT `master_categories_id`
                                 FROM " . TABLE_PRODUCTS . "
                                 WHERE `products_id` = '" . (int)$product_id . "'");
 
@@ -2132,7 +2132,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // product pulldown with attributes
   function zen_draw_products_pull_down_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -2148,7 +2148,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $new_fields=', p.`products_model`';
 
-    $products = $db->Execute("SELECT distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields .
+    $products = $gBitDb->Execute("SELECT distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields .
         " FROM " . TABLE_PRODUCTS . " p, " .
         TABLE_PRODUCTS_DESCRIPTION . " pd, " .
         TABLE_PRODUCTS_ATTRIBUTES . " pa " .
@@ -2170,7 +2170,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // categories pulldown with products
   function zen_draw_products_pull_down_categories($name, $parameters = '', $exclude = '', $show_id = false, $show_parent = false) {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -2184,7 +2184,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $select_string .= '>';
 
-    $categories = $db->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
+    $categories = $gBitDb->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
         " FROM " . TABLE_CATEGORIES . " c, " .
         TABLE_CATEGORIES_DESCRIPTION . " cd, " .
         TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " .
@@ -2213,7 +2213,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // categories pulldown with products with attributes
   function zen_draw_products_pull_down_categories_attributes($name, $parameters = '', $exclude = '') {
-    global $db, $currencies;
+    global $gBitDb, $currencies;
 
     if ($exclude == '') {
       $exclude = array();
@@ -2227,7 +2227,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     $select_string .= '>';
 
-    $categories = $db->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
+    $categories = $gBitDb->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
         " FROM " . TABLE_CATEGORIES . " c, " .
         TABLE_CATEGORIES_DESCRIPTION . " cd, " .
         TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
@@ -2265,7 +2265,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Construct a category path to the product
 // TABLES: products_to_categories
   function zen_get_product_path($products_id, $status_override = '1') {
-    global $db;
+    global $gBitDb;
     $cPath = '';
 
     $category_query = "SELECT p2c.`categories_id`
@@ -2274,7 +2274,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
                        ($status_override == '1' ? " and p.`products_status` = '1' " : '') . "
                        and p.`products_id` = p2c.`products_id`";
 
-    $category = $db->getOne($category_query);
+    $category = $gBitDb->getOne($category_query);
 
     if ($category->RecordCount() > 0) {
 
@@ -2296,12 +2296,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // Recursively go through the categories and retreive all parent categories IDs
 // TABLES: categories
   function zen_get_parent_categories(&$categories, $categories_id) {
-    global $db;
+    global $gBitDb;
     $parent_categories_query = "SELECT parent_id
                                 FROM " . TABLE_CATEGORIES . "
                                 WHERE `categories_id` = '" . (int)$categories_id . "'";
 
-    $parent_categories = $db->Execute($parent_categories_query);
+    $parent_categories = $gBitDb->Execute($parent_categories_query);
 
     while (!$parent_categories->EOF) {
       if ($parent_categories->fields['parent_id'] == 0) return true;
@@ -2315,7 +2315,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
 ////
   function zen_get_categories($categories_array = '', $parent_id = '0', $indent = '') {
-    global $db;
+    global $gBitDb;
 
     if (!is_array($categories_array)) $categories_array = array();
 
@@ -2326,7 +2326,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
                          and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                          ORDER BY `sort_order`, cd.`categories_name`";
 
-    $categories = $db->Execute($categories_query);
+    $categories = $gBitDb->Execute($categories_query);
 
     while (!$categories->EOF) {
       $categories_array[] = array('id' => $categories->fields['categories_id'],

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: email_welcome.php,v 1.10 2005/10/31 16:19:58 lsces Exp $
+//  $Id: email_welcome.php,v 1.11 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -60,9 +60,9 @@
 
       if (NEW_SIGNUP_DISCOUNT_COUPON != '' and NEW_SIGNUP_DISCOUNT_COUPON != '0') {
         $coupon_id = NEW_SIGNUP_DISCOUNT_COUPON;
-        $coupon = $db->Execute("select * from " . TABLE_COUPONS . " where coupon_id = '" . $coupon_id . "'");
-        $coupon_desc = $db->Execute("select `coupon_description` from " . TABLE_COUPONS_DESCRIPTION . " where`coupon_id` = '" . $coupon_id . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
-//        $db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ('" . $coupon_id ."', '0', 'Admin', '" . $email_address . "', now() )");
+        $coupon = $gBitDb->Execute("select * from " . TABLE_COUPONS . " where coupon_id = '" . $coupon_id . "'");
+        $coupon_desc = $gBitDb->Execute("select `coupon_description` from " . TABLE_COUPONS_DESCRIPTION . " where`coupon_id` = '" . $coupon_id . "' and `language_id` = '" . $_SESSION['languages_id'] . "'");
+//        $gBitDb->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ('" . $coupon_id ."', '0', 'Admin', '" . $email_address . "', now() )");
 
       // if on, add in Discount Coupon explanation
         $email_text .= "\n" . EMAIL_COUPON_INCENTIVE_HEADER .
@@ -77,9 +77,9 @@
 
       if (NEW_SIGNUP_GIFT_VOUCHER_AMOUNT > 0) {
         $coupon_code = 'ABCDEF';
-//        $insert_query = $db->Execute("insert into " . TABLE_COUPONS . " (coupon_code, coupon_type, coupon_amount, date_created) values ('" . $coupon_code . "', 'G', '" . NEW_SIGNUP_GIFT_VOUCHER_AMOUNT . "', now())");
+//        $insert_query = $gBitDb->Execute("insert into " . TABLE_COUPONS . " (coupon_code, coupon_type, coupon_amount, date_created) values ('" . $coupon_code . "', 'G', '" . NEW_SIGNUP_GIFT_VOUCHER_AMOUNT . "', now())");
 //        $insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
-//        $db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ('" . $insert_id ."', '0', 'Admin', '" . $email_address . "', now() )");
+//        $gBitDb->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ('" . $insert_id ."', '0', 'Admin', '" . $email_address . "', now() )");
 
       // if on, add in GV explanation
         $email_text .= "\n\n" . sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) .

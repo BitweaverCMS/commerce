@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_currencies.php,v 1.6 2005/12/05 17:48:51 squareing Exp $
+// $Id: mod_currencies.php,v 1.7 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct, $currencies;
+	global $gBitDb, $gBitProduct, $currencies;
 
 	// test if box should display
 	$show_currencies= false;

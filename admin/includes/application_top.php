@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.22 2006/12/13 18:20:00 spiderr Exp $
+//  $Id: application_top.php,v 1.23 2006/12/19 00:11:29 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -143,7 +143,7 @@ ob_start();
   require_once(DIR_FS_CATALOG . DIR_WS_INCLUDES . 'version.php');
 
 // Determine the DATABASE patch level
-  $project_db_info= $db->getRow('select * from ' . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database' ");
+  $project_db_info= $gBitDb->getRow('select * from ' . TABLE_PROJECT_VERSION . " WHERE `project_version_key` = 'Zen-Cart Database' ");
   define('PROJECT_DB_VERSION_MAJOR',$project_db_info['project_version_major']);
   define('PROJECT_DB_VERSION_MINOR',$project_db_info['project_version_minor']);
   define('PROJECT_DB_VERSION_PATCH1',$project_db_info['project_version_patch1']);
@@ -189,11 +189,11 @@ ob_start();
   $session_started = true;
 
 // Set theme related directories
-  $template_dir = $db->getOne("select `template_dir`
+  $template_dir = $gBitDb->getOne("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
                                   " where `template_language` = '0'");
 
-  $langDir = $db->getOne("select `template_dir`
+  $langDir = $gBitDb->getOne("select `template_dir`
                                   from " . TABLE_TEMPLATE_SELECT .
                                   " where `template_language` = '" . $_SESSION['languages_id'] . "'");
 
@@ -330,7 +330,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 // default admin settings
   $admin_security = false;
 
-  $demo_check = $db->Execute("select * from " . TABLE_ADMIN . " where (`admin_name`='demo' and `admin_pass`='23ce1aad0e04a3d2334c7aef2f8ade83:58') or (`admin_name`='Admin' and `admin_pass`='e30d3c90284b0f42993b99f2c99261ae:c9')");
+  $demo_check = $gBitDb->Execute("select * from " . TABLE_ADMIN . " where (`admin_name`='demo' and `admin_pass`='23ce1aad0e04a3d2334c7aef2f8ade83:58') or (`admin_name`='Admin' and `admin_pass`='e30d3c90284b0f42993b99f2c99261ae:c9')");
   if (!$demo_check->EOF) {
     $admin_security = true;
 
@@ -347,13 +347,13 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 
   // log page visit into admin activity history
   if (basename($PHP_SELF) != FILENAME_LOGIN . '.php' && basename($PHP_SELF) != FILENAME_DEFAULT . '.php' && isset($_SESSION['admin_id'])) {
-    $sql_data_array = array( 'access_date' => $db->NOW(),
+    $sql_data_array = array( 'access_date' => $gBitDb->NOW(),
                              'admin_id' => $gBitUser->mUserId,
                              'page_accessed' =>  basename($PHP_SELF),
                              'page_parameters' => zen_get_all_get_params(),
                              'ip_address' => $_SERVER['REMOTE_ADDR']
                              );
-    $db->associateInsert(TABLE_ADMIN_ACTIVITY_LOG, $sql_data_array);
+    $gBitDb->associateInsert(TABLE_ADMIN_ACTIVITY_LOG, $sql_data_array);
   }
   if (!isset($_SESSION['html_editor_preference_status'])) {
     $_SESSION['html_editor_preference_status'] = HTML_EDITOR_PREFERENCE;

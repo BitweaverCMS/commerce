@@ -477,12 +477,12 @@
 // Return a formatted address
 // TABLES: address_format
   function zen_address_format($address_format_id, $address, $html, $boln, $eoln) {
-    global $db;
+    global $gBitDb;
     $address_format_query = "select `address_format` as `format`
                              from " . TABLE_ADDRESS_FORMAT . "
                              where `address_format_id` = '" . (int)$address_format_id . "'";
 
-    $address_format = $db->query($address_format_query);
+    $address_format = $gBitDb->query($address_format_query);
     $company = zen_output_string_protected($address['company']);
     if ( !empty( $address['firstname'] ) ) {
       $firstname = zen_output_string_protected($address['firstname']);
@@ -878,15 +878,15 @@ If a special exist * 10+9
 // compute discount based on qty
 // temporarily re-add zen_get_products_discount_price_qty that was ported to CommmerceProduct::getQuantityDiscount -- spiderr
   function zen_get_products_discount_price_qty($product_id, $check_qty, $check_amount=0) {
-    global $db, $cart;
+    global $gBitDb, $cart;
       $new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id);
       // check for discount qty mix
       if ($new_qty > $check_qty) {
         $check_qty = $new_qty;
       }
       $product_id = (int)$product_id;
-      $products_query = $db->Execute("select products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id='" . $product_id . "'");
-      $products_discounts_query = $db->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $product_id . "' and discount_qty <='" . $check_qty . "' order by discount_qty desc");
+      $products_query = $gBitDb->Execute("select products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id='" . $product_id . "'");
+      $products_discounts_query = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id='" . $product_id . "' and discount_qty <='" . $check_qty . "' order by discount_qty desc");
 
       $display_price = zen_get_products_base_price($product_id);
       $display_specials_price = zen_get_products_special_price($product_id, true);

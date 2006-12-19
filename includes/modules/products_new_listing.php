@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_new_listing.php,v 1.7 2005/12/20 17:13:01 gilesw Exp $
+// $Id: products_new_listing.php,v 1.8 2006/12/19 00:11:33 spiderr Exp $
 //
 
 ?>
@@ -30,7 +30,7 @@
 
   if ($products_new_split->number_of_rows > 0) {
 	$offset = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-    $products_new = $db->query($products_new_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_NEW, $offset);
+    $products_new = $gBitDb->query($products_new_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_NEW, $offset);
     while (!$products_new->EOF) {
 
       if (PRODUCT_NEW_LIST_IMAGE != '0') {
@@ -123,7 +123,7 @@
           <tr>
             <td width="<?php echo IMAGE_PRODUCT_NEW_LISTING_WIDTH + 10; ?>" valign="top" class="main" align="center">
               <?php
-                $disp_sort_order = $db->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 1000 and configuration_value <= 1999) order by LPAD(configuration_value,11,0)");
+                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 1000 and configuration_value <= 1999) order by LPAD(configuration_value,11,0)");
                 while (!$disp_sort_order->EOF) {
                   if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_NEW_LIST_IMAGE') {
                     echo $display_products_image;
@@ -159,7 +159,7 @@
             </td>
             <td colspan="2" valign="top" class="main">
               <?php
-                $disp_sort_order = $db->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 2000 and configuration_value <= 2999) order by LPAD(configuration_value,11,0)");
+                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 2000 and configuration_value <= 2999) order by LPAD(configuration_value,11,0)");
                 while (!$disp_sort_order->EOF) {
                   if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_NEW_LIST_IMAGE') {
                     echo $display_products_image;

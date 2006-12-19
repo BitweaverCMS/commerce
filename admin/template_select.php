@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: template_select.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: template_select.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 // get an array of template info
@@ -41,20 +41,20 @@
   if (zen_not_null($action)) {
     switch ($action) {
       case 'insert':
-        $check_query = $db->Execute("select * from " . TABLE_TEMPLATE_SELECT . " where template_language = '" . $_POST['lang'] . "'");
+        $check_query = $gBitDb->Execute("select * from " . TABLE_TEMPLATE_SELECT . " where template_language = '" . $_POST['lang'] . "'");
         if ($check_query->RecordCount() < 1 ) {
-          $db->Execute("insert into " . TABLE_TEMPLATE_SELECT . " (template_dir, template_language) values ('" . $_POST['ln'] . "', '" . $_POST['lang'] . "')");
+          $gBitDb->Execute("insert into " . TABLE_TEMPLATE_SELECT . " (template_dir, template_language) values ('" . $_POST['ln'] . "', '" . $_POST['lang'] . "')");
           $_GET['tID'] = zen_db_insert_id( TABLE_TEMPLATE_SELECT, 'template_id' );
         }
         $action="";
         break;
       case 'save':
-        $db->Execute("update " . TABLE_TEMPLATE_SELECT . " set template_dir = '" . $_POST['ln'] . "' where template_id = '" . $_GET['tID'] . "'");
+        $gBitDb->Execute("update " . TABLE_TEMPLATE_SELECT . " set template_dir = '" . $_POST['ln'] . "' where template_id = '" . $_GET['tID'] . "'");
         break;
       case 'deleteconfirm':
-        $check_query = $db->Execute("select template_language from " . TABLE_TEMPLATE_SELECT . " where template_id = '" . $_GET['tID'] . "'");
+        $check_query = $gBitDb->Execute("select template_language from " . TABLE_TEMPLATE_SELECT . " where template_id = '" . $_GET['tID'] . "'");
         if ( $check_query->fields['template_language'] != 0 ) {
-          $db->Execute("delete from " . TABLE_TEMPLATE_SELECT . " where template_id = '" . $_GET['tID'] . "'");
+          $gBitDb->Execute("delete from " . TABLE_TEMPLATE_SELECT . " where template_id = '" . $_GET['tID'] . "'");
           zen_redirect(zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page']));
         }
         $action="";
@@ -115,7 +115,7 @@
                     <?php
   $template_query_raw = "select * from " . TABLE_TEMPLATE_SELECT;
   $template_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $template_query_raw, $template_query_numrows);
-  $templates = $db->Execute($template_query_raw);
+  $templates = $gBitDb->Execute($template_query_raw);
   while (!$templates->EOF) {
     if ((!isset($_GET['tID']) || (isset($_GET['tID']) && ($_GET['tID'] == $templates->fields['template_id']))) && !isset($tInfo) && (substr($action, 0, 3) != 'new')) {
       $tInfo = new objectInfo($templates->fields);
@@ -129,7 +129,7 @@
     if ($templates->fields['template_language'] == 0) {
       $template_language = "Default(All)";
     } else {
-      $ln = $db->Execute("select name
+      $ln = $gBitDb->Execute("select name
                           from " . TABLE_LANGUAGES . "
                           where languages_id = '" . $templates->fields['template_language'] . "'");
       $template_language = $ln->fields['name'];
@@ -177,7 +177,7 @@
       while (list ($key, $value) = each($template_info) ) {
         $template_array[] = array('id' => $key, 'text' => $value['name']);
       }
-      $lns = $db->Execute("select name, languages_id from " . TABLE_LANGUAGES);
+      $lns = $gBitDb->Execute("select name, languages_id from " . TABLE_LANGUAGES);
       while (!$lns->EOF) {
         $language_array[] = array('text' => $lns->fields['name'], 'id' => $lns->fields['languages_id']);
         $lns->MoveNext();

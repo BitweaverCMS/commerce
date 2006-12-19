@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: options_values_manager.php,v 1.17 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: options_values_manager.php,v 1.18 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names and values
-  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
+  $chk_option_names = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
 		" where `language_id` ='" . $_SESSION['languages_id'] . "'");
   if ( empty( $chk_option_names ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
@@ -66,7 +66,7 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
-          $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+          $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                       (products_options_values_id, language_id, products_options_values_name, products_ov_sort_order)
                       values ('" . (int)$value_id . "',
                               '" . (int)$languages[$i]['id'] . "',
@@ -74,7 +74,7 @@
                               '" . (int)$products_ov_sort_order . "')");
         }
 
-        $db->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
+        $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                     (products_options_id, products_options_values_id)
                     values ('" . (int)$option_id . "', '" . (int)$value_id . "')");
 
@@ -83,7 +83,7 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
-          $check= $db->Execute("select pov.products_options_values_id, pov.products_options_values_name, pov.`language_id`
+          $check= $gBitDb->Execute("select pov.products_options_values_id, pov.products_options_values_name, pov.`language_id`
                                 from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                                 left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.products_options_values_id = pov2po.products_options_values_id
                                 where pov.`language_id`= '" . $languages[$i]['id'] . "'
@@ -114,14 +114,14 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
-          $db->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                         set `products_options_values_name` = '" . zen_db_input($value_name) . "', `products_ov_sort_order` = '" . (int)$products_ov_sort_order . "'
                         where `products_options_values_id` = '" . zen_db_input($value_id) . "'
                         and `language_id` = '" . (int)$languages[$i]['id'] . "'");
 
         }
 
-        $db->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
+        $gBitDb->Execute("update " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                       set `products_options_id` = '" . (int)$option_id . "'
                       where `products_options_values_id` = '" . (int)$value_id . "'");
 
@@ -131,7 +131,7 @@
         for ($i=0, $n=sizeof($languages); $i<$n; $i ++) {
           $value_name = zen_db_prepare_input($value_name_array[$languages[$i]['id']]);
 
-          $check= $db->Execute("select pov.`products_options_values_id`, pov.`products_options_values_name`, pov.`language_id`
+          $check= $gBitDb->Execute("select pov.`products_options_values_id`, pov.`products_options_values_name`, pov.`language_id`
                                 from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
                                 left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " pov2po on pov.`products_options_values_id` = pov2po.`products_options_values_id`
                                 where pov.`language_id`= '" . $languages[$i]['id'] . "'
@@ -163,31 +163,31 @@
         $value_id = zen_db_prepare_input($_GET['value_id']);
 
 // remove all attributes from products with value
-        $remove_attributes_query = $db->Execute("select `products_attributes_id`, `options_id`, `options_values_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `options_values_id` ='" . (int)$value_id . "'");
+        $remove_attributes_query = $gBitDb->Execute("select `products_attributes_id`, `options_id`, `options_values_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `options_values_id` ='" . (int)$value_id . "'");
         if ($remove_attributes_query->RecordCount() > 0) {
           // clean all tables of option value
           While (!$remove_attributes_query->EOF) {
 
-            $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+            $gBitDb->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                           where `products_attributes_id`='" . $remove_attributes_query->fields['products_attributes_id'] . "'");
 
-            $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
+            $gBitDb->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
                           where `options_values_id`='" . $remove_attributes_query->fields['options_values_id'] . "'");
 
-            $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+            $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                           where `products_options_values_id` = '" . $remove_attributes_query->fields['options_values_id'] . "'");
 
-            $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
+            $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                           where `products_options_values_id` = '" . $remove_attributes_query->fields['options_values_id'] . "'");
 
             $remove_attributes_query->MoveNext();
           }
         } else {
           // remove option value only
-          $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+          $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                         where `products_options_values_id` = '" . (int)$value_id . "'");
 
-          $db->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
+          $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
                         where `products_options_values_id` = '" . (int)$value_id . "'");
 
         }
@@ -206,9 +206,9 @@
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
+        $products_only = $gBitDb->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
       } else {
-        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
+        $products_only = $gBitDb->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
       }
 
 /*
@@ -244,10 +244,10 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
             while(!$products_only->EOF) {
               $current_products_id = $products_only->fields['products_id'];
               $sql = "insert into " . TABLE_PRODUCTS_ATTRIBUTES . "(`products_id`, `options_id`, `options_values_id`) values('" . $current_products_id . "', '" . $options_id_to . "', '" . $options_values_values_id_to . "')";
-              $check_previous = $db->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'");
+              $check_previous = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_to . "' and `options_values_id`='" . $options_values_values_id_to . "'");
               // do not add duplicate attributes
               if( empty( $check_previous ) ) {
-				$db->Execute($sql);
+				$gBitDb->Execute($sql);
 				$new_attribute++;
               }
               $products_only->MoveNext();
@@ -285,12 +285,12 @@ die('I SEE match from: ' . $options_id_from . '-' . $options_values_values_id_fr
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select distinct ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_to . "')");
+        $products_only = $gBitDb->Execute("select distinct ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_to . "')");
       } else {
-        $products_only = $db->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_to . "'");
+        $products_only = $gBitDb->Execute("select distinct pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_to . "'");
       }
 
-      $products_attributes_defaults = $db->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`products_id` = '" . $copy_from_products_id . "' and `options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
+      $products_attributes_defaults = $gBitDb->Execute("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`products_id` = '" . $copy_from_products_id . "' and `options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
 
       $options_id = zen_db_prepare_input($options_id_from);
       $values_id = zen_db_prepare_input($options_values_values_id_from);
@@ -392,11 +392,11 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                                   '" . zen_db_input($attributes_price_letters_free) . "',
                                   '" . zen_db_input($attributes_required) . "')";
 
-              $check_previous = $db->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
+              $check_previous = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
               // do not add duplicate attributes
               if ($check_previous->RecordCount() < 1) {
               // add new attribute
-                $db->Execute($sql);
+                $gBitDb->Execute($sql);
                 //echo $sql . '<br>';
                 $new_attribute++;
               } else {
@@ -406,8 +406,8 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
                 } else {
                 // delete old and add new
                 //echo 'delete old and add new: ' . $current_products_id . '<br>';
-                  $db->Execute("DELETE from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
-                  $db->Execute($sql);
+                  $gBitDb->Execute("DELETE from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'");
+                  $gBitDb->Execute($sql);
                   $new_attribute++;
                 }
               }
@@ -440,9 +440,9 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
 
       // one category of products or all products
       if ($_POST['copy_to_categories_id'] != '') {
-        $products_only = $db->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
+        $products_only = $gBitDb->Execute("select ptc.`products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES  . " ptc left join " . TABLE_PRODUCTS_ATTRIBUTES . " pa on pa.`products_id`=ptc.`products_id` where ptc.`categories_id`='" . $_POST['copy_to_categories_id'] . "' and (pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "')");
       } else {
-        $products_only = $db->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
+        $products_only = $gBitDb->Execute("select pa.`products_id` from " . TABLE_PRODUCTS_ATTRIBUTES  . " pa where pa.`options_id` ='" . $options_id_from . "' and pa.`options_values_id` ='" . $options_values_values_id_from . "'");
       }
 
       if ($_POST['copy_to_categories_id'] == '') {
@@ -464,14 +464,14 @@ die('I SEE match from products_id:' . $copy_from_products_id . ' options_id_from
 
             // check for associated downloads
             $downloads_remove_query = "select `products_attributes_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and options_id='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'";
-            $downloads_remove = $db->Execute($downloads_remove_query);
+            $downloads_remove = $gBitDb->Execute($downloads_remove_query);
 
             $sql = "delete from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $current_products_id . "' and `options_id` ='" . $options_id_from . "' and `options_values_id` ='" . $options_values_values_id_from . "'";
-            $delete_selected = $db->Execute($sql);
+            $delete_selected = $gBitDb->Execute($sql);
 
             // delete associated downloads
             while (!$downloads_remove->EOF) {
-              $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+              $gBitDb->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                             where products_attributes_id='" . $downloads_remove->fields['products_attributes_id'] . "'");
               $downloads_remove->MoveNext();
             }
@@ -563,7 +563,7 @@ function go_option() {
 <!-- value //-->
 <?php
   if ($action == 'delete_option_value') { // delete product option value
-    $values_values = $db->Execute("select products_options_values_id, products_options_values_name
+    $values_values = $gBitDb->Execute("select products_options_values_id, products_options_values_name
                                    from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                                    where `products_options_values_id` = '" . (int)$_GET['value_id'] . "'
                                    and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -576,7 +576,7 @@ function go_option() {
                 <td colspan="4"><?php echo zen_black_line(); ?></td>
               </tr>
 <?php
-    $products_values = $db->Execute("select p.`products_id`, pd.`products_name`, po.`products_options_name`, pa.`options_id`
+    $products_values = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, po.`products_options_name`, pa.`options_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_ATTRIBUTES . " pa, "
                                      . TABLE_PRODUCTS_OPTIONS . " po, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where pd.`products_id` = p.`products_id`
@@ -665,7 +665,7 @@ function go_option() {
     $prev_value_page = $_GET['value_page'] - 1;
     $next_value_page = $_GET['value_page'] + 1;
 
-    $value_query = $db->query($values, $bindVars);
+    $value_query = $gBitDb->query($values, $bindVars);
 
     $value_page_start = ($per_page * $_GET['value_page']) - $per_page;
     $num_rows = $value_query->RecordCount();
@@ -718,7 +718,7 @@ function go_option() {
 <?php
     $next_id = 1;
     $rows = 0;
-    $values_values = $db->query($values, $bindVars, $per_page, $value_page_start);
+    $values_values = $gBitDb->query($values, $bindVars, $per_page, $value_page_start);
     while (!$values_values->EOF) {
       $options_name = zen_options_name($values_values->fields['products_options_id']);
 // iii 030813 added: Option Type Feature and File Uploading
@@ -739,18 +739,18 @@ function go_option() {
         echo '<form name="values" action="' . zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, 'action=update_value' . (isset($_GET['option_page']) ? '&option_page=' . $_GET['option_page'] . '&' : '') . (isset($_GET['value_page']) ? '&value_page=' . $_GET['value_page'] . '&' : '') . (isset($_GET['attribute_page']) ? '&attribute_page=' . $_GET['attribute_page'] : '') ) . '" method="post">';
         $inputs = '';
         for ($i = 0, $n = sizeof($languages); $i < $n; $i ++) {
-          $value_name = $db->Execute("select `products_options_values_name`
+          $value_name = $gBitDb->Execute("select `products_options_values_name`
                                       from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                                       where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "' and `language_id` = '" . (int)$languages[$i]['id'] . "'");
           $inputs .= $languages[$i]['code'] . ':&nbsp;<input type="text" name="value_name[' . $languages[$i]['id'] . ']" ' . zen_set_field_length(TABLE_PRODUCTS_OPTIONS_VALUES, 'products_options_values_name', 25) . ' value="' . $value_name->fields['products_options_values_name'] . '">&nbsp;<br />';
         }
-          $products_ov_sort_order = $db->Execute("select distinct `products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");
+          $products_ov_sort_order = $gBitDb->Execute("select distinct `products_ov_sort_order` from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `products_options_values_id` = '" . (int)$values_values->fields['products_options_values_id'] . "'");
           $inputs2 .= '&nbsp;<input type="text" name="products_ov_sort_order" size="4" value="' . $products_ov_sort_order->fields['products_ov_sort_order'] . '">&nbsp;';
 ?>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo $values_values->fields['products_options_values_id']; ?><input type="hidden" name="value_id" value="<?php echo $values_values->fields['products_options_values_id']; ?>">&nbsp;</td>
                 <td align="center" class="attributeBoxContent">&nbsp;<?php echo "\n"; ?><select name="option_id">
 <?php
-        $options_values = $db->Execute("select `products_options_id`, `products_options_name`, `products_options_type`
+        $options_values = $gBitDb->Execute("select `products_options_id`, `products_options_name`, `products_options_type`
                                        from " . TABLE_PRODUCTS_OPTIONS . "
                                        where `language_id` = '" . (int)$_SESSION['languages_id'] . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and `products_options_type` !='" . PRODUCTS_OPTIONS_TYPE_FILE . "'
                                        order by `products_options_name`");
@@ -795,7 +795,7 @@ function go_option() {
 ?>
 <?php
       }
-      $max_values_id_values = $db->Execute("select max(products_options_values_id) + 1
+      $max_values_id_values = $gBitDb->Execute("select max(products_options_values_id) + 1
                                            as next_id from " . TABLE_PRODUCTS_OPTIONS_VALUES);
 
       $next_id = $max_values_id_values->fields['next_id'];
@@ -817,7 +817,7 @@ function go_option() {
                 <td align="center" class="smallText">&nbsp;<?php echo $next_id; ?>&nbsp;</td>
                 <td align="center" class="smallText">&nbsp;<select name="option_id">
 <?php
-      $options_values = $db->Execute("select products_options_id, products_options_name, products_options_type
+      $options_values = $gBitDb->Execute("select products_options_id, products_options_name, products_options_type
                                       from " . TABLE_PRODUCTS_OPTIONS . "
                                       where `language_id` = '" . $_SESSION['languages_id'] . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_FILE . "'
                                       order by products_options_name");
@@ -880,7 +880,7 @@ function go_option() {
 */
 
   // build dropdown for option_name from
-  $options_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_name` !='' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_FILE . "' order by products_options_name");
+  $options_values_from = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_name` !='' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_TEXT . "' and products_options_type !='" . PRODUCTS_OPTIONS_TYPE_FILE . "' order by products_options_name");
 	$option_from_dropdown = '';
   while(!$options_values_from->EOF) {
     $option_from_dropdown .= "\n" . '  <option name="' . $options_values_from->fields['products_options_name'] . '" value="' . $options_values_from->fields['products_options_id'] . '">' . $options_values_from->fields['products_options_name'] . '</option>';
@@ -896,7 +896,7 @@ function go_option() {
   $option_to_dropdown.= "\n" . '</select>';
 
   // build dropdown for option_values from
-  $options_values_values_from = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_values_id` !='0' order by `products_options_values_name`");
+  $options_values_values_from = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . $_SESSION['languages_id'] . "' and `products_options_values_id` !='0' order by `products_options_values_name`");
 	$option_values_from_dropdown = '';
   while(!$options_values_values_from->EOF) {
     $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($options_values_values_from->fields['products_options_values_id'])) . ']';

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.11 2006/09/02 23:35:37 spiderr Exp $
+//  $Id: preview_info.php,v 1.12 2006/12/19 00:11:31 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -26,7 +26,7 @@
       $products_description = $_POST['products_description'];
       $products_url = $_POST['products_url'];
     } else {
-      $products = $db->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
+      $products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
                                       pd.`products_description`, pd.`products_url`, p.`products_quantity`,
                                       p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
                                       p.`products_weight`, p.`products_date_added`, p.products_last_modified,

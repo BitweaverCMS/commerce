@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_lowstock.php,v 1.6 2005/09/28 22:38:58 spiderr Exp $
+//  $Id: stats_products_lowstock.php,v 1.7 2006/12/19 00:11:29 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -77,7 +77,7 @@
   $rows = 0;
   $products_query_raw = "select p.`products_id`, pd.`products_name`, p.`products_quantity`, p.`products_type` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.`products_id` = pd.`products_id` and pd.`language_id`='" . $_SESSION['languages_id'] . "' order by p.`products_quantity`, pd.`products_name`";
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
-  $products = $db->Execute($products_query_raw);
+  $products = $gBitDb->Execute($products_query_raw);
   while (!$products->EOF) {
 
 // only show low stock on products that can be added to the cart

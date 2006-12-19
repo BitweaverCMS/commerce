@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: order.php,v 1.7 2005/08/24 15:28:51 lsces Exp $
+//  $Id: order.php,v 1.8 2006/12/19 00:11:30 spiderr Exp $
 //
 
   class order {
@@ -34,13 +34,13 @@
     }
 
     function query($order_id) {
-      global $db;
-      $order = $db->Execute("select *
+      global $gBitDb;
+      $order = $gBitDb->Execute("select *
                              from " . TABLE_ORDERS . " o INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
                              where `orders_id` = '" . (int)$order_id . "'");
 
 
-      $totals = $db->Execute("select `title`, `text`, `class`
+      $totals = $gBitDb->Execute("select `title`, `text`, `class`
                               from " . TABLE_ORDERS_TOTAL . "
                               where `orders_id` = '" . (int)$order_id . "'
                               order by `sort_order`");
@@ -89,7 +89,7 @@
                              'format_id' => $order->fields['billing_address_format_id']);
 
       $index = 0;
-      $orders_products = $db->Execute("select *
+      $orders_products = $gBitDb->Execute("select *
                                        from " . TABLE_ORDERS_PRODUCTS . "
                                        where `orders_id` = '" . (int)$order_id . "'");
 
@@ -125,7 +125,7 @@
                                         'product_is_free' => $orders_products->fields['product_is_free']) );
 
         $subindex = 0;
-        $attributes = $db->Execute("select `products_options`, `products_options_values`, `options_values_price`,
+        $attributes = $gBitDb->Execute("select `products_options`, `products_options_values`, `options_values_price`,
                                            `price_prefix`,
                                            `product_attribute_is_free`
                                     from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "

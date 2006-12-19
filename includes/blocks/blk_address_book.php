@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_address_book.php,v 1.4 2006/01/15 00:03:24 lsces Exp $
+// $Id: blk_address_book.php,v 1.5 2006/12/19 00:11:32 spiderr Exp $
 //
   $addresses_query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
                              `entry_company` as `company`, `entry_street_address` as `street_address`,
@@ -27,7 +27,7 @@
                       where  `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                       order by `entry_firstname`, `entry_lastname`";
 
-  $addresses = $db->Execute($addresses_query);
+  $addresses = $gBitDb->Execute($addresses_query);
 
   while (!$addresses->EOF) {
     $format_id = zen_get_address_format_id($addresses->fields['country_id']);

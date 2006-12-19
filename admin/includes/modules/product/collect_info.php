@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.21 2006/09/02 23:35:37 spiderr Exp $
+//  $Id: collect_info.php,v 1.22 2006/12/19 00:11:31 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -61,9 +61,9 @@
     $pInfo = new objectInfo($parameters);
 
     if (isset($_GET['pID']) && empty($_POST)) {
-      $product = $db->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
+      $product = $gBitDb->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
                                       p.*,
-                                      ".$db->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
+                                      ".$gBitDb->mDb->SQLDate('Y-m-d','p.`products_date_available`')." as
                                       `products_date_available`, p.`products_status`, p.`products_tax_class_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                               where p.`products_id` = '" . (int)$_GET['pID'] . "'
@@ -79,7 +79,7 @@
     }
 
     $manufacturers_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $manufacturers = $db->Execute("select `manufacturers_id`, `manufacturers_name`
+    $manufacturers = $gBitDb->Execute("select `manufacturers_id`, `manufacturers_name`
                                    from " . TABLE_MANUFACTURERS . " order by `manufacturers_name`");
     while (!$manufacturers->EOF) {
       $manufacturers_array[] = array('id' => $manufacturers->fields['manufacturers_id'],
@@ -88,7 +88,7 @@
     }
 
     $suppliers_array = array(array('id' => '', 'text' => TEXT_NONE));
-    $suppliers = $db->Execute("select `suppliers_id`, `suppliers_name`
+    $suppliers = $gBitDb->Execute("select `suppliers_id`, `suppliers_name`
                                    from " . TABLE_SUPPLIERS . " order by `suppliers_name`");
     while (!$suppliers->EOF) {
       $suppliers_array[] = array('id' => $suppliers->fields['suppliers_id'],
@@ -97,7 +97,7 @@
     }
 
     $tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
-    $tax_class = $db->Execute("select `tax_class_id`, `tax_class_title`
+    $tax_class = $gBitDb->Execute("select `tax_class_id`, `tax_class_title`
                                      from " . TABLE_TAX_CLASS . " order by `tax_class_title`");
     while (!$tax_class->EOF) {
       $tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],

@@ -17,25 +17,25 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.27 2006/09/02 23:35:32 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.28 2006/12/19 00:11:27 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
   // verify option names, values, products
-  $chk_option_names = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
+  $chk_option_names = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_OPTIONS .
 		" where `language_id`=?", array( $_SESSION['languages_id'] ) );
   if ( empty( $chk_option_names ) ) {
     $messageStack->add_session(ERROR_DEFINE_OPTION_NAMES, 'caution');
     zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER));
   }
-  $chk_option_values = $db->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
+  $chk_option_values = $gBitDb->getOne("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES .
 		" where `products_options_values_id` != '0' and `language_id`=?", array( $_SESSION['languages_id'] ) );
   if( empty( $chk_option_values ) ) {
 	$messageStack->add_session(ERROR_DEFINE_OPTION_VALUES, 'caution');
 	zen_redirect(zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER));
   }
-  $chk_products = $db->getOne("select * from " . TABLE_PRODUCTS);
+  $chk_products = $gBitDb->getOne("select * from " . TABLE_PRODUCTS);
   if( empty( $chk_products ) ) {
 	$messageStack->add_session(ERROR_DEFINE_PRODUCTS, 'caution');
 	zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES));
@@ -54,14 +54,14 @@
 
   if ($action == 'new_cat') {
     $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
 
 // set categories and products if not set
   if ($productsId == '' and $current_category_id != '') {
-    $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id. "' order by pd.`products_name`");
+    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id. "' order by pd.`products_name`");
     $productsId = $new_product_query->fields['products_id'];
     if ($productsId != '') {
       zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -70,7 +70,7 @@
     if ($productsId == '' and $current_category_id == '') {
       $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
       $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $db->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
+      $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
       $productsId = $new_product_query->fields['products_id'];
       $_GET['products_id'] = $productsId;
     }
@@ -95,44 +95,44 @@
 //// BOF OF FLAGS
       case 'set_flag_attributes_display_only':
         $action='';
-        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_display_only` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("select `products_attributes_id`, `products_id`, `attributes_display_only` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_display_only'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_display_only`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_product_attribute_is_free':
         $action='';
-        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `product_attribute_is_free` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("select `products_attributes_id`, `products_id`, `product_attribute_is_free` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['product_attribute_is_free'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='1' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='1' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='0' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `product_attribute_is_free`='0' where `products_id` ='" . $_GET['products_id'] . "' and products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_default':
         $action='';
-        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_default` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("select `products_attributes_id`, `products_id`, `attributes_default` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_default'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_default`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
 
       case 'set_flag_attributes_discounted':
         $action='';
-        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_discounted` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("select `products_attributes_id`, `products_id`, `attributes_discounted` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_discounted'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_discounted`='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
 
         // reset products_price_sorter for searches etc.
@@ -143,11 +143,11 @@
 
       case 'set_flag_attributes_price_base_inc':
         $action='';
-        $new_flag= $db->Execute("select `products_attributes_id`, `products_id`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("select `products_attributes_id`, `products_id`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_price_base_inc'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_price_base_inc` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
 
         // reset products_price_sorter for searches etc.
@@ -158,11 +158,11 @@
 
       case 'set_flag_attributes_required':
         $action='';
-        $new_flag= $db->Execute("`select products_attributes_id`, `products_id`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+        $new_flag= $gBitDb->Execute("`select products_attributes_id`, `products_id`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         if ($new_flag->fields['attributes_required'] == '0') {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='1' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `attributes_required` ='0' where `products_id` ='" . $_GET['products_id'] . "' and `products_attributes_id` ='" . $_GET['attributes_id'] . "'");
         }
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $_GET['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
@@ -188,7 +188,7 @@
         break;
       case 'add_product_attributes':
 // check for duplicate and block them
-        $check_duplicate = $db->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
+        $check_duplicate = $gBitDb->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
                                          where `products_id` = ?
                                          and `options_id` = ?
                                          and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
@@ -204,7 +204,7 @@
           } else {
 // iii 030811 added:  For TEXT and FILE option types, ignore option value
 // entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
-        $products_options_array = $db->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['options_id'] ) );
+        $products_options_array = $gBitDb->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['options_id'] ) );
         $values_id = (($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id'];
             $products_id = zen_db_prepare_input($_POST['products_id']);
             $options_id = zen_db_prepare_input($_POST['options_id']);
@@ -281,7 +281,7 @@
 				'attributes_required' => $attributes_required,
 			);
 
-            $db->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $attrs );
+            $gBitDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $attrs );
 
             if (DOWNLOAD_ENABLED == 'true') {
 				$products_attributes_id = zen_db_insert_id( TABLE_PRODUCTS_ATTRIBUTES, 'products_attributes_id' );
@@ -292,7 +292,7 @@
 
 	//die( 'I am adding ' . strlen($_POST['products_attributes_filename']) . ' vs ' . strlen(trim($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_prepare_input($_POST['products_attributes_filename'])) . ' vs ' . strlen(zen_db_input($products_attributes_filename)) );
 				if (zen_not_null($products_attributes_filename)) {
-					$db->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+					$gBitDb->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
 								values (" . (int)$products_attributes_id . ",
 										'" . zen_db_input($products_attributes_filename) . "',
 										'" . zen_db_input($products_attributes_maxdays) . "',
@@ -308,7 +308,7 @@
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&products_id=' . $_POST['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
       case 'update_product_attribute':
-        $check_duplicate = $db->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` =? and `options_id` = ? and `options_values_id` = ? and `products_attributes_id` != ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'], $_POST['attribute_id'] ) );
+        $check_duplicate = $gBitDb->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` =? and `options_id` = ? and `options_values_id` = ? and `products_attributes_id` != ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'], $_POST['attribute_id'] ) );
 
         if ($check_duplicate->RecordCount() > 0) {
           // do not add duplicates give a warning
@@ -321,7 +321,7 @@
           } else {
             // add the new attribute
 // iii 030811 added:  Enforce rule that TEXT and FILE Options use value PRODUCTS_OPTIONS_VALUES_TEXT_ID
-        $products_options_query = $db->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
+        $products_options_query = $gBitDb->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
         switch ($products_options_array->fields['products_options_type']) {
           case PRODUCTS_OPTIONS_TYPE_TEXT:
           case PRODUCTS_OPTIONS_TYPE_FILE:
@@ -383,7 +383,7 @@
           }
 
 // turned off until working
-          $db->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . "
                         set attributes_image = '" .  $attributes_image_name . "'
                         where products_attributes_id = '" . (int)$attribute_id . "'");
 
@@ -412,7 +412,7 @@
 				'attributes_required' => $attributes_required,
 			);
 
-            $db->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $attrs, array( 'products_attributes_id' => $attribute_id ) );
+            $gBitDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $attrs, array( 'products_attributes_id' => $attribute_id ) );
 
             if (DOWNLOAD_ENABLED == 'true') {
               $products_attributes_filename = zen_db_prepare_input($_POST['products_attributes_filename']);
@@ -420,7 +420,7 @@
               $products_attributes_maxcount = zen_db_prepare_input($_POST['products_attributes_maxcount']);
 
               if (zen_not_null($products_attributes_filename)) {
-                $db->Execute("replace into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+                $gBitDb->Execute("replace into " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                               set `products_attributes_id` = '" . (int)$attribute_id . "',
                                   `products_attributes_filename` = '" . zen_db_input($products_attributes_filename) . "',
                                   `products_attributes_maxdays` = '" . zen_db_input($products_attributes_maxdays) . "',
@@ -444,11 +444,11 @@
         }
         $attribute_id = zen_db_prepare_input($_GET['attribute_id']);
 
-        $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
+        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES . "
                       where `products_attributes_id` = '" . (int)$attribute_id . "'");
 
 // added for DOWNLOAD_ENABLED. Always try to remove attributes, even if downloads are no longer enabled
-        $db->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
+        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                       where `products_attributes_id` = '" . (int)$attribute_id . "'");
 
         // reset products_price_sorter for searches etc.
@@ -489,7 +489,7 @@
       if ($_POST['categories_update_id'] == '') {
         $messageStack->add_session(WARNING_PRODUCT_COPY_TO_CATEGORY_NONE . ' ID#' . $_POST['products_id'], 'warning');
       } else {
-        $copy_to_category = $db->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
+        $copy_to_category = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . $_POST['categories_update_id'] . "'");
         while (!$copy_to_category->EOF) {
           zen_copy_products_attributes($_POST['products_id'], $copy_to_category->fields['products_id']);
           $copy_to_category->MoveNext();
@@ -505,8 +505,8 @@
 
 //iii 031103 added to get results from database option type query
   $products_options_types_list = array();
-//  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where `language_id` ='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
-  $products_options_type_array = $db->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " order by products_options_types_id");
+//  $products_options_type_array = $gBitDb->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " where `language_id` ='" . $_SESSION['languages_id'] . "' order by products_options_types_id");
+  $products_options_type_array = $gBitDb->Execute("select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " order by products_options_types_id");
   while (!$products_options_type_array->EOF) {
     $products_options_types_list[$products_options_type_array->fields['products_options_types_id']] = $products_options_type_array->fields['products_options_types_name'];
     $products_options_type_array->MoveNext();
@@ -773,7 +773,7 @@ if ($action == 'attributes_preview') {
 <?php
 //            where    patrib.`products_id`='" . $pInfo->products_id . "'
 //            where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-  $check_template = $db->Execute("select template_dir from " . TABLE_TEMPLATE_SELECT);
+  $check_template = $gBitDb->Execute("select template_dir from " . TABLE_TEMPLATE_SELECT);
   echo '<link rel="stylesheet" type="text/css" href="' . DIR_WS_CATALOG_TEMPLATE . $check_template->fields['template_dir'] . '/css/stylesheet.css' . '" />';
 ?>
 
@@ -955,7 +955,7 @@ if ($action == '') {
 <?php
   $per_page = MAX_ROW_LISTS_ATTRIBUTES_CONTROLLER;
   $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id` and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.`products_id` ='" . $productsId . "' order by pd.`products_name`, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.`options_id`,11,'0'), LPAD(pa.`products_options_sort_order`,11,'0')";
-  $attribute_query = $db->Execute($attributes);
+  $attribute_query = $gBitDb->Execute($attributes);
 
   $attribute_page_start = ($per_page * $_GET['attribute_page']) - $per_page;
   $num_rows = $attribute_query->RecordCount();
@@ -1013,7 +1013,7 @@ if ($action == '') {
 
 <?php
   $next_id = 1;
-  $attributes_values = $db->query($attributes, NULL, $per_page, $attribute_page_start );
+  $attributes_values = $gBitDb->query($attributes, NULL, $per_page, $attribute_page_start );
 
   if ($attributes_values->RecordCount() == 0) {
 ?>
@@ -1099,7 +1099,7 @@ if ($action == '') {
             <td class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_VALUE . '<br />'; ?><select name="values_id" size="5">
 <?php
 // FIX HERE 2
-      $values_values = $db->query("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
+      $values_values = $gBitDb->query("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
                                      where pov.`language_id` =? AND povtpo.products_options_id=?
                                      order by pov.products_options_values_name", array( $_SESSION['languages_id'], $attributes_values->fields['options_id'] ) );
 
@@ -1317,7 +1317,7 @@ if ($action == '') {
         $download_query_raw ="select products_attributes_filename, products_attributes_maxdays, products_attributes_maxcount
                               from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                               where products_attributes_id='" . $attributes_values->fields['products_attributes_id'] . "'";
-        $download = $db->Execute($download_query_raw);
+        $download = $gBitDb->Execute($download_query_raw);
         if ($download->RecordCount() > 0) {
           $products_attributes_filename = $download->fields['products_attributes_filename'];
           $products_attributes_maxdays  = $download->fields['products_attributes_maxdays'];
@@ -1446,7 +1446,7 @@ if ($action == '') {
         $download_display_query_raw ="select products_attributes_filename, products_attributes_maxdays, products_attributes_maxcount
                               from " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . "
                               where products_attributes_id='" . $attributes_values->fields['products_attributes_id'] . "'";
-        $download_display = $db->Execute($download_display_query_raw);
+        $download_display = $gBitDb->Execute($download_display_query_raw);
         if ($download_display->RecordCount() > 0) {
 
 // Could go into /admin/includes/configure.php
@@ -1481,7 +1481,7 @@ if ($action == '') {
 ?>
 <?php
     }
-    $max_attributes_id_values = $db->Execute("select max(products_attributes_id) + 1
+    $max_attributes_id_values = $gBitDb->Execute("select max(products_attributes_id) + 1
                                               as next_id from " . TABLE_PRODUCTS_ATTRIBUTES);
 
     $next_id = $max_attributes_id_values->fields['next_id'];
@@ -1577,7 +1577,7 @@ if ($action == '') {
             <td class="attributeBoxContent" width="40">&nbsp;</td>
             <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_NAME . '<br />'; ?><select name="options_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
 <?php
-    $options_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . "
+    $options_values = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . "
                                     where `language_id` = '" . $_SESSION['languages_id'] . "'
                                     order by `products_options_name`");
 
@@ -1589,7 +1589,7 @@ if ($action == '') {
             </select>&nbsp;</td>
             <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_VALUE . '<br />'; ?><select name="values_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
 <?php
-    $values_values = $db->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
+    $values_values = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
                                    where `language_id` = '" . $_SESSION['languages_id'] . "'
                                    order by `products_options_values_name`");
     while (!$values_values->EOF) {

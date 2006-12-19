@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_yearly.php,v 1.2 2005/10/06 21:01:45 spiderr Exp $
+//  $Id: banner_yearly.php,v 1.3 2006/12/19 00:11:30 spiderr Exp $
 //
 
   include(DIR_WS_CLASSES . 'phplot.php');
 
   $stats = array(array('0', '0', '0'));
-  $banner_stats = $db->Execute("select year(banners_history_date) as year,
+  $banner_stats = $gBitDb->Execute("select year(banners_history_date) as year,
                                        sum(banners_shown) as value, sum(banners_clicked) as dvalue
                                 from " . TABLE_BANNERS_HISTORY . "
                                 where banners_id = '" . $banner_id . "' group by year");

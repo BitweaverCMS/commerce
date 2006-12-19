@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration_dhtml.php,v 1.7 2006/02/05 21:36:07 spiderr Exp $
+//  $Id: configuration_dhtml.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
 //
 
 ?>
@@ -26,13 +26,13 @@
 <li class="submenu">
 <?php echo BOX_HEADING_CONFIGURATION; ?><ul>
 <?php
-	global $db;
+	global $gBitDb;
 	$heading = array();
 	$contents = array();
 	$heading[] = array('text'  => BOX_HEADING_CONFIGURATION,
                      'link'  => zen_href_link_admin(basename($_SERVER['PHP_SELF']), zen_get_all_get_params(array('selected_box')) . 'selected_box=configuration'));
 	$cfg_groups = '';
-	$rs = $db->Execute("SELECT `configuration_group_id` as `cg_id`,
+	$rs = $gBitDb->Execute("SELECT `configuration_group_id` as `cg_id`,
 												`configuration_group_title` as `cg_title`
 												from " . TABLE_CONFIGURATION_GROUP . "
 												where `visible` = '1' order by `sort_order`");

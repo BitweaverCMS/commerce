@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.7 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: html_output.php,v 1.8 2006/12/19 00:11:30 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
@@ -105,8 +105,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 // javascript to dynamically update the states/provinces list when the country is changed
 // TABLES: zones
   function zen_js_zone_list($country, $form, $field) {
-    global $db;
-    $countries = $db->Execute("select distinct zone_country_id
+    global $gBitDb;
+    $countries = $gBitDb->Execute("select distinct zone_country_id
                                from " . TABLE_ZONES . "
                                order by zone_country_id");
 
@@ -119,7 +119,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
         $output_string .= '  } else if (' . $country . ' == "' . $countries->fields['zone_country_id'] . '") {' . "\n";
       }
 
-      $states = $db->Execute("select `zone_name`, `zone_id`
+      $states = $gBitDb->Execute("select `zone_name`, `zone_id`
                               from " . TABLE_ZONES . "
                               where `zone_country_id` = '" . $countries->fields['zone_country_id'] . "'
                               order by `zone_name`");

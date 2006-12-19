@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.13 2006/09/02 23:35:33 spiderr Exp $
+//  $Id: geo_zones.php,v 1.14 2006/12/19 00:11:28 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -31,7 +31,7 @@
         $zone_country_id = zen_db_prepare_input($_POST['zone_country_id']);
         $zone_id = zen_db_prepare_input($_POST['zone_id']);
 
-        $db->Execute("insert into " . TABLE_ZONES_TO_GEO_ZONES . "
+        $gBitDb->Execute("insert into " . TABLE_ZONES_TO_GEO_ZONES . "
                     (`zone_country_id`, `zone_id`, `geo_zone_id`, `date_added`)
                     values ('" . (int)$zone_country_id . "',
                             '" . (int)$zone_id . "',
@@ -48,7 +48,7 @@
         $zone_country_id = zen_db_prepare_input($_POST['zone_country_id']);
         $zone_id = zen_db_prepare_input($_POST['zone_id']);
 
-        $db->Execute("update " . TABLE_ZONES_TO_GEO_ZONES . "
+        $gBitDb->Execute("update " . TABLE_ZONES_TO_GEO_ZONES . "
                       set `geo_zone_id` = '" . (int)$zID . "',
                           `zone_country_id` = '" . (int)$zone_country_id . "',
                           `zone_id` = " . (zen_not_null($zone_id) ? "'" . (int)$zone_id . "'" : 'null') . ",
@@ -67,7 +67,7 @@
         }
         $sID = zen_db_prepare_input($_GET['sID']);
 
-        $db->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
+        $gBitDb->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
                       where `association_id` = '" . (int)$sID . "'");
 
         zen_redirect(zen_href_link_admin(FILENAME_GEO_ZONES, 'zpage=' . $_GET['zpage'] . '&zID=' . $_GET['zID'] . '&action=list&spage=' . $_GET['spage']));
@@ -83,7 +83,7 @@
         $geo_zone_name = zen_db_prepare_input($_POST['geo_zone_name']);
         $geo_zone_description = zen_db_prepare_input($_POST['geo_zone_description']);
 
-        $db->Execute("insert into " . TABLE_GEO_ZONES . "
+        $gBitDb->Execute("insert into " . TABLE_GEO_ZONES . "
                     (`geo_zone_name`, `geo_zone_description`, `date_added`)
                     values ('" . zen_db_input($geo_zone_name) . "',
                             '" . zen_db_input($geo_zone_description) . "',
@@ -98,7 +98,7 @@
         $geo_zone_name = zen_db_prepare_input($_POST['geo_zone_name']);
         $geo_zone_description = zen_db_prepare_input($_POST['geo_zone_description']);
 
-        $db->Execute("update " . TABLE_GEO_ZONES . "
+        $gBitDb->Execute("update " . TABLE_GEO_ZONES . "
                       set `geo_zone_name` = '" . zen_db_input($geo_zone_name) . "',
                           `geo_zone_description` = '" . zen_db_input($geo_zone_description) . "',
                           `last_modified` = " . $gBitDb->mDb->sysTimeStamp . " where `geo_zone_id` = '" . (int)$zID . "'");
@@ -115,15 +115,15 @@
         }
         $zID = zen_db_prepare_input($_GET['zID']);
 
-        $check_tax_rates = $db->Execute("select `tax_zone_id` from " . TABLE_TAX_RATES . " where tax_zone_id='" . $zID . "'");
+        $check_tax_rates = $gBitDb->Execute("select `tax_zone_id` from " . TABLE_TAX_RATES . " where tax_zone_id='" . $zID . "'");
         if ($check_tax_rates->RecordCount() > 0) {
           $_GET['action']= '';
           $messageStack->add_session(ERROR_TAX_RATE_EXISTS, 'caution');
         } else {
-          $db->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
+          $gBitDb->Execute("delete from " . TABLE_ZONES_TO_GEO_ZONES . "
                         where `geo_zone_id` = '" . (int)$zID . "'");
 
-          $db->Execute("delete from " . TABLE_GEO_ZONES . "
+          $gBitDb->Execute("delete from " . TABLE_GEO_ZONES . "
                         where `geo_zone_id` = '" . (int)$zID . "'");
         }
 
@@ -221,7 +221,7 @@ function update_zone(theForm) {
     $rows = 0;
     $zones_query_raw = "select a.`association_id`, a.`zone_country_id`, c.`countries_name`, a.`zone_id`, a.`geo_zone_id`, a.`last_modified`, a.`date_added`, z.`zone_name` from " . TABLE_ZONES_TO_GEO_ZONES . " a left join " . TABLE_COUNTRIES . " c on a.`zone_country_id` = c.`countries_id` left join " . TABLE_ZONES . " z on a.`zone_id` = z.`zone_id` where a.`geo_zone_id` = " . $_GET['zID'] . " order by `association_id`";
     $zones_split = new splitPageResults($_GET['spage'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
-    $zones = $db->Execute($zones_query_raw);
+    $zones = $gBitDb->Execute($zones_query_raw);
     while (!$zones->EOF) {
       $rows++;
       if ((!isset($_GET['sID']) || (isset($_GET['sID']) && ($_GET['sID'] == $zones->fields['association_id']))) && !isset($sInfo) && (substr($action, 0, 3) != 'new')) {
@@ -264,10 +264,10 @@ function update_zone(theForm) {
 <?php
     $zones_query_raw = "select `geo_zone_id`, `geo_zone_name`, `geo_zone_description`, `last_modified`, `date_added` from " . TABLE_GEO_ZONES . " order by `geo_zone_name`";
     $zones_split = new splitPageResults($_GET['zpage'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
-    $zones = $db->Execute($zones_query_raw);
+    $zones = $gBitDb->Execute($zones_query_raw);
     while (!$zones->EOF) {
       if ((!isset($_GET['zID']) || (isset($_GET['zID']) && ($_GET['zID'] == $zones->fields['geo_zone_id']))) && !isset($zInfo) && (substr($action, 0, 3) != 'new')) {
-        $num_zones = $db->Execute("select count(*) as `num_zones`
+        $num_zones = $gBitDb->Execute("select count(*) as `num_zones`
                                    from " . TABLE_ZONES_TO_GEO_ZONES . "
                                    where `geo_zone_id` = '" . (int)$zones->fields['geo_zone_id'] . "'
                                    group by `geo_zone_id`");
@@ -278,7 +278,7 @@ function update_zone(theForm) {
           $zones->fields['num_zones'] = 0;
         }
 
-        $num_tax_rates = $db->Execute("select count(*) as `num_tax_rates`
+        $num_tax_rates = $gBitDb->Execute("select count(*) as `num_tax_rates`
                                    from " . TABLE_TAX_RATES . "
                                    where `tax_zone_id` = '" . (int)$zones->fields['geo_zone_id'] . "'
                                    group by `tax_zone_id`");

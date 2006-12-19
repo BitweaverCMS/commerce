@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: media_manager.php,v 1.3 2005/08/24 02:52:18 lsces Exp $
+// $Id: media_manager.php,v 1.4 2006/12/19 00:11:33 spiderr Exp $
 //
-   global $db;
+   global $gBitDb;
    $zv_collection_query = "select * from " . TABLE_MEDIA_TO_PRODUCTS . " 
                            where product_id = '" . (int)$_GET['products_id'] . "'";
-   $zq_collections = $db->Execute($zv_collection_query);
+   $zq_collections = $gBitDb->Execute($zv_collection_query);
    $zv_product_has_media = false;
    if ($zq_collections->RecordCount() > 0) {
      $zv_product_has_media = true;
@@ -30,7 +30,7 @@
        $zf_media_manager_query = "select * from " . TABLE_MEDIA_MANAGER . " 
                                   where media_id = '" . $zq_collections->fields['media_id'] . "'";
  
-       $zq_media_manager = $db->Execute($zf_media_manager_query);
+       $zq_media_manager = $gBitDb->Execute($zf_media_manager_query);
        $za_media_manager[$zq_media_manager->fields['media_id']] = array(
                                    'text' => $zq_media_manager->fields['media_name']);
        if ($zq_collections->RecordCount() < 1) {
@@ -39,13 +39,13 @@
          $zv_clips_query = "select * from " . TABLE_MEDIA_CLIPS . " 
                             where media_id = '" . $zq_media_manager->fields['media_id'] . "'";
 
-         $zq_clips = $db->Execute($zv_clips_query);
+         $zq_clips = $gBitDb->Execute($zv_clips_query);
          while (!$zq_clips->EOF) {
            
            $zf_clip_type_query = "select * from " . TABLE_MEDIA_TYPES . " 
                                   where `type_id` = '" . $zq_clips->fields['clip_type'] . "'";
 
-           $zq_clip_type = $db->Execute($zf_clip_type_query);
+           $zq_clip_type = $gBitDb->Execute($zf_clip_type_query);
 
            $za_media_manager[$zq_media_manager->fields['media_id']]['clips'][$zq_clips->fields['clip_id']] = 
                               array('clip_filename' => $zq_clips->fields['clip_filename'], 'clip_type' => $zq_clip_type->fields['type_name']);

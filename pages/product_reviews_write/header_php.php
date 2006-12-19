@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.11 2005/12/20 17:13:06 gilesw Exp $
+// $Id: header_php.php,v 1.12 2006/12/19 00:11:38 spiderr Exp $
 //
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
@@ -34,7 +34,7 @@
                          and p.`products_id` = pd.`products_id`
                          and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-  $product_info = $db->Execute($product_info_query);
+  $product_info = $gBitDb->Execute($product_info_query);
 
   if (!$product_info->RecordCount()) {
     zen_redirect(zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params(array('action'))));
@@ -45,7 +45,7 @@
                      where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
 
-  $customer = $db->Execute($customer_query);
+  $customer = $gBitDb->Execute($customer_query);
 
   if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
     $rating = zen_db_prepare_input($_POST['rating']);
@@ -78,7 +78,7 @@
                              zen_db_input($customer->fields['customers_lastname']) . "', '" .
                              zen_db_input($rating) . "', now(), " . zen_db_input($review_status) . ")";
 
-      $rs = $db->Execute($sql);
+      $rs = $gBitDb->Execute($sql);
 
       $insert_id = zen_db_insert_id( TABLE_REVIEWS, 'reviews_id' );
 
@@ -87,7 +87,7 @@
                      values ('" . (int)$insert_id . "', '" . (int)$_SESSION['languages_id'] . "', '" .
                              zen_db_input($review_text) . "')";
 
-      $db->Execute($sql);
+      $gBitDb->Execute($sql);
 // send review-notification email to admin
       if (REVIEWS_APPROVAL == '1' && SEND_EXTRA_REVIEW_NOTIFICATION_EMAILS_TO_STATUS == '1' and defined('SEND_EXTRA_REVIEW_NOTIFICATION_EMAILS_TO') and SEND_EXTRA_REVIEW_NOTIFICATION_EMAILS_TO !='') {
         $email_text  = sprintf(EMAIL_PRODUCT_REVIEW_CONTENT_INTRO, $product_info->fields['products_name']) . "\n\n" ;

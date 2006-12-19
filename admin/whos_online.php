@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.8 2006/02/19 20:56:50 lsces Exp $
+//  $Id: whos_online.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
 //
 
 
@@ -33,13 +33,13 @@ function zen_check_bot($checking) {
 
 // host for current ip
 function zen_check_quantity($which) {
-  global $db;
-  $which_query = $db->Execute("select `sesskey`, `sess_value`
+  global $gBitDb;
+  $which_query = $gBitDb->Execute("select `sesskey`, `sess_value`
                                    from " . TABLE_SESSIONS . "
                                    where `sesskey`= '" . $which . "'");
 
 
-  $who_query = $db->Execute("select `session_id`, `time_entry`, `time_last_click`, `host_address`, `user_agent`
+  $who_query = $gBitDb->Execute("select `session_id`, `time_entry`, `time_last_click`, `host_address`, `user_agent`
                                  from " . TABLE_WHOS_ONLINE . "
                                  where `session_id`='" . $which . "'");
 
@@ -81,7 +81,7 @@ function zen_check_minutes($the_time_last_click) {
   $xx_mins_ago = (time() - WHOIS_TIMER_REMOVE);
 
 // remove entries that have expired
-  $db->Execute("delete from " . TABLE_WHOS_ONLINE . "
+  $gBitDb->Execute("delete from " . TABLE_WHOS_ONLINE . "
                 where `time_last_click` < '" . $xx_mins_ago . "'
                 or (`time_entry`=`time_last_click`
                 and `time_last_click` < '" . $xx_mins_ago_dead . "')");
@@ -207,7 +207,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_LAST_PAGE_URL; ?>&nbsp;</td>
               </tr>
 <?php
-  $whos_online = $db->Execute("select `customer_id`, `full_name`, `ip_address`, `time_entry`, `time_last_click`,
+  $whos_online = $gBitDb->Execute("select `customer_id`, `full_name`, `ip_address`, `time_entry`, `time_last_click`,
                                       `last_page_url`, `session_id`, `host_address`, `user_agent`
                                from " . TABLE_WHOS_ONLINE . "
                                order by $order");
@@ -323,7 +323,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
     $heading[] = array('text' => '<b>' . TABLE_HEADING_SHOPPING_CART . '</b>');
 
     if (STORE_SESSIONS == 'db') {
-      $session_data = $db->Execute("select value from " . TABLE_SESSIONS . "
+      $session_data = $gBitDb->Execute("select value from " . TABLE_SESSIONS . "
                                     WHERE sesskey = '" . $info . "'");
 
       $session_data = trim($session_data->fields['value']);

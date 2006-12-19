@@ -17,9 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_order_history.php,v 1.8 2005/10/31 16:20:01 lsces Exp $
+// $Id: mod_order_history.php,v 1.9 2006/12/19 00:11:34 spiderr Exp $
 //
-	global $db, $gBitProduct;
+	global $gBitDb, $gBitProduct;
 
 	if( $gBitUser->isRegistered() ) {
 		// retreive the last x products purchased
@@ -31,7 +31,7 @@
 						and p.`products_status` = '1'
 						order by o.date_purchased desc";
 
-		$orders_history = $db->query( $orders_history_query, $gBitUser->mUserId,MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX );
+		$orders_history = $gBitDb->query( $orders_history_query, $gBitUser->mUserId,MAX_DISPLAY_PRODUCTS_IN_ORDER_HISTORY_BOX );
 
 		if ($orders_history->RecordCount() > 0) {
 			$product_ids = '';
@@ -48,7 +48,7 @@
 								and `language_id` = '" . (int)$_SESSION['languages_id'] . "'
 								order by `products_name`";
 
-			$products_history = $db->Execute($products_history_query);
+			$products_history = $gBitDb->Execute($products_history_query);
 
 			while (!$products_history->EOF) {
 				$rows++;

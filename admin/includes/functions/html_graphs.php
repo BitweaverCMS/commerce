@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_graphs.php,v 1.6 2006/11/01 19:15:30 lsces Exp $
+// $Id: html_graphs.php,v 1.7 2006/12/19 00:11:30 spiderr Exp $
 //
 
 ////
 // calls routines to initialize defaults, set up table
 // print data, and close table.
-  function html_graph($names, $values, $bars, $vals, $dvalues = 0, $dbars = 0) {
+  function html_graph($names, $values, $bars, $vals, $dvalues = 0, $gBitDbars = 0) {
 // set the error level on entry and exit so as not to interfear with anyone elses error checking.
     $er = error_reporting(1);
 
@@ -36,9 +36,9 @@
     } elseif ($vals['type'] == 1) {
       $html_graph_string .= vertical_graph($names, $values, $bars, $vals);
     } elseif ($vals['type'] == 2) {
-      $html_graph_string .= double_horizontal_graph($names, $values, $bars, $vals, $dvalues, $dbars);
+      $html_graph_string .= double_horizontal_graph($names, $values, $bars, $vals, $dvalues, $gBitDbars);
     } elseif ($vals['type'] == 3) {
-      $html_graph_string .= double_vertical_graph($names, $values, $bars, $vals, $dvalues, $dbars);
+      $html_graph_string .= double_vertical_graph($names, $values, $bars, $vals, $dvalues, $gBitDbars);
     }
 
     $html_graph_string .= end_graph();
@@ -239,7 +239,7 @@
 
 ////
 // prints out the actual data for the double horizontal chart
-  function double_horizontal_graph($names, $values, $bars, $vals, $dvalues, $dbars) {
+  function double_horizontal_graph($names, $values, $bars, $vals, $dvalues, $gBitDbars) {
     $double_horizontal_graph_string = '';
     for($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $double_horizontal_graph_string .= '  <tr>' . "\n" .
@@ -259,10 +259,10 @@
                                          '        <td';
 
 // set background to a color if it starts with # or an image otherwise.
-      if (ereg('^#', $dbars[$i])) {
-        $double_horizontal_graph_string .= ' bgcolor="' . $dbars[$i] . '">';
+      if (ereg('^#', $gBitDbars[$i])) {
+        $double_horizontal_graph_string .= ' bgcolor="' . $gBitDbars[$i] . '">';
       } else {
-        $double_horizontal_graph_string .= ' background="' . $dbars[$i] . '">';
+        $double_horizontal_graph_string .= ' background="' . $gBitDbars[$i] . '">';
       }
 
       $double_horizontal_graph_string .= '<nowrap>';
@@ -299,7 +299,7 @@
 
 ////
 // prints out the actual data for the double vertical chart
-  function double_vertical_graph($names, $values, $bars, $vals, $dvalues, $dbars) {
+  function double_vertical_graph($names, $values, $bars, $vals, $dvalues, $gBitDbars) {
     $double_vertical_graph_string = '  <tr>' . "\n";
     for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $double_vertical_graph_string .= '    <td align="center" valign="bottom"';
@@ -340,7 +340,7 @@
         $double_vertical_graph_string .= '<i><font size="-2" color="' . $vals['doublefcolor'] . '" style="' . $vals['valuefstyle'] . '">(' . $dvalues[$i] . ')</font></i><br>';
       }
 
-      $double_vertical_graph_string .= '<img src="' . $dbars[$i] . '" width="10" height="';
+      $double_vertical_graph_string .= '<img src="' . $gBitDbars[$i] . '" width="10" height="';
 
       if ($dvalues[$i] != 0) {
         $double_vertical_graph_string .= $dvalues[$i] * $vals['scale'];
@@ -373,16 +373,16 @@
 ////
 // draws a double vertical bar graph for the banner views vs clicks statistics
   function zen_banner_graph_infoBox($banner_id, $days) {
-    global $db;
+    global $gBitDb;
     $names = array();
     $values = array();
     $dvalues = array();
 
-    $banner_stats = $db->Execute("select ".$db->SQLDate( 'd', '`banners_history_date`' )." as `name`,
+    $banner_stats = $gBitDb->Execute("select ".$gBitDb->SQLDate( 'd', '`banners_history_date`' )." as `name`,
 	                                     `banners_shown` as `svalue`, `banners_clicked` as `dvalue`
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where `banners_id` = '" . $banner_id . "'
-										 and ".$db->OffsetDate( $days, '`banners_history_date`' )." > ".$db->qtNOW()."
+										 and ".$gBitDb->OffsetDate( $days, '`banners_history_date`' )." > ".$gBitDb->qtNOW()."
 										 order by `banners_history_date`");
 
     while (!$banner_stats->EOF) {
@@ -394,10 +394,10 @@
     $largest = @max($values);
 
     $bars = array();
-    $dbars = array();
+    $gBitDbars = array();
     for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $bars[$i] = DIR_WS_IMAGES . 'graph_hbar_blue.gif';
-      $dbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
+      $gBitDbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
     }
 
     $graph_vals = @array('vlabel'=>TEXT_BANNERS_DATA,
@@ -422,19 +422,19 @@
                         'valuefstyle'=>'',
                         'doublefcolor'=>'#ff7339');
 
-    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $dbars);
+    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $gBitDbars);
   }
 
 ////
 // draws a double vertical bar graph for the banner views vs clicks statistics
   function zen_banner_graph_yearly($banner_id) {
-    global $db, $banner, $_GET;
+    global $gBitDb, $banner, $_GET;
 
-    $banner_stats = $db->Execute("select ".$db->SQLDate( 'Y', 'banners_history_date' )." as year,
+    $banner_stats = $gBitDb->Execute("select ".$gBitDb->SQLDate( 'Y', 'banners_history_date' )." as year,
 	                                     sum(banners_shown) as value, sum(banners_clicked) as dvalue
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where banners_id = '" . $banner_id . "'
-										 group by ".$db->SQLDate( 'Y', 'banners_history_date' ) );
+										 group by ".$gBitDb->SQLDate( 'Y', 'banners_history_date' ) );
 
     while (!$banner_stats->EOF) {
       $names[] = $banner_stats->fields['year'];
@@ -446,10 +446,10 @@
     $largest = @max($values);
 
     $bars = array();
-    $dbars = array();
+    $gBitDbars = array();
     for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $bars[$i] = DIR_WS_IMAGES . 'graph_hbar_blue.gif';
-      $dbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
+      $gBitDbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
     }
 
     $graph_vals = @array('vlabel'=>TEXT_BANNERS_DATA,
@@ -474,13 +474,13 @@
                         'valuefstyle'=>'',
                         'doublefcolor'=>'#ff7339');
 
-    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $dbars);
+    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $gBitDbars);
   }
 
 ////
 // draws a double vertical bar graph for the banner views vs clicks statistics
   function zen_banner_graph_monthly($banner_id) {
-    global $db, $banner, $_GET;
+    global $gBitDb, $banner, $_GET;
 
     $year = (($_GET['year']) ? $_GET['year'] : date('Y'));
 
@@ -490,11 +490,11 @@
       $dvalues[] = '0';
     }
 
-    $banner_stats = $db->Execute("select ".$db->SQLDate( 'm', 'banners_history_date' )." as banner_month, sum(banners_shown) as value,
+    $banner_stats = $gBitDb->Execute("select ".$gBitDb->SQLDate( 'm', 'banners_history_date' )." as banner_month, sum(banners_shown) as value,
 	                              sum(banners_clicked) as dvalue
 								  from " . TABLE_BANNERS_HISTORY . "
 								  where banners_id = '" . $banner_id . "'
-								  and ".$db->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'
+								  and ".$gBitDb->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'
 								  group by month(banners_history_date)");
 
     while (!$banner_stats->EOF) {
@@ -507,10 +507,10 @@
     $largest = @max($values);
 
     $bars = array();
-    $dbars = array();
+    $gBitDbars = array();
     for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $bars[$i] = DIR_WS_IMAGES . 'graph_hbar_blue.gif';
-      $dbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
+      $gBitDbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
     }
 
     $graph_vals = @array('vlabel'=>TEXT_BANNERS_DATA,
@@ -535,13 +535,13 @@
                         'valuefstyle'=>'',
                         'doublefcolor'=>'#ff7339');
 
-    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $dbars);
+    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $gBitDbars);
   }
 
 ////
 // draws a double vertical bar graph for the banner views vs clicks statistics
   function zen_banner_graph_daily($banner_id) {
-    global $db, $banner, $_GET;
+    global $gBitDb, $banner, $_GET;
 
     $year = (isset($_GET['year']) ? $_GET['year'] : date('Y'));
     $month = (isset($_GET['month']) ? $_GET['month'] : date('n'));
@@ -554,12 +554,12 @@
       $dvalues[] = '0';
     }
 
-    $banner_stats = $db->Execute("select ".$db->SQLDate( 'd', 'banners_history_date' )." as banner_day,
+    $banner_stats = $gBitDb->Execute("select ".$gBitDb->SQLDate( 'd', 'banners_history_date' )." as banner_day,
 	                                     banners_shown as value, banners_clicked as dvalue
 										 from " . TABLE_BANNERS_HISTORY . "
 										 where banners_id = '" . $banner_id . "'
-										 and ".$db->SQLDate( 'm', 'banners_history_date' )." = '" . $month . "'
-										 and ".$db->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'");
+										 and ".$gBitDb->SQLDate( 'm', 'banners_history_date' )." = '" . $month . "'
+										 and ".$gBitDb->SQLDate( 'Y', 'banners_history_date' )." = '" . $year . "'");
 
     while (!$banner_stats->EOF) {
       $names[($banner_stats->fields['banner_day']-1)] = $banner_stats->fields['banner_day'];
@@ -571,10 +571,10 @@
     $largest = @max($values);
 
     $bars = array();
-    $dbars = array();
+    $gBitDbars = array();
     for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
       $bars[$i] = DIR_WS_IMAGES . 'graph_hbar_blue.gif';
-      $dbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
+      $gBitDbars[$i] = DIR_WS_IMAGES . 'graph_hbar_red.gif';
     }
 
     $graph_vals = @array('vlabel'=>TEXT_BANNERS_DATA,
@@ -599,6 +599,6 @@
                         'valuefstyle'=>'',
                         'doublefcolor'=>'#ff7339');
 
-    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $dbars);
+    return html_graph($names, $values, $bars, $graph_vals, $dvalues, $gBitDbars);
   }
 ?>

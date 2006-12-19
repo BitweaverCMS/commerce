@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.48 2006/12/11 23:21:05 spiderr Exp $
+// $Id: order.php,v 1.49 2006/12/19 00:11:32 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -115,7 +115,7 @@ class order extends BitBase {
 	}
 
     function load($order_id) {
-      global $db;
+      global $gBitDb;
 
       $order_id = zen_db_prepare_input($order_id);
 
@@ -123,14 +123,14 @@ class order extends BitBase {
                       FROM " . TABLE_ORDERS . " co INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
                       WHERE `orders_id` = ?";
 
-      $order = $db->query( $order_query, array( $order_id ) );
+      $order = $gBitDb->query( $order_query, array( $order_id ) );
 
       $totals_query = "select `title`, `text`, `class`, `orders_value`
                        from " . TABLE_ORDERS_TOTAL . "
                        where `orders_id` = '" . (int)$order_id . "'
                        order by `sort_order`";
 
-      $totals = $db->Execute($totals_query);
+      $totals = $gBitDb->Execute($totals_query);
 
       while (!$totals->EOF) {
         $this->totals[] = array('title' => $totals->fields['title'],
@@ -146,7 +146,7 @@ class order extends BitBase {
          and class = 'ot_total'";
 
 
-      $order_total = $db->Execute($order_total_query);
+      $order_total = $gBitDb->Execute($order_total_query);
 
 
       $shipping_method_query = "select title, `orders_value`
@@ -155,14 +155,14 @@ class order extends BitBase {
           and class = 'ot_shipping'";
 
 
-      $shipping_method = $db->Execute($shipping_method_query);
+      $shipping_method = $gBitDb->Execute($shipping_method_query);
 
       $order_status_query = "select `orders_status_name`
                              from " . TABLE_ORDERS_STATUS . "
                              where `orders_status_id` = '" . $order->fields['orders_status'] . "'
                              and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
-      $order_status = $db->Execute($order_status_query);
+      $order_status = $gBitDb->Execute($order_status_query);
 
       $this->info = array('currency' => $order->fields['currency'],
                           'currency_value' => $order->fields['currency_value'],
@@ -341,7 +341,7 @@ class order extends BitBase {
 	}
 
     function cart() {
-      global $db, $currencies, $gBitUser, $gBitCustomer;
+      global $gBitDb, $currencies, $gBitUser, $gBitCustomer;
       $this->content_type = $_SESSION['cart']->get_content_type();
 
 		if( $gBitUser->isRegistered() ) {
@@ -358,7 +358,7 @@ class order extends BitBase {
 										 and ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
 										 and c.`customers_default_address_id` = ab.`address_book_id`";
 
-			  $customer_address = $db->Execute($customer_address_query);
+			  $customer_address = $gBitDb->Execute($customer_address_query);
 
 			  $shipping_address_query = "select ab.*, z.`zone_name`, ab.`entry_country_id`,
 												c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
@@ -369,7 +369,7 @@ class order extends BitBase {
 										 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
 										 and ab.`address_book_id` = '" . (int)$_SESSION['sendto'] . "'";
 
-			  $shipping_address = $db->Execute($shipping_address_query);
+			  $shipping_address = $gBitDb->Execute($shipping_address_query);
 
 			  $billing_address_query = "select ab.*, z.`zone_name`, ab.`entry_country_id`,
 											   c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`,
@@ -380,7 +380,7 @@ class order extends BitBase {
 										where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
 										and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
 
-			  $billing_address = $db->Execute($billing_address_query);
+			  $billing_address = $gBitDb->Execute($billing_address_query);
 		}
 //STORE_PRODUCT_TAX_BASIS
 
@@ -392,7 +392,7 @@ class order extends BitBase {
                                 left join " . TABLE_ZONES . " z on (ab.entry_zone_id = z.zone_id)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                 and ab.`address_book_id` = '" . (int)($this->content_type == 'virtual' ? $_SESSION['billto'] : $_SESSION['sendto']) . "'";
-          $tax_address = $db->Execute($tax_address_query);
+          $tax_address = $gBitDb->Execute($tax_address_query);
         break;
         case 'Billing':
 
@@ -401,7 +401,7 @@ class order extends BitBase {
                                 left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
                                 where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                 and ab.`address_book_id` = '" . (int)$_SESSION['billto'] . "'";
-          $tax_address = $db->Execute($tax_address_query);
+          $tax_address = $gBitDb->Execute($tax_address_query);
         break;
         case 'Store':
           if ($billing_address->fields['entry_zone_id'] == STORE_ZONE) {
@@ -418,7 +418,7 @@ class order extends BitBase {
                                   where ab.`customers_id` = '" . (int)$_SESSION['customer_id'] . "'
                                   and ab.`address_book_id` = '" . (int)($this->content_type == 'virtual' ? $_SESSION['billto'] : $_SESSION['sendto']) . "'";
           }
-          $tax_address = $db->Execute($tax_address_query);
+          $tax_address = $gBitDb->Execute($tax_address_query);
      }
 
 	if( !empty( $tax_address->fields['entry_country_id'] ) && empty( $tax_address->fields['entry_zone_id'] ) ) {
@@ -438,7 +438,7 @@ class order extends BitBase {
                               FROM " . TABLE_COUPONS . "
                               WHERE `coupon_id` = ?";
 
-        $coupon_code = $db->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
+        $coupon_code = $gBitDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
       }
 
       $this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
@@ -565,7 +565,7 @@ class order extends BitBase {
 									AND popt.`language_id` = ?
 									AND poval.`language_id` = ?";
 
-            $attributes = $db->query($attributes_query, array( zen_get_prid( $products[$i]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'], (int)$_SESSION['languages_id'] ) );
+            $attributes = $gBitDb->query($attributes_query, array( zen_get_prid( $products[$i]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'], (int)$_SESSION['languages_id'] ) );
 
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
             if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
@@ -621,9 +621,9 @@ class order extends BitBase {
     }
 
     function create($zf_ot_modules, $zf_mode = 2) {
-		global $db;
+		global $gBitDb;
 
-		$db->StartTrans();
+		$gBitDb->StartTrans();
 		if ($_SESSION['shipping'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
@@ -680,7 +680,7 @@ class order extends BitBase {
 							);
 
 
-		$db->associateInsert(TABLE_ORDERS, $sql_data_array);
+		$gBitDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
 		$this->mOrdersId = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
 
@@ -691,7 +691,7 @@ class order extends BitBase {
 									'orders_value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
 									'class' => $zf_ot_modules[$i]['code'],
 									'sort_order' => $zf_ot_modules[$i]['sort_order']);
-			$db->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
+			$gBitDb->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
 		}
 
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
@@ -700,16 +700,16 @@ class order extends BitBase {
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments']);
-		$db->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+		$gBitDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
-		$db->CompleteTrans();
+		$gBitDb->CompleteTrans();
 
 		return( $this->mOrdersId );
     }
 
 
 	function  create_add_products($zf_insert_id, $zf_mode = false) {
-		global $db, $currencies, $order_total_modules, $order_totals;
+		global $gBitDb, $currencies, $order_total_modules, $order_totals;
 
 			$this->mDb->StartTrans();
 	// initialized for the email confirmation
@@ -741,9 +741,9 @@ class order extends BitBase {
 						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
 						$bindVars[] = $products_attributes[0]['value_id'];
 					}
-					$stock_values = $db->query($stock_query_raw, $bindVars);
+					$stock_values = $gBitDb->query($stock_query_raw, $bindVars);
 				} else {
-					$stock_values = $db->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+					$stock_values = $gBitDb->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 				}
 
 				if ($stock_values->RecordCount() > 0) {
@@ -757,12 +757,12 @@ class order extends BitBase {
 
 		//            $this->products[$i]['stock_value'] = $stock_values->fields['products_quantity'];
 
-					$db->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+					$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 		//        if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
 					if ($stock_left < 1) {
 						// only set status to off when not displaying sold out
 						if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-							$db->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+							$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 						}
 					}
 
@@ -775,7 +775,7 @@ class order extends BitBase {
 			}
 
 			// Update products_ordered (for bestsellers list)
-			$db->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->products[$i]['quantity']) . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
+			$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->products[$i]['quantity']) . " where `products_id` = '" . zen_get_prid($this->products[$i]['id']) . "'");
 
 			$sql_data_array = array('orders_id' => $zf_insert_id,
 								'products_id' => zen_get_prid($this->products[$i]['id']),
@@ -791,7 +791,7 @@ class order extends BitBase {
 								'product_is_free' => $this->products[$i]['product_is_free'],
 								'products_discount_type' => $this->products[$i]['products_discount_type'],
 								'products_discount_type_from' => $this->products[$i]['products_discount_type_from']);
-			$db->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
+			$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 			$this->products[$i]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
 
 			$order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
@@ -822,9 +822,9 @@ class order extends BitBase {
 											and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
 											and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
 
-						$attributes_values = $db->Execute($attributes_query);
+						$attributes_values = $gBitDb->Execute($attributes_query);
 					} else {
-						$attributes_values = $db->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
+						$attributes_values = $gBitDb->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
 										from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 										where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
 					}
@@ -859,7 +859,7 @@ class order extends BitBase {
 											);
 
 
-					$db->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+					$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 
 					if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
 						$sql_data_array = array('orders_id' => $zf_insert_id,
@@ -868,7 +868,7 @@ class order extends BitBase {
 												'download_maxdays' => $attributes_values->fields['products_attributes_maxdays'],
 												'download_count' => $attributes_values->fields['products_attributes_maxcount']);
 
-						$db->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
+						$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
 					}
 			//clr 030714 changing to use values from $orders->products and adding call to zen_decode_specialchars()
 			//        $this->products_ordered_attributes .= "\n\t" . $attributes_values->fields['products_options_name'] . ' ' . $attributes_values->fields['products_options_values_name'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: default_filter.php,v 1.11 2006/05/06 22:15:13 bitweaver Exp $
+// $Id: default_filter.php,v 1.12 2006/12/19 00:11:33 spiderr Exp $
 //
 // show the products of a specified manufacturer
 	$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -120,7 +120,7 @@ $listing_sql = "select " . $select_column_list . " p.`products_id`, p.`manufactu
       } else {
         $filterlist_sql= "select distinct m.`manufacturers_id` as `id`, m.`manufacturers_name` as `name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_MANUFACTURERS . " m where p.`products_status` = '1' and p.`manufacturers_id` = m.`manufacturers_id` and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . (int)$current_category_id . "' order by m.`manufacturers_name`";
       }
-      $filterlist = $db->Execute($filterlist_sql);
+      $filterlist = $gBitDb->Execute($filterlist_sql);
       if ($filterlist->RecordCount() > 1)
       {
           $do_filter_list = true;
@@ -147,7 +147,7 @@ $listing_sql = "select " . $select_column_list . " p.`products_id`, p.`manufactu
                 from   " . TABLE_MANUFACTURERS . "
                 where      `manufacturers_id` = '" . (int)$_GET['manufacturers_id'] . "'";
 
-      $image_name = $db->Execute($sql);
+      $image_name = $gBitDb->Execute($sql);
       $image = $image_name->fields['manufacturers_image'];
 
     } elseif ($current_category_id) {
@@ -155,7 +155,7 @@ $listing_sql = "select " . $select_column_list . " p.`products_id`, p.`manufactu
       $sql = "select `categories_image` from " . TABLE_CATEGORIES . "
               where  `categories_id` = '" . (int)$current_category_id . "'";
 
-      $image_name = $db->Execute($sql);
+      $image_name = $gBitDb->Execute($sql);
       $image = $image_name->fields['categories_image'];
     }
 ?>

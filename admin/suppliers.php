@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: suppliers.php,v 1.5 2006/09/02 23:35:34 spiderr Exp $
+//  $Id: suppliers.php,v 1.6 2006/12/19 00:11:29 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -35,17 +35,17 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
         $sql_data_array = array('suppliers_name' => $suppliers_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => $db->NOW());
+          $insert_sql_data = array('date_added' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-          $db->associateInsert(TABLE_SUPPLIERS, $sql_data_array);
+          $gBitDb->associateInsert(TABLE_SUPPLIERS, $sql_data_array);
           $suppliers_id = zen_db_insert_id( TABLE_SUPPLIERS, 'suppliers_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => $db->NOW());
+          $update_sql_data = array('last_modified' => $gBitDb->NOW());
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
-          $db->associateUpdate(TABLE_SUPPLIERS, $sql_data_array, array( 'suppliers_id'=> (int)$suppliers_id ) );
+          $gBitDb->associateUpdate(TABLE_SUPPLIERS, $sql_data_array, array( 'suppliers_id'=> (int)$suppliers_id ) );
 
         }
 
@@ -54,11 +54,11 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
         if ( $suppliers_image->parse() &&  $suppliers_image->save()) {
           // remove image from database if none
          if ($suppliers_image->filename != 'none') {
-            $db->Execute("update " . TABLE_SUPPLIERS . "
+            $gBitDb->Execute("update " . TABLE_SUPPLIERS . "
                           set `suppliers_image` = '" .  $_POST['img_dir'] . $suppliers_image->filename . "'
                           where `suppliers_id` = '" . (int)$suppliers_id . "'");
           } else {
-            $db->Execute("update " . TABLE_SUPPLIERS . "
+            $gBitDb->Execute("update " . TABLE_SUPPLIERS . "
                           set `suppliers_image` = ''
                           where `suppliers_id` = '" . (int)$suppliers_id . "'");
           }
@@ -77,9 +77,9 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
-            $db->associateInsert(TABLE_SUPPLIERS_INFO, $sql_data_array);
+            $gBitDb->associateInsert(TABLE_SUPPLIERS_INFO, $sql_data_array);
           } elseif ($action == 'save') {
-            $db->associateUpdate(TABLE_SUPPLIERS_INFO, $sql_data_array, array( 'suppliers_id' => (int)$suppliers_id , 'languages_id' => (int)$language_id) );
+            $gBitDb->associateUpdate(TABLE_SUPPLIERS_INFO, $sql_data_array, array( 'suppliers_id' => (int)$suppliers_id , 'languages_id' => (int)$language_id) );
           }
         }
 
@@ -95,7 +95,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
         $suppliers_id = zen_db_prepare_input($_GET['mID']);
 
         if (isset($_POST['delete_image']) && ($_POST['delete_image'] == 'on')) {
-          $supplier = $db->Execute("select `suppliers_image`
+          $supplier = $gBitDb->Execute("select `suppliers_image`
                                         from " . TABLE_SUPPLIERS . "
                                         where `suppliers_id` = '" . (int)$suppliers_id . "'");
 
@@ -104,13 +104,13 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
           if (file_exists($image_location)) @unlink($image_location);
         }
 
-        $db->Execute("delete from " . TABLE_SUPPLIERS . "
+        $gBitDb->Execute("delete from " . TABLE_SUPPLIERS . "
                       where `suppliers_id` = '" . (int)$suppliers_id . "'");
-        $db->Execute("delete from " . TABLE_SUPPLIERS_INFO . "
+        $gBitDb->Execute("delete from " . TABLE_SUPPLIERS_INFO . "
                       where `suppliers_id` = '" . (int)$suppliers_id . "'");
 
         if (isset($_POST['delete_products']) && ($_POST['delete_products'] == 'on')) {
-          $products = $db->Execute("select products_id
+          $products = $gBitDb->Execute("select products_id
                                     from " . TABLE_PRODUCTS . "
                                     where suppliers_id = '" . (int)$suppliers_id . "'");
 
@@ -119,7 +119,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
             $products->MoveNext();
           }
         } else {
-          $db->Execute("update " . TABLE_PRODUCTS . "
+          $gBitDb->Execute("update " . TABLE_PRODUCTS . "
                         set `suppliers_id` = ''
                         where `suppliers_id` = '" . (int)$suppliers_id . "'");
         }
@@ -181,10 +181,10 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 <?php
   $suppliers_query_raw = "select `suppliers_id`, `suppliers_name`, `suppliers_image`, `date_added`, `last_modified` from " . TABLE_SUPPLIERS . " order by `suppliers_name`";
   $suppliers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $suppliers_query_raw, $suppliers_query_numrows);
-  $suppliers = $db->Execute($suppliers_query_raw);
+  $suppliers = $gBitDb->Execute($suppliers_query_raw);
   while (!$suppliers->EOF) {
     if ((!isset($_GET['mID']) || (isset($_GET['mID']) && ($_GET['mID'] == $suppliers->fields['suppliers_id']))) && !isset($mInfo) && (substr($action, 0, 3) != 'new')) {
-      $supplier_products = $db->Execute("select count(*) as `products_count`
+      $supplier_products = $gBitDb->Execute("select count(*) as `products_count`
                                              from " . TABLE_PRODUCTS . "
                                              where `suppliers_id` = '" . (int)$suppliers->fields['suppliers_id'] . "'");
 
