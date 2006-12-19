@@ -83,7 +83,6 @@
 	global $gCommerceSystem, $gBitDb, $gBitSmarty;
 	$gCommerceSystem = new CommerceSystem();
 	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
-	$gBitDb = &$gBitDb;
 
   // set the language
   if( empty( $_SESSION['languages_id'] ) || isset($_GET['language'])) {
