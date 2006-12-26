@@ -160,6 +160,7 @@ class CommerceVoucher extends BitBase {
 
 		// send additional emails
 			if (SEND_EXTRA_GV_CUSTOMER_EMAILS_TO_STATUS == '1' and SEND_EXTRA_GV_CUSTOMER_EMAILS_TO !='') {
+				zen_mail('', SEND_EXTRA_GV_CUSTOMER_EMAILS_TO, $gv_email_subject, $textMessage, STORE_NAME, EMAIL_FROM, $htmlMessage,'gv_send');
 				if ($_SESSION['customer_id']) {
 					$account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
 										from " . TABLE_CUSTOMERS . "
