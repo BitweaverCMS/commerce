@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_queue.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: gv_queue.php,v 1.16 2006/12/26 01:28:17 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -181,7 +181,7 @@
       if ($gv_list->RecordCount() == 0) {
         $contents[] = array('align' => 'center','text' => TEXT_GV_NONE);
       } else {
-        $contents[] = array('align' => 'center','text' => '<a href="' . zen_href_link_admin('gv_queue.php','action=release&gid=' . $gInfo->unique_id,'NONSSL'). '">' . zen_image_button('button_release_gift.gif', IMAGE_RELEASE) . '</a>');
+        $contents[] = array('align' => 'center','text' => '<a href="' . zen_href_link_admin('gv_queue.php','action=release&gid=' . $gInfo->unique_id,'NONSSL'). '">' . zen_image_button('button_release_gift.gif', tra( 'Release Gift Certificate' ) ) . '</a>');
 
 // quick link to order
         $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','90%','3'));

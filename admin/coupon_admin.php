@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.16 2006/12/26 01:28:17 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -396,9 +396,8 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
                                    from " . TABLE_COUPONS_DESCRIPTION . "
                                    where `coupon_id` = '" . $_GET['cid'] . "'
                                    and `language_id` = '" . $_SESSION['languages_id'] . "'");
-      $count_customers = $gBitDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . "
-                                       where `coupon_id` = '" . $_GET['cid'] . "'
-                                       and `customer_id` = '" . $cInfo->customer_id . "'");
+      $count_customers = $gBitDb->query("SELECT * FROM " . TABLE_COUPON_REDEEM_TRACK . "
+                                     WHERE `coupon_id` = ? AND `customer_id` = ?", array( $_GET['cid'], $cInfo->customer_id ) );
 
       $heading[] = array('text' => '<b>[' . $_GET['cid'] . ']' . COUPON_NAME . ' ' . $coupon_desc->fields['coupon_name'] . '</b>');
       $contents[] = array('text' => '<b>' . TEXT_REDEMPTIONS . '</b>');
