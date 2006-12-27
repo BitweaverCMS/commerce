@@ -17,14 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: coupon_restrict.php,v 1.10 2006/12/27 20:50:06 spiderr Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
   $restrict_array = array();
-  $restrict_array[] = array('id'=>'Deny', text=>'Deny');
-  $restrict_array[] = array('id'=>'Allow', text=>'Allow');
-  if ($_GET['action']=='switch_status') {
+  $restrict_array[] = array('id'=>'Deny', 'text'=>'Deny');
+  $restrict_array[] = array('id'=>'Allow', 'text'=>'Allow');
+	$getAction = isset( $_GET['action'] ) ? $_GET['action'] : ''; 
+  if ($getAction=='switch_status') {
     $status = $gBitDb->Execute("select coupon_restrict
                             from " . TABLE_COUPON_RESTRICT . "
                             where restrict_id = '" . $_GET['info'] . "'");
@@ -35,7 +36,7 @@
                   set coupon_restrict = '" . $new_status . "'
                   where restrict_id = '" . $_GET['info'] . "'");
   }
-  if ($_GET['action']=='add_category' && $_POST['cPath']) {
+  if ($getAction=='add_category' && $_POST['cPath']) {
     $test_query=$gBitDb->Execute("select * from " . TABLE_COUPON_RESTRICT . "
                               where coupon_id = '" . $_GET['cid'] . "'
                               and category_id = '" . $_POST['cPath'] . "'");
@@ -48,7 +49,7 @@
                   values ('" . $_GET['cid'] . "', '" . $_POST['cPath'] . "', '" . $status . "')");
     }
   }
-  if ($_GET['action']=='add_product' && $_POST['products']) {
+  if ($getAction=='add_product' && $_POST['products']) {
     $test_query=$gBitDb->Execute("select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and product_id = '" . $_POST['products'] . "'");
     if ($test_query->RecordCount() < 1) {
       $status = 'N';
@@ -58,7 +59,7 @@
                   values ('" . $_GET['cid'] . "', '" . $_POST['products'] . "', '" . $status . "')");
     }
   }
-  if ($_GET['action']=='remove' && $_GET['info']) {
+  if ($getAction=='remove' && $_GET['info']) {
     $gBitDb->Execute("delete from " . TABLE_COUPON_RESTRICT . " where restrict_id = '" . $_GET['info'] . "'");
   }
 ?>
@@ -128,13 +129,15 @@
     $cr_query_raw = "select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and category_id != '0'";
     $cr_split = new splitPageResults($_GET['cpage'], MAX_DISPLAY_RESTRICT_ENTRIES, $cr_query_raw, $cr_query_numrows);
     $cr_list = $gBitDb->Execute($cr_query_raw);
+	$restrictId = NULL;
     while (!$cr_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
         $rows = '0' . $rows;
       }
-      if (((!$_GET['cid']) || (@$_GET['cid'] == $cr_list->fields['restrict_id'])) && (!$cInfo)) {
+      if (( empty( $_GET['cid'] ) || ($_GET['cid'] == $cr_list->fields['restrict_id'])) && empty( $cInfo ) ) {
         $cInfo = new objectInfo($cr_list->fields);
+		$restrictId = $cInfo->restrict_id;
       }
         echo '          <tr class="dataTableRow">' . "\n";
 
@@ -172,7 +175,7 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>">
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
@@ -219,6 +222,7 @@
     $pr_query_raw = "select * from " . TABLE_COUPON_RESTRICT . " where coupon_id = '" . $_GET['cid'] . "' and product_id != '0'";
     $pr_split = new splitPageResults($_GET['ppage'], MAX_DISPLAY_RESTRICT_ENTRIES, $pr_query_raw, $pr_query_numrows);
     $pr_list = $gBitDb->Execute($pr_query_raw);
+	$rows = 0;
     while (!$pr_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
@@ -262,11 +266,15 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>">
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
 <?php
-      if (isset($_POST['cPath_prod'])) $current_category_id = $_POST['cPath_prod'];
+		if(isset($_POST['cPath_prod'])) {
+			$current_category_id = $_POST['cPath_prod'];
+		} else {
+			$_POST['cPath_prod'] = NULL;
+		}
       $products = $gBitDb->query("select p.`products_id`, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = ? and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = ? order by pd.`products_name`", array( $_SESSION['languages_id'], $_POST['cPath_prod'] ) );
       $products_array = array();
       while (!$products->EOF) {
@@ -276,9 +284,9 @@
       }
 ?>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
-                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $restrictId, 'NONSSL'); ?>">
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('cPath_prod', zen_get_category_tree(), $current_category_id, 'onChange="this.form.submit();"'); ?></td></form>
-                    <form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $cInfo->restrict_id, 'NONSSL'); ?>">
+                    <form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $restrictId, 'NONSSL'); ?>">
                     <td class="smallText" valign="top"><?php echo HEADER_PRODUCT_NAME; ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('products', $products_array, $current_category_id); ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('restrict_status', $restrict_array); ?></td>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.16 2006/12/26 01:28:17 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.17 2006/12/27 20:50:06 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -25,11 +25,13 @@
   $currencies = new currencies();
 
   if ($_GET['selected_box']) {
-    $_GET['action']='';
+    $_GET['action'] ='';
     $_GET['old_action']='';
   }
 
-  if (($_GET['action'] == 'send_email_to_user') && ($_POST['customers_email_address']) && (!$_POST['back_x'])) {
+	$getAction = !empty( $_GET['action'] ) ? $_GET['action'] : '';
+
+  if (($getAction == 'send_email_to_user') && ($_POST['customers_email_address']) && (!$_POST['back_x'])) {
 	$audience_select = get_audience_sql_query($_POST['customers_email_address'], 'email');
         $mail = $gBitDb->Execute($audience_select['query_string']);
         $mail_sent_to = $audience_select['query_name'];
@@ -48,7 +50,7 @@
 
     // demo active test
     if (zen_admin_demo()) {
-      $_GET['action']= '';
+      $getAction= '';
       $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
       zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to)));
     }
@@ -88,8 +90,8 @@
     zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN, 'mail_sent_to=' . urlencode($mail_sent_to) . '&recip_count='. $recip_count ));
   }
 
-  if ( ($_GET['action'] == 'preview_email') && (!$_POST['customers_email_address']) ) {
-    $_GET['action'] = 'email';
+  if ( ($getAction == 'preview_email') && (!$_POST['customers_email_address']) ) {
+    $getAction = 'email';
     $messageStack->add(ERROR_NO_CUSTOMER_SELECTED, 'error');
   }
 
@@ -98,7 +100,7 @@
     $_GET['mail_sent_to'] = '';
   }
 
-  switch ($_GET['action']) {
+  switch ($getAction) {
       case 'set_editor':
         if ($_GET['reset_editor'] == '0') {
           $_SESSION['html_editor_preference_status'] = 'NONE';
@@ -111,7 +113,7 @@
     case 'confirmdelete':
       // demo active test
       if (zen_admin_demo()) {
-        $_GET['action']= '';
+        $getAction= '';
         $messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
         zen_redirect(zen_href_link_admin(FILENAME_COUPON_ADMIN));
       }
@@ -146,23 +148,23 @@
         $coupon_code = CommerceCoupon::generateCouponCode();
       }
       if ($_POST['coupon_code']) $coupon_code = $_POST['coupon_code'];
-      $query1 = $gBitDb->Execute("select coupon_code
+      $query1 = $gBitDb->query("select coupon_code
                               from " . TABLE_COUPONS . "
-                              where coupon_code = '" . zen_db_prepare_input($coupon_code) . "'");
+                              where coupon_code = ?", array( $coupon_code ) );
 
       if ($query1->RecordCount()>0 && $_POST['coupon_code'] && $_GET['oldaction'] != 'voucheredit')  {
         $update_errors = 1;
         $messageStack->add(ERROR_COUPON_EXISTS, 'error');
       }
       if ($update_errors != 0) {
-        $_GET['action'] = 'new';
+        $getAction = 'new';
       } else {
-        $_GET['action'] = 'update_preview';
+        $getAction = 'update_preview';
       }
       break;
     case 'update_confirm':
       if ( ($_POST['back_x']) || ($_POST['back_y']) ) {
-        $_GET['action'] = 'new';
+        $getAction = 'new';
       } else {
         if ($_POST['coupon_free_ship']) {
         	$coupon_type = 'S';
@@ -321,7 +323,7 @@ function check_form(form_name) {
   <tr>
 <!-- body_text //-->
 <?php
-  switch ($_GET['action']) {
+  switch ($getAction) {
   case 'voucherreport':
 ?>
       <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -764,7 +766,7 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
     $_POST['coupon_finishdate'] = $coupon->fields['coupon_expire_date'];
   case 'new':
 // set some defaults
-    if ($_GET['action'] != 'voucheredit' and $_POST['coupon_uses_user'] == '') $_POST['coupon_uses_user'] = 1;
+    if ($getAction != 'voucheredit' and $_POST['coupon_uses_user'] == '') $_POST['coupon_uses_user'] = 1;
 ?>
       <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
       <tr>
@@ -778,7 +780,7 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
       <tr>
       <td>
 <?php
-    echo zen_draw_form_admin('coupon', FILENAME_COUPON_ADMIN, 'action=update&oldaction='.$_GET['action'] . '&cid=' . $_GET['cid']);
+    echo zen_draw_form_admin('coupon', FILENAME_COUPON_ADMIN, 'action=update&oldaction='.$getAction . '&cid=' . $_GET['cid']);
 ?>
       <table border="0" width="100%" cellspacing="0" cellpadding="6">
 <?php
@@ -926,12 +928,13 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
     }
     $cc_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_DISCOUNT_COUPONS, $cc_query_raw, $cc_query_numrows);
     $cc_list = $gBitDb->Execute($cc_query_raw);
+	$rows = 0;
     while (!$cc_list->EOF) {
       $rows++;
       if (strlen($rows) < 2) {
         $rows = '0' . $rows;
       }
-      if (((!$_GET['cid']) || (@$_GET['cid'] == $cc_list->fields['coupon_id'])) && (!$cInfo)) {
+      if (( empty( $_GET['cid'] ) || ($_GET['cid'] == $cc_list->fields['coupon_id'])) && (!$cInfo)) {
         $cInfo = new objectInfo($cc_list->fields);
       }
       if ( (is_object($cInfo)) && ($cc_list->fields['coupon_id'] == $cInfo->coupon_id) ) {
@@ -982,7 +985,7 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
     $heading = array();
     $contents = array();
 
-    switch ($_GET['action']) {
+    switch ($getAction) {
     case 'release':
       break;
     case 'voucherreport':
@@ -1005,7 +1008,7 @@ $customer = $gBitDb->Execute("select `customers_firstname`, `customers_lastname`
       } else {
         $amount = $currencies->format($amount);
       }
-      if ($_GET['action'] == 'voucherdelete') {
+      if ($getAction == 'voucherdelete') {
         $contents[] = array('text'=> TEXT_CONFIRM_DELETE . '</br></br>' .
                 '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'action=confirmdelete&cid='.$_GET['cid'],'NONSSL').'">'.zen_image_button('button_confirm.gif','Confirm Delete ' . TEXT_GV_NAME).'</a>' .
                 '<a href="'.zen_href_link_admin(FILENAME_COUPON_ADMIN,'cid='.$cInfo->coupon_id,'NONSSL').'">'.zen_image_button('button_cancel.gif','Cancel').'</a>'
