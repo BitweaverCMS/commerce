@@ -17,20 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: catalog_dhtml.php,v 1.7 2005/11/22 11:04:42 gilesw Exp $
+//  $Id: catalog_dhtml.php,v 1.8 2007/01/06 07:07:23 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array('text' => BOX_HEADING_CATALOG, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_CATEGORIES_PRODUCTS, 'link' => zen_href_link_admin(FILENAME_CATEGORIES, '', 'NONSSL'));
 
   $za_contents[] = array('text' => BOX_CATALOG_PRODUCT_TYPES, 'link' => zen_href_link_admin(FILENAME_PRODUCT_TYPES, '', 'NONSSL'));
+  $za_contents[] = array('text' => tra( 'Product Options' ), 'link' => zen_href_link_admin( 'products_options.php', '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_PRODUCTS_PRICE_MANAGER, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_CATALOG_CATEGORIES_OPTIONS_NAME_MANAGER, 'link' => zen_href_link_admin(FILENAME_OPTIONS_NAME_MANAGER, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_CATALOG_CATEGORIES_OPTIONS_VALUES_MANAGER, 'link' => zen_href_link_admin(FILENAME_OPTIONS_VALUES_MANAGER, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_CATALOG_CATEGORIES_ATTRIBUTES_CONTROLLER, 'link' => zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_CATEGORIES_ATTRIBUTES_DOWNLOADS_MANAGER, 'link' => zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_CATALOG_PRODUCT_OPTIONS_NAME, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_NAME, '', 'NONSSL'));
-  $za_contents[] = array('text' => BOX_CATALOG_PRODUCT_OPTIONS_VALUES, 'link' => zen_href_link_admin(FILENAME_PRODUCTS_OPTIONS_VALUES, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_MANUFACTURERS, 'link' => zen_href_link_admin(FILENAME_MANUFACTURERS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CATALOG_SUPPLIERS, 'link' => zen_href_link_admin(FILENAME_SUPPLIERS, '', 'NONSSL'));  
   $za_contents[] = array('text' => BOX_CATALOG_REVIEWS, 'link' => zen_href_link_admin(FILENAME_REVIEWS, '', 'NONSSL'));
