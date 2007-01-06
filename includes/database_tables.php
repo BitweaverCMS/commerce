@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.13 2006/12/13 19:32:37 lsces Exp $
+// $Id: database_tables.php,v 1.14 2007/01/06 06:13:50 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -78,12 +78,11 @@
   define('TABLE_PRODUCT_TYPES_TO_CATEGORY', '`'.BITCOMMERCE_DB_PREFIX . 'com_product_types_to_category`');
   define('TABLE_PRODUCTS_ATTRIBUTES', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_attributes`');
   define('TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_attributes_dld`');
+  define('TABLE_PRODUCTS_OPTIONS_MAP', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_options_map`');
   define('TABLE_PRODUCTS_DESCRIPTION', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_description`');
   define('TABLE_PRODUCTS_DISCOUNT_QUANTITY', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_discount_quantity`');
   define('TABLE_PRODUCTS_NOTIFICATIONS', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_notifications`');
   define('TABLE_PRODUCTS_OPTIONS', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_options`');
-  define('TABLE_PRODUCTS_OPTIONS_VALUES', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_options_values`');
-  define('TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS', '`'.BITCOMMERCE_DB_PREFIX . 'com_prd_opt_val_to_prd_opt`');
   define('TABLE_PRODUCTS_OPTIONS_TYPES', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_options_types`');
   define('TABLE_PRODUCTS_TO_CATEGORIES', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_to_categories`');
   define('TABLE_PROJECT_VERSION', '`'.BITCOMMERCE_DB_PREFIX . 'com_project_version`');

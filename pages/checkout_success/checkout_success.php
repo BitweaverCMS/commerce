@@ -17,76 +17,28 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_success.php,v 1.3 2006/12/19 00:11:36 spiderr Exp $
+// $Id: checkout_success.php,v 1.4 2007/01/06 06:13:51 spiderr Exp $
 //
-global $zv_orders_id;
-?>
-<?php echo zen_draw_form('order', zen_href_link(FILENAME_CHECKOUT_SUCCESS, 'action=update', 'SSL')); ?>
-<table  width="100%" border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td>
-		<div class="heading">
-			<h1><?php echo HEADING_TITLE; ?></h1>
-		</div>
-<?php
-	global $gBitSmarty;
-	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/order_success.tpl' );
-?>
-  </td>
-<?php
-  if (CUSTOMERS_PRODUCTS_NOTIFICATION_STATUS == '1') {
-?>
-  <tr>
-    <td class="main">
-<?php
-    if ($global->fields['global_product_notifications'] != '1') {
-      echo TEXT_NOTIFY_PRODUCTS . '<br /><p class="productsNotifications">';
 
-      $products_displayed = array();
-      for ($i=0, $n=sizeof($products_array); $i<$n; $i++) {
-        if (!in_array($products_array[$i]['id'], $products_displayed)) {
-          echo zen_draw_checkbox_field('notify[]', $products_array[$i]['id']) . ' ' . $products_array[$i]['text'] . '<br />';
-          $products_displayed[] = $products_array[$i]['id'];
-        }
-      }
+global $newOrdersId;
+$newOrdersId = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
+$gBitSmarty->assign( 'newOrdersId', $newOrdersId );
 
-      echo '</p>';
-    }
-?>
-    </td>
-  </tr>
-<?php } ?>
-  <tr>
-    <td class="main"><?php echo TEXT_YOUR_ORDER_NUMBER . '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $zv_orders_id, 'SSL', false); ?>"><?=$zv_orders_id?></a></td>
-  </tr>
-  <tr>
-    <td class="plainBox"><?php  echo TEXT_SEE_ORDERS . '<br /><br />' . TEXT_CONTACT_STORE_OWNER;?></td>
-  </tr>
-  <tr>
-    <td align="center"><h3><?php echo TEXT_THANKS_FOR_SHOPPING; ?></h3></td>
-  </tr>
-<?php
-  $gv_query="select `amount` from " . TABLE_COUPON_GV_CUSTOMER . "
-             where `customer_id`='".$_SESSION['customer_id'] . "'";
+if( $gBitCustomer->getGlobalNotifications() != '1' ) {
+	$products_array = array();
+	$products_query = "SELECT DISTINCT `products_id`, `products_name` from " . TABLE_ORDERS_PRODUCTS . "
+					   WHERE `orders_id` = ?
+					   ORDER BY `products_name`";
+	$products = $gBitDb->getAssoc($products_query, array($newOrdersId) );
+	$gBitSmarty->assign_by_ref( 'notifyProducts', $products );
+}
 
-  $gv_result = $gBitDb->Execute($gv_query);
+$gv_query = "SELECT `amount` from " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id`=?";
+$gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gCustomer->mCustomersIs ) ) );
 
-  if (!$gv_result->EOF) {
-    if ($gv_result->fields['amount'] > 0) {
+// include template specific file name defines
+$define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
+
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/checkout_success.tpl' );
+
 ?>
-  <tr>
-    <td align="center" class="main"><?php echo GV_HAS_VOUCHERA; echo zen_href_link(FILENAME_GV_SEND); echo GV_HAS_VOUCHERB; ?></td>
-  </tr>
-<?php
-    }
-  }
-?>
-  <tr>
-    <td class="main">
-      <?php if (DOWNLOAD_ENABLED == 'true') include(DIR_WS_MODULES . 'downloads.php'); ?>
-    </td>
-  </tr>
-  <tr>
-    <td align="right"><?php echo zen_image_submit(BUTTON_IMAGE_CONTINUE, BUTTON_CONTINUE_ALT); ?></td>
-  </tr>
-</table></form>

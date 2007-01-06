@@ -1,4 +1,16 @@
 <?php
+//
+// +----------------------------------------------------------------------+
+// | bitcommerce                                                          |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2007 bitcommerce.org                                   |
+// |                                                                      |
+// | http://www.bitcommerce.org                                           |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license        |
+// +----------------------------------------------------------------------+
+//  $Id: CommerceProduct.php,v 1.86 2007/01/06 06:13:49 spiderr Exp $
+//
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
 if( !defined( 'TABLE_PRODUCTS' ) ) {
@@ -35,6 +47,8 @@ class CommerceProduct extends LibertyAttachable {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM `".TABLE_PRODUCTS."` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
+			$this->mContentId = $this->getField( 'content_id' );
+			parent::load();
 			$this->mContentId = $this->mInfo['content_id'];
 //			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
 //				$this->mInfo = array();
@@ -80,6 +94,10 @@ class CommerceProduct extends LibertyAttachable {
 		}
 	}
 
+	// LibertyAttachable override
+	function getStorageSubDirName() {
+		return 'products';
+	}
 
 	function loadByRelatedContent( $pContentId ) {
 		if( is_numeric( $pContentId ) ) {
@@ -95,18 +113,19 @@ class CommerceProduct extends LibertyAttachable {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
-			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,lc.*, m.*
+			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,lc.*, m.*, cat.*, catd.*
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
 					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
+						INNER JOIN ".TABLE_CATEGORIES." cat ON ( p.`master_categories_id`=cat.`categories_id` )
+						LEFT OUTER JOIN ".TABLE_CATEGORIES_DESCRIPTION." catd ON ( cat.`categories_id`=catd.`categories_id` AND catd.`language_id`=pd.`language_id` )
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
 						LEFT OUTER JOIN ".TABLE_SUPPLIERS." s ON ( p.`suppliers_id`=s.`suppliers_id` )					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
 // Leave these out for now... and possibly forever. These can produce multiple row returns
 //						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
-//						LEFT OUTER JOIN ".TABLE_CATEGORIES." c ON ( p.`master_categories_id`=c.`categories_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
 					$ret['products_image_url'] = CommerceProduct::getImageUrl( $ret['products_image'] );
@@ -431,6 +450,11 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+//		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mStorage ) ) {
+//			$thumbImage = current( $this->mStorage );
+//			$ret = $thumbImage['thumbnail_url'][$pSize];
+//error_log( $pSize );			
+
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
@@ -443,7 +467,16 @@ class CommerceProduct extends LibertyAttachable {
 				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
-			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
+			if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
+				$pMixed = $this->mProductsId;
+			}
+	
+			if( is_numeric( $pMixed ) ) {
+				$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize.'.jpg';
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path;
+			} else {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
+			}
 		}
 		return $ret;
 	}
@@ -797,126 +830,56 @@ $this->debug(0);
 	}
 
 
-	function getAttribute( $pOptionId, $pOptionValueId, $pAttr ) {
-		$ret = NULL;
-		if( is_null( $this->mOptions ) ) {
-			$this->loadAttributes();
-		}
-		if( !empty( $this->mOptions[$pOptionId]['values'][$pOptionValueId][$pAttr] ) ) {
-			$ret = $this->mOptions[$pOptionId]['values'][$pOptionValueId][$pAttr];
-		}
-		return $ret;
-	}
+    function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
+        $ret = FALSE;
+        if( empty( $pProductsId ) ) {
+            $pProductsId = $this->mProductsId;
+        }
 
-	function compareAttributes( &$pParamHash, $pAttr ) {
-		$currentAttr = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], $pAttr );
-		if( (!empty( $pParamHash[$pAttr] ) && $pParamHash[$pAttr] != $currentAttr )
-			||	(empty( $pParamHash[$pAttr] ) && !empty( $pParamHash[$pAttr] )) ) {
-			$pParamHash['attributes_store'][$pAttr] = !empty( $pParamHash[$pAttr] ) ? $pParamHash[$pAttr] : NULL;
-		}
-	}
+        if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
+            // don't include READONLY attributes to determin if attributes must be selected to add to cart
+            $query = "select pa.`products_options_values_id`
+                        from  " . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
+							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pom.`products_options_values_id`=pom.`products_options_values_id`) 
+							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po on pa.`products_options_id` = po.`products_options_id`
+                        where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+        } else {
+            // regardless of READONLY attributes no add to cart buttons
+            $query = "SELECT pa.`products_attributes_id`
+                      FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+							INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+                      WHERE pom.`products_id` = ?";
+        }
+
+        $attributes = $this->mDb->getOne($query, array( $pProductsId) );
+
+        return( $attributes->fields['products_attributes_id'] > 0 );
+    }
 
 
-	function verifyAttributes( &$pParamHash ) {
-		if( !empty( $pParamHash['options_id'] ) ) {
-			// iii 030811 added:  For TEXT and FILE option types, ignore option value
-			// entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
-			$optionType = $this->mDb->GetOne( "select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $pParamHash['options_id'] ) );
-			$pParamHash['options_values_id'] = (($optionType == PRODUCTS_OPTIONS_TYPE_TEXT) || ($optionType == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $pParamHash['options_values_id'];
-			$this->compareAttributes( $pParamHash, 'options_values_id' );
-			$this->compareAttributes( $pParamHash, 'options_values_price' );
-
-			$attrList = array(
-				'products_options_sort_order',
-				'product_attribute_is_free',
-				'products_attributes_wt',
-				'products_attributes_wt_pfix',
-				'attributes_display_only',
-				'attributes_default',
-				'attributes_discounted',
-				'attributes_price_base_inc',
-				'attributes_price_onetime',
-				'attributes_price_factor',
-				'attributes_pf_offset',
-				'attributes_pf_onetime',
-				'attributes_pf_onetime_offset',
-				'attributes_qty_prices',
-				'attributes_qty_prices_onetime',
-				'attributes_price_words',
-				'attributes_price_words_free',
-				'attributes_price_letters',
-				'attributes_price_letters_free',
-				'attributes_required',
-				'options_values_price',
-				'price_prefix',
-			);
-
-			foreach( $attrList as $attr ) {
-				$this->compareAttributes( $pParamHash, $attr  );
+	
+	function storeAttributeMap( $pOptionsValuesId ) {
+		if( BitBase::verifyId( $pOptionsValuesId ) && $this->isValid() ) {
+			if( !$this->hasOptionValue( $pOptionsValuesId ) ) {
+				$this->mDb->associateInsert( TABLE_PRODUCTS_OPTIONS_MAP, array( 'products_id' => $this->mProductsId, 'products_options_values_id' => $pOptionsValuesId ) );
 			}
 		}
-		return( !empty( $pParamHash['attributes_store'] ) && count( $pParamHash['attributes_store'] ) );
 	}
 
-	function storeAttributes( $pParamHash ) {
-		if( $this->verifyAttributes( $pParamHash ) ) {
-			$prodAttrId = $this->getAttribute( $pParamHash['options_id'], $pParamHash['options_values_id'], 'products_attributes_id' );
-			if( $prodAttrId ) {
-	            $this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'], array( 'products_attributes_id' => $prodAttrId ) );
-	        } else {
-				$pParamHash['attributes_store']['options_id'] = $pParamHash['options_id'];
-				$pParamHash['attributes_store']['products_id'] = $this->mProductsId;
-	            $this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['attributes_store'] );
-	        }
-		}
-/*
-// check for duplicate and block them
-$check_duplicate = $gBitDb->query("DELETE * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ? and `options_id` = ? and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
-            $products_id = zen_db_prepare_input($_POST['products_id']);
-//            $values_id = zen_db_prepare_input($_POST['values_id']);
 
-        if ($check_duplicate->RecordCount() > 0) {
-          // do not add duplicates give a warning
-          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
-        } else {
-          // Validate options_id and options_value_id
-          if (!zen_validate_options_to_options_value($_POST['options_id'], $_POST['values_id'])) {
-            // do not add invalid match
-            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
-          } else {
-// add - update as record exists
-// attributes images
-// when set to none remove from database
-          if (isset($_POST['attributes_image']) && zen_not_null($_POST['attributes_image']) && ($_POST['attributes_image'] != 'none')) {
-            $attributes_image = zen_db_prepare_input($_POST['attributes_image']);
-          } else {
-            $attributes_image = '';
-          }
-
-          $attributes_image = new upload('attributes_image');
-          $attributes_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
-          if ($attributes_image->parse() && $attributes_image->save($_POST['overwrite'])) {
-            $attributes_image_name = $_POST['img_dir'] . $attributes_image->filename;
-          } else {
-            $attributes_image_name = (isset($_POST['attributes_previous_image']) ? $_POST['attributes_previous_image'] : '');
-          }
-			'attributes_image' => $attributes_image_name,
-*/
-
-	}
-
-	function expungeAllAttributes() {
-		if( $this->isValid() ) {
+	function expungeAttributeMap( $pOptionsValuesId ) {
+		if( BitBase::verifyId( $pOptionsValuesId ) && $this->isValid() ) {
 			// The products_id is redundant for safety purposes
-			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`=?", array( $this->mProductsId ));
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_options_values_id` = ? AND `products_id`=?", array( $pOptionsValuesId, $this->mProductsId ) );
 		}
 		return( count( $this->mErrors ) == 0 );		
 	}
 
-	function expungeAttribute( $pProductsAttributesId ) {
-		if( $this->isValid() && BitBase::verifyId( $pProductsAttributesId ) ) {
+
+	function expungeAllAttributes() {
+		if( $this->isValid() ) {
 			// The products_id is redundant for safety purposes
-			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id`=? AND `products_attributes_id` = ?", array( $this->mProductsId, $pProductsAttributesId ));
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=?", array( $this->mProductsId ));
 		}
 		return( count( $this->mErrors ) == 0 );		
 	}
@@ -1032,13 +995,17 @@ Skip deleting of images for now
 				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 				// remove downloads if they exist
-				$remove_downloads= $this->mDb->query( "SELECT `products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
+				$remove_downloads= $this->mDb->query(  
+					"SELECT pa.`products_attributes_id`
+					 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
+					 WHERE pom.`products_id` = ?", array( $this->mProductsId ) );
 				while (!$remove_downloads->EOF) {
 					$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
 					$remove_downloads->MoveNext();
 				}
 
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
@@ -1194,24 +1161,25 @@ Skip deleting of images for now
 
 			$sql = "SELECT distinct popt.`products_options_id` AS hash_key, popt.*
 					FROM " . TABLE_PRODUCTS_OPTIONS . " popt
-						INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " patrib ON(patrib.`options_id` = popt.`products_options_id`)
-					WHERE patrib.`products_id`= ? AND popt.`language_id` = ? " .
+						INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
+						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
+					WHERE pom.`products_id`= ? AND popt.`language_id` = ? " .
 					$options_order_by;
 
 			if( $this->mOptions = $this->mDb->GetAssoc($sql, array( $this->mProductsId, (int)$_SESSION['languages_id'] ) ) ) {
 				if ( PRODUCTS_OPTIONS_SORT_BY_PRICE =='1' ) {
-					$order_by= ' ORDER BY pa.`products_options_sort_order`, pov.`products_options_values_name`';
+					$order_by= ' ORDER BY pa.`products_options_sort_order`, pa.`products_options_values_name`';
 				} else {
 					$order_by= ' ORDER BY pa.`products_options_sort_order`, pa.`options_values_price`';
 				}
 
 				foreach( array_keys( $this->mOptions ) as $optionsId ) {
-					$sql = "SELECT pov.`products_options_values_id`, pov.`products_options_values_name`, pa.*
+					$sql = "SELECT pa.`products_options_values_id`, pa.`products_options_values_name`, pa.*
 							FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov ON (pa.`options_values_id` = pov.`products_options_values_id`)
-							WHERE pa.`products_id`=? AND pa.`options_id`=? AND pov.`language_id`=? " .
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
+							WHERE pom.`products_id`=? AND pa.`products_options_id`=? " .
 							$order_by;
-			        if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId, $_SESSION['languages_id'] ) ) ) {
+			        if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId ) ) ) {
 						$this->mOptions[$optionsId]['values'] = array();
 						while( !$rs->EOF ) {
 							$this->mOptions[$optionsId]['values'][$rs->fields['products_options_values_id']] = $rs->fields;
@@ -1225,27 +1193,12 @@ Skip deleting of images for now
 	}
 
 
-	function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
+	function hasOptionValue( $pOptionsValuesId ) {
 		$ret = FALSE;
-		if( empty( $pProductsId ) ) {
-			$pProductsId = $this->mProductsId;
+		if( $this->isValid() && $this->verifyId( $pOptionsValuesId ) ) {
+			$ret = $this->mDb->getOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=? AND `products_options_values_id`=?", array( $this->mProductsId, $pOptionsValuesId ) );
 		}
-
-		if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
-			// don't include READONLY attributes to determin if attributes must be selected to add to cart
-			$query = "select pa.`products_attributes_id`
-						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id`
-						where pa.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
-		} else {
-			// regardless of READONLY attributes no add to cart buttons
-			$query = "select pa.`products_attributes_id`
-						from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						where pa.`products_id` = ?";
-		}
-
-		$attributes = $this->mDb->getOne($query, array( $pProductsId) );
-
-		return( $attributes->fields['products_attributes_id'] > 0 );
+		return( $ret );
 	}
 
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.31 2006/09/03 03:21:46 spiderr Exp $
+// $Id: shopping_cart.php,v 1.32 2007/01/06 06:13:50 spiderr Exp $
 //
 
   class shoppingCart {
@@ -454,18 +454,16 @@
           reset($this->contents[$products_id]['attributes']);
           while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
 /*
-                                      products_attributes_id, options_values_price, price_prefix,
+                                      options_values_price, price_prefix,
                                       attributes_display_only, product_attribute_is_free,
                                       attributes_discounted
 */
 
-            $attribute_price_query = "select *
-                                      from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                      where `products_id` = '" . (int)$prid . "'
-                                      and `options_id` = '" . (int)$option . "'
-                                      and `options_values_id` = '" . (int)$value . "'";
-
-            $attribute_price = $gBitDb->Execute($attribute_price_query);
+			$attribute_price_query = "SELECT *
+									FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+									WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+			$attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$prid, (int)$option , (int)$value ) );
 
             $new_attributes_price = 0;
             $discount_type_id = '';
@@ -554,14 +552,12 @@
         if (isset($this->contents[$products_id]['attributes'])) {
           reset($this->contents[$products_id]['attributes']);
           while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-            $attribute_weight_query = "select `products_attributes_wt`, `products_attributes_wt_pfix`
-                                       from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                       where `products_id` = '" . (int)$prid . "'
-                                       and `options_id` = '" . (int)$option . "'
-                                       and `options_values_id` = '" . (int)$value . "'";
-
-            $attribute_weight = $gBitDb->Execute($attribute_weight_query);
-
+			$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
+									FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+									WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+			$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$prid, (int)$option , (int)$value ) );
+		  
           // adjusted count for free shipping
           if ($product->getField('product_is_always_free_ship') != 1) {
             $new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
@@ -592,13 +588,11 @@
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
 
-          $attribute_price_query = "select *
-                                    from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                    where `products_id` = '" . (int)$products_id . "'
-                                    and `options_id` = '" . (int)$option . "'
-                                    and `options_values_id` = '" . (int)$value . "'";
-
-          $attribute_price = $gBitDb->Execute($attribute_price_query);
+          $attribute_price_query = "SELECT *
+                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+                                    WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+          $attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$products_id, (int)$option , (int)$value ) );
 
           $new_attributes_price = 0;
           $discount_type_id = '';
@@ -690,13 +684,11 @@
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
 
-          $attribute_price_query = "select *
-                                    from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                    where `products_id` = '" . (int)$products_id . "'
-                                    and `options_id` = '" . (int)$option . "'
-                                    and `options_values_id` = '" . (int)$value . "'";
-
-          $attribute_price = $gBitDb->Execute($attribute_price_query);
+          $attribute_price_query = "SELECT *
+                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+                                    WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+          $attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$products_id, (int)$option , (int)$value ) );
 
           $new_attributes_price = 0;
           $discount_type_id = '';
@@ -756,9 +748,10 @@ if ((int)$products_id != $products_id) {
       if (isset($this->contents[$pCartProductsHash]['attributes'])) {
         reset($this->contents[$pCartProductsHash]['attributes']);
         while (list($option, $value) = each($this->contents[$pCartProductsHash]['attributes'])) {
-			$sql = "select `products_attributes_wt`, `products_attributes_wt_pfix`
-					from " . TABLE_PRODUCTS_ATTRIBUTES . "
-					WHERE `products_id` = ? AND `options_id` = ? AND `options_values_id` = ?";
+			$sql = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
+					FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					  INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
+					WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
 			$attribute_weight_info = $gBitDb->query( $sql, array( $prid, (int)$option, (int)$value ) );
           // adjusted count for free shipping
           $freeShip = $gBitDb->getOne("select `product_is_always_free_ship`
@@ -791,15 +784,15 @@ if ((int)$products_id != $products_id) {
 
 		$products_array = array();
 		reset($this->contents);
-		while (list($products_id, ) = each($this->contents)) {
+		while( list( $products_id, $productsHash ) = each( $this->contents ) ) {
 			$product = new CommerceProduct( zen_get_prid( $products_id ) );
 			if( $product->load() ) {
 				$prid = $product->mProductsId;
-				$qty = $this->contents[$prid]['quantity'];
+				$qty = $productsHash['quantity'];
 				$products_price = $product->getPurchasePrice( $qty );
 
 					if ($check_for_valid_cart == true) {
-						$check_quantity = $this->contents[$products_id]['quantity'];
+						$check_quantity = $productsHash['quantity'];
 						$check_quantity_min = $product->getField( 'products_quantity_order_min' );
 					// Check quantity min
 						if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
@@ -831,17 +824,17 @@ if ((int)$products_id != $products_id) {
 				if (QUANTITY_DECIMALS != 0) {
 		//          $new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-					$fix_qty = $this->contents[$products_id]['quantity'];
+					$fix_qty = $productsHash['quantity'];
 					switch (true) {
 						case (!strstr($fix_qty, '.')):
 							$new_qty = $fix_qty;
 							break;
 						default:
-							$new_qty = preg_replace('/[0]+$/','',$this->contents[$products_id]['quantity']);
+							$new_qty = preg_replace('/[0]+$/','',$productsHash['quantity']);
 							break;
 					}
 				} else {
-					$new_qty = $this->contents[$products_id]['quantity'];
+					$new_qty = $productsHash['quantity'];
 				}
 
 				$new_qty = round($new_qty, QUANTITY_DECIMALS);
@@ -871,8 +864,8 @@ if ((int)$products_id != $products_id) {
 				$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 				$productHash['tax'] = $product->getField('tax_rate');
 				$productHash['tax_description'] = $product->getField('tax_description');
-				$productHash['attributes'] = (isset($this->contents[$products_id]['attributes']) ? $this->contents[$products_id]['attributes'] : '');
-				$productHash['attributes_values'] = (isset($this->contents[$products_id]['attributes_values']) ? $this->contents[$products_id]['attributes_values'] : '');
+				$productHash['attributes'] = (isset( $productsHash['attributes'] ) ? $productsHash['attributes'] : '');
+				$productHash['attributes_values'] = (isset( $productsHash['attributes_values'] ) ? $productsHash['attributes_values'] : '');
 				$products_array[] = $productHash;
 			}
       }
@@ -917,14 +910,13 @@ if ((int)$products_id != $products_id) {
           if (isset($this->contents[$products_id]['attributes'])) {
             reset($this->contents[$products_id]['attributes']);
             while (list(, $value) = each($this->contents[$products_id]['attributes'])) {
-              $virtual_check_query = "select count(*) as `total`
-                                      from " . TABLE_PRODUCTS_ATTRIBUTES . " pa, "
-                                             . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                      where pa.`products_id` = '" . (int)$products_id . "'
-                                      and pa.`options_values_id` = '" . (int)$value . "'
-                                      and pa.`products_attributes_id` = pad.`products_attributes_id`";
+              $virtual_check_query = "SELECT COUNT(*) as `total`
+                                      FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+									  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+                                        INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
+                                      WHERE pom.`products_id` = ? AND pa.`products_options_values_id` = ?";
 
-              $virtual_check = $gBitDb->Execute($virtual_check_query);
+              $virtual_check = $gBitDb->query( $virtual_check_query, array( (int)$products_id, (int)$value ) );
 
               if ($virtual_check->fields['total'] > 0) {
                 switch ($this->content_type) {

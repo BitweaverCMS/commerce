@@ -17,10 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.2 2005/10/06 21:01:46 spiderr Exp $
+//  $Id: index.php,v 1.3 2007/01/06 06:13:49 spiderr Exp $
 //
 
-define('HEADING_TITLE', 'Choose an action..');
+if( !defined( 'HEADING_TITLE' ) ) {
+	define('HEADING_TITLE', 'Choose an action..');
+}
 
 define('BOX_TITLE_ORDERS', 'Orders');
 define('BOX_TITLE_STATISTICS', 'Statistics');

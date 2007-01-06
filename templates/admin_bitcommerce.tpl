@@ -1,11 +1,6 @@
-{* $Header: /cvsroot/bitweaver/_bit_commerce/templates/admin_bitcommerce.tpl,v 1.2 2005/09/02 08:39:32 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_commerce/templates/admin_bitcommerce.tpl,v 1.3 2007/01/06 06:13:52 spiderr Exp $ *}
 {strip}
-<div class="floaticon">{bithelp}</div>
-<div id="navbar">
-	<ul class="nde-menu-system">
-		{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
-	</ul>
-</div>
+{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
 	<div class="body">

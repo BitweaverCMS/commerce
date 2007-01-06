@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.14 2006/12/19 00:11:34 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.15 2007/01/06 06:13:51 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
@@ -80,8 +80,8 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
 
   if( $gvBalance = CommerceVoucher::getGiftAmount() ) {
       $content .= zen_draw_separator();
-      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_BALANCE . '</td><td class="smalltext" align="right" valign="bottom">' . $gvBalance . '</td></tr></table>';
-      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext"><a href="'. zen_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a></td></tr></table>';
+      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . tra( 'Gift Certificate Balance' ) . '</td><td class="smalltext" align="right" valign="bottom">' . $gvBalance . '</td></tr></table>';
+      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext"><a href="'. zen_href_link(FILENAME_GV_SEND) . '">' . tra( 'Send Gift Certificate' ) . '</a></td></tr></table>';
   }
   if( $couponAmount = CommerceVoucher::getCouponAmount() ) {
     $content .= zen_draw_separator();

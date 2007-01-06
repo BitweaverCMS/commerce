@@ -17,12 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.9 2006/03/23 08:05:04 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.10 2007/01/06 06:13:51 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
 global $gBitCustomer, $order;
 
+define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($_SESSION['cart']->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));

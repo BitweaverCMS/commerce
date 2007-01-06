@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.21 2006/09/06 08:53:51 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.22 2007/01/06 06:13:51 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -79,7 +79,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				if ($vals['attributes_discounted'] == 1) {
 					// apply product discount to attributes if discount is on
 					//              $new_attributes_price = $vals['options_values_price'];
-					$new_attributes_price = zen_get_attributes_price_final( $vals["products_attributes_id"], 1, '', 'false' );
+					$new_attributes_price = zen_get_attributes_price_final( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
 					$new_attributes_price = zen_get_discount_calc((int)$_GET['products_id'], true, $new_attributes_price);
 				} else {
 					// discount is off do not apply
@@ -93,7 +93,7 @@ if ( $gBitProduct->loadAttributes() ) {
 
 				if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
 					$productSettings['show_onetime_charges_description'] = 'true';
-					$new_onetime_charges = zen_get_attributes_price_final_onetime( $vals["products_attributes_id"], 1, '');
+					$new_onetime_charges = zen_get_attributes_price_final_onetime( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, '');
 					$price_onetime = ' *'. $currencies->display_price($new_onetime_charges,
 					zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id']));
 				} else {
@@ -171,7 +171,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				} else {
 					// $selected_attribute = ($vals['attributes_default']=='1' ? true : false);
 					// if an error, set to customer setting
-					if ($_POST['id'] !='') {
+					if( !empty( $_POST['id'] ) ) {
 						$selected_attribute= false;
 						reset($_POST['id']);
 						while(list($key,$value) = each($_POST['id'])) {

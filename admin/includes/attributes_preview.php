@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: attributes_preview.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
+// $Id: attributes_preview.php,v 1.9 2007/01/06 06:13:49 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -30,7 +30,7 @@
     $sql = "select count(*) as `total`
             from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
             where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-            and      patrib.`options_id` = popt.`products_options_i`d
+            and      patrib.`products_options_id` = popt.`products_options_i`d
             and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
     $pr_attr = $gBitDb->getOne($sql);
@@ -48,7 +48,7 @@
                               popt.`products_options_images_style`
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
               where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.`options_id` = popt.`products_options_id`
+              and             patrib.`products_options_id` = popt.`products_options_id`
               and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
@@ -77,13 +77,10 @@
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
-        $sql = "select    pov.`products_options_values_id`,
-                          pov.`products_options_values_name`,
-                          pa.*
-                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
+        $sql = "select pa.*
+                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa
                 where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.`options_values_id` = pov.`products_options_values_id`
+                and       pa.`products_options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
                 and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
                 $order_by;
 
@@ -498,7 +495,7 @@
 
 // Read Only - just for display purposes
           if ($products_options_names->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
-//            $tmp_html .= '<input type="hidden" name ="id[' . $products_options_names->fields['products_options_id'] . ']"' . '" value="' . stripslashes($products_options->fields['products_options_values_name']) . ' SELECTED' . '" />  ' . $products_options->fields['products_options_values_name'];
+//            $tmp_html .= '<input type="hidden" name ="id[' . $products_options_names->fields['products_options_id'] . ']"' . '" value="' . stripslashes($products_options->fields['products_options_values_name']) . ' SELECTED' . '" />  ' . $products_options->fields['attributes_name'];
             $tmp_html .= $products_options_details . '<br />';
           } else {
             $zv_display_select_option ++;

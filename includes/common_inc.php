@@ -230,7 +230,9 @@
 	    $field .= '<option value=""></option>';
 	}
 
-    if (empty($default) && isset($GLOBALS[$name])) $default = stripslashes($GLOBALS[$name]);
+    if( empty($default) && isset($GLOBALS[$name] ) && is_string( $GLOBALS[$name] ) ) {
+		$default = stripslashes( $GLOBALS[$name] );
+	}
 
     for ($i=0, $n=sizeof($values); $i<$n; $i++) {
       $field .= '<option value="' . zen_output_string($values[$i]['id']) . '"';
@@ -346,7 +348,7 @@
 // Output a raw date string in the selected locale date format
 // $raw_date needs to be in this format: YYYY-MM-DD HH:MM:SS
   function zen_date_long($raw_date) {
-    if ( ($raw_date == '0001-01-01 00:00:00') || ($raw_date == '') ) return false;
+    if ( ($raw_date == '0001-01-01 00:00:00') || empty( $raw_date ) ) return false;
 
     $year = (int)substr($raw_date, 0, 4);
     $month = (int)substr($raw_date, 5, 2);
@@ -521,7 +523,7 @@
 // HTML Mode
       $HR = '<hr>';
       $hr = '<hr>';
-      if ( ($boln == '') && ($eoln == "\n") ) { // Values not specified, use rational defaults
+      if ( empty( $boln ) && ($eoln == "\n") ) { // Values not specified, use rational defaults
         $CR = '<br />';
         $cr = '<br />';
         $eoln = $cr;
@@ -540,7 +542,7 @@
     $statecomma = '';
     $streets = $street;
     if ($suburb != '') $streets = $street . $cr . $suburb;
-    if ($country == '') {
+    if ( empty( $country ) ) {
       if (is_array($address['country'])) {
         $country = zen_output_string_protected($address['country']['countries_name']);
       } else {
@@ -593,15 +595,20 @@
 		}
 
 		// do not select display only attributes and attributes_price_base_inc is true
-		$product_att_query = $gBitDb->query("select `options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` = '" . (int)$products_id . "' and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " order by `options_id`, `price_prefix`, `options_values_price`");
+		$query = "SELECT `products_options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` 
+				  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
+				  WHERE `products_id` = ? and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " 
+				  ORDER BY `products_options_id`, `price_prefix`, `options_values_price`";
+		$product_att_query = $gBitDb->query( $query, array( (int)$products_id ) );
 
 		$the_options_id= 'x';
 		$the_base_price= 0;
 	// add attributes price to price
 		if ($product['products_priced_by_attribute'] == '1' and $product_att_query->RecordCount() >= 1) {
 			while (!$product_att_query->EOF) {
-			if ( $the_options_id != $product_att_query->fields['options_id']) {
-				$the_options_id = $product_att_query->fields['options_id'];
+			if ( $the_options_id != $product_att_query->fields['products_options_id']) {
+				$the_options_id = $product_att_query->fields['products_options_id'];
 				$the_base_price += $product_att_query->fields['options_values_price'];
 			}
 			$product_att_query->MoveNext();
@@ -1364,12 +1371,17 @@ If a special exist * 10+9
 
 ////
 // attributes final price
-  function zen_get_attributes_price_final($attribute, $qty = 1, $pre_selected, $include_onetime = 'false') {
+  function zen_get_attributes_price_final( $pProductsId, $pOptionsValuesId, $qty = 1, $pre_selected, $include_onetime = 'false') {
     global $gBitDb;
     global $cart;
-
-    if ($pre_selected == '' or $attribute != $pre_selected->fields["products_attributes_id"]) {
-      $pre_selected = $gBitDb->query("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
+	
+    if ( empty( $pre_selected ) OR $pOptionsValuesId != $pre_selected->fields["products_options_values_id"]) {
+		$query = "SELECT pa.*, pom.`products_id`, po.`products_options_type` 
+				  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
+				    INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON( po.`products_options_id`=pa.`products_options_id` )
+				  WHERE pa.`products_options_values_id` = ? AND pom.`products_id`=?";
+		$pre_selected = $gBitDb->query( $query, array( $pOptionsValuesId, $pProductsId ) );
     } else {
       // use existing select
     }
@@ -1391,14 +1403,14 @@ If a special exist * 10+9
     $attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
 
     // per word and letter charges
-    if (zen_get_attributes_type($attribute) == PRODUCTS_OPTIONS_TYPE_TEXT) {
+    if( $pre_selected->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
       // calc per word or per letter
     }
 
 // onetime charges
     if ($include_onetime == 'true') {
       $pre_selected_onetime = $pre_selected;
-      $attributes_price_final += zen_get_attributes_price_final_onetime($pre_selected->fields["products_attributes_id"], 1, $pre_selected_onetime);
+      $attributes_price_final += zen_get_attributes_price_final_onetime($pre_selected->fields['products_options_values_id'], 1, $pre_selected_onetime);
     }
 
     return $attributes_price_final;
@@ -1407,12 +1419,16 @@ If a special exist * 10+9
 
 ////
 // attributes final price onetime
-  function zen_get_attributes_price_final_onetime($attribute, $qty= 1, $pre_selected_onetime) {
+  function zen_get_attributes_price_final_onetime( $pProductsId, $pOptionsValuesId, $qty= 1, $pre_selected_onetime) {
     global $gBitDb;
     global $cart;
 
-    if ($pre_selected_onetime == '' or $attribute != $pre_selected_onetime->fields["products_attributes_id"]) {
-      $pre_selected_onetime = $gBitDb->query("select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa where pa.`products_attributes_id` = '" . $attribute . "'");
+    if ( !empty( $pre_selected_onetime ) or $pOptionsValuesId != $pre_selected_onetime->fields["products_options_values_id"]) {
+		$query = "SELECT * 
+				  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
+				    INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
+				  WHERE pa.`products_options_values_id` = ? AND pom.`products_id`=?";
+		$pre_selected_onetime = $gBitDb->query( $query, array( $pOptionsValuesId, $pProductsId ) );
     } else {
       // use existing select
     }
@@ -1439,9 +1455,11 @@ If a special exist * 10+9
 // get attributes type
   function zen_get_attributes_type($check_attribute) {
     global $gBitDb;
-    $check_options_id_query = $gBitDb->query( "select `options_id` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_attributes_id` =?", array( $check_attribute ) );
-    $check_type_query = $gBitDb->query( "select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` =?", array( $check_options_id_query->fields['options_id'] ) );
-    return $check_type_query->fields['products_options_type'];
+	$query = "SELECT po.`products_options_type` 
+			  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
+				INNER JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON( po.`products_options_id`=pa.`products_options_id` )
+			  WHERE pa.`products_attributes_id` = ?";
+    return $gBitDb->getOne( $query, array( $check_attribute ) );
   }
 
 

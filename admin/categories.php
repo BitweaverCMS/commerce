@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.18 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: categories.php,v 1.19 2007/01/06 06:13:48 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -536,8 +536,8 @@
         echo TEXT_CATEGORIES_PRODUCTS_SORT_ORDER_INFO . zen_draw_form_admin('set_categories_products_sort_order_form', FILENAME_CATEGORIES, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_categories_products_sort_order', $categories_products_sort_order_array, $reset_categories_products_sort_order, 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('cID', $cPath) .
         zen_draw_hidden_field('cPath', $cPath) .
-        zen_draw_hidden_field('pID', $_GET['pID']) .
-        zen_draw_hidden_field('page', $_GET['page']) .
+        @zen_draw_hidden_field('pID', $_GET['pID']) .
+        @zen_draw_hidden_field('page', $_GET['page']) .
         zen_draw_hidden_field('action', 'set_categories_products_sort_order') .
         '</form>';
 
@@ -547,8 +547,8 @@
         echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_CATEGORIES, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
         zen_draw_hidden_field('cID', $cPath) .
         zen_draw_hidden_field('cPath', $cPath) .
-        zen_draw_hidden_field('pID', $_GET['pID']) .
-        zen_draw_hidden_field('page', $_GET['page']) .
+        @zen_draw_hidden_field('pID', $_GET['pID']) .
+        @zen_draw_hidden_field('page', $_GET['page']) .
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
       ?>
@@ -627,8 +627,10 @@
 			  }
 			}
 
-			$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
-			$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
+			if( !empty( $cInfo ) ) {
+				$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
+				$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
+			}
 
 			$contents[] = array('text' => '<br />' . TEXT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', '', 'size="6"'));
 			$contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');

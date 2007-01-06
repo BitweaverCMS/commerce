@@ -9,6 +9,7 @@ $gBitSmarty->assign( 'mochikitLibs', array( 'DOM.js', 'Iter.js', 'Style.js', 'Si
 
 $productManager = new CommerceProductManager();
 
+
 if( $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_IMAGES') == 'true' ) {
   $dir = @dir(DIR_FS_CATALOG_IMAGES);
   $dir_info[] = array('id' => '', 'text' => "Main Directory");
@@ -18,38 +19,49 @@ if( $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_IMAGES') == 'true' ) {
     }
   }
   sort($dir_info);
-
   $default_directory = 'options/';
 }
 
-$tempProduct = new CommerceProduct();
-$optionsList = CommerceProduct::getAllOptions();
-$gBitSmarty->assign_by_ref( 'optionsList', $optionsList );
-
-if( @BitBase::verifyId( $_REQUEST['attributes_id'] ) ) {
-	$editAttribute = CommerceProduct::getAllAttributes( $_REQUEST['attributes_id'] );
-	$gBitSmarty->assign_by_ref( 'editAttribute', current( $editAttribute ) );
+if( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_id'] ) ) {
+	if( BitBase::verifyId( $_REQUEST['products_options_id'] ) && $editOption = current( $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['products_options_id'] ) ) ) ) {
+		$gBitSmarty->assign_by_ref( 'editOption', $editOption );
+	}
+	$gBitSmarty->assign_by_ref( 'optionsTypes', $productManager->getOptionsTypes() );
+	$editTpl = 'bitpackage:bitcommerce/admin_products_options_edit_inc.tpl';
+} elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_values_id'] ) ) {
+	if( BitBase::verifyId( $_REQUEST['products_options_values_id'] ) && $editOptionsValue = current( $productManager->getOptionsList( array( 'products_options_values_id' => $_REQUEST['products_options_values_id'] ) ) ) ) {
+		$gBitSmarty->assign_by_ref( 'editValue', $editOptionsValue );
+	}
+	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+	$editTpl = 'bitpackage:bitcommerce/admin_products_options_values_edit_inc.tpl';
+} else {
+	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
 }
-//vd( $editAttribute );
-$attributesList = CommerceProduct::getAllAttributes();
-$gBitSmarty->assign_by_ref( 'attributesList', $attributesList );
 
-if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editAttribute ) ) {
+if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 	if( empty( $_REQUEST['confirm'] ) ) {
 		$formHash['delete_attribute'] = TRUE;
 		$formHash['attributes_id'] = $_REQUEST['attributes_id'];
-		$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete this attribute (#'.$_REQUEST['attributes_id'].') and all attribute assignments?', 'error' => 'This cannot be undone!' ) );
+		$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete this option value (#'.$_REQUEST['attributes_id'].') and remove  assignments to products?', 'error' => 'This cannot be undone!' ) );
 	} else {
 		$tempProduct->expungeAttribute( $_REQUEST['attributes_id'] );
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	}
-
 } elseif( !empty( $_REQUEST['save_attribute'] ) ) {
-	list( $_REQUEST['options_id'], $_REQUEST['options_values_id'] ) = split( ':', $_REQUEST['options'] );
-	$tempProduct->storeAttributes( $_REQUEST );
+	$productManager->storeOptionsValue( $_REQUEST );
 	bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
+} elseif( !empty( $_REQUEST['save_option'] ) ) {
+	if( $productManager->storeOption( $_REQUEST ) ) {
+		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
+	} else {
+vd( 'option store failed' );
+vd( $_REQUEST );
+	}
 } 
+ 
+if( !empty( $editTpl ) ) {
+	$gBitSmarty->assign_by_ref( 'editTpl', $editTpl );
+}
 
 $gBitSystem->display( 'bitpackage:bitcommerce/admin_products_options.tpl', 'Product Options' );
-
 ?>

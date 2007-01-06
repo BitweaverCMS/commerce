@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.9 2006/12/19 00:11:33 spiderr Exp $
+// $Id: ot_coupon.php,v 1.10 2007/01/06 06:13:50 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -302,11 +302,10 @@ $gBitDb->debug( 0 );
       if (isset($_SESSION['cart']->contents[$product_id]['attributes'])) {
         reset($_SESSION['cart']->contents[$product_id]['attributes']);
         while (list($option, $value) = each($_SESSION['cart']->contents[$product_id]['attributes'])) {
-          $attribute_price = $gBitDb->Execute("select `options_values_price`, `price_prefix`
-                                           from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                           where `products_id` = '" . $prid . "'
-                                           and `options_id` = '" . $option . "'
-                                           and `options_values_id` = '" . $value . "'");
+          $attribute_price = $gBitDb->Execute("SELECT `options_values_price`, `price_prefix`
+                                           FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										   	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+                                           WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pom.`products_options_values_id` = ?", array( $prid, $option, $value ) );
 
           if ($attribute_price->fields['price_prefix'] == '-') {
             if ($this->include_tax == 'true') {

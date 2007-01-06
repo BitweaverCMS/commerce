@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.13 2006/12/19 00:11:36 spiderr Exp $
+// $Id: header_php.php,v 1.14 2007/01/06 06:13:51 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {
@@ -65,31 +65,4 @@
   $breadcrumb->add(NAVBAR_TITLE_1);
   $breadcrumb->add(NAVBAR_TITLE_2);
 
-	global $zv_orders_id;
-	$zv_orders_id = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
-
-  $global_query = "select `global_product_notifications` from " . TABLE_CUSTOMERS_INFO . "
-                   where `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
-
-  $global = $gBitDb->Execute($global_query);
-
-  if ($global->fields['global_product_notifications'] != '1') {
-
-    $products_array = array();
-
-    $products_query = "select `products_id`, `products_name` from " . TABLE_ORDERS_PRODUCTS . "
-                       where `orders_id` = ?
-                       order by `products_name`";
-
-    $products = $gBitDb->query($products_query, array($zv_orders_id) );
-
-    while (!$products->EOF) {
-      $products_array[] = array('id' => $products->fields['products_id'],
-                                'text' => $products->fields['products_name']);
-      $products->MoveNext();
-    }
-  }
-
-// include template specific file name defines
-  $define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
 ?>

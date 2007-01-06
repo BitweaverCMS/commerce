@@ -1,177 +1,130 @@
-{form}
+{form name="option" method="post"}
 
-	<div class="row">
-		<div class="formlabel">{tr}Attribute Id{/tr}</div>
-		{forminput}
-{if $editAttribute.products_attributes_id}
-			<input type="hidden" name="products_attributes_id" value="{$editAttribute.products_attributes_id}">{$editAttribute.products_attributes_id}
+<input type="hidden" name="option_id" value="{$smarty.request.products_option_id}" />
+
+<div class="row">
+	<div class="formlabel">{tr}Option Id{/tr}</div>
+	{forminput}
+{if $editOption.products_options_id}
+		<input type="hidden" name="products_options_id" value="{$editOption.products_options_id}">{$editOption.products_options_id}
 {else}
-			<em>{tr}New{/tr}</em>
+		<em>{tr}New{/tr}</em>
 {/if}
-		{/forminput}
-	</div>
+	{/forminput}
+</div>
 
-	<div class="row">
-		<div class="formlabel">{tr}Attribute Name{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_name" value="{$editAttribute.products_attributes_name}">&nbsp;</div>
-	</div>
-	
-	<div class="row">
-		<div class="formlabel">{tr}Option{/tr}</div>
-		<div class="forminput">
-			<select name="options">
-				{foreach from=$optionsList item=option key=optionsId}
-				<option value="{$option.products_options_id}:{$option.products_options_values_id}" 
-				{if $editAttribute.products_options_id == $option.products_options_id && $editAttribute.products_options_values_id == $option.products_options_values_id }selected="selected"{/if}
-				>[{$option.products_options_types_name|strtoupper|escape:html}] {$option.products_options_name|escape:html} &raquo; {$option.products_options_values_name|escape:html}</option>
-				{/foreach}
-			</select>
-		</div>
-	</div>
+<div class="row">
+	{formlabel label="Title"}
+	{forminput}
+		<input type="text" name="products_options_name" value="{$editOption.products_options_name|escape:html}" />
+	{/forminput}
+</div>
 
-	<div class="row">
-		<div class="formlabel">{tr}Sort Order{/tr}</div>
-		<div class="forminput"><input type="text" name="products_options_sort_order" value="{$editAttribute.products_attributes_sort_order}" size="4">&nbsp;</div>
-	</div>
-	<h2>{tr}Attribute Pricing{/tr}</h2>
-	<div class="row">
-		<div class="formlabel">{tr}Fixed Attribute Price{/tr}</div>
-		<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="{$editAttribute.price_prefix|default:'+'}" />&nbsp;<input type="text" name="options_values_price" value="{$editAttribute.options_values_price}" size="6" />&nbsp;</div>
-	</div>
-	<div class="row">
-		<div class="formlabel">{tr}One Time{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_price_onetime" value="{$editAttribute.attributes_price_onetime}" size="6" />&nbsp;</div>
-	</div>
+<div class="row">
+	{formlabel label="Type"}
+	{forminput}
+		{html_options name="products_options_type" options=$optionsTypes selected=$editOption.products_options_type}
+	{/forminput}
+</div>
 
-{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_PRICE_FACTOR') == 'true'}
-	<div class="row">
-		<div class="formlabel">{tr}% Attribute Price{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_price_factor" value="{$editAttribute.attributes_price_factor}" size="6" /></div>
-	</div>
-	<div class="row">
-		<div class="formlabel">{tr}Offset{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_pf_offset" size="6" value="{$editAttribute.attributes_pf_offset}" />&nbsp;</div>
-	</div>
-	<div class="row">
-		<div class="formlabel">{tr}One Time Factor{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_pf_onetime" value="{$editAttribute.attributes_pf_onetime}" size="6" /></div>
-	</div>
-	<div class="row">
-		<div class="formlabel">{tr}Offset{/tr}</div>
-		<div class="forminput"><input type="text" name="attributes_pf_onetime_offset" value="{$editAttribute.attributes_pf_onetime_offset}" size="6" /></div>
-	</div>
-{/if}
+<div class="row">
+	{formlabel label="HTML Attributes"}
+	{forminput}
+		<input type="text" name="products_options_html_attributes" value="{$editOption.products_options_html_attributes|escape:html}" />
+		{formhelp note="Use this for extra HTML elements, such as Javascript onchange or a custom 'id'."}
+	{/forminput}
+</div>
 
-{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_QTY_PRICES') == 'true'}
-			<h2>{tr}Attribute Quantity Pricing{/tr}</h2>
-			<div class="row">
-				<div class="formlabel">{tr}Option Qty Price Discount{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_qty_prices" value="{$editAttribute.attributes_qty_prices}" size="60"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel">{tr}Onetime Option Qty Price Discount{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_qty_prices_onetime" value="{$editAttribute.attributes_qty_prices_onetime}" size="60"></div>
-			</div>
-{/if}
+<div class="row">
+	{formlabel label="Comment"}
+	{forminput}
+		<input type="text" name="products_options_comment" value="{$editOption.products_options_comment|escape:html}" />
+	{/forminput}
+</div>
+<div class="row">
+	{formlabel label="Sort Order"}
+	{forminput}
+		<input type="text" name="products_options_sort_order" value="{$editOption.products_options_sort_order}" />
+	{/forminput}
+</div>
+<div class="row">
+	{formlabel label="Display Size"}
+	{forminput}
+		<input type="text" name="products_options_size" value="{$editOption.products_options_size}" />
+	{/forminput}
+</div>
+<div class="row">
+	{formlabel label="Maximum Length"}
+	{forminput}
+		<input type="text" name="products_options_length" value="{$editOption.products_options_length}" />
+	{/forminput}
+</div>
+<div class="row">
+	{formlabel label="Attribute Images per Row"}
+	{forminput}
+		<input type="text" name="products_options_images_per_row" value="{$editOption.products_options_images_per_row}" />
+	{/forminput}
+</div>
+<div class="row">
+	{formlabel label="Attribute Style for Radio Buttons/Checkbox"}
+	{forminput}
+		<select name="products_options_images_style">
+			<option value="" ></option>
+			<option value="0" {if $editOption.products_options_images_style===0}selected="selected"{/if}>{tr}Images Below Option Names{/tr}</option>
+			<option value="1" {if $editOption.products_options_images_style==1}selected="selected"{/if}>{tr}Element, Image and Option Value{/tr}</option>
+			<option value="2" {if $editOption.products_options_images_style==2}selected="selected"{/if}>{tr}Element, Image and Option Name Below{/tr}</option>
+			<option value="3" {if $editOption.products_options_images_style==3}selected="selected"{/if}>{tr}Option Name Below Element and Image{/tr}</option>
+			<option value="4" {if $editOption.products_options_images_style==4}selected="selected"{/if}>{tr}Element Below Image and Option Name{/tr}</option>
+			<option value="5" {if $editOption.products_options_images_style==5}selected="selected"{/if}>{tr}Element Above Image and Option Name{/tr}</option>
+		</select>
+	{/forminput}
+</div>
 
-{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_TEXT_PRICES') == 'true'}
-			<h2>{tr}Attribute Text Pricing{/tr}</h2>
-			<div class="row">
-				<div class="formlabel">{tr}Price Per Word{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_price_words" value="{$editAttribute.attributes_price_words}" size="6" /></div>
-			</div>
-			<div class="row">
-				<div class="formlabel">{tr}- Free Words{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_price_words_free" value="{$editAttribute.attributes_price_words_free}" size="6" /></div>
-			</div>
-			<div class="row">
-				<div class="formlabel">{tr}Price Per Letter{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_price_letters" value="{$editAttribute.attributes_price_letters}" size="6" /></div>
-			</div>
-			<div class="row">
-				<div class="formlabel">{tr}- Free Letters{/tr}</div>
-				<div class="forminput"><input type="text" name="attributes_price_letters_free" value="{$editAttribute.attributes_price_letters_free}" size="6" /></div>
-			</div>
-{/if}
+<p>&nbsp;</p>
 
-			<h2>{tr}Attribute Weights{/tr}</h2>
-			<div class="row">
-				<div class="formlabel">{tr}Weight{/tr}</div>
-				<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlength="1"  value="{$editAttribute.products_attributes_wt_pfix|default:'+'}" />&nbsp;<input type="text" name="products_attributes_wt" value="{$editAttribute.products_attributes_wt}" size="6" />&nbsp;</div>
-			</div>
+<div class="row">
+	{formlabel label="Option Values"}
+	{forminput}
+		<ul class="data" id="optval_sortable">
+		{foreach from=$editOption.values item=optionsValue key=optionsValueId}
+			<li class="item {cycle values="odd,even"}" id="optval{$optionsValueId}" >
+				<div id="optval{$optionsValueId}display">
+					<div class="floaticon">
+						<a href="#" onclick="editOptionsValue('{$optionsValueId}')">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</a>
+						<a href="{$smarty.server.PHP_SELF}?action=delete&amp;option_id={$optionId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete" iforce="icon"}</a>
+					</div>
+					<span id="optval{$optionsValueId}title">{$optionsValue.products_options_values_name}</span>
+				</div>
+				<div id="optval{$optionsValueId}edit" style="display:none">
+					<input type="text" name="products_options_values_name{$optionsValueId}" id="products_options_values_name{$optionsValueId}" value="{$optionsValue.products_options_values_name}" />
+					<input type="submit" value="save" name="save_options_value" onclick="return saveOptionsValue('{$optionsValueId}');" />
+					<input type="submit" value="cancel" name="cancel_options_value" onclick="return editOptionsValue('{$optionsValueId}');" />
+				</div>
+			</li>
+		{/foreach}
+		</ul>
+{literal}
+<script type="text/javascript">
+function editOptionsValue( pOptValId ) {
+	flip( 'optval'+pOptValId+'edit' );
+	flip( 'optval'+pOptValId+'display' );
+	return false;
+}
+function saveOptionsValue( pOptValId ) {
+	$('optval'+pOptValId+'title').innerHTML=$('products_options_value_name'+pOptValId).value;
+	editOptionsValue( pOptValId );
+	return false;
+}
 
-			<h2>{tr}Attribute Flags{/tr}</h2>
-			
-			<div class="row">
-				{forminput}
-					<span style="background-color:#ffff00; padding:4px"><input type="checkbox" name="attributes_display_only" value="1" {if $editAttribute.attributes_display_only==1}checked="checked"{/if} /></span>{tr}Used For Display Purposes Only{/tr}<br/>
-					<span style="background-color:#0000ff; padding:4px"><input type="checkbox" name="product_attribute_is_free" value="1" {if $editAttribute.product_attribute_is_free==1}checked="checked"{/if} /></span>{tr}Attribute is Free When Product is Free{/tr}<br/>
-					<span style="background-color:#ffa346; padding:4px"><input type="checkbox" name="attributes_default" value="1" {if $editAttribute.attributes_default==1}checked="checked"{/if} /></span>{tr}Default Attribute to be Marked Selected{/tr}<br/>
-					<span style="background-color:#ff00ff; padding:4px"><input type="checkbox" name="attributes_discounted" value="1" {if !isset($editAttribute.attributes_discounted) || $editAttribute.attributes_discounted}checked="checked"{/if} /></span>{tr}Apply Discounts Used by Product Special/Sale{/tr}<br/>
-					<span style="background-color:#d200f0; padding:4px"><input type="checkbox" name="attributes_price_base_inc" value="1" {if !isset($editAttribute.attributes_price_base_inc) || $editAttribute.attributes_price_base_inc}checked="checked"{/if}/></span>{tr}Include in Base Price When Priced by Options{/tr}<br/>
-					<span style="background-color:#fd0000; padding:4px"><input type="checkbox" name="attributes_required" value="1" {if $editAttribute.attributes_required==1}checked="checked"{/if} /></span>{tr}Attribute Required for Text{/tr}<br/>
-				{/forminput}
-			</div>
+  MochiKit.Sortable.Sortable.create('optval_sortable',{onUpdate:function(){alert('drop!')}});
+</script>
+{/literal}
+	{/forminput}
+</div>
 
+<div class="row submit">
+	<input type="submit" name="save_option" value="{tr}Save{/tr}" />
+	<input type="submit" name="cancel" value="{tr}Cancel{/tr}">
+</div>
 
-{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_IMAGES') == 'true'}
-	<h2>{tr}Attribute Image{/tr}</h2>
-	
-	<div class="row">
-		{formlabel label="Options Image Swatch"}
-		{forminput}<input name="attributes_image" size="50" type="file">{/forminput}
-	</div>
-	
-	<div class="row">
-		{formlabel label="Option Image Directory"}
-		{forminput}
-			<select name="img_dir">
-				<option value="">Main Directory</option>
-			</select>
-		{/forminput}
-	</div>
-	
-	<div class="row">
-		{formlabel label="Overwrite Existing Image?"}
-		{forminput}
-			<input name="overwrite" value="0" type="radio">&nbsp;No <input name="overwrite" value="1" checked="checked" type="radio">&nbsp;Yes
-			{formhelp note="Use No for manually typed names"}
-		{/forminput}
-	</div>
-{else}
-	<div class="row">
-		{forminput}{tr}Disabled{/tr}{/forminput}
-	</div>
-{/if}
-
-	<h2>{tr}Downloadable Products{/tr}</h2>
-	
-{if $gCommerceSystem->getConfig('DOWNLOAD_ENABLED') == 'true'}
-	<div class="row">
-		{formlabel label="Filename"}
-		{forminput}
-			<input name="products_attributes_filename" size="1" maxlength="" type="text">
-		{/forminput}
-	</div>
-	<div class="row">
-		{formlabel label="Expiry days"}
-		{forminput}
-			<input name="products_attributes_maxdays" value="{$gCommerceSystem->getConfig('DOWNLOAD_MAX_DAYS')}" size="5" type="text">
-		{/forminput}
-	</div>
-	<div class="row">
-		{formlabel label="Maximum download count"}
-		{forminput}
-			<input name="products_attributes_maxcount" value="{$gCommerceSystem->getConfig('DOWNLOAD_MAX_COUNT')}" size="5" type="text">
-		{/forminput}
-	</div>
-{else}
-	<div class="row">
-		{forminput}{tr}Disabled{/tr}e{/forminput}
-	</div>
-{/if}
-
-	<div class="row submit">
-			<input type="submit" name="save_attribute" value="{tr}Save{/tr}">
-	</div>
 {/form}

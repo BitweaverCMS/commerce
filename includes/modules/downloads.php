@@ -17,8 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: downloads.php,v 1.9 2006/12/19 00:11:33 spiderr Exp $
+// $Id: downloads.php,v 1.10 2007/01/06 06:13:50 spiderr Exp $
 //
+	global $gBitDb;
+
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 // Get last order id for checkout_success
     $orders_lookup_query = "select `orders_id`

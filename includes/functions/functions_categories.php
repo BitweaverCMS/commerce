@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_categories.php,v 1.10 2006/12/19 00:11:32 spiderr Exp $
+// $Id: functions_categories.php,v 1.11 2007/01/06 06:13:50 spiderr Exp $
 //
 //
 ////
@@ -331,13 +331,13 @@
 
     $new_fields=', p.`products_model`';
 
-    $products = $gBitDb->Execute("select distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields ."
-                              from " . TABLE_PRODUCTS . " p, " .
-                                       TABLE_PRODUCTS_DESCRIPTION . " pd, " .
-                                       TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
-                              where p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id`
-                              and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                              order by `products_name`");
+    $products = $gBitDb->query("select distinct pom.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields ."
+                              FROM " . TABLE_PRODUCTS . " p 
+                                INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id` = pd.`products_id`) 
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(p.`products_id`= pom.`products_id`)
+                                INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+                              WHERE pd.`language_id` = ?
+                              ORDER BY `products_name`", array( (int)$_SESSION['languages_id'] ) );
 
     while (!$products->EOF) {
       if (!in_array($products->fields['products_id'], $exclude)) {
@@ -408,16 +408,14 @@
 
     $select_string .= '>';
 
-    $categories = $gBitDb->Execute("select distinct c.`categories_id`, cd.`categories_name` " ."
-                                from " . TABLE_CATEGORIES . " c, " .
-                                         TABLE_CATEGORIES_DESCRIPTION . " cd, " .
-                                         TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
-                                         TABLE_PRODUCTS_ATTRIBUTES . " pa " ."
-                                where pa.`products_id`= ptoc.`products_id`
-                                and ptoc.`categories_id`= c.`categories_id`
-                                and c.`categories_id` = cd.`categories_id`
-                                and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                                order by categories_name");
+    $categories = $gBitDb->query("select distinct c.`categories_id`, cd.`categories_name` " ."
+							FROM " . TABLE_CATEGORIES . " c
+								INNER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON(c.`categories_id` = cd.`categories_id`)
+								INNER JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " ptoc ON(ptoc.`categories_id`= c.`categories_id`)
+								INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pom.`products_id`= ptoc.`products_id`)
+							WHERE cd.`language_id` = ?
+							ORDER BY categories_name", array( (int)$_SESSION['languages_id'] ) );
 
     while (!$categories->EOF) {
       if (!in_array($categories->fields['categories_id'], $exclude)) {

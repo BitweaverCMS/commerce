@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.13 2006/12/19 00:11:39 spiderr Exp $
+// $Id: shopping_cart.php,v 1.14 2007/01/06 06:13:52 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -97,18 +97,14 @@ function popupWindow(url) {
 			} else {
 				$optionId = $option;
 			}
-          $attributes = "select popt.`products_options_name`, poval.`products_options_values_name`,
-                                     pa.`options_values_price`, pa.`price_prefix`
-                         from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                         where pa.`products_id` = '" .  $prid . "'
-                         and pa.`options_id` = '" . $optionId . "'
-                         and pa.`options_id` = popt.`products_options_id`
-                         and pa.`options_values_id` = '" . $value . "'
-                         and pa.`options_values_id` = poval.`products_options_values_id`
-                         and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
-                         and poval.`language_id` = '" . $_SESSION['languages_id'] . "'" . $options_order_by;
+          $attributes = "select popt.`products_options_name`, pa.`products_options_values_name`, pa.`options_values_price`, pa.`price_prefix`
+                         from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+							INNER JOIN " . TABLE_PRODUCTS_OPTIONS . " popt ON(pa.`products_options_id` = popt.`products_options_id`)
+                         WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ? AND popt.`language_id` = ? "
+                         . $options_order_by;
 
-          $attributes_values = $gBitDb->Execute($attributes);
+          $attributes_values = $gBitDb->query($attributes, array( $prid, $optionId, $value, $_SESSION['languages_id'] ) );
 
           //clr 030714 determine if attribute is a text attribute and assign to $attr_value temporarily
           if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID) {
@@ -121,10 +117,10 @@ function popupWindow(url) {
 
 
           $products[$i][$option]['products_options_name'] = $attributes_values->fields['products_options_name'];
-          $products[$i][$option]['options_values_id'] = $value;
+          $products[$i][$option]['products_options_values_id'] = $value;
           //clr 030714 assign $attr_value
 
-//          $products[$i][$option]['products_options_values_name'] = $attributes_values->fields['products_options_values_name'];
+//          $products[$i][$option]['products_options_values_name'] = $attributes_values->fields['attributes_name'];
           $products[$i][$option]['products_options_values_name'] = $attr_value ;
           $products[$i][$option]['options_values_price'] = $attributes_values->fields['options_values_price'];
           $products[$i][$option]['price_prefix'] = $attributes_values->fields['price_prefix'];

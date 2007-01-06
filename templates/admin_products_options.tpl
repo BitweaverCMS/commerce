@@ -1,4 +1,5 @@
 {include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
+
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
@@ -7,70 +8,77 @@
 	</div>
 	<div class="body">
 
-{jstabs}
-
-{jstab title="Attribute Sets"}
-
-{if $editAttribute}
-	{assign var=listStyle value='style="display:none"'}
-	{assign var=formStyle value=''}
-{else}
-	{assign var=listStyle value=''}
-	{assign var=formStyle value='style="display:none"'}
-{/if}
+{if $editTpl}
 
 <div id="newattrform" {$formStyle}>
-	<a onclick="flip('attrlist');flip('newattrform');return 0;">&laquo; {tr}List Product Options{/tr}</a>
-	{include file="bitpackage:bitcommerce/admin_products_options_edit_inc.tpl"}
+	{include file=$editTpl}
 </div>
+
+{else}
 <div id="attrlist" {$listStyle} >
-	<a onclick="flip('attrlist');flip('newattrform');return 0;">{tr}New Attribute{/tr} &raquo;</a>
+
+<a href="{$smarty.server.PHP_SELF}?products_options_id=new">{tr}New Option{/tr}</a> &bull; <a href="{$smarty.server.PHP_SELF}?products_options_values_id=new">{tr}New Option Value{/tr}</a>
+
+
 	<ul class="data">
-	{foreach from=$attributesList key=attrId item=attr}
+	{foreach from=$optionsList key=optionId item=option}
 		<li class="item">
+			
 			<div class="floaticon">
-				<a href="{$smarty.server.PHP_SELF}?attributes_id={$attrId}">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Attribute" iforce="icon"}</a>
-				<a href="{$smarty.server.PHP_SELF}?attributes_id={$attrId}&amp;delete_attribute=1">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Attribute" iforce="icon"}</a>
+				<a href="{$smarty.server.PHP_SELF}?products_options_id={$optionId}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option" iforce="icon"}</a>
+				<a href="{$smarty.server.PHP_SELF}?products_options_id={$optionId}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
 			</div>
-			<h2>{$attr.products_options_name} &raquo; {$attr.products_options_values_name} {if $attr.attributes_default}<em>{tr}Default{/tr}</em>{/if} ( #{$attr.products_attributes_id} ) </h2>
-			<em><strong>{$attr.products_attributes_sort_order}</strong></em>
-			{if $attr.attribute_is_free}
-				<strong class="warning">{tr}FREE{/tr}</strong>
-			{else}
-				
-				{if $attr.options_values_price}
-					{$attr.price_prefix}${$attr.options_values_price}, 
-				{/if}
-				{if $attr.attributes_price_onetime}
-					{$attr.price_prefix}${$attr.options_values_price} , 
-				{/if}
-				{if $attr.attributes_price_factor}
-					{$attr.price_prefix}{$attr.attributes_price_factor*100}%, 
-				{/if}
+			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name}) 
+			<ul class="data">
+			{if $option.values}
+					{foreach from=$option.values key=optionValueId item=optionValue}
+					<li class="item {cycle values="odd,even"}">
+						<div class="floaticon">
+							<a href="{$smarty.server.PHP_SELF}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option Value" iforce="icon"}</a>
+							<a href="{$smarty.server.PHP_SELF}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
+						</div>
+						{$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
+					
+					<em><strong>{$optionValue.products_attributes_sort_order}</strong></em>			
+					{if $optionValue.attribute_is_free}
+						<strong class="warning">{tr}FREE{/tr}</strong>
+					{else}
+						
+						{if $optionValue.options_values_price}
+							{$optionValue.price_prefix}${$optionValue.options_values_price}, 
+						{/if}
+						{if $optionValue.attributes_price_onetime}
+							{$optionValue.price_prefix}${$optionValue.options_values_price} , 
+						{/if}
+						{if $optionValue.attributes_price_factor}
+							{$optionValue.price_prefix}{$optionValue.attributes_price_factor*100}%, 
+						{/if}
+					{/if}
+		
+					{if $optionValue.products_attributes_wt}
+						{$optionValue.products_attributes_wt_pfix}{$optionValue.products_attributes_wt} lbs., 
+					{/if}
+		
+					{if !$optionValue.attributes_discounted}
+						<em>{tr}Will NOT Discount{/tr}</em>
+					{/if}
+		
+					{if $optionValue.attributes_required}
+						<em class="warning">{tr}Required{/tr}</em>
+					{/if}
+		
+					</li>
+					{/foreach}
 			{/if}
-
-			{if $attr.products_attributes_wt}
-				{$attr.products_attributes_wt_pfix}{$attr.products_attributes_wt} lbs., 
-			{/if}
-
-			{if !$attr.attributes_discounted}
-				<em>{tr}Will NOT Discount{/tr}</em>
-			{/if}
-
-			{if $attr.attributes_required}
-				<em class="warning">{tr}Required{/tr}</em>
-			{/if}
-
+			</ul>
+	
 		</li>
 	{foreachelse}
 		<li class="item">{tr}No Product Options.{/tr}</li>
 	{/foreach}
 	</ul>
 </div>
-
-{/jstab}
-
-{/jstabs}
+{/if}
 
 	</div><!-- end .body -->
 </div><!-- end .bitcommerce -->

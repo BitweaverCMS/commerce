@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.49 2006/12/19 00:11:32 spiderr Exp $
+// $Id: order.php,v 1.50 2007/01/06 06:13:50 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -552,20 +552,16 @@ class order extends BitBase {
             }
 */
 
-            $attributes_query = "SELECT popt.`products_options_name`, poval.`products_options_values_name`,
-                                        pa.`options_values_price`, pa.`price_prefix`
-                                 FROM " . TABLE_PRODUCTS_OPTIONS . " popt,
-                                      " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval,
-                                      " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                                 WHERE pa.`products_id` = ?
-									AND pa.`options_id` = ?
-									AND pa.`options_id` = popt.`products_options_id`
-									AND pa.`options_values_id` = ?
-									AND pa.`options_values_id` = poval.`products_options_values_id`
-									AND popt.`language_id` = ?
-									AND poval.`language_id` = ?";
+            $attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pa.`options_values_price`, pa.`price_prefix`
+                                 FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+                                    INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
+									INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`)
+                                 WHERE pom.`products_id` = ?
+									AND pa.`products_options_id` = ?
+									AND pa.`products_options_values_id` = ?
+									AND popt.`language_id` = ? ";
 
-            $attributes = $gBitDb->query($attributes_query, array( zen_get_prid( $products[$i]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'], (int)$_SESSION['languages_id'] ) );
+            $attributes = $gBitDb->query( $attributes_query, array( zen_get_prid( $products[$i]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'] ) );
 
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
             if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
@@ -728,8 +724,9 @@ class order extends BitBase {
 				if (DOWNLOAD_ENABLED == 'true') {
 					$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
 										FROM " . TABLE_PRODUCTS . " p
-											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON p.`products_id`=pa.`products_id`
-											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON pa.`products_attributes_id`=pad.`products_attributes_id`
+											LEFT JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(p.`products_id`=pom.`products_id`)
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id`=pad.`products_attributes_id`)
 										WHERE p.`products_id` = ?";
 					$bindVars = array( zen_get_prid($this->products[$i]['id']) );
 
@@ -737,7 +734,7 @@ class order extends BitBase {
 					// otherwise, we have to build the query dynamically with a loop
 					$products_attributes = $this->products[$i]['attributes'];
 					if( is_array( $products_attributes ) ) {
-						$stock_query_raw .= " AND pa.`options_id` = ? AND pa.`options_values_id` = ?";
+						$stock_query_raw .= " AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
 						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
 						$bindVars[] = $products_attributes[0]['value_id'];
 					}
@@ -809,57 +806,55 @@ class order extends BitBase {
 				$attributes_exist = '1';
 				for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
 					if (DOWNLOAD_ENABLED == 'true') {
-						$attributes_query = "select popt.`products_options_name`, poval.`products_options_values_name`,
-										pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
-										from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										left join " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-											on pa.`products_attributes_id` = pad.`products_attributes_id`
-										where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ) . "'
-											and pa.`options_id` = '" . (int)$this->products[$i]['attributes'][$j]['option_id'] . "'
-											and pa.`options_id` = popt.`products_options_id`
-											and pa.`options_values_id` = '" . (int)$this->products[$i]['attributes'][$j]['value_id'] . "'
-											and pa.`options_values_id` = poval.`products_options_values_id`
-											and popt.`language_id` = '" . $_SESSION['languages_id'] . "'
-											and poval.`language_id` = '" . $_SESSION['languages_id'] . "'";
+						$attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pom.*, pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
+										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 
+											INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_id` = popt.`products_options_id`)
+											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad on(pa.`products_attributes_id` = pad.`products_attributes_id`)
+										WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ? AND popt.`language_id` = ?";
 
-						$attributes_values = $gBitDb->Execute($attributes_query);
+						$attributes_values = $gBitDb->query($attributes_query, array( zen_get_prid( $this->products[$i]['id'] ), (int)$this->products[$i]['attributes'][$j]['option_id'], (int)$this->products[$i]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
 					} else {
-						$attributes_values = $gBitDb->Execute("select popt.`products_options_name`, poval.`products_options_values_name`, pa.*
-										from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_OPTIONS_VALUES . " poval, " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										where pa.`products_id` = '" . zen_get_prid( $this->products[$i]['id'] ). "' and pa.`options_id` = '" . $this->products[$i]['attributes'][$j]['option_id'] . "' and pa.`options_id` = popt.`products_options_id` and pa.`options_values_id` = '" . $this->products[$i]['attributes'][$j]['value_id'] . "' and pa.`options_values_id` = poval.`products_options_values_id` and popt.`language_id` = '" . $_SESSION['languages_id'] . "' and poval.`language_id` = '" . $_SESSION['languages_id'] . "'");
+						$attributes_values = $gBitDb->query("select popt.`products_options_name`, pa.*
+										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 
+											INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
+											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+										WHERE pom.`products_id`=? and pa.`products_options_id`=? AND pa.`products_options_values_id`=? AND popt.`language_id`=?", array( zen_get_prid( $this->products[$i]['id'] ), $this->products[$i]['attributes'][$j]['option_id'], $this->products[$i]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
 					}
 
-					//clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
-					$sql_data_array = array('orders_id' => $zf_insert_id,
-											'orders_products_id' => $this->products[$i]['orders_products_id'],
-											'products_options' => $attributes_values->fields['products_options_name'],
-
-			//                                 'products_options_values' => $attributes_values->fields['products_options_values_name'],
-											'products_options_values' => $this->products[$i]['attributes'][$j]['value'],
-											'options_values_price' => $attributes_values->fields['options_values_price'],
-											'price_prefix' => $attributes_values->fields['price_prefix'],
-											'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
-											'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
-											'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
-											'attributes_discounted' => (int)$attributes_values->fields['attributes_discounted'],
-											'attributes_price_base_inc' => (int)$attributes_values->fields['attributes_price_base_inc'],
-											'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
-											'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
-											'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
-											'attributes_pf_onetime' => $attributes_values->fields['attributes_pf_onetime'],
-											'attributes_pf_onetime_offset' => $attributes_values->fields['attributes_pf_onetime_offset'],
-											'attributes_qty_prices' => $attributes_values->fields['attributes_qty_prices'],
-											'attributes_qty_prices_onetime' => $attributes_values->fields['attributes_qty_prices_onetime'],
-											'attributes_price_words' => $attributes_values->fields['attributes_price_words'],
-											'attributes_price_words_free' => $attributes_values->fields['attributes_price_words_free'],
-											'attributes_price_letters' => $attributes_values->fields['attributes_price_letters'],
-											'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free'],
-											'products_options_id' => $attributes_values->fields['options_id'],
-											'products_options_values_id' => $attributes_values->fields['options_values_id'],
-											);
-
-
-					$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+					if( !empty( $attributes_values->fields['products_options_id'] ) ) {
+						//clr 030714 update insert query.  changing to use values form $order->products for products_options_values.
+						$sql_data_array = array('orders_id' => $zf_insert_id,
+												'orders_products_id' => $this->products[$i]['orders_products_id'],
+												'products_options' => $attributes_values->fields['products_options_name'],
+	
+				//                                'products_options_values' => $attributes_values->fields['products_options_values_name'],
+												'products_options_values' => $this->products[$i]['attributes'][$j]['value'],
+												'options_values_price' => $attributes_values->fields['options_values_price'],
+												'price_prefix' => $attributes_values->fields['price_prefix'],
+												'product_attribute_is_free' => $attributes_values->fields['product_attribute_is_free'],
+												'products_attributes_wt' => $attributes_values->fields['products_attributes_wt'],
+												'products_attributes_wt_pfix' => $attributes_values->fields['products_attributes_wt_pfix'],
+												'attributes_discounted' => (int)$attributes_values->fields['attributes_discounted'],
+												'attributes_price_base_inc' => (int)$attributes_values->fields['attributes_price_base_inc'],
+												'attributes_price_onetime' => $attributes_values->fields['attributes_price_onetime'],
+												'attributes_price_factor' => $attributes_values->fields['attributes_price_factor'],
+												'attributes_pf_offset' => $attributes_values->fields['attributes_pf_offset'],
+												'attributes_pf_onetime' => $attributes_values->fields['attributes_pf_onetime'],
+												'attributes_pf_onetime_offset' => $attributes_values->fields['attributes_pf_onetime_offset'],
+												'attributes_qty_prices' => $attributes_values->fields['attributes_qty_prices'],
+												'attributes_qty_prices_onetime' => $attributes_values->fields['attributes_qty_prices_onetime'],
+												'attributes_price_words' => $attributes_values->fields['attributes_price_words'],
+												'attributes_price_words_free' => $attributes_values->fields['attributes_price_words_free'],
+												'attributes_price_letters' => $attributes_values->fields['attributes_price_letters'],
+												'attributes_price_letters_free' => $attributes_values->fields['attributes_price_letters_free'],
+												'products_options_id' => $attributes_values->fields['products_options_id'],
+												'products_options_values_id' => $attributes_values->fields['products_options_values_id'],
+												);
+	
+	
+						$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+					}
 
 					if ((DOWNLOAD_ENABLED == 'true') && isset($attributes_values->fields['products_attributes_filename']) && zen_not_null($attributes_values->fields['products_attributes_filename'])) {
 						$sql_data_array = array('orders_id' => $zf_insert_id,

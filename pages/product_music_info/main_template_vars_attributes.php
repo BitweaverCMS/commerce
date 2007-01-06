@@ -17,20 +17,20 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.8 2006/12/19 00:11:38 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.9 2007/01/06 06:13:52 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
 //////////////////////////////////////////////////
 // limit to 1 for larger tables
 
-    $sql = "select count(*) as `total`
-            from " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-            where    patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-            and      patrib.`options_id` = popt.`products_options_id`
-            and      popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+    $sql = "SELECT count(*) as `total`
+            FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+				INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_id` = popt.`products_options_id`)
+				INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
+            WHERE pom.`products_id`=? AND popt.`language_id` = ?";
 
-    $pr_attr = $gBitDb->getOne($sql);
+    $pr_attr = $gBitDb->getOne( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
 
     if ($pr_attr->fields['total'] > 0) {
       if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
@@ -43,13 +43,13 @@
                               popt.`products_options_type`, popt.`products_options_length`, popt.`products_options_comment`, popt.`products_options_size`,
                               popt.`products_options_images_per_row`,
                               popt.`products_options_images_style`
-              from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.`options_id` = popt.`products_options_id`
-              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
-              $options_order_by;
+				FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_id` = popt.`products_options_id`)
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
+				WHERE pom.`products_id`=? AND popt.`language_id` = ?" .
+				$options_order_by;
 
-      $products_options_names = $gBitDb->Execute($sql);
+      $products_options_names = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) ) );
 
 // iii 030813 added: initialize $number_of_uploads
       $number_of_uploads = 0;
@@ -74,17 +74,12 @@
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
-        $sql = "select    pov.`products_options_values_id`,
-                          pov.`products_options_values_name`,
-                          pa.*
-                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.`options_id` = '" . (int)$products_options_names->fields['products_options_id'] . "'
-                and       pa.`options_values_id` = pov.`products_options_values_id`
-                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+        $sql = "SELECT pa.*
+                FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
+                WHERE pom.`products_id`=? and pa.`products_options_id`=? " .
                 $order_by;
-
-        $products_options = $gBitDb->Execute($sql);
+        $products_options = $gBitDb->Execute($sql, array( (int)$_GET['products_id'], (int)$products_options_names->fields['products_options_id'] ) );
 
         $products_options_value_id = '';
         $products_options_details = '';
@@ -116,7 +111,7 @@
             if ($products_options->fields['attributes_discounted'] == 1) {
 // apply product discount to attributes if discount is on
 //              $new_attributes_price = $products_options->fields['options_values_price'];
-              $new_attributes_price = zen_get_attributes_price_final($products_options->fields["products_attributes_id"], 1, '', 'false');
+              $new_attributes_price = zen_get_attributes_price_final((int)$_GET['products_id'], $products_options->fields["products_options_values_id"], 1, '', 'false');
               $new_attributes_price = zen_get_discount_calc((int)$_GET['products_id'], true, $new_attributes_price);
             } else {
 // discount is off do not apply
@@ -130,7 +125,7 @@
 
             if ($products_options->fields['attributes_price_onetime'] != 0 or $products_options->fields['attributes_pf_onetime'] != 0) {
               $show_onetime_charges_description = 'true';
-              $new_onetime_charges = zen_get_attributes_price_final_onetime($products_options->fields["products_attributes_id"], 1, '');
+              $new_onetime_charges = zen_get_attributes_price_final_onetime((int)$_GET['products_id'], $products_options->fields["products_options_values_id"], 1, '');
               $price_onetime = TEXT_ONETIME_CHARGE_SYMBOL . $currencies->display_price($new_onetime_charges,
               zen_get_tax_rate($product_info->fields['products_tax_class_id']));
             } else {

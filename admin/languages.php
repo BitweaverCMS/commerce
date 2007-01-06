@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.14 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: languages.php,v 1.15 2007/01/06 06:13:48 spiderr Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -103,21 +103,6 @@
 						                    '" . zen_db_input($products_options->fields['products_options_images_style']) . "')");
 
             $products_options->MoveNext();
-          }
-
-// create additional products_options_values records
-          $products_options_values = $gBitDb->Execute("select `products_options_values_id`,
-		                                                `products_options_values_name`, `products_ov_sort_order`
-						   from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-						   where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
-
-          while (!$products_options_values->EOF) {
-            $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                        (`products_options_values_id`, `language_id`, `products_options_values_name`, `products_ov_sort_order`)
-				                values ('" . (int)$products_options_values->fields['products_options_values_id'] . "',
-						                    '" . (int)$insert_id . "', '" . zen_db_input($products_options_values->fields['products_options_values_name']) . "', '" . zen_db_input($products_options_values->fields['products_ov_sort_order']) . "')");
-
-            $products_options_values->MoveNext();
           }
 
 // create additional manufacturers_info records
@@ -233,7 +218,6 @@
         $gBitDb->Execute("delete from " . TABLE_CATEGORIES_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
         $gBitDb->Execute("delete from " . TABLE_PRODUCTS_DESCRIPTION . " where `language_id` = '" . (int)$lID . "'");
         $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS . " where `language_id` = '" . (int)$lID . "'");
-        $gBitDb->Execute("delete from " . TABLE_PRODUCTS_OPTIONS_VALUES . " where `language_id` = '" . (int)$lID . "'");
         $gBitDb->Execute("delete from " . TABLE_MANUFACTURERS_INFO . " where `languages_id` = '" . (int)$lID . "'");
         $gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$lID . "'");
         $gBitDb->Execute("delete from " . TABLE_LANGUAGES . " where `languages_id` = '" . (int)$lID . "'");

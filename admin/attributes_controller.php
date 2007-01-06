@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.28 2006/12/19 00:11:27 spiderr Exp $
+//  $Id: attributes_controller.php,v 1.29 2007/01/06 06:13:46 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -188,26 +188,26 @@
         break;
       case 'add_product_attributes':
 // check for duplicate and block them
-        $check_duplicate = $gBitDb->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                                         where `products_id` = ?
-                                         and `options_id` = ?
-                                         and `options_values_id` = ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'] ));
+        $isDuplicate = $gBitDb->query( "SELECT COUNT(*) 
+										FROM " . TABLE_PRODUCTS_ATTRIBUTES . " cpa
+											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " cpom ON (cpa.products_options_values_id=cpom.products_options_values_id)
+                                        WHERE `products_id` = ?  and `products_options_id` = ?  and `options_values_id` = ?", array( $_POST['products_id'], $_POST['products_options_id'], $_POST['values_id'] ));
 
-        if ($check_duplicate->RecordCount() > 0) {
+        if( $isDuplicate ) {
           // do not add duplicates give a warning
-          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE . ' - ' . zen_options_name($_POST['products_options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
         } else {
           // Validate options_id and options_value_id
-          if (!zen_validate_options_to_options_value($_POST['options_id'], $_POST['values_id'])) {
+          if (!zen_validate_options_to_options_value($_POST['products_options_id'], $_POST['values_id'])) {
             // do not add invalid match
-            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH . ' - ' . zen_options_name($_POST['products_options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
           } else {
 // iii 030811 added:  For TEXT and FILE option types, ignore option value
 // entered by administrator and use PRODUCTS_OPTIONS_VALUES_TEXT instead.
-        $products_options_array = $gBitDb->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['options_id'] ) );
+        $products_options_array = $gBitDb->query("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $_POST['products_options_id'] ) );
         $values_id = (($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) or ($products_options_array->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $_POST['values_id'];
             $products_id = zen_db_prepare_input($_POST['products_id']);
-            $options_id = zen_db_prepare_input($_POST['options_id']);
+            $options_id = zen_db_prepare_input($_POST['products_options_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
             $value_price = zen_db_prepare_input($_POST['value_price']);
             $price_prefix = zen_db_prepare_input($_POST['price_prefix'][0]);
@@ -254,7 +254,7 @@
 
 			$attrs = array(
 				'products_id' => $products_id,
-				'options_id' => $options_id,
+				'products_options_id' => $options_id,
 				'options_values_id' => $values_id,
 				'options_values_price' => $value_price,
 				'price_prefix' => $price_prefix,
@@ -308,20 +308,23 @@
         zen_redirect(zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, $_SESSION['page_info'] . '&products_id=' . $_POST['products_id'] . '&current_category_id=' . $_POST['current_category_id']));
         break;
       case 'update_product_attribute':
-        $check_duplicate = $gBitDb->query("select * from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id` =? and `options_id` = ? and `options_values_id` = ? and `products_attributes_id` != ?", array( $_POST['products_id'], $_POST['options_id'], $_POST['values_id'], $_POST['attribute_id'] ) );
+        $isDuplicate = $gBitDb->getOne("SELECT COUNT(*) 
+										FROM " . TABLE_PRODUCTS_ATTRIBUTES . " cpa
+											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " cpom ON (cpa.products_options_values_id=cpom.products_options_values_id)
+										WHERE `products_id` =? and `products_options_id` = ? and `options_values_id` = ? and cpom.`products_options_values_id` != ?", array( $_POST['products_id'], $_POST['products_options_id'], $_POST['values_id'], $_POST['attribute_id'] ) );
 
-        if ($check_duplicate->RecordCount() > 0) {
+        if( $isDuplicate ) {
           // do not add duplicates give a warning
-          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE_UPDATE . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+          $messageStack->add_session(ATTRIBUTE_WARNING_DUPLICATE_UPDATE . ' - ' . zen_options_name($_POST['products_options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
         } else {
           // Validate options_id and options_value_id
-          if (!zen_validate_options_to_options_value($_POST['options_id'], $_POST['values_id'])) {
+          if (!zen_validate_options_to_options_value($_POST['products_options_id'], $_POST['values_id'])) {
             // do not add invalid match
-            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH_UPDATE . ' - ' . zen_options_name($_POST['options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
+            $messageStack->add_session(ATTRIBUTE_WARNING_INVALID_MATCH_UPDATE . ' - ' . zen_options_name($_POST['products_options_id']) . ' : ' . zen_values_name($_POST['values_id']), 'error');
           } else {
             // add the new attribute
 // iii 030811 added:  Enforce rule that TEXT and FILE Options use value PRODUCTS_OPTIONS_VALUES_TEXT_ID
-        $products_options_query = $gBitDb->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['options_id'] . "'");
+        $products_options_query = $gBitDb->Execute("select `products_options_type` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = '" . $_POST['products_options_id'] . "'");
         switch ($products_options_array->fields['products_options_type']) {
           case PRODUCTS_OPTIONS_TYPE_TEXT:
           case PRODUCTS_OPTIONS_TYPE_FILE:
@@ -333,7 +336,7 @@
 // iii 030811 added END
 
             $products_id = zen_db_prepare_input($_POST['products_id']);
-            $options_id = zen_db_prepare_input($_POST['options_id']);
+            $options_id = zen_db_prepare_input($_POST['products_options_id']);
 //            $values_id = zen_db_prepare_input($_POST['values_id']);
             $value_price = zen_db_prepare_input($_POST['value_price']);
             $price_prefix = zen_db_prepare_input($_POST['price_prefix'][0]);
@@ -389,7 +392,7 @@
 
 			$attrs = array(
 				'products_id' => $products_id,
-				'options_id' => $options_id,
+				'products_options_id' => $options_id,
 				'options_values_id' => $values_id,
 				'options_values_price' => $value_price,
 				'price_prefix' => $price_prefix,
@@ -954,7 +957,7 @@ if ($action == '') {
             <td colspan="10" class="smallText">
 <?php
   $per_page = MAX_ROW_LISTS_ATTRIBUTES_CONTROLLER;
-  $attributes = "select pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pa.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id` and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pa.`products_id` ='" . $productsId . "' order by pd.`products_name`, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.`options_id`,11,'0'), LPAD(pa.`products_options_sort_order`,11,'0')";
+  $attributes = "select pom.*,pa.* from " . TABLE_PRODUCTS_ATTRIBUTES . " pa INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id ) left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on pom.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`products_options_id` = po.`products_options_id` and po.`language_id` = '" . (int)$_SESSION['languages_id'] . "'" . " where pom.`products_id` ='" . $productsId . "' order by pd.`products_name`, LPAD(po.products_options_sort_order,11,'0'), LPAD(pa.`products_options_id`,11,'0'), LPAD(pa.`products_options_sort_order`,11,'0')";
   $attribute_query = $gBitDb->Execute($attributes);
 
   $attribute_page_start = ($per_page * $_GET['attribute_page']) - $per_page;
@@ -1048,10 +1051,10 @@ if ($action == '') {
 	$rows = 0;
   while (!$attributes_values->EOF) {
     $current_attributes_products_id = $attributes_values->fields['products_id'];
-    $current_attributes_options_id = $attributes_values->fields['options_id'];
+    $current_attributes_options_id = $attributes_values->fields['products_options_id'];
 
     $products_name_only = zen_get_products_name($attributes_values->fields['products_id']);
-    $options_name = zen_options_name($attributes_values->fields['options_id']);
+    $options_name = zen_options_name($attributes_values->fields['products_options_id']);
     $values_name = zen_values_name($attributes_values->fields['options_values_id']);
     $rows++;
 ?>
@@ -1093,15 +1096,15 @@ if ($action == '') {
           <tr class="attributeBoxContent"><td><table><tr>
             <td class="smallText" valign="top" width="40">&nbsp;</td>
             <td class="pageHeading">&nbsp;
-              <input type="hidden" name="options_id" value="<?php echo $attributes_values->fields['options_id']; ?>">
-              <?php echo zen_get_option_name_language($attributes_values->fields['options_id'], $_SESSION['languages_id']); ?>:
+              <input type="hidden" name="products_options_id" value="<?php echo $attributes_values->fields['products_options_id']; ?>">
+              <?php echo zen_get_option_name_language($attributes_values->fields['products_options_id'], $_SESSION['languages_id']); ?>:
             </td>
             <td class="smallText">&nbsp;<?php echo TABLE_HEADING_OPT_VALUE . '<br />'; ?><select name="values_id" size="5">
 <?php
 // FIX HERE 2
       $values_values = $gBitDb->query("select pov.* from " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov left join " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . " povtpo on pov.products_options_values_id = povtpo.products_options_values_id
                                      where pov.`language_id` =? AND povtpo.products_options_id=?
-                                     order by pov.products_options_values_name", array( $_SESSION['languages_id'], $attributes_values->fields['options_id'] ) );
+                                     order by pov.products_options_values_name", array( $_SESSION['languages_id'], $attributes_values->fields['products_options_id'] ) );
 
       while(!$values_values->EOF) {
         $show_option_name= '&nbsp;&nbsp;&nbsp;[' . strtoupper(zen_get_products_options_name_from_value($values_values->fields['products_options_values_id'])) . ']';
@@ -1169,7 +1172,9 @@ if ($action == '') {
   </td>
 </tr>
 
+
 <tr><td>
+
   <table border="0">
     <tr>
       <td colspan="3" class="pageHeading"><?php echo TEXT_PRICES_AND_WEIGHTS; ?></td>
@@ -1261,7 +1266,9 @@ if ($action == '') {
                 <td align="center" class="smallText" width="150" bgcolor="#fd0000"><?php echo TEXT_ATTRIBUTES_REQUIRED . '<br>' . zen_draw_radio_field('attributes_required', '0', $off_attributes_required) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_required', '1', $on_attributes_required) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
               </tr>
 
-</table></td></tr>
+</table>
+
+</td></tr>
 
 <?php if (ATTRIBUTES_ENABLED_IMAGES == 'true') { ?>
 
@@ -1500,7 +1507,7 @@ if ($action == '') {
             </table></td></tr>
 <?php
   } else {
-    if ($current_attributes_options_id != $attributes_values->fields['options_id']) {
+    if ($current_attributes_options_id != $attributes_values->fields['products_options_id']) {
 ?>
           <tr class="<?php echo (floor($rows/2) == ($rows/2) ? 'attributes-even' : 'attributes-odd'); ?>">
             <td colspan="10"><table width="100%"><td>
@@ -1575,7 +1582,7 @@ if ($action == '') {
           </tr></table></td></tr>
           <tr class="attributeBoxContent"><td><table><tr>
             <td class="attributeBoxContent" width="40">&nbsp;</td>
-            <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_NAME . '<br />'; ?><select name="options_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
+            <td class="attributeBoxContent">&nbsp;<?php echo TABLE_HEADING_OPT_NAME . '<br />'; ?><select name="products_options_id" size="<?php echo ($action != 'delete_attribute' ? "5" : "1"); ?>">
 <?php
     $options_values = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_OPTIONS . "
                                     where `language_id` = '" . $_SESSION['languages_id'] . "'
@@ -1627,231 +1634,13 @@ $off_overwrite = false;
   </tr>
 <!-- eof Option Name and Value -->
 
-<!-- bof Prices and Weight -->
-  <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2" style="width:auto;">
-    <tr>
-      <td colspan="2" class="pageHeading"><?php echo TEXT_PRICES_AND_WEIGHTS; ?></td>
-    </tr>
-    <tr>
-      <td class="attributeBoxContent">
-			<div class="row">
-				<div class="formlabel"><?php echo tra( 'Sort Order' ); ?></div>
-				<div class="forminput"><input type="text" name="products_options_sort_order" value="" size="4">&nbsp;</div>
-			</div>
-			<h2><?php echo tra( 'Attribute Pricing' ) ?></h2>
-			<div class="row">
-				<div class="formlabel"><?php echo tra( 'Fixed Attribute Price' ) ?> </div>
-				<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="+">&nbsp;<input type="text" name="value_price" size="6">&nbsp;</div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_ONETIME; ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_onetime" size="6">&nbsp;</div>
-			</div>
-<?php if (ATTRIBUTES_ENABLED_PRICE_FACTOR == 'true') { ?>
-			<div class="row">
-				<div class="formlabel"><?php echo tra( '% Attribute Price' ) ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_factor" size="6"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET; ?></div>
-				<div class="forminput"><input type="text" name="attributes_pf_offset" size="6">&nbsp;</div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_ONETIME; ?></div>
-				<div class="forminput"><input type="text" name="attributes_pf_onetime" size="6"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_FACTOR_OFFSET_ONETIME; ?></div>
-				<div class="forminput"><input type="text" name="attributes_pf_onetime_offset" size="6"></div>
-			</div>
 
-<?php
-} // ATTRIBUTES_ENABLED_PRICE_FACTOR
-?>
-<?php if (ATTRIBUTES_ENABLED_QTY_PRICES == 'true') { ?>
-			<h2><?php echo tra( 'Attribute Quantity Pricing' ) ?></h2>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES; ?></div>
-				<div class="forminput"><input type="text" name="attributes_qty_prices" size="60"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_QTY_PRICES_ONETIME; ?></div>
-				<div class="forminput"><input type="text" name="attributes_qty_prices_onetime" size="60"></div>
-			</div>
-<?php } // ATTRIBUTES_ENABLED_QTY_PRICES ?>
-
-<?php if (ATTRIBUTES_ENABLED_TEXT_PRICES == 'true') { ?>
-			<h2><?php echo tra( 'Attribute Text Pricing' ) ?></h2>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_WORDS; ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_words" size="6"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_WORDS_FREE; ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_words_free" size="6"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS; ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_letters" size="6"></div>
-			</div>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_ATTRIBUTES_PRICE_LETTERS_FREE; ?></div>
-				<div class="forminput"><input type="text" name="attributes_price_letters_free" size="6"></div>
-			</div>
-<?php } // ATTRIBUTES_ENABLED_TEXT_PRICES ?>
-
-			<h2><?php echo tra( 'Attribute Weights' ) ?></h2>
-			<div class="row">
-				<div class="formlabel"><?php echo TABLE_HEADING_OPT_WEIGHT ?></div>
-				<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlenght="1" value="+">&nbsp;<input type="text" name="products_attributes_wt" size="6">&nbsp;</div>
-			</div>
-
-  </td></tr>
-
-<!-- eof Option Name and Value -->
-
-<!-- bof Attribute Flags -->
-<tr class="attributeBoxContent">
-  <td class="pageHeading">
-    <table border='0' width="100%">
-      <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
-
-            <tr><td class="attributeBoxContent"><table border="1" cellpadding="4" cellspacing="2">
-
-              <tr >
-                <td class="smallText" align="center" width="50"><?php echo TEXT_ATTRIBUTES_FLAGS; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#ffff00"><?php echo TEXT_ATTRIBUTES_DISPLAY_ONLY . '<br>' . zen_draw_radio_field('attributes_display_only', '0', $off_attributes_display_only) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_display_only', '1', $on_attributes_display_only) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#0000ff"><?php echo TEXT_ATTRIBUTES_IS_FREE . '<br>' . zen_draw_radio_field('product_attribute_is_free', '0', $off_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('product_attribute_is_free', '1', $on_product_attribute_is_free) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#ffa346"><?php echo TEXT_ATTRIBUTES_DEFAULT . '<br>' . zen_draw_radio_field('attributes_default', '0', $off_attributes_default) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_default', '1', $on_attributes_default) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#ff00ff"><?php echo TEXT_ATTRIBUTE_IS_DISCOUNTED . '<br>' . zen_draw_radio_field('attributes_discounted', '0', $off_attributes_discounted) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_discounted', '1', $on_attributes_discounted) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td class="smallText" align="center" width="150" bgcolor="#d200f0"><?php echo TEXT_ATTRIBUTE_PRICE_BASE_INCLUDED . '<br>' . zen_draw_radio_field('attributes_price_base_inc', '0', $off_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_price_base_inc', '1', $on_attributes_price_base_inc) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-                <td align="center" class="smallText" width="150" bgcolor="#fd0000"><?php echo TEXT_ATTRIBUTES_REQUIRED . '<br>' . zen_draw_radio_field('attributes_required', '0', $off_attributes_required) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('attributes_required', '1', $on_attributes_required) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-              </tr>
-
-</table></td></tr>
-
-      </table></td></tr>
-    </table>
-  </td>
-</tr>
-<!-- eof Attribute Flags -->
-
-<?php if (ATTRIBUTES_ENABLED_IMAGES == 'true') { ?>
-<?php
-// add
-// attributes images
-  $dir = @dir(DIR_FS_CATALOG_IMAGES);
-  $dir_info[] = array('id' => '', 'text' => "Main Directory");
-  while ($file = $dir->read()) {
-    if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
-      $dir_info[] = array('id' => $file . '/', 'text' => $file);
-    }
-  }
-  sort($dir_info);
-
-  $default_directory = 'attributes/';
-?>
-
-<!-- bof Attribute Images -->
-<tr class="attributeBoxContent">
-  <td class="pageHeading">
-    <table border='0' width="100%">
-      <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2" width="100%">
-
-        <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
-          <tr class="attributeBoxContent">
-            <td>&nbsp;</td>
-            <td class="main" valign="top">&nbsp;</td>
-
-<!--
-            <td class="main" valign="top">xxx<?php echo TEXT_ATTRIBUTES_IMAGE . '<br />' . zen_draw_file_field('attributes_image') . '<br />' . zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . $attributes_values->fields['attributes_image'] . zen_draw_hidden_field('attributes_image', $attributes_values->fields['attributes_image']); ?></td>
--->
-
-            <td class="main" valign="top"><?php echo TEXT_ATTRIBUTES_IMAGE . '<br />' . zen_draw_file_field('attributes_image'); ?></td>
-
-            <td class="main" valign="top"><?php echo TEXT_ATTRIBUTES_IMAGE_DIR . '<br />' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory); ?></td>
-            <td class="main" valign="top"><?php echo TEXT_IMAGES_OVERWRITE . '<br />' . zen_draw_radio_field('overwrite', '0', $off_overwrite) . '&nbsp;' . TABLE_HEADING_NO . ' ' . zen_draw_radio_field('overwrite', '1', $on_overwrite) . '&nbsp;' . TABLE_HEADING_YES; ?></td>
-          </tr>
-        </table></td>
-
-        <td width="200">
-          <table align="right">
-            <tr>
-              <td align="center" class="attributeBoxContent" height="30" valign="bottom">&nbsp;
-              <?php
-                if ($action == '') {
-                  echo zen_image_submit('button_insert.gif', IMAGE_INSERT);
-                } else {
-                  // hide button
-                }
-              ?>
-            &nbsp;
-              </td>
-            </tr>
-          </table>
-
-        </td></tr>
-
-      </table></td></tr>
-    </table>
-  </td>
-</tr>
-<!-- eof Attribute Images -->
-<?php } // ATTRIBUTES_ENABLED_IMAGES ?>
-
-<?php
-      if (DOWNLOAD_ENABLED == 'true') {
-        $products_attributes_maxdays  = DOWNLOAD_MAX_DAYS;
-        $products_attributes_maxcount = DOWNLOAD_MAX_COUNT;
-?>
-<!-- bof Down loads ON -->
-<tr class="attributeBoxContent">
-  <td class="pageHeading">
-    <table border='0' width="100%">
-      <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
-
-        <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
-          <tr class="attributeBoxContent">
-            <td class="attributeBoxContent" valign="top"><?php echo TABLE_HEADING_DOWNLOAD; ?>&nbsp;</td>
-            <td class="attributeBoxContent"><?php echo TABLE_TEXT_FILENAME . '<br />' . zen_draw_input_field('products_attributes_filename', !empty( $products_attributes_filename ) ? $products_attributes_filename : NULL, zen_set_field_length(TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD, 'products_attributes_filename', 35)); ?>&nbsp;</td>
-            <td class="attributeBoxContent"><?php echo TABLE_TEXT_MAX_DAYS . '<br />' . zen_draw_input_field('products_attributes_maxdays', $products_attributes_maxdays, 'size="5"'); ?>&nbsp;</td>
-            <td class="attributeBoxContent"><?php echo TABLE_TEXT_MAX_COUNT . '<br />' . zen_draw_input_field('products_attributes_maxcount', $products_attributes_maxcount, 'size="5"'); ?>&nbsp;</td>
-          </tr>
-        </table></td></tr>
-
-      </table></td></tr>
-    </table>
-  </td>
-</tr>
-<!-- eof Downloads ON -->
-
-<?php
-      } else {
-?>
-<!-- bof Down loads OFF -->
-<tr class="attributeBoxContent">
-  <td class="pageHeading">
-    <table border='0' width="100%">
-      <tr><td class="attributeBoxContent"><table border="1" cellpadding="4" cellspacing="2">
-
-        <tr><td class="attributeBoxContent"><table border="0" cellpadding="4" cellspacing="2">
-          <tr class="attributeBoxContent">
-            <td class="attributeBoxContent"><?php echo TEXT_DOWNLOADS_DISABLED; ?>&nbsp;</td>
-          </tr>
-        </table></td></tr>
-
-      </table></td></tr>
-    </table>
-  </td>
-</tr>
-<!-- eof Downloads OFF -->
-<?php
-      } // end of DOWNLOAD_ENABLED section
-?>
 <?php
   }
 ?>
-        </table></form></td>
+  </table>
+
+</form></td>
 <?php
 } // EOF: attributes preview
 ?>

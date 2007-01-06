@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_attributes_qty_prices.php,v 1.3 2006/12/19 00:11:37 spiderr Exp $
+// $Id: popup_attributes_qty_prices.php,v 1.4 2007/01/06 06:13:51 spiderr Exp $
 //
 ?>
 <body>
@@ -62,17 +62,12 @@ $show_onetime= 'false';
           $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
         }
 
-        $sql = "select    pov.`products_options_values_id`,
-                          pov.`products_options_values_name`,
-                          pa.*
-                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.`options_id` = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
-                and       pa.`options_values_id` = pov.`products_options_values_id`
-                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+        $sql = "SELECT pa.*
+                FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`productions_options_values_id`=pom.`products_options_values_id`)
+                WHERE pom.`products_id` = ? AND pa.`products_options_id` = ?" .
                 $order_by;
-
-        $products_options_lookup = $gBitDb->Execute($sql);
+        $products_options_lookup = $gBitDb->query($sql, array( (int)$_GET['products_id'], (int)$products_options_names_lookup->fields['products_options_id'] ) );
         $cnt_qty_prices= 0;
         while (!$products_options_lookup->EOF) {
           // set for attributes_qty_prices_onetime
@@ -163,17 +158,12 @@ $show_onetime= 'false';
           $order_by= ' order by LPAD(pa.products_options_sort_order,11,"0"), pa.options_values_price';
         }
 
-        $sql = "select    pov.`products_options_values_id`,
-                          pov.`products_options_values_name`,
-                          pa.*
-                from      " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov
-                where     pa.`products_id` = '" . (int)$_GET['products_id'] . "'
-                and       pa.`options_id` = '" . (int)$products_options_names_lookup->fields['products_options_id'] . "'
-                and       pa.`options_values_id` = pov.`products_options_values_id`
-                and       pov.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+        $sql = "SELECT pa.*
+                FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`productions_options_values_id`=pom.`products_options_values_id`)
+                WHERE pom.`products_id` = ? AND pa.`products_options_id` = ?" .
                 $order_by;
-
-        $products_options_lookup = $gBitDb->Execute($sql);
+        $products_options_lookup = $gBitDb->query($sql, array( (int)$_GET['products_id'], (int)$products_options_names_lookup->fields['products_options_id'] ) );
         $cnt_qty_prices= 0;
         while (!$products_options_lookup->EOF) {
           if ($products_options_lookup->fields['attributes_qty_prices_onetime'] != '') {

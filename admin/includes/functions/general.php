@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.42 2006/12/19 00:11:30 spiderr Exp $
+//  $Id: general.php,v 1.43 2007/01/06 06:13:49 spiderr Exp $
 //
 
 ////
@@ -1333,39 +1333,6 @@
   }
 
 ////
-// Validate Option Name and Option Type Match
-  function zen_validate_options_to_options_value($products_options_id, $products_options_values_id) {
-    global $gBitDb;
-    $check_options_to_values_query= $gBitDb->getOne("SELECT `products_options_id`
-		FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-		WHERE `products_options_id` = ?
-		AND `products_options_values_id` =?" , array( $products_options_id, $products_options_values_id ) );
-      return $check_options_to_values_query;
-  }
-
-////
-// look-up Attributues Options Name products_options_values_to_products_options
-  function zen_get_products_options_name_from_value($lookup) {
-    global $gBitDb;
-
-    if ($lookup==0) {
-      return 'RESERVED FOR TEXT/FILES ONLY ATTRIBUTES';
-    }
-
-    $check_options_to_values = $gBitDb->Execute("SELECT `products_options_id`
-                    FROM " . TABLE_PRODUCTS_OPTIONS_VALUES_TO_PRODUCTS_OPTIONS . "
-                    WHERE `products_options_values_id` ='" . $lookup . "'");
-
-    $check_options = $gBitDb->Execute("SELECT `products_options_name`
-                      FROM " . TABLE_PRODUCTS_OPTIONS . "
-                      WHERE `products_options_id` ='" . $check_options_to_values->fields['products_options_id']
-                      . "' and `language_id` ='" . $_SESSION['languages_id'] . "'");
-
-    return $check_options->fields['products_options_name'];
-  }
-
-
-////
 // lookup attributes model
   function zen_get_products_model($products_id) {
     global $gBitDb;
@@ -1432,7 +1399,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
       $update_attribute = false;
       $add_attribute = true;
-      $check_duplicate = $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` ='" . $products_id_to . "'" . " and `options_id` = '" . $products_copy_from->fields['options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] .  "'");
+      $check_duplicate = $gBitDb->Execute("SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` ='" . $products_id_to . "'" . " and `products_options_id` = '" . $products_copy_from->fields['products_options_id'] . "' and options_values_id='" . $products_copy_from->fields['options_values_id'] .  "'");
       if ($check_attributes == true) {
         if ($check_duplicate->RecordCount() == 0) {
           $update_attribute = false;
@@ -1460,7 +1427,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
         if ($add_attribute == true) {
           // New attribute - insert it
           $gBitDb->Execute("insert into " . TABLE_PRODUCTS_ATTRIBUTES . " values ('', '" . $products_id_to . "',
-          '" . $products_copy_from->fields['options_id'] . "',
+          '" . $products_copy_from->fields['products_options_id'] . "',
           '" . $products_copy_from->fields['options_values_id'] . "',
           '" . $products_copy_from->fields['options_values_price'] . "',
           '" . $products_copy_from->fields['price_prefix'] . "',
@@ -1513,8 +1480,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
           `attributes_price_letters` ='" . $products_copy_from->fields['attributes_price_letters'] . "',
           `attributes_price_letters_free` ='" . $products_copy_from->fields['attributes_price_letters_free'] . "',
           `attributes_required` ='" . $products_copy_from->fields['attributes_required'] . "'"
-           . " WHERE `products_id` ='" . $products_id_to . "'" . " and `options_id` = '" . $products_copy_from->fields['options_id'] . "' and `options_values_id` ='" . $products_copy_from->fields['options_values_id'] . "'");
-//           . " WHERE `products_id` ='" . $products_id_to . "'" . " and `options_id` = '" . $products_copy_from->fields['options_id'] . "' and `options_values_id` ='" . $products_copy_from->fields['options_values_id'] . "' and attributes_image='" . $products_copy_from->fields['attributes_image'] . "' and attributes_price_base_inc='" . $products_copy_from->fields['attributes_price_base_inc'] .  "'");
+           . " WHERE `products_id` ='" . $products_id_to . "'" . " and `products_options_id` = '" . $products_copy_from->fields['products_options_id'] . "' and `options_values_id` ='" . $products_copy_from->fields['options_values_id'] . "'");
+//           . " WHERE `products_id` ='" . $products_id_to . "'" . " and `products_options_id` = '" . $products_copy_from->fields['products_options_id'] . "' and `options_values_id` ='" . $products_copy_from->fields['options_values_id'] . "' and attributes_image='" . $products_copy_from->fields['attributes_image'] . "' and attributes_price_base_inc='" . $products_copy_from->fields['attributes_price_base_inc'] .  "'");
           $messageStack->add_session(TEXT_ATTRIBUTE_COPY_UPDATING . $products_copy_from->fields['products_attributes_id'] . ' for Products ID#' . $products_id_to, 'caution');
         }
       }
@@ -1573,7 +1540,12 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
   function zen_delete_products_attributes($delete_product_id) {
     global $gBitDb;
     // delete associated downloads
-    $products_delete_from= $gBitDb->Execute("SELECT pa.`products_id`, pad.`products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad  WHERE pa.`products_id`='" . $delete_product_id . "' and pad.`products_attributes_id` = pa.`products_attributes_id`");
+	$sql = "SELECT pom.`products_id`, pad.`products_attributes_id` 
+			FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+				INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+				INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pad.`products_attributes_id` = pa.`products_attributes_id`)
+			WHERE pom.`products_id`=?";
+    $products_delete_from= $gBitDb->query( $sql, array( $delete_product_id ) );
     while (!$products_delete_from->EOF) {
       $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` = '" . $products_delete_from['products_attributes_id'] . "'");
       $products_delete_from->MoveNext();
@@ -1582,17 +1554,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_id` = '" . $delete_product_id . "'");
 }
 
-
-////
-// Set Product Attributes Sort Order to Products Option Value Sort Order
-  function zen_update_attributes_products_option_values_sort_order($products_id) {
-    global $gBitDb;
-    $attributes_sort_order = $gBitDb->Execute("SELECT distinct pa.`products_attributes_id`, pa.`options_id`, pa.`options_values_id`, pa.`products_options_sort_order`, pov.`products_ov_sort_order` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov WHERE pa.`products_id` = '" . $products_id . "' and pa.`options_values_id` = pov.`products_options_values_id`");
-    while (!$attributes_sort_order->EOF) {
-      $gBitDb->Execute("update " . TABLE_PRODUCTS_ATTRIBUTES . " set `products_options_sort_order` = '" . $attributes_sort_order->fields['products_ov_sort_order'] . "' WHERE `products_id` = '" . $products_id . "' and `products_attributes_id` = '" . $attributes_sort_order->fields['products_attributes_id'] . "'");
-      $attributes_sort_order->MoveNext();
-    }
-  }
 
 ////
 // Check if a demo is active
@@ -1617,9 +1578,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
     global $gBitDb;
     if (DOWNLOAD_ENABLED == 'true') {
       $download_display_query_raw ="SELECT pa.`products_attributes_id`, pad.`products_attributes_filename`
-                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
-                                    WHERE pa.`products_id`='" . $products_id . "' and pad.`products_attributes_id`= pa.`products_attributes_id`";
-      $download_display = $gBitDb->Execute($download_display_query_raw);
+                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+										INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pad.`products_attributes_id`= pa.`products_attributes_id`)
+                                    WHERE pom.`products_id`=?";
+      $download_display = $gBitDb->query( $download_display_query_raw, array( $products_id ) );
       if ($check_valid == true) {
         $valid_downloads = '';
         while (!$download_display->EOF) {
@@ -2127,220 +2090,5 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
     return $parent_id;
   }
-
-/*
-////
-// product pulldown with attributes
-  function zen_draw_products_pull_down_attributes($name, $parameters = '', $exclude = '') {
-    global $gBitDb, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $new_fields=', p.`products_model`';
-
-    $products = $gBitDb->Execute("SELECT distinct p.`products_id`, pd.`products_name`, p.`products_price`" . $new_fields .
-        " FROM " . TABLE_PRODUCTS . " p, " .
-        TABLE_PRODUCTS_DESCRIPTION . " pd, " .
-        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE p.`products_id`= pa.`products_id` and p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `products_name`");
-
-    while (!$products->EOF) {
-      if (!in_array($products->fields['products_id'], $exclude)) {
-        $display_price = zen_get_products_base_price($products->fields['products_id']);
-        $select_string .= '<option value="' . $products->fields['products_id'] . '">' . $products->fields['products_name'] . ' (' . TEXT_MODEL . ' ' . $products->fields['products_model'] . ') (' . $currencies->format($display_price) . ')</option>';
-      }
-      $products->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-
-////
-// categories pulldown with products
-  function zen_draw_products_pull_down_categories($name, $parameters = '', $exclude = '', $show_id = false, $show_parent = false) {
-    global $gBitDb, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $categories = $gBitDb->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
-        " FROM " . TABLE_CATEGORIES . " c, " .
-        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
-        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc " .
-        " WHERE ptoc.`categories_id` = c.`categories_id` and c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
-
-    while (!$categories->EOF) {
-      if (!in_array($categories->fields['categories_id'], $exclude)) {
-        if ($show_parent == true) {
-          $parent = zen_get_products_master_categories_name($categories->fields['categories_id']);
-          if ($parent != '') {
-            $parent = ' : in ' . $parent;
-          }
-        } else {
-          $parent = '';
-        }
-        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . $parent . ($show_id ? ' - ID#' . $categories->fields['categories_id'] : '') . '</option>';
-      }
-      $categories->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-
-////
-// categories pulldown with products with attributes
-  function zen_draw_products_pull_down_categories_attributes($name, $parameters = '', $exclude = '') {
-    global $gBitDb, $currencies;
-
-    if ($exclude == '') {
-      $exclude = array();
-    }
-
-    $select_string = '<SELECT name="' . $name . '"';
-
-    if ($parameters) {
-      $select_string .= ' ' . $parameters;
-    }
-
-    $select_string .= '>';
-
-    $categories = $gBitDb->Execute("SELECT distinct c.`categories_id`, cd.`categories_name` " .
-        " FROM " . TABLE_CATEGORIES . " c, " .
-        TABLE_CATEGORIES_DESCRIPTION . " cd, " .
-        TABLE_PRODUCTS_TO_CATEGORIES . " ptoc, " .
-        TABLE_PRODUCTS_ATTRIBUTES . " pa " .
-        " WHERE pa.`products_id`= ptoc.`products_id` and ptoc.`categories_id`= c.`categories_id` and c.`categories_id` = cd.`categories_id` and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY categories_name");
-    while (!$categories->EOF) {
-      if (!in_array($categories->fields['categories_id'], $exclude)) {
-        $select_string .= '<option value="' . $categories->fields['categories_id'] . '">' . $categories->fields['categories_name'] . '</option>';
-      }
-      $categories->MoveNext();
-    }
-
-    $select_string .= '</select>';
-
-    return $select_string;
-  }
-////
-// Parse and secure the cPath parameter values
-  function zen_parse_category_path($cPath) {
-// make sure the category IDs are integers
-    $cPath_array = array_map('zen_string_to_int', explode('_', $cPath));
-
-// make sure no duplicate category IDs exist which could lock the server in a loop
-    $tmp_array = array();
-    $n = sizeof($cPath_array);
-    for ($i=0; $i<$n; $i++) {
-      if (!in_array($cPath_array[$i], $tmp_array)) {
-        $tmp_array[] = $cPath_array[$i];
-      }
-    }
-
-    return $tmp_array;
-  }
-////
-// Construct a category path to the product
-// TABLES: products_to_categories
-  function zen_get_product_path($products_id, $status_override = '1') {
-    global $gBitDb;
-    $cPath = '';
-
-    $category_query = "SELECT p2c.`categories_id`
-                       FROM " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c
-                       WHERE p.`products_id` = '" . (int)$products_id . "' " .
-                       ($status_override == '1' ? " and p.`products_status` = '1' " : '') . "
-                       and p.`products_id` = p2c.`products_id`";
-
-    $category = $gBitDb->getOne($category_query);
-
-    if ($category->RecordCount() > 0) {
-
-      $categories = array();
-      zen_get_parent_categories($categories, $category->fields['categories_id']);
-
-      $categories = array_reverse($categories);
-
-      $cPath = implode('_', $categories);
-
-      if (zen_not_null($cPath)) $cPath .= '_';
-      $cPath .= $category->fields['categories_id'];
-    }
-
-    return $cPath;
-  }
-
-////
-// Recursively go through the categories and retreive all parent categories IDs
-// TABLES: categories
-  function zen_get_parent_categories(&$categories, $categories_id) {
-    global $gBitDb;
-    $parent_categories_query = "SELECT parent_id
-                                FROM " . TABLE_CATEGORIES . "
-                                WHERE `categories_id` = '" . (int)$categories_id . "'";
-
-    $parent_categories = $gBitDb->Execute($parent_categories_query);
-
-    while (!$parent_categories->EOF) {
-      if ($parent_categories->fields['parent_id'] == 0) return true;
-      $categories[sizeof($categories)] = $parent_categories->fields['parent_id'];
-      if ($parent_categories->fields['parent_id'] != $categories_id) {
-        zen_get_parent_categories($categories, $parent_categories->fields['parent_id']);
-      }
-      $parent_categories->MoveNext();
-    }
-  }
-
-////
-  function zen_get_categories($categories_array = '', $parent_id = '0', $indent = '') {
-    global $gBitDb;
-
-    if (!is_array($categories_array)) $categories_array = array();
-
-    $categories_query = "SELECT c.`categories_id`, cd.`categories_name`
-                         FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-                         WHERE `parent_id` = '" . (int)$parent_id . "'
-                         and c.`categories_id` = cd.`categories_id`
-                         and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                         ORDER BY `sort_order`, cd.`categories_name`";
-
-    $categories = $gBitDb->Execute($categories_query);
-
-    while (!$categories->EOF) {
-      $categories_array[] = array('id' => $categories->fields['categories_id'],
-                                  'text' => $indent . $categories->fields['categories_name']);
-
-      if ($categories->fields['categories_id'] != $parent_id) {
-        $categories_array = zen_get_categories($categories_array, $categories->fields['categories_id'], $indent . '&nbsp;&nbsp;');
-      }
-      $categories->MoveNext();
-    }
-
-    return $categories_array;
-  }
-
-*/
 
 ?>

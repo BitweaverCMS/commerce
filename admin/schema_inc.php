@@ -302,7 +302,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_attributes_id I4 PRIMARY AUTO,
   products_id I4 NOTNULL,
-  options_id I4 NOTNULL,
+  products_options_id I4 NOTNULL,
   options_values_id I4 NOTNULL,
   options_values_price N(15,4),
   price_prefix C(1),
@@ -328,7 +328,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_price_letters_free I2,
   attributes_required I1
   CONSTRAINT ', CONSTRAINT `prod_attr_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` ),
-  				CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` ),
+  				CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` ),
   				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
 ",
 
@@ -1131,9 +1131,9 @@ $indices = array (
   'products_related_cont_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products', 'cols' => 'related_content_id', 'opts' => NULL),
   'products_pur_group_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products', 'cols' => 'purchase_group_id', 'opts' => NULL),
   'lang_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_options', 'cols' => 'language_id', 'opts' => NULL),
-  'id_options_id_values_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => ' products_id, options_id, options_values_id ', 'opts' => NULL),
+  'id_options_id_values_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => ' products_id, products_options_id, options_values_id ', 'opts' => NULL),
   'prod_attr_products_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'products_id', 'opts' => NULL),
-  'prod_attr_options_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'options_id', 'opts' => NULL),
+  'prod_attr_options_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'products_options_id', 'opts' => NULL),
   'prod_attr_options_val_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'options_values_id', 'opts' => NULL),
   'prod_desc_name_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_description', 'cols' => 'products_name', 'opts' => NULL),
   'prod_desc_lang_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_description', 'cols' => 'language_id', 'opts' => NULL),

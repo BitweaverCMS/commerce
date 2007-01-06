@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.12 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: store_manager.php,v 1.13 2007/01/06 06:13:49 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -39,11 +39,12 @@
 
 // update all products in catalog
     case ('update_all_products_attributes_sort_order'):
-      $all_products_attributes= $gBitDb->Execute("select p.`products_id`, pa.products_attributes_id from " .
-      TABLE_PRODUCTS . " p, " .
-      TABLE_PRODUCTS_ATTRIBUTES . " pa " . "
-      where p.`products_id`= pa.`products_id`"
-      );
+		$sql = "SELECT p.`products_id`, pa.products_attributes_id 
+				FROM " . TABLE_PRODUCTS . " p
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(p.`products_id`= pom.`products_id`)
+					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`= pom.`products_options_values_id`)";
+ 
+      $all_products_attributes= $gBitDb->query( $sql );
       while (!$all_products_attributes->EOF) {
         $count++;
         $product_id_updated .= ' - ' . $all_products_attributes->fields['products_id'] . ':' . $all_products_attributes->fields['products_attributes_id'];

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.23 2006/12/19 00:11:32 spiderr Exp $
+// $Id: functions_lookups.php,v 1.24 2007/01/06 06:13:50 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -292,17 +292,22 @@
 
     if (PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true') {
       // don't include READONLY attributes to determin if attributes must be selected to add to cart
-      $attributes_query = "select pa.`products_attributes_id`
-                           from " . TABLE_PRODUCTS_ATTRIBUTES . " pa left join " . TABLE_PRODUCTS_OPTIONS . " po on pa.`options_id` = po.`products_options_id`
-                           where pa.`products_id` = '" . (int)$products_id . "' and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+      $attributes_query = "SELECT pa.`products_attributes_id`
+                           FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
+						 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`) 
+						   	LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po on pa.`products_options_id` = po.`products_options_id`
+                           WHERE pom.`products_id`=? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
     } else {
       // regardless of READONLY attributes no add to cart buttons
-      $attributes_query = "select pa.`products_attributes_id`
-                           from " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-                           where pa.`products_id` = '" . (int)$products_id . "'";
+      $attributes_query = "SELECT pa.`products_attributes_id`
+                           FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`) 
+                           WHERE pom.`products_id`=?";
+		
     }
+	$bindVars = array( (int)$products_id );
 
-    $attributes = $gBitDb->getOne($attributes_query);
+    $attributes = $gBitDb->getOne($attributes_query, $bindVars );
 
     return( !empty( $attributes ) );
   }
@@ -311,17 +316,12 @@
 // Check if product has attributes values
   function zen_has_product_attributes_values($products_id) {
     global $gBitDb;
-    $attributes_query = "select sum(`options_values_price`) as `total`
-                         from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                         where `products_id` = '" . (int)$products_id . "'";
-
-    $attributes = $gBitDb->Execute($attributes_query);
-
-    if ($attributes->fields['total'] != 0) {
-      return true;
-    } else {
-      return false;
-    }
+    $attributes_query = "SELECT SUM(`options_values_price`) as `total`
+                         FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
+                         WHERE pom.`products_id` = ?";
+    $hasAttributes = $gBitDb->getOne( $attributes_query, array( (int)$products_id ) );
+	return $hasAttributes;
   }
 
   function zen_get_category_name($category_id, $fn_language_id) {
@@ -416,33 +416,29 @@
 
 ////
 // return attributes products_options_sort_order - PRODUCTS_ATTRIBUTES
-  function zen_get_attributes_sort_order($products_id, $options_id, $options_values_id) {
-    global $gBitDb;
-      $check = $gBitDb->getOne("select `products_options_sort_order`
-                             from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                             where `products_id` = '" . $products_id . "'
-                             and `options_id` = '" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "'");
+function zen_get_attributes_sort_order($products_id, $options_id, $options_values_id) {
+	global $gBitDb;
+	$check = $gBitDb->getOne("SELECT `products_options_sort_order`
+								FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
+									INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`) 
+								WHERE `products_id` = ? AND `products_options_id` = ? AND pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ) );
 
-      return $check->fields['products_options_sort_order'];
-  }
+	return $check;
+}
 
 ////
 // return attributes products_options_sort_order - PRODUCTS_OPTIONS
   function zen_get_attributes_options_sort_order($products_id, $options_id, $options_values_id) {
     global $gBitDb;
-      $check = $gBitDb->getOne("select `products_options_sort_order`
+      $sortOrder = $gBitDb->getOne("select `products_options_sort_order`
                              from " . TABLE_PRODUCTS_OPTIONS . "
                              where `products_options_id` = '" . $options_id . "'");
 
-      $check_options_id = $gBitDb->getOne("select `products_id`, `options_id`, `options_values_id`, `products_options_sort_order`
-                             from " . TABLE_PRODUCTS_ATTRIBUTES . "
-                             where `products_id` ='" . $products_id . "'
-                             and `options_id` ='" . $options_id . "'
-                             and `options_values_id` = '" . $options_values_id . "'");
-
-
-      return $check->fields['products_options_sort_order'] . '.' . str_pad($check_options_id->fields['products_options_sort_order'],5,'0',STR_PAD_LEFT);
+      $attSortOrder = $gBitDb->getOne("select `products_id`, `products_options_id`, pa.`products_options_values_id`, `products_options_sort_order`
+                             FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+							  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+                             WHERE `products_id` = ?  and `products_options_id` = ? and pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ) );
+      return $sortOrder . '.' . str_pad( $attSortOrder ,5 ,'0' , STR_PAD_LEFT );
   }
 
 ////
@@ -453,14 +449,22 @@
 
 		// text required validation
 		if (ereg('^txt_', $option)) {
-		  $check_attributes = $gBitDb->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . ereg_replace('txt_', '', $option) . "' and `options_values_id`='0'");
+			$query = "SELECT `attributes_display_only`, `attributes_required` 
+					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
+		  $check_attributes = $gBitDb->query( $query, array( $product_id, ereg_replace('txt_', '', $option), '0'  ) );
 		// text cannot be blank
 		  if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
 			$check_valid = false;
 		  }
 		} else {
 			// regular attribute validation
-			$check_attributes = $gBitDb->Execute("select `attributes_display_only`, `attributes_required` from " . TABLE_PRODUCTS_ATTRIBUTES . " where `products_id`='" . $product_id . "' and `options_id`='" . $option . "' and `options_values_id`='" . $value . "'");
+			$query = "SELECT `attributes_display_only`, `attributes_required` 
+					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
+			$check_attributes = $gBitDb->query( $query, array( $product_id, $option, $value ) );
 
 			// display only cannot be selected
 			if ($check_attributes->fields['attributes_display_only'] == '1') {
@@ -483,17 +487,6 @@
                                     and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
     return $options_values->fields['products_options_name'];
-  }
-
-  function zen_values_name($values_id) {
-    global $gBitDb;
-
-    $values_values = $gBitDb->Execute("select `products_options_values_name`
-                                   from " . TABLE_PRODUCTS_OPTIONS_VALUES . "
-                                   where `products_options_values_id` = '" . (int)$values_id . "'
-                                   and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
-
-    return $values_values->fields['products_options_values_name'];
   }
 
 ////

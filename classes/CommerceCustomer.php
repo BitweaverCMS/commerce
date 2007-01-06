@@ -47,6 +47,13 @@
 			return( $ret );
 		}
 
+		function getGlobalNotifications() {
+			if( $this->isValid() ) {
+				$global_query = "SELECT `global_product_notifications` from " . TABLE_CUSTOMERS_INFO . " WHERE `customers_info_id` = ?";
+				return( $this->mDb->getOne($global_query, array( $this->mCustomerId ) ) );
+			}
+		}
+
 		function syncBitUser( $pInfo ) {
 			global $gBitDb;
 			// bitcommerce customers table to bitweaver users_users table
