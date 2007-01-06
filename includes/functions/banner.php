@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.11 2006/12/19 00:11:32 spiderr Exp $
+// $Id: banner.php,v 1.12 2007/01/06 09:46:13 squareing Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -116,7 +116,7 @@
         $banner = $gBitDb->getRow("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                                FROM " . TABLE_BANNERS . "
                                WHERE `status` = '1' " .
-                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convert_sortmode( 'random' ));
+                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convertSortmode( 'random' ));
 
       } else {
         return '<strong>ZEN ERROR! (zen_display_banner(' . $action . ', ' . $identifier . ') -> No banners with group \'' . $identifier . '\' found!</strong>';
@@ -168,7 +168,7 @@
       return $gBitDb->Execute("SELECT `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                            FROM " . TABLE_BANNERS . "
                                WHERE `status` = '1' " .
-                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convert_sortmode( 'random' ));
+                               $new_banner_search . $my_banner_filter . " order by ".$gBitDb->convertSortmode( 'random' ));
     } elseif ($action == 'static') {
       $banner_query = "select `banners_id`, `banners_title`, `banners_image`, `banners_html_text`, `banners_open_new_windows`
                        from " . TABLE_BANNERS . "
