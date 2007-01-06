@@ -283,14 +283,14 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
   products_options_images_per_row I2 default '5',
   products_options_images_style I1 default '0'
 ",
-
+/*
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options_values' => "
   products_options_values_id I4 PRIMARY,
   language_id I4 NOTNULL default '1',
   products_options_values_name C(64),
   products_ov_sort_order I4
 ",
-
+*/
 BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
   prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
   products_options_id I4,
@@ -301,7 +301,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_attributes_id I4 PRIMARY AUTO,
-  products_id I4 NOTNULL,
+  products_options_values_name C(64),
   products_options_id I4 NOTNULL,
   options_values_id I4 NOTNULL,
   options_values_price N(15,4),
@@ -2000,7 +2000,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (3, 'Checkbox')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (4, 'File')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (5, 'Read Only')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_values` (`products_options_values_id`, `language_id`, `products_options_values_name`) VALUES (0, 1, 'TEXT')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_attributes` (`products_options_values_id`, `language_id`, `products_options_values_name`) VALUES (0, 1, 'TEXT')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('Florida', 'Florida local sales tax zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('UKVAT', 'United Kingdom VAT zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_tax_class` (`tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES ('Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
