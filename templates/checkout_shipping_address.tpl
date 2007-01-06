@@ -28,7 +28,7 @@
                           from " . TABLE_ADDRESS_BOOK . "
                           where customers_id = '" . (int)$_SESSION['customer_id'] . "'";
 
-      $addresses = $db->Execute($addresses_query);
+      $addresses = $gBitDb->Execute($addresses_query);
 
       while (!$addresses->EOF) {
         $format_id = zen_get_address_format_id($addresses->fields['country_id']);

@@ -17,11 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.4 2005/10/06 22:59:10 spiderr Exp $
+// $Id: main_template_vars.php,v 1.5 2007/01/06 17:29:38 spiderr Exp $
 //
-  if (file_exists(DIR_FS_PAGES . $current_page_base . '/main_template_vars.php')) {
-    $body_code = DIR_FS_PAGES . $current_page_base . '/main_template_vars.php';
-  } else {
-    $body_code = DIR_FS_PAGES . $current_page_base . '/' . $_REQUEST['main_page'] . '.php';
-  }
+	if (file_exists(DIR_FS_PAGES . $current_page_base . '/main_template_vars.php')) {
+		$body_code = DIR_FS_PAGES . $current_page_base . '/main_template_vars.php';
+	} elseif( file_exists( DIR_FS_PAGES . $current_page_base . '/' . $_REQUEST['main_page'] . '.php' ) ) {
+		$body_code = DIR_FS_PAGES . $current_page_base . '/' . $_REQUEST['main_page'] . '.php';
+	} else {
+		// cannot find body_code, default to index
+		$current_page = 'index';
+		$current_page_base = $current_page;
+		$body_code = DIR_FS_PAGES . 'index/index.php';
+	}
 ?>
