@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.87 2007/01/06 09:46:12 squareing Exp $
+//  $Id: CommerceProduct.php,v 1.88 2007/01/21 22:51:03 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -443,6 +443,10 @@ class CommerceProduct extends LibertyAttachable {
 			}
 		}
 		return $ret;
+	}
+
+	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
+		return( BIT_ROOT_PATH.CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
 	}
 
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
