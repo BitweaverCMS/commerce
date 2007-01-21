@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.1 2007/01/06 06:13:49 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.2 2007/01/21 22:50:04 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -38,7 +38,7 @@ class CommerceProductManager extends BitBase {
 		
 		$whereSql = preg_replace( '/^[\s]*AND\b/i', 'WHERE ', $whereSql );
 		// SElect order is important so LEFT JOIN'ed tables don't NULL out primary keys of INNER JOIN'ed tables
-	    $query = "SELECT cpo.`products_options_id` AS `hash_key` $selectSql , cpa.*, cpot.*, cpo.*
+	    $query = "SELECT cpo.`products_options_id` AS `hash_key` $selectSql , cpa.*, cpot.*, cpo.*, cpa.`products_options_sort_order`
 				  FROM " . TABLE_PRODUCTS_OPTIONS . " cpo
 				  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_TYPES . " cpot ON(cpo.`products_options_type`=cpot.`products_options_types_id`)
 				  	$joinSql
@@ -87,9 +87,8 @@ class CommerceProductManager extends BitBase {
 	function storeOption( $pParamHash ) {
 		$ret = FALSE;
 		if( $this->verifyOption( $pParamHash ) ) {
-vd( $pParamHash );		
 			if( !empty( $pParamHash['products_options_id'] ) ) {
-				$this->mDb->associateUpdate( TABLE_PRODUCTS_OPTIONS, $pParamHash['options_store'], array( 'products_options_values_id' => $pParamHash['products_options_values_id'] ) );
+				$this->mDb->associateUpdate( TABLE_PRODUCTS_OPTIONS, $pParamHash['options_store'], array( 'products_options_id' => $pParamHash['products_options_id'] ) );
 			} else {
 				$pParamHash['options_store']['products_options_id'] = $this->genOptionsId();
 				$this->mDb->associateInsert( TABLE_PRODUCTS_OPTIONS, $pParamHash['options_store'] );
