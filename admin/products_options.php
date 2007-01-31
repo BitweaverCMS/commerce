@@ -4,8 +4,8 @@ require('includes/application_top.php');
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
 
-$gBitSmarty->assign( 'loadAjax', 'mochikit' );
-$gBitSmarty->assign( 'mochikitLibs', array( 'DOM.js', 'Iter.js', 'Style.js', 'Signal.js', 'Color.js', 'Position.js', 'Visual.js', 'DragAndDrop.js', 'Sortable.js' ) );
+// $gBitSmarty->assign( 'loadAjax', 'mochikit' );
+// $gBitSmarty->assign( 'mochikitLibs', array( 'DOM.js', 'Iter.js', 'Style.js', 'Signal.js', 'Color.js', 'Position.js', 'Visual.js', 'DragAndDrop.js', 'Sortable.js' ) );
 
 $productManager = new CommerceProductManager();
 
