@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2006/12/19 00:11:36 spiderr Exp $
+// $Id: header_php.php,v 1.8 2007/02/06 05:33:03 spiderr Exp $
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
@@ -30,7 +30,7 @@
     if (zen_validate_email($email_address)) {
 // auto complete when logged in
       if($_SESSION['customer_id']) {
-        $check_customer = $gBitDb->Execute("select `customers_id`, `customers_firstname`, `customers_lastname`, `customers_password`, `customers_email_address`, `customers_default_address_id` from " . TABLE_CUSTOMERS . " where `customers_id` = '" . $customer_id . "'");
+        $check_customer = $gBitDb->query("select `customers_id`, `customers_firstname`, `customers_lastname`, `customers_password`, `customers_email_address`, `customers_default_address_id` from " . TABLE_CUSTOMERS . " where `customers_id` = ?", array( $_SESSION['customer_id'] ) );
         $customer_email= $check_customer->fields['customers_email_address'];
         $customer_name= $check_customer->fields['customers_firstname'] . ' ' . $check_customer->fields['customers_lastname'];
       } else {
