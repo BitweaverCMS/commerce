@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.24 2007/01/06 06:13:50 spiderr Exp $
+// $Id: functions_lookups.php,v 1.25 2007/02/06 05:32:46 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -45,10 +45,10 @@
 
 		while (!$orders_status->EOF) {
 			if( $pHash ) {
-				$ret[$orders_status->fields['orders_status_id']] = $orders_status->fields['orders_status_name'] . ' [' . $orders_status->fields['orders_status_id'] . ']';
+				$ret[$orders_status->fields['orders_status_id']] = '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'];
 			} else {
-				$ret[] = array('id' => $orders_status->fields['orders_status_id'],
-							   'text' => $orders_status->fields['orders_status_name'] . ' [' . $orders_status->fields['orders_status_id'] . ']');
+				$ret[] = array( 'id' => $orders_status->fields['orders_status_id'],
+							    'text' => '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'] );
 			}
 			$orders_status->MoveNext();
 		}
