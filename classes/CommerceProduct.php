@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.88 2007/01/21 22:51:03 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.89 2007/02/11 04:21:03 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -44,7 +44,7 @@ class CommerceProduct extends LibertyAttachable {
 	function load() {
 		global $gBitUser;
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
-			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM `".TABLE_PRODUCTS."` WHERE `content_id`=?", array( $this->mContentId ) );
+			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
