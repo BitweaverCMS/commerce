@@ -328,17 +328,17 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_required I1
-  CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` ),
-  				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
+  CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )'
 ",
+//  				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
  products_id I4 PRIMARY,
  products_options_values_id I4 PRIMARY,
  override_price N(15,4)
- CONSTRAINT ', CONSTRAINT `prod_optmap_products_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` ),
-  				CONSTRAINT `prod_optmap_optval_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_attributes`( `products_options_values_id` )'
+ CONSTRAINT ', CONSTRAINT `prod_optmap_products_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
+//  				CONSTRAINT `prod_optmap_optval_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_attributes`( `products_options_values_id` )'
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
   products_attributes_id I4,
