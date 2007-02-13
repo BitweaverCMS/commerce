@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.32 2007/01/06 06:13:50 spiderr Exp $
+// $Id: shopping_cart.php,v 1.33 2007/02/13 17:18:25 spiderr Exp $
 //
 
   class shoppingCart {
-    var $contents, $total, $weight, $cartID, $content_type, $free_shipping_item, $free_shipping_weight, $free_shipping_price;
+    var $contents, $total, $weight, $cartID, $content_type, $free_shipping_item, $free_shipping_weight, $free_shipping_price, $mProductObjects;
 
     function shoppingCart() {
+		$this->mProductObjects = array();
 		$this->reset();
     }
 
@@ -433,8 +434,8 @@
         $prid = zen_get_prid( $products_id );
 
 // products price
-		$product = new CommerceProduct( $prid );
-        if( $product->load() ) {
+		$product = $this->getProductObject( $prid );
+        if( $product->isValid() ) {
           $products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
           $products_price = $product->getPurchasePrice( $qty );
 
@@ -777,6 +778,18 @@ if ((int)$products_id != $products_id) {
     }
 
 
+	function getProductObject( $pProductsId ) {
+		if( BitBase::verifyId( $pProductsId ) ) {
+			if( !isset( $this->mProductObjects[$pProductsId] ) ) {
+				$this->mProductObjects[$pProductsId] = new CommerceProduct( zen_get_prid( $pProductsId ) );
+				if( $this->mProductObjects[$pProductsId]->load() ) {
+					$ret = &$this->mProductObjects[$pProductsId];
+				}
+			}
+		}
+		return $this->mProductObjects[$pProductsId];
+	}
+
     function get_products($check_for_valid_cart = false) {
 		global $gBitDb, $gBitProduct;
 
@@ -785,8 +798,8 @@ if ((int)$products_id != $products_id) {
 		$products_array = array();
 		reset($this->contents);
 		while( list( $products_id, $productsHash ) = each( $this->contents ) ) {
-			$product = new CommerceProduct( zen_get_prid( $products_id ) );
-			if( $product->load() ) {
+			$product = $this->getProductObject( zen_get_prid( $products_id ) );
+			if( $product->isValid() ) {
 				$prid = $product->mProductsId;
 				$qty = $productsHash['quantity'];
 				$products_price = $product->getPurchasePrice( $qty );
@@ -1012,6 +1025,10 @@ if ((int)$products_id != $products_id) {
         return $this->content_type;
       }
     }
+
+	function __sleep() {
+		unset( $this->mProductObjects );
+	}
 
     function unserialize($broken) {
       for(reset($broken);$kv=each($broken);) {

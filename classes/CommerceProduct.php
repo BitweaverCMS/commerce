@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.89 2007/02/11 04:21:03 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.90 2007/02/13 17:18:25 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -41,7 +41,7 @@ class CommerceProduct extends LibertyAttachable {
 		$this->mRelatedContent = NULL;
 	}
 
-	function load() {
+	function load( $pFullLoad = TRUE ) {
 		global $gBitUser;
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
@@ -57,7 +57,7 @@ class CommerceProduct extends LibertyAttachable {
 //			} else {
 				$this->loadPricing();
 //			}
-			if( !empty( $this->mInfo['related_content_id'] ) ) {
+			if( $pFullLoad && !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
 					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
