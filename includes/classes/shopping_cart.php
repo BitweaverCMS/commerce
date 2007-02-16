@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.34 2007/02/14 15:55:30 spiderr Exp $
+// $Id: shopping_cart.php,v 1.35 2007/02/16 17:01:25 spiderr Exp $
 //
 
   class shoppingCart {
@@ -1028,7 +1028,7 @@ if ((int)$products_id != $products_id) {
 
 	function __sleep() {
 		unset( $this->mProductObjects );
-		return array( 'contents', 'total', 'weight', 'cartID', 'content_type', 'free_shipping_item', 'free_shipping_weight', 'free_shipping_price' );
+		return array( 'contents', 'total', 'weight', 'content_type', 'free_shipping_item', 'free_shipping_weight', 'free_shipping_price' );
 	}
 
     function unserialize($broken) {
