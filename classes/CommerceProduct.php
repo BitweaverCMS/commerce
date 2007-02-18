@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.90 2007/02/13 17:18:25 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.91 2007/02/18 17:23:27 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -445,6 +445,10 @@ class CommerceProduct extends LibertyAttachable {
 		return $ret;
 	}
 
+	function getDisplayUri( $pProductsId=NULL, $pCatPath=NULL ) {
+		return BIT_ROOT_URI.substr( CommerceProduct::getDisplayUrl( $pProductsId, $pCatPath ), 1 );
+	}
+
 	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
 		return( BIT_ROOT_PATH.CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
 	}
@@ -643,6 +647,10 @@ $this->debug(0);
 		return( !empty( $this->mProductsId ) );
 	}
 
+	function isViewable() {
+		return( $this->hasEditPermission() || $this->isAvailable() );
+	}
+
 	function isAvailable() {
 		global $gBitUser;
 		if( $this->isValid() ) {
@@ -652,7 +660,7 @@ $this->debug(0);
 				$ret = $this->isOwner();
 			}
  		} else {
-			$ret = TRUE;
+			$ret = FALSE;
 		}
 		return( $ret );
 	}
