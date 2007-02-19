@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.9 2006/07/23 17:59:48 spiderr Exp $
+// $Id: product_info_display.php,v 1.10 2007/02/19 15:59:24 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -38,6 +38,8 @@
 //   $module_show_categories
 
 global $gBitProduct;
+
+define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
 
 echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=add_product'), 'post', 'enctype="multipart/form-data"'); ?>
 
