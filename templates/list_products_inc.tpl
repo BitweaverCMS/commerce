@@ -81,7 +81,7 @@
 								{if $gBitProduct->hasAttributes($prod.products_id) or !$smarty.const.PRODUCT_LIST_PRICE_BUY_NOW}
 									<a href="{$prod.display_url}">...{tr}more info{/tr}</a>
 								{else}
-									<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?action=buy_now&products_id={$prod.products_id}">{tr}Buy Now!{/tr}</a>
+									<a href="{$gBitProduct->getDisplayUrl($prod.products_id)}">{tr}Buy Now!{/tr}</a>
 								{/if}
 
 {*
