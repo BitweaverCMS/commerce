@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.9 2007/01/06 06:13:52 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.10 2007/03/02 22:03:02 luciash Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -49,7 +49,7 @@
 				WHERE pom.`products_id`=? AND popt.`language_id` = ?" .
 				$options_order_by;
 
-      $products_options_names = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) ) );
+      $products_options_names = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
 
 // iii 030813 added: initialize $number_of_uploads
       $number_of_uploads = 0;
