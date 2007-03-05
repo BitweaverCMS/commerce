@@ -284,6 +284,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
   products_options_images_style I1 default '0',
   products_options_html_attributes X
 ",
+
 /*
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options_values' => "
   products_options_values_id I4 PRIMARY,
@@ -291,7 +292,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options_values' => "
   products_options_values_name C(64),
   products_ov_sort_order I4
 ",
-*/
+
 BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
   prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
   products_options_id I4,
@@ -299,6 +300,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
   CONSTRAINT ', CONSTRAINT `prd_opt_val_to_prd_opt_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )'
 ",
 //  				CONSTRAINT `prd_opt_val_to_prd_val_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
+*/
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_attributes_id I4 PRIMARY AUTO,
