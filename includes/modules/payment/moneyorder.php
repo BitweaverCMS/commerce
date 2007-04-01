@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: moneyorder.php,v 1.3 2006/12/19 00:11:34 spiderr Exp $
+// $Id: moneyorder.php,v 1.4 2007/04/01 05:32:06 spiderr Exp $
 //
 
   class moneyorder {
@@ -30,16 +30,18 @@
       $this->code = 'moneyorder';
       $this->title = MODULE_PAYMENT_MONEYORDER_TEXT_TITLE;
       $this->description = MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_PAYMENT_MONEYORDER_SORT_ORDER;
-      $this->enabled = ((MODULE_PAYMENT_MONEYORDER_STATUS == 'True') ? true : false);
+      $this->sort_order = (defined( 'MODULE_PAYMENT_MONEYORDER_SORT_ORDER' ) ? MODULE_PAYMENT_MONEYORDER_SORT_ORDER : 0);
+      $this->enabled = ((defined( 'MODULE_PAYMENT_MONEYORDER_STATUS' ) && MODULE_PAYMENT_MONEYORDER_STATUS == 'True') ? true : false);
 
-      if ((int)MODULE_PAYMENT_MONEYORDER_ORDER_STATUS_ID > 0) {
+      if( defined( 'MODULE_PAYMENT_MONEYORDER_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_MONEYORDER_ORDER_STATUS_ID > 0) {
         $this->order_status = MODULE_PAYMENT_MONEYORDER_ORDER_STATUS_ID;
       }
 
       if (is_object($order)) $this->update_status();
-    
-      $this->email_footer = MODULE_PAYMENT_MONEYORDER_TEXT_EMAIL_FOOTER;
+   
+		if( $this->enabled ) { 
+	      $this->email_footer = MODULE_PAYMENT_MONEYORDER_TEXT_EMAIL_FOOTER;
+		}
     }
 
 // class methods

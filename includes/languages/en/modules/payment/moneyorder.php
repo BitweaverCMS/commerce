@@ -17,10 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: moneyorder.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id: moneyorder.php,v 1.3 2007/04/01 05:32:06 spiderr Exp $
 //
 
   define('MODULE_PAYMENT_MONEYORDER_TEXT_TITLE', 'Check/Money Order');
-  define('MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION', 'Please make your check or money order payable to:<br />' . MODULE_PAYMENT_MONEYORDER_PAYTO . '<br /><br />Mail your payment to:<br />' . nl2br(STORE_NAME_ADDRESS) . '<br /><br />' . 'Your order will not ship until we receive payment.');
+  define('MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION', 'Please make your check or money order payable to ...');
+	if( defined( 'MODULE_PAYMENT_MONEYORDER_PAYTO' ) ) {
   define('MODULE_PAYMENT_MONEYORDER_TEXT_EMAIL_FOOTER', "Please make your check or money order payable to:" . "\n\n" . MODULE_PAYMENT_MONEYORDER_PAYTO . "\n\nMail your payment to:\n" . STORE_NAME_ADDRESS . "\n\n" . 'Your order will not ship until we receive payment.');
+	}
 ?>

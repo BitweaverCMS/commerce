@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.11 2006/12/03 19:39:17 spiderr Exp $
+// $Id: payflowpro.php,v 1.12 2007/04/01 05:32:06 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -43,16 +43,16 @@
        $this->title = tra( 'Verisign PayFlow Pro' ); // Payment module title in Admin
      }
       $this->description = tra( 'Credit Card Test Info:<br /><br />CC#: 4111111111111111 or<br />5105105105105100<br />Expiry: Any' );
-      $this->sort_order = MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER;
+      $this->sort_order = defined( 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER' ) ? MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER : 0;
 
-      $this->enabled =((MODULE_PAYMENT_PAYFLOWPRO_STATUS == 'True') ? true : false);
+      $this->enabled =((defined( 'MODULE_PAYMENT_PAYFLOWPRO_STATUS' ) && MODULE_PAYMENT_PAYFLOWPRO_STATUS == 'True') ? true : false);
 //      if (MODULE_PAYMENT_PAYFLOWPRO_SERVEROS =='Linux/Unix' && !function_exists('pfpro_process') ) {
 //         $this->title = '<span class="alert">' . tra( 'Verisign PayFlow Pro' ) . '<br />&nbsp;- NOT SUPPORTED</span>';
 ////         $this->enabled =false; // if pfpro support is not compiled into PHP, do not offer this option.
 //// uncomment the above line to simply not display the option if service isn't available in PHP, rather than error message.
 //      }
 
-      if ((int)MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID > 0) {
+      if ( defined( 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID > 0) {
         $this->order_status = MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID;
       }
 

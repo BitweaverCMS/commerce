@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.10 2006/12/19 00:11:34 spiderr Exp $
+// $Id: authorizenet_aim.php,v 1.11 2007/04/01 05:32:06 spiderr Exp $
 
 
   class authorizenet_aim {
@@ -39,10 +39,10 @@
      }
       $this->description = MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_DESCRIPTION; // Descriptive Info about module in Admin
       $this->enabled = ((defined( 'MODULE_PAYMENT_AUTHORIZENET_AIM_STATUS' ) && MODULE_PAYMENT_AUTHORIZENET_AIM_STATUS == 'True') ? true : false); // Whether the module is installed or not
-      $this->sort_order = MODULE_PAYMENT_AUTHORIZENET_AIM_SORT_ORDER; // Sort Order of this payment option on the customer payment page
+      $this->sort_order = defined( 'MODULE_PAYMENT_AUTHORIZENET_AIM_SORT_ORDER' ) ? MODULE_PAYMENT_AUTHORIZENET_AIM_SORT_ORDER : 0; // Sort Order of this payment option on the customer payment page
       $this->form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', false); // Page to go to upon submitting page info
 
-	  if ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ORDER_STATUS_ID > 0) {
+	  if( defined( 'MODULE_PAYMENT_AUTHORIZENET_AIM_ORDER_STATUS_ID' ) && MODULE_PAYMENT_AUTHORIZENET_AIM_ORDER_STATUS_ID > 0) {
         $this->order_status = MODULE_PAYMENT_AUTHORIZENET_AIM_ORDER_STATUS_ID;
       }
 
