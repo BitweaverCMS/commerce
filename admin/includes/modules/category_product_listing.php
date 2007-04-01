@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.12 2006/12/19 00:11:30 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.13 2007/04/01 05:10:21 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -287,20 +287,10 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
         <?php echo '<a href="' . zen_href_link_admin($type_handler, 'cPath=' . $cPath . '&product_type=' . $products->fields['products_type'] . '&pID=' . $products->fields['products_id'] . '&action=move_product' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image(DIR_WS_IMAGES . 'icon_move.gif', ICON_MOVE) . '</a>'; ?>
         <?php echo '<a href="' . zen_href_link_admin($type_handler, 'cPath=' . $cPath . '&product_type=' . $products->fields['products_type'] . '&pID=' . $products->fields['products_id'] .'&action=copy_to' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image(DIR_WS_IMAGES . 'icon_copy_to.gif', ICON_COPY_TO) . '</a>'; ?>
 <?php
-// BOF: Attribute commands
-//if (!empty($products->fields['products_id']) && zen_has_product_attributes($products->fields['products_id'], 'false')) {
-?>
-<?php
-        if (zen_has_product_attributes($products->fields['products_id'], 'false')) {
-          echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] .'&action=attribute_features' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . ((!empty($products->fields['products_id']) && zen_has_product_attributes($products->fields['products_id'], 'false')) ? zen_image(DIR_WS_IMAGES . 'icon_attributes_on.gif', ICON_ATTRIBUTES) : zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES)) . '</a>';
-        } else {
-          echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES) . '</a>';
-        }
-?>
-<?php
-//} // EOF: Attribute commands
-?>
-<?php
+
+		echo '<a href="products_options.php?products_id=' . $products->fields['products_id'] . '">' . (zen_has_product_attributes($products->fields['products_id'], 'false')  ? zen_image(DIR_WS_IMAGES . 'icon_attributes_on.gif', ICON_ATTRIBUTES) : zen_image(DIR_WS_IMAGES . 'icon_attributes.gif', ICON_ATTRIBUTES)) . '</a>';
+
+
         if ($zc_products->get_allow_add_to_cart($products->fields['products_id']) == "Y") {
           echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $products->fields['products_id'] . '&current_category_id=' . $current_category_id) . '">' . zen_image(DIR_WS_IMAGES . 'icon_products_price_manager.gif', ICON_PRODUCTS_PRICE_MANAGER) . '</a>';
         }

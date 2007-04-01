@@ -1,4 +1,3 @@
-{form name="option" method="post"}
 
 <input type="hidden" name="option_id" value="{$smarty.request.products_option_id}" />
 
@@ -127,4 +126,3 @@ function saveOptionsValue( pOptValId ) {
 	<input type="submit" name="cancel" value="{tr}Cancel{/tr}">
 </div>
 
-{/form}

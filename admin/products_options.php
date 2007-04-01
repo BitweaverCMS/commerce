@@ -22,7 +22,10 @@ if( $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_IMAGES') == 'true' ) {
   $default_directory = 'options/';
 }
 
-if( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_id'] ) ) {
+if( $gBitProduct->isValid() ) {
+	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+	$editTpl = 'bitpackage:bitcommerce/admin_products_options_map_inc.tpl';
+} elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_id'] ) ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_id'] ) && $editOption = current( $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['products_options_id'] ) ) ) ) {
 		$gBitSmarty->assign_by_ref( 'editOption', $editOption );
 	}
@@ -50,6 +53,14 @@ if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 } elseif( !empty( $_REQUEST['save_attribute'] ) ) {
 	$productManager->storeOptionsValue( $_REQUEST );
 	bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
+} elseif( !empty( $_REQUEST['save_attribute_map'] ) ) {
+	$gBitProduct->expungeAllAttributes();
+	if( !empty( $_REQUEST['products_options'] ) ) {
+		foreach( $_REQUEST['products_options'] as $optionId ) {
+			$gBitProduct->storeAttributeMap( $optionId );
+		}
+	}
+	bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php?products_id='.$gBitProduct->getField( 'products_id' ) );
 } elseif( !empty( $_REQUEST['save_option'] ) ) {
 	if( $productManager->storeOption( $_REQUEST ) ) {
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );

@@ -11,7 +11,9 @@
 {if $editTpl}
 
 <div id="newattrform" {$formStyle}>
+{form name="option" method="post"}
 	{include file=$editTpl}
+{/form}
 </div>
 
 {else}
