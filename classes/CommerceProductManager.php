@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.2 2007/01/21 22:50:04 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.3 2007/04/01 02:19:55 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -101,7 +101,8 @@ class CommerceProductManager extends BitBase {
 
 	function genOptionsId() {
 		global $gBitDb;
-		return $gBitDb->getOne( "SELECT MAX(`products_options_id`) + 1 FROM " . TABLE_PRODUCTS_OPTIONS );
+		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_id`) + 1 FROM " . TABLE_PRODUCTS_OPTIONS );
+		return( $max + 1 );
 	}
 
 
@@ -181,7 +182,8 @@ class CommerceProductManager extends BitBase {
 
 	function genOptionsValuesId() {
 		global $gBitDb;
-		return $gBitDb->getOne( "SELECT MAX(`products_options_values_id`) + 1 FROM " . TABLE_PRODUCTS_ATTRIBUTES );
+		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_values_id`) + 1 FROM " . TABLE_PRODUCTS_ATTRIBUTES );
+		return( $max + 1 );
 	}
 
 
