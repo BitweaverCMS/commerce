@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tools_dhtml.php,v 1.10 2007/04/03 20:04:45 spiderr Exp $
+//  $Id: tools_dhtml.php,v 1.11 2007/04/03 20:05:55 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
@@ -52,5 +52,5 @@ if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
 echo zen_draw_admin_box($za_heading, $za_contents);
 ?>
 
-&nbsp; <form method="GET" action="<?=BITCOMMERCE_PKG_PATH?>admin/orders.php">Lookup Order #: <input name="oID" value="" size="6"/><input type="hidden" name="action" value="edit" /><input type="submit" name="Go" value="Go"></form>
+&nbsp; <form method="GET" action="<?=BITCOMMERCE_PKG_URL?>admin/orders.php">Lookup Order #: <input name="oID" value="" size="6"/><input type="hidden" name="action" value="edit" /><input type="submit" name="Go" value="Go"></form>
 <!-- tools_eof //-->
