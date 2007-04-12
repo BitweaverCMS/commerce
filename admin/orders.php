@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.42 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: orders.php,v 1.43 2007/04/12 23:51:53 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -228,15 +228,6 @@
            '            <td class="dataTableContent" valign="top" align="right">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
            '            <td class="dataTableContent" valign="top"><a href="'.$gBitProduct->getDisplayUrl( $order->products[$i]['products_id'] ).'">' . $order->products[$i]['name'].'</a>';
 
-      if (isset($order->products[$i]['attributes']) && (sizeof($order->products[$i]['attributes']) > 0)) {
-        for ($j = 0, $k = sizeof($order->products[$i]['attributes']); $j < $k; $j++) {
-          echo '<br /><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'];
-          if ($order->products[$i]['attributes'][$j]['price'] != '0') echo ' (' . $order->products[$i]['attributes'][$j]['prefix'] . $currencies->format($order->products[$i]['attributes'][$j]['final_price'] * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
-          if( !empty( $order->products[$i]['attributes'][$j]['product_attribute_is_free'] ) && $order->products[$i]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->products[$i]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
-          echo '</i></small></nobr>';
-        }
-      }
-
       echo '            </td>' . "\n" .
            '            <td class="dataTableContent" valign="top">' . $order->products[$i]['model'] . '</td>' . "\n" .
            '            <td class="dataTableContent" align="right" valign="top">' . zen_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n" .
@@ -258,6 +249,17 @@
                           ($foreignCurrency ? ' ('.$currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['quantity'], true, DEFAULT_CURRENCY).' )' : '' ) .
                         '</td>' . "\n";
       echo '          </tr>' . "\n";
+      if( !empty( $order->products[$i]['attributes'] ) ) {
+      echo '<tr class="dataTableRow"><td></td><td class="dataTableContent" colspan="7">' . "\n";
+        for ($j = 0, $k = sizeof($order->products[$i]['attributes']); $j < $k; $j++) {
+          echo '<div><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'];
+          if ($order->products[$i]['attributes'][$j]['price'] != '0') echo ' (' . $order->products[$i]['attributes'][$j]['prefix'] . $currencies->format($order->products[$i]['attributes'][$j]['final_price'] * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
+          if( !empty( $order->products[$i]['attributes'][$j]['product_attribute_is_free'] ) && $order->products[$i]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->products[$i]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
+          echo '</i></small></nobr></div>';
+        }
+      echo '</td></tr>' . "\n";
+      }
+
     }
 ?>
           <tr>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.14 2007/01/06 06:13:50 spiderr Exp $
+// $Id: database_tables.php,v 1.15 2007/04/12 23:51:53 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -31,6 +31,7 @@
   define('TABLE_BANNERS_HISTORY', '`'.BITCOMMERCE_DB_PREFIX . 'com_banners_history`');
   define('TABLE_CATEGORIES', '`'.BITCOMMERCE_DB_PREFIX . 'com_categories`');
   define('TABLE_CATEGORIES_DESCRIPTION', '`'.BITCOMMERCE_DB_PREFIX . 'com_categories_description`');
+  define('TABLE_COMMISSIONS_PAYMENTS', '`'.BITCOMMERCE_DB_PREFIX . 'com_commissions_payments`');
   define('TABLE_CONFIGURATION', '`'.BITCOMMERCE_DB_PREFIX . 'com_configuration`');
   define('TABLE_CONFIGURATION_GROUP', '`'.BITCOMMERCE_DB_PREFIX . 'com_configuration_group`');
   define('TABLE_COUNTER', '`'.BITCOMMERCE_DB_PREFIX . 'com_counter`');
