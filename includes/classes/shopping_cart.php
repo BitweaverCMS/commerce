@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.35 2007/02/16 17:01:25 spiderr Exp $
+// $Id: shopping_cart.php,v 1.36 2007/04/23 04:51:13 spiderr Exp $
 //
 
   class shoppingCart {
@@ -509,14 +509,13 @@
 
 // attributes_price_factor
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_price_factor'] > 0) {
+              if( !empty( $attribute_price->fields['attributes_price_factor'] ) ) {
                 $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
-
                 $this->total += $qty * zen_add_tax($added_charge, $products_tax);
               }
 // attributes_qty_prices
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_qty_prices'] != '') {
+              if( !empty( $attribute_price->fields['attributes_qty_prices'] ) ) {
                 $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $qty);
 
                 $this->total += $qty * zen_add_tax($added_charge, $products_tax);
@@ -524,12 +523,12 @@
 
 //// one time charges
 // attributes_price_onetime
-              if ($attribute_price->fields['attributes_price_onetime'] > 0) {
+              if( !empty( $attribute_price->fields['attributes_price_onetime'] ) ) {
                 $this->total += zen_add_tax($attribute_price->fields['attributes_price_onetime'], $products_tax);
               }
 // attributes_pf_onetime
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_pf_onetime'] > 0) {
+              if( !empty( $attribute_price->fields['attributes_pf_onetime'] ) ) {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
                 $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_pf_onetime'], $attribute_price->fields['attributes_pf_onetime_offset']);
@@ -637,7 +636,7 @@
               }
 // attributes_price_factor
               $added_charge = 0;
-              if ($attribute_price->fields['attributes_price_factor'] > 0) {
+              if( !empty( $attribute_price->fields['attributes_price_factor'] ) ) {
                 $chk_price = zen_get_products_base_price($products_id);
                 $chk_special = zen_get_products_special_price($products_id, false);
                 $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
