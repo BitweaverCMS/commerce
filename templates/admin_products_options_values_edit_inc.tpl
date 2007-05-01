@@ -172,8 +172,8 @@
 {/if}
 
 	<div class="row submit">
-			<input type="submit" name="save_attribute" value="{tr}Save{/tr}">
-			<input type="submit" name="cancel" value="{tr}Cancel{/tr}">
+			<input type="submit" name="save_attribute" value="{tr}Save{/tr}" />
+			<input type="submit" name="cancel" value="{tr}Cancel{/tr}" />
 	</div>
 
 {/form}
