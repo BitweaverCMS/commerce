@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.15 2007/01/06 06:13:51 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.16 2007/05/01 13:28:45 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
@@ -79,17 +79,14 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
     $content .= '</table>';
 
   if( $gvBalance = CommerceVoucher::getGiftAmount() ) {
-      $content .= zen_draw_separator();
-      $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . tra( 'Gift Certificate Balance' ) . '</td><td class="smalltext" align="right" valign="bottom">' . $gvBalance . '</td></tr></table>';
+      $content .= '<table style="margin-top:10px;" cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . tra( 'Gift Certificate Balance' ) . '</td><td class="smalltext" align="right" valign="bottom">' . $gvBalance . '</td></tr></table>';
       $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext"><a href="'. zen_href_link(FILENAME_GV_SEND) . '">' . tra( 'Send Gift Certificate' ) . '</a></td></tr></table>';
   }
   if( $couponAmount = CommerceVoucher::getCouponAmount() ) {
-    $content .= zen_draw_separator();
-    $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $couponAmount . '</td></tr></table>';
+    $content .= '<table style="margin-top:10px;" cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $couponAmount . '</td></tr></table>';
   }
   if( !empty( $_SESSION['cc_id'] ) ) {
-    $content .= zen_draw_separator();
-    $content .= '<table cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . CART_COUPON . '</td><td class="smalltext" align="right" valign="bottom">' . '<a href="javascript:couponpopupWindow(\'' . zen_href_link(FILENAME_POPUP_COUPON_HELP, 'cID=' . $_SESSION['cc_id']) . '\')">' . CART_COUPON_INFO . '</a>' . '</td></tr></table>';
+    $content .= '<table style="margin-top:10px;" cellpadding="0" width="100%" cellspacing="0" border="0"><tr><td class="smalltext">' . CART_COUPON . '</td><td class="smalltext" align="right" valign="bottom">' . '<a href="javascript:couponpopupWindow(\'' . zen_href_link(FILENAME_POPUP_COUPON_HELP, 'cID=' . $_SESSION['cc_id']) . '\')">' . CART_COUPON_INFO . '</a>' . '</td></tr></table>';
   }
 
   } else {
