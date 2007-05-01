@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.2 2007/05/01 16:21:48 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.3 2007/05/01 16:27:26 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -49,7 +49,7 @@ class CommerceCommission extends BitBase {
 					if( $this->mDb->getAssoc( "SELECT * FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id`=?", array( $pParamHash['payment_store']['payee_user_id'] ) ) ) {
 						$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount`=`amount`+? WHERE `customer_id`=?", array( $pParamHash['payment_store']['payment_amount'], $pParamHash['payment_store']['payee_user_id'] ) );
 					} else {
-						$this->mDb->query( "INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`amount`,`customer_id`) VALUES (?,?)", array( $pParamHash['payment_store']['payee_amount'], $pParamHash['payment_store']['payee_user_id'] ) );
+						$this->mDb->query( "INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`amount`,`customer_id`) VALUES (?,?)", array( $pParamHash['payment_store']['payment_amount'], $pParamHash['payment_store']['payee_user_id'] ) );
 					}
 					break;
 				default:
