@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.91 2007/02/18 17:23:27 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.92 2007/05/05 18:28:05 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -317,6 +317,7 @@ class CommerceProduct extends LibertyAttachable {
 				return '';
 			}
 		}
+
 		// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
 		$product_check = $gBitDb->getRow("select `products_tax_class_id`, `products_price` , `products_commission`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$pProductsId ) );
 
@@ -586,15 +587,7 @@ class CommerceProduct extends LibertyAttachable {
 
 		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 
-		$countQuery = "select COUNT( p.`products_id` )
-				  from " . TABLE_PRODUCTS . " p
-				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
-				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
-					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
-					$joinSql
-				  where $whereSql ";
-		$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
-
+		$pListHash['total_count'] = 0;
 		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
@@ -604,6 +597,20 @@ class CommerceProduct extends LibertyAttachable {
 					$joinSql
 				  where $whereSql ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
+			// if we returned fewer than the max, use size of our result set
+			if( $rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1 ) {
+				$pListHash['total_count'] = $rs->RecordCount();
+			} else {
+				$countQuery = "select COUNT( p.`products_id` )
+						  from " . TABLE_PRODUCTS . " p
+							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
+							INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
+							INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
+							$joinSql
+						  where $whereSql ";
+				$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
+			}
+
 			$ret = $rs->GetAssoc();
 			global $currencies;
 			foreach( array_keys( $ret ) as $productId ) {
