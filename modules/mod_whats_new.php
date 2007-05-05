@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_whats_new.php,v 1.9 2006/12/19 00:11:34 spiderr Exp $
+// $Id: mod_whats_new.php,v 1.10 2007/05/05 18:26:09 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct, $currencies;
 
@@ -25,7 +25,7 @@
 
 	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
 	$listHash['max_records'] = 1;
-	$listHash['sort_mode'] = 'random';
+	$listHash['sort_mode'] = 'products_date_added_desc';
 
 	if( empty( $moduleTitle ) ) {
 		$gBitSmarty->assign( 'moduleTitle', tra( 'New Products' ) );
