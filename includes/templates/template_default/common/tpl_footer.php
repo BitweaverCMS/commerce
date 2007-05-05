@@ -18,9 +18,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_footer.php,v 1.3 2005/09/27 22:33:53 spiderr Exp $
+// $Id: tpl_footer.php,v 1.4 2007/05/05 18:25:26 spiderr Exp $
 //
-  require(DIR_FS_INCLUDES . 'counter.php');
 
        if ($banner = zen_banner_exists('dynamic', '468x50')) { ?>
 <?php   if ($banner->RecordCount() > 0) { ?>

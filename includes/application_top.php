@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.35 2006/12/19 00:11:31 spiderr Exp $
+// $Id: application_top.php,v 1.36 2007/05/05 18:25:26 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -493,10 +493,6 @@ case 'wishlist_add_cart': reset ($lvnr);
                              break;
     }
   }
-
-// include the who's online functions
-  require_once(DIR_FS_FUNCTIONS . 'whos_online.php');
-  zen_update_whos_online();
 
 // include the password crypto functions
   require_once(DIR_FS_FUNCTIONS . 'password_funcs.php');
