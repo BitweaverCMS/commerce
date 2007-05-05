@@ -2,21 +2,21 @@
 	global $gBitProduct;
 
 	$listHash = array();
-	$title						= !empty( $module_title ) ? $module_title : tra( 'Products' );
-	$columnCount 				= !empty( $module_params['columns'] ) ? $module_params['columns'] : 3;
-	$listHash['max_records']	= !empty( $module_rows ) ? $module_rows : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
+	$title						= !empty( $moduleParams['title'] ) ? $moduleParams['title'] : (!empty( $moduleParams['module_params']['title'] ) ? $moduleParams['module_params']['title'] : tra( 'Products' ));
+	$columnCount 				= !empty( $moduleParams['module_params']['columns'] ) ? $moduleParams['module_params']['columns'] : 3;
+	$listHash['max_records']	= !empty( $moduleParams['module_rows'] ) ? $moduleParams['module_rows'] : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
 	$listHash['offset'] 		= $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-	$listHash['sort_mode']		= !empty( $module_params['sort_mode'] ) ? $module_params['sort_mode'] : 'random';
+	$listHash['sort_mode']		= !empty( $moduleParams['sort_mode'] ) ? $moduleParams['sort_mode'] : 'random';
 	if( !empty( $gQueryUser ) && $gQueryUser->mUserId ) {
 		$listHash['user_id'] = $gQueryUser->mUserId;
 	}
-	if( !empty( $module_params['category_id'] ) ) {
-		$listHash['category_id'] = $module_params['category_id'];
+	if( !empty( $moduleParams['module_params']['category_id'] ) ) {
+		$listHash['category_id'] = $moduleParams['category_id'];
 	}
-	if( !empty( $module_params['featured'] ) ) {
+	if( !empty( $moduleParams['module_params']['featured'] ) ) {
 		$listHash['featured'] = TRUE;
 	}
-	if( !empty( $module_params['commissioned'] ) ) {
+	if( !empty( $moduleParams['module_params']['commissioned'] ) ) {
 		$listHash['commissioned'] = TRUE;
 	}
 	$row = 0;
