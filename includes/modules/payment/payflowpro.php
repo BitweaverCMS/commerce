@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.12 2007/04/01 05:32:06 spiderr Exp $
+// $Id: payflowpro.php,v 1.13 2007/05/05 05:13:44 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -472,6 +472,7 @@ function placeholder_for_so_call(){
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Host Server OS', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'Linux/Unix', 'Choose your server OS. <br>To use <strong>Linux/Unix</strong>, you need to compile the --with-pfpro support into PHP from the Verisign SDK.<br />To use <strong>Windows</strong>, you need to install the COM objects from the Verisign SDK.', '6', '11', 'zen_cfg_select_option(array(\'Linux/Unix\', \'Windows\'), ', 'NOW')");
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Certificate Path', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH', '" . DIR_FS_CATALOG . "includes/modules/payment/payflowpro', 'What is the full path to your PFPRO CERT files?<br />Sometimes is: /usr/local/payflowpro/certs<br />but depends on your host.', '6', '12', 'NOW')");
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', '4111XXXXXXXX1111 out credit card numbers in database.', '6', '13', 'NOW')");
     }
 
 ////////////////////////////////////////////////////
@@ -487,7 +488,7 @@ function placeholder_for_so_call(){
 // Create our Key - > Value Arrays
 ////////////////////////////////////////////////////
     function keys() {
-      return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH');
+      return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_SERVEROS', 'MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH','MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
 
 
     }
