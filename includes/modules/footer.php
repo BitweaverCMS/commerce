@@ -17,16 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: footer.php,v 1.3 2005/10/06 21:01:49 spiderr Exp $
+// $Id: footer.php,v 1.4 2007/05/05 18:22:47 spiderr Exp $
 //
 
-  require(DIR_FS_INCLUDES . 'counter.php');
-  $time_start = explode(' ', PAGE_PARSE_START_TIME);
-  $time_end = explode(' ', microtime());
-  $parse_time = number_format(($time_end[1] + $time_end[0] - ($time_start[1] + $time_start[0])), 3);
-
-  if (STORE_PAGE_PARSE_TIME == 'true') {
-    error_log(strftime(STORE_PARSE_DATE_TIME_FORMAT) . ' - ' . $_SESSION['REQUEST_URI'] . ' (' . $parse_time . 's)' . "\n", 3, STORE_PAGE_PARSE_TIME_LOG);
-  }
   require($template->get_template_dir($footer_template, DIR_WS_TEMPLATE, $current_page_base,'common'). '/'. $footer_template);
 ?>
