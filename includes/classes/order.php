@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.51 2007/01/06 09:46:12 squareing Exp $
+// $Id: order.php,v 1.52 2007/05/06 19:36:55 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -149,7 +149,7 @@ class order extends BitBase {
       $order_total = $gBitDb->Execute($order_total_query);
 
 
-      $shipping_method_query = "select title, `orders_value`
+      $shipping_method_query = "select title, ``orders_value` AS `shipping_total`
           from " . TABLE_ORDERS_TOTAL . "
           where `orders_id` = '" . (int)$order_id . "'
           and class = 'ot_shipping'";
@@ -171,6 +171,7 @@ class order extends BitBase {
                           'shipping_method' => $order->fields['shipping_method'],
                           'shipping_method_code' => $order->fields['shipping_method_code'],
                           'shipping_module_code' => $order->fields['shipping_module_code'],
+						  'shipping_total' => $shipping_method['shipping_total'],
                           'coupon_code' => $order->fields['coupon_code'],
                           'cc_type' => $order->fields['cc_type'],
                           'cc_owner' => $order->fields['cc_owner'],
