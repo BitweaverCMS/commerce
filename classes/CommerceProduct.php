@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.92 2007/05/05 18:28:05 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.93 2007/05/07 02:35:37 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -49,14 +49,14 @@ class CommerceProduct extends LibertyAttachable {
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
 			parent::load();
-			$this->mContentId = $this->mInfo['content_id'];
-//			if( !$this->isAvailable() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
-//				$this->mInfo = array();
-//				unset( $this->mRelatedContent );
-//				unset( $this->mProductsId );
-//			} else {
+			if( $this->isDeleted() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+				$this->mInfo = array();
+				unset( $this->mRelatedContent );
+				unset( $this->mProductsId );
+			} else {
+				$this->mContentId = $this->mInfo['content_id'];
 				$this->loadPricing();
-//			}
+			}
 			if( $pFullLoad && !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
@@ -504,7 +504,7 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getList( &$pListHash ) {
-		global $gBitSystem;
+		global $gBitSystem, $gBitUser;
 	  	if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'products_date_added_desc';
 		}
@@ -513,6 +513,17 @@ class CommerceProduct extends LibertyAttachable {
 		$selectSql = '';
 		$joinSql = '';
 		$whereSql = '';
+
+		if( @BitBase::verifyId( $pListHash['content_status_id'] ) ) {
+			$bindVars[] = $pListHash['content_status_id'];
+			$whereSql = ' lc.`content_status_id` = ? ';
+		} elseif( $gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+			$whereSql = ' lc.`content_status_id` >= ? ';
+			$bindVars[] = -999;
+		} else {
+			$whereSql = ' lc.`content_status_id` >= ? ';
+			$bindVars[] = -99;
+		}
 
 
 // 		$selectSql .= ' , s.* ';
@@ -585,17 +596,17 @@ class CommerceProduct extends LibertyAttachable {
 			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
 		}
 
-		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
+//		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 
 		$pListHash['total_count'] = 0;
-		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
+		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 				  from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 				  	INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
-				  where $whereSql ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
+				  WHERE $whereSql ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set
 			if( $rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1 ) {
@@ -607,7 +618,7 @@ class CommerceProduct extends LibertyAttachable {
 							INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 							INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 							$joinSql
-						  where $whereSql ";
+						  WHERE $whereSql ";
 				$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
 			}
 
@@ -979,76 +990,77 @@ $this->debug(0);
 	// Display Price Retail
 	// Specials and Tax Included
 	function expunge() {
+		global $gBitSystem;
 		if( $this->isValid() ) {
-			if( $this->isPurchased() ) {
-				$this->mErrors['expunge'] = tra( 'This product cannot be deleted because it has been purchased' );
-			} else {
-				$this->mDb->StartTrans();
+			$this->mDb->StartTrans();
 /*
 Skip deleting of images for now
-				if( !empty( $this->mInfo['products_image'] ) ) {
-					$duplicate_image = $this->mDb->GetOne("SELECT count(*) as `total`
-                                     FROM " . TABLE_PRODUCTS . "
-                                     WHERE `products_image` = ?", array( $this->mInfo['products_image'] ) );
-					if ($duplicate_image < 2 ) {
-						$products_image = $product_image->fields['products_image'];
-						$products_image_extention = substr($products_image, strrpos($products_image, '.'));
-						$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+			if( !empty( $this->mInfo['products_image'] ) ) {
+				$duplicate_image = $this->mDb->GetOne("SELECT count(*) as `total`
+								 FROM " . TABLE_PRODUCTS . "
+								 WHERE `products_image` = ?", array( $this->mInfo['products_image'] ) );
+				if ($duplicate_image < 2 ) {
+					$products_image = $product_image->fields['products_image'];
+					$products_image_extention = substr($products_image, strrpos($products_image, '.'));
+					$products_image_base = ereg_replace($products_image_extention, '', $products_image);
 
-						$filename_medium = 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
-								$filename_large = 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
+					$filename_medium = 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
+							$filename_large = 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
 
-						if (file_exists(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image'])) {
-							@unlink(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image']);
-						}
-						if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_medium)) {
-							@unlink(DIR_FS_CATALOG_IMAGES . $filename_medium);
-						}
-						if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_large)) {
-							@unlink(DIR_FS_CATALOG_IMAGES . $filename_large);
-						}
+					if (file_exists(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image'])) {
+						@unlink(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image']);
 					}
+					if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_medium)) {
+						@unlink(DIR_FS_CATALOG_IMAGES . $filename_medium);
+					}
+					if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_large)) {
+						@unlink(DIR_FS_CATALOG_IMAGES . $filename_large);
+					}
+				}
 */
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
+			$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
-				// remove downloads if they exist
-				$remove_downloads= $this->mDb->query(  
-					"SELECT pa.`products_attributes_id`
-					 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
-					 WHERE pom.`products_id` = ?", array( $this->mProductsId ) );
-				while (!$remove_downloads->EOF) {
-					$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
-					$remove_downloads->MoveNext();
-				}
-
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
-
-				$product_reviews = $this->mDb->query("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				while (!$product_reviews->EOF) {
-					$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
-								WHERE `reviews_id` = ?", array( $product_reviews->fields['reviews_id'] ) );
-					$product_reviews->MoveNext();
-				}
-
-				$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-
-				LibertyAttachable::expunge();
-
-				$this->mInfo = array();
-				unset( $this->mRelatedContent );
-				unset( $this->mProductsId );
-
-				$this->mDb->CompleteTrans();
+			// remove downloads if they exist
+			$remove_downloads= $this->mDb->query(  
+				"SELECT pa.`products_attributes_id`
+				 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
+				 WHERE pom.`products_id` = ?", array( $this->mProductsId ) );
+			while (!$remove_downloads->EOF) {
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
+				$remove_downloads->MoveNext();
 			}
+
+			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
+
+			$product_reviews = $this->mDb->query("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			while (!$product_reviews->EOF) {
+				$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
+							WHERE `reviews_id` = ?", array( $product_reviews->fields['reviews_id'] ) );
+				$product_reviews->MoveNext();
+			}
+
+			$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			if( !$this->isPurchased() ) {
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				LibertyAttachable::expunge();
+			} else {
+				$this->storeStatus( $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
+			}
+
+
+			$this->mInfo = array();
+			unset( $this->mRelatedContent );
+			unset( $this->mProductsId );
+
+			$this->mDb->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}
