@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.93 2007/05/07 02:35:37 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.94 2007/05/07 03:04:29 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -1048,8 +1048,8 @@ Skip deleting of images for now
 			$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			if( !$this->isPurchased() ) {
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				LibertyAttachable::expunge();
 			} else {
 				$this->storeStatus( $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
