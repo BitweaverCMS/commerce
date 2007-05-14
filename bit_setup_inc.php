@@ -34,8 +34,11 @@ function bitcommerce_expunge ( &$pObject ) {
 	$relProduct = new CommerceProduct();
 
 	if( $relProduct->loadByRelatedContent( $pObject->mContentId ) ) {
-		if( !$relProduct->expunge() ) {
-			// we couldn't nuke the product because it was purchased
+		// do not delete products if related content is getting deleted, but product has been purchased
+		if( $relProduct->isPurchased() ) {
+			$relProduct->update( array( 'related_content_id' => NULL ) );
+		} else {
+			$relProduct->expunge();
 		}
 	}
 

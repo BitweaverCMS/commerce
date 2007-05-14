@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.94 2007/05/07 03:04:29 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.95 2007/05/14 21:22:52 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -859,6 +859,14 @@ $this->debug(0);
 		return( $this->mProductsId );
 	}
 
+	function update( $pUpdateHash, $pProductsId=NULL ) {
+		if( empty( $pProductsId ) && $this && $this->isValid() ) {
+			$pProductsId = $this->mProductsId;
+		}
+		if( $pProductsId ) {
+			$this->mDb->associateUpdate( TABLE_PRODUCTS, $pUpdateHash, array( 'products_id' => $pProductsId ) );
+		}
+	}
 
     function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
         $ret = FALSE;
