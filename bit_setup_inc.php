@@ -32,7 +32,6 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 function bitcommerce_expunge ( &$pObject ) {
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 	$relProduct = new CommerceProduct();
-bt(); die;
 	if( $relProduct->loadByRelatedContent( $pObject->mContentId ) ) {
 		// do not delete products if related content is getting deleted, but product has been purchased
 		if( $relProduct->isPurchased() ) {
