@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.95 2007/05/14 21:22:52 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.96 2007/05/16 19:21:36 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -1060,6 +1060,7 @@ Skip deleting of images for now
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				LibertyAttachable::expunge();
 			} else {
+				$this->update( array( 'related_content_id' => NULL ) );
 				$this->storeStatus( $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
 			}
 
