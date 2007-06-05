@@ -87,7 +87,6 @@ class fedex {
 		}
 
 		$fedexQuote = $this->_getQuote();
-vd( $fedexQuote );
 		if (is_array($fedexQuote)) {
 			if (isset($fedexQuote['error'])) {
 				$this->quotes = array('module' => $this->title1, 'error' => $fedexQuote['error']);
@@ -175,7 +174,7 @@ vd( $fedexQuote );
 		}
 
 		if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
-vd( $this->quotes );
+
 		return $this->quotes;
 	}
 
