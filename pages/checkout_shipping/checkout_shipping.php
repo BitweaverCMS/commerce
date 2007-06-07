@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.10 2007/01/06 06:13:51 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.11 2007/06/07 23:28:25 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -217,7 +217,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
 	}
-	if( zen_count_shipping_modules() ) {
+	if( zen_count_shipping_modules() && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
 		$quotes = $shipping_modules->quote();
 		// if no shipping method has been selected, automatically select the cheapest method.

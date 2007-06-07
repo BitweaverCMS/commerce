@@ -581,44 +581,49 @@
 // computes products_price + option groups lowest attributes price of each group when on
 	function zen_get_products_base_price($products_id) {
 		global $gBitDb, $gBitUser;
-		$query = "SELECT `products_price`, `products_commission`, `products_priced_by_attribute`, uu.`user_id`
-				FROM " . TABLE_PRODUCTS . " p
-					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
-					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
-				WHERE `products_id` = ?";
-		$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
+		static $sBasePriceCache = array();
 
-	// is there a products_price to add to attributes
-		$products_price = $product['products_price'];
-		if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
-			$products_price -= $product['products_commission'];
-		}
+		if( empty( $sBasePriceCache[$products_id] ) ) {
+			$query = "SELECT `products_price`, `products_commission`, `products_priced_by_attribute`, uu.`user_id`
+					FROM " . TABLE_PRODUCTS . " p
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
+					WHERE `products_id` = ?";
+			$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
 
-		// do not select display only attributes and attributes_price_base_inc is true
-		$query = "SELECT `products_options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` 
-				  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
-				  WHERE `products_id` = ? and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " 
-				  ORDER BY `products_options_id`, `price_prefix`, `options_values_price`";
-		$product_att_query = $gBitDb->query( $query, array( (int)$products_id ) );
-
-		$the_options_id= 'x';
-		$the_base_price= 0;
-	// add attributes price to price
-		if ($product['products_priced_by_attribute'] == '1' and $product_att_query->RecordCount() >= 1) {
-			while (!$product_att_query->EOF) {
-			if ( $the_options_id != $product_att_query->fields['products_options_id']) {
-				$the_options_id = $product_att_query->fields['products_options_id'];
-				$the_base_price += $product_att_query->fields['options_values_price'];
-			}
-			$product_att_query->MoveNext();
+		// is there a products_price to add to attributes
+			$products_price = $product['products_price'];
+			if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
+				$products_price -= $product['products_commission'];
 			}
 
-			$the_base_price = $products_price + $the_base_price;
-		} else {
-			$the_base_price = $products_price;
+			// do not select display only attributes and attributes_price_base_inc is true
+			$query = "SELECT `products_options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` 
+					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
+					  WHERE `products_id` = ? and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " 
+					  ORDER BY `products_options_id`, `price_prefix`, `options_values_price`";
+			$product_att_query = $gBitDb->query( $query, array( (int)$products_id ) );
+
+			$the_options_id= 'x';
+			$the_base_price= 0;
+		// add attributes price to price
+			if ($product['products_priced_by_attribute'] == '1' and $product_att_query->RecordCount() >= 1) {
+				while (!$product_att_query->EOF) {
+				if ( $the_options_id != $product_att_query->fields['products_options_id']) {
+					$the_options_id = $product_att_query->fields['products_options_id'];
+					$the_base_price += $product_att_query->fields['options_values_price'];
+				}
+				$product_att_query->MoveNext();
+				}
+
+				$the_base_price = $products_price + $the_base_price;
+			} else {
+				$the_base_price = $products_price;
+			}
+			$sBasePriceCache[$products_id] = $the_base_price;
 		}
-		return $the_base_price;
+		return $sBasePriceCache[$products_id];
 	}
 
 
@@ -1542,7 +1547,9 @@ If a special exist * 10+9
 //get specials price or sale price
   function zen_get_products_special_price($product_id, $specials_price_only=false) {
     global $gBitDb;
-    $product = $gBitDb->query("select `products_price`, `products_model`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    $product = $gBitDb->query( "select `products_price`, `products_model`, `master_categories_id`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid( $product_id ) ) );
+      $category = $product->fields['master_categories_id'];
+
 
     if ($product->RecordCount() > 0) {
 //  	  $product_price = $product->fields['products_price'];
@@ -1580,9 +1587,6 @@ If a special exist * 10+9
 // changed to use master_categories_id
 //      $product_to_categories = $gBitDb->query("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
 //      $category = $product_to_categories->fields['categories_id'];
-
-      $product_to_categories = $gBitDb->query("select `master_categories_id` from " . TABLE_PRODUCTS . " where `products_id`=?", array( zen_get_prid( $product_id ) ) );
-      $category = $product_to_categories->fields['master_categories_id'];
 
       $sale = $gBitDb->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
       if ($sale->RecordCount() < 1) {
