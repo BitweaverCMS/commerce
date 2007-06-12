@@ -47,13 +47,13 @@ class fedex {
 			'92' => 'FedEx Ground<sup>&reg;</sup> Service',
 		);
 		$this->codes = array(
-			'01' => "Priority",
-			'03' => "Two Day",
-			'05' => "Standard Overnight",
-			'06' => "First Overnight",
-			'20' => "Express Saver",
-			'92' => "Ground Service",
-			'90' => "Ground Home Deliver",
+			'01' => "FDX01: Priority",
+			'03' => "FDX03: Two Day",
+			'05' => "FDX05: Standard Overnight",
+			'06' => "FDX06: First Overnight",
+			'20' => "FDX20: Express Saver",
+			'92' => "FDX92: Ground Service",
+			'90' => "FDX90: Ground Home Delivery",
 		);
 	}
 	function quote($method = '') {
