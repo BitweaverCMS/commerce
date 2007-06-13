@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.12 2006/12/19 00:11:31 spiderr Exp $
+//  $Id: preview_info.php,v 1.13 2007/06/13 16:36:50 spiderr Exp $
 //
 
     if (zen_not_null($_POST)) {
@@ -59,7 +59,6 @@
         $pInfo->products_url = zen_db_prepare_input($products_url[$languages[$i]['id']]);
       }
 
-      $specials_price = zen_get_products_special_price($pID);
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
       <tr>

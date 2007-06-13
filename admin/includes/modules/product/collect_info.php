@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.22 2006/12/19 00:11:31 spiderr Exp $
+//  $Id: collect_info.php,v 1.23 2007/06/13 16:36:50 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -122,14 +122,18 @@
     }
 
 // Virtual Products
-    if (!isset($pInfo->products_virtual)) $pInfo->products_virtual = PRODUCTS_VIRTUAL_DEFAULT;
+    if (!isset($pInfo->products_virtual) && defined( 'PRODUCTS_VIRTUAL_DEFAULT' ) ) {
+		$pInfo->products_virtual = PRODUCTS_VIRTUAL_DEFAULT;
+	}
     switch ($pInfo->products_virtual) {
       case '0': $is_virtual = false; $not_virtual = true; break;
       case '1': $is_virtual = true; $not_virtual = false; break;
       default: $is_virtual = false; $not_virtual = true;
     }
 // Always Free Shipping
-    if (!isset($pInfo->product_is_always_free_ship)) $pInfo->product_is_always_free_ship = PRODUCTS_IS_ALWAYS_FREE_SHIPPING_DEFAULT;
+    if( !isset($pInfo->product_is_always_free_ship) && defined( 'PRODUCTS_IS_ALWAYS_FREE_SHIPPING_DEFAULT' ) ) {
+		$pInfo->product_is_always_free_ship = PRODUCTS_IS_ALWAYS_FREE_SHIPPING_DEFAULT;
+	}
     switch ($pInfo->product_is_always_free_ship) {
       case '0': $is_product_is_always_free_ship = false; $not_product_is_always_free_ship = true; break;
       case '1': $is_product_is_always_free_ship = true; $not_product_is_always_free_ship = false; break;
@@ -318,7 +322,7 @@ echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath 
         <td><table border="0" cellspacing="0" cellpadding="2">
 <?php
 // show when product is linked
-if (zen_get_product_is_linked($_GET['pID']) == 'true') {
+if( !empty( $_GET['pID'] ) && zen_get_product_is_linked($_GET['pID']) == 'true') {
 ?>
           <tr>
             <td class="main"><?php echo TEXT_MASTER_CATEGORIES_ID; ?></td>
@@ -347,6 +351,16 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           <tr>
             <td colspan="2" class="main" align="center"><?php echo (zen_get_categories_status($current_category_id) == '0' ? TEXT_CATEGORIES_STATUS_INFO_OFF : '') . ($out_status == true ? ' ' . TEXT_PRODUCTS_STATUS_INFO_OFF : ''); ?></td>
           <tr>
+<?php
+    for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
+?>
+          <tr>
+            <td class="main"><?php if ($i == 0) echo TEXT_PRODUCTS_NAME; ?></td>
+            <td class="main"><?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('products_name[' . $languages[$i]['id'] . ']', (isset($products_name[$languages[$i]['id']]) ? stripslashes($products_name[$languages[$i]['id']]) : zen_get_products_name($pInfo->products_id, $languages[$i]['id'])), zen_set_field_length(TABLE_PRODUCTS_DESCRIPTION, 'products_name')); ?></td>
+          </tr>
+<?php
+    }
+?>
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_STATUS; ?></td>
             <td class="main"><?php echo zen_draw_radio_field('products_status', '1', $in_status) . '&nbsp;' . TEXT_PRODUCT_AVAILABLE . '&nbsp;' . zen_draw_radio_field('products_status', '0', $out_status) . '&nbsp;' . TEXT_PRODUCT_NOT_AVAILABLE; ?></td>
@@ -378,15 +392,6 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
             <td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
           </tr>
 <?php
-    for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-?>
-          <tr>
-            <td class="main"><?php if ($i == 0) echo TEXT_PRODUCTS_NAME; ?></td>
-            <td class="main"><?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_draw_input_field('products_name[' . $languages[$i]['id'] . ']', (isset($products_name[$languages[$i]['id']]) ? stripslashes($products_name[$languages[$i]['id']]) : zen_get_products_name($pInfo->products_id, $languages[$i]['id'])), zen_set_field_length(TABLE_PRODUCTS_DESCRIPTION, 'products_name')); ?></td>
-          </tr>
-<?php
-    }
-
 	global $gBitUser;
 	$listHash = array();
 	$groups = $gBitUser->getAllGroups( $listHash );

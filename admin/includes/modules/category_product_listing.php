@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.14 2007/06/13 16:02:41 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.15 2007/06/13 16:36:50 spiderr Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -329,9 +329,12 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
                   <tr>
                     <td class="smallText"><?php echo TEXT_CATEGORIES . '&nbsp;' . $categories_count . '<br />' . TEXT_PRODUCTS . '&nbsp;' . $products_count; ?></td>
                     <td align="right" class="smallText"><?php if( !empty( $cPath_array ) ) echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, $cPath_back . 'cID=' . $current_category_id) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>&nbsp;'; if (!isset($_GET['search'])) echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&action=new_category') . '">' . zen_image_button('button_new_category.gif', IMAGE_NEW_CATEGORY) . '</a>&nbsp;'; ?>
-
+<?php
+	if( !empty( $cPath ) ) {
+?>
 <form name="newproduct" action="<?php echo zen_href_link_admin(FILENAME_CATEGORIES, '', 'NONSSL'); ?>" method = "get"><?php    echo zen_image_submit('button_new_product.gif', IMAGE_NEW_PRODUCT); ?>
 <?php
+
   $sql = "select ptc.`product_type_id`, pt.`type_name` from " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc, " . TABLE_PRODUCT_TYPES . " pt
           where ptc.`category_id` = '" . $current_category_id . "'
           and pt.`type_id` = ptc.`product_type_id`";
@@ -350,6 +353,9 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
 <?php echo '&nbsp;&nbsp;' . zen_draw_pull_down_menu('product_type', $product_restrict_types_array); ?>
            <input type="hidden" name="cPath" value="<?php echo $cPath; ?>">
            <input type="hidden" name="action" value="new_product">
+<?php
+	}
+?>
           </form>
           &nbsp;</td>
                   </tr>

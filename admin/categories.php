@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.19 2007/01/06 06:13:48 spiderr Exp $
+//  $Id: categories.php,v 1.20 2007/06/13 16:36:50 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -560,7 +560,6 @@
     <td width="100%" valign="top">
 <?php
     require(DIR_WS_MODULES . 'category_product_listing.php');
-
     $heading = array();
     $contents = array();
 // Make an array of product types
