@@ -1156,8 +1156,6 @@ $indices = array (
   'products_related_cont_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products', 'cols' => 'related_content_id', 'opts' => NULL),
   'products_pur_group_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products', 'cols' => 'purchase_group_id', 'opts' => NULL),
   'lang_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_options', 'cols' => 'language_id', 'opts' => NULL),
-//  'id_options_id_values_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => ' products_id, products_options_id, options_values_id ', 'opts' => NULL),
-  'prod_attr_products_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'products_id', 'opts' => NULL),
   'prod_attr_options_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'products_options_id', 'opts' => NULL),
   'prod_attr_options_val_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes', 'cols' => 'products_options_values_id', 'opts' => NULL),
   'prod_desc_name_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_description', 'cols' => 'products_name', 'opts' => NULL),
@@ -2025,7 +2023,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (3, 'Checkbox')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (4, 'File')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (5, 'Read Only')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_attributes` (`products_options_values_id`, `products_options_values_name`) VALUES (0, 'TEXT')",
+//Disable for now, default TEXT option is needed for text lettering on some products. This brute force hack is crude. Will fix later. xoxo - spiderr
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_attributes` (`products_options_values_id`, `products_options_values_name`) VALUES (0, 'TEXT')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('Florida', 'Florida local sales tax zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('UKVAT', 'United Kingdom VAT zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_tax_class` (`tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES ('Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
