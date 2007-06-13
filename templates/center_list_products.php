@@ -13,7 +13,6 @@
 	if( !empty( $moduleParams['module_params']['category_id'] ) ) {
 		$listHash['category_id'] = $moduleParams['module_params']['category_id'];
 	}
-vd( $listHash );
 	if( !empty( $moduleParams['module_params']['featured'] ) ) {
 		$listHash['featured'] = TRUE;
 	}
