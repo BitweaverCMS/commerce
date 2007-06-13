@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.43 2007/01/06 06:13:49 spiderr Exp $
+//  $Id: general.php,v 1.44 2007/06/13 22:57:20 spiderr Exp $
 //
 
 ////
@@ -896,9 +896,7 @@
     $gBitDb->Execute("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
-    zen_products_attributes_download_delete($product_id);
-
-    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
+    $gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . "
                   WHERE `products_id` = '" . (int)$product_id . "'");
 
     $gBitDb->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET . "
@@ -931,6 +929,7 @@
 
   }
 
+/* TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD has been removed
   function zen_products_attributes_download_delete($product_id) {
     global $gBitDb;
   // remove downloads if they exist
@@ -940,6 +939,7 @@
       $remove_downloads->MoveNext();
     }
   }
+*/
 
   function zen_remove_order($order_id, $restock = false) {
     global $gBitDb;
