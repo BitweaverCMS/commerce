@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.6 2006/12/19 00:11:34 spiderr Exp $
+//  $Id: paypal.php,v 1.7 2007/06/13 17:07:14 spiderr Exp $
 //
 
 // Note this is temporary
@@ -38,14 +38,18 @@ DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
     } else {
        $this->title = MODULE_PAYMENT_PAYPAL_TEXT_ADMIN_TITLE; // Payment Module title in Admin
     }
-       $this->description = MODULE_PAYMENT_PAYPAL_TEXT_DESCRIPTION;
-       $this->sort_order = MODULE_PAYMENT_PAYPAL_SORT_ORDER;
-       $this->enabled = ((MODULE_PAYMENT_PAYPAL_STATUS == 'True') ? true : false);
-       if ((int)MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID > 0) {
-         $this->order_status = MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID;
-       }
-       if (is_object($order)) $this->update_status();
-       $this->form_action_url = 'https://' . MODULE_PAYMENT_PAYPAL_HANDLER;
+		if( defined( 'MODULE_PAYMENT_PAYPAL_STATUS' ) ) {
+			$this->description = MODULE_PAYMENT_PAYPAL_TEXT_DESCRIPTION;
+			$this->sort_order = MODULE_PAYMENT_PAYPAL_SORT_ORDER;
+			$this->enabled = ((MODULE_PAYMENT_PAYPAL_STATUS == 'True') ? true : false);
+			if ((int)MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID > 0) {
+				$this->order_status = MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID;
+			}
+			if (is_object($order)) {
+				$this->update_status();
+			}
+			$this->form_action_url = 'https://' . MODULE_PAYMENT_PAYPAL_HANDLER;
+		}
 
    }
 
