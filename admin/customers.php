@@ -17,11 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.15 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: customers.php,v 1.16 2007/06/13 23:11:00 spiderr Exp $
 //
 
   require('includes/application_top.php');
 
+	if( empty( $_GET['list_order'] ) ) {
+		$_GET['list_order'] = '';
+	}
   
   $currencies = new currencies();
 
@@ -982,7 +985,7 @@ if ($processed == true) {
 
 // Split Page
 // reset page when page is unknown
-if ($_GET['page'] == '' and $_GET['cID'] != '') {
+if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
   $check_page = $gBitDb->Execute($customers_query_raw);
   $check_count=1;
   if ($check_page->RecordCount() > MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER) {
@@ -1082,21 +1085,13 @@ if ($_GET['page'] == '' and $_GET['cID'] != '') {
   $contents = array();
 
   switch ($action) {
-    case 'confirm':
-      $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_CUSTOMER . '</b>');
-
-      $contents = array('form' => zen_draw_form_admin('customers', FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=deleteconfirm', 'post', '', true));
-      $contents[] = array('text' => TEXT_DELETE_INTRO . '<br><br><b>' . $cInfo->customers_firstname . ' ' . $cInfo->customers_lastname . '</b>');
-      if (isset($cInfo->number_of_reviews) && ($cInfo->number_of_reviews) > 0) $contents[] = array('text' => '<br />' . zen_draw_checkbox_field('delete_reviews', 'on', true) . ' ' . sprintf(TEXT_DELETE_REVIEWS, $cInfo->number_of_reviews));
-      $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id, 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
-      break;
     default:
       if (isset($cInfo) && is_object($cInfo)) {
         $customers_orders = $gBitDb->Execute("select `orders_id`, `date_purchased`, `order_total`, `currency`, `currency_value` from " . TABLE_ORDERS . " where `customers_id`='" . $cInfo->customers_id . "' order by `date_purchased` desc");
 
         $heading[] = array('text' => '<b>' . TABLE_HEADING_ID . $cInfo->customers_id . ' ' . $cInfo->customers_firstname . ' ' . $cInfo->customers_lastname . '</b>');
 
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=confirm', 'NONSSL') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a><br />' . ($customers_orders->RecordCount() != 0 ? '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'cID=' . $cInfo->customers_id, 'NONSSL') . '">' . zen_image_button('button_orders.gif', IMAGE_ORDERS) . '</a>' : '') . ' <a href="' . zen_href_link_admin(FILENAME_MAIL, 'origin=customers.php&mode=NONSSL&selected_box=tools&customer=' . $cInfo->customers_email_address.'&cID=' . $cInfo->customers_id, 'NONSSL') . '">' . zen_image_button('button_email.gif', IMAGE_EMAIL) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> ' . ($customers_orders->RecordCount() != 0 ? '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'cID=' . $cInfo->customers_id, 'NONSSL') . '">' . zen_image_button('button_orders.gif', IMAGE_ORDERS) . '</a>' : '') . ' <a href="' . zen_href_link_admin(FILENAME_MAIL, 'origin=customers.php&mode=NONSSL&selected_box=tools&customer=' . $cInfo->customers_email_address.'&cID=' . $cInfo->customers_id, 'NONSSL') . '">' . zen_image_button('button_email.gif', IMAGE_EMAIL) . '</a>');
         $contents[] = array('text' => '<br />' . TEXT_DATE_ACCOUNT_CREATED . ' ' . zen_date_short($cInfo->date_account_created));
         $contents[] = array('text' => '<br />' . TEXT_DATE_ACCOUNT_LAST_MODIFIED . ' ' . zen_date_short($cInfo->date_account_last_modified));
         $contents[] = array('text' => '<br />' . TEXT_INFO_DATE_LAST_LOGON . ' '  . zen_date_short($cInfo->date_last_logon));
