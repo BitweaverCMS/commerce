@@ -1,5 +1,5 @@
 <?php
-	global $gBitProduct;
+	global $gBitProduct, $gQueryUser;
 
 	$listHash = array();
 	$title						= !empty( $moduleParams['title'] ) ? $moduleParams['title'] : (!empty( $moduleParams['module_params']['title'] ) ? $moduleParams['module_params']['title'] : tra( 'Products' ));
@@ -34,7 +34,7 @@
 			$products_price = CommerceProduct::getDisplayPrice( $productsId );
 			$listBoxContents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . zen_image( CommerceProduct::getImageUrl( $listedProducts[$productsId]['products_id'], 'avatar' ), $listedProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $listedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
+													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '"><img src="' . CommerceProduct::getImageUrl( $listedProducts[$productsId]['products_id'], 'avatar' ).'" title="' . zen_output_string( $listedProducts[$productsId]['products_name'] ) . '"/></a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $listedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
 
 			$col ++;
 			if ($col > ($columnCount - 1)) {
