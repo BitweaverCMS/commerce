@@ -830,7 +830,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
   CONSTRAINT ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
-BITCOMMERCE_INSTALL_PREFIX.'commissions_payments' => "
+BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
 	commissions_payments_id I4 PRIMARY AUTO,
 	payee_user_id I4 NOTNULL,
 	payer_user_id I4 NOTNULL,
