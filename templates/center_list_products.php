@@ -22,7 +22,7 @@
 	$row = 0;
 	$col = 0;
 	$listBoxContents = '';
-	if( $listedProducts = $gBitProduct->getList( $listHash ) ) {
+	if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listHash ) ) {
 		// show only when 1 or more
 		$num_products_count = count( $listedProducts );
 		if( $num_products_count < $columnCount  ) {
