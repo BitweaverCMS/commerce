@@ -46,7 +46,7 @@ class fedex {
 			'90' => 'FedEx Home Delivery<sup>&reg;</sup>',
 			'92' => 'FedEx Ground<sup>&reg;</sup> Service',
 		);
-		$this->codes = array(
+		$this->types = array(
 			'01' => "FDX01: Priority",
 			'03' => "FDX03: Two Day",
 			'05' => "FDX05: Standard Overnight",
@@ -114,13 +114,14 @@ class fedex {
 				foreach ($fedexQuote as $type => $cost) {
 					$skip = FALSE;
 					$this->surcharge = 0;
+					$quoteCode = substr($type,0,2);
 					if ($this->intl === FALSE) {
 						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
-							$service_descr = $this->domestic_types[substr($type,0,2)] . ' (' . substr($type,2,1) . ' days)';
+							$service_descr = $this->domestic_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
 						} else {
-							$service_descr = $this->domestic_types[substr($type,0,2)];
+							$service_descr = $this->domestic_types[$quoteCode];
 						}
-						switch (substr($type,0,2)) {
+						switch ($quoteCode) {
 							case 90:
 								if ($order->delivery['company'] != '') {
 									$skip = TRUE;
@@ -138,26 +139,26 @@ class fedex {
 								}
 								break;
 							default:
-								if ($this->country != "CA" && substr($type,0,2) < "90" && $order->delivery['company'] == '') {
+								if ($this->country != "CA" && $quoteCode < "90" && $order->delivery['company'] == '') {
 									$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
 								}
 								break;
 						}
 					} else {
 						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
-							$service_descr = $this->international_types[substr($type,0,2)] . ' (' . substr($type,2,1) . ' days)';
+							$service_descr = $this->international_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
 						} else {
-							$service_descr = $this->international_types[substr($type,0,2)];
+							$service_descr = $this->international_types[$quoteCode];
 						}
 					}
-					if ($method) {
-						if (substr($type,0,2) != $method) $skip = TRUE;
+					if( $method && $quoteCode != $method ) {
+						$skip = TRUE;
 					}
 					if (!$skip) {
-						$methods[] = array('id' => substr($type,0,2),
+						$methods[] = array('id' => $quoteCode,
 							'title' => $service_descr,
 							'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shipping_num_boxes,
-							'code' => 'FedEx '.$this->codes[$type],
+							'code' => $this->types[$quoteCode],
 						);
 					}
 				}
