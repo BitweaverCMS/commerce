@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.23 2006/11/22 04:33:53 spiderr Exp $
+// $Id: index.php,v 1.24 2007/06/24 03:51:07 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -37,7 +37,9 @@ ob_start();
 
 
 	if( empty( $_REQUEST['main_page'] ) ) {
-		if( $infoPage = $gBitProduct->getInfoPage() ) {
+		if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
+			$_REQUEST['main_page'] = 'user_products';
+		} elseif( $infoPage = $gBitProduct->getInfoPage() ) {
 			$_REQUEST['main_page'] = $infoPage;
 		} else {
 			$_REQUEST['main_page'] = 'index';
