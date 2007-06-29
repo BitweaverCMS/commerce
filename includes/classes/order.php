@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.53 2007/05/06 20:12:02 spiderr Exp $
+// $Id: order.php,v 1.54 2007/06/29 21:14:14 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -156,10 +156,9 @@ class order extends BitBase {
 
       $order_status_query = "select `orders_status_name`
                              from " . TABLE_ORDERS_STATUS . "
-                             where `orders_status_id` = '" . $order->fields['orders_status'] . "'
-                             and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+                             where `orders_status_id` = ? AND `language_id` = ?";
 
-      $order_status = $gBitDb->Execute($order_status_query);
+      $order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
 
       $this->info = array('currency' => $order->fields['currency'],
                           'currency_value' => $order->fields['currency_value'],
