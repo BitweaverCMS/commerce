@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.25 2007/02/06 05:32:46 spiderr Exp $
+// $Id: functions_lookups.php,v 1.26 2007/07/02 05:24:23 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -464,7 +464,7 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
-			$check_attributes = $gBitDb->query( $query, array( $product_id, $option, $value ) );
+			$check_attributes = $gBitDb->query( $query, array( (int)$product_id, (int)$option, (int)$value ) );
 
 			// display only cannot be selected
 			if ($check_attributes->fields['attributes_display_only'] == '1') {
