@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.43 2007/04/12 23:51:53 spiderr Exp $
+//  $Id: orders.php,v 1.44 2007/07/03 07:12:53 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -137,7 +137,7 @@
 	  <tr>
 		<td valign="top">
 			<?php echo zen_date_long($order->info['date_purchased']); ?><br/>
-			<?php echo $gBitUser->getDisplayName( TRUE, $order->customer ).' (ID: '.$order->customer['user_id'].' <a href="list_orders.php?user_id='.$order->customer['user_id'].'&amp;orders_status_id=all&amp;list_filter=all">customer orders</a>)'; ?><br/>
+			<?php echo $gBitUser->getDisplayName( TRUE, $order->customer ).' (ID: '.$order->customer['user_id'].' <a href="list_orders.php?user_id='.$order->customer['user_id'].'&amp;orders_status_id=all&amp;list_filter=all">orders</a> <a href="product_history.php?user_id='.$order->customer['user_id'].'"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Users Products History" alt="H" /></a>)'; ?><br/>
 <?php if( !empty( $order->customer['telephone'] ) ) { ?>
 		<?php echo $order->customer['telephone']; ?><br/>
 <?php } ?>
@@ -222,7 +222,7 @@
             <th align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></th>
           </tr>
 <?php
-	$foreignCurrency = $order->info['currency'] != DEFAULT_CURRENCY;
+	$foreignCurrency = !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY;
     for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
       echo '          <tr class="dataTableRow">' . "\n" .
            '            <td class="dataTableContent" valign="top" align="right">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
@@ -250,7 +250,7 @@
                         '</td>' . "\n";
       echo '          </tr>' . "\n";
       if( !empty( $order->products[$i]['attributes'] ) ) {
-      echo '<tr class="dataTableRow"><td></td><td class="dataTableContent" colspan="7">' . "\n";
+      echo '<tr class="dataTableRow"><td><a href="product_history.php?products_id='.$order->products[$i]['products_id'].'"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Products History" alt="H" /></a></td><td class="dataTableContent" colspan="7">' . "\n";
         for ($j = 0, $k = sizeof($order->products[$i]['attributes']); $j < $k; $j++) {
           echo '<div><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'];
           if ($order->products[$i]['attributes'][$j]['price'] != '0') echo ' (' . $order->products[$i]['attributes'][$j]['prefix'] . $currencies->format($order->products[$i]['attributes'][$j]['final_price'] * $order->products[$i]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
