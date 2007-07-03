@@ -17,12 +17,17 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.23 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: application_top.php,v 1.24 2007/07/03 05:45:38 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+
+// Force hiding of columns in admin side for maximum real estate and productivity. - spiderr
+$gBitSystem->mConfig["bitcommerce_hide_right_col"] = 'y';
+$gBitSystem->mConfig["bitcommerce_hide_left_col"] = 'y';
+
 // Set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
   	error_reporting(E_ALL & ~E_NOTICE);
