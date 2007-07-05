@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.96 2007/05/16 19:21:36 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.97 2007/07/05 19:20:45 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -140,9 +140,10 @@ class CommerceProduct extends LibertyAttachable {
 	}
 
 	function getCommissionDiscount() {
+		global $gBitUser;
 		$ret = 0;
 		if( $this->isValid() ) {
-			$ret = $this->hasEditPermission() ? $this->getField( 'products_commission' ) : 0;
+			$ret = $this->hasEditPermission( FALSE ) ? $this->getField( 'products_commission' ) : 0;
 		}
 		return $ret;
 	}
