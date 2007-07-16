@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.7 2006/12/03 21:01:20 spiderr Exp $
+// $Id: header_php.php,v 1.8 2007/07/16 21:47:16 spiderr Exp $
 //
 
 if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId ) {
@@ -26,6 +26,7 @@ $listHash['thumbnail_size'] = 'small';
 /* The cool bitweaver way will have to happen later... - spiderr */
 $listHash['user_id'] = $gQueryUser->mUserId;
 $userProducts = $gBitProduct->getList( $listHash );
+$gBitProduct->invokeServices( 'content_list_function', $listHash );
 $gBitSmarty->assign( 'listProducts', $userProducts );
 $gBitSmarty->assign( 'listTitle', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( TRUE ) );
 $gBitSmarty->assign( 'listInfo', $listHash );
