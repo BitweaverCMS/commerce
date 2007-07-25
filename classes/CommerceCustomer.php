@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.23 2007/04/12 23:51:53 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.24 2007/07/25 15:54:27 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -54,28 +54,33 @@
 							INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
 							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
 						WHERE lc.`user_id`=? AND cop.`products_commission` IS NOT NULL AND cop.`products_commission` > 0
-						ORDER BY co.`date_purchased` DESC";
+						ORDER BY co.`date_purchased` ASC";
 				if( $sales = $this->mDb->getAssoc( $sql, array( $this->mCustomerId ) ) ) {
 					foreach( array_keys( $sales ) as $hashKey ) {
 						$sales[$hashKey]['purchased_epoch'] = strtotime($sales[$hashKey]['date_purchased'] );
 					}
 				}
 
-				$sql = "SELECT ccp.`commissions_payments_id` AS `hash_key`, ccp.* FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE `payee_user_id`=?";
+				$sql = "SELECT ccp.`commissions_payments_id` AS `hash_key`, ccp.* FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE `payee_user_id`=? ORDER BY ccp.`period_end_date` ASC";
 				if( $commissions = $this->mDb->getAssoc( $sql, array( $this->mCustomerId ) ) ) {
 					foreach( array_keys( $commissions ) as $commId ) {
 						$commissions[$commId]['period_end_epoch'] = strtotime( $commissions[$commId]['period_end_date'] );
 					}
 				}
-
+				rewind( $commissions );
 				$commission = current( $commissions );
 				foreach( $sales AS $sale ) {
+					array_push( $ret, $sale );
 					if( !empty( $commission ) && $commission['period_end_epoch'] > $sale['purchased_epoch'] ) {
 						array_push( $ret, $commission );
 						$commission = next( $commissions );
 					}
-					array_push( $ret, $sale );
 				}
+				// add the last commission if no sales since last payment
+				if( !empty( $commission ) ) {
+					array_push( $ret, $commission );
+				}
+				$ret = array_reverse( $ret );
 			}
 			return( $ret );
 		}
