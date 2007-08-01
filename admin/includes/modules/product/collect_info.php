@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.23 2007/06/13 16:36:50 spiderr Exp $
+//  $Id: collect_info.php,v 1.24 2007/08/01 03:14:15 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -404,7 +404,7 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
 				<select name="purchase_group_id">
 					<option value=""></value>
 <?php
-	foreach( $groups['data'] as $group ) {
+	foreach( $groups as $group ) {
 		print '<option value="'.$group['group_id'].'" '.($pInfo->purchase_group_id == $group['group_id'] ? 'selected="selected"': '') .' >'.$group['group_name']."</option>\n";
 	}
 ?>
