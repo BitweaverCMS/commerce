@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.3 2007/04/01 02:19:55 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.4 2007/08/01 19:59:17 lsces Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -72,7 +72,7 @@ class CommerceProductManager extends BitBase {
 			'products_options_comment',
 			'products_options_images_per_row',
 			'products_options_images_style',
-			'products_options_html_attributes',
+			'products_options_html_attrib',
 		);
 		foreach( $optList as $opt ) {
 			$pParamHash['options_store'][$opt] = !empty( $pParamHash[$opt] ) || is_numeric( $pParamHash[$opt] ) ? $pParamHash[$opt] : NULL;

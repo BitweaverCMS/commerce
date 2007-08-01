@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.24 2007/07/16 21:49:03 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.25 2007/08/01 19:59:15 lsces Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -543,7 +543,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				}
 
-				$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $gBitProduct->mOptions[$optionsId]['products_options_html_attributes']);
+				$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $gBitProduct->mOptions[$optionsId]['products_options_html_attrib']);
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ( !empty( $gBitProduct->mOptions[$optionsId]['products_options_comment_position'] ) ? '1' : '0');
 			break;

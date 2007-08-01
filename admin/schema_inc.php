@@ -282,7 +282,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
   products_options_size I2 NOTNULL default '32',
   products_options_images_per_row I2 default '5',
   products_options_images_style I1 default '0',
-  products_options_html_attributes X
+  products_options_html_attrib X
 ",
 
 /*

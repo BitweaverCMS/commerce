@@ -29,7 +29,7 @@
 <div class="row">
 	{formlabel label="HTML Attributes"}
 	{forminput}
-		<input type="text" name="products_options_html_attributes" value="{$editOption.products_options_html_attributes|escape:html}" />
+		<input type="text" name="products_options_html_attrib" value="{$editOption.products_options_html_attrib|escape:html}" />
 		{formhelp note="Use this for extra HTML elements, such as Javascript onchange or a custom 'id'."}
 	{/forminput}
 </div>
