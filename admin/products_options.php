@@ -65,8 +65,8 @@ if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 	if( $productManager->storeOption( $_REQUEST ) ) {
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	} else {
-vd( 'option store failed' );
-vd( $_REQUEST );
+bit_error_log( 'option store failed' );
+bit_error_log( $_REQUEST );
 	}
 } 
  
