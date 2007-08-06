@@ -329,6 +329,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_price_words_free I2,
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
+  attributes_html_attrib X,
   attributes_required I1
   CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )'
 ",
