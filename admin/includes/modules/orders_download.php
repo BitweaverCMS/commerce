@@ -17,7 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_download.php,v 1.4 2006/12/19 00:11:30 spiderr Exp $
+//  $Id: orders_download.php,v 1.5 2007/08/07 06:03:01 spiderr Exp $
+
+	global $gBitDb;
 
   // select downloads for current order
   $orders_download_query = "select * from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " where `orders_id`='" . $_GET['oID'] . "'";
