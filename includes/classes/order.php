@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.54 2007/06/29 21:14:14 spiderr Exp $
+// $Id: order.php,v 1.55 2007/08/07 05:57:14 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -276,7 +276,8 @@ class order extends BitBase {
 																		'value' => $attributes->fields['products_options_values'],
 																		'prefix' => $attributes->fields['price_prefix'],
 																		'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->products[$index] ),
-																		'price' => $attributes->fields['options_values_price']);
+																		'price' => $attributes->fields['options_values_price'],
+																		'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
 
 				$subindex++;
 				$attributes->MoveNext();
