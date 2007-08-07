@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.24 2007/07/03 05:45:38 spiderr Exp $
+//  $Id: application_top.php,v 1.25 2007/08/07 05:59:44 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -37,6 +37,8 @@ if( defined( 'IS_LIVE' ) && IS_LIVE ) {
 
 global $gBitSystem, $gBitUser;
 $gBitSystem->verifyPermission( 'p_commerce_admin' );
+// This is admin - verify ticket at all times
+$gBitUser->verifyTicket();
 
 define( 'BITCOMMERCE_ADMIN', TRUE );
 
