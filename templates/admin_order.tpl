@@ -139,7 +139,7 @@ echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<
 	{assign var=finalQtyPlusTax value=$finalPlusTax*$order->products[p].quantity} 
 	{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
 	{if $order->products[p].onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
-	{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax, true, DEFAULT_CURRENCY)} ){/if}
+	{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
 </td>
 </tr>
 {if !empty( $order->products[p].attributes )}
@@ -149,7 +149,8 @@ echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<
 {section loop=$order->products[p].attributes name=a}
 		<div class="orders products attributes" id="{$order->products[p].attributes[a].products_attributes_id}att">
 			<nobr><em>&bull; {$order->products[p].attributes[a].option}: {$order->products[p].attributes[a].value}
-				{if $order->products[p].attributes[a].price}({$order->products[p].attributes[a].prefix}{$currencies->format($order->products[p].attributes[a].final_price*$order->products[p].quantity, true, $order->info.currency, $order->info.currency_value)}){/if}
+				{assign var=sumAttrPrice value=$order->products[p].attributes[a].final_price*$order->products[p].quantity}
+				{if $order->products[p].attributes[a].price}({$order->products[p].attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 				{if !empty($order->products[p].attributes[a].product_attribute_is_free) && $order->products[p].attributes[a].product_attribute_is_free == '1' and $order->products[p].product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
 			</em>
 {*			<span onclick="editOption({$order->products[p].attributes[a].orders_products_attributes_id}); return false;">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</span> *}
