@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.10 2007/08/12 07:02:00 lsces Exp $
+//  $Id: product.php,v 1.11 2007/08/12 14:44:37 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -343,7 +343,7 @@ if (typeof _editor_url == "string") HTMLArea.replaceAll();
           <tr>
 <?php
 // Split Page
-if ($products_query_numrows > 0) {
+if ( isset($products_split) && $products_query_numrows > 0 ) {
   if (empty($pInfo->products_id)) {
     $pInfo->products_id= $pID;
   }

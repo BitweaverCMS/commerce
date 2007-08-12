@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.24 2007/08/01 03:14:15 spiderr Exp $
+//  $Id: collect_info.php,v 1.25 2007/08/12 14:44:08 lsces Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -443,15 +443,15 @@ echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorte
           </tr>
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_MARGIN; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('products_margin', $products_margin , 'onKeyUp="updateFromMargin()"'); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('products_margin', isset($products_margin) ? $products_margin : 0 , 'onKeyUp="updateFromMargin()"'); ?></td>
           </tr> 
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_PROFIT; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('products_profit', $products_profit , 'onKeyUp="updateFromProfit()"'); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('products_profit', isset($products_profit) ? $products_profit : 0 , 'onKeyUp="updateFromProfit()"'); ?></td>
           </tr>
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_ROUNDING; ?></td>
-            <td class="main"><?php echo zen_draw_input_field('products_rounding', $products_rounding , 'onKeyUp="updateFromRounding()"'); ?></td>
+            <td class="main"><?php echo zen_draw_input_field('products_rounding', isset($products_profit) ? $products_profit : 0 , 'onKeyUp="updateFromRounding()"'); ?></td>
           </tr>                                                          
           <tr bgcolor="#ebebff">
             <td class="main"><?php echo TEXT_PRODUCTS_PRICE_NET; ?></td>
