@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: suppliers.php,v 1.6 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: suppliers.php,v 1.7 2007/08/12 08:34:15 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -218,10 +218,10 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
                 </table></td>
               </tr>
 <?php
-  if (empty($action)) {
+  if ( empty($action) ) {
 ?>
               <tr>
-                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $mInfo->suppliers_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
+                <td align="right" colspan="2" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . ( isset($mInfo) ? $mInfo->suppliers_id : '' ) . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
               </tr>
 <?php
   }
