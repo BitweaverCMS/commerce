@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.97 2007/07/05 19:20:45 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.98 2007/08/13 17:56:45 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -676,7 +676,7 @@ $this->debug(0);
  			if( !empty( $this->mInfo['products_status'] ) ) {
 				$ret = TRUE;
 			} else {
-				$ret = $this->isOwner();
+				$ret = $this->isOwner() || $this->hasEditPermission();
 			}
  		} else {
 			$ret = FALSE;
