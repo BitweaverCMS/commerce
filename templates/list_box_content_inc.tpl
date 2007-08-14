@@ -1,4 +1,4 @@
-
+{if $listBoxContents}
 <h2 class="centerboxheading">{$productListTitle|default:"Products"}</h2>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -20,4 +20,4 @@
 {/section}
 
 </table>
-
+{/if}
