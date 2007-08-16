@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.15 2007/06/13 16:36:50 spiderr Exp $
+//  $Id: category_product_listing.php,v 1.16 2007/08/16 09:26:25 lsces Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -133,7 +133,7 @@
                     // show counts
                     $total_products = zen_get_products_to_categories($categories->fields['categories_id'], true);
                     $total_products_on = zen_get_products_to_categories($categories->fields['categories_id'], false);
-                    echo $total_products_on . TEXT_PRODUCTS_STATUS_ON_OF . $total_products . TEXT_PRODUCTS_STATUS_ACTIVE;
+                    echo $total_products_on . ' ' . tra('of') . ' ' . $total_products . ' ' . tra('active');
                   }
                   ?>
                   &nbsp;&nbsp;
