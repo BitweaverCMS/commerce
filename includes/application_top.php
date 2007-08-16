@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.37 2007/08/16 09:23:28 lsces Exp $
+// $Id: application_top.php,v 1.38 2007/08/16 19:36:54 spiderr Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -61,7 +61,7 @@ function clean_input( &$pArray ) {
   if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && !empty( $_SESSION['check_valid'] ) && $_SESSION['check_valid'] != 'false') {
     $check_valid = zen_products_id_valid($_GET['products_id']);
     if ($check_valid) {
-      $_REQUEST['main_page'] = 'product_info'; // zen_get_info_page( $_GET['products_id'] );
+      $_REQUEST['main_page'] = zen_get_info_page( $_GET['products_id'] );
       // do not recheck redirect
       $_SESSION['check_valid'] = 'false';
       zen_redirect(zen_href_link($_REQUEST['main_page'], 'products_id=' . $_GET['products_id']));
