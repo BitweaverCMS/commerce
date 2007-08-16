@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_download.php,v 1.5 2007/08/07 06:03:01 spiderr Exp $
+//  $Id: orders_download.php,v 1.6 2007/08/16 07:31:22 spiderr Exp $
 
 	global $gBitDb;
 
   // select downloads for current order
-  $orders_download_query = "select * from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " where `orders_id`='" . $_GET['oID'] . "'";
-  $orders_download = $gBitDb->Execute($orders_download_query);
+  $orders_download_query = "select * from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " where `orders_id`=?";
+  $orders_download = $gBitDb->query($orders_download_query, array( $_REQUEST['oID'] ) );
 
 // only display if there are downloads to display
   if ($orders_download->RecordCount() > 0) {
@@ -49,13 +49,13 @@
     while (!$orders_download->EOF) {
       switch (true) {
         case ($orders_download->fields['download_maxdays'] > 0 and $orders_download->fields['download_count'] > 0):
-          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_GET['oID'] . '&action=edit&download_reset_off=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_CURRENT) . '</a>';
+          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_REQUEST['oID'] . '&action=edit&download_reset_off=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_CURRENT) . '</a>';
           break;
         case ($orders_download->fields['download_maxdays'] <= 1 or $orders_download->fields['download_count'] <= 1):
-          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_GET['oID'] . '&action=edit&download_reset_on=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_STATUS_EXPIRED) . '</a>';
+          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_REQUEST['oID'] . '&action=edit&download_reset_on=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_STATUS_EXPIRED) . '</a>';
           break;
         default:
-          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_GET['oID'] . '&action=edit&download_reset_on=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_STATUS_EXPIRED) . '</a>';
+          $zc_file_status = '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_REQUEST['oID'] . '&action=edit&download_reset_on=' . $orders_download->fields['orders_products_download_id'], 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_STATUS_EXPIRED) . '</a>';
           break;
           break;
       }
