@@ -17,19 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.17 2006/12/19 00:11:38 spiderr Exp $
+// $Id: main_template_vars.php,v 1.18 2007/08/16 07:37:05 spiderr Exp $
 //
 
-  $sql = "select count(*) as `total`
-          from " . TABLE_PRODUCTS . " p, " .
-                   TABLE_PRODUCTS_DESCRIPTION . " pd
-          where    p.`products_status` = '1'
-          and      p.`products_id` = '" . (int)$_GET['products_id'] . "'
-          and      pd.`products_id` = p.`products_id`
-          and      pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+  $sql = "SELECT COUNT(*) as `total`
+          FROM " . TABLE_PRODUCTS . " p INNER JOIN " .
+                   TABLE_PRODUCTS_DESCRIPTION . " pd ON ( pd.`products_id` = p.`products_id` )
+          WHERE p.`products_status` = '1' AND p.`products_id` = ? AND pd.`language_id` = ?";
 
 
-  $res = $gBitDb->Execute($sql);
+  $res = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
 
   if ( $res->fields['total'] < 1 ) {
 
@@ -38,13 +35,6 @@
   } else {
 
     $tpl_page_body = 'product_info_display.php';
-
-    $sql = "update " . TABLE_PRODUCTS_DESCRIPTION . "
-            set        `products_viewed` = `products_viewed` + 1
-            where      `products_id` = '" . (int)$_GET['products_id'] . "'
-            and        `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
-
-    $res = $gBitDb->Execute($sql);
 
     $sql = "select p.`products_id`, pd.`products_name`,
                   pd.`products_description`, p.`products_model`,
@@ -56,13 +46,12 @@
                   p.`products_qty_box_status`,
                   p.`products_quantity_order_max`,
                   p.`products_discount_type`, p.`products_discount_type_from`, p.`products_sort_order`, p.`products_price_sorter`, m.`manufacturers_name`
-           from   " . TABLE_PRODUCTS . " p LEFT OUTER JOIN " . TABLE_MANUFACTURERS ." m ON (p.`manufacturers_id`=m.`manufacturers_id`), " . TABLE_PRODUCTS_DESCRIPTION . " pd
-           where  p.`products_status` = '1'
-           and    p.`products_id` = '" . (int)$_GET['products_id'] . "'
-           and    pd.`products_id` = p.`products_id`
-           and    pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
+           FROM " . TABLE_PRODUCTS . " p 
+				INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (pd.`products_id` = p.`products_id`)
+				LEFT OUTER JOIN " . TABLE_MANUFACTURERS ." m ON (p.`manufacturers_id`=m.`manufacturers_id`)
+           WHERE p.`products_status` = '1' and p.`products_id` = ? and pd.`language_id` = ?";
 
-    $product_info = $gBitDb->Execute($sql);
+    $product_info = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
 
     $products_price_sorter = $product_info->fields['products_price_sorter'];
 
