@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.26 2007/07/02 05:24:23 spiderr Exp $
+// $Id: functions_lookups.php,v 1.27 2007/08/16 21:11:13 lsces Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -520,7 +520,7 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 // look up the product type from product_id and return an info page name
   function zen_get_info_page($zf_product_id) {
 		global $gBitDb;
-		return '';
+//		return '';
 		$sql = "select `products_type` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$zf_product_id . "'";
 		$zp_type = $gBitDb->Execute($sql);
 		if ($zp_type->RecordCount() == 0) {
