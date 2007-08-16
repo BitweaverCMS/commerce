@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.98 2007/08/13 17:56:45 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.99 2007/08/16 09:10:15 lsces Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -1249,7 +1249,7 @@ Skip deleting of images for now
 			$pProductsId = $this->mProductsId;
 		}
 		if( $this->isValid() && is_numeric( $pCustomersId ) ) {
-			$query = "SELECT count(*) AS `count` FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id`=? and `customers_id`=?";
+			$query = "SELECT count(*) AS `ncount` FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id`=? and `customers_id`=?";
 			$ret = $this->mDb->getOne($query, array( $pProductsId, $pCustomersId ) );
 		}
 		return $ret;
@@ -1259,7 +1259,7 @@ Skip deleting of images for now
 		if( $this->isValid() ) {
 			// if review must be approved or disabled do not show review
 			$review_status = " AND r.status = '1'";
-			$sql = "SELECT count(*) as count
+			$sql = "SELECT COUNT(*) as `rcount`
 					FROM " . TABLE_REVIEWS . " r INNER JOIN " . TABLE_REVIEWS_DESCRIPTION . " rd ON (r.`reviews_id` = rd.`reviews_id`)
 					WHERE r.`products_id` = ? AND rd.`languages_id` = ?" . $review_status;
 
