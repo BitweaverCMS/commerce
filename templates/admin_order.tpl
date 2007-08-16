@@ -8,11 +8,21 @@ function deleteOption( pOrdPrdAttId, pTitle ) {
 	return confirm( "Are you sure you want to delete the option '"+pTitle+"' from this order?" );
 }
 
-var structureAddResult = function (response) {
-	responseHash = MochiKit.Async.evalJSONRequest(response);
-	MochiKit.Visual.fade($(responseHash.orders_products_attributes_id+"att"));
-	$(responseHash.content_id+"feedback").innerHTML = responseHash.feedback;
-};
+function getNewOption( pOrdPrdId ) {
+	var myAjax = new Ajax.Updater(
+		'neworderattr', 
+		"{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}", 
+		{
+			method: 'get', 
+			parameters: 'new_option_id='+$F('neworderoption')+'&orders_products_id='+pOrdPrdId
+		});
+}
+
+function saveNewOption( pForm ) {
+	pForm.submit();
+	window.location.reload();
+}
+
 /* ]]> */</script>
 {/literal}
 
@@ -154,10 +164,17 @@ echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<
 				{if !empty($order->products[p].attributes[a].product_attribute_is_free) && $order->products[p].attributes[a].product_attribute_is_free == '1' and $order->products[p].product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
 			</em>
 {*			<span onclick="editOption({$order->products[p].attributes[a].orders_products_attributes_id}); return false;">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</span> *}
-			<a href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$order->products[p].attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$order->products[p].attributes[a].orders_products_attributes_id},'{$order->products[p].attributes[a].option}: {$order->products[p].attributes[a].value}');">{biticon ipackage="icons" iname="edit-delete" iexplain="edit" iforce="icon"}</a>
+			<a href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$order->products[p].attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$order->products[p].attributes[a].orders_products_attributes_id},'{$order->products[p].attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$order->products[p].attributes[a].value|escape:'quotes'|escape:'htmlall'}');">{biticon ipackage="icons" iname="edit-delete" iexplain="edit" iforce="icon"}</a>
 			</nobr>
 		</div>
 {/section}
+		<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
+			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
+			<input type="hidden" name="action" value="save_new_option"/>
+			<input type="hidden" name="orders_products_id" value="{$order->products[p].orders_products_id}"/>
+			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption" onchange="getNewOption(`$order->products[p].orders_products_id`);" selected="0"}
+			<span id="neworderattr"></span>
+		</form>
 	</td>
 </tr>
 

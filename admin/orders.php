@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.45 2007/08/07 05:58:37 spiderr Exp $
+//  $Id: orders.php,v 1.46 2007/08/16 07:26:49 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -28,6 +28,33 @@
 	$gBitThemes->loadAjax( 'prototype' );
 
 	$currencies = new currencies();
+
+	if( $gBitThemes->isAjaxRequest() ) {
+		require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+		$productManager = new CommerceProductManager();
+
+		if( !empty( $_REQUEST['new_option_id'] ) ) {
+			if( $optionValues = $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['new_option_id'] ) ) ) {
+				if( !empty( $optionValues[$_REQUEST['new_option_id']]['values'] ) ) {
+					foreach( $optionValues[$_REQUEST['new_option_id']]['values'] as $optValId=>$optVal ) {
+						$optionValuesList[$optValId] = $optVal['products_options_values_name'];
+					}
+					require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
+					print smarty_function_html_options(array('options'		=> $optionValuesList,
+														'name'			=> 'newOrderOptionValue',
+														'print_result'	=> FALSE ), $gBitSmarty );
+					print '<input type="submit" value="save" name="save_new_option">';
+				} else {
+					print "<span class='error'>No Options</span>";
+				}
+			} else {
+				print "<span class='error'>Unkown Option</span>";
+			}
+		} else {
+		}
+
+		exit;
+	}
 
 	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
@@ -42,6 +69,12 @@
 	if( empty( $order ) ) {
   		require_once( BITCOMMERCE_PKG_PATH.'admin/orders_list_inc.php' );
 	} else {
+		require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+		$productManager = new CommerceProductManager();
+		$optionsList = $productManager->getOptions();
+		$optionsList[0] = "Add new order option...";
+		$gBitSmarty->assign_by_ref( 'optionsList', $optionsList );
+ 
 		$gBitSmarty->assign_by_ref( 'order', $order ); 
 		$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
 		if( !empty( $_REQUEST['del_ord_prod_att_id'] ) ) {
@@ -53,6 +86,40 @@
 
 		if( !empty( $_REQUEST['action'] ) ) {
 		switch( $_REQUEST['action'] ) {
+			case 'save_new_option':
+
+				$query = "SELECT 
+					cpo.`products_options_name` AS products_options,
+					cpa.`products_options_values_name` AS products_options_values,
+					options_values_price,
+					price_prefix,
+					product_attribute_is_free,
+					products_attributes_wt,
+					products_attributes_wt_pfix,
+					attributes_discounted,
+					attributes_price_base_inc,
+					attributes_price_onetime,
+					attributes_price_factor,
+					attributes_pf_offset,
+					attributes_pf_onetime,
+					attributes_pf_onetime_offset,
+					attributes_qty_prices,
+					attributes_qty_prices_onetime,
+					attributes_price_words,
+					attributes_price_words_free,
+					attributes_price_letters,
+					attributes_price_letters_free,
+					cpo.`products_options_id`,
+					products_options_values_id
+				FROM " . TABLE_PRODUCTS_OPTIONS . " cpo 
+					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.products_options_id=cpo.products_options_id) 
+				WHERE cpa.`products_options_values_id`=?";
+				$newOption = $gBitDb->getRow( $query, array( $_REQUEST['newOrderOptionValue'] ) );
+				$newOption['orders_id'] = $_REQUEST['oID'];
+				$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
+				$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'].'&action=edit' );
+				break;
 		  case 'update_order':
 			// demo active test
 			if (zen_admin_demo()) {
@@ -125,7 +192,7 @@
 		}
 		}
 	}
-  
+ 
 	$gBitSystem->setOnloadScript( 'init()' );
 	require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
