@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.36 2007/05/05 18:25:26 spiderr Exp $
+// $Id: application_top.php,v 1.37 2007/08/16 09:23:28 lsces Exp $
 //
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
@@ -60,8 +60,8 @@ function clean_input( &$pArray ) {
 // validate products_id for search engines and bookmarks, etc.
   if (isset( $_GET['products_id'] ) && is_numeric( $_GET['products_id'] ) && !empty( $_SESSION['check_valid'] ) && $_SESSION['check_valid'] != 'false') {
     $check_valid = zen_products_id_valid($_GET['products_id']);
-    if (!$check_valid) {
-      $_GET['main_page'] = zen_get_info_page( $_GET['products_id'] );
+    if ($check_valid) {
+      $_REQUEST['main_page'] = 'product_info'; // zen_get_info_page( $_GET['products_id'] );
       // do not recheck redirect
       $_SESSION['check_valid'] = 'false';
       zen_redirect(zen_href_link($_REQUEST['main_page'], 'products_id=' . $_GET['products_id']));
@@ -503,12 +503,7 @@ case 'wishlist_add_cart': reset ($lvnr);
 // split-page-results
   require_once(DIR_FS_CLASSES . 'split_page_results.php');
 
-// auto activate and expire banners
-  require_once(DIR_FS_FUNCTIONS . 'banner.php');
-  zen_activate_banners();
-  zen_expire_banners();
-
-// only process once per session do not include banners as banners expire per click as well as per date
+// only process once per session
 // this is processed in the admin for dates that expire as being worked on
   if( !empty( $_SESSION['update_expirations'] ) && $_SESSION['update_expirations'] != 'true') {
     // auto expire special products
