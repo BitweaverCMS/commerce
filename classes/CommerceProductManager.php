@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.4 2007/08/01 19:59:17 lsces Exp $
+//  $Id: CommerceProductManager.php,v 1.5 2007/08/16 07:29:09 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -190,6 +190,11 @@ class CommerceProductManager extends BitBase {
 	function getOptionsTypes() {
 		global $gBitDb;
 		return( $gBitDb->getAssoc( "select products_options_types_id, products_options_types_name from " . TABLE_PRODUCTS_OPTIONS_TYPES . " order by products_options_types_id" ) );
+	}
+
+	function getOptions() {
+		global $gBitDb;
+		return( $gBitDb->getAssoc( "select products_options_id, products_options_name from " . TABLE_PRODUCTS_OPTIONS . " order by products_options_name" ) );
 	}
 
 	function getOptionsValue( $pAttrId ) {
