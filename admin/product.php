@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: product.php,v 1.11 2007/08/12 14:44:37 lsces Exp $
+//  $Id: product.php,v 1.12 2007/08/16 09:20:20 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -360,7 +360,7 @@ if ( isset($products_split) && $products_query_numrows > 0 ) {
     </table>
 <?php
   }
-  print_r($pInfo);
+//  print_r($pInfo);
   
 ?>
     </td>
