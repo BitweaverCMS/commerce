@@ -17,16 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: new_product_preview.php,v 1.3 2006/08/30 21:15:25 spiderr Exp $
+//  $Id: new_product_preview.php,v 1.4 2007/08/16 09:19:11 lsces Exp $
 
 // copy image only if modified
-        if( empty( $_GET['read'] ) ) {
-          $products_image = new upload('products_image');
-          $products_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
-          if ($products_image->parse() && $products_image->save($_POST['overwrite'])) {
-            $products_image_name = $_POST['img_dir'] . $products_image->filename;
-          } else {
-            $products_image_name = (isset($_POST['products_previous_image']) ? $_POST['products_previous_image'] : '');
-          }
-        }
+	if( empty( $_REQUEST['read'] ) ) {
+		$products_image = new upload('products_image');
+		$products_image->set_destination(DIR_FS_CATALOG_IMAGES);
+		if ($products_image->parse() && $products_image->save( isset($_POST['overwrite']) ? $_POST['overwrite'] : true ) ) {
+			$products_image_name = $products_image->filename;
+		} else {
+			$products_image_name = (isset($_REQUEST['products_previous_image']) ? $_REQUEST['products_previous_image'] : '');
+		}
+	}
 ?>
