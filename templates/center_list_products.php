@@ -1,5 +1,5 @@
 <?php
-	global $gBitProduct, $gQueryUser;
+	global $gBitProduct, $gQueryUser, $currencies;
 
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
