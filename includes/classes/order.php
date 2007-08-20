@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.55 2007/08/07 05:57:14 spiderr Exp $
+// $Id: order.php,v 1.56 2007/08/20 19:26:40 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -1031,8 +1031,9 @@ class order extends BitBase {
 
 		$order_updated = false;
 
-		$status = zen_db_prepare_input($pParamHash['status']);
-		$comments = zen_db_prepare_input($pParamHash['comments']);
+		// default to order status if not specified
+		$status = !empty( $pParamHash['status'] ) ? zen_db_prepare_input( $pParamHash['status'] ) : $this->getStatus();
+		$comments = !empty( $pParamHash['comments'] ) ? zen_db_prepare_input( $pParamHash['comments'] ) : NULL;
 
 		$statusChanged = ($this->getStatus() != $status);
 
@@ -1103,6 +1104,61 @@ class order extends BitBase {
 			$ret = TRUE;
 		}
 		return $ret;
+	}
+
+	function combineOrders( $pParamHash ) {
+		global $currencies;
+		$ret = FALSE;
+
+		$sql = "SELECT * FROM " . TABLE_ORDERS . " WHERE `orders_id`=?";
+		$sourceHash = $this->mDb->getRow( $sql, array( $pParamHash['source_orders_id'] ) );
+		$destHash = $this->mDb->getRow( $sql, array( $pParamHash['dest_orders_id'] ) );
+
+		if( empty( $sourceHash ) ) {
+			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] not found";
+		} elseif( empty( $destHash ) ) {
+			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] not found";
+		} elseif( $sourceHash['orders_status'] != DEFAULT_ORDERS_STATUS_ID ) {
+			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
+		} elseif( $destHash['orders_status'] != DEFAULT_ORDERS_STATUS_ID ) {
+			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
+		} elseif( ($sourceHash['delivery_street_address'] == $destHash['delivery_street_address']) &&
+		  ($sourceHash['delivery_suburb'] == $destHash['delivery_suburb']) &&
+		  ($sourceHash['delivery_city'] == $destHash['delivery_city']) &&
+		  ($sourceHash['delivery_postcode'] == $destHash['delivery_postcode']) &&
+		  ($sourceHash['delivery_state'] == $destHash['delivery_state']) &&
+		  ($sourceHash['delivery_country'] == $destHash['delivery_country']) ) {
+
+			$this->mDb->StartTrans();
+			$this->mDb->query( "UPDATE ". TABLE_ORDERS . " SET `order_total`=?, `order_tax`=? WHERE `orders_id`=?", array( ($sourceHash['order_total'] + $destHash['order_total']), ($sourceHash['order_tax'] + $destHash['order_tax']), $pParamHash['dest_orders_id'] ) );
+
+			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+
+			if( $rs = $this->mDb->query( "SELECT cot.`orders_total_id`, cot.* FROM " . TABLE_ORDERS_TOTAL . " cot WHERE `orders_id`=?", array( $pParamHash['source_orders_id'] ) ) ) {
+				while( $sourceTotal = $rs->fetchRow() ) {
+					$destTotal = $this->mDb->getRow( "SELECT `class`, cot.* FROM " . TABLE_ORDERS_TOTAL . " cot WHERE `orders_id`=? AND `class`=?", array( $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
+					if( empty( $destHash['currency'] ) ) {
+						$destHash['currency'] = NULL;
+						$destHash['currency_value'] = NULL;
+					}
+					$total = $sourceTotal['orders_value'] + $destTotal['orders_value'];
+					$text = $currencies->format( $total, true, $destHash['currency'], $destHash['currency_value'] );
+					$this->mDb->query( "UPDATE ". TABLE_ORDERS_TOTAL . " SET `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $total, $text, $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
+							
+				}
+			}
+
+			// Move statuses over to 
+			$this->mDb->query( "UPDATE ". TABLE_ORDERS_STATUS_HISTORY . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+			$this->updateStatus( array( 'notify' => !empty( $pParamHash['combine_notify'] ) , "comments" => "Order $pParamHash[source_orders_id] was combined with this order" ) );
+			zen_remove_order( $pParamHash['source_orders_id'], FALSE );
+			$this->mDb->CompleteTrans();
+		} else {
+			$this->mErrors['combine'] = "Address mismatch. To combine orders, they must have the same delivery address.";
+		}
+
+		// no yet implemented
+		return empty( $this->mErrors['combine'] );
 	}
 
 	function isValid() {

@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.99 2007/08/16 09:10:15 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.100 2007/08/20 19:26:40 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -447,10 +447,6 @@ class CommerceProduct extends LibertyAttachable {
 		return $ret;
 	}
 
-	function getDisplayUri( $pProductsId=NULL, $pCatPath=NULL ) {
-		return BIT_ROOT_URI.substr( CommerceProduct::getDisplayUrl( $pProductsId, $pCatPath ), 1 );
-	}
-
 	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
 		return( BIT_ROOT_PATH.CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
 	}
@@ -733,6 +729,14 @@ $this->debug(0);
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
 			'products_quantity_order_max' => (!empty( $pParamHash['products_quantity_order_max'] ) && is_numeric( $pParamHash['products_quantity_order_max'] ) ? $pParamHash['products_quantity_order_max'] : 0),
 			);
+
+		if( !empty( $pParamHash['reorders_interval_number'] ) && is_numeric( $pParamHash['reorders_interval_number'] ) && !empty( $pParamHash['reorders_pending'] ) ) {
+			$pParamHash['product_store']['reorders_interval'] = $pParamHash['reorders_interval_number'].' '.$pParamHash['reorders_interval'];
+			$pParamHash['product_store']['reorders_pending'] = $pParamHash['reorders_pending'];
+		} else {
+			$pParamHash['product_store']['reorders_interval'] = NULL;
+			$pParamHash['product_store']['reorders_pending'] = NULL;
+		}
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
 		if( is_array( $pParamHash['products_name'] ) ) {
