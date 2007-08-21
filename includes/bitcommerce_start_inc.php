@@ -161,6 +161,7 @@
 
 // include currencies class and create an instance
   require_once(DIR_FS_CLASSES . 'currencies.php');
+	global $currencies;
   $currencies = new currencies();
 
   require_once(DIR_FS_CLASSES . 'category_tree.php');
