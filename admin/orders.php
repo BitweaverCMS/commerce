@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.47 2007/08/20 19:26:40 spiderr Exp $
+//  $Id: orders.php,v 1.48 2007/08/21 02:45:47 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -51,6 +51,7 @@
 				print "<span class='error'>Unkown Option</span>";
 			}
 		} else {
+				print "<span class='error'>Empty Option</span>";
 		}
 
 		exit;
