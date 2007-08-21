@@ -10,11 +10,11 @@ function deleteOption( pOrdPrdAttId, pTitle ) {
 
 function getNewOption( pOrdPrdId ) {
 	var myAjax = new Ajax.Updater(
-		'neworderattr', 
+		'neworderattr'+pOrdPrdId, 
 		"{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}", 
 		{
 			method: 'get', 
-			parameters: 'new_option_id='+$F('neworderoption')+'&orders_products_id='+pOrdPrdId
+			parameters: 'new_option_id='+$F('neworderoption'+pOrdPrdId)+'&orders_products_id='+pOrdPrdId
 		});
 }
 
@@ -172,8 +172,8 @@ echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
 			<input type="hidden" name="orders_products_id" value="{$order->products[p].orders_products_id}"/>
-			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption" onchange="getNewOption(`$order->products[p].orders_products_id`);" selected="0"}
-			<span id="neworderattr"></span>
+			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption`$order->products[p].orders_products_id`" onchange="getNewOption(`$order->products[p].orders_products_id`);" selected="0"}
+			<span id="neworderattr{$order->products[p].orders_products_id}"></span>
 		</form>
 	</td>
 </tr>
