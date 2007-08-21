@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.44 2007/06/13 22:57:20 spiderr Exp $
+//  $Id: general.php,v 1.45 2007/08/21 04:36:58 spiderr Exp $
 //
 
 ////
@@ -1359,6 +1359,10 @@
     }
   }
 
+/*
+
+This is obsolete/really broken with the advent of normalized product options
+
 function zen_copy_products_attributes($products_id_from, $products_id_to) {
   global $gBitDb;
   global $messageStack;
@@ -1493,6 +1497,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
      zen_update_products_price_sorter($products_id_to);
   } // end of no attributes or other errors
 } // eof: zen_copy_products_attributes
+
+*/
 
 ////
 // warning message

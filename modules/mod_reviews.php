@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_reviews.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
+// $Id: mod_reviews.php,v 1.6 2007/08/21 04:36:58 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct;
 
@@ -28,8 +28,8 @@
 	$listHash['max_records'] = MAX_RANDOM_SELECT_REVIEWS;
 	if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
 		$gBitSmarty->assign( 'sideboxReview', current( $sideboxReview ) );
-	} elseif ( isset($_GET['products_id']) and zen_products_id_valid($_GET['products_id'])) {
-		$gBitSmarty->assign( 'reviewProductsId', $_GET['products_id'] );
+	} elseif ( $gBitProduct->isValid() ) {
+		$gBitSmarty->assign( 'reviewProductsId', $gBitProduct->getField( 'products_id' ) );
 		$gBitSmarty->assign( 'writeReview', TRUE );
 	}
 	if( empty( $moduleTitle ) ) {

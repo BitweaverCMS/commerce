@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.27 2007/08/16 21:11:13 lsces Exp $
+// $Id: functions_lookups.php,v 1.28 2007/08/21 04:36:58 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -191,22 +191,6 @@
     }
   }
 
-
-////
-// validate products_id
-  function zen_products_id_valid($valid_id) {
-	$ret = FALSE;
-	if( is_numeric( $valid_id ) ) {
-	    global $gBitDb;
-    	$check_valid = $gBitDb->getOne("select p.`products_id`
-        	                         from " . TABLE_PRODUCTS . " p
-            	                     where `products_id`='" . $valid_id . "'");
-	    if( $check_valid ) {
-    	  $ret = true;
-	    }
-	}
-    return $ret;
-  }
 
 /**
  * Return a product's name.
