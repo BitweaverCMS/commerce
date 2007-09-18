@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.3 2007/05/01 16:27:26 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.4 2007/09/18 07:46:30 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -42,6 +42,26 @@ class CommerceCommission extends BitBase {
 			} else {
 				$pParamHash['commissions_payments_id'] = $this->mDb->GenID( 'com_commissions_payments_id_seq' );
 				$pParamHash['payment_store']['commissions_payments_id'] = $pParamHash['commissions_payments_id'];
+				$sql = "SELECT cop.`orders_products_id`, cop.`products_commission` * cop.`products_quantity` AS products_commissions_total
+						FROM " . TABLE_ORDERS . " co  
+							INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
+							INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
+							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
+						WHERE lc.`user_id`=? AND co.`date_purchased` > ? AND co.`date_purchased` <= ?";
+
+				$payedProducts = $this->mDb->getAssoc( $sql, array( $pParamHash['payment_store']['payee_user_id'], $pParamHash['payment_store']['period_start_date'], $pParamHash['payment_store']['period_end_date'] ) );
+				$totalPayed = 0;
+				foreach( $payedProducts AS $ordersProductsId => $productsCommissionsTotal ) {
+					$this->mDb->query( "UPDATE  " . TABLE_ORDERS_PRODUCTS . " SET `commissions_payments_id`=? WHERE `orders_products_id`=?", array( $pParamHash['commissions_payments_id'], $ordersProductsId ) );
+					$totalPayed += $productsCommissionsTotal;
+				}
+
+				if( $totalPayed != $pParamHash['payment_amount'] ) {
+					$this->mErrors['commissions_payment'] = "Payment amount is not equal to products commissions ($totalPayed != $pParamHash[payment_amount] user " . $pParamHash['payment_store']['payee_user_id'] . ")";
+					bit_error_log( $this->mErrors['commissions_payment'] );
+					$this->mDb->RollbackTrans();
+return FALSE;
+				}				
 				$this->mDb->associateInsert( TABLE_COMMISSIONS_PAYMENTS, $pParamHash['payment_store'] );
 			}
 			switch( $pParamHash['payment_store']['payment_method'] ) {
@@ -59,6 +79,7 @@ class CommerceCommission extends BitBase {
 		} else {
 			$this->mDb->RollbackTrans();
 		}
+		return( count($this->mErrors) == 0 );
 	}
 
 	function getCommissions( $pListHash ) {
@@ -79,7 +100,7 @@ class CommerceCommission extends BitBase {
 		}
 
 		if( !empty( $pListHash['commissions_delay'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->OffsetDate( $pListHash['commissions_delay'], 'co.`date_purchased`' ).' < '.$throughDate;
+			$whereSql .= ' AND co.`date_purchased` < '.$throughDate;
 		}
 
 		$sql = "SELECT lc.`user_id`, uu.`content_id`, uu.`real_name`, uu.`login`, uu.`email`, lcp.`pref_value` AS `payment_method`, SUM(cop.`products_commission` * cop.`products_quantity`) AS `commission_sum`

@@ -15,12 +15,13 @@ $commissionManager = new CommerceCommission();
 
 $listHash  = array();
 
-$date = getdate();
-$periodEndDate = $date['year'].'-'.str_pad( $date['mon'], 2, '0', STR_PAD_LEFT ).'-01';
-$gBitSmarty->assign( 'periodEndDate', $periodEndDate );
+$listHash['commissions_delay'] = $gBitSystem->getConfig( 'com_commissions_delay', '60' );
+$endEpoch = strtotime( "-".$listHash['commissions_delay']." days" );
+$listHash['commissions_due'] = $endEpoch;
 
-$listHash['commissions_due'] = strtotime( $periodEndDate.' 23:59:59' );
-$listHash['commissions_delay'] = $gBitSystem->getConfig( 'com_commissions_delay', '30' );
+$date = getdate( $endEpoch );
+$periodEndDate = $date['year'].'-'.str_pad( $date['mon'], 2, '0', STR_PAD_LEFT ).'-'.str_pad( $date['mday'], 2, '0', STR_PAD_LEFT );
+$gBitSmarty->assign( 'periodEndDate', $periodEndDate );
 
 if( !empty( $_REQUEST['save_payment'] ) ) {
 	$commissionManager->storePayment( $_REQUEST );
