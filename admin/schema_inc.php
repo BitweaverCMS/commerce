@@ -680,6 +680,21 @@ BITCOMMERCE_INSTALL_PREFIX.'com_meta_tags_products_desc' => "
   CONSTRAINT ', CONSTRAINT `meta_tags_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
+	commissions_payments_id I4 PRIMARY AUTO,
+	payee_user_id I4 NOTNULL,
+	payer_user_id I4 NOTNULL,
+	period_start_date T NOTNULL,
+	period_end_date T NOTNULL,
+	payment_date T NOTNULL,
+	payment_amount N(15,2) NOTNULL,
+	payment_method C(250) NOTNULL,
+	payment_reference_number C(250),
+	payment_note x
+    CONSTRAINT ', CONSTRAINT `com_commissions_payer_ref` FOREIGN KEY ( `payer_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )
+                , CONSTRAINT `com_commissions_payee_ref` FOREIGN KEY ( `payee_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   orders_id I4 PRIMARY AUTO,
   customers_id I4,
@@ -747,6 +762,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
   products_name C(64),
   products_price N(15,4),
   products_commission N(15,4),
+  commissions_payments_id I4,
   products_cogs N(15,4),
   final_price N(15,4),
   products_tax N(7,4),
@@ -757,7 +773,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
   products_discount_type I1,
   products_discount_type_from I1
   CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
-  			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
+  			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
+  			  , CONSTRAINT `ord_prod_com_ref` FOREIGN KEY ( `commissions_payments_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_commissions_payments` ( `commissions_payments_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
@@ -829,21 +846,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
   class C(32),
   sort_order I4
   CONSTRAINT ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
-",
-
-BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
-	commissions_payments_id I4 PRIMARY AUTO,
-	payee_user_id I4 NOTNULL,
-	payer_user_id I4 NOTNULL,
-	period_start_date T NOTNULL,
-	period_end_date T NOTNULL,
-	payment_date T NOTNULL,
-	payment_amount N(15,2) NOTNULL,
-	payment_method C(250) NOTNULL,
-	payment_reference_number C(250),
-	payment_note x
-    CONSTRAINT ', CONSTRAINT `com_commissions_payer_ref` FOREIGN KEY ( `payer_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )
-                , CONSTRAINT `com_commissions_payee_ref` FOREIGN KEY ( `payee_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
