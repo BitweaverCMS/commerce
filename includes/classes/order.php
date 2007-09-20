@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.57 2007/08/20 19:55:52 spiderr Exp $
+// $Id: order.php,v 1.58 2007/09/20 04:27:04 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -196,7 +196,7 @@ class order extends BitBase {
                               'country' => $order->fields['customers_country'],
                               'format_id' => $order->fields['customers_address_format_id'],
                               'telephone' => $order->fields['customers_telephone'],
-                              'email_address' => $order->fields['customers_email_address']);
+                              'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
 
       $this->delivery = array('name' => $order->fields['delivery_name'],
                               'company' => $order->fields['delivery_company'],
