@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.10 2007/02/19 15:59:24 spiderr Exp $
+// $Id: product_info_display.php,v 1.11 2007/09/20 07:01:59 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -121,11 +121,13 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
             <?php
             if ($products_qty_box_status == '0' or $products_quantity_order_max== '1') {
               // hide the quantity box and default to 1
-              $the_button = '<input type="hidden" name="cart_quantity" value="1" />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']) . zen_image_submit(BUTTON_IMAGE_IN_CART, BUTTON_IN_CART_ALT);
+              $the_button = '<input type="hidden" name="cart_quantity" value="1" />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']);
             } else {
               // show the quantity box
-              $the_button = PRODUCTS_ORDER_QTY_TEXT . '<input type="text" name="cart_quantity" value="' . (zen_get_buy_now_qty($_GET['products_id'])) . '" maxlength="6" size="4" /><br />' . zen_get_products_quantity_min_units_display((int)$_GET['products_id']) . '<br />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']) . zen_image_submit(BUTTON_IMAGE_IN_CART, BUTTON_IN_CART_ALT);
+              $the_button = PRODUCTS_ORDER_QTY_TEXT . '<input type="text" name="cart_quantity" value="' . (zen_get_buy_now_qty($_GET['products_id'])) . '" maxlength="6" size="4" /><br />' . zen_get_products_quantity_min_units_display((int)$_GET['products_id']) . '<br />' . zen_draw_hidden_field('products_id', (int)$_GET['products_id']);
             }
+			$title = !empty( $_REQUEST['sub'] ) ? $_REQUEST['sub'] : BUTTON_IN_CART_ALT;
+			$the_button .= zen_image_submit( BUTTON_IMAGE_IN_CART, $title );
             echo zen_get_buy_now_button($_GET['products_id'], $the_button);
             ?>
           </td>
