@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.21 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: modules.php,v 1.22 2007/09/20 06:52:03 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -289,8 +289,7 @@
       break;
     default:
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
-
-      if ($mInfo->status == '1') {
+      if( !empty( $mInfo->status ) && $mInfo->status == '1') {
         $keys = '';
         reset($mInfo->keys);
         while (list(, $value) = each($mInfo->keys)) {
