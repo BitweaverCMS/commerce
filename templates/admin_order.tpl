@@ -77,10 +77,10 @@ function saveNewOption( pForm ) {
 	{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
 </td>
 </tr>
-{if !empty( $order->products[p].attributes )}
 <tr class="dataTableRow">
 	<td><a href="product_history.php?products_id={$order->products[p].products_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Products History" alt="H" /></a></td>
 	<td class="dataTableContent" colspan="7">
+{if !empty( $order->products[p].attributes )}
 {section loop=$order->products[p].attributes name=a}
 		<div class="orders products attributes" id="{$order->products[p].attributes[a].products_attributes_id}att">
 			<nobr><em>&bull; {$order->products[p].attributes[a].option}: {$order->products[p].attributes[a].value}
@@ -93,6 +93,7 @@ function saveNewOption( pForm ) {
 			</nobr>
 		</div>
 {/section}
+{/if}
 		<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
@@ -103,7 +104,6 @@ function saveNewOption( pForm ) {
 	</td>
 </tr>
 
-{/if}
 {/section}
           <tr>
             <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
