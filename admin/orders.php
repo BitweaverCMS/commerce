@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.48 2007/08/21 02:45:47 spiderr Exp $
+//  $Id: orders.php,v 1.49 2007/10/10 03:18:46 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -28,6 +28,16 @@
 	$gBitThemes->loadAjax( 'prototype' );
 
 	$currencies = new currencies();
+
+	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
+		$oID = zen_db_prepare_input($_REQUEST['oID']);
+		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
+		    $order = new order($oID);
+			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
+		} else {
+			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
+		}
+	}
 
 	if( $gBitThemes->isAjaxRequest() ) {
 		require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
@@ -40,9 +50,9 @@
 						$optionValuesList[$optValId] = $optVal['products_options_values_name'];
 					}
 					require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
-					print smarty_function_html_options(array('options'		=> $optionValuesList,
-														'name'			=> 'newOrderOptionValue',
-														'print_result'	=> FALSE ), $gBitSmarty );
+					print smarty_function_html_options(array( 'options'			=> $optionValuesList,
+															  'name'			=> 'newOrderOptionValue',
+															  'print_result'	=> FALSE ), $gBitSmarty );
 					print '<input type="submit" value="save" name="save_new_option">';
 				} else {
 					print "<span class='error'>No Options</span>";
@@ -50,21 +60,23 @@
 			} else {
 				print "<span class='error'>Unkown Option</span>";
 			}
+		} elseif( !empty( $_REQUEST['address_type'] ) ) {
+			$addressType = $_REQUEST['address_type'];
+			$entry = $order->$addressType;
+			$countryId = zen_get_country_id( $entry['country'] );
+			if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
+				$statePullDown = zen_draw_input_field('state', $entry['state'] );
+				$gBitSmarty->assign( 'statePullDown', $statePullDown );
+			}
+
+			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId ) );
+			$gBitSmarty->assign_by_ref( 'address', $entry );
+			$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 		} else {
 				print "<span class='error'>Empty Option</span>";
 		}
 
 		exit;
-	}
-
-	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
-		$oID = zen_db_prepare_input($_REQUEST['oID']);
-		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
-		    $order = new order($oID);
-			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
-		} else {
-			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
-		}
 	}
 
 	if( empty( $order ) ) {
@@ -88,7 +100,6 @@
 		if( !empty( $_REQUEST['action'] ) ) {
 		switch( $_REQUEST['action'] ) {
 			case 'save_new_option':
-
 				$query = "SELECT 
 					cpo.`products_options_name` AS products_options,
 					cpa.`products_options_values_name` AS products_options_values,
@@ -121,29 +132,45 @@
 				$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'].'&action=edit' );
 				break;
+		  case 'save_address':
+				$addressType = $_REQUEST['address_type'];
+				$saveAddress[$addressType.'_name'] = $_REQUEST['name'];
+				$saveAddress[$addressType.'_company'] = $_REQUEST['company'];
+				$saveAddress[$addressType.'_street_address'] = $_REQUEST['street_address'];
+				$saveAddress[$addressType.'_suburb'] = $_REQUEST['suburb'];
+				$saveAddress[$addressType.'_city'] = $_REQUEST['city'];
+				$saveAddress[$addressType.'_state'] = $_REQUEST['state'];
+				$saveAddress[$addressType.'_postcode'] = $_REQUEST['postcode'];
+				$saveAddress[$addressType.'_country'] = zen_get_country_name( $_REQUEST['country_id'] );
+				$saveAddress[$addressType.'_telephone'] = $_REQUEST['telephone'];
+				$gBitDb->StartTrans();
+				$gBitDb->associateUpdate( TABLE_ORDERS, $saveAddress, array( 'orders_id'=>$_REQUEST['oID'] ) ); 
+				$gBitDb->CompleteTrans();
+				bit_redirect( $_SERVER['PHP_SELF'].'?oID='.$_REQUEST['oID'] );
+				exit;
+				break;
 		  case 'update_order':
-			// demo active test
-			if (zen_admin_demo()) {
-				$_GET['action']= '';
-				$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
+				// demo active test
+				if (zen_admin_demo()) {
+					$_GET['action']= '';
+					$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
+					zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+				}
+
+				if( $order->updateStatus( $_REQUEST ) ) {
+					if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
+						// adjust download_maxdays based on current date
+						$zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
+						$update_downloads_query = "UPDATE " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " SET download_maxdays=?, download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`=?";
+						$gBitDb->query($update_downloads_query, array( $zc_max_days, (int)$oID ) );
+					}
+					$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
+				} else {
+					$messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
+				}
+
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
-			}
-
-			if( $order->updateStatus( $_REQUEST ) ) {
-			 if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
-				// adjust download_maxdays based on current date
-				$zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
-
-				$update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . (int)$oID . "'";
-				$gBitDb->Execute($update_downloads_query);
-			  }
-			  $messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
-			} else {
-			  $messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
-			}
-
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
-			break;
+				break;
 		  case 'combine':
 			if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
 				$combineOrder = new order( $_REQUEST['combine_order_id'] );

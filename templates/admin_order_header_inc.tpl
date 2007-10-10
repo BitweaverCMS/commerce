@@ -1,3 +1,17 @@
+{literal}
+<script type="text/javascript">/* <![CDATA[ */
+function editAddress( pAddress ) {
+	var myAjax = new Ajax.Updater(
+		pAddress+'address', 
+		"{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}", 
+		{
+			method: 'get', 
+			parameters: 'address_type='+pAddress+'&oID='+{/literal}{$smarty.request.oID}{literal}
+		});
+}
+/* ]]> */</script>
+{/literal}
+
 
 <table>
 <tr>
@@ -46,19 +60,22 @@
 	</tr>
 	<tr>
 		<td valign="top">
-			<strong>{tr}Shipping Address{/tr}</strong><br/>
+			<strong>{tr}Shipping Address{/tr}</strong> [<a onclick="editAddress('delivery');return false;">Edit</a>]<br/>
+<div id="deliveryaddress">
 {php}
 global $order;
 echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br />');
 {/php}
-
+</div>
 		</td>
 		<td valign="top"><table>
-			<strong>{tr}Billing Address{/tr}</strong><br/>
+			<strong>{tr}Billing Address{/tr}</strong> [<a onclick="editAddress('billing');return false;">Edit</a>]<br/>
+<div id="billingaddress">
 {php}
 global $order;
 echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<br />');
 {/php}
+</div>
 		</td>
 	  </tr>
 	</table>
