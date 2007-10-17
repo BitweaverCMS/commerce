@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.5 2006/07/12 04:12:59 spiderr Exp $
+// $Id: account_history_info.php,v 1.6 2007/10/17 20:48:41 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -110,6 +110,12 @@
         echo '<br /><nobr><small>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'] . '</i></small></nobr>';
       }
     }
+
+	$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$order->products[$i]['type_handler'].'_info/orders_product_inc.php';
+	if( file_exists( $ordersProductFile ) ) {
+		$ordersProductHash = $order->products[$i];
+		include( $ordersProductFile );
+	}
 
     echo '          </td>' . "\n";
 

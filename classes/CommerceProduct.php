@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.100 2007/08/20 19:26:40 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.101 2007/10/17 20:48:41 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -113,7 +113,7 @@ class CommerceProduct extends LibertyAttachable {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
-			$query = "SELECT p.*, pd.*, pt.*, uu.* $selectSql ,lc.*, m.*, cat.*, catd.*
+			$query = "SELECT p.*, pd.*, pt.*, uu.`real_name`, uu.`login` $selectSql , m.*, cat.*, catd.*, lc.*
 					  FROM " . TABLE_PRODUCTS . " p
 					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
@@ -835,13 +835,20 @@ $this->debug(0);
 					$this->mDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $bindVars);
 				}
 			}
-
+			// did we recieve an arbitrary file, or uploaded file as the product image?
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
-				file_exists( $pParamHash['products_image'] );
-				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
- 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['source_file']	= $pParamHash['products_image'];
 				$fileHash['name']			= basename( $fileHash['source_file'] );
+				$fileHash['source_name']	= $fileHash['source_file'];
+			} elseif( !empty( $pParamHash['products_image_upload']['size'] ) ) {
+				$fileHash['source_file']	= $pParamHash['products_image_upload']['tmp_name'];
+				$fileHash['name']			= basename( $pParamHash['products_image_upload']['name'] );
+				$fileHash['source_name']	= $pParamHash['products_image_upload']['name'];
+			}
+
+			if( !empty( $fileHash ) ) {
+				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
+				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
@@ -850,9 +857,9 @@ $this->debug(0);
 					// some docs at http://wiki.cc/php/Fileinfo
 					$res = finfo_open( FILEINFO_MIME );
 					$info = new finfo( FILEINFO_MIME );
-					$fileHash['type'] = finfo_file( $res, $pParamHash['products_image'] );
+					$fileHash['type'] = finfo_file( $res, $fileHash['source_file'] );
 				} else {
-					$pathParts = pathinfo( $pParamHash['products_image'] );
+					$pathParts = pathinfo( $fileHash['source_name'] );
 					$fileHash['type'] = 'image/'.$pathParts['extension'];
 				}
 				liberty_process_image( $fileHash );
