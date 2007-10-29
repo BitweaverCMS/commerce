@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.25 2007/08/07 06:02:35 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.26 2007/10/29 03:50:02 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -66,15 +66,14 @@
 					foreach( array_keys( $commissions ) as $commId ) {
 						$commissions[$commId]['period_end_epoch'] = strtotime( $commissions[$commId]['period_end_date'] );
 					}
-					rewind( $commissions );
 				}
 				$commission = current( $commissions );
 				foreach( $sales AS $sale ) {
-					array_push( $ret, $sale );
-					if( !empty( $commission ) && $commission['period_end_epoch'] > $sale['purchased_epoch'] ) {
+					if( !empty( $commission ) && ((int)$commission['period_end_epoch'] < (int)$sale['purchased_epoch']) ) {
 						array_push( $ret, $commission );
 						$commission = next( $commissions );
 					}
+					array_push( $ret, $sale );
 				}
 				// add the last commission if no sales since last payment
 				if( !empty( $commission ) ) {
