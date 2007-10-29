@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.4 2007/09/18 07:46:30 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.5 2007/10/29 02:35:08 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -56,9 +56,9 @@ class CommerceCommission extends BitBase {
 					$totalPayed += $productsCommissionsTotal;
 				}
 
-				if( $totalPayed != $pParamHash['payment_amount'] ) {
+				if( (int)$totalPayed != (int)$pParamHash['payment_amount'] ) {
 					$this->mErrors['commissions_payment'] = "Payment amount is not equal to products commissions ($totalPayed != $pParamHash[payment_amount] user " . $pParamHash['payment_store']['payee_user_id'] . ")";
-					bit_error_log( $this->mErrors['commissions_payment'] );
+					bit_log_error( $this->mErrors['commissions_payment'] );
 					$this->mDb->RollbackTrans();
 return FALSE;
 				}				
