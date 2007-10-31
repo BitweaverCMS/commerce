@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.26 2007/10/29 03:50:02 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.27 2007/10/31 11:27:40 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -43,6 +43,19 @@
 				}
 			}
 			return $ret;
+		}
+
+		function getPurchaseStats( $pCustomerId ) {
+			global $gBitDb;
+			if( empty( $pCustomerId ) ) {
+				$pCustomerId = $this->mCustomerId;
+			}
+			
+			$bindVars[] = $pCustomerId;
+			$bindVars[] = DEFAULT_ORDERS_STATUS_ID;
+
+			$sql = "SELECT count( `orders_id` ), sum( `order_total` ) FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `orders_status` > ?";
+			return $gBitDb->getRow( $sql, $bindVars );
 		}
 
 		function getCommissionsHistory() {
