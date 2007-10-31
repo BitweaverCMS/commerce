@@ -17,14 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.14 2007/10/31 11:24:56 spiderr Exp $
+//  $Id: gv_mail.php,v 1.15 2007/10/31 12:44:00 spiderr Exp $
 //
 
-  require('includes/application_top.php');
+  require_once('includes/application_top.php');
+  require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php');
 
-  $currencies = new currencies();
-
-  $_REQUEST['amount'] = (!empty( $_REQUEST['amount'] ) ? preg_replace( '/[^\d.]/', '', $_REQUEST['amount'] ) : 0);
+  $_REQUEST['amount'] = (!empty( $_REQUEST['amount'] ) ? preg_replace( '/[^\d.]/', '', $_REQUEST['amount'] ) : NULL);
 
 	if ( !empty( $_GET['action'] ) ) {
 		if ($_GET['action'] == 'set_editor') {
@@ -36,7 +35,7 @@
 			$action='';
 			zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL));
 		}
-		if ( ($_GET['action'] == 'send_email_to_user') && (!empty( $_REQUEST['customers_email_address'] ) || !empty( $_REQUEST['email_to'] )) && (empty( $_REQUEST['back_x'] ) ) ) {
+		if ( ($_GET['action'] == 'send_email_to_user') && (!empty( $_REQUEST['customers_email_address'] ) || !empty( $_REQUEST['email_to'] )) && (empty( $_REQUEST['back'] ) ) ) {
 			$from = zen_db_prepare_input($_REQUEST['from']);
 			$subject = zen_db_prepare_input($_REQUEST['subject']);
 /*
@@ -99,8 +98,7 @@ This code is just too damned dangerous to be useful - possibly send every custom
 				}
 			}
 */
-
-			if ( !empty( $_REQUEST['email_to'] ) ) {
+			if ( !empty( $_REQUEST['send_gv'] ) ) {
 				$mailSentTo = $_REQUEST['email_to'];
 				$id1 = CommerceVoucher::generateCouponCode( $_REQUEST['email_to'] );
 				$message = zen_db_prepare_input($_REQUEST['message']);
@@ -146,8 +144,15 @@ This code is just too damned dangerous to be useful - possibly send every custom
 											values ('" . $insert_id ."', '0', 'Admin',
 													'" . $_REQUEST['email_to'] . "', now() )");
 
+				if( !empty( $_REQUEST['oID'] ) ) {
+					$order = new order( $_REQUEST['oID'] );
+					$status['comments'] = 'A $'.$_REQUEST['amount'].' Gift Certificate ( '.$id1.' ) was emailed to '.$_REQUEST['email_to'].' in relation to order '.$_REQUEST['oID'].'';
+					$order->updateStatus( $status );
+					zen_redirect(zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $_REQUEST['oID'] ));
+				} else {
+					zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL, 'mailSentTo=' . urlencode($mailSentTo) . '&recip_count='. $recip_count ));
+				}
 			}
-			zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL, 'mailSentTo=' . urlencode($mailSentTo) . '&recip_count='. $recip_count ));
 		}
 
 		if ( ($_GET['action'] == 'preview') && empty( $_REQUEST['customers_email_address'] ) && empty( $_REQUEST['email_to'] ) ) {

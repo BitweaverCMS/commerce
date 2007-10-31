@@ -48,6 +48,15 @@
 	{/forminput}
 </div>
 
+{if $smarty.request.oID}
+<div class="row">
+	{formlabel label="Related Order"}
+	{forminput}
+		{$smarty.request.oID}
+	{/forminput}
+</div>
+{/if}
+
 {* Re-Post all POST'ed variables *}
 {foreach from=$smarty.post key=key item=value}
 	<input type="hidden" name="{$key}" value="{$value|escape}" />
@@ -56,7 +65,7 @@
 <div class="row submit">
 	{forminput}
 		<input class="button" name="Back" value="Back" type="submit" />
-		<input class="button" name="Send Email" value="Send Email" type="submit" />
+		<input class="button" name="send_gv" value="Send Email" type="submit" />
 	{/forminput}
 </div>
 
@@ -160,7 +169,6 @@ function check_form(form_name) {
 
 
 {form name="mail" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`gv_mail.php?action=preview" method="post" onsubmit="return check_form(mail);"}
-
 <div class="row">
 	{formlabel label="Email To"}
 	{forminput}
@@ -222,6 +230,13 @@ function check_form(form_name) {
 	{formlabel label="Message"}
 	{forminput}
 		<textarea name="message" wrap="soft" cols="60" rows="15">{$smarty.request.message|default:$smarty.const.TEXT_GV_ANNOUNCE|strip_tags|stripslashes|escape|trim}</textarea>
+	{/forminput}
+</div>
+
+<div class="row">
+	{formlabel label="Related to Order"}
+	{forminput}
+		<input type="text" name="oID" value="{$smarty.request.oID}" />
 	{/forminput}
 </div>
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.49 2007/10/10 03:18:46 spiderr Exp $
+//  $Id: orders.php,v 1.50 2007/10/31 12:44:01 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -258,14 +258,6 @@
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' );
 
 ?>
-	  <div style="margin-top:15px;">
-        		<?php echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_INVOICE, 'oID=' . $_REQUEST['oID']) . '" TARGET="_blank">' . zen_image_button('button_invoice.gif', IMAGE_ORDERS_INVOICE) . '</a>
-				<a href="' . zen_href_link_admin(FILENAME_ORDERS_PACKINGSLIP, 'oID=' . $_REQUEST['oID']) . '" TARGET="_blank">' . zen_image_button('button_packingslip.gif', IMAGE_ORDERS_PACKINGSLIP) . '</a>
-				<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $_REQUEST['oID'] . '&action=delete', 'NONSSL') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>
-<br/><br/>				<form method="post" action="' . zen_href_link_admin( FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action'))) . '&amp;oID=' . $_REQUEST['oID'] . '&amp;action=combine">Combine with order: <input type="text" name="combine_order_id" style="width:100px;" /><input type="submit" name="combine" value="' . tra( 'Combine' ) . '" class="button" /><br/><input type=checkbox name="combine_notify" value="on" checked="checked">Notify Customer
-<br/><em class="small">Both orders must have status '. zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID ) .'. This order will deleted.</em></form>'; ?>
-	  </div>
-	  
 
 </td>
 <td valign="top" style="width:33%;">

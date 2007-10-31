@@ -151,4 +151,20 @@ function saveNewOption( pForm ) {
 	var tabPane;
 </script>
 </div>
-
+<div style="margin-top:15px;">
+	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}" class="button">{tr}Invoice{/tr}</a>
+	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}" class="button">{tr}Packing Slip{/tr}</a>
+	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete" class="button">{tr}Delete{/tr}</a>
+	<form method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
+		<input type="hidden" name="email_to" value="{$membershipInfo.email}" />
+		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
+		<input type="submit" name="Send" value="Send Gift Certificate" />
+	</form>
+{form method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
+	{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" style="width:100px;" />
+	<input type="submit" name="combine" value="{tr}Combine{/tr}" class="button" />
+	<br/><input type=checkbox name="combine_notify" value="on" checked="checked">Notify Customer
+	<br/><em class="small">Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</em>
+{/form}
+</div>
+	  
