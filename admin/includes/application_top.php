@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.25 2007/08/07 05:59:44 spiderr Exp $
+//  $Id: application_top.php,v 1.26 2007/10/31 11:25:28 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -247,6 +247,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 // initialize the message stack for output messages
   require_once(DIR_WS_CLASSES . 'message_stack.php');
   $messageStack = new messageStack;
+	$gBitSmarty->assign_by_ref( 'messageStack', $messageStack );
 
 //  split-page-results
 //  require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'split_page_results.php');
