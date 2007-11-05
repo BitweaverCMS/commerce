@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.50 2007/10/31 12:44:01 spiderr Exp $
+//  $Id: orders.php,v 1.51 2007/11/05 03:45:50 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -197,8 +197,9 @@
 			  zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
 			}
 			$gBitUser->verifyTicket();
-			zen_remove_order($oID, $_POST['restock']);
-			bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
+			if( $order->expunge( $_POST['restock'] ) ) {
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
+			}
 			break;
 		  default:
 		  // reset single download to on
