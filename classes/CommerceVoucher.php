@@ -116,6 +116,72 @@ class CommerceVoucher extends BitBase {
 		return $ret;
 	}
 
+	// This method is very similar to customerSendCoupon, however is done via
+	// admin or automated means. Eventually these two functions should be
+	// merged/simplified
+	function adminSendCoupon( $pParamHash ) {
+		global $gBitUser, $gBitCustomer, $gBitSystem, $currencies;
+		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
+		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
+		$ret = FALSE;
+		if( !empty( $pParamHash['email_to'] ) && !empty( $pParamHash['amount'] ) )  {
+			if( empty( $pParamHash['from'] ) ) {
+				$pParamHash['from'] = EMAIL_FROM;
+			}
+			$from = zen_db_prepare_input( $pParamHash['from'] );
+			if( empty( $pParamHash['subject'] ) ) {
+				$pParamHash['subject'] = $gBitSystem->getConfig( 'site_title' ).' '.tra( "Gift Certificate" );
+			}
+			$subject = zen_db_prepare_input( $pParamHash['subject'] );
+			$mailSentTo = $pParamHash['email_to'];
+			$id1 = $this->generateCouponCode( $pParamHash['email_to'] );
+			if( empty( $pParamHash['message'] ) ) {
+				$pParamHash['message'] = trim( stripslashes( strip_tags( TEXT_GV_ANNOUNCE ) ) );
+			}
+			$message = zen_db_prepare_input($pParamHash['message']);
+			$message .= "\n\n" . TEXT_GV_WORTH  . $currencies->format($pParamHash['amount']) . "\n\n";
+			$message .= TEXT_TO_REDEEM;
+			$message .= TEXT_WHICH_IS . ' ' . $id1 . ' ' . TEXT_IN_CASE . "\n\n";
+
+			$html_msg['GV_WORTH']  = TEXT_GV_WORTH  . $currencies->format($pParamHash['amount']) .'<br />';
+			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . "\n\n";
+
+			if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
+				$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1 . "\n\n";
+				$html_msg['GV_CODE_URL']  = '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>'. "&nbsp;";
+			} else {
+				$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 . "\n\n";
+				$html_msg['GV_CODE_URL']  =  '<a href="'. HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>' . "&nbsp;";
+			}
+			$message .= TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG  . TEXT_ENTER_CODE . "\n\n";
+			$html_msg['GV_CODE_URL']  .= TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE;
+			$html_msg['EMAIL_MESSAGE_HTML'] = !empty( $pParamHash['message_html'] ) ? zen_db_prepare_input($pParamHash['message_html']) : '';
+			$html_msg['EMAIL_FIRST_NAME'] = ''; // unknown, since only an email address was supplied
+			$html_msg['EMAIL_LAST_NAME']  = ''; // unknown, since only an email address was supplied
+			// disclaimer
+			$message .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
+
+			// Now create the coupon main entry
+			$this->mDb->query("insert into " . TABLE_COUPONS . " (coupon_code, coupon_type, coupon_amount, date_created) values ( ?, 'G', ?, now())", array( $id1, $pParamHash['amount'] ) );
+			$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
+			$this->mDb->query( "INSERT INTO " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ( ?, '0', ?, ?, now() )", array( $insert_id, $gBitUser->getDisplayName(), $pParamHash['email_to'] ) );
+
+			// Send the emails
+			zen_mail( '', $pParamHash['email_to'], $subject , $message, $from, $from, $html_msg, 'gv_mail' );
+			if (SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_STATUS== '1' and SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO != '') {
+				zen_mail('', SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO, SEND_EXTRA_DISCOUNT_COUPON_ADMIN_EMAILS_TO_SUBJECT . ' ' . $subject, $message, $from, $from, $html_msg, 'gv_mail_extra');
+			}
+
+			if( !empty( $pParamHash['oID'] ) ) {
+				$order = new order( $pParamHash['oID'] );
+				$status['comments'] = 'A $'.$pParamHash['amount'].' Gift Certificate ( '.$id1.' ) was emailed to '.$pParamHash['email_to'].' in relation to order '.$pParamHash['oID'].'';
+				$order->updateStatus( $status );
+			}
+			$ret = TRUE;
+		}
+		return $ret;
+	}
+
 	function customerSendCoupon( $pFromUser, $pRecipient, $pAmount ) {
 		global $gBitDb, $gBitSmarty, $gCommerceSystem, $currencies;
 		$ret = NULL;
