@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.58 2007/09/20 04:27:04 spiderr Exp $
+// $Id: order.php,v 1.59 2007/11/05 03:47:01 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -290,6 +290,36 @@ class order extends BitBase {
         $orders_products->MoveNext();
        }
     }
+
+	function expunge( $pRestock=FALSE ) {
+		global $gBitProduct, $gBitDb;
+		$ret = NULL;
+
+		if( BitBase::verifyId( $this->mOrdersId ) ) {
+			$gBitDb->StartTrans();
+			if ($pRestock == 'on') {
+				if( $products = $gBitDb->getAssoc("SELECT `products_id`, `products_quantity` FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) ) ) {
+					foreach( $products AS $productsId=>$productsQuantity  ) {
+						$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = `products_quantity` + ?, `products_ordered` = `products_ordered` - ? WHERE `products_id` = ?", array( $productsQuantity, $productsQuantity, $productsId ) );
+					}
+				}
+			}
+
+			$gBitProduct->invokeServices( 'commerce_expunge_order_function', $this );
+
+			$gBitDb->query("DELETE FROM " . TABLE_COUPON_GV_QUEUE . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
+			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$gBitDb->query("DELETE FROM " . TABLE_ORDERS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+
+			$gBitDb->CompleteTrans();
+			$ret = TRUE;
+		}
+
+		return $ret;
+	}
 
 	function getOrderAttributePrice( $pAttributeHash, $pProductHash ) {
 		$ret = 0;

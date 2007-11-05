@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: general.php,v 1.45 2007/08/21 04:36:58 spiderr Exp $
+//  $Id: general.php,v 1.46 2007/11/05 03:46:39 spiderr Exp $
 //
 
 ////
@@ -940,42 +940,6 @@
     }
   }
 */
-
-  function zen_remove_order($order_id, $restock = false) {
-    global $gBitDb;
-	$gBitDb->StartTrans();
-    if ($restock == 'on') {
-      $order = $gBitDb->Execute("SELECT `products_id`, `products_quantity`
-                             FROM " . TABLE_ORDERS_PRODUCTS . "
-                             WHERE `orders_id` = '" . (int)$order_id . "'");
-
-      while (!$order->EOF) {
-        $gBitDb->Execute("update " . TABLE_PRODUCTS . "
-                      set `products_quantity` = `products_quantity` + " . $order->fields['products_quantity'] . ", `products_ordered` = `products_ordered` - " . $order->fields['products_quantity'] . " WHERE `products_id` = '" . (int)$order->fields['products_id'] . "'");
-        $order->MoveNext();
-      }
-    }
-
-    $gBitDb->query("delete FROM " . TABLE_COUPON_GV_QUEUE . "
-                WHERE `order_id` = ?", array( (int)$order_id ) );
-
-    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-                  WHERE `orders_id` = '" . (int)$order_id . "'");
-
-    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_PRODUCTS . "
-                  WHERE `orders_id` = '" . (int)$order_id . "'");
-
-    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_STATUS_HISTORY . "
-                  WHERE `orders_id` = '" . (int)$order_id . "'");
-
-    $gBitDb->Execute("delete FROM " . TABLE_ORDERS_TOTAL . "
-                  WHERE orders_id = '" . (int)$order_id . "'");
-
-    $gBitDb->Execute("delete FROM " . TABLE_ORDERS . "
-    			  WHERE `orders_id` = '" . (int)$order_id . "'");
-
-	$gBitDb->CompleteTrans();
-  }
 
   function zen_get_file_permissions($mode) {
 // determine type
