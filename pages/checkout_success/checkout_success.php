@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_success.php,v 1.5 2007/05/06 19:36:55 spiderr Exp $
+// $Id: checkout_success.php,v 1.6 2007/11/05 03:52:32 spiderr Exp $
 //
 
 global $newOrdersId;
@@ -39,6 +39,7 @@ $gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gCustomer->
 // include template specific file name defines
 $define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
 
+define( 'HEADING_TITLE', tra( 'Order Success!' )." #$newOrdersId" );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/checkout_success.tpl' );
 
 ?>
