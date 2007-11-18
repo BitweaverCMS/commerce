@@ -165,7 +165,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_categories_description' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_configuration' => "
   configuration_id I4 PRIMARY AUTO,
-  configuration_title X2 NOTNULL,
+  configuration_title C(255) NOTNULL,
   configuration_key C(255) UNIQUE,
   configuration_value X2 NOTNULL,
   configuration_description X2 NOTNULL,
@@ -972,9 +972,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_wishlist' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout' => "
   configuration_id I4 PRIMARY AUTO,
-  configuration_title X2 NOTNULL,
+  configuration_title C(255) NOTNULL,
   configuration_key C(255),
-  configuration_value X2 NOTNULL,
+  configuration_value C(255) NOTNULL,
   configuration_description X2 NOTNULL,
   product_type_id I4,
   sort_order I2,
@@ -1036,7 +1036,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_authorizenet' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_paypal_session' => "
   unique_id I4 PRIMARY AUTO,
-  session_id X2 NOTNULL,
+  session_id C(255) NOTNULL,
   saved_session B,
   expiry I8
 ",
