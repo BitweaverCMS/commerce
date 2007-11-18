@@ -8,9 +8,10 @@ $registerHash = array(
 	'homeable' => TRUE,
 );
 $gBitSystem->registerPackage( $registerHash );
-define( 'BITCOMMERCE_PKG_ADMIN_URI', str_replace( 'http:', 'https:', BITCOMMERCE_PKG_URI.'admin/' ) );
 
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
+	define( 'BITCOMMERCE_PKG_ADMIN_URI', str_replace( 'http:', 'https:', BITCOMMERCE_PKG_URI.'admin/' ) );
+
 	$menuHash = array(
 		'package_name'  => BITCOMMERCE_PKG_NAME,
 		'index_url'     => BITCOMMERCE_PKG_URL.'index.php',
