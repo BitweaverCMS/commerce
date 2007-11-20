@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.10 2006/12/19 00:11:34 spiderr Exp $
+// $Id: usps.php,v 1.11 2007/11/20 07:31:07 spiderr Exp $
 //
 
 class usps {
@@ -59,20 +59,20 @@ class usps {
 			}
 		}
 
-		$this->types = array('Express' => 'Express Mail',
-							'First Class' => 'First-Class Mail',
-							'Priority' => 'Priority Mail',
-							'Parcel' => 'Parcel Post',
-							'Media' => 'Media Mail',
+		$this->types = array('EXPRESS' => 'Express Mail',
+							'FIRST CLASS' => 'First-Class Mail',
+							'PRIORITY' => 'Priority Mail',
+							'PARCEL' => 'Parcel Post',
+							'MEDIA' => 'Media Mail',
 							'BPM' => 'Bound Printed Material',
-							'Library' => 'Library'
+							'LIBRARY' => 'Library'
 							);
 
-		$this->codes = array('Express' => 'USPSEXP',
-							'First Class' => 'First-Class Mail',
-							'Priority' => 'USPSPRI',
-							'Parcel' => 'USPSPAR',
-							'Media' => 'USPSREG',
+		$this->codes = array('EXPRESS' => 'USPSEXP',
+							'FIRST CLASS' => 'First-Class Mail',
+							'PRIORITY' => 'USPSPRI',
+							'PARCEL' => 'USPSPAR',
+							'MEDIA' => 'USPSREG',
 							'Global Express Mail (EMS)' => 'USPSIGEM',
 							'Global Express Guaranteed Non-Document Service' => 'USPSIGDX',
 							'Airmail Parcel Post' => 'USPSIAPP',
@@ -163,6 +163,7 @@ class usps {
 				$size = sizeof($uspsQuote);
 				for ($i=0; $i<$size; $i++) {
 					list($type, $cost) = each($uspsQuote[$i]);
+					$type = strtoupper( $type ); //safely upper casing as USPS has fiddled with case unannounced before, see 2007-NOV-19
 // BOF: UPS USPS
 					$title = ((isset($this->types[$type])) ? $this->types[$type] : $type);
 					$code = ((isset($this->codes[$type])) ? $this->codes[$type] : '');
@@ -216,7 +217,7 @@ class usps {
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Shipping Zone', 'MODULE_SHIPPING_USPS_ZONE', '0', 'If a zone is selected, only enable this shipping method for that zone.', '7', '0', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_SHIPPING_USPS_SORT_ORDER', '0', 'Sort order of display.', '7', '0', now())");
 	// BOF: UPS USPS
-			$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Domestic Shipping Methods', 'MODULE_SHIPPING_USPS_TYPES', 'Express, Priority, First Class, Parcel, Media, BPM, Library', 'Select the domestic services to be offered:', '6', '14', 'zen_cfg_select_multioption(array(\'Express\', \'Priority\', \'First Class\', \'Parcel\', \'Media\', \'BPM\', \'Library\'), ',  now())");
+			$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Domestic Shipping Methods', 'MODULE_SHIPPING_USPS_TYPES', 'EXPRESS, PRIORITY, FIRST CLASS, PARCEL, MEDIA, BPM, LIBRARY', 'Select the domestic services to be offered:', '6', '14', 'zen_cfg_select_multioption(array(\'EXPRESS\', \'PRIORITY\', \'FIRST CLASS\', \'PARCEL\', \'MEDIA\', \'BPM\', \'LIBRARY\'), ',  now())");
 			$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Int\'l Shipping Methods', 'MODULE_SHIPPING_USPS_TYPES_INTL', 'GXG Document, GXG Non-Document, Express, Priority Lg, Priority Sm, Priority Var, Airmail Letter, Airmail Parcel, Surface Letter, Surface Post', 'Select the international services to be offered:', '6', '15', 'zen_cfg_select_multioption(array(\'GXG Document\', \'GXG Non-Document\', \'Express\', \'Priority Lg\', \'Priority Sm\', \'Priority Var\', \'Airmail Letter\', \'Airmail Parcel\', \'Surface Letter\', \'Surface Post\'), ',  now())");
 			$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('USPS Options', 'MODULE_SHIPPING_USPS_OPTIONS', 'Display weight, Display transit time', 'Select from the following the USPS options.', '6', '16', 'zen_cfg_select_multioption(array(\'Display weight\', \'Display transit time\'), ',  now())");
 	// EOF: UPS USPS
@@ -296,14 +297,14 @@ class usps {
 								'<OriginZip>' . STORE_ORIGIN_ZIP . '</OriginZip>' .
 								'<DestinationZip>' . $dest_zip . '</DestinationZip>';
 
-					switch ($key) {
-						case 'Express':
+					switch( strtoupper( $key ) ) {
+						case 'EXPRESS':
 							$transreq[$key] = 'API=ExpressMail&XML=' . urlencode( '<ExpressMailRequest ' . $transitreq . '</ExpressMailRequest>');
 							break;
-						case 'Priority':
+						case 'PRIORITY':
 							$transreq[$key] = 'API=PriorityMail&XML=' . urlencode( '<PriorityMailRequest ' . $transitreq . '</PriorityMailRequest>');
 							break;
-						case 'Parcel':
+						case 'PARCEL':
 							$transreq[$key] = 'API=StandardB&XML=' . urlencode( '<StandardBRequest ' . $transitreq . '</StandardBRequest>');
 							break;
 						default:
@@ -405,8 +406,8 @@ class usps {
 
 	// BOF: UPS USPS
 				if ($transit) {
-					switch ($service) {
-						case 'Express':     $time = ereg('<MonFriCommitment>(.*)</MonFriCommitment>', $transresp[$service], $tregs);
+					switch ( strtoupper( $service ) ) {
+						case 'EXPRESS':     $time = ereg('<MonFriCommitment>(.*)</MonFriCommitment>', $transresp[$service], $tregs);
 											$time = $tregs[1];
 											if ($time == '' || $time == 'No Data') {
 											$time = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
@@ -414,7 +415,7 @@ class usps {
 											$time = 'Tomorrow by ' . $time;
 											}
 											break;
-						case 'Priority':    $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+						case 'PRIORITY':    $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
 											$time = $tregs[1];
 											if ($time == '' || $time == 'No Data') {
 											$time = '2 - 3 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
@@ -424,7 +425,7 @@ class usps {
 											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 											}
 											break;
-						case 'Parcel':      $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+						case 'PARCEL':      $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
 											$time = $tregs[1];
 											if ($time == '' || $time == 'No Data') {
 											$time = '4 - 7 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
@@ -434,7 +435,7 @@ class usps {
 											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 											}
 											break;
-						case 'First Class': $time = '2 - 5 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						case 'FIRST CLASS': $time = '2 - 5 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 											break;
 						default:            $time = '';
 											break;
