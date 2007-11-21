@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.51 2007/11/05 03:45:50 spiderr Exp $
+//  $Id: orders.php,v 1.52 2007/11/21 17:08:14 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -49,14 +49,14 @@
 					foreach( $optionValues[$_REQUEST['new_option_id']]['values'] as $optValId=>$optVal ) {
 						$optionValuesList[$optValId] = $optVal['products_options_values_name'];
 					}
-					require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
-					print smarty_function_html_options(array( 'options'			=> $optionValuesList,
-															  'name'			=> 'newOrderOptionValue',
-															  'print_result'	=> FALSE ), $gBitSmarty );
-					print '<input type="submit" value="save" name="save_new_option">';
 				} else {
-					print "<span class='error'>No Options</span>";
+					$optionValuesList[$optionValues[$_REQUEST['new_option_id']]['products_options_values_id']] = $optionValues[$_REQUEST['new_option_id']]['products_options_values_name'];
 				}
+				require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
+				print smarty_function_html_options(array( 'options'			=> $optionValuesList,
+														  'name'			=> 'newOrderOptionValue',
+														  'print_result'	=> FALSE ), $gBitSmarty );
+				print '<input type="submit" value="save" name="save_new_option">';
 			} else {
 				print "<span class='error'>Unkown Option</span>";
 			}
