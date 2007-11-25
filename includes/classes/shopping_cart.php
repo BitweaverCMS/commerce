@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.36 2007/04/23 04:51:13 spiderr Exp $
+// $Id: shopping_cart.php,v 1.37 2007/11/25 04:49:22 spiderr Exp $
 //
 
   class shoppingCart {
@@ -479,7 +479,7 @@
               if ($attribute_price->fields['price_prefix'] == '-') {
                 if ($attribute_price->fields['attributes_discounted'] == '1') {
 // calculate proper discount for attributes
-                  $new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
+					$new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
                   $this->total -= $qty * zen_add_tax( ($new_attributes_price), $products_tax);
                 } else {
                   $this->total -= $qty * zen_add_tax($attribute_price->fields['options_values_price'], $products_tax);

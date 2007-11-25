@@ -997,7 +997,7 @@ If a special exist * 10+9
 // fix here
 // BOF: percentage discounts apply to price
     switch (true) {
-      case (zen_get_discount_qty($product_id, $qty) and !$attributes_id):
+	case (zen_get_discount_qty($product_id, $qty) and !$attributes_id):
         // discount quanties exist and this is not an attribute
         // $this->contents[$products_id]['quantity']
         $check_discount_qty_price = zen_get_products_discount_price_qty($product_id, $qty, $attributes_amount);
