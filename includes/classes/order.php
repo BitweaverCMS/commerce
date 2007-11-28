@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.59 2007/11/05 03:47:01 spiderr Exp $
+// $Id: order.php,v 1.60 2007/11/28 23:59:11 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -1184,7 +1184,8 @@ class order extends BitBase {
 			// Move statuses over to 
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_STATUS_HISTORY . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->updateStatus( array( 'notify' => !empty( $pParamHash['combine_notify'] ) , "comments" => "Order $pParamHash[source_orders_id] was combined with this order" ) );
-			zen_remove_order( $pParamHash['source_orders_id'], FALSE );
+			$delOrder  = new order( $pParamHash['source_orders_id'] );
+			$delOrder->expunge();
 			$this->mDb->CompleteTrans();
 		} else {
 			$this->mErrors['combine'] = "Address mismatch. To combine orders, they must have the same delivery address.";
