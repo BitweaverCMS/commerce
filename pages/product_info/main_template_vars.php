@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.18 2007/08/16 07:37:05 spiderr Exp $
+// $Id: main_template_vars.php,v 1.19 2007/11/30 02:18:45 spiderr Exp $
 //
 
   $sql = "SELECT COUNT(*) as `total`
@@ -34,6 +34,7 @@
 
   } else {
 
+//    $mid = 'bitpackage:bitcommerce/product_info_display.tpl';
     $tpl_page_body = 'product_info_display.php';
 
     $sql = "select p.`products_id`, pd.`products_name`,
@@ -81,6 +82,8 @@
                        $review_status;
 
     $reviews = $gBitDb->Execute($reviews_query);
+
+	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
 
   }
 

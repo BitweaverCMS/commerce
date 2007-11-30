@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.27 2007/08/16 07:28:15 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.28 2007/11/30 02:18:45 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -169,7 +169,7 @@ if ( $gBitProduct->loadAttributes() ) {
 						$selected_attribute = false;
 					}
 				} else {
-					// $selected_attribute = ($vals['attributes_default']=='1' ? true : false);
+					$selected_attribute = ($vals['attributes_default']=='1' ? true : false);
 					// if an error, set to customer setting
 					if( !empty( $_POST['id'] ) ) {
 						$selected_attribute= false;
@@ -186,73 +186,15 @@ if ( $gBitProduct->loadAttributes() ) {
 					}
 				}
 
-				switch ($gBitProduct->mOptions[$optionsId]['products_options_images_style']) {
-				case '1':
-					$tmp_radio .= zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
-					break;
-
-				case '2':
-					$tmp_radio .= zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . $products_options_details . ($vals['attributes_image'] != '' ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
-					break;
-
-				case '3':
-					$tmp_attributes_image_row++;
-
-	//                  if ($tmp_attributes_image_row > PRODUCTS_IMAGES_ATTRIBUTES_PER_ROW) {
-					if ($tmp_attributes_image_row > $gBitProduct->mOptions[$optionsId]['products_options_images_per_row']) {
-						$tmp_attributes_image .= '</tr><tr>';
-						$tmp_attributes_image_row = 1;
-					}
-
-					if ($vals['attributes_image'] != '') {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-								$products_options_value_id, $selected_attribute) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
-					} else {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-								$products_options_value_id, $selected_attribute) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
-					}
-				break;
-
-				case '4':
-					$tmp_attributes_image_row++;
-
-	//                  if ($tmp_attributes_image_row > PRODUCTS_IMAGES_ATTRIBUTES_PER_ROW) {
-					if ($tmp_attributes_image_row > $gBitProduct->mOptions[$optionsId]['products_options_images_per_row']) {
-						$tmp_attributes_image .= '</tr><tr>';
-						$tmp_attributes_image_row = 1;
-					}
-
-					if ($vals['attributes_image'] != '') {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-									$products_options_value_id, $selected_attribute) . '</td>';
-					} else {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-									$products_options_value_id, $selected_attribute) . '</td>';
-					}
-				break;
-
-				case '5':
-					$tmp_attributes_image_row++;
-
-	//                  if ($tmp_attributes_image_row > PRODUCTS_IMAGES_ATTRIBUTES_PER_ROW) {
-					if ($tmp_attributes_image_row > $gBitProduct->mOptions[$optionsId]['products_options_images_per_row']) {
-						$tmp_attributes_image .= '</tr><tr>';
-						$tmp_attributes_image_row = 1;
-					}
-
-					if ($vals['attributes_image'] != '') {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-								$products_options_value_id, $selected_attribute) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
-					} else {
-					$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-								$products_options_value_id, $selected_attribute) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
-					}
-					break;
-				case '0':
-				default:
-					$tmp_radio .= zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . $products_options_details . '<br />';
-					break;
+				// ignore products_options_images_style as this should be fully controllable via CSS
+				$tmp_radio .= '<div class="productoptions">' . 
+							  zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . 
+							  "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
+				if( !empty( $vals['attributes_image'] ) ) {
+					$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
 				}
+				$tmp_radio .= '</div>';
+
 			}
 
 			// checkboxes
