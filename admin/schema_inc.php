@@ -330,8 +330,12 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_html_attrib X,
-  attributes_required I1
-  CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )'
+  attributes_required I1,
+  purchase_group_id I4
+
+  CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )
+			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )
+  			'
 ",
 //  				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
 

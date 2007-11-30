@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.60 2007/11/28 23:59:11 spiderr Exp $
+// $Id: order.php,v 1.61 2007/11/30 06:10:17 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -833,6 +833,11 @@ class order extends BitBase {
 			if( !empty($this->products[$i]['attributes']) ) {
 				$attributes_exist = '1';
 				for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
+					if( !empty( $this->products[$i]['attributes'][$j]['purchase_group_id'] ) ) {
+						global $gBitUser;
+						$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['attributes'][$j]['purchase_group_id'] );
+					}
+
 					if (DOWNLOAD_ENABLED == 'true') {
 						$attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pom.*, pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
 										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 

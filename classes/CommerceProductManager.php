@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.5 2007/08/16 07:29:09 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.6 2007/11/30 06:10:17 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -117,6 +117,7 @@ class CommerceProductManager extends BitBase {
 //			$pParamHash['options_values_id'] = (($optionType == PRODUCTS_OPTIONS_TYPE_TEXT) || ($optionType == PRODUCTS_OPTIONS_TYPE_FILE)) ? PRODUCTS_OPTIONS_VALUES_TEXT_ID : $pParamHash['options_values_id'];
 			$attrList = array(
 				'products_options_id',
+				'purchase_group_id',
 				'options_values_price',
 				'products_options_sort_order',
 				'products_attributes_wt',

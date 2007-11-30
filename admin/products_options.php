@@ -69,7 +69,15 @@ bit_log_error( 'option store failed' );
 bit_log_error( $_REQUEST );
 	}
 } 
- 
+
+$listHash = array();
+$groups = $gBitUser->getAllGroups( $listHash );
+$groupList[] = '';
+foreach( $groups as $group ) {
+	$groupList[$group['group_id']] = $group['group_name'];
+}
+$gBitSmarty->assign_by_ref( 'groupList', $groupList );
+
 if( !empty( $editTpl ) ) {
 	$gBitSmarty->assign_by_ref( 'editTpl', $editTpl );
 }

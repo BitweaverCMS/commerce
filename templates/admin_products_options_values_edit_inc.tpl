@@ -33,6 +33,15 @@
 		<div class="formlabel">{tr}Sort Order{/tr}</div>
 		<div class="forminput"><input type="text" name="products_options_sort_order" value="{$editValue.products_options_sort_order}" size="4">&nbsp;</div>
 	</div>
+
+	<div class="row">
+		<div class="formlabel">{tr}Related Group ID{/tr}</div>
+		<div class="forminput">{html_options name="purchase_group_id" options=$groupList selected=$editValue.purchase_group_id}
+			{formhelp note="User will be added to this group upon successful purchase"}
+		</div>
+	</div>
+
+
 	<h2>{tr}Attribute Pricing{/tr}</h2>
 	<div class="row">
 		<div class="formlabel">{tr}Fixed Attribute Price{/tr}</div>
