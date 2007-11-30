@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.61 2007/11/30 06:10:17 spiderr Exp $
+// $Id: order.php,v 1.62 2007/11/30 06:44:36 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -733,7 +733,7 @@ class order extends BitBase {
 
 
 	function  create_add_products($zf_insert_id, $zf_mode = false) {
-		global $gBitDb, $currencies, $order_total_modules, $order_totals;
+		global $gBitDb, $gBitUser, $currencies, $order_total_modules, $order_totals;
 
 			$this->mDb->StartTrans();
 	// initialized for the email confirmation
@@ -822,7 +822,6 @@ class order extends BitBase {
 			$order_total_modules->update_credit_account($i);//ICW ADDED FOR CREDIT CLASS SYSTEM
 
 			if( !empty( $this->products[$i]['purchase_group_id'] ) ) {
-				global $gBitUser;
 				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['purchase_group_id'] );
 			}
 
@@ -833,11 +832,6 @@ class order extends BitBase {
 			if( !empty($this->products[$i]['attributes']) ) {
 				$attributes_exist = '1';
 				for ($j=0, $n2=count( $this->products[$i]['attributes'] ); $j<$n2; $j++) {
-					if( !empty( $this->products[$i]['attributes'][$j]['purchase_group_id'] ) ) {
-						global $gBitUser;
-						$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->products[$i]['attributes'][$j]['purchase_group_id'] );
-					}
-
 					if (DOWNLOAD_ENABLED == 'true') {
 						$attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pom.*, pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
 										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 
@@ -853,6 +847,10 @@ class order extends BitBase {
 											INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
 											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
 										WHERE pom.`products_id`=? and pa.`products_options_id`=? AND pa.`products_options_values_id`=? AND popt.`language_id`=?", array( zen_get_prid( $this->products[$i]['id'] ), $this->products[$i]['attributes'][$j]['option_id'], $this->products[$i]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
+					}
+
+					if( !empty( $attributes_values->fields['purchase_group_id'] ) ) {
+						$gBitUser->addUserToGroup( $gBitUser->mUserId, $attributes_values->fields['purchase_group_id'] );
 					}
 
 					if( !empty( $attributes_values->fields['products_options_id'] ) ) {
