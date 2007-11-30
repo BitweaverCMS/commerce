@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.14 2006/12/19 00:11:33 spiderr Exp $
+// $Id: product_listing.php,v 1.15 2007/11/30 03:49:20 spiderr Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
@@ -105,7 +105,7 @@
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>';
             } else {
-              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>';
+              $lc_text = '<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . $listing->fields['products_name'] . '</a>';
             }
 			// add description
 			if (PRODUCT_LIST_DESCRIPTION > 0) {
@@ -125,7 +125,7 @@
 // more info in place of buy now
             $lc_button = '';
             if (zen_has_product_attributes($listing->fields['products_id']) or PRODUCT_LIST_PRICE_BUY_NOW == '0') {
-              $lc_button = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'products_id=' . $listing->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
+              $lc_button = '<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
             } else {
               if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0) {
                 $how_many++;
@@ -135,7 +135,7 @@
               }
             }
             $the_button = $lc_button;
-            $products_link = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'products_id=' . $listing->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
+            $products_link = '<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
             $lc_text .= '<br />' . zen_get_buy_now_button($listing->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($listing->fields['products_id']);
 
             break;
@@ -152,7 +152,7 @@
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
             }
             break;
         }
