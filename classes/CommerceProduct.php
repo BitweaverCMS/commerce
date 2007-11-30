@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.101 2007/10/17 20:48:41 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.102 2007/11/30 02:32:18 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -172,13 +172,15 @@ class CommerceProduct extends LibertyAttachable {
           }
 
 // adjust price for discounts when priced by attribute
-          if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
+		  if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
             // reset for priced by attributes
 //            $products_price = $products->fields['products_price'];
             if ($special_price) {
               $ret = $special_price;
-            } else {
-              $ret = $this->getField('purchase_price');
+			} else {
+				// get the base price quantity discount. attribute discounts will be calculated later
+//				$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
+				$ret = $this->getField('products_price');
             }
           } else {
 // discount qty pricing
@@ -216,25 +218,13 @@ class CommerceProduct extends LibertyAttachable {
 			case '1':
 				if ($this->getField('products_discount_type_from') == '0') {
 					// priced by attributes
-					if ($check_amount != 0) {
-						$discounted_price = $check_amount - ($check_amount * ($discountPrice/100));
-		//echo 'ID#' .  $this->mProductsId . ' Amount is: ' . $check_amount . ' discount: ' . $discounted_price . '<br />';
-		//echo 'I SEE 2 for ' . $this->getField('products_discount_type') . ' - ' . $this->getField('products_discount_type_from') . ' - '. $check_amount . ' new: ' . $discounted_price . ' qty: ' . $pQuantity;
-					} else {
-						$discounted_price = $display_price - ($display_price * ($discountPrice/100));
-					}
+					$checkPrice = ($check_amount != 0) ? $check_amount : $display_price;
+				} elseif ( $display_specials_price ) {
+					$checkPrice = $display_specials_price;
 				} else {
-					if (!$display_specials_price) {
-						// priced by attributes
-						if ($check_amount != 0) {
-							$discounted_price = $check_amount - ($check_amount * ($discountPrice/100));
-						} else {
-							$discounted_price = $display_price - ($display_price * ($discountPrice/100));
-						}
-					} else {
-						$discounted_price = $display_specials_price - ($display_specials_price * ($discountPrice/100));
-					}
+					$checkPrice = ($check_amount != 0) ? $check_amount : $display_price;
 				}
+				$discounted_price = $checkPrice - ($checkPrice * ($discountPrice/100));
 
 				break;
 			// actual price
@@ -466,23 +456,16 @@ class CommerceProduct extends LibertyAttachable {
 		}
 
 		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize.'.jpg';
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path;
+			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
+			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
+			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
 			} else {
 				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
-			if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
-				$pMixed = $this->mProductsId;
-			}
-	
-			if( is_numeric( $pMixed ) ) {
-				$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize.'.jpg';
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path;
-			} else {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
-			}
+			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
 	}
