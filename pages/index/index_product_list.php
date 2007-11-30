@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index_product_list.php,v 1.4 2006/12/19 00:11:37 spiderr Exp $
+// $Id: index_product_list.php,v 1.5 2007/11/30 03:28:57 spiderr Exp $
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
@@ -81,18 +81,20 @@ if ($error_categories==true) {
 	$show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_MISSING);
 
 	while (!$show_display_category->EOF) {
-	  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_FEATURED_PRODUCTS') {
-		include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));
-	  }
-	  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_SPECIALS_PRODUCTS') {
-		include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX));
-	  }
-	  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_NEW_PRODUCTS') {
-		require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
-	  }
-	  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_UPCOMING') {
-		include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS));
-	  }
+		if( $show_display_category->fields['configuration_value'] ) {
+		  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_FEATURED_PRODUCTS') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));
+		  }
+		  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_SPECIALS_PRODUCTS') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX));
+		  }
+		  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_NEW_PRODUCTS') {
+			require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
+		  }
+		  if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_MISSING_UPCOMING') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS));
+		  }
+		}
 	  $show_display_category->MoveNext();
 	} // !EOF
 
@@ -101,22 +103,24 @@ if ($error_categories==true) {
 //// bof: categories
 $show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
 if ($error_categories == false and $show_display_category->RecordCount() > 0) {
-  $show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
-  while (!$show_display_category->EOF) {
-    if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_FEATURED_PRODUCTS') {
-      include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));
-    }
-    if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_SPECIALS_PRODUCTS') {
-      include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX));
-    }
-    if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_NEW_PRODUCTS') {
-      require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
-    }
-    if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_UPCOMING') {
-      include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS));
-    }
-  $show_display_category->MoveNext();
-  } // !EOF
+	$show_display_category = $gBitDb->Execute(SQL_SHOW_PRODUCT_INFO_LISTING_BELOW);
+	while( !$show_display_category->EOF ) {
+	  if( $show_display_category->fields['configuration_value'] ) {
+		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_FEATURED_PRODUCTS') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_FEATURED_PRODUCTS_MODULE));
+		}
+		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_SPECIALS_PRODUCTS') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_SPECIALS_INDEX));
+		}
+		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_NEW_PRODUCTS') {
+			require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_NEW_PRODUCTS));
+		}
+		if ($show_display_category->fields['configuration_key'] == 'SHOW_PRODUCT_INFO_LISTING_BELOW_UPCOMING') {
+			include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_UPCOMING_PRODUCTS));
+		}
+	  }
+	  $show_display_category->MoveNext();
+	} // !EOF
 } //// eof: categories
 ?>
 
