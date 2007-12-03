@@ -107,8 +107,9 @@ function popupWindowPrice(url) {
 {/if}
 
 {if $gBitProduct->getField('products_discount_type')}
-<div class="row">';
-    {* include_php file="`$smarty.const.DIR_FS_MODULES``$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory`" *}
+<div class="row">
+	{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
+    {include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
 </div>
 {/if}
 </div>
@@ -118,50 +119,31 @@ function popupWindowPrice(url) {
 	<div class="content">
 		{$gBitProduct->getField('products_description')}
 	</div>
-{*
-    </td>
-  </tr>
-<?php require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_images_additional.php'); ?>
-<?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
-  <tr>
-    <td colspan="2" align="center">
-      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
-    </td>
-  </tr>
-<?php } ?>
-<?php
-  if ($products_date_available > date('Y-m-d H:i:s')) {
-    if (SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1') {
-?>
-  <tr>
-    <td colspan="2" align="center" class="smallText"><?php echo sprintf(TEXT_DATE_AVAILABLE, zen_date_long($products_date_available)); ?></td>
-  </tr>
-<?php
-    }
-  } else {
-    if (SHOW_PRODUCT_INFO_DATE_ADDED == '1') {
-?>
-  <tr>
-    <td colspan="2" align="center" class="smallText"><?php echo sprintf(TEXT_DATE_ADDED, zen_date_long($products_date_added)); ?></td>
-  </tr>
-<?php
-    } // SHOW_PRODUCT_INFO_DATE_ADDED
-  }
-?>
-<?php
-  if (zen_not_null($products_url)) {
-    if (SHOW_PRODUCT_INFO_URL == '1') {
-?>
-  <tr>
-    <td class="main" align="center" colspan="2">
-      <?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?>
-    </td>
-  </tr>
- <?php
-    } // SHOW_PRODUCT_INFO_URL
-  }
-?>
-*}
+
+{include_php file="`$smarty.const.DIR_FS_PAGES``$current_page_base`/main_template_vars_images_additional.php"}
+
+{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
+<div class="row">
+	{assign var="templateDir" value=$commerceTemplate->get_template_dir('/tpl_products_next_previous.php',$smarty.const.DIR_WS_TEMPLATE, $current_page_base,'templates')}
+	{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH``$templateDir`/tpl_products_next_previous.php"}
+</div>
+{/if}
+
+{if $smarty.const.SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1' && $gBitProduct->getField('products_date_available') > date('Y-m-d H:i:s')}
+<div class="row">
+	<span class="warning">{tr}This product will be in stock on{/tr} {$gBitProduct->getField('products_date_available')|zen_date_long}</span>
+</div>
+{elseif $smarty.const.SHOW_PRODUCT_INFO_DATE_ADDED == '1'}
+<div class="row">
+	{tr}This product was added to our catalog on{/tr} {$gBitProduct->getField('products_date_added')|zen_date_long}
+</div>
+{/if}
+
+{if $gBitProduct->getField('products_url') && $smarty.const.SHOW_PRODUCT_INFO_URL == '1'}
+<div class="row">
+{*  <?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?> *}
+</div>
+{/if}
 
 
 </table>
