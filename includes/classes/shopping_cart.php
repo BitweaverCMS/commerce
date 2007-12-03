@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.37 2007/11/25 04:49:22 spiderr Exp $
+// $Id: shopping_cart.php,v 1.38 2007/12/03 05:51:22 spiderr Exp $
 //
 
   class shoppingCart {
@@ -351,21 +351,24 @@
       return $total_items;
     }
 
-    function get_quantity($products_id) {
-      if (isset($this->contents[$products_id])) {
-        return $this->contents[$products_id]['quantity'];
-      } else {
-        return 0;
-      }
+    function get_quantity($pProductsId) {
+		$ret = 0;
+		$keys = array_keys( $this->contents );
+		foreach( $keys AS $k ) {
+			if( !strpos( $pProductsId, ':' ) ) {
+				$productId = (strpos( $k, ':' ) ? substr( $k, 0, strpos( $k, ':' ) ) : $k);
+			} else {
+				$productId = $k;
+			}
+			if( $productId == $pProductsId ) {
+				$ret += $this->contents[$k]['quantity'];
+			}
+		}
+		return( $ret );
     }
 
-    function in_cart($products_id) {
-//  die($products_id);
-      if (isset($this->contents[$products_id])) {
-        return true;
-      } else {
-        return false;
-      }
+    function in_cart( $pProductsId ) {
+		return( $this->get_quantity( $pProductsId ) > 0 );
     }
 
     function remove($products_id) {
