@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.102 2007/11/30 02:32:18 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.103 2007/12/03 05:56:49 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -873,8 +873,8 @@ $this->debug(0);
             // don't include READONLY attributes to determin if attributes must be selected to add to cart
             $query = "select pa.`products_options_values_id`
                         from  " . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
-							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pom.`products_options_values_id`=pom.`products_options_values_id`) 
-							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po on pa.`products_options_id` = po.`products_options_id`
+							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
+							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON(pa.`products_options_id`=po.`products_options_id`)
                         where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
         } else {
             // regardless of READONLY attributes no add to cart buttons
@@ -886,7 +886,7 @@ $this->debug(0);
 
         $attributes = $this->mDb->getOne($query, array( $pProductsId) );
 
-        return( $attributes->fields['products_attributes_id'] > 0 );
+        return( $attributes > 0 );
     }
 
 
