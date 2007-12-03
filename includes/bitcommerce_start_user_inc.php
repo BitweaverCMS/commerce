@@ -91,6 +91,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
 
   require(DIR_FS_CLASSES . 'template_func.php');
   $template = new template_func(DIR_WS_TEMPLATE);
+	$gBitSmarty->assign_by_ref( 'commerceTemplate', $template );
 
 // include the language translations
 // include template specific language files
