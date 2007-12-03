@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.24 2007/06/24 03:51:07 spiderr Exp $
+// $Id: index.php,v 1.25 2007/12/03 06:28:05 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -56,6 +56,8 @@ ob_start();
 	$current_page_base = $current_page;
 	$code_page_directory = DIR_FS_PAGES . $current_page_base;
 	$page_directory = $code_page_directory;
+	$gBitSmarty->assign_by_ref( 'current_page_base', $current_page_base );
+
 
 	$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
 
