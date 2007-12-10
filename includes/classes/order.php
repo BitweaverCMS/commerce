@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.62 2007/11/30 06:44:36 spiderr Exp $
+// $Id: order.php,v 1.63 2007/12/10 03:27:10 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -230,7 +230,8 @@ class order extends BitBase {
 									LEFT OUTER JOIN  " . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
 									LEFT OUTER JOIN  " . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
 									LEFT OUTER JOIN  `" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
-                                WHERE `orders_id` = ?";
+                                WHERE `orders_id` = ?
+								ORDER BY op.`orders_products_id`";
       $orders_products = $this->mDb->query( $orders_products_query, array( $order_id ) );
 
       while (!$orders_products->EOF) {
@@ -264,9 +265,10 @@ class order extends BitBase {
 		$this->products[$index]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
-        $attributes_query = "SELECT *, `orders_products_attributes_id` AS products_attributes_id
+        $attributes_query = "SELECT *, `orders_products_attributes_id` AS `products_attributes_id`
                              FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-                             WHERE `orders_id` = ? AND orders_products_id = ?";
+                             WHERE `orders_id` = ? AND `orders_products_id` = ?
+							 ORDER BY `orders_products_id`";
         $attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
         if ($attributes->RecordCount()) {
 			while (!$attributes->EOF) {
