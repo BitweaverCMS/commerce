@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.103 2007/12/03 05:56:49 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.104 2007/12/11 01:44:11 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -49,7 +49,7 @@ class CommerceProduct extends LibertyAttachable {
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
 			parent::load();
-			if( $this->isDeleted() && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+			if( $this->isDeleted() && !$gBitUser->hasPermission( 'p_commerce_admin' ) && !$this->isPurchased( $gBitUser->mUserId ) ) {
 				$this->mInfo = array();
 				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
@@ -672,10 +672,18 @@ $this->debug(0);
 		return( $ret );
 	}
 
-	function isPurchased() {
+	function isPurchased( $pUserId=NULL ) {
 		$ret = FALSE;
+		$joinSql = '';
+		$whereSql = '';
 		if( $this->isValid() ) {
-			$ret = $this->mDb->GetOne( "SELECT COUNT(*) FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `products_id`=?", array( $this->mProductsId ) );
+			$bindVars = array( $this->mProductsId );
+			if( is_numeric( $pUserId ) ) {
+				$joinSql .= ' INNER JOIN '.TABLE_ORDERS.' co ON(co.`orders_id`=cop.`orders_id`)';
+				$whereSql .= ' AND `customers_id`=? ';
+				$bindVars[] = $pUserId;
+			}
+			$ret = $this->mDb->GetOne( "SELECT COUNT(*) FROM " . TABLE_ORDERS_PRODUCTS . " cop $joinSql WHERE `products_id`=? $whereSql", $bindVars );
 		}
 		return $ret;
 	}
