@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.104 2007/12/11 01:44:11 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.105 2007/12/15 02:40:25 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -179,8 +179,7 @@ class CommerceProduct extends LibertyAttachable {
               $ret = $special_price;
 			} else {
 				// get the base price quantity discount. attribute discounts will be calculated later
-//				$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
-				$ret = $this->getField('products_price');
+				$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
             }
           } else {
 // discount qty pricing
@@ -192,7 +191,7 @@ class CommerceProduct extends LibertyAttachable {
 		return $ret;
 	}
 
-	function getQuantityPrice( $pQuantity, $check_amount=0 ) {
+	function getQuantityPrice( $pQuantity, $pCheckAmount=0 ) {
 		global $gBitDb, $cart;
 		if( is_object( $_SESSION['cart'] ) ) {
 			$new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity( $this->mProductsId );
@@ -210,19 +209,18 @@ class CommerceProduct extends LibertyAttachable {
 		switch( $this->getField('products_discount_type') ) {
 			// none
 			case (empty( $discountPrice )):
-			//no discount applies
 			case '0':
-				$discounted_price = zen_get_products_actual_price( $this->mProductsId );
+          		$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price( $this->mProductsId );
 				break;
 			// percentage discount
 			case '1':
 				if ($this->getField('products_discount_type_from') == '0') {
 					// priced by attributes
-					$checkPrice = ($check_amount != 0) ? $check_amount : $display_price;
+					$checkPrice = ($pCheckAmount != 0) ? $pCheckAmount : $display_price;
 				} elseif ( $display_specials_price ) {
 					$checkPrice = $display_specials_price;
 				} else {
-					$checkPrice = ($check_amount != 0) ? $check_amount : $display_price;
+					$checkPrice = ($pCheckAmount != 0) ? $pCheckAmount : $display_price;
 				}
 				$discounted_price = $checkPrice - ($checkPrice * ($discountPrice/100));
 
