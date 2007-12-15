@@ -162,7 +162,8 @@
 // include currencies class and create an instance
   require_once(DIR_FS_CLASSES . 'currencies.php');
 	global $currencies;
-  $currencies = new currencies();
+	$currencies = new currencies();
+	$gBitSmarty->assign_by_ref( 'gCommerceCurrencies', $currencies );
 
   require_once(DIR_FS_CLASSES . 'category_tree.php');
 
