@@ -601,7 +601,7 @@
 			$query = "SELECT `products_options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` 
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
-					  WHERE `products_id` = ? and `attributes_display_only` != '1' and `attributes_price_base_inc` ='1'". " 
+					  WHERE `products_id` = ? AND `attributes_required`='1' AND `attributes_display_only` != '1' AND `attributes_price_base_inc` ='1' 
 					  ORDER BY `products_options_id`, `price_prefix`, `options_values_price`";
 			$product_att_query = $gBitDb->query( $query, array( (int)$products_id ) );
 
@@ -889,7 +889,7 @@ If a special exist * 10+9
 ////
 // compute discount based on qty
 // temporarily re-add zen_get_products_discount_price_qty that was ported to CommmerceProduct::getQuantityDiscount -- spiderr
-  function zen_get_products_discount_price_qty($product_id, $check_qty, $check_amount=0) {
+  function zen_get_products_discount_price_qty($product_id, $check_qty, $pCheckAmount=0) {
     global $gBitDb, $cart;
       $new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id);
       // check for discount qty mix
@@ -906,28 +906,25 @@ If a special exist * 10+9
       switch ($products_query->fields['products_discount_type']) {
         // none
         case ($products_discounts_query->EOF):
-          //no discount applies
-          $discounted_price = zen_get_products_actual_price($product_id);
-          break;
         case '0':
-          $discounted_price = zen_get_products_actual_price($product_id);
+          $discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
           break;
         // percentage discount
         case '1':
           if ($products_query->fields['products_discount_type_from'] == '0') {
             // priced by attributes
-            if ($check_amount != 0) {
-              $discounted_price = $check_amount - ($check_amount * ($products_discounts_query->fields['discount_price']/100));
-//echo 'ID#' . $product_id . ' Amount is: ' . $check_amount . ' discount: ' . $discounted_price . '<br />';
-//echo 'I SEE 2 for ' . $products_query->fields['products_discount_type'] . ' - ' . $products_query->fields['products_discount_type_from'] . ' - '. $check_amount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
+            if ($pCheckAmount != 0) {
+              $discounted_price = $pCheckAmount - ($pCheckAmount * ($products_discounts_query->fields['discount_price']/100));
+//echo 'ID#' . $product_id . ' Amount is: ' . $pCheckAmount . ' discount: ' . $discounted_price . '<br />';
+//echo 'I SEE 2 for ' . $products_query->fields['products_discount_type'] . ' - ' . $products_query->fields['products_discount_type_from'] . ' - '. $pCheckAmount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
             } else {
               $discounted_price = $display_price - ($display_price * ($products_discounts_query->fields['discount_price']/100));
             }
           } else {
             if (!$display_specials_price) {
               // priced by attributes
-              if ($check_amount != 0) {
-                $discounted_price = $check_amount - ($check_amount * ($products_discounts_query->fields['discount_price']/100));
+              if ($pCheckAmount != 0) {
+                $discounted_price = $pCheckAmount - ($pCheckAmount * ($products_discounts_query->fields['discount_price']/100));
               } else {
                 $discounted_price = $display_price - ($display_price * ($products_discounts_query->fields['discount_price']/100));
               }
