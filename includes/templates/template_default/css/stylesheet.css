@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: stylesheet.css,v 1.9 2006/07/23 17:59:48 spiderr Exp $
+// $Id: stylesheet.css,v 1.10 2007/12/15 22:41:23 spiderr Exp $
 */
 .centershop {
 	padding: 0px;
@@ -120,8 +120,6 @@ TD.headerInfo {
 }
 
 .leftboxheading, .rightboxheading, .centerboxheading, .singleboxheading {
-  border-bottom: 1px solid #9a9a9a;
-  font-size: 10px;
   font-weight: bold;
   padding: 3px;
   height: 20px;
