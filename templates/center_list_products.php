@@ -31,12 +31,10 @@
 		} else {
 			$col_width = 100/$columnCount;
 		}
+		$gBitSmarty->assign( 'listColWidth', $col_width );
 		foreach( array_keys( $listedProducts ) as $productsId ) {
 			$products_price = CommerceProduct::getDisplayPrice( $productsId );
-			$listBoxContents[$row][$col] = array('align' => 'center',
-													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '"><img src="' . CommerceProduct::getImageUrl( $listedProducts[$productsId]['products_id'], 'avatar' ).'" title="' . zen_output_string( $listedProducts[$productsId]['products_name'] ) . '"/></a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $listedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
-
+			$listBoxContents[$row][$col] = $listedProducts[$productsId];
 			$col ++;
 			if ($col > ($columnCount - 1)) {
 				$col = 0;
