@@ -11,7 +11,7 @@
 		<span class="productimage"><a href="{$gBitProduct->getDisplayUrl($listBoxContents[ix][jx].products_id)}" /><img class="thumb" src="{$gBitProduct->getImageUrl($listBoxContents[ix][jx].products_id,'avatar')}"/></a></span>
 		<div class="productinfo">
 		<h3><a href="{$gBitProduct->getDisplayUrl($listBoxContents[ix][jx].products_id)}" />{$listBoxContents[ix][jx].products_name}</a></h3>
-		{if $listBoxContents[ix][jx].user_id!=$smarty.const.ROOT_USER_ID}{tr}by{/tr} {displayname hash=$listBoxContents[ix][jx].products_hash}{/if}
+		{if $listBoxContents[ix][jx].user_id!=$smarty.const.ROOT_USER_ID}{tr}by{/tr} {displayname hash=$listBoxContents[ix][jx]}{/if}
 		<div class="details">
 			{if $listBoxContents[ix][jx].products_model}<span class="model">{$listBoxContents[ix][jx].products_model}</span><br/>{/if}
 			{tr}Starting at:{/tr}<span class="price">{$gBitProduct->getDisplayPrice($listBoxContents[ix][jx].products_id)}</span>
