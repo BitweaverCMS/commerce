@@ -156,7 +156,7 @@ function saveNewOption( pForm ) {
 	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}" class="button">{tr}Packing Slip{/tr}</a>
 	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete" class="button">{tr}Delete{/tr}</a>
 	<form method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
-		<input type="hidden" name="email_to" value="{$membershipInfo.email}" />
+		<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
 		<input type="submit" name="Send" value="Send Gift Certificate" />
 	</form>
