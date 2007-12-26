@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.105 2007/12/15 02:40:25 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.106 2007/12/26 18:16:14 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -210,17 +210,17 @@ class CommerceProduct extends LibertyAttachable {
 			// none
 			case (empty( $discountPrice )):
 			case '0':
-          		$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price( $this->mProductsId );
+          		$discounted_price = ($pCheckAmount ? $pCheckAmount : zen_get_products_actual_price( $this->mProductsId )) - $this->getCommissionDiscount();
 				break;
 			// percentage discount
 			case '1':
 				if ($this->getField('products_discount_type_from') == '0') {
 					// priced by attributes
-					$checkPrice = ($pCheckAmount != 0) ? $pCheckAmount : $display_price;
+					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price) - $this->getCommissionDiscount();
 				} elseif ( $display_specials_price ) {
-					$checkPrice = $display_specials_price;
+					$checkPrice = $display_specials_price - $this->getCommissionDiscount();
 				} else {
-					$checkPrice = ($pCheckAmount != 0) ? $pCheckAmount : $display_price;
+					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price) - $this->getCommissionDiscount();
 				}
 				$discounted_price = $checkPrice - ($checkPrice * ($discountPrice/100));
 
