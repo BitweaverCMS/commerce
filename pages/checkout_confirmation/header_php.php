@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
+// $Id: header_php.php,v 1.10 2007/12/30 18:41:47 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($_SESSION['cart']->count_contents() <= 0) {
@@ -92,8 +92,8 @@
 // Stock Check
   $any_out_of_stock = false;
   if (STOCK_CHECK == 'true') {
-    for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
-      if (zen_check_stock($order->products[$i]['id'], $order->products[$i]['quantity'])) {
+    foreach( array_keys( $order->products ) as $opid ) {
+      if (zen_check_stock($order->products[$opid]['id'], $order->products[$opid]['quantity'])) {
         $any_out_of_stock = true;
       }
     }

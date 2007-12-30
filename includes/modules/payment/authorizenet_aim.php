@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.11 2007/04/01 05:32:06 spiderr Exp $
+// $Id: authorizenet_aim.php,v 1.12 2007/12/30 18:41:47 spiderr Exp $
 
 
   class authorizenet_aim {
@@ -238,8 +238,8 @@
 
 	  // Create a string that contains a listing of products ordered for the description field
 	  $description = '';
-	  for ($i=0; $i<sizeof($order->products); $i++) {
-	    $description .= $order->products[$i]['name'] . '(qty: ' . $order->products[$i]['quantity'] . ') + ';
+	  foreach( array_keys( $order->products ) as $opid ) {
+	    $description .= $order->products[$opid]['name'] . '(qty: ' . $order->products[$opid]['quantity'] . ') + ';
 	  }
 	  // Remove the last "\n" from the string
 	  $description = substr($description, 0, -2);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.5 2006/09/18 06:27:31 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.6 2007/12/30 18:41:47 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -89,17 +89,17 @@
 <?php
   }
 
-  for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+  foreach( array_keys( $order->products ) as $opid ) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$i]['quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$i]['products_id'] ) . '">' . $order->products[$i]['name']. '</a>';
+         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$opid]['products_id'] ) . '">' . $order->products[$opid]['name']. '</a>';
 
     if (STOCK_CHECK == 'true') {
-      echo zen_check_stock(stripslashes($order->products[$i]['id']), $order->products[$i]['quantity']);
+      echo zen_check_stock(stripslashes($order->products[$opid]['id']), $order->products[$opid]['quantity']);
     }
-    if ( !empty( $order->products[$i]['attributes'] ) && (sizeof($order->products[$i]['attributes']) > 0) ) {
-      for ($j=0, $n2=sizeof($order->products[$i]['attributes']); $j<$n2; $j++) {
-        echo '<br /><nobr>&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['value'] . '</i></nobr>';
+    if ( !empty( $order->products[$opid]['attributes'] ) && (sizeof($order->products[$opid]['attributes']) > 0) ) {
+      for ($j=0, $n2=sizeof($order->products[$opid]['attributes']); $j<$n2; $j++) {
+        echo '<br /><nobr>&nbsp;<i> - ' . $order->products[$opid]['attributes'][$j]['option'] . ': ' . $order->products[$opid]['attributes'][$j]['value'] . '</i></nobr>';
       }
     }
 
@@ -107,15 +107,15 @@
 
     if ( !empty( $order->info['tax_groups'] ) && sizeof($order->info['tax_groups']) > 1) {
 		echo '            <td class="main" valign="top" align="right">';
-		if( !empty( $order->products[$i]['tax'] ) ) {
-			echo zen_display_tax_value($order->products[$i]['tax']) . '%';
+		if( !empty( $order->products[$opid]['tax'] ) ) {
+			echo zen_display_tax_value($order->products[$opid]['tax']) . '%';
 		}
 		echo '</td>' . "\n";
 	}
 
     echo '        <td class="main" align="right" valign="top">' .
-                    $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['quantity']) .
-                    ($order->products[$i]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->products[$i]['onetime_charges'], $order->products[$i]['tax'], 1) : '') .
+                    $currencies->display_price($order->products[$opid]['final_price'], $order->products[$opid]['tax'], $order->products[$opid]['quantity']) .
+                    ($order->products[$opid]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->products[$opid]['onetime_charges'], $order->products[$opid]['tax'], 1) : '') .
                   '</td>' . "\n" .
          '      </tr>' . "\n";
   }

@@ -56,21 +56,21 @@
 	{formlabel label="Products"}
 	{forminput}
 <table class="data" style="border:0">
-{section loop=$gBitOrder->products name=ix}
+{foreach from=$gBitOrder->products key=opid item=ordersProduct}
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
-	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($gBitOrder->products[ix].products_id,'icon')}" />
-	<td class="item" valign="top" align="right">{$gBitOrder->products[ix].quantity}&nbsp;x</td>
+	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($ordersProduct.products_id,'icon')}" />
+	<td class="item" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
 	<td class="item" valign="top" width="90%">
-		{$gBitOrder->products[ix].name} [ {$gBitOrder->products[ix].model} ]
-		{if !empty($gBitOrder->products[ix].attributes)}
-			{section loop=$gBitOrder->products[ix].attributes name=ax}
-				<br><nobr><small>&nbsp;<i>{$gBitOrder->products[ix].attributes[ax].option}: {$gBitOrder->products[ix].attributes[ax].value}</i></small></nobr>
+		{$ordersProduct.name} [ {$ordersProduct.model} ]
+		{if !empty($ordersProduct.attributes)}
+			{section loop=$ordersProduct.attributes name=ax}
+				<br><nobr><small>&nbsp;<i>{$ordersProduct.attributes[ax].option}: {$ordersProduct.attributes[ax].value}</i></small></nobr>
 			{/section}
 		{/if}
 	</td>
 </tr>
-{/section}
+{/foreach}
 </table>
 	{/forminput}
 </div>

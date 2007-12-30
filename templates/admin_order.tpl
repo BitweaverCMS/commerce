@@ -54,48 +54,48 @@ function saveNewOption( pForm ) {
             <th align="right">{$smarty.const.TABLE_HEADING_TOTAL_EXCLUDING_TAX}</th>
             <th align="right">{$smarty.const.TABLE_HEADING_TOTAL_INCLUDING_TAX}</th>
           </tr>
-{section loop=$order->products name=p}
+{foreach from=$order->products item=ordersProduct}
 <tr class="dataTableRow">
-<td class="dataTableContent" valign="top" align="right">{$order->products[p].quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($order->products[p].products_id)}">{$order->products[p].name}</a></td>
-<td class="dataTableContent" valign="top">{$order->products[p].model}</td>
-<td class="dataTableContent" align="right" valign="top">{$order->products[p].tax|zen_display_tax_value}%</td>
-<td class="dataTableContent" align="right" valign="top">{$currencies->format($order->products[p].final_price,true,$order->info.currency, $order->info.currency_value)}
-	{if $order->products[p].onetime_charges}<br />{$currencies->format($order->products[p].onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+<td class="dataTableContent" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name}</a></td>
+<td class="dataTableContent" valign="top">{$ordersProduct.model}</td>
+<td class="dataTableContent" align="right" valign="top">{$ordersProduct.tax|zen_display_tax_value}%</td>
+<td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalPlusTax value=$order->products[p].final_price|zen_add_tax:$order->products[p].tax}
+	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
 	{$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)}
-	{if $order->products[p].onetime_charges}<br />
-		{assign var=onetimePlusTax value=$order->products[p].onetime_charges|zen_add_tax:$order->products[p].tax)}
+	{if $ordersProduct.onetime_charges}<br />
+		{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax)}
 		{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}
 	{/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalQty value=$order->products[p].final_price*$order->products[p].quantity}
+	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.quantity}
 	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}
-	{if $order->products[p].onetime_charges}<br />{$currencies->format($order->products[p].onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalQtyPlusTax value=$finalPlusTax*$order->products[p].quantity} 
+	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.quantity} 
 	{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
-	{if $order->products[p].onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
 	{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
 </td>
 </tr>
 <tr class="dataTableRow">
-	<td><a href="product_history.php?products_id={$order->products[p].products_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Products History" alt="H" /></a></td>
+	<td><a href="product_history.php?products_id={$ordersProduct.products_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Products History" alt="H" /></a></td>
 	<td class="dataTableContent" colspan="7">
-{if !empty( $order->products[p].attributes )}
-{section loop=$order->products[p].attributes name=a}
-		<div class="orders products attributes" id="{$order->products[p].attributes[a].products_attributes_id}att">
-			<nobr><em>&bull; {$order->products[p].attributes[a].option}: {$order->products[p].attributes[a].value}
-				{assign var=sumAttrPrice value=$order->products[p].attributes[a].final_price*$order->products[p].quantity}
-				{if $order->products[p].attributes[a].price}({$order->products[p].attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
-				{if !empty($order->products[p].attributes[a].product_attribute_is_free) && $order->products[p].attributes[a].product_attribute_is_free == '1' and $order->products[p].product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
+{if !empty( $ordersProduct.attributes )}
+{section loop=$ordersProduct.attributes name=a}
+		<div class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
+			<nobr><em>&bull; {$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
+				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.quantity}
+				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
+				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
 			</em>
-{*			<span onclick="editOption({$order->products[p].attributes[a].orders_products_attributes_id}); return false;">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</span> *}
-			<a href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$order->products[p].attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$order->products[p].attributes[a].orders_products_attributes_id},'{$order->products[p].attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$order->products[p].attributes[a].value|escape:'quotes'|escape:'htmlall'}');">{biticon ipackage="icons" iname="edit-delete" iexplain="edit" iforce="icon"}</a>
+{*			<span onclick="editOption({$ordersProduct.attributes[a].orders_products_attributes_id}); return false;">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</span> *}
+			<a href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');">{biticon ipackage="icons" iname="edit-delete" iexplain="edit" iforce="icon"}</a>
 			</nobr>
 		</div>
 {/section}
@@ -103,14 +103,14 @@ function saveNewOption( pForm ) {
 		<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
-			<input type="hidden" name="orders_products_id" value="{$order->products[p].orders_products_id}"/>
-			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption`$order->products[p].orders_products_id`" onchange="getNewOption(`$order->products[p].orders_products_id`);" selected="0"}
-			<span id="neworderattr{$order->products[p].orders_products_id}"></span>
+			<input type="hidden" name="orders_products_id" value="{$ordersProduct.orders_products_id}"/>
+			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
+			<span id="neworderattr{$ordersProduct.orders_products_id}"></span>
 		</form>
 	</td>
 </tr>
 
-{/section}
+{/foreach}
           <tr>
             <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
 {section loop=$order->totals name=t}

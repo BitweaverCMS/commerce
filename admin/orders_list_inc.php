@@ -224,17 +224,13 @@
       $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
       $order = new order($oInfo->orders_id);
       $contents[] = array('text' => 'Products Ordered: ' . sizeof($order->products) );
-      for ($i=0; $i<sizeof($order->products); $i++) {
-        $contents[] = array('text' => $order->products[$i]['quantity'] . '&nbsp;x&nbsp;' . $order->products[$i]['name']);
+      foreach( array_keys( $order->products) as $opid ) {
+        $contents[] = array('text' => $order->products[$opid]['quantity'] . '&nbsp;x&nbsp;' . $order->products[$opid]['name']);
 
-        if (sizeof($order->products[$i]['attributes']) > 0) {
-          for ($j=0; $j<sizeof($order->products[$i]['attributes']); $j++) {
-            $contents[] = array('text' => '&nbsp;<i> - ' . $order->products[$i]['attributes'][$j]['option'] . ': ' . $order->products[$i]['attributes'][$j]['orders_value'] . '</i></nobr>' );
+        if (sizeof($order->products[$opid]['attributes']) > 0) {
+          for ($j=0; $j<sizeof($order->products[$opid]['attributes']); $j++) {
+            $contents[] = array('text' => '&nbsp;<i> - ' . $order->products[$opid]['attributes'][$j]['option'] . ': ' . $order->products[$opid]['attributes'][$j]['orders_value'] . '</i></nobr>' );
           }
-        }
-        if ($i > MAX_DISPLAY_RESULTS_ORDERS_DETAILS_LISTING and MAX_DISPLAY_RESULTS_ORDERS_DETAILS_LISTING != 0) {
-          $contents[] = array('align' => 'left', 'text' => TEXT_MORE);
-          break;
         }
       }
 

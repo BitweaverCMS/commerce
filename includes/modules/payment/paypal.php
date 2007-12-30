@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.7 2007/06/13 17:07:14 spiderr Exp $
+//  $Id: paypal.php,v 1.8 2007/12/30 18:41:47 spiderr Exp $
 //
 
 // Note this is temporary
@@ -143,7 +143,7 @@ DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
                               zen_draw_hidden_field('amount', number_format(($order->info['total']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
                               zen_draw_hidden_field('shipping', '0.00') .
                               zen_draw_hidden_field('custom', zen_session_name() . '=' . zen_session_id() ) .
-                              zen_draw_hidden_field('upload', sizeof($order->products) ) .
+                              zen_draw_hidden_field('upload', sizeof( $order->products ) ) .
                               zen_draw_hidden_field('redirect_cmd', '_xclick') .
                               zen_draw_hidden_field('first_name', $order->customer['firstname']) .
                               zen_draw_hidden_field('last_name', $order->customer['lastname']) .

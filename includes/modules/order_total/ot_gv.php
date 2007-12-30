@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.13 2006/12/19 00:11:33 spiderr Exp $
+// $Id: ot_gv.php,v 1.14 2007/12/30 18:41:47 spiderr Exp $
 //
 
   class ot_gv {
@@ -112,12 +112,12 @@
       }
     }
 
-	function update_credit_account($i) {
+	function update_credit_account($pOpid) {
 		global $gBitDb, $order, $insert_id;
-		if (ereg('^GIFT', addslashes($order->products[$i]['model']))) {
-			$gv_order_amount = ($order->products[$i]['final_price'] * $order->products[$i]['quantity']);
+		if (ereg('^GIFT', addslashes($orderopid>products[$pOpid]['model']))) {
+			$gv_order_amount = ($order->products[$pOpid]['final_price'] * $order->products[$pOpid]['quantity']);
 			if ($this->credit_tax=='true') {
-				$gv_order_amount = $gv_order_amount * (100 + $order->products[$i]['tax']) / 100;
+				$gv_order_amount = $gv_order_amount * (100 + $order->products[$pOpid]['tax']) / 100;
 			}
 			$gv_order_amount = $gv_order_amount * 100 / 100;
 			if (MODULE_ORDER_TOTAL_GV_QUEUE == 'false') {
@@ -137,9 +137,9 @@
 					$gBitDb->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
 				}
 			} else {
-				for( $j = 0; $j < $order->products[$i]['quantity']; $j++ ) {
+				for( $j = 0; $j < $order->products[$pOpid]['quantity']; $j++ ) {
 					// GV_QUEUE is true - so queue the gv for release by store owner
-					$gBitDb->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$i]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
+					$gBitDb->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$pOpid]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
 				}
 			}
 		}
