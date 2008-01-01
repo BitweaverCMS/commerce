@@ -4,7 +4,7 @@ http://www.oscommerce.com
 Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
-$Id: stylesheet.css,v 1.2 2005/07/08 05:56:38 spiderr Exp $
+$Id: stylesheet.css,v 1.3 2008/01/01 21:53:38 spiderr Exp $
 */
 @import url("menu.css");/* including stylesheet for dhtml menu */
 @import url("index.css");/* including stylesheet for index.php */
@@ -12,7 +12,7 @@ a{
 color:#0000ff;
 text-decoration:none;
 }
-a,body,html,table{
+body{
 font:normal normal 11px Verdana,sans-serif;
 }
 a:hover{
@@ -91,36 +91,6 @@ text-decoration:underline;
 a.splitPageLink:active{
 color:#0000ff;
 text-decoration:none;
-}
-body{
-background-color:#ffffff;
-color:#333333;
-margin:0;
-}
-body#login{
-margin-top:100px;
-text-align:center;
-}
-body#login .button{
-cursor:pointer;
-}
-body#login fieldset{
-margin:0 auto;
-padding:10px;
-width:400px;
-}
-body#login label{
-display:inline;
-margin:20px 70px;
-text-align:right;
-}
-body#login legend{
-background:#ffffff;
-border:1px solid #c96e29;
-color:#333333;
-font-size:90%;
-padding:0.2em 0.5em;
-text-align:right;
 }
 checkbox,input,radio,select,textarea,file{
 font-size:11px;

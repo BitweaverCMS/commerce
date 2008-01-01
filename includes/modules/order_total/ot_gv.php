@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.14 2007/12/30 18:41:47 spiderr Exp $
+// $Id: ot_gv.php,v 1.15 2008/01/01 21:53:38 spiderr Exp $
 //
 
   class ot_gv {
@@ -114,7 +114,7 @@
 
 	function update_credit_account($pOpid) {
 		global $gBitDb, $order, $insert_id;
-		if (ereg('^GIFT', addslashes($orderopid>products[$pOpid]['model']))) {
+		if (ereg('^GIFT', addslashes($order->products[$pOpid]['model']))) {
 			$gv_order_amount = ($order->products[$pOpid]['final_price'] * $order->products[$pOpid]['quantity']);
 			if ($this->credit_tax=='true') {
 				$gv_order_amount = $gv_order_amount * (100 + $order->products[$pOpid]['tax']) / 100;
