@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.14 2007/01/06 06:13:52 spiderr Exp $
+// $Id: shopping_cart.php,v 1.15 2008/01/02 04:44:24 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -104,7 +104,7 @@ function popupWindow(url) {
                          WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ? AND popt.`language_id` = ? "
                          . $options_order_by;
 
-          $attributes_values = $gBitDb->query($attributes, array( $prid, $optionId, $value, $_SESSION['languages_id'] ) );
+          $attributes_values = $gBitDb->query($attributes, array( $prid, $optionId, (int)$value, $_SESSION['languages_id'] ) );
 
           //clr 030714 determine if attribute is a text attribute and assign to $attr_value temporarily
           if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID) {
