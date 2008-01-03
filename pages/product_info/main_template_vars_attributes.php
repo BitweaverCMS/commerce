@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.28 2007/11/30 02:18:45 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.29 2008/01/03 01:18:29 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -70,10 +70,7 @@ if ( $gBitProduct->loadAttributes() ) {
 												'text' => $vals['products_options_values_name']);
 
 			if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
-				$new_attributes_price = '';
 				$new_options_values_price = 0;
-				$products_options_display_price = '';
-				$price_onetime = '';
 			} else {
 				// collect price information if it exists
 				if ($vals['attributes_discounted'] == 1) {
@@ -91,13 +88,10 @@ if ( $gBitProduct->loadAttributes() ) {
 					$new_attributes_price = -$new_attributes_price;
 				}
 
+				$price_onetime = '';
 				if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
 					$productSettings['show_onetime_charges_description'] = 'true';
-					$new_onetime_charges = zen_get_attributes_price_final_onetime( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, '');
-					$price_onetime = ' *'. $currencies->display_price($new_onetime_charges,
-					zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id']));
-				} else {
-					$price_onetime = '';
+					$price_onetime = ' '. $currencies->display_price( zen_get_attributes_price_final_onetime( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, ''), zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id'])).' '.tra( 'One time' );
 				}
 
 				if ( !empty( $vals['attributes_qty_prices'] ) || !empty( $vals['attributes_qty_prices_onetime'] ) ) {
@@ -107,9 +101,7 @@ if ( $gBitProduct->loadAttributes() ) {
 
 				if ( !empty( $vals['options_values_price'] ) && (empty( $vals['product_attribute_is_free'] ) && !$gBitProduct->isFree() ) ) {
 					// show sale maker discount if a percentage
-					$products_options_display_price= ' (' . $vals['price_prefix'] .
-					$currencies->display_price($new_attributes_price,
-					zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id'])) . ') ';
+					$products_options_display_price= $vals['price_prefix'] .  $currencies->display_price($new_attributes_price, zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id'])).' '.tra('Each');
 				} else {
 					// if product_is_free and product_attribute_is_free
 					if ( $vals['product_attribute_is_free'] == '1' && !$gBitProduct->isFree() ) {
@@ -121,13 +113,15 @@ if ( $gBitProduct->loadAttributes() ) {
 						if ($new_attributes_price == 0) {
 							$products_options_display_price= '';
 						} else {
-							$products_options_display_price= ' (' . $vals['price_prefix'] .
+							$products_options_display_price= $vals['price_prefix'] .
 							$currencies->display_price($new_attributes_price,
-							zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) ) . ') ';
+							zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) );
 						}
 					}
 				}
-				$products_options_display_price .= $price_onetime;
+				if( $products_options_display_price ) {
+					$products_options_display_price = '( '.$products_options_display_price.($price_onetime ? ', '.$price_onetime : '').' )';
+				}
 			} // approve
 			$products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_price;
 

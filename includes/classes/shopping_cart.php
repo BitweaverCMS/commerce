@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.38 2007/12/03 05:51:22 spiderr Exp $
+// $Id: shopping_cart.php,v 1.39 2008/01/03 01:18:29 spiderr Exp $
 //
 
   class shoppingCart {
@@ -457,12 +457,6 @@
         if (isset($this->contents[$products_id]['attributes'])) {
           reset($this->contents[$products_id]['attributes']);
           while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-/*
-                                      options_values_price, price_prefix,
-                                      attributes_display_only, product_attribute_is_free,
-                                      attributes_discounted
-*/
-
 			$attribute_price_query = "SELECT *
 									FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
@@ -520,7 +514,6 @@
               $added_charge = 0;
               if( !empty( $attribute_price->fields['attributes_qty_prices'] ) ) {
                 $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $qty);
-
                 $this->total += $qty * zen_add_tax($added_charge, $products_tax);
               }
 
