@@ -4,7 +4,7 @@ http://www.oscommerce.com
 Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
-$Id: stylesheet.css,v 1.3 2008/01/01 21:53:38 spiderr Exp $
+$Id: stylesheet.css,v 1.4 2008/01/04 20:25:10 spiderr Exp $
 */
 @import url("menu.css");/* including stylesheet for dhtml menu */
 @import url("index.css");/* including stylesheet for index.php */
@@ -12,7 +12,7 @@ a{
 color:#0000ff;
 text-decoration:none;
 }
-body{
+body,html,#content table{
 font:normal normal 11px Verdana,sans-serif;
 }
 a:hover{
