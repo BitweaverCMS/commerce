@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.30 2008/01/03 01:46:58 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.31 2008/01/08 21:04:42 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -158,12 +158,8 @@ if ( $gBitProduct->loadAttributes() ) {
 
 			// radio buttons
 			if ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
-				if ($_SESSION['cart']->in_cart($prod_id)) {
-					if ($_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) {
-						$selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']];
-					} else {
-						$selected_attribute = false;
-					}
+				if( $_SESSION['cart']->in_cart($prod_id) && ($_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) ) {
+					$selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']];
 				} else {
 					$selected_attribute = ($vals['attributes_default']=='1' ? true : false);
 					// if an error, set to customer setting
