@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.6 2007/11/30 06:10:17 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.7 2008/01/14 21:28:13 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -101,7 +101,7 @@ class CommerceProductManager extends BitBase {
 
 	function genOptionsId() {
 		global $gBitDb;
-		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_id`) + 1 FROM " . TABLE_PRODUCTS_OPTIONS );
+		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_id`) FROM " . TABLE_PRODUCTS_OPTIONS );
 		return( $max + 1 );
 	}
 
@@ -167,6 +167,8 @@ class CommerceProductManager extends BitBase {
 	}
 
 	function storeOptionsValue( $pParamHash ) {
+		$this->mDb->StartTrans();
+$this->debug();
 		$ret = FALSE;
 		if( $this->verifyOptionsValue( $pParamHash ) ) {
 			if( !empty( $pParamHash['products_options_values_id'] ) ) {
@@ -177,13 +179,14 @@ class CommerceProductManager extends BitBase {
 			}
 			$ret = TRUE;
 		}
+		$this->mDb->CompleteTrans();
 		return $ret;
 	}
 
 
 	function genOptionsValuesId() {
 		global $gBitDb;
-		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_values_id`) + 1 FROM " . TABLE_PRODUCTS_ATTRIBUTES );
+		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_values_id`) FROM " . TABLE_PRODUCTS_ATTRIBUTES );
 		return( $max + 1 );
 	}
 
