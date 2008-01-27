@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.39 2008/01/03 01:18:29 spiderr Exp $
+// $Id: shopping_cart.php,v 1.40 2008/01/27 23:38:58 spiderr Exp $
 //
 
   class shoppingCart {
@@ -457,90 +457,8 @@
         if (isset($this->contents[$products_id]['attributes'])) {
           reset($this->contents[$products_id]['attributes']);
           while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-			$attribute_price_query = "SELECT *
-									FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-									WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-			$attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$prid, (int)$option , (int)$value ) );
-
-            $new_attributes_price = 0;
-            $discount_type_id = '';
-            $sale_maker_discount = '';
-
-// bottom total
-//            if ($attribute_price->fields['product_attribute_is_free']) {
-            if ($attribute_price->fields['product_attribute_is_free'] == '1' and zen_get_products_price_is_free((int)$prid)) {
-              // no charge for attribute
-            } else {
-// + or blank adds
-              if ($attribute_price->fields['price_prefix'] == '-') {
-                if ($attribute_price->fields['attributes_discounted'] == '1') {
-// calculate proper discount for attributes
-					$new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
-                  $this->total -= $qty * zen_add_tax( ($new_attributes_price), $products_tax);
-                } else {
-                  $this->total -= $qty * zen_add_tax($attribute_price->fields['options_values_price'], $products_tax);
-                }
-              } else {
-                if ($attribute_price->fields['attributes_discounted'] == '1') {
-// calculate proper discount for attributes
-                  $new_attributes_price = zen_get_discount_calc($product->mProductsId, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
-                  $this->total += $qty * zen_add_tax( ($new_attributes_price), $products_tax);
-                } else {
-                  $this->total += $qty * zen_add_tax($attribute_price->fields['options_values_price'], $products_tax);
-                }
-              }
-
-////////////////////////////////////////////////
-// calculate additional attribute charges
-              $chk_price = zen_get_products_base_price($products_id);
-              $chk_special = zen_get_products_special_price($products_id, false);
-// products_options_value_text
-              if (zen_get_attributes_type($attribute_price->fields['products_attributes_id']) == PRODUCTS_OPTIONS_TYPE_TEXT) {
-                  $text_words = zen_get_word_count_price($this->contents[$products_id]['attributes_values'][$attribute_price->fields['options_id']], $attribute_price->fields['attributes_price_words_free'], $attribute_price->fields['attributes_price_words']);
-                  $text_letters = zen_get_letters_count_price($this->contents[$products_id]['attributes_values'][$attribute_price->fields['options_id']], $attribute_price->fields['attributes_price_letters_free'], $attribute_price->fields['attributes_price_letters']);
-
-                  $this->total += $qty * zen_add_tax($text_letters, $products_tax);
-                  $this->total += $qty * zen_add_tax($text_words, $products_tax);
-              }
-
-// attributes_price_factor
-              $added_charge = 0;
-              if( !empty( $attribute_price->fields['attributes_price_factor'] ) ) {
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
-                $this->total += $qty * zen_add_tax($added_charge, $products_tax);
-              }
-// attributes_qty_prices
-              $added_charge = 0;
-              if( !empty( $attribute_price->fields['attributes_qty_prices'] ) ) {
-                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $qty);
-                $this->total += $qty * zen_add_tax($added_charge, $products_tax);
-              }
-
-//// one time charges
-// attributes_price_onetime
-              if( !empty( $attribute_price->fields['attributes_price_onetime'] ) ) {
-                $this->total += zen_add_tax($attribute_price->fields['attributes_price_onetime'], $products_tax);
-              }
-// attributes_pf_onetime
-              $added_charge = 0;
-              if( !empty( $attribute_price->fields['attributes_pf_onetime'] ) ) {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_pf_onetime'], $attribute_price->fields['attributes_pf_onetime_offset']);
-
-                $this->total += zen_add_tax($added_charge, $products_tax);
-              }
-// attributes_qty_prices_onetime
-              $added_charge = 0;
-              if ($attribute_price->fields['attributes_qty_prices_onetime'] != '') {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices_onetime'], $qty);
-                $this->total += zen_add_tax($added_charge, $products_tax);
-              }
-////////////////////////////////////////////////
-            }
+			$added_charge = zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, 'true');
+			$this->total += zen_add_tax($added_charge, $products_tax);
           }
         } // attributes price
 
@@ -583,84 +501,8 @@
 
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-
-          $attribute_price_query = "SELECT *
-                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-                                    WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-          $attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$products_id, (int)$option , (int)$value ) );
-
-          $new_attributes_price = 0;
-          $discount_type_id = '';
-          $sale_maker_discount = '';
-
-//          if ($attribute_price->fields['product_attribute_is_free']) {
-          if ($attribute_price->fields['product_attribute_is_free'] == '1' and zen_get_products_price_is_free((int)$products_id)) {
-            // no charge
-          } else {
-// + or blank adds
-            if ($attribute_price->fields['price_prefix'] == '-') {
-// calculate proper discount for attributes
-              if ($attribute_price->fields['attributes_discounted'] == '1') {
-                $discount_type_id = '';
-                $sale_maker_discount = '';
-                $new_attributes_price = zen_get_discount_calc($products_id, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
-                $attributes_price -= ($new_attributes_price);
-              } else {
-                $attributes_price -= $attribute_price->fields['options_values_price'];
-              }
-            } else {
-              if ($attribute_price->fields['attributes_discounted'] == '1') {
-// calculate proper discount for attributes
-                $discount_type_id = '';
-                $sale_maker_discount = '';
-                $new_attributes_price = zen_get_discount_calc(zen_get_prid($products_id), $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
-                $attributes_price += ($new_attributes_price);
-              } else {
-                $attributes_price += $attribute_price->fields['options_values_price'];
-              }
-            }
-
-//////////////////////////////////////////////////
-// calculate additional charges
-// products_options_value_text
-              if (zen_get_attributes_type($attribute_price->fields['products_attributes_id']) == PRODUCTS_OPTIONS_TYPE_TEXT) {
-                  $text_words = zen_get_word_count_price($this->contents[$products_id]['attributes_values'][$attribute_price->fields['options_id']], $attribute_price->fields['attributes_price_words_free'], $attribute_price->fields['attributes_price_words']);
-                  $text_letters = zen_get_letters_count_price($this->contents[$products_id]['attributes_values'][$attribute_price->fields['options_id']], $attribute_price->fields['attributes_price_letters_free'], $attribute_price->fields['attributes_price_letters']);
-                  $attributes_price += $text_letters;
-                  $attributes_price += $text_words;
-              }
-// attributes_price_factor
-              $added_charge = 0;
-              if( !empty( $attribute_price->fields['attributes_price_factor'] ) ) {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_price_factor'], $attribute_price->fields['attributes_pf_offset']);
-                $attributes_price += $added_charge;
-              }
-// attributes_qty_prices
-              $added_charge = 0;
-              if ($attribute_price->fields['attributes_qty_prices'] != '') {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices'], $this->contents[$products_id]['quantity']);
-                $attributes_price += $added_charge;
-              }
-
-//////////////////////////////////////////////////
-          }
-// Validate Attributes
-          if ($attribute_price->fields['attributes_display_only']) {
-            $_SESSION['valid_to_checkout'] = false;
-            $_SESSION['cart_errors'] .= zen_get_products_name($attribute_price->fields['products_id'], $_SESSION['languages_id'])  . ERROR_PRODUCT_OPTION_SELECTION . '<br />';
-          }
-/*
-//// extra testing not required on text attribute this is done in application_top before it gets to the cart
-          if ($attribute_price->fields['attributes_required']) {
-            $_SESSION['valid_to_checkout'] = false;
-            $_SESSION['cart_errors'] .= zen_get_products_name($attribute_price->fields['products_id'], $_SESSION['languages_id'])  . ERROR_PRODUCT_OPTION_SELECTION . '<br />';
-          }
-*/
+        	$prid = zen_get_prid( $products_id );
+			$attributes_price += zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, 'true');
         }
       }
 
@@ -798,7 +640,6 @@ if ((int)$products_id != $products_id) {
 				$prid = $product->mProductsId;
 				$qty = $productsHash['quantity'];
 				$products_price = $product->getPurchasePrice( $qty );
-
 					if ($check_for_valid_cart == true) {
 						$check_quantity = $productsHash['quantity'];
 						$check_quantity_min = $product->getField( 'products_quantity_order_min' );
@@ -1067,36 +908,35 @@ if ((int)$products_id != $products_id) {
       return $in_cart_mixed_qty;
     }
 
-// check mixed discount_quantity
-    function in_cart_mixed_discount_quantity($products_id) {
-      global $gBitDb;
-      // if nothing is in cart return 0
-      if (!is_array($this->contents)) return 0;
+	// check mixed discount_quantity
+	function in_cart_mixed_discount_quantity($products_id) {
+		global $gBitDb;
+		$ret = 0;
 
-		// check if mixed is on
-		if( $product = $gBitDb->getRow("select `products_id`, `products_mixed_discount_qty` from " . TABLE_PRODUCTS .
-			" where `products_id` ='" . zen_get_prid($products_id) . "'") ) {
+		// if nothing is in cart return 0
+		if( is_array( $this->contents ) ) {
+			// check if mixed is on
+			if( $hasMixedQuantity = $gBitDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid($products_id ) ) ) ) {
 
-			// if mixed attributes is off return qty for current attribute selection
-			if ($product['products_mixed_discount_qty'] == '0') {
-				return $this->get_quantity($products_id);
+				// compute total quantity regardless of attributes
+				$in_cart_mixed_qty_discount_quantity = 0;
+				$chk_products_id= zen_get_prid($products_id);
+
+				// reset($this->contents); // breaks cart
+				$check_contents = $this->contents;
+				while (list($products_id, ) = each($check_contents)) {
+					$test_id = zen_get_prid($products_id);
+					if ($test_id == $chk_products_id) {
+						$in_cart_mixed_qty_discount_quantity += $check_contents[$products_id]['quantity'];
+					}
+				}
 			}
+		} else {
+			$ret = $this->get_quantity( $products_id );
 		}
-
-      // compute total quantity regardless of attributes
-      $in_cart_mixed_qty_discount_quantity = 0;
-      $chk_products_id= zen_get_prid($products_id);
-
-      // reset($this->contents); // breaks cart
-      $check_contents = $this->contents;
-      while (list($products_id, ) = each($check_contents)) {
-        $test_id = zen_get_prid($products_id);
-        if ($test_id == $chk_products_id) {
-          $in_cart_mixed_qty_discount_quantity += $check_contents[$products_id]['quantity'];
-        }
-      }
-      return $in_cart_mixed_qty_discount_quantity;
-    }
+				
+		return $in_cart_mixed_qty_discount_quantity;
+	}
 
 // $check_what is the fieldname example: 'products_is_free'
 // $check_value is the value being tested for - default is 1
