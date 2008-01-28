@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.31 2008/01/08 21:04:42 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.32 2008/01/28 23:51:19 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -86,6 +86,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				// reverse negative values for display
 				if ($new_attributes_price < 0) {
 					$new_attributes_price = -$new_attributes_price;
+					$vals['price_prefix'] = '-';
 				}
 
 				$price_onetime = '';
@@ -189,7 +190,11 @@ if ( $gBitProduct->loadAttributes() ) {
 
 			}
 
-			// checkboxes
+
+
+
+			// =-=-=-=-=-=-=-=-=-=-= checkboxes
+
 			if ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX) {
 				$string = $gBitProduct->mOptions[$optionsId]['products_options_id'].'_chk'.$vals['products_options_values_id'];
 				if ($_SESSION['cart']->in_cart($prod_id)) {
@@ -295,7 +300,10 @@ if ( $gBitProduct->loadAttributes() ) {
 			}
 
 
-	// text
+
+
+			// =-=-=-=-=-=-=-=-=-=-= text
+
 			if (($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
 				//CLR 030714 Add logic for text option
 	//            $products_attribs_query = zen_db_query("select distinct patrib.options_values_price, patrib.price_prefix from " . TABLE_PRODUCTS_ATTRIBUTES . " patrib where patrib.`products_id`='" . (int)$_GET['products_id'] . "' and patrib.options_id = '" . $products_options_name['products_options_id'] . "'");
@@ -351,12 +359,13 @@ if ( $gBitProduct->loadAttributes() ) {
 				}
 			}
 
-	// file uploads
 
-	// iii 030813 added: support for file fields
+
+
+			// =-=-=-=-=-=-=-=-=-=-= file uploads
+
 			if ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE) {
 				$number_of_uploads++;
-	// $cart->contents[$_GET['products_id']]['attributes_values'][$products_options_name['products_options_id']]
 				$tmp_html = '<input type="file" name="id[' . TEXT_PREFIX . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
 							$_SESSION['cart']->contents[$prod_id]['attributes_values'][$gBitProduct->mOptions[$optionsId]['products_options_id']] .
 							zen_draw_hidden_field(UPLOAD_PREFIX . $number_of_uploads, $gBitProduct->mOptions[$optionsId]['products_options_id']) .
@@ -365,7 +374,7 @@ if ( $gBitProduct->loadAttributes() ) {
 			}
 
 
-	// collect attribute image if it exists and to draw in table below
+			// collect attribute image if it exists and to draw in table below
 			if ($gBitProduct->mOptions[$optionsId]['products_options_images_style'] == '0' or ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE or $gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT or $gBitProduct->mOptions[$optionsId]['products_options_type'] == '0') ) {
 				if ($vals['attributes_image'] != '') {
 				$tmp_attributes_image_row++;
@@ -380,7 +389,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				}
 			}
 
-	// Read Only - just for display purposes
+			// Read Only - just for display purposes
 			if ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
 	//            $tmp_html .= '<input type="hidden" name ="id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']"' . '" value="' . stripslashes($vals['products_options_values_name']) . ' SELECTED' . '" />  ' . $vals['products_options_values_name'];
 				$tmp_html .= $products_options_details . '<br />';
@@ -474,7 +483,6 @@ if ( $gBitProduct->loadAttributes() ) {
 				} else {
 				$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				}
-
 				$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $gBitProduct->mOptions[$optionsId]['products_options_html_attrib']);
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ( !empty( $gBitProduct->mOptions[$optionsId]['products_options_comment_position'] ) ? '1' : '0');
