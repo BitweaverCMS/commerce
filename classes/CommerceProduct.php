@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.106 2007/12/26 18:16:14 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.107 2008/01/28 23:54:00 spiderr Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -897,10 +897,10 @@ $this->debug(0);
 
 
 	
-	function storeAttributeMap( $pOptionsValuesId ) {
+	function storeAttributeMap( $pOptionsValuesId, $pOverridePrice=NULL ) {
 		if( BitBase::verifyId( $pOptionsValuesId ) && $this->isValid() ) {
 			if( !$this->hasOptionValue( $pOptionsValuesId ) ) {
-				$this->mDb->associateInsert( TABLE_PRODUCTS_OPTIONS_MAP, array( 'products_id' => $this->mProductsId, 'products_options_values_id' => $pOptionsValuesId ) );
+				$this->mDb->associateInsert( TABLE_PRODUCTS_OPTIONS_MAP, array( 'products_id' => $this->mProductsId, 'products_options_values_id' => $pOptionsValuesId, 'override_price' => $pOverridePrice ) );
 			}
 		}
 	}
