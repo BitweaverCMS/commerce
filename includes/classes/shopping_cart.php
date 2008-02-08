@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.40 2008/01/27 23:38:58 spiderr Exp $
+// $Id: shopping_cart.php,v 1.41 2008/02/08 04:45:31 spiderr Exp $
 //
 
   class shoppingCart {
@@ -419,79 +419,81 @@
     }
 
 // calculates totals
-    function calculate() {
-      global $gBitDb;
-      $this->total = 0;
-      $this->weight = 0;
+    function calculate( $pForceRecalculate=FALSE ) {
+		global $gBitDb;
+		if( is_null( $this->total ) || $pForceRecalculate ) {
+		  $this->total = 0;
+		  $this->weight = 0;
 
-// shipping adjustment
-      $this->free_shipping_item = 0;
-      $this->free_shipping_price = 0;
-      $this->free_shipping_weight = 0;
+	// shipping adjustment
+		  $this->free_shipping_item = 0;
+		  $this->free_shipping_price = 0;
+		  $this->free_shipping_weight = 0;
 
-      if (!is_array($this->contents)) return 0;
+		  if (!is_array($this->contents)) return 0;
 
-      reset($this->contents);
-      while (list($products_id, ) = each($this->contents)) {
-        $qty = $this->contents[$products_id]['quantity'];
-        $prid = zen_get_prid( $products_id );
+		  reset($this->contents);
+		  while (list($products_id, ) = each($this->contents)) {
+			$qty = $this->contents[$products_id]['quantity'];
+			$prid = zen_get_prid( $products_id );
 
-// products price
-		$product = $this->getProductObject( $prid );
-        if( $product->isValid() ) {
-          $products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
-          $products_price = $product->getPurchasePrice( $qty );
+	// products price
+			$product = $this->getProductObject( $prid );
+			if( $product->isValid() ) {
+			  $products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
+			  $products_price = $product->getPurchasePrice( $qty );
 
-// shipping adjustments
-          if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
-            $this->free_shipping_item += $qty;
-            $this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-            $this->free_shipping_weight += ($qty * $product->getField('products_weight') );
-          }
+	// shipping adjustments
+			  if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
+				$this->free_shipping_item += $qty;
+				$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
+				$this->free_shipping_weight += ($qty * $product->getField('products_weight') );
+			  }
 
-          $this->total += zen_add_tax($products_price, $products_tax) * $qty;
-          $this->weight += ($qty * $product->getField('products_weight') );
-        }
+			  $this->total += zen_add_tax($products_price, $products_tax) * $qty;
+			  $this->weight += ($qty * $product->getField('products_weight') );
+			}
 
-// attributes price
-        if (isset($this->contents[$products_id]['attributes'])) {
-          reset($this->contents[$products_id]['attributes']);
-          while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-			$added_charge = zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, 'true');
-			$this->total += zen_add_tax($added_charge, $products_tax);
-          }
-        } // attributes price
+	// attributes price
+			if (isset($this->contents[$products_id]['attributes'])) {
+			  reset($this->contents[$products_id]['attributes']);
+			  while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+					$added_charge = zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, TRUE);
+					$this->total += zen_add_tax($added_charge, $products_tax);
+			  }
+			} // attributes price
 
-// attributes weight
-        if (isset($this->contents[$products_id]['attributes'])) {
-          reset($this->contents[$products_id]['attributes']);
-          while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-			$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
-									FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-									WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-			$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$prid, (int)$option , (int)$value ) );
-		  
-          // adjusted count for free shipping
-          if ($product->getField('product_is_always_free_ship') != 1) {
-            $new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
-          } else {
-            $new_attributes_weight = 0;
-          }
+	// attributes weight
+			if (isset($this->contents[$products_id]['attributes'])) {
+			  reset($this->contents[$products_id]['attributes']);
+			  while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+				$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
+										FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
+										WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+				$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$prid, (int)$option , (int)$value ) );
+			  
+			  // adjusted count for free shipping
+			  if ($product->getField('product_is_always_free_ship') != 1) {
+				$new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
+			  } else {
+				$new_attributes_weight = 0;
+			  }
 
-// + or blank adds
-            if ($attribute_weight->fields['products_attributes_wt_pfix'] == '-') {
-              $this->weight -= $qty * $new_attributes_weight;
-            } else {
-              $this->weight += $qty * $new_attributes_weight;
-            }
-          }
-        } // attributes weight
+	// + or blank adds
+				if ($attribute_weight->fields['products_attributes_wt_pfix'] == '-') {
+				  $this->weight -= $qty * $new_attributes_weight;
+				} else {
+				  $this->weight += $qty * $new_attributes_weight;
+				}
+			  }
+			} // attributes weight
 
-      }
+		  }
+		}
     }
 
-    function attributes_price($products_id) {
+    function attributes_price( $products_id, $pTotalPrice=TRUE ) {
       global $gBitDb;
 
       $attributes_price = 0;
@@ -502,7 +504,7 @@
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
         	$prid = zen_get_prid( $products_id );
-			$attributes_price += zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, 'true');
+			$attributes_price += zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, $pTotalPrice );
         }
       }
 
@@ -708,7 +710,7 @@ if ((int)$products_id != $products_id) {
 				}
 				$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
 		// fix here
-				$productHash['final_price'] = $products_price + $this->attributes_price($products_id);
+				$productHash['final_price'] = $products_price + $this->attributes_price($products_id, FALSE);
 				$productHash['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
 				$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 				$productHash['tax'] = $product->getField('tax_rate');
