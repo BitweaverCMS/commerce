@@ -1373,7 +1373,7 @@ If a special exist * 10+9
 
 ////
 // attributes final price
-  function zen_get_attributes_price_final( $pProductsId, $pOptionsValuesId, $qty = 1, $pre_selected, $include_onetime = 'false') {
+  function zen_get_attributes_price_final( $pProductsId, $pOptionsValuesId, $qty = 1, $pre_selected, $pTotalPrice = TRUE ) {
     global $gBitDb;
     global $cart;
 	
@@ -1390,6 +1390,9 @@ If a special exist * 10+9
 
 		if( !empty( $pre_selected->fields['override_price'] ) ) {
 			$attributes_price_final = $pre_selected->fields['override_price'];
+			if( $pTotalPrice == TRUE ) {
+				$attributes_price_final *= $qty;
+			}
 		} else {
 
 			$attributes_price_final = 0;
@@ -1414,7 +1417,8 @@ If a special exist * 10+9
 			}
 
 			// onetime charges
-			if ($include_onetime == 'true') {
+			if( $pTotalPrice == TRUE ) {
+				$attributes_price_final *= $qty;
 				$pre_selected_onetime = $pre_selected;
 				$attributes_price_final += zen_get_attributes_price_final_onetime($pProductsId, $pre_selected->fields['products_options_values_id'], 1, $pre_selected_onetime);
 			}
