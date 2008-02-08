@@ -155,7 +155,9 @@
 			$_SESSION['cart']->restore_contents();
 		}
 	}
-	$_SESSION['cart']->total = NULL;
+  	if( is_object( $_SESSION['cart'] ) ) {
+		$_SESSION['cart']->total = NULL;
+	}
 	if( !isset( $_SESSION['cc_id'] ) ) {
 		$_SESSION['cc_id'] = NULL;
 	}
