@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.66 2008/01/02 04:44:01 spiderr Exp $
+// $Id: order.php,v 1.67 2008/02/08 05:36:05 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -569,7 +569,7 @@ class order extends BitBase {
       $products = $_SESSION['cart']->get_products();
       foreach( array_keys( $products ) as $opid ) {
         $this->products[$opid] = $products[$opid];
-        $this->products[$opid]['final_price'] = $products[$opid]['price'] + $_SESSION['cart']->attributes_price($products[$opid]['id']);
+        $this->products[$opid]['final_price'] = $products[$opid]['price'] + $_SESSION['cart']->attributes_price($products[$opid]['id'], FALSE );
         $this->products[$opid]['onetime_charges'] = $_SESSION['cart']->attributes_price_onetime_charges($products[$opid]['id'], $products[$opid]['quantity']);
         $this->products[$opid]['tax'] = zen_get_tax_rate( $products[$opid]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
         $this->products[$opid]['tax_description'] = zen_get_tax_description( $products[$opid]['tax_class_id'], $tax_address->fields['entry_country_id'], $tax_address->fields['entry_zone_id'] );
