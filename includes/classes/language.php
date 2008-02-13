@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.5 2005/09/10 13:46:52 spiderr Exp $
+// $Id: language.php,v 1.6 2008/02/13 01:48:42 spiderr Exp $
 //
 
   class language {
@@ -74,7 +74,7 @@
                           FROM " . TABLE_LANGUAGES . "
                           ORDER BY `sort_order`";
 
-      $languages = $gBitDb->Query($languages_query);
+      $languages = $gBitDb->query($languages_query);
 
       while (!$languages->EOF) {
         $this->catalog_languages[$languages->fields['code']] = array('id' => $languages->fields['languages_id'],
