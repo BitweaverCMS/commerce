@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: general.php,v 1.47 2008/02/13 06:01:21 spiderr Exp $
+//	$Id: general.php,v 1.48 2008/02/13 07:28:51 spiderr Exp $
 //
 
 ////
@@ -371,7 +371,12 @@
 		global $gCommerceSystem;
 		$ret = array();
 		if( BitBase::verifyId( $pCustomersId ) ) {	
-			$sql = "SELECT MAX(`date_purchased`) - MIN(`date_purchased`) AS `customers_age`, COUNT(`order_total`) AS `orders_count`, SUM(`order_total`) AS `customers_total` FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 AND `customers_id`=?";
+			//  MAX(cgvc.`amount`) is a little hokie here since customer_id is PKEY and a row is hit for every order, however MAX works and keeps things clean
+			$sql = "SELECT MAX(co.`date_purchased`) - MIN(co.`date_purchased`) AS `customers_age`, COUNT(co.`order_total`) AS `orders_count`, SUM(co.`order_total`) AS `customers_total`, SUM(cotgv.`orders_value`) AS `gifts_redeemed`, MAX(cgvc.`amount`) AS `gifts_balance`
+					FROM " . TABLE_ORDERS . " co
+						LEFT JOIN " . TABLE_ORDERS_TOTAL . " cotgv ON (cotgv.`orders_id`=co.`orders_id` AND cotgv.`class`='ot_gv')
+						LEFT JOIN " . TABLE_COUPON_GV_CUSTOMER . " cgvc ON (cgvc.`customer_id`=co.`customers_id`)
+					WHERE `orders_status` > 0 AND `customers_id`=?";
 			if( $ret = $gBitDb->getRow( $sql, array( $pCustomersId ) ) ) {
 				// get the natural log of the total divided by the natural log of the 10th root of the tier cieling.
 				// This gives an exponentail number from 1 to 10, akin to Google PageRank for customers
@@ -380,6 +385,7 @@
 				if( strpos( $ret['customers_age'], ' ' ) ) {
 					$ret['customers_age'] = substr( $ret['customers_age'], 0, strrpos( $ret['customers_age'], ' ' ));
 				}
+				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=`cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
 			}
 		}
 		return $ret;
