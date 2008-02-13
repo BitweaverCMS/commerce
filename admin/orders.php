@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.53 2008/02/13 06:01:21 spiderr Exp $
+//  $Id: orders.php,v 1.54 2008/02/13 07:28:20 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -79,9 +79,10 @@
 		exit;
 	}
 
-	if( empty( $order ) ) {
-  		require_once( BITCOMMERCE_PKG_PATH.'admin/orders_list_inc.php' );
-	} else {
+	$gBitSystem->setOnloadScript( 'init()' );
+	require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+
+	if( !empty( $order ) ) {
 		require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
 		$productManager = new CommerceProductManager();
 		$optionsList = $productManager->getOptions();
@@ -236,9 +237,6 @@
 	}
 
 	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
-
-	$gBitSystem->setOnloadScript( 'init()' );
-	require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
 	if( $order_exists ) {
 		if ($order->info['payment_module_code']) {
