@@ -23,7 +23,11 @@ function editAddress( pAddress ) {
 {/if}
 		<a href="mailto:{$order->customer.email_address}">{$order->customer.email_address}</a><br/>
 		IP: {$order->info.ip_address}<br/>
-		{$order->info.payment_method}
+		{$order->info.payment_method}<br/>
+		{if $customerStats.orders_count == 1}</em>First Order</em>
+		{else}
+		<strong>Tier {$customerStats.tier|round}</strong>: {$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2} {tr}over{/tr} {$customerStats.customers_age}
+		{/if}
 		</td>
 	</td>
 	<td>

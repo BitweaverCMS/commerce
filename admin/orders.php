@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.52 2007/11/21 17:08:14 spiderr Exp $
+//  $Id: orders.php,v 1.53 2008/02/13 06:01:21 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -234,7 +234,9 @@
 		}
 		}
 	}
- 
+
+	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
+
 	$gBitSystem->setOnloadScript( 'init()' );
 	require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
