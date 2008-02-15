@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.41 2008/02/08 04:45:31 spiderr Exp $
+// $Id: shopping_cart.php,v 1.42 2008/02/15 18:51:18 spiderr Exp $
 //
 
   class shoppingCart {
@@ -514,7 +514,7 @@
 
 // one time attribute prices
 // add to tpl_shopping_cart/orders
-    function attributes_price_onetime_charges($products_id, $qty) {
+    function attributes_price_onetime_charges($products_id, $qty=1) {
       global $gBitDb;
 
       $attributes_price_onetime = 0;
