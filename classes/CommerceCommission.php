@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.5 2007/10/29 02:35:08 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.6 2008/03/25 03:24:56 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -30,6 +30,7 @@ class CommerceCommission extends BitBase {
 		$pParamHash['payment_store']['payment_method'] = $pParamHash['payment_method'];
 		$pParamHash['payment_store']['payment_reference_number'] = $pParamHash['payment_reference_number'];
 		$pParamHash['payment_store']['payment_note'] = $pParamHash['payment_note'];
+		$pParamHash['payment_store']['commission_type'] = $pParamHash['commission_type'];
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -103,7 +104,7 @@ return FALSE;
 			$whereSql .= ' AND co.`date_purchased` < '.$throughDate;
 		}
 
-		$sql = "SELECT lc.`user_id`, uu.`content_id`, uu.`real_name`, uu.`login`, uu.`email`, lcp.`pref_value` AS `payment_method`, SUM(cop.`products_commission` * cop.`products_quantity`) AS `commission_sum`
+		$sql = "SELECT lc.`user_id` AS `hash_key`, lc.`user_id`, uu.`content_id`, uu.`real_name`, uu.`login`, uu.`email`, lcp.`pref_value` AS `payment_method`, SUM(cop.`products_commission` * cop.`products_quantity`) AS `commission_sum`
 				FROM " . TABLE_ORDERS . " co  
 					INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
 					INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)

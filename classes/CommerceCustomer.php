@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.27 2007/10/31 11:27:40 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.28 2008/03/25 03:24:56 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -61,8 +61,8 @@
 		function getCommissionsHistory() {
 			$ret = array();
 			if( $this->isValid() ) {
-				$sql = "SELECT cop.`orders_products_id` AS `hash_key`, co.*,cop.* FROM 
-							" . TABLE_ORDERS . " co  
+				$sql = "SELECT cop.`orders_products_id` AS `hash_key`, co.*,cop.* 
+						FROM " . TABLE_ORDERS . " co  
 							INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
 							INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
 							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
