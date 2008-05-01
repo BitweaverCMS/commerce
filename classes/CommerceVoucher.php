@@ -289,14 +289,14 @@ class CommerceVoucher extends BitBase {
 	function updateCustomerBalance( $pCustomerId, $pCouponId ) {
 		global $gBitDb;
 		if( BitBase::verifyId( $pCustomerId ) ) {
-			$query = "SELECT amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?";
-			$customerBalance = $gBitDb->getOne( $query, array( $pCustomerId ) );
+			$query = "SELECT customer_id, amount FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?";
+			$customerBalance = $gBitDb->getRow( $query, array( $pCustomerId ) );
 
 			$coupon_gv_query = "SELECT coupon_amount FROM " . TABLE_COUPONS . " WHERE coupon_id = ?";
 			$couponAmount = $gBitDb->getOne($coupon_gv_query, array( $pCouponId ) );
 
-			if( $customerBalance ) {
-				$newAmount = $customerBalance + $couponAmount;
+			if( !empty( $customerBalance['customer_id'] ) ) {
+				$newAmount = $customerBalance['amount'] + $couponAmount;
 				$gv_query = "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET amount = ? WHERE `customer_id` = ?";
 				$gBitDb->query($gv_query, array( $newAmount, $pCustomerId ) );
 			} else {
