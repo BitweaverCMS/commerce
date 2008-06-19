@@ -57,7 +57,7 @@ function saveNewOption( pForm ) {
 {foreach from=$order->products item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name}</a></td>
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
 <td class="dataTableContent" valign="top">{$ordersProduct.model}</td>
 <td class="dataTableContent" align="right" valign="top">{$ordersProduct.tax|zen_display_tax_value}%</td>
 <td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}
