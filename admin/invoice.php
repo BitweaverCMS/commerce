@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.9 2007/12/30 18:41:47 spiderr Exp $
+//  $Id: invoice.php,v 1.10 2008/06/19 19:36:46 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -46,7 +46,7 @@
     <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
       <tr>
         <td class="pageHeading"><?php echo nl2br(STORE_NAME_ADDRESS); ?></td>
-        <td class="pageHeading" align="right"><?php echo zen_image(DIR_WS_IMAGES . HEADER_LOGO_IMAGE, HEADER_ALT_TEXT); ?></td>
+        <td class="pageHeading" align="right"></td>
       </tr>
     </table></td>
   </tr>
