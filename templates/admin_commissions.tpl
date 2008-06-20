@@ -29,7 +29,7 @@
 		<td class="item">{$commission.payment_method}</td>
 	</tr>
 	<tr style="display:none" id="enterpayment{$commission.user_id}">
-		<td colspan="6" class="item {$oddeven}" >
+		<td colspan="5" class="item {$oddeven}" >
 			{include file="bitpackage:bitcommerce/admin_commission_payment_inc.tpl" commission=$commission}
 		</td>
 	</tr>
