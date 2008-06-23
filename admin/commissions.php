@@ -24,6 +24,7 @@ $periodEndDate = $date['year'].'-'.str_pad( $date['mon'], 2, '0', STR_PAD_LEFT )
 $gBitSmarty->assign( 'periodEndDate', $periodEndDate );
 
 if( !empty( $_REQUEST['save_payment'] ) ) {
+	$_REQUEST['commission_type'] = 'product sale';
 	$commissionManager->storePayment( $_REQUEST );
 }
 

@@ -9,10 +9,12 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.6 2008/03/25 03:24:56 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.7 2008/06/23 21:39:22 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
+
+define( 'COMMISSION_TYPE_PRODUCT_SALE', 'product sale' );
 
 class CommerceCommission extends BitBase {
 
@@ -30,7 +32,11 @@ class CommerceCommission extends BitBase {
 		$pParamHash['payment_store']['payment_method'] = $pParamHash['payment_method'];
 		$pParamHash['payment_store']['payment_reference_number'] = $pParamHash['payment_reference_number'];
 		$pParamHash['payment_store']['payment_note'] = $pParamHash['payment_note'];
-		$pParamHash['payment_store']['commission_type'] = $pParamHash['commission_type'];
+		if( !empty( $pParamHash['commission_type'] ) ) {
+			$pParamHash['payment_store']['commission_type'] = $pParamHash['commission_type'];
+		} else {
+			$this->mErrors['commissions_payment'] = tra( 'Commission type not specified' );
+		}
 
 		return( count( $this->mErrors ) == 0 );
 	}
