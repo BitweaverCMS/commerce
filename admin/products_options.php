@@ -82,5 +82,5 @@ if( !empty( $editTpl ) ) {
 	$gBitSmarty->assign_by_ref( 'editTpl', $editTpl );
 }
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_products_options.tpl', 'Product Options' );
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_products_options.tpl', 'Product Options' , array( 'display_mode' => 'admin' ));
 ?>

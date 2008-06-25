@@ -14,6 +14,6 @@ $history = $orderManager->getProductHistory( $_REQUEST );
 
 $gBitSmarty->assign_by_ref( 'productHistory', $history );
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_product_history.tpl', 'Product History' );
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_product_history.tpl', 'Product History' , array( 'display_mode' => 'admin' ));
 
 ?>

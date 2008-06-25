@@ -47,5 +47,5 @@ if( $commissionsDue = $commissionManager->getCommissions( $listHash ) ) {
 	$gBitSmarty->assign_by_ref( 'commissionsDue', $commissionsDue );
 }
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_commissions.tpl', 'Commissions Report' );
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_commissions.tpl', 'Commissions Report' , array( 'display_mode' => 'admin' ));
 ?>

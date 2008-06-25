@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: footer.php,v 1.4 2005/10/31 16:20:00 lsces Exp $
+//  $Id: footer.php,v 1.5 2008/06/25 22:21:07 spiderr Exp $
 //
 
 $obcontent = ob_get_contents();
@@ -26,6 +26,6 @@ ob_end_clean();
 
 $gBitSystem->mLayout = array( 1 );
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_bitcommerce.tpl', tra( 'Admin' ).' '.ucfirst( BITCOMMERCE_PKG_DIR ).' : '.HEADING_TITLE );
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_bitcommerce.tpl', tra( 'Admin' ).' '.ucfirst( BITCOMMERCE_PKG_DIR ).' : '.HEADING_TITLE , array( 'display_mode' => 'admin' ));
 
 ?>

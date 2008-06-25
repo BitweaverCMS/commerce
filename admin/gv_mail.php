@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: gv_mail.php,v 1.16 2007/11/05 03:48:25 spiderr Exp $
+//  $Id: gv_mail.php,v 1.17 2008/06/25 22:21:07 spiderr Exp $
 //
 
   require_once('includes/application_top.php');
@@ -72,5 +72,5 @@
 		}
 		$gBitSmarty->assign( 'mailSentTo', $mailSentTo );
 	} 
-	$gBitSystem->display( "bitpackage:bitcommerce/admin_gv_mail.tpl" );
+	$gBitSystem->display( "bitpackage:bitcommerce/admin_gv_mail.tpl" , NULL, array( 'display_mode' => 'admin' ));
 ?>
