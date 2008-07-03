@@ -256,7 +256,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products' => "
   metatags_price_status I1,
   metatags_title_tagline_status I1,
   related_content_id I4,
-  purchase_group_id I4
+  purchase_group_id I4,
+  reorders_interval C(256),
+  reorders_pending I4
 
   CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
