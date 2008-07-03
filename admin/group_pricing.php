@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: group_pricing.php,v 1.9 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: group_pricing.php,v 1.10 2008/07/03 14:35:07 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -35,12 +35,12 @@
           $sql_data_array = array('group_name' => $group_name,
                                   'group_percentage' => $group_percentage);
           if ($action == 'insert') {
-            $insert_sql_data = array('date_added' => 'now()');
+            $insert_sql_data = array('date_added' => $gBitDb->NOW() );
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
             $gBitDb->associateInsert(TABLE_GROUP_PRICING, $sql_data_array);
             $group_id = zen_db_insert_id( TABLE_GROUP_PRICING, 'group_id' );
           } elseif ($action == 'save') {
-            $update_sql_data = array('last_modified' => 'now()');
+            $update_sql_data = array('last_modified' => $gBitDb->NOW() );
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
             $gBitDb->associateInsert(TABLE_GROUP_PRICING, $sql_data_array, 'update', "group_id = '" . (int)$group_id . "'");
           }
@@ -158,6 +158,7 @@
               </tr>
 <?php
   if (empty($action)) {
+  	if ( !isset($gInfo) ) $gInfo->group_id = 1;
 ?>
               <tr>
                 <td align="right" colspan="4" class="smallText"><?php echo '<a href="' . zen_href_link_admin(FILENAME_GROUP_PRICING, 'page=' . $_GET['page'] . '&gID=' . $gInfo->group_id . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>

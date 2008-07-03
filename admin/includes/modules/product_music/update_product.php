@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.8 2006/12/19 00:11:31 spiderr Exp $
+//  $Id: update_product.php,v 1.9 2008/07/03 14:38:52 lsces Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -62,7 +62,7 @@
           }
 
           if ($action == 'insert_product') {
-            $insert_sql_data = array( 'products_date_added' => 'now()',
+            $insert_sql_data = array( 'products_date_added' => $gBitDb->NOW(),
                                       'master_categories_id' => (int)$current_category_id);
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
@@ -86,7 +86,7 @@
             $gBitDb->associateInsert(TABLE_PRODUCT_MUSIC_EXTRA, $sql_data_array);
 
           } elseif ($action == 'update_product') {
-            $update_sql_data = array( 'products_last_modified' => 'now()',
+            $update_sql_data = array( 'products_last_modified' => $gBitDb->NOW(),
                                       'master_categories_id' => ($_POST['master_categories_id'] > 0 ? zen_db_prepare_input($_POST['master_categories_id']) : zen_db_prepare_input($_POST['master_categories_id'])));
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);

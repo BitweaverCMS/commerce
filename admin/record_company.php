@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: record_company.php,v 1.8 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: record_company.php,v 1.9 2008/07/03 14:38:52 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -34,14 +34,14 @@
         $sql_data_array = array('record_company_name' => $record_company_name);
 
         if ($action == 'insert') {
-          $insert_sql_data = array('date_added' => 'now()');
+          $insert_sql_data = array('date_added' => $gBitDb->NOW() );
 
           $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
           $gBitDb->associateInsert(TABLE_RECORD_COMPANY, $sql_data_array);
           $record_company_id = zen_db_insert_id( TABLE_RECORD_COMPANY, 'record_company_id' );
         } elseif ($action == 'save') {
-          $update_sql_data = array('last_modified' => 'now()');
+          $update_sql_data = array('last_modified' => $gBitDb->NOW() );
 
           $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product_meta_tags.php,v 1.6 2006/12/19 00:11:30 spiderr Exp $
+//  $Id: update_product_meta_tags.php,v 1.7 2008/07/03 14:38:52 lsces Exp $
 //
 
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
@@ -38,12 +38,12 @@
 
           if ($action == 'new_product_meta_tags') {
             $insert_sql_data = array( 'products_id' =>  $products_id);
-            $insert_sql_data = array( 'products_date_added' =>  'now()');
+            $insert_sql_data = array( 'products_date_added' =>  $gBitDb->NOW() );
 
             $sql_data_array = array_merge($sql_data_array, $insert_sql_data);
             $gBitDb->associateInsert(TABLE_PRODUCTS, $sql_data_array);
           } elseif ($action == 'update_product_meta_tags') {
-            $update_sql_data = array( 'products_last_modified' => 'now()');
+            $update_sql_data = array( 'products_last_modified' => $gBitDb->NOW() );
 
             $sql_data_array = array_merge($sql_data_array, $update_sql_data);
 //die('UPDATE PRODUCTS ID:' . (int)$products_id . ' - ' . sizeof($sql_data_array));

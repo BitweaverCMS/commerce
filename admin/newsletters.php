@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: newsletters.php,v 1.10 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: newsletters.php,v 1.11 2008/07/03 14:38:52 lsces Exp $
 
   require('includes/application_top.php');
 
@@ -72,7 +72,7 @@
                                   'module' => $newsletter_module);
 
           if ($action == 'insert') {
-            $sql_data_array['date_added'] = 'now()';
+            $sql_data_array['date_added'] = $gBitDb->NOW();
             $sql_data_array['status'] = '0';
             $sql_data_array['locked'] = '0';
 
