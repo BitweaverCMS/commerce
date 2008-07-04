@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.108 2008/07/04 18:49:32 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.109 2008/07/04 19:28:17 lsces Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
@@ -990,7 +990,7 @@ $this->debug(0);
 	function loadDiscounts() {
 		$this->mDiscounts = array();
 		if( $this->isValid() ) {
-			$this->mDiscounts = $this->mDb->getAssoc( "SELECT `discount_qty` AS `hash_key`, * FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ? ORDER BY `discount_qty`", array( $this->mProductsId ) );
+			$this->mDiscounts = $this->mDb->getAssoc( "SELECT pdq.`discount_qty` AS `hash_key`, pdq.* FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " pdq WHERE `products_id` = ? ORDER BY `discount_qty`", array( $this->mProductsId ) );
 		}
 		return( count( $this->mDiscounts ) );
 	}
