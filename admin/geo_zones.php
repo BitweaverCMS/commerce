@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: geo_zones.php,v 1.14 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: geo_zones.php,v 1.15 2008/07/05 11:31:34 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -221,7 +221,8 @@ function update_zone(theForm) {
     $rows = 0;
     $zones_query_raw = "select a.`association_id`, a.`zone_country_id`, c.`countries_name`, a.`zone_id`, a.`geo_zone_id`, a.`last_modified`, a.`date_added`, z.`zone_name` from " . TABLE_ZONES_TO_GEO_ZONES . " a left join " . TABLE_COUNTRIES . " c on a.`zone_country_id` = c.`countries_id` left join " . TABLE_ZONES . " z on a.`zone_id` = z.`zone_id` where a.`geo_zone_id` = " . $_GET['zID'] . " order by `association_id`";
     $zones_split = new splitPageResults($_GET['spage'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
-    $zones = $gBitDb->Execute($zones_query_raw);
+    $offset = (isset($_GET['spage']) ? (($_GET['spage']-1) * MAX_DISPLAY_SEARCH_RESULTS) : 0);
+	$zones = $gBitDb->query($zones_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS, $offset );
     while (!$zones->EOF) {
       $rows++;
       if ((!isset($_GET['sID']) || (isset($_GET['sID']) && ($_GET['sID'] == $zones->fields['association_id']))) && !isset($sInfo) && (substr($action, 0, 3) != 'new')) {
@@ -264,7 +265,7 @@ function update_zone(theForm) {
 <?php
     $zones_query_raw = "select `geo_zone_id`, `geo_zone_name`, `geo_zone_description`, `last_modified`, `date_added` from " . TABLE_GEO_ZONES . " order by `geo_zone_name`";
     $zones_split = new splitPageResults($_GET['zpage'], MAX_DISPLAY_SEARCH_RESULTS, $zones_query_raw, $zones_query_numrows);
-    $zones = $gBitDb->Execute($zones_query_raw);
+    $zones = $gBitDb->Execute($zones_query_raw, MAX_DISPLAY_SEARCH_RESULTS);
     while (!$zones->EOF) {
       if ((!isset($_GET['zID']) || (isset($_GET['zID']) && ($_GET['zID'] == $zones->fields['geo_zone_id']))) && !isset($zInfo) && (substr($action, 0, 3) != 'new')) {
         $num_zones = $gBitDb->Execute("select count(*) as `num_zones`
