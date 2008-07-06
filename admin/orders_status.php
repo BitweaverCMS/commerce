@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_status.php,v 1.12 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: orders_status.php,v 1.13 2008/07/06 12:47:51 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -91,7 +91,7 @@
       case 'delete':
         $oID = zen_db_prepare_input($_GET['oID']);
 
-        $status = $gBitDb->Execute("select count(*) as count
+        $status = $gBitDb->Execute("select count(*) as `ocount`
                                 from " . TABLE_ORDERS . "
                                 where orders_status = '" . (int)$oID . "'");
 
@@ -99,15 +99,15 @@
         if ($oID == DEFAULT_ORDERS_STATUS_ID) {
           $remove_status = false;
           $messageStack->add(ERROR_REMOVE_DEFAULT_ORDER_STATUS, 'error');
-        } elseif ($status->fields['count'] > 0) {
+        } elseif ($status->fields['ocount'] > 0) {
           $remove_status = false;
           $messageStack->add(ERROR_STATUS_USED_IN_ORDERS, 'error');
         } else {
-          $history = $gBitDb->Execute("select count(*) as count
+          $history = $gBitDb->Execute("select count(*) as `oscount`
                                    from " . TABLE_ORDERS_STATUS_HISTORY . "
                                    where orders_status_id = '" . (int)$oID . "'");
 
-          if ($history->fields['count'] > 0) {
+          if ($history->fields['oscount'] > 0) {
             $remove_status = false;
             $messageStack->add(ERROR_STATUS_USED_IN_HISTORY, 'error');
           }
