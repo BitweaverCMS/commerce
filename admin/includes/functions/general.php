@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: general.php,v 1.48 2008/02/13 07:28:51 spiderr Exp $
+//	$Id: general.php,v 1.49 2008/07/06 12:49:17 lsces Exp $
 //
 
 ////
@@ -1337,11 +1337,11 @@
 // Check if product has attributes
 	function zen_has_product_attributes_OLD($products_id) {
 		global $gBitDb;
-		$attributes = $gBitDb->Execute("SELECT count(*) as `count`
+		$attributes = $gBitDb->Execute("SELECT count(*) as `acount`
 												 FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
 												 WHERE `products_id` = '" . (int)$products_id . "'");
 
-		if ($attributes->fields['count'] > 0) {
+		if ($attributes->fields['acount'] > 0) {
 			return true;
 		} else {
 			return false;
