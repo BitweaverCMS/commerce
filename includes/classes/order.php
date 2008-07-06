@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.67 2008/02/08 05:36:05 spiderr Exp $
+// $Id: order.php,v 1.68 2008/07/06 12:58:46 lsces Exp $
 //
 
 class order extends BitBase {
@@ -273,8 +273,8 @@ class order extends BitBase {
 		$this->products[$opid]['price'] = $orders_products->fields['products_price'];
 
         $subindex = 0;
-        $attributes_query = "SELECT *, `orders_products_attributes_id` AS `products_attributes_id`
-                             FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
+        $attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
+                             FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
                              WHERE `orders_id` = ? AND `orders_products_id` = ?
 							 ORDER BY `orders_products_id`";
         $attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
@@ -654,7 +654,7 @@ class order extends BitBase {
     function create($zf_ot_modules, $zf_mode = 2) {
 		global $gBitDb;
 
-		$gBitDb->StartTrans();
+//		$gBitDb->StartTrans();
 		if ($_SESSION['shipping'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
@@ -728,12 +728,13 @@ class order extends BitBase {
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'orders_status_id' => $this->info['order_status'],
+							'user_id' => $_SESSION['customer_id'],
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments']);
 		$gBitDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
-		$gBitDb->CompleteTrans();
+//		$gBitDb->CompleteTrans();
 
 		return( $this->mOrdersId );
     }
