@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.7 2006/12/19 00:11:32 spiderr Exp $
+// $Id: blk_account_history.php,v 1.8 2008/07/06 12:54:49 lsces Exp $
 //
   $orders_total = zen_count_customer_orders();
 
@@ -37,7 +37,7 @@
     $history = $gBitDb->Execute($history_split->sql_query);
 
     while (!$history->EOF) {
-      $products_query = "select count(*) as `count`
+      $products_query = "select count(*) as `acount`
                          from   " . TABLE_ORDERS_PRODUCTS . "
                          where      `orders_id` = '" . (int)$history->fields['orders_id'] . "'";
 
