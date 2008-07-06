@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.10 2006/12/19 00:11:38 spiderr Exp $
+// $Id: header_php.php,v 1.11 2008/07/06 13:07:10 lsces Exp $
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 
@@ -25,21 +25,19 @@
 // if review must be approved or disabled do not show review
     $review_status = " and r.`status` = '1'";
 
-    $reviews_count_query = "select count(*) as count from " . TABLE_REVIEWS . " r, "
-                                                       . TABLE_REVIEWS_DESCRIPTION . " rd
-                       where r.`products_id` = '" . (int)$_GET['products_id'] . "'
-                       and r.`reviews_id` = rd.`reviews_id`
-                       and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
-                       $review_status;
+	$reviews_count_query = "select count(*) from " . TABLE_REVIEWS . " r, "
+						. TABLE_REVIEWS_DESCRIPTION . " rd
+						where r.`products_id` = '" . (int)$_GET['products_id'] . "'
+						and r.`reviews_id` = rd.`reviews_id`
+						and rd.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'" .
+						$review_status;
 
-    $reviews_count = $gBitDb->Execute($reviews_count_query);
-
-    $reviews_counter = $reviews_count->fields['count'];
+	$reviews_counter = $gBitDb->getOne($reviews_count_query);
 
 // if review must be approved or disabled do not show review
-    $review_status = " and r.`status` = '1'";
+	$review_status = " and r.`status` = '1'";
 
-    $review_info_check_query = "select count(*) as `total`
+	$review_info_check_query = "select count(*) as `total`
                            from " . TABLE_REVIEWS . " r, " . TABLE_REVIEWS_DESCRIPTION . " rd
                            where r.`reviews_id` = '" . (int)$_GET['reviews_id'] . "'
                            and r.`products_id` = '" . (int)$_GET['products_id'] . "'
