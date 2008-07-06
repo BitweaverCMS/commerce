@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.8 2006/01/13 23:48:33 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.9 2008/07/06 13:10:03 lsces Exp $
 //
 
 global $gBitDb, $order, $currencies, $total_weight, $total_count;
@@ -67,7 +67,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
       // set shipping to null ! multipickjup changes address to store address...
       $shipping='';
       // include the order class (uses the sendto !)
-      require(DIR_FS_CLASSES . 'order.php');
+      require_once(DIR_FS_CLASSES . 'order.php');
       $order = new order;
     }else{
 // user not logged in !

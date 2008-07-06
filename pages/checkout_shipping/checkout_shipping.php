@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.11 2007/06/07 23:28:25 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.12 2008/07/06 13:10:03 lsces Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -72,7 +72,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 			$_SESSION['shipping'] = '';
 	}
 
-  require(DIR_FS_CLASSES . 'order.php');
+  require_once(DIR_FS_CLASSES . 'order.php');
   $order = new order;
 $gBitSmarty->assign_by_ref( 'order', $order );
 
