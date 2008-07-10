@@ -34,7 +34,7 @@ function popupWindowPrice(url) {
 {/if}
 
 {if $gBitProduct->hasEditPermission()}
-		<a title="{tr}Edit{/tr}" href="{$smarty.const.PRODUCTS_PKG_URL}edit.php?products_id={$gBitProduct->getField('products_id')}">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Product"}</a>
+		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&pID={$gBitProduct->getField('products_id')}&action=new_product">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Product"}</a>
 {/if}
 </div>
 
