@@ -9,22 +9,22 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.109 2008/07/04 19:28:17 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.110 2008/07/10 18:03:19 lsces Exp $
 //
 
-require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
+require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 if( !defined( 'TABLE_PRODUCTS' ) ) {
 	// we might be coming in from LibertyBase::getLibertyObject
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 }
 
-class CommerceProduct extends LibertyAttachable {
+class CommerceProduct extends LibertyMime {
 	var $mProductsId;
 	var $mOptions;
 	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
-		LibertyAttachable::LibertyAttachable();
+		LibertyMime::LibertyMime();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
 						'content_description' => 'Product',
@@ -94,7 +94,7 @@ class CommerceProduct extends LibertyAttachable {
 		}
 	}
 
-	// LibertyAttachable override
+	// LibertyMime override
 	function getStorageSubDirName() {
 		return 'products';
 	}
@@ -453,17 +453,25 @@ class CommerceProduct extends LibertyAttachable {
 			$pMixed = $this->mProductsId;
 		}
 
-		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
-			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
+		if ( !empty( $this ) && is_object( $this ) && is_numeric($this->mInfo['products_image']) ) {
+			if( $att = LibertyMime::getAttachment( $this->mInfo['products_image'] ) ) {
+				return $att['thumbnail_url'][$pSize];
 			} else {
 				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+			}	
+		} else {		
+			if( is_numeric( $pMixed ) ) {
+				$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
+				if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
+					$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
+				} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
+					$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
+				} else {
+					$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+				}
+			} else {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 			}
-		} else {
-			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
 	}
@@ -744,8 +752,13 @@ $this->debug(0);
 			$pParamHash['product_store']['products_date_available'] = NULL;
 		}
 
+		if( is_numeric( $pParamHash['products_image'] ) ) {
+			$pParamHash['product_store']['products_image'] = $pParamHash['products_image'];
+		}
+
 		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? $this->mDb->NOW() : $pParamHash['products_last_modified']);
 		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL));
+
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
@@ -754,8 +767,11 @@ $this->debug(0);
 	}
 
 	function store( &$pParamHash ) {
+		// we have already done all the permission checking needed for this user to upload an image
+		$pParamHash['no_perm_check'] = TRUE;
+
 		$this->mDb->StartTrans();
-		if( $this->verify( $pParamHash ) && LibertyAttachable::store( $pParamHash ) ) {
+		if( $this->verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
 			}
@@ -767,9 +783,15 @@ $this->debug(0);
 				zen_update_products_price_sorter( (int)$this->mProductsId );
 			} else {
 				$pParamHash['product_store']['content_id'] = $pParamHash['content_id'];
+				if( defined( 'LINKED_ATTACHMENTS' )) {
+					$this->mProductsId = $pParamHash['product_store']['products_id'] = $pParamHash['content_id'];
+				}
 				$action = 'insert_product';
 				$this->mDb->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
-				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
+				if( !defined( 'LINKED_ATTACHMENTS' )) {
+					$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
+					// Caution - this is not multi-user friendly is two people are adding products
+				}
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( $this->mProductsId );
 					$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
@@ -825,7 +847,7 @@ $this->debug(0);
 				}
 			}
 			// did we recieve an arbitrary file, or uploaded file as the product image?
-			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
+			if( !empty( $pParamHash['products_image'] ) && !is_numeric( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
 				$fileHash['name']			= basename( $fileHash['source_file'] );
 				$fileHash['source_name']	= $fileHash['source_file'];
@@ -1059,7 +1081,7 @@ Skip deleting of images for now
 			if( !$this->isPurchased() ) {
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				LibertyAttachable::expunge();
+				LibertyMime::expunge();
 			} else {
 				$this->update( array( 'related_content_id' => NULL ) );
 				$this->storeStatus( $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );

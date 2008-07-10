@@ -17,31 +17,34 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.13 2007/06/13 16:36:50 spiderr Exp $
+//  $Id: preview_info.php,v 1.14 2008/07/10 18:03:19 lsces Exp $
 //
 
-    if (zen_not_null($_POST)) {
-      $pInfo = new objectInfo($_POST);
-      $products_name = $_POST['products_name'];
-      $products_description = $_POST['products_description'];
-      $products_url = $_POST['products_url'];
-    } else {
-      $products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
-                                      pd.`products_description`, pd.`products_url`, p.`products_quantity`,
-                                      p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
-                                      p.`products_weight`, p.`products_date_added`, p.products_last_modified,
-                                      p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`, p.`products_barcode` ,
-                                      p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
-                                      p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed,
-                                      p.product_is_always_free_ship, p.`products_qty_box_status`, p.`products_quantity_order_max`,
-                    p.`products_sort_order`
-                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                               where p.`products_id` = pd.`products_id`
-                               and p.`products_id` = '" . (int)$_GET['pID'] . "'");
+	if (zen_not_null($_POST)) {
+		$pInfo = new objectInfo($_POST);
+		$products_name = $_POST['products_name'];
+		$products_description = $_POST['products_description'];
+		$products_url = $_POST['products_url'];
+		if ( isset( $pInfo->products_image_att ) && is_numeric( $pInfo->products_image_att ) ) {
+			$products_image_name = $pInfo->products_image_att;
+		}
+	} else {
+		$products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
+									pd.`products_description`, pd.`products_url`, p.`products_quantity`,
+									p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
+									p.`products_weight`, p.`products_date_added`, p.products_last_modified,
+									p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`, p.`products_barcode` ,
+									p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
+									p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed,
+									p.product_is_always_free_ship, p.`products_qty_box_status`, p.`products_quantity_order_max`,
+									p.`products_sort_order`
+								from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
+								where p.`products_id` = pd.`products_id`
+								and p.`products_id` = '" . (int)$_GET['pID'] . "'");
 
-      $pInfo = new objectInfo($product->fields);
-      $products_image_name = $pInfo->products_image;
-    }
+		$pInfo = new objectInfo($products->fields);
+		$products_image_name = $pInfo->products_image;
+	}
 
     $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
 
@@ -77,9 +80,9 @@
           <?php
 //auto replace with defined missing image
             if ($products_image_name == '' and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
-              echo zen_image(DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
+              echo zen_image_OLD(DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             } else {
-              echo zen_image(DIR_WS_CATALOG_IMAGES . $products_image_name, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
+              echo zen_image_OLD( ( !is_numeric( $products_image_name ) ? DIR_WS_CATALOG_IMAGES . $products_image_name : $products_image_name) , $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             }
           ?>
         </td>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.27 2007/08/16 09:11:03 lsces Exp $
+//  $Id: collect_info.php,v 1.28 2008/07/10 18:03:19 lsces Exp $
 //
 
 		$parameters = array('products_name' => '',
@@ -602,6 +602,14 @@ updateGross();
 						<td class="main"><?php echo TEXT_PRODUCTS_IMAGE; ?></td>
 						<td class="main"><?php echo zen_draw_file_field('products_image') . '<br />' . $pInfo->products_image . zen_draw_hidden_field('products_previous_image', $pInfo->products_image); ?></td>
 					</tr>
+<?php 
+	if( defined( 'LINKED_ATTACHMENTS' )) {
+?>
+					<tr>
+						<td class="main">Attachment ID:</td>
+						<td class="main"><?php echo zen_draw_input_field('products_image_att', $pInfo->products_image); ?></td>
+					</tr>
+<?php } ?>
 					<tr>
 						<td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
 					</tr>
