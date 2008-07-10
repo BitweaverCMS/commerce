@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.16 2007/08/16 09:26:25 lsces Exp $
+//  $Id: category_product_listing.php,v 1.17 2008/07/10 12:26:25 lsces Exp $
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -263,7 +263,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
 // Split Page
 ?>
                 <td class="dataTableContent" width="20" align="right"><?php echo $products->fields['products_id']; ?></td>
-                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&action=new_product_preview&read=only' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image(DIR_WS_ICONS . 'preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $products->fields['products_name']; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCT, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&action=new_product_preview&read=only' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image(DIR_WS_ICONS . 'preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $products->fields['products_name']; ?></td>
                 <td class="dataTableContent"><?php echo $products->fields['products_model']; ?></td>
                 <td colspan="2" class="dataTableContent" align="right"><?php echo CommerceProduct::getDisplayPrice($products->fields['products_id']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_quantity']; ?></td>
