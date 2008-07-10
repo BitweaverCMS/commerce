@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: filenames.php,v 1.5 2006/09/19 03:37:06 spiderr Exp $
+// $Id: filenames.php,v 1.6 2008/07/10 12:24:40 lsces Exp $
 //
 
 
@@ -120,6 +120,7 @@
   define('FILENAME_POPUP_CVV_HELP', 'popup_cvv_help');
   define('FILENAME_POPUP_ATTRIBUTES_QTY_PRICES', 'popup_attributes_qty_prices');
   define('FILENAME_PRIVACY', 'privacy');
+  define('FILENAME_PRODUCT', 'product');
   define('FILENAME_PRODUCT_TYPES', 'product_types');
   define('FILENAME_PRODUCT_INFO', 'product_info');
   define('FILENAME_PRODUCT_REVIEWS', 'product_reviews');
