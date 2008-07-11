@@ -12,8 +12,14 @@ function popupWindowPrice(url) {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <td>
-		<a rel="nofollow" href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=popup_image&amp;products_id={$gBitProduct->mProductsId}&amp;style=basic')"><img class="thumb" src="{$gBitProduct->getImageUrl(0,'medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
-
+    	<a rel="nofollow" 
+		{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )} 
+			href="{$gBitProduct->getImageUrl(0,'large')}">
+		{else}
+			href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=popup_image&amp;products_id={$gBitProduct->mProductsId}&amp;style=basic')">
+		{/if}
+		<img class="thumb" src="{$gBitProduct->getImageUrl(0,'medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
+		
 {if $smarty.const.SHOW_PRODUCT_INFO_REVIEWS == '1' AND $gBitSystem->isFeatureActive( 'wiki_comments' )}
 	<div class="row">
 		{include file="bitpackage:liberty/comments.tpl"}
