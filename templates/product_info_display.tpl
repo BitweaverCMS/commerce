@@ -40,7 +40,9 @@ function popupWindowPrice(url) {
 {/if}
 
 {if $gBitProduct->hasEditPermission()}
-		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&pID={$gBitProduct->getField('products_id')}&action=new_product">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Product"}</a>
+		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&pID={$gBitProduct->getField('products_id')}&action=new_product">{biticon ipackage="bitcommerce" iname="icon_edit" iexplain="Edit Product"}</a>
+		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{biticon ipackage="bitcommerce" iname="icon_attributes" iexplain="Edit Product Options"}</a>
+		<a title="{tr}Prices{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_price_manager.php?product_type={$gBitProduct->getField('products_type')}&current_category_id={$gBitProduct->getField('categories_id')}">{biticon ipackage="bitcommerce" iname="icon_products_price_manager" iexplain="Edit Product Prices"}</a>
 {/if}
 </div>
 
