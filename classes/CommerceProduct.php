@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.110 2008/07/10 18:03:19 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.111 2008/07/11 15:13:26 lsces Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
@@ -858,21 +858,13 @@ $this->debug(0);
 			}
 
 			if( !empty( $fileHash ) ) {
+				global $gBitSystem;
 				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
-				if( class_exists( 'finfo' ) ) {
-					// support for pecl Fileinfo - install with: pear install Fileinfo
-					// some docs at http://wiki.cc/php/Fileinfo
-					$res = finfo_open( FILEINFO_MIME );
-					$info = new finfo( FILEINFO_MIME );
-					$fileHash['type'] = finfo_file( $res, $fileHash['source_file'] );
-				} else {
-					$pathParts = pathinfo( $fileHash['source_name'] );
-					$fileHash['type'] = 'image/'.$pathParts['extension'];
-				}
+				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
 				liberty_process_image( $fileHash );
 			}
 
