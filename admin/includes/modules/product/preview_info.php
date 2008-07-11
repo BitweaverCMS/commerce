@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.14 2008/07/10 18:03:19 lsces Exp $
+//  $Id: preview_info.php,v 1.15 2008/07/11 15:17:34 lsces Exp $
 //
 
 	if (zen_not_null($_POST)) {
@@ -26,7 +26,11 @@
 		$products_description = $_POST['products_description'];
 		$products_url = $_POST['products_url'];
 		if ( isset( $pInfo->products_image_att ) && is_numeric( $pInfo->products_image_att ) ) {
+			$products_image = '';
 			$products_image_name = $pInfo->products_image_att;
+		} else {
+			$products_image = $products_image_name;
+			$products_image_name = DIR_WS_CATALOG_IMAGES . $products_image_name;
 		}
 	} else {
 		$products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
@@ -43,10 +47,14 @@
 								and p.`products_id` = '" . (int)$_GET['pID'] . "'");
 
 		$pInfo = new objectInfo($products->fields);
-		$products_image_name = $pInfo->products_image;
+		if ( is_numeric( $pInfo->products_image ) ) {
+			$products_image_name = $pInfo->products_image;
+		} else {
+			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_PKG_NAME . '/' . ($pInfo->products_id % 1000) . '/' . $pInfo->products_id . '/medium.jpg';
+		}
 	}
-
-    $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
+	
+	$form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
 
     echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
@@ -80,9 +88,9 @@
           <?php
 //auto replace with defined missing image
             if ($products_image_name == '' and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
-              echo zen_image_OLD(DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
+              echo zen_image(DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             } else {
-              echo zen_image_OLD( ( !is_numeric( $products_image_name ) ? DIR_WS_CATALOG_IMAGES . $products_image_name : $products_image_name) , $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
+              echo zen_image( $products_image_name, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             }
           ?>
         </td>
@@ -161,7 +169,7 @@
         echo zen_draw_hidden_field('products_description[' . $languages[$i]['id'] . ']', htmlspecialchars(stripslashes($products_description[$languages[$i]['id']])));
         echo zen_draw_hidden_field('products_url[' . $languages[$i]['id'] . ']', htmlspecialchars(stripslashes($products_url[$languages[$i]['id']])));
       }
-      echo zen_draw_hidden_field('products_image', stripslashes($products_image_name));
+      echo zen_draw_hidden_field('products_image', stripslashes($products_image));
 
       echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="edit"') . '&nbsp;&nbsp;';
 
