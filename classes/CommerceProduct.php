@@ -1,4 +1,13 @@
 <?php
+/**
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.113 2008/07/13 06:29:31 lsces Exp $
+ *
+ * System class for handling the liberty package
+ *
+ * @package  bitcommerce
+ * @author   spider <spider@steelsun.com>
+ */
+
 //
 // +----------------------------------------------------------------------+
 // | bitcommerce                                                          |
@@ -9,16 +18,24 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.112 2008/07/13 05:45:11 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.113 2008/07/13 06:29:31 lsces Exp $
 //
 
+/**
+ * Initialization
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 if( !defined( 'TABLE_PRODUCTS' ) ) {
 	// we might be coming in from LibertyBase::getLibertyObject
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 }
 
-class CommerceProduct extends LibertyMime {
+/**
+ * Class for handling the commerce product
+ *
+ * @package bitcommerce
+ */
+ class CommerceProduct extends LibertyMime {
 	var $mProductsId;
 	var $mOptions;
 	var $mRelatedContent;
@@ -610,9 +627,10 @@ class CommerceProduct extends LibertyMime {
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
 				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
-				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
-				}
+				// ? even if ['products_image'] is not empty getImageUrl will give legacy path so we don't need the if
+				if( empty( $ret[$productId]['products_image'] ) or is_numeric( $ret[$productId]['products_image'] ) ) {
+					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId], $pListHash['thumbnail_size'] );
+				} 
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
 					$taxRate[$ret[$productId]['products_tax_class_id']] = zen_get_tax_rate( $ret[$productId]['products_tax_class_id'] );
