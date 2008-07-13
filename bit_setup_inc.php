@@ -25,6 +25,13 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 if( !defined( 'BITCOMMERCE_DB_PREFIX' ) ) {
 	define( 'BITCOMMERCE_DB_PREFIX', BIT_DB_PREFIX );
 }
+
+if( defined( 'FLAT_STORAGE_NAME' ) ) {
+	define( 'BITCOMMERCE_STORAGE_NAME', FLAT_STORAGE_NAME );
+} else {
+	define( 'BITCOMMERCE_STORAGE_NAME', BITCOMMERCE_PKG_NAME );
+}
+
 // include shopping cart class
 // 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
