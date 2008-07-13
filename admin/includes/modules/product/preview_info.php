@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.16 2008/07/13 05:42:57 lsces Exp $
+//  $Id: preview_info.php,v 1.17 2008/07/13 16:27:19 lsces Exp $
 //
 
 	if (zen_not_null($_POST)) {
@@ -48,12 +48,12 @@
 
 		$pInfo = new objectInfo($products->fields);
 		if ( is_numeric( $pInfo->products_image ) ) {
-			$products_image_name = $pInfo->products_image;
+			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_STORAGE_NAME . '/' . ($pInfo->products_image % 1000) . '/' . $pInfo->products_image . '/medium.jpg';
 		} else {
-			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_STORAGE_NAME . '/' . ($pInfo->products_id % 1000) . '/' . $pInfo->products_id . '/medium.jpg';
+			$products_image_name = $pInfo->products_image;
 		}
 	}
-	
+
 	$form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
 
     echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
