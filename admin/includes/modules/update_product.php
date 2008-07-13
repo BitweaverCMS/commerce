@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.8 2008/07/13 05:40:02 lsces Exp $
+//  $Id: update_product.php,v 1.9 2008/07/13 16:23:40 lsces Exp $
 //
 	if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
 		$action = 'new_product';
@@ -27,6 +27,9 @@
 		// update with a full path so the image is copied to the proper place - if not already loaded
 		if( !empty( $_REQUEST['products_image'] ) && !is_numeric( $_REQUEST['products_image'] ) ) {
 			$_REQUEST['products_image'] = STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/images/'.$_REQUEST['products_image'];
+		}
+		if( !empty( $_REQUEST['products_image_att'] ) && is_numeric( $_REQUEST['products_image_att'] ) ) {
+			$_REQUEST['products_image'] = $_REQUEST['products_image_att'];
 		}
 
 		$newProduct->store( $_REQUEST );
