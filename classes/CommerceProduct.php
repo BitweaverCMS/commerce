@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.111 2008/07/11 15:13:26 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.112 2008/07/13 05:45:11 lsces Exp $
 //
 
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
@@ -449,29 +449,26 @@ class CommerceProduct extends LibertyMime {
 //			$ret = $thumbImage['thumbnail_url'][$pSize];
 //error_log( $pSize );			
 
-		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
-			$pMixed = $this->mProductsId;
-		}
+		$pImage = $pMixed;
+		$pAttached = 0;
+		if ( is_array( $pMixed ) ) {
+			$pImage = isset( $pMixed['products_id'] ) ? $pMixed['products_id'] : 0;
+			if( is_numeric( $pMixed['products_image'] ) ) $pImage = $pMixed['products_image'];
+		} else if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
+			$pImage = is_numeric( $this->mInfo['products_image'] ) ? $this->mInfo['products_image'] : $this->mProductsId;
+		} 
 
-		if ( !empty( $this ) && is_object( $this ) && is_numeric($this->mInfo['products_image']) ) {
-			if( $att = LibertyMime::getAttachment( $this->mInfo['products_image'] ) ) {
-				return $att['thumbnail_url'][$pSize];
+		if( is_numeric( $pImage ) ) {
+			$path = ($pImage % 1000).'/'.$pImage.'/'.$pSize;
+			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.jpg';
+			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.png';
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
-			}	
-		} else {		
-			if( is_numeric( $pMixed ) ) {
-				$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
-				if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
-					$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
-				} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
-					$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
-				} else {
-					$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
-				}
-			} else {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
+				$ret = BITCOMMERCE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/blank_'.$pSize.'.jpg';
 			}
+		} else {
+			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
 	}
@@ -634,7 +631,6 @@ class CommerceProduct extends LibertyMime {
 		$pListHash['offset'] = $pListHash['offset'] + 1;
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['offset'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
-$this->debug(0);
 
 		return( $ret );
 	}
@@ -859,7 +855,7 @@ $this->debug(0);
 
 			if( !empty( $fileHash ) ) {
 				global $gBitSystem;
-				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
+				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_STORAGE_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
