@@ -171,6 +171,7 @@
   function zen_draw_input_field($name, $value = '', $parameters = '', $type = 'text', $reinsert_value = true, $required = false) {
     $field = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
 
+	if( is_float($value) ) $value = (string)$value;
     if (isset($GLOBALS[$name]) && ($reinsert_value == true) && is_string($GLOBALS[$name])) {
       $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
     } elseif (zen_not_null($value)) {
