@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.15 2008/07/11 15:17:34 lsces Exp $
+//  $Id: preview_info.php,v 1.16 2008/07/13 05:42:57 lsces Exp $
 //
 
 	if (zen_not_null($_POST)) {
@@ -50,7 +50,7 @@
 		if ( is_numeric( $pInfo->products_image ) ) {
 			$products_image_name = $pInfo->products_image;
 		} else {
-			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_PKG_NAME . '/' . ($pInfo->products_id % 1000) . '/' . $pInfo->products_id . '/medium.jpg';
+			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_STORAGE_NAME . '/' . ($pInfo->products_id % 1000) . '/' . $pInfo->products_id . '/medium.jpg';
 		}
 	}
 	
