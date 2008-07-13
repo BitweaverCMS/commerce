@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_new_listing.php,v 1.8 2006/12/19 00:11:33 spiderr Exp $
+// $Id: products_new_listing.php,v 1.9 2008/07/13 07:07:46 lsces Exp $
 //
 
 ?>
@@ -34,7 +34,7 @@
     while (!$products_new->EOF) {
 
       if (PRODUCT_NEW_LIST_IMAGE != '0') {
-        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($products_new->fields['products_id']), 'products_id=' . $products_new->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl($products_new->fields['products_id'], 'avatar'), $products_new->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_NEW_LIST_IMAGE, 3, 1));
+        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($products_new->fields['products_id']), 'products_id=' . $products_new->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl($products_new->fields, 'avatar' ), $products_new->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_NEW_LIST_IMAGE, 3, 1));
       } else {
         $display_products_image = '';
       }

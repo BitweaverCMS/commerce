@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.15 2007/11/30 03:49:20 spiderr Exp $
+// $Id: product_listing.php,v 1.16 2008/07/13 07:07:47 lsces Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
@@ -152,7 +152,7 @@
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields, 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
             }
             break;
         }
