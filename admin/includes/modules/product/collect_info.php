@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.29 2008/07/13 08:58:22 lsces Exp $
+//  $Id: collect_info.php,v 1.30 2008/07/13 16:57:19 lsces Exp $
 //
 
 		$parameters = array('products_name' => '',
@@ -610,7 +610,7 @@ updateGross();
 ?>
 					<tr>
 						<td class="main">Product Image ID:</td>
-						<td class="main"><?php echo zen_draw_input_field('products_image_att', $pInfo->products_image);
+						<td class="main"><?php echo zen_draw_input_field('products_image_att', $pInfo->products_image) . zen_draw_hidden_field('products_image', $pInfo->products_image);
 							echo zen_image_OLD( $pInfo->products_image, $pInfo->products_name, MEDIUM_IMAGE_WIDTH, MEDIUM_IMAGE_HEIGHT, 'align="left" hspace="5" vspace="5"'); ?></td>
 					</tr>
 <?php } ?>
