@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.13 2008/07/10 12:31:29 lsces Exp $
+// $Id: html_output.php,v 1.14 2008/07/13 08:56:11 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -32,7 +32,7 @@
 	// check for attachment_id 
 	if ( is_numeric($src) ) {
 		if( !$att = LibertyMime::getAttachment( $src ) ) {
-			$ret = tra( "The attachment id given is not valid." );
+			$ret = DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE;
 		} else {
 			$src = $att['source_url'];
 		}
@@ -111,15 +111,6 @@
       return false;
     }
 
-	// check for attachment_id 
-	if ( is_numeric($src) ) {
-		if( !$att = LibertyMime::getAttachment( $src )) {
-			$ret = tra( "The attachment id given is not valid." );
-		} else {
-			$src = $att['source_url'];
-		}
-	}
-
     // if not in current template switch to template_default
     if (!file_exists($src)) {
       $src = str_replace(DIR_WS_TEMPLATES . $template_dir, DIR_WS_TEMPLATES . 'template_default', $src);
@@ -133,7 +124,7 @@
       $image .= ' title=" ' . zen_output_string($alt) . ' "';
     }
 
-	$srcPath = BIT_ROOT_PATH.$src;
+	$srcPath = BIT_ROOT_PATH . $src;
     if ( ((CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height))) ) {
       if ($image_size = @getimagesize($srcPath)) {
         if (empty($width) && zen_not_null($height)) {
