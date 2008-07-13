@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: also_purchased_products.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
+// $Id: also_purchased_products.php,v 1.8 2008/07/13 07:09:25 lsces Exp $
 //
   if (isset($_GET['products_id']) && SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS > 0) {
 
@@ -41,7 +41,7 @@
         $orders->fields['products_name'] = zen_get_products_name($orders->fields['products_id']);
         $list_box_contents[$row][$col] = array('align' => 'center',
                                                'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $orders->fields['products_id'], 'avatar' ), $orders->fields['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
+                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $orders->fields, 'avatar' ), $orders->fields['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
 
         $col ++;
         if ($col > (SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS - 1)) {
