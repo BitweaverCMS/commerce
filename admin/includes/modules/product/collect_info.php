@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.28 2008/07/10 18:03:19 lsces Exp $
+//  $Id: collect_info.php,v 1.29 2008/07/13 08:58:22 lsces Exp $
 //
 
 		$parameters = array('products_name' => '',
@@ -598,16 +598,20 @@ updateGross();
 
 	$default_directory = substr( $pInfo->products_image, 0,strpos( $pInfo->products_image, '/')+1);
 ?>
+<?php 
+	if( !defined( 'LINKED_ATTACHMENTS' )) {
+?>
 					<tr>
 						<td class="main"><?php echo TEXT_PRODUCTS_IMAGE; ?></td>
 						<td class="main"><?php echo zen_draw_file_field('products_image') . '<br />' . $pInfo->products_image . zen_draw_hidden_field('products_previous_image', $pInfo->products_image); ?></td>
 					</tr>
 <?php 
-	if( defined( 'LINKED_ATTACHMENTS' )) {
+	} else {
 ?>
 					<tr>
-						<td class="main">Attachment ID:</td>
-						<td class="main"><?php echo zen_draw_input_field('products_image_att', $pInfo->products_image); ?></td>
+						<td class="main">Product Image ID:</td>
+						<td class="main"><?php echo zen_draw_input_field('products_image_att', $pInfo->products_image);
+							echo zen_image_OLD( $pInfo->products_image, $pInfo->products_name, MEDIUM_IMAGE_WIDTH, MEDIUM_IMAGE_HEIGHT, 'align="left" hspace="5" vspace="5"'); ?></td>
 					</tr>
 <?php } ?>
 					<tr>
