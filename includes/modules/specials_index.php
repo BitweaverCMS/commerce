@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials_index.php,v 1.14 2007/01/06 09:46:13 squareing Exp $
+// $Id: specials_index.php,v 1.15 2008/07/13 06:56:10 lsces Exp $
 //
 	global $gBitProduct, $gBitSmarty;
 
@@ -29,6 +29,7 @@
 	if ( !empty( $new_products_category_id ) ) {
   		$listHash['categories_id'] = $new_products_category_id;
 	}
+	$listHash['thumbnail_size'] = 'avatar';
 
 /*
     $specials_index_query = "select p.`products_id`, p.`products_image`, pd.`products_name`
@@ -71,7 +72,7 @@
 		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
 		$listBoxContents[$row][$col] = array('align' => 'center',
 												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( CommerceProduct::getImageUrl( $productsId, 'avatar' ), $specialProducts['products_name']) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
+												'text' => '<a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . zen_image( $specialProducts['products_image_url'], $specialProducts['products_name']) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($productsId), 'products_id=' . $productsId) . '">' . $specialProducts['products_name'] . '</a><br />' . $products_price);
 
 		$col ++;
 		if ($col > (SHOW_PRODUCT_INFO_COLUMNS_SPECIALS_PRODUCTS - 1)) {

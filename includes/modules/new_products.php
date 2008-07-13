@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.18 2006/09/19 07:12:59 spiderr Exp $
+// $Id: new_products.php,v 1.19 2008/07/13 06:56:10 lsces Exp $
 //
 	global $gBitProduct, $gBitSmarty;
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));
@@ -27,6 +27,7 @@
   	$listHash['max_records'] = MAX_DISPLAY_PRODUCTS_NEW;
 	$listHash['offset'] = MAX_DISPLAY_PRODUCTS_NEW * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 	$listHash['sort_mode'] = 'products_date_added_desc';
+	$listHash['thumbnail_size'] = 'avatar';
 	if ( !empty( $new_products_category_id ) ) {
 		$listHash['category_id'] = $new_products_category_id;
 	}
@@ -51,7 +52,7 @@
 
       $listBoxContents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' .  CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $product['products_id'], 'avatar' ), $product['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . $product['products_name'] . '</a><br />' . $products_price);
+                                             'text' => '<a href="' .  CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . zen_image( $product['products_image_url'], $product['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . $product['products_name'] . '</a><br />' . $products_price);
 
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS - 1)) {

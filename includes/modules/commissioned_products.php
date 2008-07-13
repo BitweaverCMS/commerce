@@ -9,6 +9,7 @@
 	$listHash['offset'] = $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 	$listHash['sort_mode'] = 'random';
 	$listHash['commissioned'] = TRUE;
+	$listHash['thumbnail_size'] = 'avatar';
 
 	$row = 0;
 	$col = 0;
@@ -26,7 +27,7 @@
 			$products_price = CommerceProduct::getDisplayPrice( $productsId );
 			$listBoxContents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . zen_image( CommerceProduct::getImageUrl( $commissionedProducts[$productsId]['products_id'], 'avatar' ), $commissionedProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $commissionedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
+													'text' => '<a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . zen_image( $commissionedProducts[$productsId]['products_image_url'], $commissionedProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $productsId ) . '">' . $commissionedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);
 
 			$col ++;
 			if ($col > ($columnCount - 1)) {
