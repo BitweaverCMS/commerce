@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.9 2008/07/13 16:23:40 lsces Exp $
+//  $Id: update_product.php,v 1.10 2008/07/13 16:42:03 lsces Exp $
 //
 	if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
 		$action = 'new_product';
@@ -33,6 +33,7 @@
 		}
 
 		$newProduct->store( $_REQUEST );
-		zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $newProduct->mProductId . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+
+		zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $newProduct->mProductsId . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 	}
 ?>
