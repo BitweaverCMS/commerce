@@ -7,7 +7,7 @@
 // |                                                                      |
 // | http://www.zen-cart.com/index.php                                    |
 // |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
+// | Portions Copyright (c) 2003 osCommerce                                 |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.22 2008/07/14 07:34:54 lsces Exp $
+//  $Id: categories.php,v 1.23 2008/07/14 13:32:05 lsces Exp $
 //
 
   require('includes/application_top.php');
@@ -238,7 +238,7 @@
 			}
         }
 
-        if ( !is_numeric($_POST['categories_image']) && $categories_image = new upload('categories_image')) {
+        if ($categories_image = new upload('categories_image')) {
           $categories_image->set_destination(DIR_FS_CATALOG_IMAGES . $_POST['img_dir']);
           if ($categories_image->parse() && $categories_image->save()) {
             $categories_image_name = $_POST['img_dir'] . $categories_image->filename;
@@ -256,11 +256,8 @@
                             where `categories_id` = '" . (int)$categories_id . "'");
             }
           }
-        } else if ( is_numeric($_POST['categories_image']) ) {
-			$gBitDb->Execute("update " . TABLE_CATEGORIES . "
-					set `categories_image` = '" . $_POST['categories_image'] . "'
-					where `categories_id` = '" . (int)$categories_id . "'");
-		}
+        }
+
 
         zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $categories_id));
         break;
@@ -566,7 +563,7 @@
     $heading = array();
     $contents = array();
 // Make an array of product types
-	$sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
+    $sql = "select `type_id`, `type_name` from " . TABLE_PRODUCT_TYPES;
     $product_types = $gBitDb->Execute($sql);
     while (!$product_types->EOF) {
       $type_array[] = array('id' => $product_types->fields['type_id'], 'text' => $product_types->fields['type_name']);
@@ -619,29 +616,24 @@
             $category_inputs_string .= zen_draw_textarea_field('categories_description[' . $languages[$i]['id'] . ']', 'soft', '100%', '20', zen_get_category_description($cInfo->categories_id, $languages[$i]['id']));
           }
         }
-		$contents[] = array('text' => '<br />' . TEXT_CATEGORIES_DESCRIPTION . $category_inputs_string);
-
-		if( !defined( 'LINKED_ATTACHMENTS' )) {
-			$contents[] = array('text' => '<br />' . TEXT_CATEGORIES_IMAGE . '<br />' . zen_draw_file_field('categories_image'));
-			if( $dir = bit_get_images_dir( DIR_FS_CATALOG_IMAGES ) ) {
-				$dir_info[] = array('id' => '', 'text' => "Main Directory");
-				while ($file = $dir->read()) {
-					if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
-						$dir_info[] = array('id' => $file . '/', 'text' => $file);
-					}
-				}
-
-				if( !empty( $cInfo ) ) {
-					$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
-					$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
-				}
+        $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_DESCRIPTION . $category_inputs_string);
+        $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_IMAGE . '<br />' . zen_draw_file_field('categories_image'));
+        if( $dir = bit_get_images_dir( DIR_FS_CATALOG_IMAGES ) ) {
+			$dir_info[] = array('id' => '', 'text' => "Main Directory");
+			while ($file = $dir->read()) {
+			  if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
+				$dir_info[] = array('id' => $file . '/', 'text' => $file);
+			  }
 			}
-		} else {
-			$contents[] = array('text' => '<br />' . TEXT_EDIT_CATEGORIES_IMAGE . '<br />' . zen_draw_input_field('categories_image', $cInfo->categories_image) );
-		}
 
-		$contents[] = array('text' => '<br />' . TEXT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', '', 'size="6"'));
-		$contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+			if( !empty( $cInfo ) ) {
+				$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
+				$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
+			}
+
+			$contents[] = array('text' => '<br />' . TEXT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', '', 'size="6"'));
+			$contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+		}
         break;
       case 'edit_category':
 // echo 'I SEE ' . $_SESSION['html_editor_preference_status'];
@@ -669,24 +661,20 @@
           }
         }
         $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_DESCRIPTION . $category_inputs_string);
-		if( !defined( 'LINKED_ATTACHMENTS' )) {
-    	    $contents[] = array('text' => '<br />' . TEXT_EDIT_CATEGORIES_IMAGE . '<br />' . zen_draw_file_field('categories_image'));
-        	$dir = @dir(DIR_FS_CATALOG_IMAGES);
-        	$dir_info[] = array('id' => '', 'text' => "Main Directory");
-        	while ($file = $dir->read()) {
-        		if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
-        			$dir_info[] = array('id' => $file . '/', 'text' => $file);
-        		}
-        	}
-        	
-        	$default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
-			$contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
-		  	$contents[] = array('text' => '<br>' . zen_info_image($cInfo->categories_image, $cInfo->categories_name));
-			$contents[] = array('text' => '<br>' . $cInfo->categories_image);
-		} else {
-			$contents[] = array('text' => '<br />' . TEXT_EDIT_CATEGORIES_IMAGE . '<br />' . zen_draw_input_field('categories_image', $cInfo->categories_image) );
-			$contents[] = array('text' => '<br />' . zen_image_OLD( $cInfo->categories_image, $cInfo->categories_name, MEDIUM_IMAGE_WIDTH, MEDIUM_IMAGE_HEIGHT, 'align="left" hspace="5" vspace="5"') );
-		}
+        $contents[] = array('text' => '<br />' . TEXT_EDIT_CATEGORIES_IMAGE . '<br />' . zen_draw_file_field('categories_image'));
+
+        $dir = @dir(DIR_FS_CATALOG_IMAGES);
+        $dir_info[] = array('id' => '', 'text' => "Main Directory");
+        while ($file = $dir->read()) {
+          if (is_dir(DIR_FS_CATALOG_IMAGES . $file) && strtoupper($file) != 'CVS' && $file != "." && $file != "..") {
+            $dir_info[] = array('id' => $file . '/', 'text' => $file);
+          }
+        }
+
+        $default_directory = substr( $cInfo->categories_image, 0,strpos( $cInfo->categories_image, '/')+1);
+        $contents[] = array('text' => TEXT_CATEGORIES_IMAGE_DIR . ' ' . zen_draw_pull_down_menu('img_dir', $dir_info, $default_directory));
+        $contents[] = array('text' => '<br>' . zen_info_image($cInfo->categories_image, $cInfo->categories_name));
+        $contents[] = array('text' => '<br>' . $cInfo->categories_image);
 
         $contents[] = array('text' => '<br />' . TEXT_EDIT_SORT_ORDER . '<br />' . zen_draw_input_field('sort_order', $cInfo->sort_order, 'size="6"'));
         $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_save.gif', IMAGE_SAVE) . ' <a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&cID=' . $cInfo->categories_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
