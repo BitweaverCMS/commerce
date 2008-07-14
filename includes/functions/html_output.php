@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.14 2008/07/13 08:56:11 lsces Exp $
+// $Id: html_output.php,v 1.15 2008/07/14 13:53:15 lsces Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -28,15 +28,6 @@
 // The HTML image wrapper function
   function zen_image_OLD($src, $alt = '', $width = '', $height = '', $parameters = '') {
     global $template_dir, $gBitSmarty;
-
-	// check for attachment_id 
-	if ( is_numeric($src) ) {
-		if( !$att = LibertyMime::getAttachment( $src ) ) {
-			$ret = DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE;
-		} else {
-			$src = $att['source_url'];
-		}
-	}
 
 //auto replace with defined missing image
     if ($src == DIR_WS_IMAGES and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
@@ -124,7 +115,7 @@
       $image .= ' title=" ' . zen_output_string($alt) . ' "';
     }
 
-	$srcPath = BIT_ROOT_PATH . $src;
+	$srcPath = BIT_ROOT_PATH.$src;
     if ( ((CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height))) ) {
       if ($image_size = @getimagesize($srcPath)) {
         if (empty($width) && zen_not_null($height)) {
