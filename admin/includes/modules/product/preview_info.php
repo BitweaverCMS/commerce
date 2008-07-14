@@ -17,44 +17,33 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.17 2008/07/13 16:27:19 lsces Exp $
+//  $Id: preview_info.php,v 1.18 2008/07/14 13:07:21 lsces Exp $
 //
 
-	if (zen_not_null($_POST)) {
-		$pInfo = new objectInfo($_POST);
-		$products_name = $_POST['products_name'];
-		$products_description = $_POST['products_description'];
-		$products_url = $_POST['products_url'];
-		if ( isset( $pInfo->products_image_att ) && is_numeric( $pInfo->products_image_att ) ) {
-			$products_image = '';
-			$products_image_name = $pInfo->products_image_att;
-		} else {
-			$products_image = $products_image_name;
-			$products_image_name = DIR_WS_CATALOG_IMAGES . $products_image_name;
-		}
-	} else {
-		$products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
-									pd.`products_description`, pd.`products_url`, p.`products_quantity`,
-									p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
-									p.`products_weight`, p.`products_date_added`, p.products_last_modified,
-									p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`, p.`products_barcode` ,
-									p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
-									p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed,
-									p.product_is_always_free_ship, p.`products_qty_box_status`, p.`products_quantity_order_max`,
-									p.`products_sort_order`
-								from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-								where p.`products_id` = pd.`products_id`
-								and p.`products_id` = '" . (int)$_GET['pID'] . "'");
+    if (zen_not_null($_POST)) {
+      $pInfo = new objectInfo($_POST);
+      $products_name = $_POST['products_name'];
+      $products_description = $_POST['products_description'];
+      $products_url = $_POST['products_url'];
+    } else {
+      $products = $gBitDb->Execute("select p.`products_id`, pd.`language_id`, pd.`products_name`,
+                                      pd.`products_description`, pd.`products_url`, p.`products_quantity`,
+                                      p.`products_model`, p.`products_manufacturers_model`, p.`products_image`, p.`products_price`, p.`products_cogs`, p.`products_virtual`,
+                                      p.`products_weight`, p.`products_date_added`, p.products_last_modified,
+                                      p.`products_date_available`, p.`products_status, p.`manufacturers_id`, p.`suppliers_id`, p.`products_barcode` ,
+                                      p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`,
+                                      p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed,
+                                      p.product_is_always_free_ship, p.`products_qty_box_status`, p.`products_quantity_order_max`,
+                    p.`products_sort_order`
+                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
+                               where p.`products_id` = pd.`products_id`
+                               and p.`products_id` = '" . (int)$_GET['pID'] . "'");
 
-		$pInfo = new objectInfo($products->fields);
-		if ( is_numeric( $pInfo->products_image ) ) {
-			$products_image_name = STORAGE_PKG_URL . BITCOMMERCE_STORAGE_NAME . '/' . ($pInfo->products_image % 1000) . '/' . $pInfo->products_image . '/medium.jpg';
-		} else {
-			$products_image_name = $pInfo->products_image;
-		}
-	}
+      $pInfo = new objectInfo($product->fields);
+      $products_image_name = $pInfo->products_image;
+    }
 
-	$form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
+    $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
 
     echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
@@ -90,7 +79,7 @@
             if ($products_image_name == '' and PRODUCTS_IMAGE_NO_IMAGE_STATUS == '1') {
               echo zen_image(DIR_WS_CATALOG_IMAGES . PRODUCTS_IMAGE_NO_IMAGE, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             } else {
-              echo zen_image( $products_image_name, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
+              echo zen_image(DIR_WS_CATALOG_IMAGES . $products_image_name, $pInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'align="right" hspace="5" vspace="5"') . $pInfo->products_description;
             }
           ?>
         </td>
@@ -169,7 +158,7 @@
         echo zen_draw_hidden_field('products_description[' . $languages[$i]['id'] . ']', htmlspecialchars(stripslashes($products_description[$languages[$i]['id']])));
         echo zen_draw_hidden_field('products_url[' . $languages[$i]['id'] . ']', htmlspecialchars(stripslashes($products_url[$languages[$i]['id']])));
       }
-      echo zen_draw_hidden_field('products_image', stripslashes($products_image));
+      echo zen_draw_hidden_field('products_image', stripslashes($products_image_name));
 
       echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="edit"') . '&nbsp;&nbsp;';
 
