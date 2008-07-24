@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.113 2008/07/13 06:29:31 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.114 2008/07/24 22:55:55 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.113 2008/07/13 06:29:31 lsces Exp $
+//  $Id: CommerceProduct.php,v 1.114 2008/07/24 22:55:55 spiderr Exp $
 //
 
 /**
@@ -466,23 +466,18 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 //			$ret = $thumbImage['thumbnail_url'][$pSize];
 //error_log( $pSize );			
 
-		$pImage = $pMixed;
-		$pAttached = 0;
-		if ( is_array( $pMixed ) ) {
-			$pImage = isset( $pMixed['products_id'] ) ? $pMixed['products_id'] : 0;
-			if( is_numeric( $pMixed['products_image'] ) ) $pImage = $pMixed['products_image'];
-		} else if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
-			$pImage = is_numeric( $this->mInfo['products_image'] ) ? $this->mInfo['products_image'] : $this->mProductsId;
-		} 
+		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
+			$pMixed = $this->mProductsId;
+		}
 
-		if( is_numeric( $pImage ) ) {
-			$path = ($pImage % 1000).'/'.$pImage.'/'.$pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.jpg' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.jpg';
-			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.png' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_STORAGE_NAME.'/'.$path.'.png';
+		if( is_numeric( $pMixed ) ) {
+			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
+			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
+			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/blank_'.$pSize.'.jpg';
+				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
@@ -627,10 +622,9 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
 				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
-				// ? even if ['products_image'] is not empty getImageUrl will give legacy path so we don't need the if
-				if( empty( $ret[$productId]['products_image'] ) or is_numeric( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId], $pListHash['thumbnail_size'] );
-				} 
+				if( empty( $ret[$productId]['products_image'] ) ) {
+					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
+				}
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
 					$taxRate[$ret[$productId]['products_tax_class_id']] = zen_get_tax_rate( $ret[$productId]['products_tax_class_id'] );
@@ -766,13 +760,8 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 			$pParamHash['product_store']['products_date_available'] = NULL;
 		}
 
-		if( is_numeric( $pParamHash['products_image'] ) ) {
-			$pParamHash['product_store']['products_image'] = $pParamHash['products_image'];
-		}
-
 		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? $this->mDb->NOW() : $pParamHash['products_last_modified']);
 		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL));
-
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
@@ -783,7 +772,6 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 	function store( &$pParamHash ) {
 		// we have already done all the permission checking needed for this user to upload an image
 		$pParamHash['no_perm_check'] = TRUE;
-
 		$this->mDb->StartTrans();
 		if( $this->verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
@@ -797,18 +785,12 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 				zen_update_products_price_sorter( (int)$this->mProductsId );
 			} else {
 				$pParamHash['product_store']['content_id'] = $pParamHash['content_id'];
-				if( defined( 'LINKED_ATTACHMENTS' )) {
-					$this->mProductsId = $pParamHash['product_store']['products_id'] = $pParamHash['content_id'];
-				}
 				$action = 'insert_product';
 				$this->mDb->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
-				if( !defined( 'LINKED_ATTACHMENTS' )) {
-					$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
-					// Caution - this is not multi-user friendly is two people are adding products
-				}
+				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 				// reset products_price_sorter for searches etc.
 				zen_update_products_price_sorter( $this->mProductsId );
-					$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['master_categories_id'] ) );
+					$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['product_store']['master_categories_id'] ) );
 			}
 
 			$languages = zen_get_languages();
@@ -861,7 +843,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 				}
 			}
 			// did we recieve an arbitrary file, or uploaded file as the product image?
-			if( !empty( $pParamHash['products_image'] ) && !is_numeric( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
+			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
 				$fileHash['name']			= basename( $fileHash['source_file'] );
 				$fileHash['source_name']	= $fileHash['source_file'];
@@ -872,8 +854,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 			}
 
 			if( !empty( $fileHash ) ) {
-				global $gBitSystem;
-				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_STORAGE_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
+				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
@@ -881,10 +862,9 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
 				liberty_process_image( $fileHash );
 			}
-
-			$this->mDb->CompleteTrans();
-			$this->load();
 		}
+		$this->mDb->CompleteTrans();
+		$this->load();
 		return( $this->mProductsId );
 	}
 
