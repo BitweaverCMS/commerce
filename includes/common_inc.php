@@ -171,7 +171,6 @@
   function zen_draw_input_field($name, $value = '', $parameters = '', $type = 'text', $reinsert_value = true, $required = false) {
     $field = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
 
-	if( is_float($value) ) $value = (string)$value;
     if (isset($GLOBALS[$name]) && ($reinsert_value == true) && is_string($GLOBALS[$name])) {
       $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
     } elseif (zen_not_null($value)) {
@@ -1422,6 +1421,10 @@ If a special exist * 10+9
 				$attributes_price_final *= $qty;
 				$pre_selected_onetime = $pre_selected;
 				$attributes_price_final += zen_get_attributes_price_final_onetime($pProductsId, $pre_selected->fields['products_options_values_id'], 1, $pre_selected_onetime);
+			}
+			// discount attribute
+			if( !empty( $pre_selected->fields["attributes_discounted"] ) ) {
+				$attributes_price_final = zen_get_discount_calc($pProductsId, $pre_selected->fields['products_attributes_id'], $attributes_price_final, $qty);
 			}
 		}
 
