@@ -1844,7 +1844,7 @@ function reset_bitcommerce_layout() {
         return false;
       }
     } else {
-      if ( (is_string($value) || is_int($value)) && ($value != '') && ($value != 'NULL') && (strlen(trim($value)) > 0)) {
+      if ( (is_float($value) || is_string($value) || is_int($value)) && ($value != '') && ($value != 'NULL') && (strlen(trim($value)) > 0)) {
         return true;
       } else {
         return false;
