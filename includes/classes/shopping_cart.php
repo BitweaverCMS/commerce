@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.42 2008/02/15 18:51:18 spiderr Exp $
+// $Id: shopping_cart.php,v 1.43 2008/08/20 02:10:47 spiderr Exp $
 //
 
   class shoppingCart {
@@ -300,7 +300,7 @@
 
                 $gBitDb->query( $sql, array( $val, $_SESSION['customer_id'], $products_id, (int)$option.'_chk'.$val ) );
               }
-            } else {
+            } elseif( is_int( $value ) ) {
               if ($_SESSION['customer_id']) {
                 $sql = "UPDATE " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
                         SET `products_options_value_id`=?, `products_options_value_text`=?
@@ -433,13 +433,14 @@
 		  if (!is_array($this->contents)) return 0;
 
 		  reset($this->contents);
-		  while (list($products_id, ) = each($this->contents)) {
-			$qty = $this->contents[$products_id]['quantity'];
-			$prid = zen_get_prid( $products_id );
+		  foreach( array_keys( $this->contents ) as $productsCartKey ) {
+			$qty = $this->contents[$productsCartKey]['quantity'];
+			$prid = zen_get_prid( $productsCartKey );
 
 	// products price
 			$product = $this->getProductObject( $prid );
-			if( $product->isValid() ) {
+			// sometimes 0 hash things can get stuck in cart.
+			if( $product && $product->isValid() ) {
 			  $products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
 			  $products_price = $product->getPurchasePrice( $qty );
 
@@ -455,18 +456,18 @@
 			}
 
 	// attributes price
-			if (isset($this->contents[$products_id]['attributes'])) {
-			  reset($this->contents[$products_id]['attributes']);
-			  while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+			if (isset($this->contents[$productsCartKey]['attributes'])) {
+			  reset($this->contents[$productsCartKey]['attributes']);
+			  while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
 					$added_charge = zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, TRUE);
 					$this->total += zen_add_tax($added_charge, $products_tax);
 			  }
 			} // attributes price
 
 	// attributes weight
-			if (isset($this->contents[$products_id]['attributes'])) {
-			  reset($this->contents[$products_id]['attributes']);
-			  while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+			if (isset($this->contents[$productsCartKey]['attributes'])) {
+			  reset($this->contents[$productsCartKey]['attributes']);
+			  while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
 				$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
 										FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
@@ -638,7 +639,7 @@ if ((int)$products_id != $products_id) {
 		reset($this->contents);
 		while( list( $products_id, $productsHash ) = each( $this->contents ) ) {
 			$product = $this->getProductObject( zen_get_prid( $products_id ) );
-			if( $product->isValid() ) {
+			if( $product && $product->isValid() ) {
 				$prid = $product->mProductsId;
 				$qty = $productsHash['quantity'];
 				$products_price = $product->getPurchasePrice( $qty );
