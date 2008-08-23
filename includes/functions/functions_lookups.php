@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.28 2007/08/21 04:36:58 spiderr Exp $
+// $Id: functions_lookups.php,v 1.29 2008/08/23 17:51:39 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -502,20 +502,20 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 
 ////
 // look up the product type from product_id and return an info page name
-  function zen_get_info_page($zf_product_id) {
+function zen_get_info_page($zf_product_id) {
+	$ret = 'products_general_info';
+	if( BitBase::verifyId( $zf_product_id ) ) {
 		global $gBitDb;
-//		return '';
-		$sql = "select `products_type` from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$zf_product_id . "'";
-		$zp_type = $gBitDb->Execute($sql);
-		if ($zp_type->RecordCount() == 0) {
-		  return 'products_general_info';
-		} else {
-		  $zp_product_type = $zp_type->fields['products_type'];
-		  $sql = "select `type_handler` from " . TABLE_PRODUCT_TYPES . " where `type_id` = '" . $zp_product_type . "'";
-		  $zp_handler = $gBitDb->Execute($sql);
-		  return $zp_handler->fields['type_handler'] . '_info';
+		//		return '';
+		$sql = "SELECT cpt.`type_handler` FROM " . TABLE_PRODUCTS . " cp 
+					INNER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON (cp.`products_type`=cpt.`type_id`)
+				WHERE cp.`products_id` = ?";
+		if( $zp_type = $gBitDb->getOne( $sql, array( $zf_product_id ) ) ) {
+			$ret = $zp_type . '_info';
 		}
-  }
+	}
+	return $ret;
+}
 
 ////
 // Get accepted credit cards
