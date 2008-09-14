@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.114 2008/07/24 22:55:55 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.115 2008/09/14 16:12:34 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.114 2008/07/24 22:55:55 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.115 2008/09/14 16:12:34 spiderr Exp $
 //
 
 /**
@@ -854,6 +854,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 			}
 
 			if( !empty( $fileHash ) ) {
+				global $gBitSystem;
 				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
 				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
