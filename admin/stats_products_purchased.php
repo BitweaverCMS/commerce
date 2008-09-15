@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: stats_products_purchased.php,v 1.10 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: stats_products_purchased.php,v 1.11 2008/09/15 06:16:23 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -68,37 +68,39 @@
           <tr>
             <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
               <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_NUMBER; ?></td>
+                <td class="dataTableHeadingContent">#</td>
+                <td class="dataTableHeadingContent">ID</td>
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_PURCHASED; ?>&nbsp;</td>
+                <td class="dataTableHeadingContent" align="center">Quantity</td>
+                <td class="dataTableHeadingContent" align="center">First Purchase</td>
+                <td class="dataTableHeadingContent" align="center">Last Purchase</td>
               </tr>
 <?php
-  if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS_REPORTS - MAX_DISPLAY_SEARCH_RESULTS_REPORTS;
-// The following OLD query only considers the "products_ordered" value from the products table.
-// The new query subsequent to this uses real order info from the orders_products table.
-// Thus this older query is somewhat deprecated
-//  $products_query_raw = "select p.`products_id`, p.products_ordered, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and p.products_ordered > 0 group by pd.`products_id` order by p.products_ordered DESC, pd.`products_name`";
+	$rows = 0;
+	if( isset( $_GET['page'] ) && ($_GET['page'] > 1) ) {
+		$rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS_REPORTS - MAX_DISPLAY_SEARCH_RESULTS_REPORTS;
+	}
 
-// NOTE: The following is much more accurate in output content
-$products_query_raw = "select sum(op.`products_quantity`) as `products_ordered`, op.`products_name`, p.`products_id`, pd.`language_id`, o.`orders_id` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, ".TABLE_ORDERS." o, ".TABLE_ORDERS_PRODUCTS." op where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and o.`orders_id` = op.`orders_id` and op.`products_id` = p.`products_id` group by op.`products_name`, p.`products_id`, pd.`language_id`, o.`orders_id` ORDER BY 1 DESC";
+	// NOTE: The following is much more accurate in output content
+	$products_query_raw = "select sum(op.`products_quantity`) as `products_ordered`, MAX(o.`date_purchased`) AS `last_purchased`, MIN(o.`date_purchased`) AS `first_purchased`, op.`products_name`, p.`products_id`, pd.`language_id`, o.`orders_id` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, ".TABLE_ORDERS." o, ".TABLE_ORDERS_PRODUCTS." op where pd.`products_id` = p.`products_id` and pd.`language_id` = '" . $_SESSION['languages_id']. "' and o.`orders_id` = op.`orders_id` and op.`products_id` = p.`products_id` group by op.`products_name`, p.`products_id`, pd.`language_id`, o.`orders_id` ORDER BY 1 DESC";
 
-//  $offset = splitPageResults::splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
-  $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
+	$products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
 
-  $rows = 0;
-  $products = $gBitDb->query($products_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $offset);
-  while (!$products->EOF) {
-    $rows++;
+	$products = $gBitDb->query($products_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $rows);
+	while (!$products->EOF) {
+		$rows++;
 
-    if (strlen($rows) < 2) {
-      $rows = '0' . $rows;
-    }
-    $cPath = zen_get_product_path($products->fields['products_id']);
+		if (strlen($rows) < 2) {
+			$rows = '0' . $rows;
+		}
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page='); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php print CommerceProduct::getDisplayUrl( $products->fields['products_id'] ); ?>'">
+				<td class="dataTableContent"><?php echo $rows;?></td>
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_id']; ?>&nbsp;&nbsp;</td>
-                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&page=') . '">' . $products->fields['products_name'] . '</a>'; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . CommerceProduct::getDisplayUrl( $products->fields['products_id'] ) . '">' . $products->fields['products_name'] . '</a>'; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $products->fields['products_ordered']; ?>&nbsp;</td>
+                <td class="dataTableContent" align="center"><?php echo substr( $products->fields['first_purchased'], 0, strpos( $products->fields['first_purchased'], ' ' ) ); ?>&nbsp;</td>
+                <td class="dataTableContent" align="center"><?php if( $products->fields['first_purchased'] != $products->fields['last_purchased'] ) { echo substr( $products->fields['last_purchased'], 0, strpos( $products->fields['last_purchased'], ' ' ) ); } ?>&nbsp;</td>
               </tr>
 <?php
     $products->MoveNext();
