@@ -22,7 +22,7 @@
 	{foreach from=$commissionsDue key=userId item=commission}
 	{cycle assign="oddeven" values="odd,even"}
 	<tr>
-		<td class="item {$oddeven}">{displayname hash=$commission}</td>
+		<td class="item {$oddeven}">{displayname hash=$commission} ( {$commission.user_id} )</td>
 		<td class="item {$oddeven}">{$commission.email}</td>
 		<td class="item {$oddeven}" style="text-align:right">{$commission.commission_sum|string_format:"$%.2f"}</td>
 		<td class="item {$oddeven}"><a href="#" onclick="toggle('enterpayment{$userId}');return false;">Enter Payment</a></td>
