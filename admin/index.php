@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.24 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: index.php,v 1.25 2008/09/24 19:41:14 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -139,6 +139,9 @@ global $language;
 </div>
 
 <div id="coltwo">
+<?php
+	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
+?>
 <table class="data">
 <tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
 <?php
