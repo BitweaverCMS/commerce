@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.115 2008/09/14 16:12:34 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.116 2008/10/20 21:40:09 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.115 2008/09/14 16:12:34 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.116 2008/10/20 21:40:09 spiderr Exp $
 //
 
 /**
@@ -35,7 +35,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
  *
  * @package bitcommerce
  */
- class CommerceProduct extends LibertyMime {
+class CommerceProduct extends LibertyMime {
 	var $mProductsId;
 	var $mOptions;
 	var $mRelatedContent;
@@ -160,7 +160,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 		global $gBitUser;
 		$ret = 0;
 		if( $this->isValid() ) {
-			$ret = $this->hasEditPermission( FALSE ) ? $this->getField( 'products_commission' ) : 0;
+			$ret = $this->hasUpdatePermission( FALSE ) ? $this->getField( 'products_commission' ) : 0;
 		}
 		return $ret;
 	}
@@ -660,7 +660,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 	}
 
 	function isViewable() {
-		return( $this->hasEditPermission() || $this->isAvailable() );
+		return( $this->hasUpdatePermission() || $this->isAvailable() );
 	}
 
 	function isAvailable() {
@@ -669,7 +669,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
  			if( !empty( $this->mInfo['products_status'] ) ) {
 				$ret = TRUE;
 			} else {
-				$ret = $this->isOwner() || $this->hasEditPermission();
+				$ret = $this->isOwner() || $this->hasUpdatePermission();
 			}
  		} else {
 			$ret = FALSE;

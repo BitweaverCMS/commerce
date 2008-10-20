@@ -1260,7 +1260,8 @@ $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_commerce_admin', 'Can administer commerce.', 'admin', 'bitcommerce'),
 	array('p_commerce_view_product', 'Can create and modify storefront products', 'basic', 'bitcommerce'),
 	array('p_commerce_purchase_product', 'Can purchase webstore products', 'basic', 'bitcommerce'),
-	array('p_commerce_edit_product', 'Can create and modify storefront products', 'editors', 'bitcommerce'),
+	array('p_commerce_create_product', 'Can create storefront products', 'editors', 'bitcommerce'),
+	array('p_commerce_update_product', 'Can update all storefront products', 'editors', 'bitcommerce'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(

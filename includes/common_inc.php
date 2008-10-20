@@ -1772,7 +1772,7 @@ function reset_bitcommerce_layout() {
 		)
 	);
 	$i = 1;
-	$gBitThemes->removeAllLayoutModules( ROOT_USER_ID, BITCOMMERCE_PKG_NAME );
+	$gBitThemes->expungeLayout( BITCOMMERCE_PKG_NAME );
 	foreach( array_keys( $modules ) as $col ) {
 		foreach( $modules[$col] as $moduleHash ) {
 			$moduleHash['fPackage'] = BITCOMMERCE_PKG_NAME;
@@ -1781,7 +1781,7 @@ function reset_bitcommerce_layout() {
 			$moduleHash['pos'] = $col;
 			$moduleHash['ord'] = $i++;
 			$moduleHash['layout'] = BITCOMMERCE_PKG_NAME;
-			$gBitThemes->storeLayout( $moduleHash );
+			$gBitThemes->storeModule( $moduleHash );
 		}
 		$i = 1;
 	}
