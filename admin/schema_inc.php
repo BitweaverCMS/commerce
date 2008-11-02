@@ -1258,10 +1258,11 @@ $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_commerce_admin', 'Can administer commerce.', 'admin', 'bitcommerce'),
-	array('p_commerce_view_product', 'Can create and modify storefront products', 'basic', 'bitcommerce'),
-	array('p_commerce_purchase_product', 'Can purchase webstore products', 'basic', 'bitcommerce'),
-	array('p_commerce_create_product', 'Can create storefront products', 'editors', 'bitcommerce'),
-	array('p_commerce_update_product', 'Can update all storefront products', 'editors', 'bitcommerce'),
+	array('p_commerce_product_view', 'Can create and modify storefront products', 'basic', 'bitcommerce'),
+	array('p_commerce_product_create', 'Can create storefront products', 'editors', 'bitcommerce'),
+	array('p_commerce_product_update', 'Can update all storefront products', 'editors', 'bitcommerce'),
+	array('p_commerce_product_purchase', 'Can purchase webstore products', 'basic', 'bitcommerce'),
+	array('p_commerce_retailer', 'Can sell products for a profit', 'editors', 'bitcommerce'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
