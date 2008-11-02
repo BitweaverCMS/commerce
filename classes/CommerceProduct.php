@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.116 2008/10/20 21:40:09 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.117 2008/11/02 03:41:26 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.116 2008/10/20 21:40:09 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.117 2008/11/02 03:41:26 spiderr Exp $
 //
 
 /**
@@ -471,7 +471,11 @@ class CommerceProduct extends LibertyMime {
 		}
 
 		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/'.$pSize;
+			$path = ($pMixed % 1000).'/'.$pMixed.'/';
+			if( is_dir( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'thumbs/' ) ) {
+				$path .= 'thumbs/';
+			}
+			$path .= $pSize;
 			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
 				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
 			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
