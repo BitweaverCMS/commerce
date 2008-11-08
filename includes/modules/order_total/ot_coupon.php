@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.11 2008/11/08 15:15:48 spiderr Exp $
+// $Id: ot_coupon.php,v 1.12 2008/11/08 16:13:55 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -122,7 +122,7 @@ $gBitDb->debug( 0 );
 				// JTD - end of additions of missing code to handle coupon product restrictions
 
 				if( !$coupon->isRedeemable() ) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mError['redeem_error'] ), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'] ), 'SSL',true, false));
 				}
 
 				if ($coupon->getField('coupon_type')=='S') {
