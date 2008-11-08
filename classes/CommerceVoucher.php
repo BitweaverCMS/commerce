@@ -60,32 +60,35 @@ class CommerceVoucher extends BitBase {
 										where coupon_start_date <= now() and
 										coupon_id=?", array( $this->mCouponId ) );
 			if ( !$couponStart ) {
-				$this->mError['redeem_error'] = TEXT_INVALID_STARTDATE_COUPON;
+				$this->mErrors['redeem_error'] = TEXT_INVALID_STARTDATE_COUPON;
 			}
 
 			$couponExpire=$this->mDb->getOne("SELECT coupon_expire_date FROM " . TABLE_COUPONS . "
 									   WHERE coupon_expire_date >= now() AND coupon_id=?", array( $this->mCouponId ) );
 			if ( !$couponExpire ) {
-				$this->mError['redeem_error'] = TEXT_INVALID_FINISDATE_COUPON;
+				$this->mErrors['redeem_error'] = TEXT_INVALID_FINISDATE_COUPON;
 			}
 
-			if( $this->getField( 'uses_per_coupon' ) > 0 ) {
+			if( $this->getField( 'uses_per_coupon' ) ) {
 				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id=?";
 				$redeemCount = $this->mDb->getOne( $query, array( $this->mCouponId ) );
 				if( $redeemCount >= $this->getField( 'uses_per_coupon' ) ) {
-					$this->mError['redeem_error'] =TEXT_INVALID_USES_COUPON . $this->getField( 'uses_per_coupon' ) . TIMES;
+					$this->mErrors['redeem_error'] =TEXT_INVALID_USES_COUPON . $this->getField( 'uses_per_coupon' ) . TIMES;
 				}
 			}
 
-			if ( $this->getField( 'uses_per_user' ) > 0 ) {
+			if ( $this->getField( 'uses_per_user' ) ) {
 				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id = ? AND customer_id = ?";
 				$redeemCountCustomer = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
 				if ( $redeemCountCustomer >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
-					$this->mError['redeem_error'] = TEXT_INVALID_USES_USER_COUPON . $this->getField( 'uses_per_user' ) . TIMES;
+					$this->mErrors['redeem_error'] = TEXT_INVALID_USES_USER_COUPON . $this->getField( 'uses_per_user' ) . TIMES;
 				}
 			}
+		} else {
+			$this->mErrors['redeem_error'] = "Invalid coupon code";
 		}
-		return( count( $this->mErrors ) == 0 );
+
+		return( count( $this->mErrors ) === 0 );
 	}
 
 	function getGiftAmount( $pFormat=TRUE ) {
