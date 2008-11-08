@@ -63,17 +63,17 @@ class CommerceVoucher extends BitBase {
 				$this->mErrors['redeem_error'] = TEXT_INVALID_STARTDATE_COUPON;
 			}
 
-			$couponExpire=$this->mDb->getOne("SELECT coupon_expire_date FROM " . TABLE_COUPONS . "
-									   WHERE coupon_expire_date >= now() AND coupon_id=?", array( $this->mCouponId ) );
-			if ( !$couponExpire ) {
-				$this->mErrors['redeem_error'] = TEXT_INVALID_FINISDATE_COUPON;
+			$isExpired = $this->mDb->getOne("SELECT coupon_expire_date FROM " . TABLE_COUPONS . "
+									   WHERE coupon_expire_date < now() AND coupon_id=?", array( $this->mCouponId ) );
+			if ( $isExpired ) {
+				$this->mErrors['redeem_error'] = 'This coupon has expired.';
 			}
 
 			if( $this->getField( 'uses_per_coupon' ) ) {
 				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id=?";
 				$redeemCount = $this->mDb->getOne( $query, array( $this->mCouponId ) );
 				if( $redeemCount >= $this->getField( 'uses_per_coupon' ) ) {
-					$this->mErrors['redeem_error'] =TEXT_INVALID_USES_COUPON . $this->getField( 'uses_per_coupon' ) . TIMES;
+					$this->mErrors['redeem_error'] = 'This coupon has been used the maximum number of times allowed.';
 				}
 			}
 
@@ -81,7 +81,7 @@ class CommerceVoucher extends BitBase {
 				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id = ? AND customer_id = ?";
 				$redeemCountCustomer = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
 				if ( $redeemCountCustomer >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
-					$this->mErrors['redeem_error'] = TEXT_INVALID_USES_USER_COUPON . $this->getField( 'uses_per_user' ) . TIMES;
+					$this->mErrors['redeem_error'] = 'You have used coupon code the maximum number of times allowed per customer.';
 				}
 			}
 		} else {
