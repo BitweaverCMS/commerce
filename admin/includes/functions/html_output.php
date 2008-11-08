@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.8 2006/12/19 00:11:30 spiderr Exp $
+//  $Id: html_output.php,v 1.9 2008/11/08 06:53:00 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
@@ -145,6 +145,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 ////
 // Output a form
   function zen_draw_form_admin($name, $action, $parameters = '', $method = 'post', $params = '', $usessl = 'false') {
+	global $gBitUser;
     $form = '<form name="' . zen_output_string($name) . '" action="';
     if (zen_not_null($parameters)) {
       if ($usessl) {
@@ -164,6 +165,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
       $form .= ' ' . $params;
     }
     $form .= '>';
+	$form .= '<input type="hidden" name="tk" value="'.$gBitUser->mTicket.'" />';
     return $form;
   }
 
