@@ -298,6 +298,8 @@
 				$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
 			}
 */
+		} else {
+			unset( $gBitProduct->mProductsId );
 		}
 	} elseif( class_exists( 'CommerceProduct' ) ) {
 		$gBitProduct = new CommerceProduct();
