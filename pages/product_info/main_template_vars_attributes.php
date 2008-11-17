@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.32 2008/01/28 23:51:19 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.33 2008/11/17 17:22:12 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -38,7 +38,6 @@ if ( $gBitProduct->loadAttributes() ) {
 	$discount_amount = zen_get_discount_calc((int)$_GET['products_id']);
 	// iii 030813 added: initialize $number_of_uploads
 	$number_of_uploads = 0;
-
 	foreach ( array_keys( $gBitProduct->mOptions ) as $optionsId ) {
         $products_options_array = array();
 
@@ -62,8 +61,7 @@ if ( $gBitProduct->loadAttributes() ) {
         foreach ( array_keys( $gBitProduct->mOptions[$optionsId]['values'] ) as $valId ) {
         	$vals = &$gBitProduct->mOptions[$optionsId]['values'][$valId];
 			// reset
-			$products_options_display_price='';
-			$new_attributes_price= '';
+			$new_value_price= '';
 			$price_onetime = '';
 
 			$products_options_array[] = array('id' => $vals['products_options_values_id'],
@@ -75,19 +73,21 @@ if ( $gBitProduct->loadAttributes() ) {
 				// collect price information if it exists
 				if ($vals['attributes_discounted'] == 1) {
 					// apply product discount to attributes if discount is on
-					//              $new_attributes_price = $vals['options_values_price'];
-					$new_attributes_price = zen_get_attributes_price_final( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
-					$new_attributes_price = zen_get_discount_calc((int)$_GET['products_id'], true, $new_attributes_price);
+					//              $new_value_price = $vals['options_values_price'];
+					$new_value_price = zen_get_attributes_price_final( $gBitProduct->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
+					$new_value_price = zen_get_discount_calc((int)$_GET['products_id'], true, $new_value_price);
 				} else {
 					// discount is off do not apply
-					$new_attributes_price = $vals['options_values_price'];
+					$new_value_price = $vals['options_values_price'];
 				}
 
 				// reverse negative values for display
-				if ($new_attributes_price < 0) {
-					$new_attributes_price = -$new_attributes_price;
+				if ($new_value_price < 0) {
+					$new_value_price = -$new_value_price;
 					$vals['price_prefix'] = '-';
 				}
+
+				$vals['value_price'] = (float)($vals['price_prefix'].$new_value_price);
 
 				$price_onetime = '';
 				if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
@@ -102,31 +102,26 @@ if ( $gBitProduct->loadAttributes() ) {
 
 				if ( !empty( $vals['options_values_price'] ) && (empty( $vals['product_attribute_is_free'] ) && !$gBitProduct->isFree() ) ) {
 					// show sale maker discount if a percentage
-					$products_options_display_price= $vals['price_prefix'] .  $currencies->display_price($new_attributes_price, zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id']));
-				} else {
+					$vals['display_price'] = $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id']));
+				} elseif ( $vals['product_attribute_is_free'] == '1' && !$gBitProduct->isFree() ) {
 					// if product_is_free and product_attribute_is_free
-					if ( $vals['product_attribute_is_free'] == '1' && !$gBitProduct->isFree() ) {
-						$products_options_display_price= TEXT_ATTRIBUTES_PRICE_WAS . $vals['price_prefix'] .
-						$currencies->display_price($new_attributes_price,
-						zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id'])) . TEXT_ATTRIBUTE_IS_FREE;
+					$vals['display_price'] =  TEXT_ATTRIBUTES_PRICE_WAS . $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate($gBitProduct->mInfo['products_tax_class_id'])) . TEXT_ATTRIBUTE_IS_FREE;
+				} else {
+					// normal price
+					if ($new_value_price == 0) {
+						$vals['display_price'] = '';
 					} else {
-						// normal price
-						if ($new_attributes_price == 0) {
-							$products_options_display_price= '';
-						} else {
-							$products_options_display_price= $vals['price_prefix'] .
-							$currencies->display_price($new_attributes_price,
-							zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) );
-						}
+						$vals['display_price'] = $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate( $gBitProduct->mInfo['products_tax_class_id'] ) );
 					}
 				}
-				if( $products_options_display_price ) {
-					$products_options_display_price = '( '.$products_options_display_price.($price_onetime ? ' '.tra('Per Item').', '.$price_onetime.' '.tra( 'One time' ) : '').' )';
+
+				if( !empty( $vals['display_price']  ) ) {
+					$vals['display_price'] = '( '.$vals['display_price'].($price_onetime ? ' '.tra('Per Item').', '.$price_onetime.' '.tra( 'One time' ) : '').' )';
 				} elseif( $price_onetime ) {
-					$products_options_display_price = $price_onetime;
+					$vals['display_price'] = $price_onetime;
 				}
 			} // approve
-			$products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_price;
+			$products_options_array[sizeof($products_options_array)-1]['text'] .= $vals['display_price'];
 
 	// collect weight information if it exists
 			if ((SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES=='1' && !empty( $vals['products_attributes_wt'] ) )) {
@@ -149,15 +144,15 @@ if ( $gBitProduct->loadAttributes() ) {
 					$products_options_details = '';
 				}
 				if ($gBitProduct->mOptions[$optionsId]['products_options_images_style'] >= 3) {
-					$products_options_details .= $products_options_display_price . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
-					$products_options_details_noname = $products_options_display_price . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
+					$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
+					$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
 				} else {
-					$products_options_details .= $products_options_display_price . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
-					$products_options_details_noname = $products_options_display_price . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
+					$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
+					$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
 				}
 			}
 
-			// radio buttons
+			// =-=-=-=-=-=-=-=-=-=-= radio buttons
 			if ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
 				if( $_SESSION['cart']->in_cart($prod_id) && ($_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) ) {
 					$selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']];
@@ -187,7 +182,6 @@ if ( $gBitProduct->loadAttributes() ) {
 					$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
 				}
 				$tmp_radio .= '</div>';
-
 			}
 
 
@@ -397,6 +391,8 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productSettings['zv_display_select_option']++;
 			}
 
+			$productOptions[$optionsId]['option_values'][$valId]['value_name'] = $vals['products_options_values_name'];
+			$productOptions[$optionsId]['option_values'][$valId]['value_price'] = $vals['value_price'];
 
 				// default
 				// find default attribute if set to for default dropdown
@@ -416,7 +412,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productOptions[$optionsId]['menu'] = $tmp_html;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			// checkbox
 			case ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX):
 				if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
@@ -427,7 +423,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productOptions[$optionsId]['menu'] = $tmp_checkbox;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			// radio buttons
 			case ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO):
 				if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
@@ -438,7 +434,7 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productOptions[$optionsId]['menu'] = $tmp_radio;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			// file upload
 			case ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE):
 				if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
@@ -449,55 +445,53 @@ if ( $gBitProduct->loadAttributes() ) {
 				$productOptions[$optionsId]['menu'] = $tmp_html;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			// READONLY
 			case ($gBitProduct->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
 				$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				$productOptions[$optionsId]['menu'] = $tmp_html;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			// dropdownmenu auto switch to selected radio button display
 			case ( count( $gBitProduct->mOptions[$optionsId] ) == 1):
 				if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-				$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $gBitProduct->mOptions[$optionsId]['products_options_name'];
+					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				} else {
-				$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
+					$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				}
-				$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']',
-								$products_options_value_id, 'selected') . $products_options_details;
+				$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ($gBitProduct->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-			break;
+				break;
 			default:
 				// normal dropdown menu display
 				if (isset($_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']])) {
-				$selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']];
+					$selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$gBitProduct->mOptions[$optionsId]['products_options_id']];
 				} else {
 				// selected set above
 	//                echo 'Type ' . $gBitProduct->mOptions[$optionsId]['products_options_type'] . '<br />';
 				}
-
 				if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-				$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $gBitProduct->mOptions[$optionsId]['products_options_name'];
+					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				} else {
-				$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
+					$productOptions[$optionsId]['name'] = $gBitProduct->mOptions[$optionsId]['products_options_name'];
 				}
 				$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $gBitProduct->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $gBitProduct->mOptions[$optionsId]['products_options_html_attrib']);
 				$productOptions[$optionsId]['comment'] = $gBitProduct->mOptions[$optionsId]['products_options_comment'];
 				$productOptions[$optionsId]['comment_position'] = ( !empty( $gBitProduct->mOptions[$optionsId]['products_options_comment_position'] ) ? '1' : '0');
-			break;
+				break;
 			}
 			// attributes images table
 			$productOptions[$optionsId]['attributes_image'] = $tmp_attributes_image;
 		}
-      // manage filename uploads
-      $_GET['number_of_uploads'] = $number_of_uploads;
+		// manage filename uploads
+		$_GET['number_of_uploads'] = $number_of_uploads;
 //      zen_draw_hidden_field('number_of_uploads', $_GET['number_of_uploads']);
-      zen_draw_hidden_field('number_of_uploads', $number_of_uploads);
-      $gBitSmarty->assign( 'productSettings', $productSettings );
-      $gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
-    }
+		zen_draw_hidden_field('number_of_uploads', $number_of_uploads);
+		$gBitSmarty->assign( 'productSettings', $productSettings );
+		$gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
+	}
 
 //////////////////////////////////////////////////
 //// EOF: attributes
