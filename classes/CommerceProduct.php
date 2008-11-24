@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.118 2008/11/02 04:27:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.119 2008/11/24 05:12:42 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.118 2008/11/02 04:27:57 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.119 2008/11/24 05:12:42 spiderr Exp $
 //
 
 /**
@@ -911,6 +911,451 @@ class CommerceProduct extends LibertyMime {
         return( $attributes > 0 );
     }
 
+
+	function getProductOptions( $pSelectedId = NULL, $pCart = NULL ) {
+		global $currencies;
+		require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
+		if ( $this->loadAttributes() ) {
+			$productSettings['zv_display_select_option'] = 0;
+			$productSettings['show_attributes_qty_prices_description'] = 'false';
+			$productSettings['show_onetime_charges_description'] = 'false';
+			if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
+				$options_order_by= ' ORDER BY popt.`products_options_sort_order`';
+			} else {
+				$options_order_by= ' ORDER BY popt.`products_options_name`';
+			}
+
+			$discount_type = zen_get_products_sale_discount_type( $this->mProductsId );
+			$discount_amount = zen_get_discount_calc( $this->mProductsId );
+			$number_of_uploads = 0;
+			foreach ( array_keys( $this->mOptions ) as $optionsId ) {
+				$products_options_array = array();
+
+				$products_options_value_id = '';
+				$products_options_details = '';
+				$products_options_details_noname = '';
+				$tmp_radio = '';
+				$tmp_checkbox = '';
+				$tmp_html = '';
+				$selected_attribute = false;
+
+				$tmp_attributes_image = '';
+				$tmp_attributes_image_row = 0;
+				$productSettings['show_attributes_qty_prices_icon'] = 'false';
+				foreach ( array_keys( $this->mOptions[$optionsId]['values'] ) as $valId ) {
+					$vals = &$this->mOptions[$optionsId]['values'][$valId];
+					// reset
+					$new_value_price= '';
+					$price_onetime = '';
+
+					$products_options_array[] = array('id' => $vals['products_options_values_id'],
+														'text' => $vals['products_options_values_name']);
+
+					if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
+						$new_options_values_price = 0;
+					} else {
+						// collect price information if it exists
+						if( is_object( $pCart ) && $vals['attributes_discounted'] == 1 ) {
+							// apply product discount to attributes if discount is on
+							//              $new_value_price = $vals['options_values_price'];
+							$new_value_price = zen_get_attributes_price_final( $this->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
+							$new_value_price = zen_get_discount_calc( $this->mProductsId, true, $new_value_price);
+						} else {
+							// discount is off do not apply
+							$new_value_price = $vals['options_values_price'];
+						}
+
+						// reverse negative values for display
+						if ($new_value_price < 0) {
+							$new_value_price = -$new_value_price;
+							$vals['price_prefix'] = '-';
+						}
+
+						$vals['value_price'] = (float)($vals['price_prefix'].$new_value_price);
+
+						$price_onetime = '';
+						if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
+							$productSettings['show_onetime_charges_description'] = 'true';
+							$price_onetime = ' '. $currencies->display_price( zen_get_attributes_price_final_onetime( $this->mProductsId, $vals["products_options_values_id"], 1, ''), zen_get_tax_rate($this->mInfo['products_tax_class_id']));
+						}
+
+						if ( !empty( $vals['attributes_qty_prices'] ) || !empty( $vals['attributes_qty_prices_onetime'] ) ) {
+							$productSettings['show_attributes_qty_prices_description'] = 'true';
+							$productSettings['show_attributes_qty_prices_icon'] = 'true';
+						}
+
+						if ( !empty( $vals['options_values_price'] ) && (empty( $vals['product_attribute_is_free'] ) && !$this->isFree() ) ) {
+							// show sale maker discount if a percentage
+							$vals['display_price'] = $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
+						} elseif ( $vals['product_attribute_is_free'] == '1' && !$this->isFree() ) {
+							// if product_is_free and product_attribute_is_free
+							$vals['display_price'] =  TEXT_ATTRIBUTES_PRICE_WAS . $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . TEXT_ATTRIBUTE_IS_FREE;
+						} else {
+							// normal price
+							if ($new_value_price == 0) {
+								$vals['display_price'] = '';
+							} else {
+								$vals['display_price'] = $vals['price_prefix'] . $currencies->display_price($new_value_price, zen_get_tax_rate( $this->mInfo['products_tax_class_id'] ) );
+							}
+						}
+
+						if( !empty( $vals['display_price']  ) ) {
+							$vals['display_price'] = '( '.$vals['display_price'].($price_onetime ? ' '.tra('Per Item').', '.$price_onetime.' '.tra( 'One time' ) : '').' )';
+						} elseif( $price_onetime ) {
+							$vals['display_price'] = $price_onetime;
+						}
+					} // approve
+					$products_options_array[sizeof($products_options_array)-1]['text'] .= $vals['display_price'];
+
+			// collect weight information if it exists
+					if ((SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES=='1' && !empty( $vals['products_attributes_wt'] ) )) {
+						$products_options_display_weight = ' (' . $vals['products_attributes_wt_pfix'] . round( $vals['products_attributes_wt'], 2 )  . 'lbs / '.round($vals['products_attributes_wt']*0.4536,2).'kg)';
+						$products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_weight;
+					} else {
+						// reset
+						$products_options_display_weight='';
+					}
+
+					if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO or count( $this->mOptions[$optionsId] ) == 1 or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
+						$products_options_value_id = $vals['products_options_values_id'];
+						if ($this->mOptions[$optionsId]['products_options_type'] != PRODUCTS_OPTIONS_TYPE_TEXT and $this->mOptions[$optionsId]['products_options_type'] != PRODUCTS_OPTIONS_TYPE_FILE) {
+							$products_options_details = $vals['products_options_values_name'];
+						} else {
+							// don't show option value name on TEXT or filename
+							$products_options_details = '';
+						}
+						if ($this->mOptions[$optionsId]['products_options_images_style'] >= 3) {
+							$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
+							$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
+						} else {
+							$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
+							$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
+						}
+					}
+
+					// =-=-=-=-=-=-=-=-=-=-= radio buttons
+					if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
+						if( is_object( $pCart ) && $pCart->in_cart($this->mProductsId) && ($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) ) {
+							$selected_attribute = $pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']];
+						} else {
+							$selected_attribute = ($vals['attributes_default']=='1' ? true : false);
+							// if an error, set to customer setting
+							if( !empty( $pSelectedId ) ) {
+								$selected_attribute= false;
+								reset($pSelectedId);
+								while(list($key,$value) = each($pSelectedId)) {
+									if (($key == $this->mOptions[$optionsId]['products_options_id'] and $value == $vals['products_options_values_id'])) {
+										// zen_get_products_name($_POST['products_id']) .
+										$selected_attribute = true;
+										break;
+									}
+								}
+							} else {
+								$selected_attribute = $vals['attributes_default'] == '1';
+							}
+						}
+
+						// ignore products_options_images_style as this should be fully controllable via CSS
+						$tmp_radio .= '<div class="productoptions">' . 
+									  zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . 
+									  "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
+						if( !empty( $vals['attributes_image'] ) ) {
+							$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
+						}
+						$tmp_radio .= '</div>';
+					}
+
+
+
+
+					// =-=-=-=-=-=-=-=-=-=-= checkboxes
+
+					if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX) {
+						$string = $this->mOptions[$optionsId]['products_options_id'].'_chk'.$vals['products_options_values_id'];
+						if( is_object( $pCart ) && $pCart->in_cart($this->mProductsId)) {
+							if ($pCart->contents[$this->mProductsId]['attributes'][$string] == $vals['products_options_values_id']) {
+								$selected_attribute = true;
+							} else {
+								$selected_attribute = false;
+							}
+						} else {
+			//              $selected_attribute = ($vals['attributes_default']=='1' ? true : false);
+							// if an error, set to customer setting
+							if( !empty( $pSelectedId ) ) {
+								$selected_attribute= false;
+								reset($pSelectedId);
+								while(list($key,$value) = each($pSelectedId)) {
+									if (is_array($value)) {
+										while(list($kkey,$vvalue) = each($value)) {
+										if (($key == $this->mOptions[$optionsId]['products_options_id'] and $vvalue == $vals['products_options_values_id'])) {
+											$selected_attribute = true;
+											break;
+										}
+										}
+									} else {
+										if (($key == $this->mOptions[$optionsId]['products_options_id'] and $value == $vals['products_options_values_id'])) {
+									// zen_get_products_name($_POST['products_id']) .
+										$selected_attribute = true;
+										break;
+										}
+									}
+								}
+							} else {
+								$selected_attribute = ($vals['attributes_default']=='1' ? true : false);
+							}
+						}
+
+						switch ($this->mOptions[$optionsId]['products_options_images_style']) {
+						  case '1':
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . ($vals['attributes_image'] != '' ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
+							break;
+						  case '2':
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .  ($vals['attributes_image'] != '' ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
+							break;
+						  case '3':
+							$tmp_attributes_image_row++;
+
+							if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+								$tmp_attributes_image .= '</tr><tr>';
+								$tmp_attributes_image_row = 1;
+							}
+
+							if ($vals['attributes_image'] != '') {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
+							} else {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
+							}
+							break;
+
+						  case '4':
+							$tmp_attributes_image_row++;
+
+							if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+								$tmp_attributes_image .= '</tr><tr>';
+								$tmp_attributes_image_row = 1;
+							}
+
+							if ($vals['attributes_image'] != '') {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
+															. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
+															. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
+															. ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '')
+															. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
+							} else {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
+							}
+							break;
+
+						  case '5':
+							$tmp_attributes_image_row++;
+
+							if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+								$tmp_attributes_image .= '</tr><tr>';
+								$tmp_attributes_image_row = 1;
+							}
+
+							if ($vals['attributes_image'] != '') {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+							} else {
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+							}
+							break;
+						  case '0':
+						  default:
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
+							break;
+						}
+					}
+
+
+
+
+					// =-=-=-=-=-=-=-=-=-=-= text
+
+					if (($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
+						if ( !empty( $pSelectedId ) ) {
+							reset($pSelectedId);
+							while(list($key,$value) = each($pSelectedId)) {
+			//echo ereg_replace('txt_', '', $key) . '#';
+			//print_r($pSelectedId);
+			//echo $this->mOptions[$optionsId]['products_options_id'].'|';
+			//echo $value.'|';
+			//echo $vals['products_options_values_id'].'#';
+								if ((ereg_replace('txt_', '', $key) == $this->mOptions[$optionsId]['products_options_id'])) {
+									$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . stripslashes($value) .'" />  ';
+									$tmp_html .= $products_options_details;
+									break;
+								}
+							}
+
+						} elseif( is_object( $pCart ) ) {
+							$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+							$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />  ';
+							$tmp_html .= $products_options_details;
+							$tmp_word_cnt_string = '';
+				// calculate word charges
+							$tmp_word_cnt =0;
+							$tmp_word_cnt_string = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+							$tmp_word_cnt = zen_get_word_count($tmp_word_cnt_string, $vals['attributes_price_words_free']);
+							$tmp_word_price = zen_get_word_count_price($tmp_word_cnt_string, $vals['attributes_price_words_free'], $vals['attributes_price_words']);
+
+							if ($vals['attributes_price_words'] != 0) {
+								$tmp_html .= TEXT_PER_WORD . $currencies->display_price($vals['attributes_price_words'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_words_free'] !=0 ? TEXT_WORDS_FREE . $vals['attributes_price_words_free'] : '');
+							}
+							if ($tmp_word_cnt != 0 and $tmp_word_price != 0) {
+								$tmp_word_price = $currencies->display_price($tmp_word_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
+								$tmp_html = $tmp_html . '<br />' . TEXT_CHARGES_WORD . ' ' . $tmp_word_cnt . ' = ' . $tmp_word_price;
+							}
+				// calculate letter charges
+							$tmp_letters_cnt =0;
+							$tmp_letters_cnt_string = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+							$tmp_letters_cnt = zen_get_letters_count($tmp_letters_cnt_string, $vals['attributes_price_letters_free']);
+							$tmp_letters_price = zen_get_letters_count_price($tmp_letters_cnt_string, $vals['attributes_price_letters_free'], $vals['attributes_price_letters']);
+
+							if ($vals['attributes_price_letters'] != 0) {
+								$tmp_html .= TEXT_PER_LETTER . $currencies->display_price($vals['attributes_price_letters'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_letters_free'] !=0 ? TEXT_LETTERS_FREE . $vals['attributes_price_letters_free'] : '');
+							}
+							if ($tmp_letters_cnt != 0 and $tmp_letters_price != 0) {
+								$tmp_letters_price = $currencies->display_price($tmp_letters_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
+								$tmp_html = $tmp_html . '<br />' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price;
+							}
+
+						}
+					}
+
+
+
+
+					// =-=-=-=-=-=-=-=-=-=-= file uploads
+
+					if( is_object( $pCart ) && $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE) {
+						$number_of_uploads++;
+						$tmp_html = '<input type="file" name="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
+									$pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']] .
+									zen_draw_hidden_field(UPLOAD_PREFIX . $number_of_uploads, $this->mOptions[$optionsId]['products_options_id']) .
+									zen_draw_hidden_field(TEXT_PREFIX . UPLOAD_PREFIX . $number_of_uploads, $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']]);
+						$tmp_html  .= $products_options_details;
+					}
+
+
+					// collect attribute image if it exists and to draw in table below
+					if ($this->mOptions[$optionsId]['products_options_images_style'] == '0' or ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT or $this->mOptions[$optionsId]['products_options_type'] == '0') ) {
+						if ($vals['attributes_image'] != '') {
+						$tmp_attributes_image_row++;
+
+						if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+							$tmp_attributes_image .= '</tr><tr>';
+							$tmp_attributes_image_row = 1;
+						}
+
+						$tmp_attributes_image .= '<td class="smallText" align="center">' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . '</td>';
+						}
+					}
+
+					// Read Only - just for display purposes
+					if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
+						$tmp_html .= $products_options_details . '<br />';
+					} else {
+						$productSettings['zv_display_select_option']++;
+					}
+
+					$productOptions[$optionsId]['option_values'][$valId]['value_name'] = $vals['products_options_values_name'];
+					$productOptions[$optionsId]['option_values'][$valId]['value_price'] = $vals['value_price'];
+
+					// default
+					// find default attribute if set to for default dropdown
+					if ($vals['attributes_default']=='1') {
+						$selected_attribute = $vals['products_options_values_id'];
+					}
+				}
+
+				switch (true) {
+				// text
+				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = $tmp_html;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				// checkbox
+				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX):
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = $tmp_checkbox;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				// radio buttons
+				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO):
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = $tmp_radio;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				// file upload
+				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE):
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = $tmp_html;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				// READONLY
+				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
+					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					$productOptions[$optionsId]['menu'] = $tmp_html;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				// dropdownmenu auto switch to selected radio button display
+				case ( count( $this->mOptions[$optionsId] ) == 1):
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					break;
+				default:
+					// normal dropdown menu display
+					if( is_object( $pCart ) && isset($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']])) {
+						$selected_attribute = $pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']];
+					} else {
+					// selected set above
+		//                echo 'Type ' . $this->mOptions[$optionsId]['products_options_type'] . '<br />';
+					}
+					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+					} else {
+						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+					}
+					$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib']);
+					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+					$productOptions[$optionsId]['comment_position'] = ( !empty( $this->mOptions[$optionsId]['products_options_comment_position'] ) ? '1' : '0');
+					break;
+				}
+				// attributes images table
+				$productOptions[$optionsId]['attributes_image'] = $tmp_attributes_image;
+			}
+		}
+		return $productOptions;
+	}
 
 	
 	function storeAttributeMap( $pOptionsValuesId, $pOverridePrice=NULL ) {
