@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_output.php,v 1.15 2008/07/14 13:53:15 lsces Exp $
+// $Id: html_output.php,v 1.16 2008/11/24 05:13:39 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -272,7 +272,8 @@
 		return zen_get_country_list( $pParams['name'], $pParams['selected'] );
 	}
 
-	$gBitSmarty->register_function( 'commerce_country_select', 'commerce_country_select' );
+global $gBitSmarty;
+$gBitSmarty->register_function( 'commerce_country_select', 'commerce_country_select' );
 
 
 ?>
