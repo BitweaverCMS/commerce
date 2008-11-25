@@ -1438,7 +1438,7 @@ If a special exist * 10+9
 		global $gBitDb;
 		global $cart;
 
-		if ( !empty( $pre_selected_onetime ) or $pOptionsValuesId != $pre_selected_onetime->fields["products_options_values_id"] ) {
+		if ( empty( $pre_selected_onetime ) or $pOptionsValuesId != $pre_selected_onetime->fields["products_options_values_id"] ) {
 			$query = "SELECT * 
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
 						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
