@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.120 2008/11/25 05:10:33 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.121 2008/11/25 05:15:57 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.120 2008/11/25 05:10:33 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.121 2008/11/25 05:15:57 spiderr Exp $
 //
 
 /**
@@ -1162,7 +1162,7 @@ class CommerceProduct extends LibertyMime {
 							break;
 						  case '0':
 						  default:
-							if( !empty( $vals['attributes_image'] ) ) {
+							if( !empty( $vals['attributes_html_attrib'] ) ) {
 								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
 							}
 							break;
