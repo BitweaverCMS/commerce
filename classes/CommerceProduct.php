@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.119 2008/11/24 05:12:42 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.120 2008/11/25 05:10:33 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.119 2008/11/24 05:12:42 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.120 2008/11/25 05:10:33 spiderr Exp $
 //
 
 /**
@@ -1120,7 +1120,7 @@ class CommerceProduct extends LibertyMime {
 								$tmp_attributes_image_row = 1;
 							}
 
-							if ($vals['attributes_image'] != '') {
+							if( !empty( $vals['attributes_image'] ) ) {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
 							} else {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
@@ -1135,7 +1135,7 @@ class CommerceProduct extends LibertyMime {
 								$tmp_attributes_image_row = 1;
 							}
 
-							if ($vals['attributes_image'] != '') {
+							if( !empty( $vals['attributes_image'] ) ) {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
 															. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
 															. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
@@ -1154,7 +1154,7 @@ class CommerceProduct extends LibertyMime {
 								$tmp_attributes_image_row = 1;
 							}
 
-							if ($vals['attributes_image'] != '') {
+							if( !empty( $vals['attributes_image'] ) ) {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
 							} else {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
@@ -1162,7 +1162,9 @@ class CommerceProduct extends LibertyMime {
 							break;
 						  case '0':
 						  default:
-							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
+							if( !empty( $vals['attributes_image'] ) ) {
+								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
+							}
 							break;
 						}
 					}
@@ -1240,7 +1242,7 @@ class CommerceProduct extends LibertyMime {
 
 					// collect attribute image if it exists and to draw in table below
 					if ($this->mOptions[$optionsId]['products_options_images_style'] == '0' or ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT or $this->mOptions[$optionsId]['products_options_type'] == '0') ) {
-						if ($vals['attributes_image'] != '') {
+						if( !empty( $vals['attributes_image'] ) ) {
 						$tmp_attributes_image_row++;
 
 						if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
@@ -1269,6 +1271,8 @@ class CommerceProduct extends LibertyMime {
 					}
 				}
 
+				$commentPosition = (!empty( $this->mOptions[$optionsId]['products_options_comment_position'] ) && $this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+
 				switch (true) {
 				// text
 				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
@@ -1279,7 +1283,7 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = $tmp_html;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				// checkbox
 				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX):
@@ -1290,7 +1294,7 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = $tmp_checkbox;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				// radio buttons
 				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO):
@@ -1301,7 +1305,7 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = $tmp_radio;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				// file upload
 				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE):
@@ -1312,14 +1316,14 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = $tmp_html;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				// READONLY
 				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
 					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 					$productOptions[$optionsId]['menu'] = $tmp_html;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				// dropdownmenu auto switch to selected radio button display
 				case ( count( $this->mOptions[$optionsId] ) == 1):
@@ -1330,7 +1334,7 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ($this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				default:
 					// normal dropdown menu display
@@ -1347,7 +1351,7 @@ class CommerceProduct extends LibertyMime {
 					}
 					$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib']);
 					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = ( !empty( $this->mOptions[$optionsId]['products_options_comment_position'] ) ? '1' : '0');
+					$productOptions[$optionsId]['comment_position'] = $commentPosition;
 					break;
 				}
 				// attributes images table
