@@ -284,9 +284,9 @@
 
 // add the products model to the breadcrumb trail
 	if ( !empty( $_REQUEST['products_id'] ) ) {
-		$gBitProduct = new CommerceProduct( $_REQUEST['products_id'] );
+		$gBitProduct = bc_get_commerce_product( $_REQUEST['products_id'] );
 
-		if( $gBitProduct->load() ) {
+		if( $gBitProduct->isValid() ) {
 			if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
 				$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 			}
@@ -298,8 +298,6 @@
 				$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
 			}
 */
-		} else {
-			unset( $gBitProduct->mProductsId );
 		}
 	} elseif( class_exists( 'CommerceProduct' ) ) {
 		$gBitProduct = new CommerceProduct();

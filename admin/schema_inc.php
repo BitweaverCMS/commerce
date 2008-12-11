@@ -199,6 +199,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_product_types' => "
   type_id I4 PRIMARY AUTO,
   type_name C(255),
   type_handler C(255),
+  type_class C(64),
+  type_class_file C(255),
   type_master_type I4 NOTNULL default '1',
   allow_add_to_cart C(1) NOTNULL default 'Y',
   default_image C(255),

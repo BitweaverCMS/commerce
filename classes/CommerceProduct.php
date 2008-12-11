@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.121 2008/11/25 05:15:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.122 2008/12/11 23:01:02 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.121 2008/11/25 05:15:57 spiderr Exp $
+//  $Id: CommerceProduct.php,v 1.122 2008/12/11 23:01:02 spiderr Exp $
 //
 
 /**
@@ -1738,6 +1738,33 @@ Skip deleting of images for now
 
 }
 
+function bc_get_commerce_product( $pProductsId ) {
+	global $gBitDb;
+	$product = NULL;
 
+	$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
+			FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+			WHERE `products_id`=?";
+	$productTypes = $gBitDb->getRow( $sql, array( $pProductsId ) );
+
+	if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
+		require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
+		if( class_exists(  $productTypes['type_class'] ) ) {
+			$productClass = $productTypes['type_class']; 
+		}
+	}
+
+	if( empty( $productClass ) ) {
+		$productClass = 'CommerceProduct';
+	}
+
+	$product = new $productClass( $pProductsId );
+
+	if( !$product->load() ) {	
+		unset( $product->mProductsId );
+	}
+
+	return $product;
+}
 
 ?>
