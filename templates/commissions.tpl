@@ -6,40 +6,8 @@
 
 	<div class="body">
 
-{form method="post" enctype="multipart/form-data" action=$smarty.server.REQUEST_URI}
-	<div class="row">
-		{formlabel label="Payment Method"}
-		{forminput}
-			{html_options id="commissions_payment_method" name="commissions_payment_method" options=$paymentOptions selected=$gBitUser->getPreference('commissions_payment_method')  onchange="updatePaymentMethod()" }
-			{formhelp note="Select the way in which you would like to receive payments. <a href='`$smarty.const.WIKI_PKG_URL`Selling+Products'>Fees</a> may be required for some payment methods."}
-		{/forminput}
-	</div>
-
 	{include file="bitpackage:bitcommerce/commissions_payment_options_inc.tpl"}
 
-	<div class="row submit">
-		<input type="submit" name="save_commission_settings" value="Save" />
-	</div>
-{/form}
-
-<div class="clear"></div>
-
-{literal}
-<script type="text/javascript">
-function updatePaymentMethod() {
-	hideById('commissionstorecredit');
-	hideById('commissionpaypal');
-	hideById('commissionworldpay');
-	hideById('commissioncheck');
-methodValue = 'commission'+$('commissions_payment_method').value;
-showById(methodValue);
-	return true;
-}
-
-updatePaymentMethod();
-</script>
-
-{/literal}
 	</div>
 </div>
 
