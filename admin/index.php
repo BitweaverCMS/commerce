@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.25 2008/09/24 19:41:14 spiderr Exp $
+//  $Id: index.php,v 1.26 2008/12/16 01:44:11 spiderr Exp $
 //
   $version_check_index=true;
   require('includes/application_top.php');
@@ -88,21 +88,6 @@ global $language;
 
 ?>
 <div id="colone">
-<table class="data">
-   <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
-<?php   $orders_contents = '';
-	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
-			  FROM " . TABLE_ORDERS . " co
-				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
-			  GROUP BY `orders_status_name`, `orders_status_id`
-			  ORDER BY `orders_status_id` DESC";
-  if( $rs = $gBitDb->query( $query ) ) {
-	  while( $orders_status = $rs->fetchRow() ) {
-		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
-	  }
-  }
-?>
-</table>
 <?php
 	require_once( DIR_FS_CLASSES.'order.php' );
 
@@ -139,6 +124,21 @@ global $language;
 </div>
 
 <div id="coltwo">
+<table class="data">
+   <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
+<?php   $orders_contents = '';
+	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
+			  FROM " . TABLE_ORDERS . " co
+				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
+			  GROUP BY `orders_status_name`, `orders_status_id`
+			  ORDER BY `orders_status_id` DESC";
+  if( $rs = $gBitDb->query( $query ) ) {
+	  while( $orders_status = $rs->fetchRow() ) {
+		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
+	  }
+  }
+?>
+</table>
 <?php
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
