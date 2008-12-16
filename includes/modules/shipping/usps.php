@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.11 2007/11/20 07:31:07 spiderr Exp $
+// $Id: usps.php,v 1.12 2008/12/16 01:42:49 spiderr Exp $
 //
 
 class usps {
@@ -447,6 +447,13 @@ class usps {
 // EOF: UPS USPS
 				}
 			}
+
+// This is a hack to force return of something in case USPS servers die
+//if( empty( $rates ) ) {
+//	$rates[] = array( 'PRIORITY' => 6.25 );
+//	return( $rates );
+//}
+
 		} else {
 			if (ereg('<Error>', $response[0])) {
 				$number = ereg('<Number>(.*)</Number>', $response[0], $regs);
