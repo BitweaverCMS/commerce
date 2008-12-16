@@ -49,38 +49,42 @@ function saveNewOption( pForm ) {
             <th colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}</th>
             <th>{$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
             <th align="right">{$smarty.const.TABLE_HEADING_TAX}</th>
-            <th align="right">{$smarty.const.TABLE_HEADING_PRICE_EXCLUDING_TAX}</th>
-            <th align="right">{$smarty.const.TABLE_HEADING_PRICE_INCLUDING_TAX}</th>
-            <th align="right">{$smarty.const.TABLE_HEADING_TOTAL_EXCLUDING_TAX}</th>
-            <th align="right">{$smarty.const.TABLE_HEADING_TOTAL_INCLUDING_TAX}</th>
+            <th colspan="2" align="right">{tr}Price{/tr} ( {tr}Inc. Tax{/tr} )</th>
+            <th colspan="2" align="right">{tr}Total{/tr} ( {tr}Inc. Tax{/tr} )</th>
           </tr>
 {foreach from=$order->products item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>{if $ordersProduct.products_version > 1}, v{$ordersProduct.products_version}{/if}</td>
 <td class="dataTableContent" valign="top">{$ordersProduct.model}</td>
-<td class="dataTableContent" align="right" valign="top">{$ordersProduct.tax|zen_display_tax_value}%</td>
+<td class="dataTableContent" align="right" valign="top">{if $ordersProduct.tax}{$ordersProduct.tax|zen_display_tax_value}%{/if}</td>
 <td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
-	{$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)}
-	{if $ordersProduct.onetime_charges}<br />
+{if $ordersProduct.tax}
+	( {$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)} )
+	{if $ordersProduct.onetime_charges}
 		{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax)}
-		{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}
+		{if $ordersProduct.onetime_charges != $onetimePlusTax}
+			<br /> {$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}
+		{/if}
 	{/if}
+{/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
 	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.quantity}
 	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.quantity} 
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.quantity} 
-	{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
-	{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
-	{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
+	{if $ordersProduct.tax}
+		{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
+		{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
+		{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
+	{/if}
 </td>
 </tr>
 <tr class="dataTableRow">
