@@ -1,24 +1,24 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.122 2008/12/11 23:01:02 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.123 2008/12/16 04:17:36 spiderr Exp $
  *
  * System class for handling the liberty package
  *
- * @package  bitcommerce
- * @author   spider <spider@steelsun.com>
+ * @package	bitcommerce
+ * @author	 spider <spider@steelsun.com>
  */
 
 //
 // +----------------------------------------------------------------------+
-// | bitcommerce                                                          |
+// | bitcommerce															|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2007 bitcommerce.org                                   |
-// |                                                                      |
-// | http://www.bitcommerce.org                                           |
+// | Copyright (c) 2007 bitcommerce.org									 |
+// |																		|
+// | http://www.bitcommerce.org											 |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license        |
+// | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProduct.php,v 1.122 2008/12/11 23:01:02 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.123 2008/12/16 04:17:36 spiderr Exp $
 //
 
 /**
@@ -135,10 +135,10 @@ class CommerceProduct extends LibertyMime {
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			$query = "SELECT p.*, pd.*, pt.*, uu.`real_name`, uu.`login` $selectSql , m.*, cat.*, catd.*, lc.*
 					  FROM " . TABLE_PRODUCTS . " p
-					  	INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
-					  	INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
-					  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
-					  	INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
+							INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
+							INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
+							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
+							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
 						INNER JOIN ".TABLE_CATEGORIES." cat ON ( p.`master_categories_id`=cat.`categories_id` )
 						LEFT OUTER JOIN ".TABLE_CATEGORIES_DESCRIPTION." catd ON ( cat.`categories_id`=catd.`categories_id` AND catd.`language_id`=pd.`language_id` )
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
@@ -172,41 +172,41 @@ class CommerceProduct extends LibertyMime {
 		$ret = NULL;
 		if( $this->isValid() ) {
 			$ret = $this->getField( 'actual_price' );
-          // adjusted count for free shipping
-          if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
-            $products_weight = $this->getField('products_weight');
-          } else {
-            $products_weight = 0;
-          }
+			// adjusted count for free shipping
+			if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
+			$products_weight = $this->getField('products_weight');
+			} else {
+			$products_weight = 0;
+			}
 
-          $special_price = zen_get_products_special_price( $this->mProductsId );
-          if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
-            $ret = $special_price;
-          } else {
-            $special_price = 0;
-          }
+			$special_price = zen_get_products_special_price( $this->mProductsId );
+			if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
+			$ret = $special_price;
+			} else {
+			$special_price = 0;
+			}
 
-          if (zen_get_products_price_is_free($this->mProductsId)) {
-            // no charge
-            $ret = 0;
-          }
+			if (zen_get_products_price_is_free($this->mProductsId)) {
+			// no charge
+			$ret = 0;
+			}
 
 // adjust price for discounts when priced by attribute
-		  if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
-            // reset for priced by attributes
-//            $products_price = $products->fields['products_price'];
-            if ($special_price) {
-              $ret = $special_price;
+			if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
+			// reset for priced by attributes
+//			$products_price = $products->fields['products_price'];
+			if ($special_price) {
+				$ret = $special_price;
 			} else {
 				// get the base price quantity discount. attribute discounts will be calculated later
 				$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
-            }
-          } else {
+			}
+			} else {
 // discount qty pricing
-            if( $this->getField('products_discount_type') ) {
-              $ret = $this->getQuantityPrice( $pQuantity );
-            }
-          }
+			if( $this->getField('products_discount_type') ) {
+				$ret = $this->getQuantityPrice( $pQuantity );
+			}
+			}
 		}
 		return $ret;
 	}
@@ -230,7 +230,7 @@ class CommerceProduct extends LibertyMime {
 			// none
 			case (empty( $discountPrice )):
 			case '0':
-          		$discounted_price = ($pCheckAmount ? $pCheckAmount : zen_get_products_actual_price( $this->mProductsId )) - $this->getCommissionDiscount();
+					$discounted_price = ($pCheckAmount ? $pCheckAmount : zen_get_products_actual_price( $this->mProductsId )) - $this->getCommissionDiscount();
 				break;
 			// percentage discount
 			case '1':
@@ -496,7 +496,7 @@ class CommerceProduct extends LibertyMime {
 		global $gBitSystem, $gBitUser;
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 				$pSelectSql .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-				$pJoinSql   .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (p.`content_id`=cg.`content_id`)
+				$pJoinSql	 .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (p.`content_id`=cg.`content_id`)
 								LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ts ON (ts.`security_id`=cg.`security_id` ) ";
 			if( !$this->isOwner() && !$gBitUser->isAdmin() ) {
 				// this is an ineleganct solution to mash $gBitUser->mUserId in there, but other things were painful.
@@ -507,7 +507,7 @@ class CommerceProduct extends LibertyMime {
 
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
-	  	if( empty( $pListHash['sort_mode'] ) ) {
+			if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'products_date_added_desc';
 		}
 		BitBase::prepGetList( $pListHash );
@@ -657,7 +657,7 @@ class CommerceProduct extends LibertyMime {
 	function getInfoPage() {
 		$ret = NULL;
 		if( !empty( $this->mInfo['info_page'] ) ) {
-  			$ret = $this->mInfo['info_page'];
+				$ret = $this->mInfo['info_page'];
 		}
 		return $ret;
 	}
@@ -885,34 +885,34 @@ class CommerceProduct extends LibertyMime {
 		}
 	}
 
-    function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
-        $ret = FALSE;
-        if( empty( $pProductsId ) ) {
-            $pProductsId = $this->mProductsId;
-        }
+	function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
+		$ret = FALSE;
+		if( empty( $pProductsId ) ) {
+			$pProductsId = $this->mProductsId;
+		}
 
-        if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
-            // don't include READONLY attributes to determin if attributes must be selected to add to cart
-            $query = "select pa.`products_options_values_id`
-                        from  " . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
+		if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
+			// don't include READONLY attributes to determin if attributes must be selected to add to cart
+			$query = "select pa.`products_options_values_id`
+						from  " . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
 							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
 							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON(pa.`products_options_id`=po.`products_options_id`)
-                        where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
-        } else {
-            // regardless of READONLY attributes no add to cart buttons
-            $query = "SELECT pa.`products_attributes_id`
-                      FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+						where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+		} else {
+			// regardless of READONLY attributes no add to cart buttons
+			$query = "SELECT pa.`products_attributes_id`
+					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 							INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
-                      WHERE pom.`products_id` = ?";
-        }
+					  WHERE pom.`products_id` = ?";
+		}
 
-        $attributes = $this->mDb->getOne($query, array( $pProductsId) );
+		$attributes = $this->mDb->getOne($query, array( $pProductsId) );
 
-        return( $attributes > 0 );
-    }
+		return( $attributes > 0 );
+	}
 
 
-	function getProductOptions( $pSelectedId = NULL, $pCart = NULL ) {
+	function getProductOptions( $pSelectedId = NULL, $pCart = NULL, &$productSettings = NULL ) {
 		global $currencies;
 		require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 		if ( $this->loadAttributes() ) {
@@ -930,7 +930,6 @@ class CommerceProduct extends LibertyMime {
 			$number_of_uploads = 0;
 			foreach ( array_keys( $this->mOptions ) as $optionsId ) {
 				$products_options_array = array();
-
 				$products_options_value_id = '';
 				$products_options_details = '';
 				$products_options_details_noname = '';
@@ -957,7 +956,7 @@ class CommerceProduct extends LibertyMime {
 						// collect price information if it exists
 						if( is_object( $pCart ) && $vals['attributes_discounted'] == 1 ) {
 							// apply product discount to attributes if discount is on
-							//              $new_value_price = $vals['options_values_price'];
+							//			  $new_value_price = $vals['options_values_price'];
 							$new_value_price = zen_get_attributes_price_final( $this->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
 							$new_value_price = zen_get_discount_calc( $this->mProductsId, true, $new_value_price);
 						} else {
@@ -1079,7 +1078,6 @@ class CommerceProduct extends LibertyMime {
 								$selected_attribute = false;
 							}
 						} else {
-			//              $selected_attribute = ($vals['attributes_default']=='1' ? true : false);
 							// if an error, set to customer setting
 							if( !empty( $pSelectedId ) ) {
 								$selected_attribute= false;
@@ -1087,16 +1085,15 @@ class CommerceProduct extends LibertyMime {
 								while(list($key,$value) = each($pSelectedId)) {
 									if (is_array($value)) {
 										while(list($kkey,$vvalue) = each($value)) {
-										if (($key == $this->mOptions[$optionsId]['products_options_id'] and $vvalue == $vals['products_options_values_id'])) {
-											$selected_attribute = true;
-											break;
-										}
+											if (($key == $this->mOptions[$optionsId]['products_options_id'] and $vvalue == $vals['products_options_values_id'])) {
+												$selected_attribute = true;
+												break;
+											}
 										}
 									} else {
 										if (($key == $this->mOptions[$optionsId]['products_options_id'] and $value == $vals['products_options_values_id'])) {
-									// zen_get_products_name($_POST['products_id']) .
-										$selected_attribute = true;
-										break;
+											$selected_attribute = true;
+											break;
 										}
 									}
 								}
@@ -1107,10 +1104,10 @@ class CommerceProduct extends LibertyMime {
 
 						switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 						  case '1':
-							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . ($vals['attributes_image'] != '' ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
 							break;
 						  case '2':
-							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .  ($vals['attributes_image'] != '' ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .  (!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
 							break;
 						  case '3':
 							$tmp_attributes_image_row++;
@@ -1139,10 +1136,10 @@ class CommerceProduct extends LibertyMime {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
 															. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
 															. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
-															. ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '')
+															. (!empty( $products_options_details_noname )  ? '<br />' . $products_options_details_noname : '')
 															. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
 							} else {
-								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
 							}
 							break;
 
@@ -1155,16 +1152,14 @@ class CommerceProduct extends LibertyMime {
 							}
 
 							if( !empty( $vals['attributes_image'] ) ) {
-								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
 							} else {
 								$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
 							}
 							break;
 						  case '0':
 						  default:
-							if( !empty( $vals['attributes_html_attrib'] ) ) {
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
-							}
+							$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
 							break;
 						}
 					}
@@ -1272,87 +1267,86 @@ class CommerceProduct extends LibertyMime {
 				}
 
 				$commentPosition = (!empty( $this->mOptions[$optionsId]['products_options_comment_position'] ) && $this->mOptions[$optionsId]['products_options_comment_position'] == '1' ? '1' : '0');
-
 				switch (true) {
-				// text
-				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
-					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = $tmp_html;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				// checkbox
-				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX):
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
+					// text
+					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					// checkbox
+					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX):
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = $tmp_checkbox;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					// radio buttons
+					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO):
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = $tmp_radio;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					// file upload
+					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE):
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					// READONLY
+					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
 						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = $tmp_checkbox;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				// radio buttons
-				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO):
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
-					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = $tmp_radio;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				// file upload
-				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE):
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-					$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
-					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = $tmp_html;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				// READONLY
-				case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
-					$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					$productOptions[$optionsId]['menu'] = $tmp_html;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				// dropdownmenu auto switch to selected radio button display
-				case ( count( $this->mOptions[$optionsId] ) == 1):
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
-						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
-				default:
-					// normal dropdown menu display
-					if( is_object( $pCart ) && isset($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']])) {
-						$selected_attribute = $pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']];
-					} else {
-					// selected set above
-		//                echo 'Type ' . $this->mOptions[$optionsId]['products_options_type'] . '<br />';
-					}
-					if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-						$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-					} else {
-						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-					}
-					$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib']);
-					$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
-					$productOptions[$optionsId]['comment_position'] = $commentPosition;
-					break;
+						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					// dropdownmenu auto switch to selected radio button display
+					case ( count( $this->mOptions[$optionsId] ) == 1):
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
+					default:
+						// normal dropdown menu display
+						if( is_object( $pCart ) && isset($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']])) {
+							$selected_attribute = $pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']];
+						} else {
+						// selected set above
+			//				echo 'Type ' . $this->mOptions[$optionsId]['products_options_type'] . '<br />';
+						}
+						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
+							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
+						} else {
+							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
+						}
+						$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib']);
+						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
+						$productOptions[$optionsId]['comment_position'] = $commentPosition;
+						break;
 				}
 				// attributes images table
 				$productOptions[$optionsId]['attributes_image'] = $tmp_attributes_image;
@@ -1685,19 +1679,18 @@ Skip deleting of images for now
 								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )  
 							WHERE pom.`products_id`=? AND pa.`products_options_id`=? " .
 							$order_by;
-			        if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId ) ) ) {
+					if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId ) ) ) {
 						$this->mOptions[$optionsId]['values'] = array();
 						while( !$rs->EOF ) {
 							$this->mOptions[$optionsId]['values'][$rs->fields['products_options_values_id']] = $rs->fields;
 							$rs->MoveNext();
 						}
-			        }
+					}
 				}
 			}
 		}
 		return( count( $this->mOptions ) );
 	}
-
 
 	function hasOptionValue( $pOptionsValuesId ) {
 		$ret = FALSE;
@@ -1741,11 +1734,14 @@ Skip deleting of images for now
 function bc_get_commerce_product( $pProductsId ) {
 	global $gBitDb;
 	$product = NULL;
+	static $productTypes;
 
-	$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
-			FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
-			WHERE `products_id`=?";
-	$productTypes = $gBitDb->getRow( $sql, array( $pProductsId ) );
+	if( empty( $productTypes ) ) {
+		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
+				FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+				WHERE `products_id`=?";
+		$productTypes = $gBitDb->getRow( $sql, array( $pProductsId ) );
+	}
 
 	if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
 		require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
