@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.123 2008/12/16 04:17:36 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.124 2008/12/19 06:50:57 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.123 2008/12/16 04:17:36 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.124 2008/12/19 06:50:57 spiderr Exp $
 //
 
 /**
@@ -943,6 +943,9 @@ class CommerceProduct extends LibertyMime {
 				$productSettings['show_attributes_qty_prices_icon'] = 'false';
 				foreach ( array_keys( $this->mOptions[$optionsId]['values'] ) as $valId ) {
 					$vals = &$this->mOptions[$optionsId]['values'][$valId];
+					if( empty( $vals['attributes_html_attrib'] ) ) {
+						$vals['attributes_html_attrib'] = '';
+					}
 					// reset
 					$new_value_price= '';
 					$price_onetime = '';
