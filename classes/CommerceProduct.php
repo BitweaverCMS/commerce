@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.124 2008/12/19 06:50:57 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.125 2009/01/03 07:31:40 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.124 2008/12/19 06:50:57 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.125 2009/01/03 07:31:40 spiderr Exp $
 //
 
 /**
@@ -712,7 +712,7 @@ class CommerceProduct extends LibertyMime {
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
-			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : 1),
+			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : $this->getProductType()),
 			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
 			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),
 			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
@@ -780,7 +780,7 @@ class CommerceProduct extends LibertyMime {
 		// we have already done all the permission checking needed for this user to upload an image
 		$pParamHash['no_perm_check'] = TRUE;
 		$this->mDb->StartTrans();
-		if( $this->verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
+		if( CommerceProduct::verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
 			}
@@ -804,6 +804,7 @@ class CommerceProduct extends LibertyMime {
 			for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 				$language_id = $languages[$i]['id'];
 
+				$bindVars = array();
 				if( !empty( $pParamHash['products_name'][$language_id] ) ) {
 					$bindVars['products_name'] = substr( zen_db_prepare_input($pParamHash['products_name'][$language_id]), 0, 64 );
 				}
@@ -814,15 +815,17 @@ class CommerceProduct extends LibertyMime {
 					$bindVars['products_url'] = substr( zen_db_prepare_input($pParamHash['products_url'][$language_id]), 0, 255 );
 				}
 
-				if ($action == 'insert_product') {
-					$bindVars['products_id'] = $this->mProductsId;
-					$bindVars['language_id'] = $language_id;
-					$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
-				} elseif ($action == 'update_product') {
-					$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
-					$bindVars['products_id'] = $this->mProductsId;
-					$bindVars['language_id'] = $language_id;
-					$this->mDb->query( $query, $bindVars );
+				if( !empty( $bindVars ) ) {
+					if ($action == 'insert_product') {
+						$bindVars['products_id'] = $this->mProductsId;
+						$bindVars['language_id'] = $language_id;
+						$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
+					} elseif ($action == 'update_product') {
+						$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
+						$bindVars['products_id'] = $this->mProductsId;
+						$bindVars['language_id'] = $language_id;
+						$this->mDb->query( $query, $bindVars );
+					}
 				}
 			}
 
@@ -844,11 +847,22 @@ class CommerceProduct extends LibertyMime {
 
 				$this->mDb->query( "DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id`=?", array( $this->mProductsId ) );
 				if( !empty( $bindVars ) ) {
-					$bindVars['products_id'] = $this->mProductsId;
-					$bindVars['language_id'] = $language_id;
-					$this->mDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $bindVars);
+					if( !empty( $bindVars ) ) {
+						$bindVars['products_id'] = $this->mProductsId;
+						$bindVars['language_id'] = $language_id;
+						$this->mDb->associateInsert(TABLE_META_TAGS_PRODUCTS_DESCRIPTION, $bindVars);
+					}
 				}
+				$this->storeProductImage( $pParamHash );
 			}
+		}
+		$this->mDb->CompleteTrans();
+		$this->load();
+		return( $this->mProductsId );
+	}
+
+	function storeProductImage( $pParamHash ) {
+		if( $this->isValid() ) {
 			// did we recieve an arbitrary file, or uploaded file as the product image?
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
@@ -871,9 +885,10 @@ class CommerceProduct extends LibertyMime {
 				liberty_process_image( $fileHash );
 			}
 		}
-		$this->mDb->CompleteTrans();
-		$this->load();
-		return( $this->mProductsId );
+	}
+
+	function getProductType() {
+		return 1;
 	}
 
 	function update( $pUpdateHash, $pProductsId=NULL ) {
@@ -915,6 +930,8 @@ class CommerceProduct extends LibertyMime {
 	function getProductOptions( $pSelectedId = NULL, $pCart = NULL, &$productSettings = NULL ) {
 		global $currencies;
 		require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
+		$productOptions = array();
+
 		if ( $this->loadAttributes() ) {
 			$productSettings['zv_display_select_option'] = 0;
 			$productSettings['show_attributes_qty_prices_description'] = 'false';
@@ -1734,22 +1751,37 @@ Skip deleting of images for now
 
 }
 
-function bc_get_commerce_product( $pProductsId ) {
+
+/**
+ * return a proper Commerce object based on the product_types.type_class
+ *
+ * @param mixed If an integer, a product_id is assumed, else a key=>value hash (e.g. content_id=>1234 ) to lookup the product
+ * See verify for details of the values required
+ */
+function bc_get_commerce_product( $pLookupMixed ) {
 	global $gBitDb;
 	$product = NULL;
-	static $productTypes;
 
-	if( empty( $productTypes ) ) {
-		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
-				FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
-				WHERE `products_id`=?";
-		$productTypes = $gBitDb->getRow( $sql, array( $pProductsId ) );
+	if( is_array( $pLookupMixed ) ) {
+		$lookupKey = key( $pLookupMixed );
+		$lookupValue = current( $pLookupMixed );
+	} else {
+		$lookupKey = 'products_id';
+		$lookupValue = $pLookupMixed;
 	}
 
-	if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
-		require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
-		if( class_exists(  $productTypes['type_class'] ) ) {
-			$productClass = $productTypes['type_class']; 
+	if( !empty( $lookupValue ) ) {
+
+		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
+				FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+				WHERE `$lookupKey`=?";
+		$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
+
+		if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
+			require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
+			if( class_exists(  $productTypes['type_class'] ) ) {
+				$productClass = $productTypes['type_class']; 
+			}
 		}
 	}
 
@@ -1757,7 +1789,10 @@ function bc_get_commerce_product( $pProductsId ) {
 		$productClass = 'CommerceProduct';
 	}
 
-	$product = new $productClass( $pProductsId );
+	$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
+	$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
+
+	$product = new $productClass( $productsId, $contentId );
 
 	if( !$product->load() ) {	
 		unset( $product->mProductsId );
