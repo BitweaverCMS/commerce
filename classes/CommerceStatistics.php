@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.1 2008/09/24 19:41:14 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.2 2009/01/03 07:28:56 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -23,6 +23,7 @@
 			
 			$ret = array();
 			$ret['stats']['gross_revenue_max'] = 0;
+			$ret['stats']['order_count_max'] = 0;
 
 			$sql = "SELECT TO_CHAR( `date_purchased`, '$pParamHash[period]' ) AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS gross_revenue, count(orders_id) AS order_count, round( sum(order_total) / count(orders_id), 2) AS avg_order_size 
 					FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY TO_CHAR( `date_purchased`, '$pParamHash[period]' ) ORDER BY TO_CHAR( `date_purchased`, '$pParamHash[period]' ) DESC";
