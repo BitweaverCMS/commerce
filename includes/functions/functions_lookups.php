@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.30 2009/01/07 04:42:13 spiderr Exp $
+// $Id: functions_lookups.php,v 1.31 2009/01/07 04:57:03 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -185,7 +185,7 @@
 	}
 
 	if( !($zone = $gBitDb->getOne( "SELECT `zone_code` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? ".$whereSql, array( (int)$pCountryId, $pZoneMixed ) ) ) ) {
-		$zone = $pDefault;
+		$zone = $pDefaultZone;
 	}
 	return $zone;
   }
