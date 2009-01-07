@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.29 2008/08/23 17:51:39 spiderr Exp $
+// $Id: functions_lookups.php,v 1.30 2009/01/07 04:42:13 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -175,20 +175,19 @@
   // Description : Function to retrieve the state/province code (as in FL for Florida etc)
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  function zen_get_zone_code($country_id, $zone_id, $default_zone) {
-    global $gBitDb;
-    $zone_query = "select `zone_code`
-                   from " . TABLE_ZONES . "
-                   where `zone_country_id` = '" . (int)$country_id . "'
-                   and `zone_id` = '" . (int)$zone_id . "'";
+  function zen_get_zone_code( $pCountryId, $pZoneMixed, $pDefaultZone ) {
+	global $gBitDb;
 
-    $zone = $gBitDb->Execute($zone_query);
+	if( is_integer( $pZoneMixed ) ) {
+		$whereSql = ' AND `zone_id`=?';
+	} else {
+		$whereSql = ' AND `zone_name`=?';
+	}
 
-    if ($zone->RecordCount() > 0) {
-      return $zone->fields['zone_code'];
-    } else {
-      return $default_zone;
-    }
+	if( !($zone = $gBitDb->getOne( "SELECT `zone_code` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? ".$whereSql, array( (int)$pCountryId, $pZoneMixed ) ) ) ) {
+		$zone = $pDefault;
+	}
+	return $zone;
   }
 
 
