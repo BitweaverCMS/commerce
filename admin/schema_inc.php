@@ -1812,7 +1812,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (35,'Burundi', 'BI', 'BDI', '108', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (36,'Cambodia', 'KH', 'KHM', '116', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (37,'Cameroon', 'CM', 'CMR', '120', '1')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (38,'Canada', 'CA', 'CAN', '124', '1')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (38,'Canada', 'CA', 'CAN', '124', '2')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (39,'Cape Verde', 'CV', 'CPV', '132', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (40,'Cayman Islands', 'KY', 'CYM', '136', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (41,'Central African Republic', 'CF', 'CAF', '140', '1')",
