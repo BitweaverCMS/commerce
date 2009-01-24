@@ -283,39 +283,39 @@
 
 
 // add the products model to the breadcrumb trail
-	if ( !empty( $_REQUEST['products_id'] ) ) {
-		$gBitProduct = bc_get_commerce_product( $_REQUEST['products_id'] );
+if ( !empty( $_REQUEST['products_id'] ) ) {
+	$gBitProduct = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) );
 
-		if( $gBitProduct->isValid() ) {
-			if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
-				$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
-			}
-			$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
-/*
-			global $gContent;
-			if( empty( $gContent ) ) {
-				$gContent = &$gBitProduct;
-				$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
-			}
-*/
+	if( $gBitProduct->isValid() ) {
+		if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
+			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 		}
-	} elseif( class_exists( 'CommerceProduct' ) ) {
-		$gBitProduct = new CommerceProduct();
+		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+/*
+		global $gContent;
+		if( empty( $gContent ) ) {
+			$gContent = &$gBitProduct;
+			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
+		}
+*/
 	}
+} elseif( class_exists( 'CommerceProduct' ) ) {
+	$gBitProduct = new CommerceProduct();
+}
 
-	if( empty( $_REQUEST['cPath'] ) ) {
-		$_REQUEST['cPath'] = '';
-	}
-	$gComCategory = new CommerceCategory( $_REQUEST['cPath'] );
+if( empty( $_REQUEST['cPath'] ) ) {
+	$_REQUEST['cPath'] = '';
+}
+$gComCategory = new CommerceCategory( $_REQUEST['cPath'] );
 
-	if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
-		$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
-	}
+if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
+	$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
+}
 
-	if( !empty( $gBitProduct ) ) {
-	 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
-	}
+if( !empty( $gBitProduct ) ) {
+	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+}
 
-	$gBitSmarty->assign( 'runNormal', zen_run_normal() );
+$gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
 ?>
