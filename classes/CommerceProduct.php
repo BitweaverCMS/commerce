@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.125 2009/01/03 07:31:40 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.126 2009/01/24 15:27:04 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.125 2009/01/03 07:31:40 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.126 2009/01/24 15:27:04 spiderr Exp $
 //
 
 /**
@@ -135,11 +135,11 @@ class CommerceProduct extends LibertyMime {
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			$query = "SELECT p.*, pd.*, pt.*, uu.`real_name`, uu.`login` $selectSql , m.*, cat.*, catd.*, lc.*
 					  FROM " . TABLE_PRODUCTS . " p
-							INNER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 							INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
 							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
 							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
-						INNER JOIN ".TABLE_CATEGORIES." cat ON ( p.`master_categories_id`=cat.`categories_id` )
+							INNER JOIN ".TABLE_CATEGORIES." cat ON ( p.`master_categories_id`=cat.`categories_id` )
+						LEFT OUTER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
 						LEFT OUTER JOIN ".TABLE_CATEGORIES_DESCRIPTION." catd ON ( cat.`categories_id`=catd.`categories_id` AND catd.`language_id`=pd.`language_id` )
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
 						LEFT OUTER JOIN ".TABLE_SUPPLIERS." s ON ( p.`suppliers_id`=s.`suppliers_id` )					  WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
@@ -815,12 +815,12 @@ class CommerceProduct extends LibertyMime {
 					$bindVars['products_url'] = substr( zen_db_prepare_input($pParamHash['products_url'][$language_id]), 0, 255 );
 				}
 
-				if( !empty( $bindVars ) ) {
-					if ($action == 'insert_product') {
-						$bindVars['products_id'] = $this->mProductsId;
-						$bindVars['language_id'] = $language_id;
-						$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
-					} elseif ($action == 'update_product') {
+				if ($action == 'insert_product') {
+					$bindVars['products_id'] = $this->mProductsId;
+					$bindVars['language_id'] = $language_id;
+					$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
+				} elseif ($action == 'update_product') {
+					if( !empty( $bindVars ) ) {
 						$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
 						$bindVars['products_id'] = $this->mProductsId;
 						$bindVars['language_id'] = $language_id;
@@ -830,7 +830,6 @@ class CommerceProduct extends LibertyMime {
 			}
 
 			// add meta tags
-			$languages = zen_get_languages();
 			for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 				$language_id = $languages[$i]['id'];
 
@@ -888,7 +887,8 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	function getProductType() {
-		return 1;
+		global $gCommerceSystem;
+		return $gCommerceSystem->getConfig( 'commerce_default_product_type', 1 );
 	}
 
 	function update( $pUpdateHash, $pProductsId=NULL ) {
