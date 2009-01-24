@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.14 2008/12/16 01:45:38 spiderr Exp $
+// $Id: payflowpro.php,v 1.15 2009/01/24 18:00:42 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -251,9 +251,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		$order->info['cc_owner'] = $_POST['cc_owner'];
 		$order->info['cc_cvv'] = $_POST['cc_cvv'];
 		// Calculate the next expected order id
-		$last_order_id = $gBitDb->getOne("select * from " . TABLE_ORDERS . " order by `orders_id` desc");
-		$new_order_id = $last_order_id->fields['orders_id'];
-		$new_order_id = ($new_order_id + 1);
+		$nextOrderId = $gBitDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
 
 		 $parmList .= "TRXTYPE=" . ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S');
 		 $parmList .= "&TENDER=C";
@@ -263,8 +261,8 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		 $parmList .= "&PARTNER=" . MODULE_PAYMENT_PAYFLOWPRO_PARTNER;
 
 		 $parmList .= "&ZIP=".$order->customer['postcode'];
-		 $parmList .= "&COMMENT1=" . 'CustID:' . $_SESSION['customer_id'] . ' OrderID:' . $new_order_id . ' Email:'. $order->customer['email_address'];
-		 $parmList .= "&COMMENT2=" . 'ZenSessName:' . zen_session_name() . ' ZenSessID:' . zen_session_id() ;
+		 $parmList .= "&COMMENT1=" . 'OrderID: ' . $nextOrderId . ' ' . $order->customer['email_address'] . ' (' . $gBitUser->mUserId . ')';
+//		 $parmList .= "&COMMENT2=" . 'ZenSessName:' . zen_session_name() . ' ZenSessID:' . zen_session_id() ;
 		 if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') $parmList .= ' -- PHP/COM Test Transaction --';
 		 $parmList .= "&ACCT=" . $order->info['cc_number'];
 		 $parmList .= "&EXPDATE=" . $order->info['cc_expires'];
@@ -298,9 +296,8 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 	                 TRXTYPE => ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S'),
 	                 TENDER=> 'C',
 	                 ZIP=> $order->customer['postcode'],
-	                 COMMENT1=> 'CustID:' . $_SESSION['customer_id'] . '+OrderID:' . $new_order_id . '+Email:'. $order->customer['email_address'],
-	                 COMMENT2=> 'ZenSessName:' . zen_session_name() . '+ZenSessID:' . zen_session_id() .
-	                      (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') ? '+++Test Transaction+++' : '',
+	                 COMMENT1=> 'CustID:' . $_SESSION['customer_id'] . '+OrderID:' . $nextOrderId . '+Email:'. $order->customer['email_address'],
+	                 COMMENT2=> (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') ? '+++Test Transaction+++' : '',
 	                 ACCT=> $order->info['cc_number'],
 	                 EXPDATE=> $order->info['cc_expires'],
 	                 CVV2=> $order->info['cc_cvv'],
