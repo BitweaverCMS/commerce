@@ -28,10 +28,12 @@ class CommerceSystem extends BitBase {
 	function getConfig( $pConfigName, $pDefault=NULL ) {
 		global $gBitSystem;
 		$ret = $pDefault;
-		if( defined( $pConfigName ) ) {
-			$ret = constant( $pConfigName );
+		if( defined( strtoupper( $pConfigName ) ) ) {
+			$ret = constant( strtoupper( $pConfigName ) );
 		} elseif( $pDefault === NULL && strpos( 'MAX_DISPLAY', $pConfigName ) !== FALSE ) {
 			$ret = $gBitSystem->getConfig( 'max_records', 20 );
+		} else {
+			$ret = $gBitSystem->getConfig( strtolower( $pConfigName ), $pDefault );
 		}
 		return $ret;
 	}
