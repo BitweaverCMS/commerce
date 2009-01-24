@@ -283,7 +283,7 @@
 
 
 // create the global product. products_id can be an array, such as in removing from cart
-if ( !empty( $_REQUEST['products_id'] ) && is_integer( $_REQUEST['products_id'] ) ) {
+if ( !empty( $_REQUEST['products_id'] ) && is_numeric( $_REQUEST['products_id'] ) ) {
 	$gBitProduct = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) );
 
 	if( $gBitProduct->isValid() ) {
