@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.126 2009/01/24 15:27:04 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.127 2009/01/24 22:29:51 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.126 2009/01/24 15:27:04 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.127 2009/01/24 22:29:51 spiderr Exp $
 //
 
 /**
@@ -1762,10 +1762,10 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	global $gBitDb;
 	$product = NULL;
 
-	if( is_array( $pLookupMixed ) ) {
+	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
 		$lookupValue = current( $pLookupMixed );
-	} else {
+	} elseif( is_numeric( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
 		$lookupValue = $pLookupMixed;
 	}
