@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.26 2008/06/25 22:21:07 spiderr Exp $
+// $Id: index.php,v 1.27 2009/01/27 07:58:41 spiderr Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
@@ -41,6 +41,12 @@ ob_start();
 			$_REQUEST['main_page'] = 'user_products';
 		} elseif( $infoPage = $gBitProduct->getInfoPage() ) {
 			$_REQUEST['main_page'] = $infoPage;
+			global $gContent, $gBitSmarty;
+			// we are viewing a product, assume it is gContent if nothing else was created so services work
+			if( empty( $gContent ) ) {
+				$gContent = &$gBitProduct;
+				$gBitSmarty->assign_by_ref( 'gContent', $gContent );
+			}
 		} else {
 			$_REQUEST['main_page'] = 'index';
 		}
