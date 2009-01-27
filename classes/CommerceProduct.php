@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.127 2009/01/24 22:29:51 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.128 2009/01/27 07:59:07 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.127 2009/01/24 22:29:51 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.128 2009/01/27 07:59:07 spiderr Exp $
 //
 
 /**
@@ -713,29 +713,29 @@ class CommerceProduct extends LibertyMime {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
 			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : $this->getProductType()),
-			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : NULL),
-			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : NULL),
-			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : NULL),
-			'products_commission' => (!empty( $pParamHash['products_commission'] ) ? $pParamHash['products_commission'] : NULL),
-			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : NULL),
-			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : NULL),
-			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : NULL),
-			'products_virtual' => (!empty( $pParamHash['products_virtual'] ) ? (int)$pParamHash['products_virtual'] : NULL),
-			'products_tax_class_id' => (!empty( $pParamHash['products_tax_class_id'] ) ? $pParamHash['products_tax_class_id'] : NULL),
-			'manufacturers_id' => (!empty( $pParamHash['manufacturers_id'] ) ? $pParamHash['manufacturers_id'] : NULL),
-			'suppliers_id' => (!empty( $pParamHash['suppliers_id'] ) ? $pParamHash['suppliers_id'] : NULL),
-			'products_barcode' => (!empty( $pParamHash['products_barcode'] ) ? $pParamHash['products_barcode'] : NULL),
-			'products_priced_by_attribute' => (!empty( $pParamHash['products_priced_by_attribute'] ) ? $pParamHash['products_priced_by_attribute'] : NULL),
-			'product_is_free' => (!empty( $pParamHash['product_is_free'] ) ? $pParamHash['product_is_free'] : NULL),
-			'product_is_call' => (!empty( $pParamHash['product_is_call'] ) ? $pParamHash['product_is_call'] : NULL),
-			'products_quantity_mixed' => (!empty( $pParamHash['products_quantity_mixed'] ) ? $pParamHash['products_quantity_mixed'] : NULL),
-			'product_is_always_free_ship' => (!empty( $pParamHash['product_is_always_free_ship'] ) ? $pParamHash['product_is_always_free_ship'] : NULL),
-			'products_sort_order' => (!empty( $pParamHash['products_sort_order'] ) ? $pParamHash['products_sort_order'] : NULL),
-			'products_discount_type' => (!empty( $pParamHash['products_discount_type'] ) ? $pParamHash['products_discount_type'] : NULL),
-			'products_discount_type_from' => (!empty( $pParamHash['products_discount_type_from'] ) ? $pParamHash['products_discount_type_from'] : NULL),
-			'products_price_sorter' => (!empty( $pParamHash['products_price_sorter'] ) ? $pParamHash['products_price_sorter'] : NULL),
-			'related_content_id' => (!empty( $pParamHash['related_content_id'] ) ? $pParamHash['related_content_id'] : NULL),
-			'purchase_group_id' => (!empty( $pParamHash['purchase_group_id'] ) ? $pParamHash['purchase_group_id'] : NULL),
+			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : $this->getField( 'products_model' )),
+			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : $this->getField( 'products_manufacturers_model' )),
+			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : $this->getField( 'products_price' )),
+			'products_commission' => (!empty( $pParamHash['products_commission'] ) ? $pParamHash['products_commission'] : $this->getField( 'products_commission' )),
+			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : $this->getField( 'products_cogs' )),
+			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : $this->getField( 'products_weight' )),
+			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : $this->getField( 'products_status' )),
+			'products_virtual' => (!empty( $pParamHash['products_virtual'] ) ? (int)$pParamHash['products_virtual'] : $this->getField( 'products_virtual' )),
+			'products_tax_class_id' => (!empty( $pParamHash['products_tax_class_id'] ) ? $pParamHash['products_tax_class_id'] : $this->getField( 'products_tax_class_id' )),
+			'manufacturers_id' => (!empty( $pParamHash['manufacturers_id'] ) ? $pParamHash['manufacturers_id'] : $this->getField( 'manufacturers_id' )),
+			'suppliers_id' => (!empty( $pParamHash['suppliers_id'] ) ? $pParamHash['suppliers_id'] : $this->getField( 'suppliers_id' )),
+			'products_barcode' => (!empty( $pParamHash['products_barcode'] ) ? $pParamHash['products_barcode'] : $this->getField( 'products_barcode' )),
+			'products_priced_by_attribute' => (!empty( $pParamHash['products_priced_by_attribute'] ) ? $pParamHash['products_priced_by_attribute'] : $this->getField( 'products_priced_by_attribute' )),
+			'product_is_free' => (!empty( $pParamHash['product_is_free'] ) ? $pParamHash['product_is_free'] : $this->getField( 'product_is_free' )),
+			'product_is_call' => (!empty( $pParamHash['product_is_call'] ) ? $pParamHash['product_is_call'] : $this->getField( 'product_is_call' )),
+			'products_quantity_mixed' => (!empty( $pParamHash['products_quantity_mixed'] ) ? $pParamHash['products_quantity_mixed'] : $this->getField( 'products_quantity_mixed' )),
+			'product_is_always_free_ship' => (!empty( $pParamHash['product_is_always_free_ship'] ) ? $pParamHash['product_is_always_free_ship'] : $this->getField( 'product_is_always_free_ship' )),
+			'products_sort_order' => (!empty( $pParamHash['products_sort_order'] ) ? $pParamHash['products_sort_order'] : $this->getField( 'products_sort_order' )),
+			'products_discount_type' => (!empty( $pParamHash['products_discount_type'] ) ? $pParamHash['products_discount_type'] : $this->getField( 'products_discount_type' )),
+			'products_discount_type_from' => (!empty( $pParamHash['products_discount_type_from'] ) ? $pParamHash['products_discount_type_from'] : $this->getField( 'products_discount_type_from' )),
+			'products_price_sorter' => (!empty( $pParamHash['products_price_sorter'] ) ? $pParamHash['products_price_sorter'] : $this->getField( 'products_price_sorter' )),
+			'related_content_id' => (!empty( $pParamHash['related_content_id'] ) ? $pParamHash['related_content_id'] : $this->getField( 'related_content_id' ) ),
+			'purchase_group_id' => (!empty( $pParamHash['purchase_group_id'] ) ? $pParamHash['purchase_group_id'] : $this->getField( 'purchase_group_id' )),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
