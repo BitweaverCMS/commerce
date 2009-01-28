@@ -217,27 +217,6 @@
       zen_session_start();
       $session_started = true;
     }
-  } elseif (SESSION_BLOCK_SPIDERS == 'True') {
-    $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-    $spider_flag = false;
-
-    if (zen_not_null($user_agent)) {
-      $spiders = file( BITCOMMERCE_PKG_PATH . 'includes/spiders.txt');
-
-      for ($i=0, $n=sizeof($spiders); $i<$n; $i++) {
-        if (zen_not_null($spiders[$i])) {
-          if (is_integer(strpos($user_agent, trim($spiders[$i])))) {
-            $spider_flag = true;
-            break;
-          }
-        }
-      }
-    }
-
-    if ($spider_flag == false) {
-      zen_session_start();
-      $session_started = true;
-    }
   } else {
     zen_session_start();
     $session_started = true;
