@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.128 2009/01/27 07:59:07 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.129 2009/01/29 05:55:52 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.128 2009/01/27 07:59:07 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.129 2009/01/29 05:55:52 spiderr Exp $
 //
 
 /**
@@ -883,6 +883,14 @@ class CommerceProduct extends LibertyMime {
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
 				liberty_process_image( $fileHash );
 			}
+		}
+	}
+
+	function storeStatus( $pContentStatusId ) {
+		if( $this->isValid() ) {
+			// keep com_products.products_status update to date because it is so pervasive in bitcommerce the code base - one day it will go away...
+			$this->mDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_status`=? WHERE `products_id`=?", array( (int)($pContentStatusId > 0), $this->mProductsId ) );
+			parent::storeStatus( $pContentStatusId );
 		}
 	}
 
