@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.129 2009/01/29 05:55:52 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.130 2009/02/02 16:09:45 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.129 2009/01/29 05:55:52 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.130 2009/02/02 16:09:45 spiderr Exp $
 //
 
 /**
@@ -713,34 +713,47 @@ class CommerceProduct extends LibertyMime {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
 			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : $this->getProductType()),
-			'products_model' => (!empty( $pParamHash['products_model'] ) ? $pParamHash['products_model'] : $this->getField( 'products_model' )),
-			'products_manufacturers_model' => (!empty( $pParamHash['products_manufacturers_model'] ) ? $pParamHash['products_manufacturers_model'] : $this->getField( 'products_manufacturers_model' )),
-			'products_price' => (!empty( $pParamHash['products_price'] ) ? $pParamHash['products_price'] : $this->getField( 'products_price' )),
-			'products_commission' => (!empty( $pParamHash['products_commission'] ) ? $pParamHash['products_commission'] : $this->getField( 'products_commission' )),
-			'products_cogs' => (!empty( $pParamHash['products_cogs'] ) ? $pParamHash['products_cogs'] : $this->getField( 'products_cogs' )),
-			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : $this->getField( 'products_weight' )),
-			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)$pParamHash['products_status'] : $this->getField( 'products_status' )),
-			'products_virtual' => (!empty( $pParamHash['products_virtual'] ) ? (int)$pParamHash['products_virtual'] : $this->getField( 'products_virtual' )),
-			'products_tax_class_id' => (!empty( $pParamHash['products_tax_class_id'] ) ? $pParamHash['products_tax_class_id'] : $this->getField( 'products_tax_class_id' )),
-			'manufacturers_id' => (!empty( $pParamHash['manufacturers_id'] ) ? $pParamHash['manufacturers_id'] : $this->getField( 'manufacturers_id' )),
-			'suppliers_id' => (!empty( $pParamHash['suppliers_id'] ) ? $pParamHash['suppliers_id'] : $this->getField( 'suppliers_id' )),
-			'products_barcode' => (!empty( $pParamHash['products_barcode'] ) ? $pParamHash['products_barcode'] : $this->getField( 'products_barcode' )),
-			'products_priced_by_attribute' => (!empty( $pParamHash['products_priced_by_attribute'] ) ? $pParamHash['products_priced_by_attribute'] : $this->getField( 'products_priced_by_attribute' )),
-			'product_is_free' => (!empty( $pParamHash['product_is_free'] ) ? $pParamHash['product_is_free'] : $this->getField( 'product_is_free' )),
-			'product_is_call' => (!empty( $pParamHash['product_is_call'] ) ? $pParamHash['product_is_call'] : $this->getField( 'product_is_call' )),
-			'products_quantity_mixed' => (!empty( $pParamHash['products_quantity_mixed'] ) ? $pParamHash['products_quantity_mixed'] : $this->getField( 'products_quantity_mixed' )),
-			'product_is_always_free_ship' => (!empty( $pParamHash['product_is_always_free_ship'] ) ? $pParamHash['product_is_always_free_ship'] : $this->getField( 'product_is_always_free_ship' )),
-			'products_sort_order' => (!empty( $pParamHash['products_sort_order'] ) ? $pParamHash['products_sort_order'] : $this->getField( 'products_sort_order' )),
-			'products_discount_type' => (!empty( $pParamHash['products_discount_type'] ) ? $pParamHash['products_discount_type'] : $this->getField( 'products_discount_type' )),
-			'products_discount_type_from' => (!empty( $pParamHash['products_discount_type_from'] ) ? $pParamHash['products_discount_type_from'] : $this->getField( 'products_discount_type_from' )),
-			'products_price_sorter' => (!empty( $pParamHash['products_price_sorter'] ) ? $pParamHash['products_price_sorter'] : $this->getField( 'products_price_sorter' )),
-			'related_content_id' => (!empty( $pParamHash['related_content_id'] ) ? $pParamHash['related_content_id'] : $this->getField( 'related_content_id' ) ),
-			'purchase_group_id' => (!empty( $pParamHash['purchase_group_id'] ) ? $pParamHash['purchase_group_id'] : $this->getField( 'purchase_group_id' )),
+			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)!empty( $pParamHash['products_status'] ) & (int)$this->isValid() : 0),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
 			'products_quantity_order_max' => (!empty( $pParamHash['products_quantity_order_max'] ) && is_numeric( $pParamHash['products_quantity_order_max'] ) ? $pParamHash['products_quantity_order_max'] : 0),
-			);
+			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : $this->getWeight()),
+		);
+
+		$checkFields = array( 
+			'products_model',
+			'products_manufacturers_model',
+			'products_price',
+			'products_commission',
+			'products_cogs',
+			'products_weight',
+			'products_status',
+			'products_virtual',
+			'products_tax_class_id',
+			'manufacturers_id',
+			'suppliers_id',
+			'products_barcode',
+			'products_priced_by_attribute',
+			'product_is_free',
+			'product_is_call',
+			'products_quantity_mixed',
+			'product_is_always_free_ship',
+			'products_sort_order',
+			'products_discount_type',
+			'products_discount_type_from',
+			'products_price_sorter',
+			'related_content_id',
+			'purchase_group_id',
+		);
+
+		foreach( $checkFields as $key ) {
+			if( !isset( $pParamHash['product_store'][$key] ) ) {
+				$pParamHash['product_store'][$key] =  (!empty( $pParamHash[$key] ) ? $pParamHash[$key] : $this->getField( $key ));
+			}
+		}
+
+		$pParamHash['products_description'][1] = !empty( $pParamHash['products_description'][1] ) ? $pParamHash['products_description'][1] : $this->getField( 'products_description' );
 
 		if( !empty( $pParamHash['reorders_interval_number'] ) && is_numeric( $pParamHash['reorders_interval_number'] ) && !empty( $pParamHash['reorders_pending'] ) ) {
 			$pParamHash['product_store']['reorders_interval'] = $pParamHash['reorders_interval_number'].' '.$pParamHash['reorders_interval'];
@@ -749,6 +762,7 @@ class CommerceProduct extends LibertyMime {
 			$pParamHash['product_store']['reorders_interval'] = NULL;
 			$pParamHash['product_store']['reorders_pending'] = NULL;
 		}
+
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
 		if( is_array( $pParamHash['products_name'] ) ) {
@@ -772,7 +786,6 @@ class CommerceProduct extends LibertyMime {
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
-
 		return( TRUE );
 	}
 
@@ -897,6 +910,10 @@ class CommerceProduct extends LibertyMime {
 	function getProductType() {
 		global $gCommerceSystem;
 		return $gCommerceSystem->getConfig( 'commerce_default_product_type', 1 );
+	}
+
+	function getWeight() {
+		return $this->getField( 'products_weight' );
 	}
 
 	function update( $pUpdateHash, $pProductsId=NULL ) {
@@ -1406,6 +1423,14 @@ class CommerceProduct extends LibertyMime {
 		if( $this->isValid() ) {
 			// The products_id is redundant for safety purposes
 			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=?", array( $this->mProductsId ));
+		}
+		return( count( $this->mErrors ) == 0 );		
+	}
+
+	function expungeOptionValue( $pOptionValueId ) {
+		if( $this->isValid() && $this->verifyId( $pOptionValueId ) ) {
+			// The products_id is redundant for safety purposes
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=? AND `products_options_values_id`=?", array( $this->mProductsId, $pOptionValueId ));
 		}
 		return( count( $this->mErrors ) == 0 );		
 	}
