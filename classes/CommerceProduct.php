@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.130 2009/02/02 16:09:45 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.131 2009/02/03 01:38:38 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.130 2009/02/02 16:09:45 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.131 2009/02/03 01:38:38 spiderr Exp $
 //
 
 /**
@@ -765,10 +765,12 @@ class CommerceProduct extends LibertyMime {
 
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
-		if( is_array( $pParamHash['products_name'] ) ) {
-			$pParamHash['title'] = current( $pParamHash['products_name'] );
-		} elseif( is_string( $pParamHash['products_name'] ) ) {
-			$pParamHash['title'] = $pParamHash['products_name'];
+		if( !empty( $pParamHash['products_name'] ) ) {
+			if( is_array( $pParamHash['products_name'] ) ) {
+				$pParamHash['title'] = current( $pParamHash['products_name'] );
+			} elseif( is_string( $pParamHash['products_name'] ) ) {
+				$pParamHash['title'] = $pParamHash['products_name'];
+			}
 		}
 
 		if( empty( $pParamHash['content_id'] ) ) {
