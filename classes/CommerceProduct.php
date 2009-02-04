@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.131 2009/02/03 01:38:38 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.132 2009/02/04 20:56:02 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.131 2009/02/03 01:38:38 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.132 2009/02/04 20:56:02 spiderr Exp $
 //
 
 /**
@@ -1001,7 +1001,7 @@ class CommerceProduct extends LibertyMime {
 						$new_options_values_price = 0;
 					} else {
 						// collect price information if it exists
-						if( is_object( $pCart ) && $vals['attributes_discounted'] == 1 ) {
+						if( $vals['attributes_discounted'] == 1 ) {
 							// apply product discount to attributes if discount is on
 							//			  $new_value_price = $vals['options_values_price'];
 							$new_value_price = zen_get_attributes_price_final( $this->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
