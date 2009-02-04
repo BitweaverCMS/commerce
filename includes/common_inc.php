@@ -891,7 +891,8 @@ If a special exist * 10+9
 // temporarily re-add zen_get_products_discount_price_qty that was ported to CommmerceProduct::getQuantityDiscount -- spiderr
   function zen_get_products_discount_price_qty($product_id, $check_qty, $pCheckAmount=0) {
     global $gBitDb, $cart;
-      $new_qty = $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id);
+
+      $new_qty = is_a( $_SESSION['cart'], 'cart' ) ? $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id) : 1;
       // check for discount qty mix
       if ($new_qty > $check_qty) {
         $check_qty = $new_qty;
@@ -956,7 +957,7 @@ If a special exist * 10+9
           break;
       }
 
-      return $discounted_price;
+    return $discounted_price;
   }
 
 
@@ -1376,7 +1377,7 @@ If a special exist * 10+9
   function zen_get_attributes_price_final( $pProductsId, $pOptionsValuesId, $qty = 1, $pre_selected, $pTotalPrice = TRUE ) {
     global $gBitDb;
     global $cart;
-	
+
     if ( empty( $pre_selected ) OR $pOptionsValuesId != $pre_selected->fields["products_options_values_id"]) {
 		$query = "SELECT pa.*, pom.`products_id`, pom.`override_price`, po.`products_options_type` 
 				  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa 
