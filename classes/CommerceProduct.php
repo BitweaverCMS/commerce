@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.132 2009/02/04 20:56:02 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.133 2009/02/10 22:17:25 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.132 2009/02/04 20:56:02 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.133 2009/02/10 22:17:25 spiderr Exp $
 //
 
 /**
@@ -69,7 +69,7 @@ class CommerceProduct extends LibertyMime {
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
 			parent::load();
-			if( $this->isDeleted() && !$gBitUser->hasPermission( 'p_commerce_admin' ) && !$this->isPurchased( $gBitUser->mUserId ) ) {
+			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_commerce_admin' ) || $this->isPurchased()) ) {
 				$this->mInfo = array();
 				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
