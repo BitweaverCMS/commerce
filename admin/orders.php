@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.54 2008/02/13 07:28:20 spiderr Exp $
+//  $Id: orders.php,v 1.55 2009/02/14 03:58:26 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -25,7 +25,7 @@
 	require('includes/application_top.php');
 	require_once( DIR_FS_CLASSES.'order.php');
 
-	$gBitThemes->loadAjax( 'prototype' );
+	$gBitThemes->loadAjax( 'jquery', array( 'ui/ui.core.js', 'ui/ui.draggable.js', 'ui/ui.droppable.js', 'ui/ui.accordion.js', 'ui/ui.sortable.js', 'ui/ui.dialog.js', 'ui/effects.core.js', 'ui/effects.slide.js', UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/fancybox/jquery.fancybox.js' ) );
 
 	$currencies = new currencies();
 
