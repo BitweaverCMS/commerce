@@ -9,13 +9,13 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.2 2009/01/03 07:28:56 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.3 2009/02/17 16:30:01 lsces Exp $
 //
 	class CommerceStatistics extends BitBase {
 
 		function getAggregateRevenue( $pParamHash ) {
 			if( empty( $pParamHash['period'] ) ) {
-				$pParamHash['period'] = 'YYYY-MM';
+				$pParamHash['period'] = 'Y-M';
 			}
 			if( empty( $pParamHash['max_records'] ) ) {
 				$pParamHash['max_records'] = 12;
@@ -25,10 +25,9 @@
 			$ret['stats']['gross_revenue_max'] = 0;
 			$ret['stats']['order_count_max'] = 0;
 
-			$sql = "SELECT TO_CHAR( `date_purchased`, '$pParamHash[period]' ) AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS gross_revenue, count(orders_id) AS order_count, round( sum(order_total) / count(orders_id), 2) AS avg_order_size 
-					FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY TO_CHAR( `date_purchased`, '$pParamHash[period]' ) ORDER BY TO_CHAR( `date_purchased`, '$pParamHash[period]' ) DESC";
-			$bindVars = array( $pParamHash['period'], $pParamHash['period'], $pParamHash['period'] );	
-$bindVars = array();
+			$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash[period], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
+					FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` ORDER BY `hash_key` DESC";
+			$bindVars = array();
 			if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
 				while( $row = $rs->fetchRow() ) {
 					$ret[$row['hash_key']] = $row;
