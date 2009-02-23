@@ -1,13 +1,14 @@
 {literal}
 <script type="text/javascript">/* <![CDATA[ */
 function editAddress( pAddress ) {
-	var myAjax = new Ajax.Updater(
-		pAddress+'address', 
-		"{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}", 
-		{
-			method: 'get', 
-			parameters: 'address_type='+pAddress+'&oID='+{/literal}{$smarty.request.oID}{literal}
-		});
+	jQuery.ajax({
+		data: 'address_type='+pAddress+'&oID='+{/literal}{$smarty.request.oID}{literal},
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#'+pAddress+'address').html(r);
+		}
+	})
 }
 /* ]]> */</script>
 {/literal}

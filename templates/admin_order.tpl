@@ -15,13 +15,14 @@ function deleteOption( pOrdPrdAttId, pTitle ) {
 }
 
 function getNewOption( pOrdPrdId ) {
-	var myAjax = new Ajax.Updater(
-		'neworderattr'+pOrdPrdId, 
-		"{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}", 
-		{
-			method: 'get', 
-			parameters: 'new_option_id='+$F('neworderoption'+pOrdPrdId)+'&orders_products_id='+pOrdPrdId
-		});
+	jQuery.ajax({
+		data: 'new_option_id='+document.getElementById('neworderoption'+pOrdPrdId).value+'&orders_products_id='+pOrdPrdId,
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#neworderattr'+pOrdPrdId).html(r);
+		}
+	})
 }
 
 function saveNewOption( pForm ) {
