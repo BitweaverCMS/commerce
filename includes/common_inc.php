@@ -893,7 +893,7 @@ If a special exist * 10+9
     global $gBitDb, $cart;
 
       $new_qty = is_a( $_SESSION['cart'], 'cart' ) ? $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id) : 1;
-$new_qty = 100;
+
       // check for discount qty mix
       if ($new_qty > $check_qty) {
         $check_qty = $new_qty;
@@ -901,6 +901,7 @@ $new_qty = 100;
       $product_id = (int)$product_id;
 
       $productPricing = $gBitDb->getRow( "SELECT products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id=?", array( $product_id ) );
+
       $productDiscounts = $gBitDb->getRow( "SELECT * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id=? and discount_qty <=? ORDER BY discount_qty desc", array( $product_id,  $check_qty ) );
 
       $display_price = zen_get_products_base_price($product_id);
