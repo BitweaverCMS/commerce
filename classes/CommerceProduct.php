@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.133 2009/02/10 22:17:25 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.134 2009/03/03 20:52:36 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.133 2009/02/10 22:17:25 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.134 2009/03/03 20:52:36 spiderr Exp $
 //
 
 /**
@@ -59,6 +59,11 @@ class CommerceProduct extends LibertyMime {
 		$this->mAdminContentPerm = 'p_commerce_admin';
 		$this->mOptions = NULL;
 		$this->mRelatedContent = NULL;
+	}
+
+	// Override LibertyBase method
+	function getNewObject( $pClass, $pContentId, $pLoadContent ) {
+		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
 	function load( $pFullLoad = TRUE ) {
