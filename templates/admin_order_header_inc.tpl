@@ -18,7 +18,9 @@ function editAddress( pAddress ) {
 <tr>
 	<td valign="top">
 		{$order->info.date_purchased|bit_long_datetime}<br/>
-		{displayname hash=$order->customer} (ID: {$order->customer.user_id} <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">orders</a> <a href="product_history.php?user_id={$order->customer.user_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Users Products History" alt="H" /></a>)<br/>
+		{displayname hash=$order->customer} (ID: {$order->customer.user_id} <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">orders</a> <a href="product_history.php?user_id={$order->customer.user_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Users Products History" alt="H" /></a>)
+		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" ibiticon="users/assume_user" iforce=icon} 
+		<br/>
 {if $order->customer.telephone}
 	{$order->customer.telephone}<br/>
 {/if}
