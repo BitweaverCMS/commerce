@@ -902,63 +902,67 @@ If a special exist * 10+9
 
       $productPricing = $gBitDb->getRow( "SELECT products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id=?", array( $product_id ) );
 
-      $productDiscounts = $gBitDb->getRow( "SELECT * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id=? and discount_qty <=? ORDER BY discount_qty desc", array( $product_id,  $check_qty ) );
+	if( $productDiscounts = $gBitDb->getRow( "SELECT * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id=? and discount_qty <=? ORDER BY discount_qty desc", array( $product_id,  $check_qty ) ) ) {
 
-      $display_price = zen_get_products_base_price($product_id);
-      $display_specials_price = zen_get_products_special_price($product_id, true);
+		$display_price = zen_get_products_base_price($product_id);
+		$display_specials_price = zen_get_products_special_price($product_id, true);
 
-      switch( $productPricing['products_discount_type'] ) {
-        // percentage discount
-        case '1':
-          if ($productPricing['products_discount_type_from'] == '0') {
-            // priced by attributes
-            if ($pCheckAmount != 0) {
-              $discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
-//echo 'ID#' . $product_id . ' Amount is: ' . $pCheckAmount . ' discount: ' . $discounted_price . '<br />';
-//echo 'I SEE 2 for ' . $productPricing['products_discount_type'] . ' - ' . $productPricing['products_discount_type_from'] . ' - '. $pCheckAmount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
-            } else {
-              $discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
-            }
-          } else {
-            if (!$display_specials_price) {
-              // priced by attributes
-              if ($pCheckAmount != 0) {
-                $discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
-              } else {
-                $discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
-              }
-            } else {
-              $discounted_price = $display_specials_price - ($display_specials_price * ($productDiscounts['discount_price']/100));
-            }
-          }
+		switch( $productPricing['products_discount_type'] ) {
+			// percentage discount
+			case '1':
+				if ($productPricing['products_discount_type_from'] == '0') {
+					// priced by attributes
+					if ($pCheckAmount != 0) {
+						$discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
+						//echo 'ID#' . $product_id . ' Amount is: ' . $pCheckAmount . ' discount: ' . $discounted_price . '<br />';
+						//echo 'I SEE 2 for ' . $productPricing['products_discount_type'] . ' - ' . $productPricing['products_discount_type_from'] . ' - '. $pCheckAmount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
+					} else {
+						$discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
+					}
+				} else {
+					if (!$display_specials_price) {
+						// priced by attributes
+						if ($pCheckAmount != 0) {
+							$discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
+						} else {
+							$discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
+						}
+					} else {
+						$discounted_price = $display_specials_price - ($display_specials_price * ($productDiscounts['discount_price']/100));
+					}
+				}
 
-          break;
-        // actual price
-        case '2':
-          if ($productPricing['products_discount_type_from'] == '0') {
-            $discounted_price = $productDiscounts['discount_price'];
-          } else {
-            $discounted_price = $productDiscounts['discount_price'];
-          }
-          break;
-        // amount offprice
-        case '3':
-          if ($productPricing['products_discount_type_from'] == '0') {
-            $discounted_price = $display_price - $productDiscounts['discount_price'];
-          } else {
-            if (!$display_specials_price) {
-              $discounted_price = $display_price - $productDiscounts['discount_price'];
-            } else {
-              $discounted_price = $display_specials_price - $productDiscounts['discount_price'];
-            }
-          }
-          break;
-        // none
-        case '0':
-		default:
-          $discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
-          break;
-      }
+				break;
+			// actual price
+			case '2':
+				if ($productPricing['products_discount_type_from'] == '0') {
+					$discounted_price = $productDiscounts['discount_price'];
+				} else {
+					$discounted_price = $productDiscounts['discount_price'];
+				}
+				break;
+			// amount offprice
+			case '3':
+				if ($productPricing['products_discount_type_from'] == '0') {
+					$discounted_price = $display_price - $productDiscounts['discount_price'];
+				} else {
+					if (!$display_specials_price) {
+						$discounted_price = $display_price - $productDiscounts['discount_price'];
+					} else {
+						$discounted_price = $display_specials_price - $productDiscounts['discount_price'];
+					}
+				}
+				break;
+			// none
+			case '0':
+			default:
+				$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
+				break;
+		}
+	} else {
+		// No discount loaded, return actual price
+		$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
+	}
 
     return $discounted_price;
   }
