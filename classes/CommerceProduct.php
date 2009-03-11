@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.134 2009/03/03 20:52:36 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.135 2009/03/11 03:23:01 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.134 2009/03/03 20:52:36 spiderr Exp $
+//	$Id: CommerceProduct.php,v 1.135 2009/03/11 03:23:01 spiderr Exp $
 //
 
 /**
@@ -677,7 +677,7 @@ class CommerceProduct extends LibertyMime {
 
 	function isAvailable() {
 		global $gBitUser;
-		if( $this->isValid() ) {
+		if( $this->isValid() && !$this->isDeleted() ) {
  			if( !empty( $this->mInfo['products_status'] ) ) {
 				$ret = TRUE;
 			} else {
