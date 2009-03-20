@@ -30,7 +30,7 @@ function editAddress( pAddress ) {
 		{else}
 		<strong>Tier {$customerStats.tier|round}</strong>: {$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2} {tr}over{/tr} {$customerStats.customers_age}
 			{if $customerStats.gifts_redeemed || $customerStats.gifts_balance}<br/>
-				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance}, ${$customerStats.gifts_balance} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
+				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance|round:2}, ${$customerStats.gifts_balance|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
 			{/if}
 		{/if}
 		</td>
