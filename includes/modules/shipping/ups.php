@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.10 2007/06/19 15:09:07 spiderr Exp $
+// $Id: ups.php,v 1.11 2009/03/20 04:40:21 spiderr Exp $
 //
+require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
   class ups {
     var $code, $title, $description, $icon, $enabled, $types;
@@ -32,19 +33,15 @@
 			  $this->title = MODULE_SHIPPING_UPS_TEXT_TITLE;
 			  $this->description = MODULE_SHIPPING_UPS_TEXT_DESCRIPTION;
 			  $this->sort_order = MODULE_SHIPPING_UPS_SORT_ORDER;
-			  $this->icon = template_func::get_template_dir('shipping_ups.png', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_ups.png';
+			  $this->icon = 'shipping_ups';
 			  $this->tax_class = MODULE_SHIPPING_UPS_TAX_CLASS;
 			  $this->tax_basis = MODULE_SHIPPING_UPS_TAX_BASIS;
-
-			  // disable only when entire cart is free shipping
-			  if (zen_get_shipping_enabled($this->code)) {
 				$this->enabled = ((MODULE_SHIPPING_UPS_STATUS == 'True') ? true : false);
-			  }
 		}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_UPS_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_UPS_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_UPS_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -85,29 +82,31 @@
     }
 
 // class methods
-    function quote($method = '') {
-      global $_POST, $order, $shipping_weight, $shipping_num_boxes;
+    function quote( $pShipHash = array() ) {
+      global $_POST, $order;
 
-      if ( (zen_not_null($method)) && (isset($this->types[$method])) ) {
-        $prod = $method;
-// BOF: UPS USPS
-      } else if ($order->delivery['country']['iso_code_2'] == 'CA') {
+      if ( !empty( $pShipHash['method'] ) && (isset($this->types[$pShipHash['method']])) ) {
+        $prod = $pShipHash['method'];
+      } else if ($order->delivery['country']['countries_iso_code_2'] == 'CA') {
   	    $prod = 'STD';
-// EOF: UPS USPS
       } else {
         $prod = 'GNDRES';
       }
 
-      if ($method) $this->_upsAction('3'); // return a single quote
+      if ($pShipHash['method']) $this->_upsAction('3'); // return a single quote
+
+		// default to 1
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 1 ? $pShipHash['shipping_weight'] : 1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
       $this->_upsProduct($prod);
 
       $country_name = zen_get_countries(SHIPPING_ORIGIN_COUNTRY, true);
       $this->_upsOrigin(SHIPPING_ORIGIN_ZIP, $country_name['countries_iso_code_2']);
-      $this->_upsDest($order->delivery['postcode'], $order->delivery['country']['iso_code_2']);
+      $this->_upsDest($order->delivery['postcode'], $order->delivery['country']['countries_iso_code_2']);
       $this->_upsRate(MODULE_SHIPPING_UPS_PICKUP);
       $this->_upsContainer(MODULE_SHIPPING_UPS_PACKAGE);
-      $this->_upsWeight($shipping_weight);
+      $this->_upsWeight($shippingWeight);
       $this->_upsRescom(MODULE_SHIPPING_UPS_RES);
       $upsQuote = $this->_upsGetQuote();
 
@@ -117,17 +116,16 @@
               $show_box_weight = '';
               break;
             case (1):
-              $show_box_weight = '<br/> (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+              $show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
               break;
             case (2):
-              $show_box_weight = '<br/> (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+              $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' );
               break;
             default:
-              $show_box_weight = '<br/> (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+              $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' );
               break;
           }
-        $this->quotes = array('id' => $this->code,
-                              'module' => $this->title . $show_box_weight);
+        $this->quotes = array('id' => $this->code, 'module' => $this->title, 'weight' => $show_box_weight);
 
         $methods = array();
 // BOF: UPS USPS
@@ -146,7 +144,7 @@
 // EOF: UPS USPS
           $methods[] = array('id' => $type,
                              'title' => $this->types[$type],
-                             'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shipping_num_boxes,
+                             'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shippingNumBoxes,
                              'code' => 'UPS '.$this->types[$type],
                              );
           }
@@ -154,7 +152,7 @@
         $this->quotes['methods'] = $methods;
 
         if ($this->tax_class > 0) {
-          $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+          $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
         }
       } else {
 /* ORIGINAL
@@ -167,7 +165,9 @@
 // EOF: UPS USPS
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       return $this->quotes;
     }

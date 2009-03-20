@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: zones.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
+// $Id: zones.php,v 1.6 2009/03/20 04:40:21 spiderr Exp $
 //
 /*
 
@@ -116,21 +116,17 @@
       $this->sort_order = defined( 'MODULE_SHIPPING_ZONES_SORT_ORDER' ) ? MODULE_SHIPPING_ZONES_SORT_ORDER : NULL;
       $this->icon = '';
       $this->tax_class = defined( 'MODULE_SHIPPING_ZONES_TAX_CLASS' ) ? MODULE_SHIPPING_ZONES_TAX_CLASS : NULL;
-
-      // disable only when entire cart is free shipping
-      if (zen_get_shipping_enabled($this->code)) {
-        $this->enabled = ((defined( 'MODULE_SHIPPING_ZONES_STATUS' ) && MODULE_SHIPPING_ZONES_STATUS == 'True') ? true : false);
-      }
+      $this->enabled = ((defined( 'MODULE_SHIPPING_ZONES_STATUS' ) && MODULE_SHIPPING_ZONES_STATUS == 'True') ? true : false);
 
       // CUSTOMIZE THIS SETTING FOR THE NUMBER OF ZONES NEEDED
       $this->num_zones = 3;
     }
 
 // class methods
-    function quote($method = '') {
+    function quote( $pShipHash = array() ) {
       global $order, $shipping_weight, $shipping_num_boxes;
 
-      $dest_country = $order->delivery['country']['iso_code_2'];
+      $dest_country = $order->delivery['country']['countries_iso_code_2'];
       $dest_zone = 0;
       $error = false;
 
@@ -161,18 +157,18 @@
               $show_box_weight = '';
               break;
             case (1):
-              $show_box_weight = ' (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+              $show_box_weight = $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES;
               break;
             case (2):
-              $show_box_weight = ' (' . number_format($shipping_weight * $shipping_num_boxes,2) . MODULE_SHIPPING_ZONES_TEXT_UNITS . ')';
+              $show_box_weight = number_format($shipping_weight * $shipping_num_boxes,2) . MODULE_SHIPPING_ZONES_TEXT_UNITS;
               break;
             default:
-              $show_box_weight = ' (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . MODULE_SHIPPING_ZONES_TEXT_UNITS . ')';
+              $show_box_weight = $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . MODULE_SHIPPING_ZONES_TEXT_UNITS;
               break;
           }
 
 //              $shipping_method = MODULE_SHIPPING_ZONES_TEXT_WAY . ' ' . $dest_country . (SHIPPING_BOX_WEIGHT_DISPLAY >= 2 ? ' : ' . $shipping_weight . ' ' . MODULE_SHIPPING_ZONES_TEXT_UNITS : '');
-              $shipping_method = MODULE_SHIPPING_ZONES_TEXT_WAY . ' ' . $dest_country . $show_box_weight;
+              $shipping_method = MODULE_SHIPPING_ZONES_TEXT_WAY . ' ' . $dest_country . ' (' . $show_box_weight . ')';
               break;
 	    }
 	  } else {
@@ -205,10 +201,12 @@
                                                      'cost' => $shipping_cost)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       if ($error == true) $this->quotes['error'] = MODULE_SHIPPING_ZONES_INVALID_ZONE;
 

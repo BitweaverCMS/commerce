@@ -22,7 +22,7 @@ class fedex {
 		$this->title = 'FedEx';
 		$this->description = tra( 'You will need to have registered an account with FedEx and proper approval from FedEx identity to use this module. Please see the README.TXT file for other requirements.' );
 		$this->sort_order = MODULE_SHIPPING_FEDEX_SORT_ORDER;
-		$this->icon = template_func::get_template_dir('shipping_fedex.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_fedex.gif';
+		$this->icon = 'shipping_fedex';
 		$this->tax_class = MODULE_SHIPPING_FEDEX_TAX_CLASS;
 		$this->enabled = ((MODULE_SHIPPING_FEDEX_STATUS == 'True') ? true : false);
 		$this->meter = MODULE_SHIPPING_FEDEX_METER;
@@ -56,14 +56,16 @@ class fedex {
 			'90' => "FDX90: Ground Home Delivery",
 		);
 	}
-	function quote($method = '') {
-		global $shipping_weight, $shipping_num_boxes, $cart, $order;
-		if (zen_not_null($method)) {
-			$this->_setService($method);
+	function quote( $pShipHash = array() ) {
+		global $order;
+		if( !empty( $pShipHash['method'] ) ) {
+			$this->_setService( $pShipHash['method'] );
 		}
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 1 ? $pShipHash['shipping_weight'] : 1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 		if (MODULE_SHIPPING_FEDEX_ENVELOPE == 'True') {
-			if ( ($shipping_weight <= .5 && MODULE_SHIPPING_FEDEX_WEIGHT == 'LBS') ||
-				 ($shipping_weight <= .2 && MODULE_SHIPPING_FEDEX_WEIGHT == 'KGS')) {
+			if ( ($shippingWeight <= .5 && MODULE_SHIPPING_FEDEX_WEIGHT == 'LBS') ||
+				 ($shippingWeight <= .2 && MODULE_SHIPPING_FEDEX_WEIGHT == 'KGS')) {
 				$this->_setPackageType('06');
 			} else {
 				$this->_setPackageType('01');
@@ -71,13 +73,14 @@ class fedex {
 		} else {
 			$this->_setPackageType('01');
 		}
-		if ($this->packageType == '01' && $shipping_weight < 1) {
-			$this->_setWeight(1);
-		} else {
-			$this->_setWeight($shipping_weight);
+		$this->_setWeight($shippingWeight);
+
+		if( is_object( $order ) ) {
+			$totals = $order->info['subtotal'];
+		} elseif( is_object( $_SESSION['cart'] ) ) {
+			$totals= $_SESSION['cart']->show_total();
 		}
-		$totals = $order->info['subtotal'] = $_SESSION['cart']->show_total();
-		$this->_setInsuranceValue($totals / $shipping_num_boxes);
+		$this->_setInsuranceValue($totals / $shippingNumBoxes);
 
 		if (defined("SHIPPING_ORIGIN_COUNTRY")) {
 			$countries_array = zen_get_countries(SHIPPING_ORIGIN_COUNTRY, true);
@@ -96,18 +99,19 @@ class fedex {
 					$show_box_weight = '';
 					break;
 				case (1):
-					$show_box_weight = '<br/> (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+					$show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
 					break;
 				case (2):
-					$show_box_weight = '<br/> (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+					$show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' );
 					break;
 				default:
-					$show_box_weight = '<br/> (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+					$show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' );
 					break;
 				}
 				$this->quotes = array(
 					'id' => $this->code,
-					'module' => $this->title . $show_box_weight, 
+					'module' => $this->title,
+					'weight' => $show_box_weight, 
 				);
 
 				$methods = array();
@@ -116,11 +120,7 @@ class fedex {
 					$this->surcharge = 0;
 					$quoteCode = substr($type,0,2);
 					if ($this->intl === FALSE) {
-						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
-							$service_descr = $this->domestic_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
-						} else {
-							$service_descr = $this->domestic_types[$quoteCode];
-						}
+						$service_descr = $this->domestic_types[$quoteCode];
 						switch ($quoteCode) {
 							case 90:
 								if ($order->delivery['company'] != '') {
@@ -151,13 +151,13 @@ class fedex {
 							$service_descr = $this->international_types[$quoteCode];
 						}
 					}
-					if( $method && $quoteCode != $method ) {
+					if( $pShipHash['method'] && $quoteCode != $pShipHash['method'] ) {
 						$skip = TRUE;
 					}
 					if (!$skip) {
 						$methods[] = array('id' => $quoteCode,
 							'title' => $service_descr,
-							'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shipping_num_boxes,
+							'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shippingNumBoxes,
 							'code' => $this->types[$quoteCode],
 						);
 					}
@@ -166,7 +166,7 @@ class fedex {
 				$this->quotes['methods'] = $methods;
 
 				if ($this->tax_class > 0) {
-					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 				}
 			}
 		} else {
@@ -174,7 +174,9 @@ class fedex {
 														'error' => 'An error occured with the fedex shipping calculations.<br />Fedex may not deliver to your country, or your postal code may be wrong.');
 		}
 
-		if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
 		return $this->quotes;
 	}
@@ -336,7 +338,6 @@ class fedex {
 
 	function _getQuote() {
 		global $order, $customer_id, $sendto;
-
 		if (MODULE_SHIPPING_FEDEX_ACCOUNT == "NONE" || strlen(MODULE_SHIPPING_FEDEX_ACCOUNT) == 0) {
 			return array('error' => 'You forgot to set up your Fedex account number, this can be set up in Admin -> Modules -> Shipping');
 		}
@@ -365,12 +366,14 @@ class fedex {
 		$data .= '117,"' . $this->country . '"'; // Origin country
 		$dest_zip = str_replace(array(' ', '-'), '', $order->delivery['postcode']);
 		$data .= '17,"' . $dest_zip . '"'; // Recipient zip code
-		if ($order->delivery['country']['iso_code_2'] == "US" || $order->delivery['country']['iso_code_2'] == "CA" || $order->delivery['country']['iso_code_2'] == "PR") {
-			$state .= zen_get_zone_code($order->delivery['country']['id'], $order->delivery['zone_id'], ''); // Recipient state
-			if ($state == "QC") $state = "PQ";
+		if ($order->delivery['country']['countries_iso_code_2'] == "US" || $order->delivery['country']['countries_iso_code_2'] == "CA" || $order->delivery['country']['countries_iso_code_2'] == "PR") {
+			$state = zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], ''); // Recipient state
+			if ($state == "QC") {
+				$state = "PQ";
+			}
 			$data .= '16,"' . $state . '"'; // Recipient state
 		}
-		$data .= '50,"' . $order->delivery['country']['iso_code_2'] . '"'; // Recipient country
+		$data .= '50,"' . $order->delivery['country']['countries_iso_code_2'] . '"'; // Recipient country
 		$data .= '75,"' . MODULE_SHIPPING_FEDEX_WEIGHT . '"'; // Weight units
 		if (MODULE_SHIPPING_FEDEX_WEIGHT == "KGS") {
 			$data .= '1116,"C"'; // Dimension units
@@ -401,7 +404,7 @@ class fedex {
 		}
 		$fedexData = $this->_ParseFedex($fedexData);
 		$i = 1;
-		if ($this->country == $order->delivery['country']['iso_code_2']) {
+		if ($this->country == $order->delivery['country']['countries_iso_code_2']) {
 			$this->intl = FALSE;
 		} else {
 			$this->intl = TRUE;

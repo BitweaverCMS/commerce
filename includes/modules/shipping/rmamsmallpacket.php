@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rmamsmallpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rmamsmallpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rmamsmallpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -38,7 +38,7 @@
       $this->title = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_DESCRIPTION;
       $this->sort_order = MODULE_SHIPPING_RMAMSMALLPACKET_SORT_ORDER;
-      $this->icon = (( defined('DIR_WS_ICONS') ? DIR_WS_ICONS : 'images/icons/' ) . 'shipping_ukam.gif');
+      $this->icon = 'shipping_ukam.gif';
       $this->tax_class = MODULE_SHIPPING_RMAMSMALLPACKET_TAX_CLASS;
       $this->enabled = ((MODULE_SHIPPING_RMAMSMALLPACKET_STATUS == 'True') ? true : false);
 
@@ -47,12 +47,15 @@
     }
 
 // class methods
-    function quote($method = '') {
-      global $order, $shipping_weight, $shipping_num_boxes, $currency;
+    function quote( $pShipHash = array() ) {
+      global $order, $currency;
+		// default to 1
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) ? $pShipHash['shipping_weight'] : 1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
       $currencies = new currencies();
 
-      $dest_country = $order->delivery['country']['iso_code_2'];
+      $dest_country = $order->delivery['country']['countries_iso_code_2'];
       $dest_zone = 0;
       $error = false;
 
@@ -94,21 +97,21 @@
         $zones_table = split("[:,]" , preg_replace('/\s*/','',$zones_cost) );
         $size = sizeof($zones_table);
         for ($i=0; $i<$size; $i+=2) {
-          if ($shipping_weight <= $zones_table[$i]) { 
+          if ($shippingWeight <= $zones_table[$i]) { 
             $shipping = $zones_table[$i+1];
 			//12 Feb 04 MBeedell - correctly format the total weight... if the weight exceeds the max
 			//  weight, then it is divided down over a number of separate packages - so the weight could end
 			//  up being a long fraction.
 
-            $sw_text = number_format($shipping_weight, 3, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
+            $sw_text = number_format($shippingWeight, 3, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
 
 
             $shipping_method = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_WAY . ' ' . $dest_country . ' : ' . $sw_text . ' ' . MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_UNITS;
             $shipping_method = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_WAY . ' : ' . $sw_text . ' ' . MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_UNITS;
 			//12 Feb 04 MBeedell - if weight is over the max, then show the number of boxes being shipped
-            if ($shipping_num_boxes > 1) {
-	            $sw_text = number_format($shipping_num_boxes, 0, $currency['decimal_point'], $currency['thousands_point']);
-                $sw_text = number_format($shipping_weight, 0, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
+            if ($shippingNumBoxes > 1) {
+	            $sw_text = number_format($shippingNumBoxes, 0, $currency['decimal_point'], $currency['thousands_point']);
+                $sw_text = number_format($shippingWeight, 0, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
 				$shipping_method = $shipping_method . ' in ' . $sw_text . ' boxes ';
             }
             break;
@@ -120,7 +123,7 @@
           $shipping_method = MODULE_SHIPPING_RMAMSMALLPACKET_UNDEFINED_RATE;
           //$shipping_method = $zones_cost; 	   //12 FEB 04 MBeedell	useful for debug-print out the rates list!
         } else {
-          $shipping_cost = ($shipping * $shipping_num_boxes) + constant('MODULE_SHIPPING_RMAMSMALLPACKET_ZONES_HANDLING_' . $dest_zone);
+          $shipping_cost = ($shipping * $shippingNumBoxes) + constant('MODULE_SHIPPING_RMAMSMALLPACKET_ZONES_HANDLING_' . $dest_zone);
         }
       }
 
@@ -132,10 +135,12 @@
                                                      'cost' => $shipping_cost)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       if ($error == true) $this->quotes['error'] = MODULE_SHIPPING_RMAMSMALLPACKET_INVALID_ZONE;
 

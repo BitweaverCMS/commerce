@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rm1stlargeletter.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stlargeletter.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rm1stlargeletter.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stlargeletter.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rm1stlargeletter.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stlargeletter.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -37,7 +37,7 @@
       $this->title = MODULE_SHIPPING_RM1STLARGELETTER_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_RM1STLARGELETTER_TEXT_DESCRIPTION;
       $this->sort_order = MODULE_SHIPPING_RM1STLARGELETTER_SORT_ORDER;
-      $this->icon = (( defined('DIR_WS_ICONS') ? DIR_WS_ICONS : 'images/icons/' ) . 'shipping_ukrm.jpg');
+      $this->icon = 'shipping_ukrm';
       $this->tax_class = MODULE_SHIPPING_RM1STLARGELETTER_TAX_CLASS;
       $this->enabled = ((MODULE_SHIPPING_RM1STLARGELETTER_STATUS == 'True') ? true : false);
 
@@ -46,12 +46,15 @@
     }
 
 // class methods
-    function quote($method = '') {
-      global $order, $shipping_weight, $shipping_num_boxes, $currency;
+    function quote( $pShipHash = array() ) {
+      global $order, $currency;
+		// default to 1
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) ? $pShipHash['shipping_weight'] : 1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
       $currencies = new currencies();
 
-      $dest_country = $order->delivery['country']['iso_code_2'];
+      $dest_country = $order->delivery['country']['countries_iso_code_2'];
       $dest_zone = 0;
       $error = false;
 
@@ -88,13 +91,13 @@
         $zones_table = split("[:,]" , $zones_cost);
         $size = sizeof($zones_table);
         for ($i=0; $i<$size; $i+=2) {
-          if ($shipping_weight <= $zones_table[$i]) { 
+          if ($shippingWeight <= $zones_table[$i]) { 
             $shipping = $zones_table[$i+1];
 			//12 Feb 04 MBeedell - correctly format the total weight... if the weight exceeds the max
 			//  weight, then it is divided down over a number of separate packages - so the weight could end
 			//  up being a long fraction.
 
-            $sw_text = number_format($shipping_weight, 3, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
+            $sw_text = number_format($shippingWeight, 3, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
 
 
             $shipping_method = MODULE_SHIPPING_RM1STLARGELETTER_TEXT_WAY . ' ' . $dest_country . ' : ' . $sw_text . ' ' . MODULE_SHIPPING_RM1STLARGELETTER_TEXT_UNITS;
@@ -102,7 +105,7 @@
 			//12 Feb 04 MBeedell - if weight is over the max, then show the number of boxes being shipped
             if ($shipping_num_boxes > 1) {
 	            $sw_text = number_format($shipping_num_boxes, 0, $currency['decimal_point'], $currency['thousands_point']);
-                $sw_text = number_format($shipping_weight, 0, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
+                $sw_text = number_format($shippingWeight, 0, $currencies->currencies[DEFAULT_CURRENCY]['decimal_point'], $currencies->currencies[DEFAULT_CURRENCY]['thousands_point']);
 				$shipping_method = $shipping_method . ' in ' . $sw_text . ' boxes ';
             }
             break;
@@ -126,10 +129,12 @@
                                                      'cost' => $shipping_cost)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       if ($error == true) $this->quotes['error'] = MODULE_SHIPPING_RM1STLARGELETTER_INVALID_ZONE;
 

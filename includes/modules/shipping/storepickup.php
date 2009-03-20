@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: storepickup.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
+// $Id: storepickup.php,v 1.6 2009/03/20 04:40:21 spiderr Exp $
 //
 
   class storepickup {
@@ -40,7 +40,7 @@
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_STOREPICKUP_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_STOREPICKUP_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_STOREPICKUP_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -59,7 +59,7 @@
     }
 
 // class methods
-    function quote($method = '') {
+    function quote( $pShipHash = array() ) {
       global $order;
 
       $this->quotes = array('id' => $this->code,
@@ -69,10 +69,12 @@
                                                      'cost' => MODULE_SHIPPING_STOREPICKUP_COST)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       return $this->quotes;
     }

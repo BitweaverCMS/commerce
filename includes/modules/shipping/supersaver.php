@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: supersaver.php,v 1.2 2006/02/24 04:13:08 spiderr Exp $
+// $Id: supersaver.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
 //
   class supersaver {
     var $code, $title, $description, $icon, $enabled;
@@ -30,18 +30,13 @@
       $this->title = tra( 'SuperSaver Shipping' );
       $this->description = tra( 'Offer fixed rate (or free!) shipping for orders within a specified amount.' );
       $this->sort_order = 1;
-      $this->icon = 'shipping_supersaver.png';
+      $this->icon = 'shipping_supersaver';
       $this->tax_class = MODULE_SHIPPING_SUPERSAVER_TAX_CLASS;
-
-      // enable only when entire cart is free shipping
-//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') == $_SESSION['cart']->count_contents()) {
-      if (zen_get_shipping_enabled($this->code)) {
-        $this->enabled = ((MODULE_SHIPPING_SUPERSAVER_STATUS == 'True') ? true : false);
-      }
+      $this->enabled = ((MODULE_SHIPPING_SUPERSAVER_STATUS == 'True') ? true : false);
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_SUPERSAVER_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_SUPERSAVER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_SUPERSAVER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -60,7 +55,7 @@
     }
 
 // class methods
-	function quote($method = '') {
+	function quote( $pShipHash = array() ) {
 		global $order, $currencies;
 
 		$hasSuper = FALSE;
@@ -78,7 +73,9 @@
 
 		$this->quotes['id'] = $this->code;
 		$this->quotes['module'] = MODULE_SHIPPING_SUPERSAVER_TEXT_TITLE;
-		if ( !empty( $this->icon ) ) $this->quotes['icon'] = zen_image( 'icons/'.$this->icon, $this->title );
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 		if( $desc ) {
 			$min = MODULE_SHIPPING_SUPERSAVER_MIN;
 			$max = MODULE_SHIPPING_SUPERSAVER_MAX;
@@ -93,7 +90,7 @@
 											'title' => $desc,
 											'cost' => MODULE_SHIPPING_SUPERSAVER_COST + MODULE_SHIPPING_SUPERSAVER_HANDLING));
 				if ($this->tax_class > 0) {
-					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 				}
 			}
 		}

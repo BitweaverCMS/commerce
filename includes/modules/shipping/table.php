@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: table.php,v 1.5 2006/12/19 00:11:34 spiderr Exp $
+// $Id: table.php,v 1.6 2009/03/20 04:40:21 spiderr Exp $
 //
 
   class table {
@@ -35,15 +35,12 @@
 		  $this->icon = '';
 		  $this->tax_class = MODULE_SHIPPING_TABLE_TAX_CLASS;
 		  $this->tax_basis = MODULE_SHIPPING_TABLE_TAX_BASIS;
-		  // disable only when entire cart is free shipping
-		  if (zen_get_shipping_enabled($this->code)) {
 			$this->enabled = ((MODULE_SHIPPING_TABLE_STATUS == 'True') ? true : false);
-		  }
 		}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_TABLE_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_TABLE_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_TABLE_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -62,14 +59,14 @@
     }
 
 // class methods
-    function quote($method = '') {
-      global $order, $shipping_weight, $shipping_num_boxes;
+    function quote( $pShipHash = array() ) {
+      global $order;
 
 // shipping adjustment
       if (MODULE_SHIPPING_TABLE_MODE == 'price') {
         $order_total = $_SESSION['cart']->show_total() - $_SESSION['cart']->free_shipping_prices() ;
       } else {
-        $order_total = $shipping_weight;
+        $order_total = $shippingWeight;
       }
 
       $table_cost = split("[:,]" , MODULE_SHIPPING_TABLE_COST);
@@ -82,35 +79,38 @@
       }
 
       if (MODULE_SHIPPING_TABLE_MODE == 'weight') {
-        $shipping = $shipping * $shipping_num_boxes;
+        $shipping = $shipping * $shippingNumBoxes;
         // show boxes if weight
         switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
           case (0):
             $show_box_weight = '';
             break;
           case (1):
-            $show_box_weight = ' (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+            $show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
             break;
           case (2):
-            $show_box_weight = ' (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+            $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
             break;
           default:
-            $show_box_weight = ' (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+            $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . TEXT_SHIPPING_WEIGHT;
             break;
         }
       }
 
       $this->quotes = array('id' => $this->code,
-                            'module' => MODULE_SHIPPING_TABLE_TEXT_TITLE . $show_box_weight,
+                            'module' => MODULE_SHIPPING_TABLE_TEXT_TITLE,
+							'weight' => $show_box_weight,
                             'methods' => array(array('id' => $this->code,
                                                      'title' => MODULE_SHIPPING_TABLE_TEXT_WAY,
                                                      'cost' => $shipping + MODULE_SHIPPING_TABLE_HANDLING)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       return $this->quotes;
     }

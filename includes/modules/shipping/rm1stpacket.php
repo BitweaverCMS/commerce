@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
   based upon
-  $Id: rm1stpacket.php,v 1.2 2006/12/19 00:11:34 spiderr Exp $
+  $Id: rm1stpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -37,7 +37,7 @@
       $this->title = MODULE_SHIPPING_RM1STPACKET_TEXT_TITLE;
       $this->description = MODULE_SHIPPING_RM1STPACKET_TEXT_DESCRIPTION;
       $this->sort_order = MODULE_SHIPPING_RM1STPACKET_SORT_ORDER;
-      $this->icon = (( defined('DIR_WS_ICONS') ? DIR_WS_ICONS : 'images/icons/' ) . 'shipping_ukrm.jpg');
+      $this->icon = 'shipping_ukrm';
       $this->tax_class = MODULE_SHIPPING_RM1STPACKET_TAX_CLASS;
       $this->enabled = ((MODULE_SHIPPING_RM1STPACKET_STATUS == 'True') ? true : false);
 
@@ -46,12 +46,15 @@
     }
 
 // class methods
-    function quote($method = '') {
-      global $order, $shipping_weight, $shipping_num_boxes, $currency;
+    function quote( $pShipHash = array() ) {
+      global $order, $currency;
+		// default to 1
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) ? $pShipHash['shipping_weight'] : 1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
       $currencies = new currencies();
 
-      $dest_country = $order->delivery['country']['iso_code_2'];
+      $dest_country = $order->delivery['country']['countries_iso_code_2'];
       $dest_zone = 0;
       $error = false;
 
@@ -123,10 +126,12 @@
                                                      'cost' => $shipping_cost)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       if ($error == true) $this->quotes['error'] = MODULE_SHIPPING_RM1STPACKET_INVALID_ZONE;
 

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: freeshipper.php,v 1.7 2006/12/19 00:11:34 spiderr Exp $
+// $Id: freeshipper.php,v 1.8 2009/03/20 04:40:20 spiderr Exp $
 //
   class freeshipper {
     var $code, $title, $description, $icon, $enabled;
@@ -32,17 +32,12 @@
 				$this->sort_order = MODULE_SHIPPING_FREESHIPPER_SORT_ORDER;
 				$this->icon = '';
 				$this->tax_class = MODULE_SHIPPING_FREESHIPPER_TAX_CLASS;
-
-			  // enable only when entire cart is free shipping
-		//      if ($_SESSION['cart']->in_cart_check('product_is_always_free_ship','1') == $_SESSION['cart']->count_contents()) {
-				if (zen_get_shipping_enabled($this->code)) {
-					$this->enabled = ((MODULE_SHIPPING_FREESHIPPER_STATUS == 'True') ? true : false);
-				}
+				$this->enabled = ((MODULE_SHIPPING_FREESHIPPER_STATUS == 'True') ? true : false);
 			}
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_FREESHIPPER_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_FREESHIPPER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_FREESHIPPER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -61,7 +56,7 @@
     }
 
 // class methods
-    function quote($method = '') {
+    function quote( $pShipHash = array() ) {
       global $order;
 
       $this->quotes = array('id' => $this->code,
@@ -71,10 +66,12 @@
                                                      'cost' => MODULE_SHIPPING_FREESHIPPER_COST + MODULE_SHIPPING_FREESHIPPER_HANDLING)));
 
       if ($this->tax_class > 0) {
-        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+        $this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
       }
 
-      if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
       return $this->quotes;
     }
