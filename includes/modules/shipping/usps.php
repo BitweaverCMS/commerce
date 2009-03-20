@@ -17,8 +17,9 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.12 2008/12/16 01:42:49 spiderr Exp $
+// $Id: usps.php,v 1.13 2009/03/20 04:39:37 spiderr Exp $
 //
+require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
 class usps {
 	var $code, $title, $description, $icon, $enabled, $countries;
@@ -31,18 +32,14 @@ class usps {
 		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;
 		$this->description = MODULE_SHIPPING_USPS_TEXT_DESCRIPTION;
 		$this->sort_order = MODULE_SHIPPING_USPS_SORT_ORDER;
-		$this->icon = template_func::get_template_dir('shipping_usps.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_usps.gif';
+		$this->icon = 'shipping_usps';
 		$this->tax_class = MODULE_SHIPPING_USPS_TAX_CLASS;
 		$this->tax_basis = MODULE_SHIPPING_USPS_TAX_BASIS;
-
-		// disable only when entire cart is free shipping
-		if (zen_get_shipping_enabled($this->code)) {
-			$this->enabled = ((MODULE_SHIPPING_USPS_STATUS == 'True') ? true : false);
-		}
+		$this->enabled = ((MODULE_SHIPPING_USPS_STATUS == 'True') ? true : false);
 
 		if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_USPS_ZONE > 0) ) {
 			$check_flag = false;
-			$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_USPS_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['id'] . "' order by `zone_id`");
+			$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_USPS_ZONE . "' and `zone_country_id` = ? order by `zone_id`", array( $order->delivery['country']['countries_id'] ) );
 			while (!$check->EOF) {
 			if ($check->fields['zone_id'] < 1) {
 				$check_flag = true;
@@ -95,27 +92,27 @@ class usps {
 	}
 
 // class methods
-	function quote($method = '') {
-	// BOF: UPS USPS
-		global $order, $shipping_weight, $shipping_num_boxes, $transittime;
+	function quote( $pShipHash = array() ) {
+		global $order, $transittime;
 
-		if ( zen_not_null($method) && (isset($this->types[$method]) || in_array($method, $this->intl_types)) ) {
-			$this->_setService($method);
+		if ( !empty( $pShipHash['method'] ) && (isset($this->types[$pShipHash['method']]) || in_array($pShipHash['method'], $this->intl_types)) ) {
+			$this->_setService( $pShipHash['method'] );
 		}
 
 
-// usps doesnt accept zero weight
-		$shipping_weight = number_format( ($shipping_weight < 0.1 ? 0.1 : $shipping_weight), 1 );
-		$shipping_pounds = floor ($shipping_weight);
-		$shipping_ounces = round(16 * ($shipping_weight - floor($shipping_weight)));
+		// usps doesnt accept zero weight
+		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 0.1 ? $pShipHash['shipping_weight'] : 0.1);
+		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
+		$shipping_pounds = floor ($shippingWeight);
+		$shipping_ounces = round(16 * ($shippingWeight - floor($shippingWeight)));
 
-// weight must be less than 35lbs and greater than 6 ounces or it is not machinable
+		// weight must be less than 35lbs and greater than 6 ounces or it is not machinable
 		switch(true) {
 			case ($shipping_pounds == 0 and $shipping_ounces < 6):
 				// override admin choice too light
 				$is_machinable = 'False';
 				break;
-			case ($shipping_weight > 35):
+			case ($shippingWeight > 35):
 				// override admin choice too heavy
 				$is_machinable = 'False';
 				break;
@@ -136,53 +133,45 @@ class usps {
 				$this->quotes = array('module' => $this->title, 'error' => $uspsQuote['error']);
 			} else {
 
-// BOF: UPS USPS
 				if (in_array('Display weight', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) {
 					switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
 						case (0):
 							$show_box_weight = '';
 							break;
 						case (1):
-							$show_box_weight = ' (' . $shipping_num_boxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+							$show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
 							break;
 						case (2):
-							$show_box_weight = ' (' . number_format($shipping_weight * $shipping_num_boxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+							$show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' );
 							break;
 						default:
-							$show_box_weight = ' (' . $shipping_num_boxes . ' x ' . number_format($shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+							$show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' );
 							break;
 					}
 				}
-// EOF: UPS USPS
 
-// BOF: UPS USPS
-				$this->quotes = array('id' => $this->code, 'module' => $this->title . $show_box_weight);
-// EOF: UPS USPS
+				$this->quotes = array('id' => $this->code, 'module' => $this->title, 'weight' => $show_box_weight);
 
 				$methods = array();
 				$size = sizeof($uspsQuote);
 				for ($i=0; $i<$size; $i++) {
 					list($type, $cost) = each($uspsQuote[$i]);
 					$type = strtoupper( $type ); //safely upper casing as USPS has fiddled with case unannounced before, see 2007-NOV-19
-// BOF: UPS USPS
 					$title = ((isset($this->types[$type])) ? $this->types[$type] : $type);
 					$code = ((isset($this->codes[$type])) ? $this->codes[$type] : '');
-					if(in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS)))    $title .= $transittime[$type];
-/*
-					$methods[] = array('id' => $type,
-									'title' => ((isset($this->types[$type])) ? $this->types[$type] : $type),
-									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shipping_num_boxes);
-*/
+					if(in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) {
+						$title .= $transittime[$type];
+					}
 					$methods[] = array('id' => $type,
 									'code' => $code,
 									'title' => $title,
-									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shipping_num_boxes);
+									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shippingNumBoxes);
 				}
 
 				$this->quotes['methods'] = $methods;
 
 				if ($this->tax_class > 0) {
-					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 				}
 			}
 		} else {
@@ -190,7 +179,9 @@ class usps {
 //			$this->quotes = array('module' => $this->title, 'error' => MODULE_SHIPPING_USPS_TEXT_ERROR);
 		}
 
-		if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
+		if (zen_not_null($this->icon)) {
+			$this->quotes['icon'] = $this->icon;
+		}
 
 		return $this->quotes;
 	}
@@ -261,7 +252,7 @@ class usps {
 			$transit = TRUE;
 		}
 // EOF: UPS USPS
-		if ($order->delivery['country']['id'] == SHIPPING_ORIGIN_COUNTRY) {
+		if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY) {
 			$request  = '<RateRequest USERID="' . MODULE_SHIPPING_USPS_USERID . '" PASSWORD="' . MODULE_SHIPPING_USPS_PASSWORD . '">';
 			$services_count = 0;
 
@@ -270,7 +261,7 @@ class usps {
 			}
 
 			$dest_zip = str_replace(' ', '', $order->delivery['postcode']);
-			if ($order->delivery['country']['iso_code_2'] == 'US') $dest_zip = substr($dest_zip, 0, 5);
+			if ($order->delivery['country']['countries_iso_code_2'] == 'US') $dest_zip = substr($dest_zip, 0, 5);
 
 			reset($this->types);
 // BOF: UPS USPS
@@ -294,7 +285,7 @@ class usps {
 				if($transit){
 					$transitreq  = 'USERID="' . MODULE_SHIPPING_USPS_USERID .
 								'" PASSWORD="' . MODULE_SHIPPING_USPS_PASSWORD . '">' .
-								'<OriginZip>' . STORE_ORIGIN_ZIP . '</OriginZip>' .
+								'<OriginZip>' . SHIPPING_ORIGIN_ZIP . '</OriginZip>' .
 								'<DestinationZip>' . $dest_zip . '</DestinationZip>';
 
 					switch( strtoupper( $key ) ) {
@@ -304,6 +295,9 @@ class usps {
 						case 'PRIORITY':
 							$transreq[$key] = 'API=PriorityMail&XML=' . urlencode( '<PriorityMailRequest ' . $transitreq . '</PriorityMailRequest>');
 							break;
+						case 'BPM':
+						case 'LIBRARY':
+						case 'MEDIA':
 						case 'PARCEL':
 							$transreq[$key] = 'API=StandardB&XML=' . urlencode( '<StandardBRequest ' . $transitreq . '</StandardBRequest>');
 							break;
@@ -323,7 +317,7 @@ class usps {
 						'<Pounds>' . $this->pounds . '</Pounds>' .
 						'<Ounces>' . $this->ounces . '</Ounces>' .
 						'<MailType>Package</MailType>' .
-						'<Country>' . $this->countries[$order->delivery['country']['iso_code_2']] . '</Country>' .
+						'<Country>' . $this->countries[$order->delivery['country']['countries_iso_code_2']] . '</Country>' .
 						'</Package>' .
 						'</IntlRateRequest>';
 
@@ -355,7 +349,7 @@ class usps {
 			}
 	// BOF: UPS USPS
 	//  mail('you@yourdomain.com','USPS rate quote response',$body,'From: <you@yourdomain.com>');
-			if ($transit && is_array($transreq) && ($order->delivery['country']['id'] == STORE_COUNTRY)) {
+			if ($transit && is_array($transreq) && ($order->delivery['country']['countries_id'] == STORE_COUNTRY)) {
 				while (list($key, $value) = each($transreq)) {
 					if ($http->Get('/' . $api_dll . '?' . $value)) {
 						$transresp[$key] = $http->getBody();
@@ -382,7 +376,7 @@ class usps {
 		}
 
 		$rates = array();
-		if ($order->delivery['country']['id'] == SHIPPING_ORIGIN_COUNTRY) {
+		if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY) {
 			if (sizeof($response) == '1') {
 				if (ereg('<Error>', $response[0])) {
 					$number = ereg('<Number>(.*)</Number>', $response[0], $regs);
@@ -396,55 +390,61 @@ class usps {
 
 			$n = sizeof($response);
 			for ($i=0; $i<$n; $i++) {
-			if (strpos($response[$i], '<Postage>')) {
-				$service = ereg('<Service>(.*)</Service>', $response[$i], $regs);
-				$service = $regs[1];
-				$postage = ereg('<Postage>(.*)</Postage>', $response[$i], $regs);
-				$postage = $regs[1];
+				if (strpos($response[$i], '<Postage>')) {
+					$service = ereg('<Service>(.*)</Service>', $response[$i], $regs);
+					$service = $regs[1];
+					$postage = ereg('<Postage>(.*)</Postage>', $response[$i], $regs);
+					$postage = $regs[1];
 
-				$rates[] = array($service => $postage);
+					$rates[] = array($service => $postage);
 
-	// BOF: UPS USPS
-				if ($transit) {
-					switch ( strtoupper( $service ) ) {
-						case 'EXPRESS':     $time = ereg('<MonFriCommitment>(.*)</MonFriCommitment>', $transresp[$service], $tregs);
-											$time = $tregs[1];
-											if ($time == '' || $time == 'No Data') {
-											$time = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											} else {
-											$time = 'Tomorrow by ' . $time;
-											}
-											break;
-						case 'PRIORITY':    $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
-											$time = $tregs[1];
-											if ($time == '' || $time == 'No Data') {
-											$time = '2 - 3 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											} elseif ($time == '1') {
-											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
-											} else {
-											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											}
-											break;
-						case 'PARCEL':      $time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
-											$time = $tregs[1];
-											if ($time == '' || $time == 'No Data') {
-											$time = '4 - 7 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											} elseif ($time == '1') {
-											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
-											} else {
-											$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											}
-											break;
-						case 'FIRST CLASS': $time = '2 - 5 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
-											break;
-						default:            $time = '';
-											break;
+					if ($transit) {
+						switch ( strtoupper( $service ) ) {
+							case 'EXPRESS':     
+								$time = ereg('<MonFriCommitment>(.*)</MonFriCommitment>', $transresp[$service], $tregs);
+								$time = $tregs[1];
+								if ($time == '' || $time == 'No Data') {
+									$time = '1 - 2 ' . tra( 'Days' );
+								} else {
+									$time = 'Tomorrow by ' . $time;
+								}
+								break;
+							case 'PRIORITY':    
+								$time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+								$time = $tregs[1];
+								if ($time == '' || $time == 'No Data') {
+									$time = '2 - 3 ' . tra( 'Days' );
+								} elseif ($time == '1') {
+									$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
+								} else {
+									$time .= ' ' . tra( 'Days' );
+								}
+								break;
+							case 'PARCEL':      
+								$time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+								$time = $tregs[1];
+								if ($time == '' || $time == 'No Data') {
+									$time = '4 - 7 ' . tra( 'Days' );
+								} elseif ($time == '1') {
+									$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
+								} else {
+									$time .= ' ' . tra( 'Days' );
+								}
+								break;
+							case 'FIRST CLASS': 
+								$time = '2 - 5 ' . tra( 'Days' );
+								break;
+							case 'MEDIA':
+								$time = '1 - 2 ' . tra( 'Weeks' );
+								break;
+							default:
+					            $time = '';
+								break;
+						}
+						if ($time != '') {
+							$transittime[$service] = ' (' . $time . ')';
+						}
 					}
-					if ($time != '') {
-						$transittime[$service] = ' (' . $time . ')';
-					}
-				}
-// EOF: UPS USPS
 				}
 			}
 
@@ -491,8 +491,8 @@ class usps {
 		// BOF: UPS USPS
 					$time = ereg('<SvcCommitments>(.*)</SvcCommitments>', $services[$i], $tregs);
 					$time = $tregs[1];
-					$time = preg_replace('/Weeks$/', MODULE_SHIPPING_USPS_TEXT_WEEKS, $time);
-					$time = preg_replace('/Days$/', MODULE_SHIPPING_USPS_TEXT_DAYS, $time);
+					$time = preg_replace('/Weeks$/', tra( 'Weeks' ), $time);
+					$time = preg_replace('/Days$/', tra( 'Days' ), $time);
 					$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
 
 					if( !in_array($service, $allowed_types) ) continue;
