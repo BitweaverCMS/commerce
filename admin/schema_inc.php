@@ -470,7 +470,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_redeem_track' => "
   coupon_id I4,
   customer_id I4,
   redeem_date T,
-  redeem_ip C(32),
+  redeem_ip C(39),
   order_id I4
 ",
 
