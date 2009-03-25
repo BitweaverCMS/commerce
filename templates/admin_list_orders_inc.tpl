@@ -18,10 +18,10 @@
 </tr>
 {foreach from=$listOrders key=orderId item=order}
 <tr>
+	<td style="width:10em;text-align:right">{$order.purchase_time}</td>
 	<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
-	<td>{$order.order_total|round:2}</td>
-	<td align="right">{$order.purchase_time}</td>
-	<td>{$order.orders_status_name}</td>
+	<td style="text-align:right">{$order.orders_status_name}</td>
+	<td style="text-align:right">{$order.order_total|round:2}</td>
 </tr>
 {if $order.comments && $order.comments!='Credit Card processed'}
 <tr>
