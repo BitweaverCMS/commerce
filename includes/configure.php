@@ -46,7 +46,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
   define('DIR_WS_FUNCTIONS', DIR_WS_INCLUDES . 'functions/');
   define('DIR_WS_CLASSES', DIR_WS_INCLUDES . 'classes/');
   define('DIR_WS_MODULES', DIR_WS_INCLUDES . 'modules/');
-  define('DIR_WS_LANGUAGES', DIR_WS_INCLUDES . 'languages/');
+  define('DIR_WS_LANGUAGES', BITCOMMERCE_PKG_PATH. 'includes/languages/');
   define('DIR_WS_DOWNLOAD_PUBLIC', DIR_WS_CATALOG . 'pub/');
   define('DIR_WS_BLOCKS', DIR_WS_INCLUDES . 'blocks/');
   define('DIR_WS_TEMPLATES', DIR_WS_INCLUDES . 'templates/');

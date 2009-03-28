@@ -1,6 +1,12 @@
 <?php
+// +--------------------------------------------------------------------+
+// | Copyright (c) 2007 bitcommerce.org									|
+// | http://www.bitcommerce.org											|
+// +--------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license		|
+// +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.135 2009/03/11 03:23:01 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.136 2009/03/28 20:18:08 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -8,18 +14,6 @@
  * @author	 spider <spider@steelsun.com>
  */
 
-//
-// +----------------------------------------------------------------------+
-// | bitcommerce															|
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2007 bitcommerce.org									 |
-// |																		|
-// | http://www.bitcommerce.org											 |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license		|
-// +----------------------------------------------------------------------+
-//	$Id: CommerceProduct.php,v 1.135 2009/03/11 03:23:01 spiderr Exp $
-//
 
 /**
  * Initialization

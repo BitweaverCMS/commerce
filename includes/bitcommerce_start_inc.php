@@ -297,4 +297,5 @@ if( !empty( $gBitProduct ) ) {
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
 ?>

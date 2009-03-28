@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.28 2008/03/25 03:24:56 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.29 2009/03/28 20:18:08 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -43,6 +43,21 @@
 				}
 			}
 			return $ret;
+		}
+
+		function getOrdersHistory( $pCustomerId=NULL ) {
+			global $gBitDb;
+			if( empty( $pCustomerId ) ) {
+				$pCustomerId = $this->mCustomerId;
+			}
+			$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
+            			FROM   " . TABLE_ORDERS . " o 
+							INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
+							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status` = s.`orders_status_id`)
+						WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
+						ORDER BY `orders_id` DESC";
+
+			return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
 		}
 
 		function getPurchaseStats( $pCustomerId ) {
