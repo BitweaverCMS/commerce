@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: credit_cards.php,v 1.3 2005/10/06 21:01:48 spiderr Exp $
+// $Id: credit_cards.php,v 1.4 2009/03/29 22:00:33 spiderr Exp $
 //
 
 /*
