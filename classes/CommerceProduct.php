@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.136 2009/03/28 20:18:08 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.137 2009/03/30 02:37:11 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -173,38 +173,38 @@ class CommerceProduct extends LibertyMime {
 			$ret = $this->getField( 'actual_price' );
 			// adjusted count for free shipping
 			if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
-			$products_weight = $this->getField('products_weight');
+				$products_weight = $this->getField('products_weight');
 			} else {
-			$products_weight = 0;
+				$products_weight = 0;
 			}
 
 			$special_price = zen_get_products_special_price( $this->mProductsId );
 			if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
-			$ret = $special_price;
+				$ret = $special_price;
 			} else {
-			$special_price = 0;
+				$special_price = 0;
 			}
 
 			if (zen_get_products_price_is_free($this->mProductsId)) {
-			// no charge
-			$ret = 0;
+				// no charge
+				$ret = 0;
 			}
 
-// adjust price for discounts when priced by attribute
+			// adjust price for discounts when priced by attribute
 			if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
-			// reset for priced by attributes
-//			$products_price = $products->fields['products_price'];
-			if ($special_price) {
-				$ret = $special_price;
+				// reset for priced by attributes
+	//			$products_price = $products->fields['products_price'];
+				if ($special_price) {
+					$ret = $special_price;
+				} else {
+					// get the base price quantity discount. attribute discounts will be calculated later
+					$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
+				}
 			} else {
-				// get the base price quantity discount. attribute discounts will be calculated later
-				$ret = $this->getQuantityPrice( $pQuantity, $this->getField('products_price') );
-			}
-			} else {
-// discount qty pricing
-			if( $this->getField('products_discount_type') ) {
-				$ret = $this->getQuantityPrice( $pQuantity );
-			}
+				// discount qty pricing
+				if( $this->getField('products_discount_type') ) {
+					$ret = $this->getQuantityPrice( $pQuantity );
+				}
 			}
 		}
 		return $ret;
