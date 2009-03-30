@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.31 2009/01/07 04:57:03 spiderr Exp $
+// $Id: functions_lookups.php,v 1.32 2009/03/30 02:36:42 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -214,20 +214,21 @@
 
 
 /**
- * Return a product's stock count.
+ * Return a product's stock count. Check products_virtual and return that value if products_quantity is empty (i.e. virtual products are always in stock)
  *
  * @param int The product id of the product who's stock we want
 */
   function zen_get_products_stock($products_id) {
     global $gBitDb;
     $products_id = zen_get_prid($products_id);
-    $stock_query = "select `products_quantity`
-                    from " . TABLE_PRODUCTS . "
-                    where `products_id` = '" . (int)$products_id . "'";
+    $stock_query = "select `products_quantity`, `products_virtual` from " . TABLE_PRODUCTS . " where `products_id` = ?";
+    $stock_values = $gBitDb->query($stock_query, array( $products_id ) );
 
-    $stock_values = $gBitDb->Execute($stock_query);
-
-    return $stock_values->fields['products_quantity'];
+	$ret = $stock_values->fields['products_quantity'];
+	if( empty( $stock_values->fields['products_quantity'] ) ) {
+		$ret = $stock_values->fields['products_virtual'];
+	}
+	return $ret;
   }
 
 /**
