@@ -1398,9 +1398,6 @@ If a special exist * 10+9
 
 		if( !empty( $pre_selected->fields['override_price'] ) ) {
 			$attributes_price_final = $pre_selected->fields['override_price'];
-			if( $pTotalPrice == TRUE ) {
-				$attributes_price_final *= $qty;
-			}
 		} else {
 
 			$attributes_price_final = 0;
@@ -1410,30 +1407,30 @@ If a special exist * 10+9
 			} else {
 				$attributes_price_final += $pre_selected->fields["options_values_price"];
 			}
-			// qty discounts
-			$attributes_price_final += zen_get_attributes_qty_prices_onetime($pre_selected->fields["attributes_qty_prices"], $qty);
+		}
+		// qty discounts
+		$attributes_price_final += zen_get_attributes_qty_prices_onetime($pre_selected->fields["attributes_qty_prices"], $qty);
 
-			// price factor
-			$display_normal_price = zen_get_products_actual_price($pre_selected->fields["products_id"]);
-			$display_special_price = zen_get_products_special_price($pre_selected->fields["products_id"]);
+		// price factor
+		$display_normal_price = zen_get_products_actual_price($pre_selected->fields["products_id"]);
+		$display_special_price = zen_get_products_special_price($pre_selected->fields["products_id"]);
 
-			$attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
+		$attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
 
-			// per word and letter charges
-			if( $pre_selected->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
-				// calc per word or per letter
-			}
+		// per word and letter charges
+		if( $pre_selected->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
+			// calc per word or per letter
+		}
 
-			// onetime charges
-			if( $pTotalPrice == TRUE ) {
-				$attributes_price_final *= $qty;
-				$pre_selected_onetime = $pre_selected;
-				$attributes_price_final += zen_get_attributes_price_final_onetime($pProductsId, $pre_selected->fields['products_options_values_id'], 1, $pre_selected_onetime);
-			}
-			// discount attribute
-			if( !empty( $pre_selected->fields["attributes_discounted"] ) ) {
-				$attributes_price_final = zen_get_discount_calc($pProductsId, $pre_selected->fields['products_attributes_id'], $attributes_price_final, $qty);
-			}
+		// onetime charges
+		if( $pTotalPrice == TRUE ) {
+			$attributes_price_final *= $qty;
+			$pre_selected_onetime = $pre_selected;
+			$attributes_price_final += zen_get_attributes_price_final_onetime($pProductsId, $pre_selected->fields['products_options_values_id'], 1, $pre_selected_onetime);
+		}
+		// discount attribute
+		if( !empty( $pre_selected->fields["attributes_discounted"] ) ) {
+			$attributes_price_final = zen_get_discount_calc($pProductsId, $pre_selected->fields['products_attributes_id'], $attributes_price_final, $qty);
 		}
 
 		return $attributes_price_final;
