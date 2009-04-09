@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.43 2008/08/20 02:10:47 spiderr Exp $
+// $Id: shopping_cart.php,v 1.44 2009/04/09 23:58:16 spiderr Exp $
 //
 
   class shoppingCart {
@@ -498,7 +498,8 @@
       global $gBitDb;
 
       $attributes_price = 0;
-      $qty = $this->contents[$products_id]['quantity'];
+		// check for attributes qty pricing (if pricing is negative, this can really screw pricing)
+      $qty = $this->in_cart_mixed_discount_quantity( $products_id );
 
       if (isset($this->contents[$products_id]['attributes'])) {
 
@@ -643,32 +644,32 @@ if ((int)$products_id != $products_id) {
 				$prid = $product->mProductsId;
 				$qty = $productsHash['quantity'];
 				$products_price = $product->getPurchasePrice( $qty );
-					if ($check_for_valid_cart == true) {
-						$check_quantity = $productsHash['quantity'];
-						$check_quantity_min = $product->getField( 'products_quantity_order_min' );
+				if ($check_for_valid_cart == true) {
+					$check_quantity = $productsHash['quantity'];
+					$check_quantity_min = $product->getField( 'products_quantity_order_min' );
 					// Check quantity min
-						if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
-							$check_quantity = $new_check_quantity;
-						}
+					if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
+						$check_quantity = $new_check_quantity;
+					}
 
-						$fix_once = 0;
-						if ($check_quantity < $check_quantity_min) {
-							$fix_once ++;
-							$_SESSION['valid_to_checkout'] = false;
-							$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-						}
+					$fix_once = 0;
+					if ($check_quantity < $check_quantity_min) {
+						$fix_once ++;
+						$_SESSION['valid_to_checkout'] = false;
+						$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_MIN_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
+					}
 
 					// Check Quantity Units if not already an error on Quantity Minimum
-						if ($fix_once == 0) {
-							$check_units = $product->getField( 'products_quantity_order_units' );
-							if ( fmod($check_quantity,$check_units) != 0 ) {
-								$_SESSION['valid_to_checkout'] = false;
-								$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
-							}
+					if ($fix_once == 0) {
+						$check_units = $product->getField( 'products_quantity_order_units' );
+						if ( fmod($check_quantity,$check_units) != 0 ) {
+							$_SESSION['valid_to_checkout'] = false;
+							$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity  . ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
 						}
-
-					// Verify Valid Attributes
 					}
+
+				// Verify Valid Attributes
+				}
 
 				//clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
 
@@ -912,25 +913,25 @@ if ((int)$products_id != $products_id) {
     }
 
 	// check mixed discount_quantity
-	function in_cart_mixed_discount_quantity($products_id) {
+	function in_cart_mixed_discount_quantity( $pProductsId ) {
 		global $gBitDb;
 		$ret = 0;
 
 		// if nothing is in cart return 0
 		if( is_array( $this->contents ) ) {
 			// check if mixed is on
-			if( $hasMixedQuantity = $gBitDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid($products_id ) ) ) ) {
+			$chk_products_id= zen_get_prid( $pProductsId );
+			if( $hasMixedQuantity = $gBitDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid( $chk_products_id ) ) ) ) {
 
 				// compute total quantity regardless of attributes
 				$in_cart_mixed_qty_discount_quantity = 0;
-				$chk_products_id= zen_get_prid($products_id);
 
 				// reset($this->contents); // breaks cart
 				$check_contents = $this->contents;
-				while (list($products_id, ) = each($check_contents)) {
-					$test_id = zen_get_prid($products_id);
+				foreach( array_keys( $check_contents ) as $products_key ) {
+					$test_id = zen_get_prid($products_key);
 					if ($test_id == $chk_products_id) {
-						$in_cart_mixed_qty_discount_quantity += $check_contents[$products_id]['quantity'];
+						$in_cart_mixed_qty_discount_quantity += $check_contents[$products_key]['quantity'];
 					}
 				}
 			}
