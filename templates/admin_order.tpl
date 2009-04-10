@@ -34,7 +34,11 @@ function saveNewOption( pForm ) {
 {/literal}
 
 
-<h1 class="header">{$smarty.const.HEADING_TITLE}</h1>
+<h1 class="header">
+	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo;</a>
+	{$smarty.const.HEADING_TITLE} 
+	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">&raquo;</a>
+</h1>
 
 <table>
 <tr>
