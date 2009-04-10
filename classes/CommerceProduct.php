@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.137 2009/03/30 02:37:11 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.138 2009/04/10 06:17:04 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -739,6 +739,7 @@ class CommerceProduct extends LibertyMime {
 			'products_quantity_mixed',
 			'product_is_always_free_ship',
 			'products_sort_order',
+			'products_mixed_discount_qty',
 			'products_discount_type',
 			'products_discount_type_from',
 			'products_price_sorter',
@@ -748,7 +749,7 @@ class CommerceProduct extends LibertyMime {
 
 		foreach( $checkFields as $key ) {
 			if( !isset( $pParamHash['product_store'][$key] ) ) {
-				$pParamHash['product_store'][$key] =  (!empty( $pParamHash[$key] ) ? $pParamHash[$key] : $this->getField( $key ));
+				$pParamHash['product_store'][$key] =  (isset( $pParamHash[$key] ) ? $pParamHash[$key] : $this->getField( $key ));
 			}
 		}
 
