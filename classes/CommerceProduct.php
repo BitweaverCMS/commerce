@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.138 2009/04/10 06:17:04 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.139 2009/04/11 04:04:25 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -718,13 +718,13 @@ class CommerceProduct extends LibertyMime {
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
 			'products_quantity_order_max' => (!empty( $pParamHash['products_quantity_order_max'] ) && is_numeric( $pParamHash['products_quantity_order_max'] ) ? $pParamHash['products_quantity_order_max'] : 0),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : $this->getWeight()),
+			'products_commission' => (!empty( $pParamHash['products_commission'] ) && (double)$pParamHash['products_commission'] > 0 ? $pParamHash['products_commission'] : NULL),
 		);
 
 		$checkFields = array( 
 			'products_model',
 			'products_manufacturers_model',
 			'products_price',
-			'products_commission',
 			'products_cogs',
 			'products_weight',
 			'products_status',
