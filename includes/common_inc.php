@@ -1407,6 +1407,8 @@ If a special exist * 10+9
 			} else {
 				$attributes_price_final += $pre_selected->fields["options_values_price"];
 			}
+			$attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
+
 		}
 		// qty discounts
 		$attributes_price_final += zen_get_attributes_qty_prices_onetime($pre_selected->fields["attributes_qty_prices"], $qty);
@@ -1414,8 +1416,6 @@ If a special exist * 10+9
 		// price factor
 		$display_normal_price = zen_get_products_actual_price($pre_selected->fields["products_id"]);
 		$display_special_price = zen_get_products_special_price($pre_selected->fields["products_id"]);
-
-		$attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $pre_selected->fields["attributes_price_factor"], $pre_selected->fields["attributes_pf_offset"]);
 
 		// per word and letter charges
 		if( $pre_selected->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
