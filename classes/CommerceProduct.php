@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.139 2009/04/11 04:04:25 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.140 2009/04/13 21:03:48 spiderr Exp $
  *
  * System class for handling the liberty package
  *
@@ -19,10 +19,6 @@
  * Initialization
  */
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
-if( !defined( 'TABLE_PRODUCTS' ) ) {
-	// we might be coming in from LibertyBase::getLibertyObject
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-}
 
 /**
  * Class for handling the commerce product
@@ -1834,6 +1830,13 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	}
 
 	return $product;
+}
+
+if( !defined( 'TABLE_PRODUCTS' ) ) {
+	// we might be coming in from LibertyBase::getLibertyObject
+	// keep bitcommerce_start_inc at the bottom of the file, *after* the class has been declared 
+	// because bitcommerce_start_inc creates a default gBitProduct of type CommerceProduct
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 }
 
 ?>
