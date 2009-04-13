@@ -270,13 +270,6 @@ if ( !empty( $_REQUEST['products_id'] ) && is_numeric( $_REQUEST['products_id'] 
 			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 		}
 		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
-/*
-		global $gContent;
-		if( empty( $gContent ) ) {
-			$gContent = &$gBitProduct;
-			$gBitSmarty->assign_by_ref( 'gContent', $gBitProduct );
-		}
-*/
 	}
 } elseif( class_exists( 'CommerceProduct' ) ) {
 	$gBitProduct = new CommerceProduct();
