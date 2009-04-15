@@ -6,14 +6,13 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.140 2009/04/13 21:03:48 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.141 2009/04/15 03:26:22 spiderr Exp $
  *
- * System class for handling the liberty package
+ * Product class for handling all production manipulation
  *
  * @package	bitcommerce
  * @author	 spider <spider@steelsun.com>
  */
-
 
 /**
  * Initialization
