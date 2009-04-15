@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.141 2009/04/15 03:26:22 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.142 2009/04/15 20:25:18 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -996,23 +996,15 @@ class CommerceProduct extends LibertyMime {
 						$new_options_values_price = 0;
 					} else {
 						// collect price information if it exists
-						if( $vals['attributes_discounted'] == 1 ) {
-							// apply product discount to attributes if discount is on
-							//			  $new_value_price = $vals['options_values_price'];
-							$new_value_price = zen_get_attributes_price_final( $this->mProductsId, $vals["products_options_values_id"], 1, '', 'false' );
-							$new_value_price = zen_get_discount_calc( $this->mProductsId, true, $new_value_price);
-						} else {
-							// discount is off do not apply
-							$new_value_price = $vals['options_values_price'];
-						}
+						$new_value_price = zen_get_attributes_price_final( $this->mProductsId, $vals["products_options_values_id"], 1, NULL );
+
+						$vals['value_price'] = $new_value_price;
 
 						// reverse negative values for display
 						if ($new_value_price < 0) {
 							$new_value_price = -$new_value_price;
 							$vals['price_prefix'] = '-';
 						}
-
-						$vals['value_price'] = (float)($vals['price_prefix'].$new_value_price);
 
 						$price_onetime = '';
 						if( $vals['attributes_price_onetime'] != 0 || $vals['attributes_pf_onetime'] != 0) {
