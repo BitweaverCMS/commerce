@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.13 2009/03/20 04:39:37 spiderr Exp $
+// $Id: usps.php,v 1.14 2009/04/15 04:25:38 spiderr Exp $
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
@@ -29,13 +29,15 @@ class usps {
 		global $order, $gBitDb, $template, $current_page_base;
 
 		$this->code = 'usps';
-		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;
-		$this->description = MODULE_SHIPPING_USPS_TEXT_DESCRIPTION;
-		$this->sort_order = MODULE_SHIPPING_USPS_SORT_ORDER;
-		$this->icon = 'shipping_usps';
-		$this->tax_class = MODULE_SHIPPING_USPS_TAX_CLASS;
-		$this->tax_basis = MODULE_SHIPPING_USPS_TAX_BASIS;
-		$this->enabled = ((MODULE_SHIPPING_USPS_STATUS == 'True') ? true : false);
+		if( defined( 'MODULE_SHIPPING_USPS_STATUS' ) ) {
+			$this->title = tra( 'United States Postal Service' );
+			$this->description = tra( 'United States Postal Service<br /><br />You will need to have registered an account with USPS at http://www.uspsprioritymail.com/et_regcert.html to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.' );
+			$this->sort_order = MODULE_SHIPPING_USPS_SORT_ORDER;
+			$this->icon = 'shipping_usps';
+			$this->tax_class = MODULE_SHIPPING_USPS_TAX_CLASS;
+			$this->tax_basis = MODULE_SHIPPING_USPS_TAX_BASIS;
+			$this->enabled = ((MODULE_SHIPPING_USPS_STATUS == 'True') ? true : false);
+		}
 
 		if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_USPS_ZONE > 0) ) {
 			$check_flag = false;
@@ -164,7 +166,7 @@ class usps {
 					}
 					$methods[] = array('id' => $type,
 									'code' => $code,
-									'title' => $title,
+									'title' => 'USPS '.$title,
 									'cost' => ($cost + MODULE_SHIPPING_USPS_HANDLING) * $shippingNumBoxes);
 				}
 

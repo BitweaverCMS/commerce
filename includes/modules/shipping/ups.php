@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.11 2009/03/20 04:40:21 spiderr Exp $
+// $Id: ups.php,v 1.12 2009/04/15 04:25:38 spiderr Exp $
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
@@ -30,8 +30,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
       $this->code = 'ups';
 		if( defined( 'MODULE_SHIPPING_UPS_STATUS' ) ) {
-			  $this->title = MODULE_SHIPPING_UPS_TEXT_TITLE;
-			  $this->description = MODULE_SHIPPING_UPS_TEXT_DESCRIPTION;
+			  $this->title = tra( 'United Parcel Service' );
+			  $this->description = tra( 'United Parcel Service' );
 			  $this->sort_order = MODULE_SHIPPING_UPS_SORT_ORDER;
 			  $this->icon = 'shipping_ups';
 			  $this->tax_class = MODULE_SHIPPING_UPS_TAX_CLASS;
@@ -143,7 +143,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
           if (!in_array($type, $allowed_methods)) continue;
 // EOF: UPS USPS
           $methods[] = array('id' => $type,
-                             'title' => $this->types[$type],
+                             'title' => 'UPS '.$this->types[$type],
                              'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shippingNumBoxes,
                              'code' => 'UPS '.$this->types[$type],
                              );
