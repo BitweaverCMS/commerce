@@ -1396,7 +1396,7 @@ If a special exist * 10+9
       // use existing select
     }
 
-		if( !empty( $pre_selected->fields['override_price'] ) ) {
+		if( $pre_selected->fields['override_price'] !== NULL ) {
 			$attributes_price_final = $pre_selected->fields['override_price'];
 		} else {
 
