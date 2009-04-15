@@ -83,40 +83,7 @@
 						</table>
 					{else}
 						{include file="bitpackage:bitcommerce/checkout_javascript.tpl"}
-						{section name=ix loop=$quotes}
-							{if $quotes[ix].methods || $quotes[ix].error}
-								{counter assign=radioButtons start=0}
-								{formfeedback error=$quotes[ix].error}
-								<div class="row">
-									<div class="formlabel">{$quotes[ix].module for=""}<br />{$quotes[ix].icon}</div>
-									{forminput}
-										{if $quotes[ix].methods}
-											{section name=jx loop=$quotes[ix].methods}
-												{* set the radio button to be checked if it is the method chosen *}
-												{if ("$quotes[ix].id`_`$quotes[ix].methods[jx].id`" == $sessionShippingId) || ($smarty.section.ix.index == 1 && $smarty.section.jx.index == 1)}
-													{assign var=checked value="$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}
-												{/if}
-
-												{if $smarty.section.ix.total > 1 || $smarty.section.jx.total > 1 }
-													{html_radios name="shipping" values="`$quotes[ix].id`_`$quotes[ix].methods[jx].id`" output=$quotes[ix].methods[jx].name checked=$checked}
-												{else}
-													{$quotes[ix].methods[jx].format_add_tax} <input type="hidden" name="shipping" value="{"`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}" />
-												{/if}
-												{$quotes[ix].methods[jx].title}
-												{$quotes[ix].methods[jx].format_add_tax}
-												{if $quotes[ix].methods[jx].note}
-													{formhelp note=$quotes[ix].methods[jx].note}
-												{/if}
-												<br/>
-											{/section}
-										{/if}
-										{if $quotes[ix].note}
-											<p class="note">{$quotes[ix].note}</p>
-										{/if}
-									{/forminput}
-								</div>
-							{/if}
-						{/section}
+						{include file="bitpackage:bitcommerce/shipping_quotes_inc.tpl"}
 					{/if}
 				{/if}
 </fieldset>
