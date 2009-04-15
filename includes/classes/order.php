@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.68 2008/07/06 12:58:46 lsces Exp $
+// $Id: order.php,v 1.69 2009/04/15 04:24:14 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -533,7 +533,17 @@ class order extends BitBase {
                               'postcode' => $customer_address->fields['entry_postcode'],
                               'state' => ((zen_not_null($customer_address->fields['entry_state'])) ? $customer_address->fields['entry_state'] : $customer_address->fields['zone_name']),
                               'zone_id' => $customer_address->fields['entry_zone_id'],
-                              'country' => array('id' => $customer_address->fields['countries_id'], 'title' => $customer_address->fields['countries_name'], 'iso_code_2' => $customer_address->fields['countries_iso_code_2'], 'iso_code_3' => $customer_address->fields['countries_iso_code_3']),
+                              'country' => array(
+									'countries_name' => $customer_address->fields['countries_name'], 
+									'countries_countries_id' => $customer_address->fields['countries_id'], 
+									'countries_iso_code_2' => $customer_address->fields['countries_iso_code_2'], 
+									'countries_iso_code_3' => $customer_address->fields['countries_iso_code_3'],
+									// old for backwards compatibility
+									'title' => $customer_address->fields['countries_name'], 
+									'id' => $customer_address->fields['countries_id'], 
+									'iso_code_2' => $customer_address->fields['countries_iso_code_2'], 
+									'iso_code_3' => $customer_address->fields['countries_iso_code_3']
+								),
                               'format_id' => $customer_address->fields['address_format_id'],
                               'telephone' => $customer_address->fields['customers_telephone'],
                               'email_address' => $customer_address->fields['customers_email_address']);
@@ -547,7 +557,17 @@ class order extends BitBase {
                               'postcode' => $shipping_address->fields['entry_postcode'],
                               'state' => ((zen_not_null($shipping_address->fields['entry_state'])) ? $shipping_address->fields['entry_state'] : $shipping_address->fields['zone_name']),
                               'zone_id' => $shipping_address->fields['entry_zone_id'],
-                              'country' => array('id' => $shipping_address->fields['countries_id'], 'title' => $shipping_address->fields['countries_name'], 'iso_code_2' => $shipping_address->fields['countries_iso_code_2'], 'iso_code_3' => $shipping_address->fields['countries_iso_code_3']),
+                              'country' => array(
+									'countries_id' => $shipping_address->fields['countries_id'], 
+									'countries_name' => $shipping_address->fields['countries_name'], 
+									'countries_iso_code_2' => $shipping_address->fields['countries_iso_code_2'], 
+									'countries_iso_code_3' => $shipping_address->fields['countries_iso_code_3'],
+									// old for backwards compatibility
+									'id' => $shipping_address->fields['countries_id'], 
+									'title' => $shipping_address->fields['countries_name'], 
+									'iso_code_2' => $shipping_address->fields['countries_iso_code_2'], 
+									'iso_code_3' => $shipping_address->fields['countries_iso_code_3']
+							),
                               'country_id' => $shipping_address->fields['entry_country_id'],
                               'telephone' => $shipping_address->fields['entry_telephone'],
                               'format_id' => $shipping_address->fields['address_format_id']);
@@ -561,7 +581,17 @@ class order extends BitBase {
                              'postcode' => $billing_address->fields['entry_postcode'],
                              'state' => ((zen_not_null($billing_address->fields['entry_state'])) ? $billing_address->fields['entry_state'] : $billing_address->fields['zone_name']),
                              'zone_id' => $billing_address->fields['entry_zone_id'],
-                             'country' => array('id' => $billing_address->fields['countries_id'], 'title' => $billing_address->fields['countries_name'], 'iso_code_2' => $billing_address->fields['countries_iso_code_2'], 'iso_code_3' => $billing_address->fields['countries_iso_code_3']),
+                             'country' => array(
+									'countries_id' => $billing_address->fields['countries_id'], 
+									'countries_name' => $billing_address->fields['countries_name'], 
+									'countries_iso_code_2' => $billing_address->fields['countries_iso_code_2'], 
+									'countries_iso_code_3' => $billing_address->fields['countries_iso_code_3'],
+									// old for backwards compatibility
+									'id' => $billing_address->fields['countries_id'], 
+									'title' => $billing_address->fields['countries_name'], 
+									'iso_code_2' => $billing_address->fields['countries_iso_code_2'], 
+									'iso_code_3' => $billing_address->fields['countries_iso_code_3']
+							),
                              'country_id' => $billing_address->fields['entry_country_id'],
                              'telephone' => $billing_address->fields['entry_telephone'],
                              'format_id' => $billing_address->fields['address_format_id']);
