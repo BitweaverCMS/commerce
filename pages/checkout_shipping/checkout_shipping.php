@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.12 2008/07/06 13:10:03 lsces Exp $
+// $Id: checkout_shipping.php,v 1.13 2009/04/15 03:23:34 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -89,12 +89,9 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 	}
 
-  $total_weight = $_SESSION['cart']->show_weight();
-  $total_count = $_SESSION['cart']->count_contents();
-
 // load all enabled shipping modules
-  require(DIR_FS_CLASSES . 'shipping.php');
-  $shipping_modules = new shipping;
+    require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	$shipping = new CommerceShipping();
 
   if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {
     $pass = false;
@@ -192,7 +189,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 						$quote[0]['methods'][0]['cost'] = '0';
 					} else {
-						$quote = $shipping_modules->quote($method, $module);
+						$quote = $shipping->quote( $_SESSION['cart']->show_weight(), $method, $module);
 					}
 					if (isset($quote['error'])) {
 						$_SESSION['shipping'] = '';
@@ -219,28 +216,19 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 	}
 	if( zen_count_shipping_modules() && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
-		$quotes = $shipping_modules->quote();
+		$quotes = $shipping->quote( $_SESSION['cart']->show_weight() );
+
 		// if no shipping method has been selected, automatically select the cheapest method.
 		// if the modules status was changed when none were available, to save on implementing
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
 		if ( !$_SESSION['shipping'] || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
-			$_SESSION['shipping'] = $shipping_modules->cheapest();
+			$_SESSION['shipping'] = $shipping->cheapest();
 		}
 
 
 		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 		$breadcrumb->add(NAVBAR_TITLE_2);
-
-		if( count( $quotes ) ) {
-			foreach( array_keys( $quotes ) as $i ) {
-				if( count( $quotes[$i]['methods'] ) ) {
-					foreach( array_keys( $quotes[$i]['methods'] ) as $j ) {
-						$quotes[$i]['methods'][$j]['format_add_tax'] = $currencies->format(zen_add_tax($quotes[$i]['methods'][$j]['cost'], (isset($quotes[$i]['tax']) ? $quotes[$i]['tax'] : 0)));
-					}
-				}
-			}
-		}
 
 		$gBitSmarty->assign( 'shippingModules', TRUE );
 		$gBitSmarty->assign_by_ref( 'quotes', $quotes );
