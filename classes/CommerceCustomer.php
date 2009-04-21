@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.29 2009/03/28 20:18:08 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.30 2009/04/21 18:27:45 spiderr Exp $
 //
 	class CommerceCustomer extends BitBase {
 		var $mCustomerId;
@@ -71,45 +71,6 @@
 
 			$sql = "SELECT count( `orders_id` ), sum( `order_total` ) FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `orders_status` > ?";
 			return $gBitDb->getRow( $sql, $bindVars );
-		}
-
-		function getCommissionsHistory() {
-			$ret = array();
-			if( $this->isValid() ) {
-				$sql = "SELECT cop.`orders_products_id` AS `hash_key`, co.*,cop.* 
-						FROM " . TABLE_ORDERS . " co  
-							INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
-							INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
-							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
-						WHERE lc.`user_id`=? AND cop.`products_commission` IS NOT NULL AND cop.`products_commission` > 0
-						ORDER BY co.`date_purchased` ASC";
-				if( $sales = $this->mDb->getAssoc( $sql, array( $this->mCustomerId ) ) ) {
-					foreach( array_keys( $sales ) as $hashKey ) {
-						$sales[$hashKey]['purchased_epoch'] = strtotime($sales[$hashKey]['date_purchased'] );
-					}
-				}
-
-				$sql = "SELECT ccp.`commissions_payments_id` AS `hash_key`, ccp.* FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE `payee_user_id`=? ORDER BY ccp.`period_end_date` ASC";
-				if( $commissions = $this->mDb->getAssoc( $sql, array( $this->mCustomerId ) ) ) {
-					foreach( array_keys( $commissions ) as $commId ) {
-						$commissions[$commId]['period_end_epoch'] = strtotime( $commissions[$commId]['period_end_date'] );
-					}
-				}
-				$commission = current( $commissions );
-				foreach( $sales AS $sale ) {
-					if( !empty( $commission ) && ((int)$commission['period_end_epoch'] < (int)$sale['purchased_epoch']) ) {
-						array_push( $ret, $commission );
-						$commission = next( $commissions );
-					}
-					array_push( $ret, $sale );
-				}
-				// add the last commission if no sales since last payment
-				if( !empty( $commission ) ) {
-					array_push( $ret, $commission );
-				}
-				$ret = array_reverse( $ret );
-			}
-			return( $ret );
 		}
 
 		function getGlobalNotifications() {
