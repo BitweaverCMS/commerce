@@ -9,15 +9,12 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: commissions.php,v 1.5 2008/09/24 19:41:14 spiderr Exp $
+//  $Id: commissions.php,v 1.6 2009/04/21 18:26:56 spiderr Exp $
 //
 
 require('includes/application_top.php');
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommission.php' );
-
-// $gBitSmarty->assign( 'loadAjax', 'mochikit' );
-// $gBitSmarty->assign( 'mochikitLibs', array( 'DOM.js', 'Iter.js', 'Style.js', 'Signal.js', 'Color.js', 'Position.js', 'Visual.js', 'DragAndDrop.js', 'Sortable.js' ) );
 
 if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 	$gBitUser->verifyTicket();
@@ -25,8 +22,10 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 
 $commissionManager = new CommerceCommission();
 
-$listHash  = array();
+$_REQUEST['commission_type'] = COMMISSION_TYPE_PRODUCT_SALE;
 
+$listHash  = array();
+$listHash['commission_type'] = $_REQUEST['commission_type'];
 $listHash['commissions_delay'] = $gBitSystem->getConfig( 'com_commissions_delay', '60' );
 $endEpoch = strtotime( "-".$listHash['commissions_delay']." days" );
 $listHash['commissions_due'] = $endEpoch;
@@ -36,8 +35,7 @@ $periodEndDate = $date['year'].'-'.str_pad( $date['mon'], 2, '0', STR_PAD_LEFT )
 $gBitSmarty->assign( 'periodEndDate', $periodEndDate );
 
 if( !empty( $_REQUEST['save_payment'] ) ) {
-	$_REQUEST['commission_type'] = 'product sale';
-	$commissionManager->storePayment( $_REQUEST );
+	$commissionManager->storeProductPayment( $_REQUEST );
 }
 
 if( $commissionsDue = $commissionManager->getCommissions( $listHash ) ) {
