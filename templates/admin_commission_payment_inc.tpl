@@ -65,17 +65,30 @@
 					{formlabel label="Payment Dates"}
 					{forminput}
 						{tr}From{/tr} <input type="text" name="period_start_date"  id="periodstart{$userId}" value="{$commission.last_period_end_date}" style="width:80px"/> 
-	<script language="JavaScript">
-	calPeriodStart{$userId}= new CalendarPopup("caldiv");
-	</script>
-						<a href="#" onclick="calPeriodStart{$userId}.select($('periodstart{$userId}'),'anchorperiodstart{$userId}','yyyy-MM-dd'); return false;" title="calPeriodStart{$userId}.select(document.paymentform{$userId}.period_start_date,'anchorperiodstart{$userId}','yyyy-MM-dd'); return false;" name="anchorperiodstart{$userId}" id="anchorperiodstart{$userId}"><img src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date"></img></a>
+						<img id="anchorperiodstart{$userId}" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date" />
+						{tr}Through{/tr} <input type="text" name="period_end_date" id="periodend{$userId}" value="{$periodEndDate}" style="width:80px"/>
+						<img id="anchorperiodend{$userId}" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date"/>
 
-	{tr}Through{/tr} <input type="text" name="period_end_date" id="periodend{$userId}" value="{$periodEndDate}" style="width:80px"/>
-	<script language="JavaScript">
-	calPeriodEnd{$userId}= new CalendarPopup("caldiv");
-	</script>
-						<a href="#" onclick="calPeriodEnd{$userId}.select($('periodend{$userId}'),'anchorperiodend{$userId}','yyyy-MM-dd'); return false;" title="calPeriodEnd{$userId}.select(document.paymentform{$userId}.period_end_date,'anchorperiodend{$userId}','yyyy-MM-dd'); return false;" name="anchorperiodend{$userId}" id="anchorperiodend{$userId}"><img src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date"></img></a>
 
+<script type="text/javascript">
+  Calendar.setup(
+    {ldelim}
+      inputField  : "periodstart{$userId}",         // ID of the input field
+      ifFormat    : "%Y-%m-%d",    // the date format
+      button      : "anchorperiodstart{$userId}"       // ID of the button
+    {rdelim}
+  );
+</script>
+
+<script type="text/javascript">
+  Calendar.setup(
+    {ldelim}
+      inputField  : "periodend{$userId}",         // ID of the input field
+      ifFormat    : "%Y-%m-%d",    // the date format
+      button      : "anchorperiodend{$userId}"       // ID of the button
+    {rdelim}
+  );
+</script>
 
 					{/forminput}
 				</div>
