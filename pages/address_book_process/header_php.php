@@ -17,8 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.14 2006/12/19 00:11:35 spiderr Exp $
+// $Id: header_php.php,v 1.15 2009/04/22 18:04:34 spiderr Exp $
 //
+
+ define( 'HEADING_TITLE', 'Update Address Book Entry' );
 
   if (!$_SESSION['customer_id']) {
     $_SESSION['navigation']->set_snapshot();
