@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.8 2009/04/21 18:31:26 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.9 2009/04/27 19:23:35 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -142,7 +142,7 @@ class CommerceCommission extends BitBase {
 		$sql = "SELECT `commissions_payments_id` AS `hash_key`, ccp.* 
 				FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp 
 				WHERE `payee_user_id`=? $whereSql 
-				ORDER BY `period_end_date` DESC";
+				ORDER BY `period_end_date` ASC";
 		$ret = $this->mDb->getAssoc( $sql, $bindVars );
 		return $ret;
 	}
