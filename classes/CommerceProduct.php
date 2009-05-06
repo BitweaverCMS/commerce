@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.142 2009/04/15 20:25:18 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.143 2009/05/06 19:54:06 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -891,7 +891,7 @@ class CommerceProduct extends LibertyMime {
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
-				liberty_process_image( $fileHash );
+				liberty_process_image( $fileHash, empty( $pParamHash['copy_file'] ) );
 			}
 		}
 	}
