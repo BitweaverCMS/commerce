@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.15 2009/01/24 18:00:42 spiderr Exp $
+// $Id: payflowpro.php,v 1.16 2009/05/22 19:57:56 tylerbello Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -342,6 +342,8 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 
 			if( isset( $codeHash['RESULT'] ) ) {
 				$this->result = $codeHash['RESULT'];
+			} else {
+				$this->result = 'X';
 			}
 
 			while (list ($key, $val) = each ($output)) {
