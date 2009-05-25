@@ -1,6 +1,6 @@
 <?php
 
-$gBitSystem->verifyPermission('p_commerce_retailer');
+$gBitSystem->verifyPermission('p_bitcommerce_retailer');
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommission.php' );
 

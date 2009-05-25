@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.143 2009/05/06 19:54:06 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.144 2009/05/25 17:40:08 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -42,10 +42,10 @@ class CommerceProduct extends LibertyMime {
 		$this->mProductsId = $pProductsId;
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
-		$this->mViewContentPerm  = 'p_commerce_product_view';
-		$this->mUpdateContentPerm  = 'p_commerce_product_update';
-		$this->mCreateContentPerm  = 'p_commerce_product_create';
-		$this->mAdminContentPerm = 'p_commerce_admin';
+		$this->mViewContentPerm  = 'p_bitcommerce_product_view';
+		$this->mUpdateContentPerm  = 'p_bitcommerce_product_update';
+		$this->mCreateContentPerm  = 'p_bitcommerce_product_create';
+		$this->mAdminContentPerm = 'p_bitcommerce_admin';
 		$this->mOptions = NULL;
 		$this->mRelatedContent = NULL;
 	}
@@ -63,7 +63,7 @@ class CommerceProduct extends LibertyMime {
 		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
 			parent::load();
-			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_commerce_admin' ) || $this->isPurchased()) ) {
+			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $this->isPurchased()) ) {
 				$this->mInfo = array();
 				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
@@ -513,7 +513,7 @@ class CommerceProduct extends LibertyMime {
 		if( @BitBase::verifyId( $pListHash['content_status_id'] ) ) {
 			$bindVars[] = $pListHash['content_status_id'];
 			$whereSql = ' lc.`content_status_id` = ? ';
-		} elseif( $gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+		} elseif( $gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
 			$whereSql = ' lc.`content_status_id` >= ? ';
 			$bindVars[] = -999;
 		} else {

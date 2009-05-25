@@ -6,7 +6,7 @@
 	{if $gBitUser->isRegistered()}
 		<li><a class="item" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=account">{tr}My Orders and Addresses{/tr}</a></li>
 	{/if}
-	{if $gBitUser->hasPermission('p_commerce_retailer')}
+	{if $gBitUser->hasPermission('p_bitcommerce_retailer')}
 		<li><a class="item" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=commissions">{tr}My Sales and Commissions{/tr}</a></li>
 	{/if}
 </ul>

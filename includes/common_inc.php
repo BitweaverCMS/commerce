@@ -418,7 +418,7 @@
 	global $gBitUser;
   	if( empty( $string ) ) {
 		return NULL;
-    } elseif (is_string($string) && !$gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+    } elseif (is_string($string) && !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
       return trim(zen_sanitize_string(stripslashes($string)));
     } elseif (is_array($string)) {
       reset($string);
@@ -593,7 +593,7 @@
 
 		// is there a products_price to add to attributes
 			$products_price = $product['products_price'];
-			if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_commerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
+			if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
 				$products_price -= $product['products_commission'];
 			}
 
