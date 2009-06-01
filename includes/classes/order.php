@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.70 2009/06/01 05:52:11 spiderr Exp $
+// $Id: order.php,v 1.71 2009/06/01 06:21:37 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -621,13 +621,9 @@ class order extends BitBase {
             $attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pa.`options_values_price`, pa.`price_prefix`
                                  FROM " . TABLE_PRODUCTS_OPTIONS . " popt
                                     INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
-									INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`)
-                                 WHERE pom.`products_id` = ?
-									AND pa.`products_options_id` = ?
-									AND pa.`products_options_values_id` = ?
-									AND popt.`language_id` = ? ";
+                                 WHERE pa.`products_options_id` = ?  AND pa.`products_options_values_id` = ?  AND popt.`language_id` = ? ";
 
-            $attributes = $gBitDb->query( $attributes_query, array( zen_get_prid( $products[$opid]['id'] ), zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'] ) );
+            $attributes = $gBitDb->query( $attributes_query, array( zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'] ) );
 
 	//clr 030714 Determine if attribute is a text attribute and change products array if it is.
             if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
@@ -868,20 +864,18 @@ class order extends BitBase {
 				$attributes_exist = '1';
 				for ($j=0, $n2=count( $this->products[$opid]['attributes'] ); $j<$n2; $j++) {
 					if (DOWNLOAD_ENABLED == 'true') {
-						$attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pom.*, pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
+						$attributes_query = "SELECT popt.`products_options_name`, pa.`products_options_values_name`, pa.*, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`, pad.`products_attributes_filename`
 										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 
 											INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_id` = popt.`products_options_id`)
-											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
 											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad on(pa.`products_attributes_id` = pad.`products_attributes_id`)
-										WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ? AND popt.`language_id` = ?";
+										WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ? AND popt.`language_id` = ?";
 
-						$attributes_values = $gBitDb->query($attributes_query, array( zen_get_prid( $this->products[$opid]['id'] ), (int)$this->products[$opid]['attributes'][$j]['option_id'], (int)$this->products[$opid]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
+						$attributes_values = $gBitDb->query($attributes_query, array( (int)$this->products[$opid]['attributes'][$j]['option_id'], (int)$this->products[$opid]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
 					} else {
 						$attributes_values = $gBitDb->query("select popt.`products_options_name`, pa.*
 										FROM " . TABLE_PRODUCTS_OPTIONS . " popt 
 											INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
-											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
-										WHERE pom.`products_id`=? and pa.`products_options_id`=? AND pa.`products_options_values_id`=? AND popt.`language_id`=?", array( zen_get_prid( $this->products[$opid]['id'] ), $this->products[$opid]['attributes'][$j]['option_id'], $this->products[$opid]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
+										WHERE pa.`products_options_id`=? AND pa.`products_options_values_id`=? AND popt.`language_id`=?", array( $this->products[$opid]['attributes'][$j]['option_id'], $this->products[$opid]['attributes'][$j]['value_id'], $_SESSION['languages_id'] ) );
 					}
 
 					if( !empty( $attributes_values->fields['purchase_group_id'] ) ) {
