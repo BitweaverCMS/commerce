@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.9 2007/03/02 22:03:03 luciash Exp $
+// $Id: main_template_vars_attributes.php,v 1.10 2009/06/01 05:52:11 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -61,7 +61,7 @@
       }
 
       $discount_type = zen_get_products_sale_discount_type((int)$_GET['products_id']);
-      $discount_amount = zen_get_discount_calc((int)$_GET['products_id']);
+      $discount_amount = $this->getPriceReduction();
       $show_onetime_charges_description = 'false';
       $show_attributes_qty_prices_description = 'false';
 
@@ -111,8 +111,8 @@
             if ($products_options->fields['attributes_discounted'] == 1) {
 // apply product discount to attributes if discount is on
 //              $new_attributes_price = $products_options->fields['options_values_price'];
-              $new_attributes_price = zen_get_attributes_price_final((int)$_GET['products_id'],$products_options->fields["products_options_values_id"], 1, '', 'false');
-              $new_attributes_price = zen_get_discount_calc((int)$_GET['products_id'], true, $new_attributes_price);
+              $new_attributes_price = $gBitProduct->getAttributesPriceFinal( $products_options->fields["products_options_values_id"], 1, FALSE );
+              $new_attributes_price = $gBitProduct->getPriceReduction( true, $new_attributes_price );
             } else {
 // discount is off do not apply
               $new_attributes_price = $products_options->fields['options_values_price'];
@@ -125,7 +125,7 @@
 
             if ($products_options->fields['attributes_price_onetime'] != 0 or $products_options->fields['attributes_pf_onetime'] != 0) {
               $show_onetime_charges_description = 'true';
-              $new_onetime_charges = zen_get_attributes_price_final_onetime((int)$_GET['products_id'],$products_options->fields["products_options_vales_id"], 1, '');
+              $new_onetime_charges = $gBitProduct->getAttributesPriceFinalOnetime( $products_options->fields["products_options_vales_id"] );
               $price_onetime = TEXT_ONETIME_CHARGE_SYMBOL . $currencies->display_price($new_onetime_charges,
               zen_get_tax_rate($product_info->fields['products_tax_class_id']));
             } else {

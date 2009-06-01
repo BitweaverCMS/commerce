@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.69 2009/04/15 04:24:14 spiderr Exp $
+// $Id: order.php,v 1.70 2009/06/01 05:52:11 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -646,9 +646,6 @@ class order extends BitBase {
             $subindex++;
           }
         }
-
-// add onetime charges here
-//$_SESSION['cart']->attributes_price_onetime_charges($products[$opid]['id'], $products[$opid]['quantity'])
 
         $shown_price = (zen_add_tax($this->products[$opid]['final_price'], $this->products[$opid]['tax']) * $this->products[$opid]['quantity'])
                       + zen_add_tax($this->products[$opid]['onetime_charges'], $this->products[$opid]['tax']);

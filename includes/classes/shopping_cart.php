@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.44 2009/04/09 23:58:16 spiderr Exp $
+// $Id: shopping_cart.php,v 1.45 2009/06/01 05:52:11 spiderr Exp $
 //
 
   class shoppingCart {
@@ -459,7 +459,7 @@
 			if (isset($this->contents[$productsCartKey]['attributes'])) {
 			  reset($this->contents[$productsCartKey]['attributes']);
 			  while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
-					$added_charge = zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, TRUE);
+					$added_charge = $product->getAttributesPriceFinal( (int)$value, $qty );
 					$this->total += zen_add_tax($added_charge, $products_tax);
 			  }
 			} // attributes price
@@ -470,9 +470,8 @@
 			  while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
 				$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
 										FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-											INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-										WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-				$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$prid, (int)$option , (int)$value ) );
+										WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+				$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$option , (int)$value ) );
 			  
 			  // adjusted count for free shipping
 			  if ($product->getField('product_is_always_free_ship') != 1) {
@@ -506,7 +505,8 @@
         reset($this->contents[$products_id]['attributes']);
         while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
         	$prid = zen_get_prid( $products_id );
-			$attributes_price += zen_get_attributes_price_final( $prid, (int)$value, $qty, NULL, $pTotalPrice );
+			$product = $this->getProductObject( $prid );
+			$attributes_price += $product->getAttributesPriceFinal( (int)$value, $qty, $pTotalPrice );
         }
       }
 
@@ -514,71 +514,37 @@
     }
 
 
-// one time attribute prices
-// add to tpl_shopping_cart/orders
-    function attributes_price_onetime_charges($products_id, $qty=1) {
-      global $gBitDb;
+	// one time attribute prices
+	// add to tpl_shopping_cart/orders
+	function attributes_price_onetime_charges( $pProductsId, $pQty=1 ) {
+		global $gBitDb;
 
-      $attributes_price_onetime = 0;
+		$attributes_price_onetime = 0;
 
-      if (isset($this->contents[$products_id]['attributes'])) {
+		if (isset($this->contents[$products_id]['attributes'])) {
+			$product = $this->getProductObject( $pProductsId );
 
-        reset($this->contents[$products_id]['attributes']);
-        while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+			reset($this->contents[$products_id]['attributes']);
+			while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+				if( $option = $product->getOptionValue( $option, $value ) ) {
+					if( $option['product_attribute_is_free'] != '1' && !$product->getField( 'product_is_free' ) ) {
+						// calculate additional one time charges
+						if( !empty( $option['attributes_price_onetime'] ) ) {
+							$attributes_price_onetime += $option['attributes_price_onetime'];
+						}
+						if( !empty( $option['attributes_pf_onetime'] ) ) {
+							$attributes_price_onetime = zen_get_attributes_price_factor( $product->mInfo['normal_price'], $product->mInfo['sale_price'], $option['attributes_pf_onetime'], $option['attributes_pf_onetime_offset']);
+						}
+						if( !empty( $option['attributes_qty_prices_onetime'] ) ) {
+							$attributes_price_onetime = zen_get_attributes_qty_prices_onetime($option['attributes_qty_prices_onetime'], $pQty);
+						}
+					}
+				}
+			}
+		}
 
-          $attribute_price_query = "SELECT *
-                                    FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-                                    WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-          $attribute_price = $gBitDb->query( $attribute_price_query, array( (int)$products_id, (int)$option , (int)$value ) );
-
-          $new_attributes_price = 0;
-          $discount_type_id = '';
-          $sale_maker_discount = '';
-
-//          if ($attribute_price->fields['product_attribute_is_free']) {
-          if ($attribute_price->fields['product_attribute_is_free'] == '1' and zen_get_products_price_is_free((int)$products_id)) {
-            // no charge
-          } else {
-            $discount_type_id = '';
-            $sale_maker_discount = '';
-            $new_attributes_price = zen_get_discount_calc($products_id, $attribute_price->fields['products_attributes_id'], $attribute_price->fields['options_values_price'], $qty);
-
-//////////////////////////////////////////////////
-// calculate additional one time charges
-//// one time charges
-// attributes_price_onetime
-              if ($attribute_price->fields['attributes_price_onetime'] > 0) {
-if ((int)$products_id != $products_id) {
-  die('I DO NOT MATCH ' . $products_id);
-}
-                $attributes_price_onetime += $attribute_price->fields['attributes_price_onetime'];
-              }
-// attributes_pf_onetime
-              $added_charge = 0;
-              if ($attribute_price->fields['attributes_pf_onetime'] > 0) {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_price_factor($chk_price, $chk_special, $attribute_price->fields['attributes_pf_onetime'], $attribute_price->fields['attributes_pf_onetime_offset']);
-
-                $attributes_price_onetime += $added_charge;
-              }
-// attributes_qty_prices_onetime
-              $added_charge = 0;
-              if ($attribute_price->fields['attributes_qty_prices_onetime'] != '') {
-                $chk_price = zen_get_products_base_price($products_id);
-                $chk_special = zen_get_products_special_price($products_id, false);
-                $added_charge = zen_get_attributes_qty_prices_onetime($attribute_price->fields['attributes_qty_prices_onetime'], $qty);
-                $attributes_price_onetime += $added_charge;
-              }
-
-//////////////////////////////////////////////////
-          }
-        }
-      }
-
-      return $attributes_price_onetime;
-    }
+		return $attributes_price_onetime;
+	}
 
 
     function attributes_weight( $pCartProductsHash ) {
@@ -592,9 +558,8 @@ if ((int)$products_id != $products_id) {
         while (list($option, $value) = each($this->contents[$pCartProductsHash]['attributes'])) {
 			$sql = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
 					FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-					  INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
-					WHERE `products_id` = ? AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-			$attribute_weight_info = $gBitDb->query( $sql, array( $prid, (int)$option, (int)$value ) );
+					WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
+			$attribute_weight_info = $gBitDb->query( $sql, array( (int)$option, (int)$value ) );
           // adjusted count for free shipping
           $freeShip = $gBitDb->getOne("select `product_is_always_free_ship`
                           from " . TABLE_PRODUCTS . "
@@ -622,7 +587,7 @@ if ((int)$products_id != $products_id) {
 	function getProductObject( $pProductsId ) {
 		if( BitBase::verifyId( $pProductsId ) ) {
 			if( !isset( $this->mProductObjects[$pProductsId] ) ) {
-				$this->mProductObjects[$pProductsId] = new CommerceProduct( zen_get_prid( $pProductsId ) );
+				$this->mProductObjects[$pProductsId] = bc_get_commerce_product( zen_get_prid( $pProductsId ) );
 				if( $this->mProductObjects[$pProductsId]->load() ) {
 					$ret = &$this->mProductObjects[$pProductsId];
 				}
@@ -756,7 +721,6 @@ if ((int)$products_id != $products_id) {
         reset($this->contents);
         while (list($products_id, ) = each($this->contents)) {
           $free_ship_check = $gBitDb->query( "select `products_virtual`, `products_model`, `products_price` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid($products_id) ) );
-          $virtual_check = false;
           if( $free_ship_check && ereg( '^GIFT', addslashes($free_ship_check->fields['products_model'] ) ) ) {
             $gift_voucher += ($free_ship_check->fields['products_price'] + $this->attributes_price($products_id)) * $this->contents[$products_id]['quantity'];
           }
@@ -765,13 +729,12 @@ if ((int)$products_id != $products_id) {
             while (list(, $value) = each($this->contents[$products_id]['attributes'])) {
               $virtual_check_query = "SELECT COUNT(*) as `total`
                                       FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-									  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
                                         INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
-                                      WHERE pom.`products_id` = ? AND pa.`products_options_values_id` = ?";
+                                      WHERE pa.`products_options_values_id` = ?";
 
-              $virtual_check = $gBitDb->query( $virtual_check_query, array( (int)$products_id, (int)$value ) );
+              $virtualCount = $gBitDb->getOne( $virtual_check_query, array( (int)$value ) );
 
-              if ($virtual_check->fields['total'] > 0) {
+              if ($virtualCount > 0) {
                 switch ($this->content_type) {
                   case 'physical':
                     $this->content_type = 'mixed';
