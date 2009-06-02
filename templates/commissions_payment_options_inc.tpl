@@ -1,4 +1,5 @@
 {form method="post" enctype="multipart/form-data" action=$smarty.server.REQUEST_URI}
+	<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
 	<div class="row">
 		{formlabel label="Payment Method"}
 		{forminput}
