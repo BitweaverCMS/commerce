@@ -1084,6 +1084,21 @@ If a special exist * 10+9
   }
 
 
+
+////
+// get option values
+function zen_get_option_value( $pOptionId, $pValueId ) {
+	global $gBitDb;
+
+	$query = "SELECT *
+			  FROM " . TABLE_PRODUCTS_OPTIONS . " popt
+				INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
+				LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad on(pa.`products_attributes_id` = pad.`products_attributes_id`)
+			  WHERE pa.`products_options_id` = ?  AND pa.`products_options_values_id` = ?  AND popt.`language_id` = ? ";
+
+	return( $gBitDb->getAssoc( $attributes_query, array( zen_get_options_id( $option ), (int)$value, (int)$_SESSION['languages_id'] ) ) );
+}
+
 ////
 // calculate words
   function zen_get_word_count($string, $free=0) {
