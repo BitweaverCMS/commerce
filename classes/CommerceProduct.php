@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.145 2009/06/01 05:52:11 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.146 2009/06/03 05:44:11 tylerbello Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1789,7 +1789,7 @@ class CommerceProduct extends LibertyMime {
 
 	function getDiscount( $pQuantity, $pDiscount ) {
 		$ret = NULL;
-		if( !isset( $this->mDiscounts ) ) {
+		if( !isset( $this->mDiscounts[$pQuantity] ) ) {
 			$this->loadDiscounts();
 		}
 		if( !empty( $this->mDiscounts[$pQuantity][$pDiscount] ) ) {
@@ -1845,7 +1845,6 @@ class CommerceProduct extends LibertyMime {
 			if( !isset( $pParamHash['discounts_store']['discount_price'] ) ) {
 				 $pParamHash['discount_price']['discount_qty'] = $pParamHash['discount_price'];
 			}
-
 			$this->mDb->associateInsert( TABLE_PRODUCTS_DISCOUNT_QUANTITY, $pParamHash['discounts_store'] );
 		}
 		return( !empty( $pParamHash['discount_price'] ) && count( $pParamHash['discount_price'] ) );
