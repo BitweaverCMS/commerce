@@ -48,8 +48,8 @@ function updatePaymentMethod() {
 	hideById('commissionpaypal');
 	hideById('commissionworldpay');
 	hideById('commissioncheck');
-methodValue = 'commission'+$('commissions_payment_method').value;
-showById(methodValue);
+	methodValue = 'commission'+document.getElementById('commissions_payment_method').value;
+	showById(methodValue);
 	return true;
 }
 

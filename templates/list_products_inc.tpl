@@ -69,7 +69,7 @@
 
 						<div class="details">
 							<h2><a href="{$prod.display_url}">{$prod.products_name}</a></h2>
-							{if !$prod.products_status}<em>{tr}Not Publically Available{/tr}</em><br/>{/if}
+							{if !$prod.products_status}<em>{tr}Not Publicly Available{/tr}</em><br/>{/if}
 
 							{if !$gQueryUser}
 								By {displayname hash=$prod}</br>

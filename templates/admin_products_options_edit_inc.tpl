@@ -110,7 +110,7 @@ function editOptionsValue( pOptValId ) {
 	return false;
 }
 function saveOptionsValue( pOptValId ) {
-	$('optval'+pOptValId+'title').innerHTML=$('products_options_value_name'+pOptValId).value;
+	document.getElementById('optval'+pOptValId+'title').innerHTML=document.getElementById('products_options_value_name'+pOptValId).value;
 	editOptionsValue( pOptValId );
 	return false;
 }
