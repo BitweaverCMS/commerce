@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: commissions.php,v 1.6 2009/04/21 18:26:56 spiderr Exp $
+//  $Id: commissions.php,v 1.7 2009/07/07 02:25:44 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -35,7 +35,7 @@ $periodEndDate = $date['year'].'-'.str_pad( $date['mon'], 2, '0', STR_PAD_LEFT )
 $gBitSmarty->assign( 'periodEndDate', $periodEndDate );
 
 if( !empty( $_REQUEST['save_payment'] ) ) {
-	$commissionManager->storeProductPayment( $_REQUEST );
+	$commissionManager->storePayment( $_REQUEST );
 }
 
 if( $commissionsDue = $commissionManager->getCommissions( $listHash ) ) {
