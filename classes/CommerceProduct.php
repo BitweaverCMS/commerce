@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.146 2009/06/03 05:44:11 tylerbello Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.147 2009/07/10 17:49:19 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1346,7 +1346,6 @@ class CommerceProduct extends LibertyMime {
 
 					$products_options_array[] = array('id' => $vals['products_options_values_id'],
 														'text' => $vals['products_options_values_name']);
-
 					if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
 						$new_options_values_price = 0;
 					} else {
@@ -1420,7 +1419,6 @@ class CommerceProduct extends LibertyMime {
 							$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
 						}
 					}
-
 					// =-=-=-=-=-=-=-=-=-=-= radio buttons
 					if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
 						if( is_object( $pCart ) && $pCart->in_cart($this->mProductsId) && ($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) ) {
@@ -1442,7 +1440,6 @@ class CommerceProduct extends LibertyMime {
 								$selected_attribute = $vals['attributes_default'] == '1';
 							}
 						}
-
 						// ignore products_options_images_style as this should be fully controllable via CSS
 						$tmp_radio .= '<div class="productoptions">' . 
 										zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . 
@@ -1573,7 +1570,6 @@ class CommerceProduct extends LibertyMime {
 									break;
 								}
 							}
-
 						} elseif( is_object( $pCart ) ) {
 							$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
 							$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />	';
