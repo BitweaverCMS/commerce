@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.72 2009/06/03 05:26:49 spiderr Exp $
+// $Id: order.php,v 1.73 2009/07/15 14:53:47 spiderr Exp $
 //
 
 class order extends BitBase {
@@ -93,8 +93,12 @@ class order extends BitBase {
 				$whereSql .= " `order_total` = ? OR ";
 				$bindVars[] = $pListHash['search'];
 			}
-			if( intval( $pListHash['search'] ) > 0	) {
-				$whereSql .= " o.`orders_id` = ? OR ";
+			if( is_numeric( $pListHash['search'] ) ) {
+				if( strpos( $pListHash['search'], '.' ) === FALSE ) {
+					$whereSql .= " o.`orders_id` = ? OR ";
+					$bindVars[] = $pListHash['search'];
+				}
+				$whereSql .= " o.`order_total` = ? OR ";
 				$bindVars[] = $pListHash['search'];
 			}
 			$whereSql .= " LOWER(uu.`real_name`) like ? ";
