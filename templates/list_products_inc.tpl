@@ -42,7 +42,7 @@
 								{tr}Purchase Multiple:{/tr} <input type="text" name="products_id[{$prod.products_id}]" value=0 size="4"><br/>
 							{/if}
 
-							{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='icon' serviceHash=$prod}
+							{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='list_sort' serviceHash=$prod}
 
 							<div class="date">
 								{tr}Created{/tr}: {$prod.created|bit_short_date}
