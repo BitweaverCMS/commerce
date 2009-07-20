@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.148 2009/07/20 19:57:41 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.149 2009/07/20 20:20:01 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -190,7 +190,7 @@ class CommerceProduct extends LibertyMime {
 			}
 
 			// adjust price for discounts when priced by attribute
-			if( $this->getField('products_priced_by_attribute') == '1' && !empty( $this->mOptions ) ) {
+			if( $this->getField('products_priced_by_attribute') == '1' && $this->hasAttributes() ) {
 				// reset for priced by attributes
 	//			$products_price = $products->fields['products_price'];
 				if ($special_price) {
@@ -1264,27 +1264,29 @@ class CommerceProduct extends LibertyMime {
 	function hasAttributes( $pProductsId=NULL, $not_readonly = 'true' ) {
 		$ret = FALSE;
 		if( empty( $pProductsId ) ) {
-			$pProductsId = $this->mProductsId;
-		}
-
-		if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
-			// don't include READONLY attributes to determin if attributes must be selected to add to cart
-			$query = "select pa.`products_options_values_id`
-						from	" . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
-							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
-							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON(pa.`products_options_id`=po.`products_options_id`)
-						where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+			$this->loadAttributes();
+			$ret = !empty( $this->mOptions );
 		} else {
-			// regardless of READONLY attributes no add to cart buttons
-			$query = "SELECT pa.`products_attributes_id`
-						FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-							INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
-						WHERE pom.`products_id` = ?";
+
+			if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
+				// don't include READONLY attributes to determin if attributes must be selected to add to cart
+				$query = "select pa.`products_options_values_id`
+							from	" . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
+								INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
+								LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON(pa.`products_options_id`=po.`products_options_id`)
+							where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
+			} else {
+				// regardless of READONLY attributes no add to cart buttons
+				$query = "SELECT pa.`products_attributes_id`
+							FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
+							WHERE pom.`products_id` = ?";
+			}
+
+			$ret = $this->mDb->getOne($query, array( $pProductsId) ) > 0;
 		}
 
-		$attributes = $this->mDb->getOne($query, array( $pProductsId) );
-
-		return( $attributes > 0 );
+		return( $ret );
 	}
 
 
