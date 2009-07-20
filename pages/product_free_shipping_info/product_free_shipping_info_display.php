@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_free_shipping_info_display.php,v 1.4 2006/02/11 05:06:37 spiderr Exp $
+// $Id: product_free_shipping_info_display.php,v 1.5 2009/07/20 20:16:48 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -68,7 +68,7 @@
     $one_time = '';
   }
 
-  echo $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_FREE_SHIPPING_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']);
+  echo $one_time . (($gBitProduct->hasAttributes() and SHOW_PRODUCT_FREE_SHIPPING_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . $gBitProduct->getDisplayPrice();
 ?>
     </td>
   </tr>

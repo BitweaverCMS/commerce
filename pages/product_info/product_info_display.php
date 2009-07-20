@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_info_display.php,v 1.11 2007/09/20 07:01:59 spiderr Exp $
+// $Id: product_info_display.php,v 1.12 2009/07/20 20:16:48 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -70,7 +70,7 @@ echo zen_draw_form('cart_quantity', zen_href_link(zen_get_info_page($_GET['produ
   } else {
     $one_time = '';
   }
-  echo '<h2>' . $one_time . ((zen_has_product_attributes_values((int)$_GET['products_id']) and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . CommerceProduct::getDisplayPrice((int)$_GET['products_id']) . '</h2>';
+  echo '<h2>' . $one_time . (($gBitProduct->hasAttributes() and SHOW_PRODUCT_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . $gBitProduct->getDisplayPrice() . '</h2>';
 ?>
 	</div>
 <?php
