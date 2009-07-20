@@ -77,7 +77,7 @@ echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, '', 
 {/php}
 </div>
 		</td>
-		<td valign="top"><table>
+		<td valign="top">
 			<strong>{tr}Billing Address{/tr}</strong> [<a onclick="editAddress('billing');return false;">Edit</a>]<br/>
 <div id="billingaddress">
 {php}
