@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.147 2009/07/10 17:49:19 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.148 2009/07/20 19:57:41 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -169,6 +169,7 @@ class CommerceProduct extends LibertyMime {
 		$ret = NULL;
 		if( $this->isValid() ) {
 			$ret = $this->getField( 'actual_price' );
+
 			// adjusted count for free shipping
 			if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
 				$products_weight = $this->getField('products_weight');
@@ -189,7 +190,7 @@ class CommerceProduct extends LibertyMime {
 			}
 
 			// adjust price for discounts when priced by attribute
-			if ($this->getField('products_priced_by_attribute') == '1' and zen_has_product_attributes($this->getField('products_id'), 'false')) {
+			if( $this->getField('products_priced_by_attribute') == '1' && !empty( $this->mOptions ) ) {
 				// reset for priced by attributes
 	//			$products_price = $products->fields['products_price'];
 				if ($special_price) {
@@ -205,6 +206,7 @@ class CommerceProduct extends LibertyMime {
 				}
 			}
 		}
+
 		return $ret;
 	}
 
