@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.45 2009/06/01 05:52:11 spiderr Exp $
+// $Id: shopping_cart.php,v 1.46 2009/07/22 15:07:19 spiderr Exp $
 //
 
   class shoppingCart {
@@ -494,23 +494,22 @@
     }
 
     function attributes_price( $products_id, $pTotalPrice=TRUE ) {
-      global $gBitDb;
+		global $gBitDb;
 
-      $attributes_price = 0;
+		$attributes_price = 0;
 		// check for attributes qty pricing (if pricing is negative, this can really screw pricing)
-      $qty = $this->in_cart_mixed_discount_quantity( $products_id );
+		$qty = $this->in_cart_mixed_discount_quantity( $products_id );
 
-      if (isset($this->contents[$products_id]['attributes'])) {
+		if (isset($this->contents[$products_id]['attributes'])) {
+			reset($this->contents[$products_id]['attributes']);
+			while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+				$prid = zen_get_prid( $products_id );
+				$product = $this->getProductObject( $prid );
+				$attributes_price += $product->getAttributesPriceFinal( (int)$value, $qty, $pTotalPrice );
+			}
+		}
 
-        reset($this->contents[$products_id]['attributes']);
-        while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-        	$prid = zen_get_prid( $products_id );
-			$product = $this->getProductObject( $prid );
-			$attributes_price += $product->getAttributesPriceFinal( (int)$value, $qty, $pTotalPrice );
-        }
-      }
-
-      return $attributes_price;
+		return $attributes_price;
     }
 
 
@@ -878,31 +877,28 @@
 	// check mixed discount_quantity
 	function in_cart_mixed_discount_quantity( $pProductsId ) {
 		global $gBitDb;
+		// if nothing is in cart return 0
 		$ret = 0;
 
-		// if nothing is in cart return 0
 		if( is_array( $this->contents ) ) {
 			// check if mixed is on
 			$chk_products_id= zen_get_prid( $pProductsId );
 			if( $hasMixedQuantity = $gBitDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid( $chk_products_id ) ) ) ) {
-
 				// compute total quantity regardless of attributes
-				$in_cart_mixed_qty_discount_quantity = 0;
-
 				// reset($this->contents); // breaks cart
 				$check_contents = $this->contents;
 				foreach( array_keys( $check_contents ) as $products_key ) {
 					$test_id = zen_get_prid($products_key);
 					if ($test_id == $chk_products_id) {
-						$in_cart_mixed_qty_discount_quantity += $check_contents[$products_key]['quantity'];
+						$ret += $check_contents[$products_key]['quantity'];
 					}
 				}
+			} else {
+				$ret = $this->get_quantity( $pProductsId );
 			}
-		} else {
-			$ret = $this->get_quantity( $products_id );
 		}
 				
-		return $in_cart_mixed_qty_discount_quantity;
+		return $ret;
 	}
 
 // $check_what is the fieldname example: 'products_is_free'
