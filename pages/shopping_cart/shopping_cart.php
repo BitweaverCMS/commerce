@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.17 2009/06/01 06:23:09 spiderr Exp $
+// $Id: shopping_cart.php,v 1.18 2009/07/22 15:07:01 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -74,11 +74,6 @@ function popupWindow(url) {
 			$prid =	zen_get_prid( $products[$i]['id'] );
 			$product = $_SESSION['cart']->getProductObject( $prid );
 			if (isset($products[$i]['attributes']) && is_array($products[$i]['attributes'])) {
-				if (PRODUCTS_OPTIONS_SORT_ORDER=='0') {
-					$options_order_by= ' order by popt.`products_options_sort_order`';
-				} else {
-					$options_order_by= ' order by popt.`products_options_name`';
-				}
 				while (list($option, $value) = each($products[$i]['attributes'])) {
 					$matches = array();
 					if( preg_match( '/([0-9]*)_.*/', $option, $matches ) ) {
@@ -178,12 +173,12 @@ function popupWindow(url) {
 			if ($show_products_quantity_max == 1 or zen_get_products_qty_box_status( $prid ) == 0) {
 				if (SHOW_SHOPPING_CART_UPDATE == 1 or SHOW_SHOPPING_CART_UPDATE == 3) {
 				$info_box_contents[$cur_row][] = array('align' => 'center',
-																							 'params' => 'class="productListing-data" valign="middle"',
-																							 'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ) . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT));
+														 'params' => 'class="productListing-data" valign="middle"',
+														 'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ) . '<br />' . zen_image_submit(BUTTON_IMAGE_UPDATE_CART, BUTTON_UPDATE_CART_ALT));
 				} else {
 				$info_box_contents[$cur_row][] = array('align' => 'center',
-																							 'params' => 'class="productListing-data" valign="middle"',
-																							 'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ));
+														 'params' => 'class="productListing-data" valign="middle"',
+														 'text' => $products[$i]['quantity'] . zen_draw_hidden_field('products_id[]', $products[$i]['id']) . zen_draw_hidden_field('cart_quantity[]', 1) . '<br />' . zen_get_products_quantity_min_units_display( $prid ));
 				}
 			} else {
 				if (SHOW_SHOPPING_CART_UPDATE == 1 or SHOW_SHOPPING_CART_UPDATE == 3) {
@@ -198,11 +193,11 @@ function popupWindow(url) {
 			}
 
 			$info_box_contents[$cur_row][] = array('align' => 'right',
-																						 'params' => 'class="productListing-data" valign="middle"',
-																						 'text' => '<span class="cartproductprice">' .
-																						 $currencies->display_price($products[$i]['final_price'], zen_get_tax_rate($products[$i]['tax_class_id']), $products[$i]['quantity']) .
-																						 ($products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->display_price($products[$i]['onetime_charges'], zen_get_tax_rate($products[$i]['tax_class_id']), 1) : '') .
-																						 '</span>');
+													 'params' => 'class="productListing-data" valign="middle"',
+													 'text' => '<span class="cartproductprice">' .
+													 $currencies->display_price($products[$i]['final_price'], zen_get_tax_rate($products[$i]['tax_class_id']), $products[$i]['quantity']) .
+													 ($products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->display_price($products[$i]['onetime_charges'], zen_get_tax_rate($products[$i]['tax_class_id']), 1) : '') .
+													 '</span>');
 		}
 
 		new productListingBox($info_box_contents);
