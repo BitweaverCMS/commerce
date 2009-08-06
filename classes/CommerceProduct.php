@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.149 2009/07/20 20:20:01 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.150 2009/08/06 18:29:15 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1297,7 +1297,7 @@ class CommerceProduct extends LibertyMime {
 			if( !empty( $this->mOptions[$pOptionId]['values'][$pValueId] ) ) {
 				$ret = $this->mOptions[$pOptionId]['values'][$pValueId];
 			}
-		} else {
+		} elseif( is_array( $this->mOptions ) ) {
 			foreach( array_keys( $this->mOptions ) as $optionId ) {
 				if( !empty( $this->mOptions[$optionId]['values'][$pValueId] ) ) {
 					$ret = $this->mOptions[$optionId]['values'][$pValueId];
