@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.47 2009/08/08 13:23:05 spiderr Exp $
+// $Id: shopping_cart.php,v 1.48 2009/08/08 13:29:39 spiderr Exp $
 //
 
 class shoppingCart {
@@ -707,9 +707,9 @@ class shoppingCart {
 					reset($this->contents[$products_id]['attributes']);
 					while (list(, $value) = each($this->contents[$products_id]['attributes'])) {
 						$virtual_check_query = "SELECT COUNT(*) as `total`
-																		FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-																			INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
-																		WHERE pa.`products_options_values_id` = ?";
+												FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+													INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
+												WHERE pa.`products_options_values_id` = ?";
 
 						$virtualCount = $gBitDb->getOne( $virtual_check_query, array( (int)$value ) );
 
