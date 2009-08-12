@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.13 2009/08/12 21:11:43 spiderr Exp $
+// $Id: main_template_vars.php,v 1.14 2009/08/12 21:25:32 spiderr Exp $
 //
   $sql = "select count(*) as `total`
           from " . TABLE_PRODUCTS . " p, " .
@@ -70,11 +70,8 @@
 
     $manufacturers_name= zen_get_products_manufacturers_name((int)$_GET['products_id']);
 
-    if ($new_price = zen_get_products_special_price($product_info->fields['products_id'])) {
-
-      $specials_price = $currencies->display_price($new_price,
-                        zen_get_tax_rate($product_info->fields['products_tax_class_id']));
-
+    if ($new_price = $gBitProduct->getSpecialPrice()) {
+      $specials_price = $currencies->display_price($new_price, zen_get_tax_rate($product_info->fields['products_tax_class_id']));
     }
 
 // get attributes
