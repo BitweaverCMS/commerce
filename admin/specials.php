@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.15 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: specials.php,v 1.16 2009/08/12 19:04:42 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -348,8 +348,6 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
       } else {
         $specials_current_price = $specials->fields['products_price'];
       }
-
-      $sale_price = zen_get_products_special_price($specials->fields['products_id'], false);
 
 ?>
                 <td  class="dataTableContent" align="right"><?php echo $specials->fields['products_id']; ?>&nbsp;</td>
