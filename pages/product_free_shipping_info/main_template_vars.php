@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.13 2006/12/19 00:11:37 spiderr Exp $
+// $Id: main_template_vars.php,v 1.14 2009/08/12 21:11:43 spiderr Exp $
 //
 
   $sql = "select count(*) as `total`
@@ -234,8 +234,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
   $products_qty_box_status = $product_info->fields['products_qty_box_status'];
   $products_quantity_order_max = $product_info->fields['products_quantity_order_max'];
 
-  $products_base_price = $currencies->display_price(zen_get_products_base_price((int)$_GET['products_id']),
-                      zen_get_tax_rate($product_info->fields['products_tax_class_id']));
+  $products_base_price = $currencies->display_price( $gBitProduct->getBasePrice(), zen_get_tax_rate($product_info->fields['products_tax_class_id']));
 
   $product_is_free = $product_info->fields['product_is_free'];
 
