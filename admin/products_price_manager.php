@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.21 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.22 2009/08/12 19:16:39 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -65,10 +65,11 @@
   require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
   if ($action == 'delete_special') {
-    $delete_special = $gBitDb->Execute("delete from " . TABLE_SPECIALS . " where `products_id`='" . $productsId . "'");
+    $gBitDb->query( "delete from " . TABLE_SPECIALS . " where `products_id`=?", array( $productsId ) );
+    $gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_price_sorter`=`products_price` WHERE `products_id`=?", array ( $productsId ) );
 
     // reset products_price_sorter for searches etc.
-    zen_update_products_price_sorter($productsId);
+    zen_update_products_price_sorter( $productsId );
 
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
@@ -753,14 +754,6 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
 <?php } ?>
           </tr>
 <?php
-/*
-  $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
-  $display_price = zen_get_products_base_price($_GET['products_id']);
-  $display_specials_price = zen_get_products_special_price($_GET['products_id'], true);
-  $display_sale_price = zen_get_products_special_price($_GET['products_id'], false);
-  $display_free_price = zen_get_products_price_is_free($_GET['products_id']);
-  $display_call_price = zen_get_products_price_is_call($_GET['products_id']);
-*/
 	$lastDiscount = 0;
 	if( $gBitProduct->loadDiscounts() ) {
     foreach( $gBitProduct->mDiscounts as $discount ) {
