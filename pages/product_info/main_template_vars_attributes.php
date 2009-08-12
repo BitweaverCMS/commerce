@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.34 2008/12/16 04:18:32 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.35 2009/08/12 20:47:52 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -25,7 +25,7 @@
 // limit to 1 for larger tables
 
 $productSettings = array();
-if( $productOptions = $gBitProduct->getProductOptions( $_POST['id'], $_SESSION['cart'], $productSettings ) ) {
+if( $productOptions = $gBitProduct->getProductOptions( $_POST['id'], $gBitCustomer->mCart, $productSettings ) ) {
 	// manage filename uploads
 	$_GET['number_of_uploads'] = $productSettings['number_of_uploads'];
 	zen_draw_hidden_field('number_of_uploads', $productSettings['number_of_uploads']);
