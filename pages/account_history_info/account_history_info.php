@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.7 2007/12/30 18:41:47 spiderr Exp $
+// $Id: account_history_info.php,v 1.8 2009/08/12 21:04:06 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -100,32 +100,32 @@
         </tr>
 <?php
   }
-  foreach( array_keys( $order->products ) as $opid ) {
+  foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->products[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->products[$opid]['id'] ) .'">'. $order->products[$opid]['name'] . '</a>';
+         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['id'] ) .'">'. $order->contents[$opid]['name'] . '</a>';
 
-    if ( !empty( $order->products[$opid]['attributes'] ) ) {
-      for ($j=0, $n2=sizeof($order->products[$opid]['attributes']); $j<$n2; $j++) {
-        echo '<br /><nobr><small>&nbsp;<i> - ' . $order->products[$opid]['attributes'][$j]['option'] . ': ' . $order->products[$opid]['attributes'][$j]['value'] . '</i></small></nobr>';
+    if ( !empty( $order->contents[$opid]['attributes'] ) ) {
+      for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {
+        echo '<br /><nobr><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'] . '</i></small></nobr>';
       }
     }
 
-	$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$order->products[$opid]['type_handler'].'_info/orders_product_inc.php';
+	$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$order->contents[$opid]['type_handler'].'_info/orders_product_inc.php';
 	if( file_exists( $ordersProductFile ) ) {
-		$ordersProductHash = $order->products[$opid];
+		$ordersProductHash = $order->contents[$opid];
 		include( $ordersProductFile );
 	}
 
     echo '          </td>' . "\n";
 
     if (sizeof($order->info['tax_groups']) > 1) {
-      echo '        <td class="main" valign="top" align="right">' . zen_display_tax_value($order->products[$opid]['tax']) . '%</td>' . "\n";
+      echo '        <td class="main" valign="top" align="right">' . zen_display_tax_value($order->contents[$opid]['tax']) . '%</td>' . "\n";
     }
 
     echo '          <td class="main" align="right" valign="top">' .
-                      $currencies->format(zen_add_tax($order->products[$opid]['final_price'], $order->products[$opid]['tax']) * $order->products[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
-                      ($order->products[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$opid]['onetime_charges'], $order->products[$opid]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '').
+                      $currencies->format(zen_add_tax($order->contents[$opid]['final_price'], $order->contents[$opid]['tax']) * $order->contents[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
+                      ($order->contents[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '').
                     '</td>' . "\n" .
          '        </tr>' . "\n";
 

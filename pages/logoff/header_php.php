@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:29 spiderr Exp $
+// $Id: header_php.php,v 1.5 2009/08/12 21:04:07 spiderr Exp $
 //
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
@@ -34,6 +34,6 @@
 //  $_SESSION['cc_id'] = '';
 //  $_SESSION['cot_gv'] = '0.00';
 
-//  $_SESSION['cart']->reset();
+//  $gBitCustomer->mCart->reset();
  zen_session_destroy();
 ?>

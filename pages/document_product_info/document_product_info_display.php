@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: document_product_info_display.php,v 1.5 2009/07/20 20:16:48 spiderr Exp $
+// $Id: document_product_info_display.php,v 1.6 2009/08/12 21:04:07 spiderr Exp $
 //
 // Variables available on this page
 //
@@ -167,7 +167,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
       <table border="0" width="150px" cellspacing="2" cellpadding="2">
         <tr>
           <td align="center" class="cartBox">
-            <?php echo ((SHOW_DOCUMENT_PRODUCT_INFO_IN_CART_QTY == '1' and $_SESSION['cart']->in_cart($_GET['products_id'])) ? PRODUCTS_ORDER_QTY_TEXT_IN_CART . $_SESSION['cart']->get_quantity($_GET['products_id']) . '<br /><br />' : '&nbsp;'); ?>
+            <?php echo ((SHOW_DOCUMENT_PRODUCT_INFO_IN_CART_QTY == '1' and $gBitCustomer->mCart->in_cart($_GET['products_id'])) ? PRODUCTS_ORDER_QTY_TEXT_IN_CART . $gBitCustomer->mCart->get_quantity($_GET['products_id']) . '<br /><br />' : '&nbsp;'); ?>
             <?php
             if ($products_qty_box_status == '0' or $products_quantity_order_max== '1') {
               // hide the quantity box and default to 1

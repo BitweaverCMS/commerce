@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.13 2009/04/15 03:23:34 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.14 2009/08/12 21:04:07 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -25,7 +25,7 @@ global $gBitCustomer, $order;
 
 define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
 // if there is nothing in the customers cart, redirect them to the shopping cart page
-if ($_SESSION['cart']->count_contents() <= 0) {
+if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
@@ -44,7 +44,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 
 // Validate Cart for checkout
   $_SESSION['valid_to_checkout'] = true;
-  $_SESSION['cart']->get_products(true);
+  $gBitCustomer->mCart->get_products(true);
   if ($_SESSION['valid_to_checkout'] == false) {
     $messageStack->add('header', 'Please update your order ...', 'error');
     zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
@@ -52,7 +52,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 
 // Stock Check
   if ( (STOCK_CHECK == 'true') && (STOCK_ALLOW_CHECKOUT != 'true') ) {
-    $products = $_SESSION['cart']->get_products();
+    $products = $gBitCustomer->mCart->get_products();
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
       if (zen_check_stock($products[$i]['id'], $products[$i]['quantity'])) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
@@ -78,7 +78,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 
 // register a random ID in the session to check throughout the checkout procedure
 // against alterations in the shopping cart contents
-  $_SESSION['cartID'] = $_SESSION['cart']->cartID;
+  $_SESSION['cartID'] = $gBitCustomer->mCart->cartID;
 
 // if the order contains only virtual products, forward the customer to the billing page as
 // a shipping address is not needed
@@ -113,7 +113,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
     }
 
     $free_shipping = false;
-    if ( ($pass == true) && ($_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) ) {
+    if ( ($pass == true) && ($gBitCustomer->mCart->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) ) {
       $free_shipping = true;
     }
   } else {
@@ -189,7 +189,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 						$quote[0]['methods'][0]['cost'] = '0';
 					} else {
-						$quote = $shipping->quote( $_SESSION['cart']->show_weight(), $method, $module);
+						$quote = $shipping->quote( $gBitCustomer->mCart->show_weight(), $method, $module);
 					}
 					if (isset($quote['error'])) {
 						$_SESSION['shipping'] = '';
@@ -216,7 +216,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 	}
 	if( zen_count_shipping_modules() && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
-		$quotes = $shipping->quote( $_SESSION['cart']->show_weight() );
+		$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
 
 		// if no shipping method has been selected, automatically select the cheapest method.
 		// if the modules status was changed when none were available, to save on implementing

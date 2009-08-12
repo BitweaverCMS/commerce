@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.9 2006/12/19 00:11:35 spiderr Exp $
+// $Id: header_php.php,v 1.10 2009/08/12 21:04:07 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
-  if ($_SESSION['cart']->count_contents() <= 0) {
+  if ($gBitCustomer->mCart->count_contents() <= 0) {
     zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
   }
 
@@ -36,15 +36,15 @@
   }
 
 // avoid hack attempts during the checkout procedure by checking the internal cartID
-  if (isset($_SESSION['cart']->cartID) && $_SESSION['cartID']) {
-    if ($_SESSION['cart']->cartID != $_SESSION['cartID']) {
+  if (isset($gBitCustomer->mCart->cartID) && $_SESSION['cartID']) {
+    if ($gBitCustomer->mCart->cartID != $_SESSION['cartID']) {
       zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
     }
   }
 
 // Stock Check
   if ( (STOCK_CHECK == 'true') && (STOCK_ALLOW_CHECKOUT != 'true') ) {
-    $products = $_SESSION['cart']->get_products();
+    $products = $gBitCustomer->mCart->get_products();
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
       if (zen_check_stock($products[$i]['id'], $products[$i]['quantity'])) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
@@ -91,8 +91,8 @@
 
     $comments = !empty( $_SESSION['comments'] ) ? $_SESSION['comments'] : NULL;
 
-  $total_weight = $_SESSION['cart']->show_weight();
-  $total_count = $_SESSION['cart']->count_contents();
+  $total_weight = $gBitCustomer->mCart->show_weight();
+  $total_count = $gBitCustomer->mCart->count_contents();
 
 // load all enabled payment modules
   require(DIR_FS_CLASSES . 'payment.php');

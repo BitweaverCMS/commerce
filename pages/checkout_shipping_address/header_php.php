@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.8 2006/12/19 00:11:36 spiderr Exp $
+// $Id: header_php.php,v 1.9 2009/08/12 21:04:07 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
-  if ($_SESSION['cart']->count_contents() <= 0) {
+  if ($gBitCustomer->mCart->count_contents() <= 0) {
     zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
   }
 

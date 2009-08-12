@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/10/06 21:01:51 spiderr Exp $
+// $Id: header_php.php,v 1.5 2009/08/12 21:04:07 spiderr Exp $
 //
 
   require( 'checkout_process.php' );
@@ -25,7 +25,7 @@
 // load the after_process function from the payment modules
   $payment_modules->after_process();
 
-  $_SESSION['cart']->reset(true);
+  $gBitCustomer->mCart->reset(true);
 
 // unregister session variables used during checkout
   unset($_SESSION['sendto']);

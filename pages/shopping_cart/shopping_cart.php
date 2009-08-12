@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.18 2009/07/22 15:07:01 spiderr Exp $
+// $Id: shopping_cart.php,v 1.19 2009/08/12 21:04:08 spiderr Exp $
 //
 ?>
 <script language="javascript" src="includes/general.js" type="text/javascript"></script>
@@ -36,17 +36,17 @@ function popupWindow(url) {
 	<td class="smallText" colspan="3" align="center">
 	<?php
 		if (SHOW_TOTALS_IN_CART == '1') {
-			echo TEXT_TOTAL_ITEMS . $_SESSION['cart']->count_contents() . TEXT_TOTAL_WEIGHT . round( $_SESSION['cart']->show_weight(), 2 ) . TEXT_SHIPPING_WEIGHT . ' ( '. round( ($_SESSION['cart']->show_weight() * .45359), 2 ) .'kb ) '. TEXT_TOTAL_AMOUNT . $currencies->format($_SESSION['cart']->show_total()) . '<br />';
+			echo TEXT_TOTAL_ITEMS . $gBitCustomer->mCart->count_contents() . TEXT_TOTAL_WEIGHT . round( $gBitCustomer->mCart->show_weight(), 2 ) . TEXT_SHIPPING_WEIGHT . ' ( '. round( ($gBitCustomer->mCart->show_weight() * .45359), 2 ) .'kb ) '. TEXT_TOTAL_AMOUNT . $currencies->format($gBitCustomer->mCart->show_total()) . '<br />';
 		}
 		if (SHOW_TOTALS_IN_CART == '2') {
-			echo TEXT_TOTAL_ITEMS . $_SESSION['cart']->count_contents() . ($_SESSION['cart']->show_weight() > 0 ? TEXT_TOTAL_WEIGHT . $_SESSION['cart']->show_weight() . TEXT_SHIPPING_WEIGHT : '') . TEXT_TOTAL_AMOUNT . $currencies->format($_SESSION['cart']->show_total()) . '<br />';
+			echo TEXT_TOTAL_ITEMS . $gBitCustomer->mCart->count_contents() . ($gBitCustomer->mCart->show_weight() > 0 ? TEXT_TOTAL_WEIGHT . $gBitCustomer->mCart->show_weight() . TEXT_SHIPPING_WEIGHT : '') . TEXT_TOTAL_AMOUNT . $currencies->format($gBitCustomer->mCart->show_total()) . '<br />';
 		}
 	?>
 	</td>
 </tr>
 
 <?php
-	if ($_SESSION['cart']->count_contents() > 0) {
+	if ($gBitCustomer->mCart->count_contents() > 0) {
 ?>
 	<tr>
 		<td colspan="3" class="main">
@@ -68,11 +68,11 @@ function popupWindow(url) {
 										'text' => TABLE_HEADING_TOTAL);
 
 		$any_out_of_stock = 0;
-		$products = $_SESSION['cart']->get_products();
+		$products = $gBitCustomer->mCart->get_products();
 		for ($i=0, $n=sizeof($products); $i<$n; $i++) {
 			// Push all attributes information in an array
 			$prid =	zen_get_prid( $products[$i]['id'] );
-			$product = $_SESSION['cart']->getProductObject( $prid );
+			$product = $gBitCustomer->mCart->getProductObject( $prid );
 			if (isset($products[$i]['attributes']) && is_array($products[$i]['attributes'])) {
 				while (list($option, $value) = each($products[$i]['attributes'])) {
 					$matches = array();
@@ -208,7 +208,7 @@ function popupWindow(url) {
 		<td class="main" colspan="3"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
 	</tr>
 	<tr>
-		<td align="right" class="main" colspan="3"><?php echo SUB_TITLE_SUB_TOTAL; ?> <?php echo $currencies->format($_SESSION['cart']->show_total()); ?></td>
+		<td align="right" class="main" colspan="3"><?php echo SUB_TITLE_SUB_TOTAL; ?> <?php echo $currencies->format($gBitCustomer->mCart->show_total()); ?></td>
 	</tr>
 <?php
 		if ($any_out_of_stock == 1) {

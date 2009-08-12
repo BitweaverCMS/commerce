@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.4 2005/11/30 07:46:31 spiderr Exp $
+// $Id: header_php.php,v 1.5 2009/08/12 21:04:08 spiderr Exp $
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
@@ -25,7 +25,7 @@
 // Validate Cart for checkout
   $_SESSION['valid_to_checkout'] = true;
   $_SESSION['cart_errors'] = '';
-  $_SESSION['cart']->get_products(true);
+  $gBitCustomer->mCart->get_products(true);
 
   if (!$_SESSION['valid_to_checkout']) {
     $messageStack->add('header', ERROR_CART_UPDATE . $_SESSION['cart_errors'] , 'caution');
