@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommissionBase.php,v 1.1 2009/08/17 00:02:33 spiderr Exp $
+//  $Id: CommerceCommissionBase.php,v 1.2 2009/08/17 02:34:47 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -99,6 +99,7 @@ class CommerceCommissionBase extends BitBase {
 					$pCommissions[$userId]['last_period_end_date'] = date( 'Y-m-d', $pCommissions[$userId]['last_period_end_epoch'] );
 				}
 				$pCommissions[$userId]['period_end_date'] = $periodEndDate;
+				$pCommissions[$userId]['commission_type'] = $this->mCommissionType;
 
 				switch( $pCommissions[$userId]['payment_method'] ) {
 					case 'paypal':
