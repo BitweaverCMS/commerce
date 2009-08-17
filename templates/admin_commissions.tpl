@@ -12,7 +12,7 @@
 	</div>
 	<div class="body">
 
-		{include file="bitpackage:bitcommerce/admin_commissions_table_inc.tpl"}
+		{include file="bitpackage:bitcommerce/admin_commissions_list_inc.tpl"}
 
 	</div><!-- end .body -->
 </div><!-- end .bitcommerce -->
