@@ -17,7 +17,7 @@ if( !empty( $_REQUEST['save_commission_settings'] ) ) {
 	}
 }
 
-$gBitSmarty->assign_by_ref( 'commissionList', $commissionManager->getProductCommissionHistory( array( 'user_id' => $gBitCustomer->mCustomerId ) ) );
+$gBitSmarty->assign_by_ref( 'commissionList', $commissionManager->getHistory( array( 'user_id' => $gBitCustomer->mCustomerId ) ) );
 if( $addresses = $gBitCustomer->getAddresses( $gBitCustomer->mCustomerId ) ) {
 	foreach( $addresses AS $addrId=>$addr ) {
 		$addressList[$addr['address_book_id']] = zen_address_format( zen_get_address_format_id( $addr['country_id'] ), $addr, 0, ' ', ' ' );
