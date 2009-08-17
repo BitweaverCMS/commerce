@@ -30,6 +30,18 @@ function saveNewOption( pForm ) {
 	window.location.reload();
 }
 
+function getShippingQuotes( pOrderId ) {
+	jQuery.ajax({
+		data: 'action=quote&oID='+pOrderId,
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/shipping_change.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#shippingquote').html(r);
+		}
+	})
+
+}
+
 /* ]]> */</script>
 {/literal}
 
@@ -57,7 +69,7 @@ function saveNewOption( pForm ) {
             <th colspan="2" align="right">{tr}Price{/tr} ( {tr}Inc. Tax{/tr} )</th>
             <th colspan="2" align="right">{tr}Total{/tr} ( {tr}Inc. Tax{/tr} )</th>
           </tr>
-{foreach from=$order->products item=ordersProduct}
+{foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
 <td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>{if $ordersProduct.products_version > 1}, v{$ordersProduct.products_version}{/if}</td>
@@ -124,11 +136,23 @@ function saveNewOption( pForm ) {
             <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
 {section loop=$order->totals name=t}
 <tr>
-	<td align="right" class="{$order->totals[t].class|str_replace:'_':'-'}-Text">{$order->totals[t].title}</td>
-	<td align="right" class="{$order->totals[t].class|str_replace:'_':'-'}-Amount">{$order->totals[t].text}
+	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Text">
+		{if $order->totals[t].class=='ot_shipping'}
+			<a onclick="getShippingQuotes({$smarty.request.oID});return false;">Change</a>
+		{/if}
+		{$order->totals[t].title}
+	</td>
+	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Amount">{$order->totals[t].text}
 		{if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	</td>
 </tr>
+{if $order->totals[t].class=='ot_shipping'}
+<tr>
+	<td colspan="2">
+		<span id="shippingquote"></span>
+	</td>
+</td>
+{/if}
 {/section}
 
             </table></td>

@@ -56,7 +56,7 @@
 	{formlabel label="Products"}
 	{forminput}
 <table class="data" style="border:0">
-{foreach from=$gBitOrder->products key=opid item=ordersProduct}
+{foreach from=$gBitOrder->contents key=opid item=ordersProduct}
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
 	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($ordersProduct.products_id,'icon')}" />
