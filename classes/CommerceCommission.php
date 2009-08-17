@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.10 2009/08/17 00:03:53 spiderr Exp $
+//  $Id: CommerceCommission.php,v 1.11 2009/08/17 01:54:11 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommissionBase.php' );
@@ -88,7 +88,7 @@ class CommerceProductCommission extends CommerceCommissionBase {
 		$bindVars = array();
 
 		if( !empty( $pListHash['commissions_due'] ) ) {
-			$whereSql .= " AND (co.`date_purchased` > (SELECT COALESCE( MAX(ccp.`period_end_date`), '1970-01-01 00:00:00-0' ) FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE ccp.payee_user_id=lc.`user_id`) )";
+			$whereSql .= " AND (co.`date_purchased` > (SELECT COALESCE( MAX(ccp.`period_end_date`), '1970-01-01 00:00:00-0' ) FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE ccp.payee_user_id=lc.`user_id` AND ccp.commission_type='".$this->mCommissionType."') )";
 			$throughDate = $this->mDb->sqlIntToTimestamp( $pListHash['commissions_due'] );
 		} else {
 			$throughDate = $this->mDb->NOW();
