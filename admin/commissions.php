@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: commissions.php,v 1.7 2009/07/07 02:25:44 spiderr Exp $
+//  $Id: commissions.php,v 1.8 2009/08/17 02:17:16 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -20,7 +20,7 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 	$gBitUser->verifyTicket();
 }
 
-$commissionManager = new CommerceCommission();
+$commissionManager = new CommerceProductCommission();
 
 $_REQUEST['commission_type'] = COMMISSION_TYPE_PRODUCT_SALE;
 
