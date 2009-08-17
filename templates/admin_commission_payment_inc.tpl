@@ -18,7 +18,7 @@
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_new">
 					<input type="hidden" name="cmd" value="_xclick" />
 					<input type="hidden" name="business" value="{$commission.commissions_paypal_address}" />
-					<input type="hidden" name="item_name" value="Payments Through {$commission.period_end_date} ( {$commission.user_id} )" />
+					<input type="hidden" name="item_name" value="{$commission.commission_type|ucwords} Payments Through {$commission.period_end_date} ( {$commission.user_id} )" />
 					<input type="hidden" name="item_number" value="{$commission.user_id}" />
 					<input type="hidden" name="amount" value="{$commission.commission_sum}" />
 					<input type="hidden" name="no_shipping" value="1" />
