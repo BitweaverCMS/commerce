@@ -17,27 +17,16 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.55 2009/02/14 03:58:26 spiderr Exp $
+//  $Id: orders.php,v 1.56 2009/08/18 20:30:32 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 	require('includes/application_top.php');
-	require_once( DIR_FS_CLASSES.'order.php');
 
 	$gBitThemes->loadAjax( 'jquery', array( 'ui/ui.core.js', 'ui/ui.draggable.js', 'ui/ui.droppable.js', 'ui/ui.accordion.js', 'ui/ui.sortable.js', 'ui/ui.dialog.js', 'ui/effects.core.js', 'ui/effects.slide.js', UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/fancybox/jquery.fancybox.js' ) );
 
 	$currencies = new currencies();
-
-	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
-		$oID = zen_db_prepare_input($_REQUEST['oID']);
-		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
-		    $order = new order($oID);
-			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
-		} else {
-			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
-		}
-	}
 
 	if( $gBitThemes->isAjaxRequest() ) {
 		require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
