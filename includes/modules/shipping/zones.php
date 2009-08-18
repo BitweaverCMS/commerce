@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: zones.php,v 1.6 2009/03/20 04:40:21 spiderr Exp $
+// $Id: zones.php,v 1.7 2009/08/18 20:33:15 spiderr Exp $
 //
 /*
 
@@ -173,7 +173,7 @@
 	    }
 	  } else {
 // shipping adjustment
-            if (($_SESSION['cart']->show_total() - $_SESSION['cart']->free_shipping_prices()) <= $zones_table[$i]) {
+            if (($gBitCustomer->mCart->show_total() - $gBitCustomer->mCart->free_shipping_prices()) <= $zones_table[$i]) {
               $shipping = $zones_table[$i+1];
               $shipping_method = MODULE_SHIPPING_ZONES_TEXT_WAY . ' ' . $dest_country;
               break;

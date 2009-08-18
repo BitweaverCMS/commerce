@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ipn_application_top.php,v 1.6 2006/12/19 00:11:34 spiderr Exp $
+// $Id: ipn_application_top.php,v 1.7 2009/08/18 20:33:15 spiderr Exp $
 //
 
 // start the timer for the page parse time log
@@ -175,8 +175,8 @@ if (!$_SESSION['customer_id']) {
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.2. Got past Session Start ' . $PHP_SELF);
 
 // create the shopping cart & fix the cart if necesary
-  if (!$_SESSION['cart']) {
-    $_SESSION['cart'] = new shoppingCart;
+  if (!$gBitCustomer->mCart) {
+    $gBitCustomer->mCart = new shoppingCart;
   }
 
 

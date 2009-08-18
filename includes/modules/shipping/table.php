@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: table.php,v 1.6 2009/03/20 04:40:21 spiderr Exp $
+// $Id: table.php,v 1.7 2009/08/18 20:33:15 spiderr Exp $
 //
 
   class table {
@@ -64,7 +64,7 @@
 
 // shipping adjustment
       if (MODULE_SHIPPING_TABLE_MODE == 'price') {
-        $order_total = $_SESSION['cart']->show_total() - $_SESSION['cart']->free_shipping_prices() ;
+        $order_total = $gBitCustomer->mCart->show_total() - $gBitCustomer->mCart->free_shipping_prices() ;
       } else {
         $order_total = $shippingWeight;
       }

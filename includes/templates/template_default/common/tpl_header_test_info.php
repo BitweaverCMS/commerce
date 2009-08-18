@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_header_test_info.php,v 1.4 2006/12/19 00:11:34 spiderr Exp $
+// $Id: tpl_header_test_info.php,v 1.5 2009/08/18 20:33:15 spiderr Exp $
 //
 ?>
     <table class="centershop" border="0" cellspacing="0" cellpadding="0">
@@ -36,7 +36,7 @@
             <td align="center" width="25%"><?php require(DIR_FS_MODULES . 'sideboxes/' . 'search_header.php'); ?>
             </td>
             <td class="headerNavigation" align="right" valign="top" width="33%">
-<?php if ($_SESSION['cart']->count_contents() != 0) { ?>
+<?php if ($gBitCustomer->mCart->count_contents() != 0) { ?>
               <a href="<?php echo zen_href_link(FILENAME_SHOPPING_CART, '', 'NONSSL'); ?>"><?php echo HEADER_TITLE_CART_CONTENTS; ?></a>&nbsp;|&nbsp;<a href="<?php echo zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'); ?>"><?php echo HEADER_TITLE_CHECKOUT; ?>&raquo;</a>
 <?php }?></td>
           </tr>

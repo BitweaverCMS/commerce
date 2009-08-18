@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: item.php,v 1.7 2009/03/20 04:40:20 spiderr Exp $
+// $Id: item.php,v 1.8 2009/08/18 20:33:15 spiderr Exp $
 //
 
   class item {
@@ -63,9 +63,9 @@
       global $order, $total_count;
 
       // adjusted count for free shipping
-//      $total_count = $total_count - $_SESSION['cart']->in_cart_check('product_is_free','1');
-//      $total_count = $total_count - $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1');
-      $total_count = $total_count - $_SESSION['cart']->free_shipping_items();
+//      $total_count = $total_count - $gBitCustomer->mCart->in_cart_check('product_is_free','1');
+//      $total_count = $total_count - $gBitCustomer->mCart->in_cart_check('product_is_always_free_ship','1');
+      $total_count = $total_count - $gBitCustomer->mCart->free_shipping_items();
       $this->quotes = array('id' => $this->code,
                             'module' => MODULE_SHIPPING_ITEM_TEXT_TITLE,
                             'methods' => array(array('id' => $this->code,
