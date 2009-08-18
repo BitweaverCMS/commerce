@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.12 2008/11/08 16:13:55 spiderr Exp $
+// $Id: ot_coupon.php,v 1.13 2009/08/18 20:38:54 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -109,7 +109,7 @@ $gBitDb->debug( 0 );
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
-				$products = $_SESSION['cart']->get_products();
+				$products = $gBitCustomer->mCart->get_products();
 				$foundvalid = FALSE;
 				for ($i=0; $i<sizeof($products); $i++) {
 					if (is_product_valid($products[$i]['id'], $coupon->mCouponId ) ) {
@@ -190,7 +190,7 @@ $gBitDb->debug( 0 );
 						if ($od_amount['total']>$order_total) {
 							$od_amount['total'] = $order_total;
 						}
-						$products = $_SESSION['cart']->get_products();
+						$products = $gBitCustomer->mCart->get_products();
 						for ($i=0; $i<sizeof($products); $i++) {
 							if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
@@ -203,7 +203,7 @@ $gBitDb->debug( 0 );
 										break;
 										case 'Standard':
 											$ratio = $od_amount['total']/$this->get_order_total();
-											$products = $_SESSION['cart']->get_products();
+											$products = $gBitCustomer->mCart->get_products();
 											for ($i=0; $i<sizeof($products); $i++) {
 												$t_prid = zen_get_prid($products[$i]['id']);
 												$cc_result = $gBitDb->Execute("select `products_tax_class_id`
@@ -232,7 +232,7 @@ $gBitDb->debug( 0 );
 										break;
 										case 'Standard':
 											$ratio = $od_amount['total']/$this->get_order_total();
-											$products = $_SESSION['cart']->get_products();
+											$products = $gBitCustomer->mCart->get_products();
 											for ($i=0; $i<sizeof($products); $i++) {
 												$t_prid = zen_get_prid($products[$i]['id']);
 												$cc_result = $gBitDb->Execute("select `products_tax_class_id`
@@ -262,7 +262,7 @@ $gBitDb->debug( 0 );
 
 	function get_order_total() {
 		global	$order;
-		$products = $_SESSION['cart']->get_products();
+		$products = $gBitCustomer->mCart->get_products();
 		$order_total = 0;
 		for ($i=0; $i<sizeof($products); $i++) {
 			if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
@@ -281,7 +281,7 @@ $gBitDb->debug( 0 );
 		global $gBitDb, $order;
 		$products_id = zen_get_prid($product_id);
  // products price
-		$qty = $_SESSION['cart']->contents[$product_id]['quantity'];
+		$qty = $gBitCustomer->mCart->contents[$product_id]['quantity'];
 		$product = $gBitDb->Execute("select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`
 														 from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id . "'");
 
@@ -302,9 +302,9 @@ $gBitDb->debug( 0 );
 			}
 
 // attributes price
-			if (isset($_SESSION['cart']->contents[$product_id]['attributes'])) {
-				reset($_SESSION['cart']->contents[$product_id]['attributes']);
-				while (list($option, $value) = each($_SESSION['cart']->contents[$product_id]['attributes'])) {
+			if (isset($gBitCustomer->mCart->contents[$product_id]['attributes'])) {
+				reset($gBitCustomer->mCart->contents[$product_id]['attributes']);
+				while (list($option, $value) = each($gBitCustomer->mCart->contents[$product_id]['attributes'])) {
 					$attribute_price = $gBitDb->Execute("SELECT `options_values_price`, `price_prefix`
 														 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 														 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )

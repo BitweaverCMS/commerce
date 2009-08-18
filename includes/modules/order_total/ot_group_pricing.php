@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_group_pricing.php,v 1.5 2006/12/19 00:11:33 spiderr Exp $
+// $Id: ot_group_pricing.php,v 1.6 2009/08/18 20:38:54 spiderr Exp $
 //
 
   class ot_group_pricing {
@@ -44,7 +44,7 @@
         $group_discount = $gBitDb->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where
                                         `group_id` = '" . $group_query->fields['customers_group_pricing'] . "'");
         $order_total = $this->get_order_total();
-        $gift_vouchers = $_SESSION['cart']->gv_only();
+        $gift_vouchers = $gBitCustomer->mCart->gv_only();
         $discount = ($order_total - $gift_vouchers) * $group_discount->fields['group_percentage'] / 100;
         $od_amount = zen_round($discount, 2);
         if ($this->calculate_tax != "none") {

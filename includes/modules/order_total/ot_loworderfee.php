@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_loworderfee.php,v 1.4 2006/12/19 00:11:34 spiderr Exp $
+// $Id: ot_loworderfee.php,v 1.5 2009/08/18 20:38:54 spiderr Exp $
 //
 
   class ot_loworderfee {
@@ -50,8 +50,8 @@
 //        if ( ($pass == true) && ( ($order->info['total'] - $order->info['shipping_cost']) < MODULE_ORDER_TOTAL_LOWORDERFEE_ORDER_UNDER) ) {
         if ( ($pass == true) && ( $order->info['subtotal'] < MODULE_ORDER_TOTAL_LOWORDERFEE_ORDER_UNDER) ) {
           $charge_it = 'true';
-          $cart_content_type = $_SESSION['cart']->get_content_type();
-          $gv_content_only = $_SESSION['cart']->gv_only();
+          $cart_content_type = $gBitCustomer->mCart->get_content_type();
+          $gv_content_only = $gBitCustomer->mCart->gv_only();
           if ($cart_content_type == 'physical' or $cart_content_type == 'mixed') {
             $charge_it = 'true';
           } else {
@@ -73,8 +73,8 @@
           }
 
           if ($charge_it == 'true') {
-            $tax = zen_get_tax_rate(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $order->delivery['country']['id'], $order->delivery['zone_id']);
-            $tax_description = zen_get_tax_description(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $order->delivery['country']['id'], $order->delivery['zone_id']);
+            $tax = zen_get_tax_rate(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
+            $tax_description = zen_get_tax_description(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 
 // calculate from flat fee or percentage
             if (substr(MODULE_ORDER_TOTAL_LOWORDERFEE_FEE, -1) == '%') {

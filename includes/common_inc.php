@@ -579,51 +579,14 @@
 
 ////
 // computes products_price + option groups lowest attributes price of each group when on
-	function zen_get_products_base_price($products_id) {
-		global $gBitDb, $gBitUser;
+	function zen_get_products_base_price( $pProductsId ) {
 		static $sBasePriceCache = array();
-
-		if( empty( $sBasePriceCache[$products_id] ) ) {
-			$query = "SELECT `products_price`, `products_commission`, `products_priced_by_attribute`, uu.`user_id`
-					FROM " . TABLE_PRODUCTS . " p
-						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
-						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
-					WHERE `products_id` = ?";
-			$product = $gBitDb->getRow( $query, array( (int)$products_id ) );
-
-		// is there a products_price to add to attributes
-			$products_price = $product['products_price'];
-			if( !empty( $product['products_commission'] ) && ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $gBitUser->mUserId == $product['user_id'] ) ) {
-				$products_price -= $product['products_commission'];
-			}
-
-			// do not select display only attributes and attributes_price_base_inc is true
-			$query = "SELECT `products_options_id`, `price_prefix`, `options_values_price`, `attributes_display_only`, `attributes_price_base_inc` 
-					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.products_options_values_id=pom.products_options_values_id )
-					  WHERE `products_id` = ? AND `attributes_required`='1' AND `attributes_display_only` != '1' AND `attributes_price_base_inc` ='1' 
-					  ORDER BY `products_options_id`, `price_prefix`, `options_values_price`";
-			$product_att_query = $gBitDb->query( $query, array( (int)$products_id ) );
-
-			$the_options_id= 'x';
-			$the_base_price= 0;
-		// add attributes price to price
-			if ($product['products_priced_by_attribute'] == '1' and $product_att_query->RecordCount() >= 1) {
-				while (!$product_att_query->EOF) {
-				if ( $the_options_id != $product_att_query->fields['products_options_id']) {
-					$the_options_id = $product_att_query->fields['products_options_id'];
-					$the_base_price += $product_att_query->fields['options_values_price'];
-				}
-				$product_att_query->MoveNext();
-				}
-
-				$the_base_price = $products_price + $the_base_price;
-			} else {
-				$the_base_price = $products_price;
-			}
-			$sBasePriceCache[$products_id] = $the_base_price;
+		if( empty( $sBasePriceCache[$pProductsId] ) ) {
+			$product = bc_get_commerce_product( $pProductsId );
+			$sBasePriceCache[$pProductsId] = $product->getBasePrice();
 		}
-		return $sBasePriceCache[$products_id];
+bt(); die;
+		return $sBasePriceCache[$pProductsId];
 	}
 
 
@@ -706,7 +669,7 @@
     $product_discounts = $gBitDb->query("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
 
     if ($product_discounts->fields['products_quantity_mixed']) {
-      if ($new_qty = $_SESSION['cart']->count_contents_qty($product_id)) {
+      if ($new_qty = $gBitCustomer->mCart->count_contents_qty($product_id)) {
         $qty = $new_qty;
       }
     }
@@ -741,99 +704,6 @@
 
 
 ////
-// look up discount in sale makers - attributes only can have discounts if set as percentages
-// this gets the discount amount this does not determin when to apply the discount
-  function zen_get_products_sale_discount_type($product_id = false, $categories_id = false, $return_value = false) {
-    global $currencies;
-    global $gBitDb;
-
-/*
-
-0 = flat amount off base price with a special
-1 = Percentage off base price with a special
-2 = New Price with a special
-
-5 = No Sale or Skip Products with Special
-
-special options + option * 10
-0 = Ignore special and apply to Price
-1 = Skip Products with Specials switch to 5
-2 = Apply to Special Price
-
-If a special exist * 10+9
-
-0*100 + 0*10 = flat apply to price = 0 or 9
-0*100 + 1*10 = flat skip Specials = 5 or 59
-0*100 + 2*10 = flat apply to special = 20 or 209
-
-1*100 + 0*10 = Percentage apply to price = 100 or 1009
-1*100 + 1*10 = Percentage skip Specials = 110 or 1109 / 5 or 59
-1*100 + 2*10 = Percentage apply to special = 120 or 1209
-
-2*100 + 0*10 = New Price apply to price = 200 or 2009
-2*100 + 1*10 = New Price skip Specials = 210 or 2109 / 5 or 59
-2*100 + 2*10 = New Price apply to Special = 220 or 2209
-
-*/
-
-// get products category
-    if ($categories_id == true) {
-      $check_category = $categories_id;
-    } else {
-      $check_category = zen_get_products_category_id($product_id);
-    }
-
-    $deduction_type_array = array(array('id' => '0', 'text' => tra( 'Deduct amount' )),
-                                  array('id' => '1', 'text' => tra( 'Percent' )),
-                                  array('id' => '2', 'text' => tra( 'New Price' )));
-
-    $sale_exists = 'false';
-    $sale_maker_discount = '';
-    $sale_maker_special_condition = '';
-    $salemaker_sales = $gBitDb->query("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
-    while (!$salemaker_sales->EOF) {
-      $categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
-  	  while (list($key,$value) = each($categories)) {
-	      if ($value == $check_category) {
-          $sale_exists = 'true';
-  	      $sale_maker_discount = $salemaker_sales->fields['sale_deduction_value'];
-  	      $sale_maker_special_condition = $salemaker_sales->fields['sale_specials_condition'];
-	        $sale_maker_discount_type = $salemaker_sales->fields['sale_deduction_type'];
-	        break;
-        }
-      }
-      $salemaker_sales->MoveNext();
-    }
-
-    $check_special = zen_get_products_special_price($product_id, true);
-
-    if ($sale_exists == 'true' and $sale_maker_special_condition != 0) {
-      $sale_maker_discount_type = (($sale_maker_discount_type * 100) + ($sale_maker_special_condition * 10));
-    } else {
-      $sale_maker_discount_type = 5;
-    }
-
-    if (!$check_special) {
-      // do nothing
-    } else {
-      $sale_maker_discount_type = ($sale_maker_discount_type * 10) + 9;
-    }
-
-    switch (true) {
-      case (!$return_value):
-        return $sale_maker_discount_type;
-        break;
-      case ($return_value == 'amount'):
-        return $sale_maker_discount;
-        break;
-      default:
-        return 'Unknown Request';
-        break;
-    }
-  }
-
-
-////
 // Return quantity buy now
   function zen_get_buy_now_qty($product_id) {
     global $cart;
@@ -842,20 +712,20 @@ If a special exist * 10+9
     $buy_now_qty=1;
 // works on Mixed ON
     switch (true) {
-      case ($_SESSION['cart']->in_cart_mixed($product_id) == 0 ):
+      case ($gBitCustomer->mCart->in_cart_mixed($product_id) == 0 ):
         if ($check_min >= $check_units) {
           $buy_now_qty = $check_min;
         } else {
           $buy_now_qty = $check_units;
         }
         break;
-      case ($_SESSION['cart']->in_cart_mixed($product_id) < $check_min):
-        $buy_now_qty = $check_min - $_SESSION['cart']->in_cart_mixed($product_id);
+      case ($gBitCustomer->mCart->in_cart_mixed($product_id) < $check_min):
+        $buy_now_qty = $check_min - $gBitCustomer->mCart->in_cart_mixed($product_id);
         break;
-      case ($_SESSION['cart']->in_cart_mixed($product_id) > $check_min):
+      case ($gBitCustomer->mCart->in_cart_mixed($product_id) > $check_min):
       // set to units or difference in units to balance cart
-        $new_units = $check_units - fmod($_SESSION['cart']->in_cart_mixed($product_id), $check_units);
-//echo 'Cart: ' . $_SESSION['cart']->in_cart_mixed($product_id) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($_SESSION['cart']->in_cart_mixed($product_id), $check_units) . '<br />';
+        $new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($product_id), $check_units);
+//echo 'Cart: ' . $gBitCustomer->mCart->in_cart_mixed($product_id) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($gBitCustomer->mCart->in_cart_mixed($product_id), $check_units) . '<br />';
         $buy_now_qty = ($new_units > 0 ? $new_units : $check_units);
         break;
       default:
@@ -887,88 +757,6 @@ If a special exist * 10+9
 
 
 ////
-// compute discount based on qty
-// temporarily re-add zen_get_products_discount_price_qty that was ported to CommmerceProduct::getQuantityPrice -- spiderr
-  function zen_get_products_discount_price_qty($product_id, $check_qty, $pCheckAmount=0) {
-    global $gBitDb, $cart;
-
-      $new_qty = is_a( $_SESSION['cart'], 'cart' ) ? $_SESSION['cart']->in_cart_mixed_discount_quantity($product_id) : 1;
-
-      // check for discount qty mix
-      if ($new_qty > $check_qty) {
-        $check_qty = $new_qty;
-      }
-      $product_id = (int)$product_id;
-
-      $productPricing = $gBitDb->getRow( "SELECT products_discount_type, products_discount_type_from, products_priced_by_attribute from " . TABLE_PRODUCTS . " where products_id=?", array( $product_id ) );
-
-	if( $productDiscounts = $gBitDb->getRow( "SELECT * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where products_id=? and discount_qty <=? ORDER BY discount_qty desc", array( $product_id,  $check_qty ) ) ) {
-
-		$display_price = zen_get_products_base_price($product_id);
-		$display_specials_price = zen_get_products_special_price($product_id, true);
-
-		switch( $productPricing['products_discount_type'] ) {
-			// percentage discount
-			case '1':
-				if ($productPricing['products_discount_type_from'] == '0') {
-					// priced by attributes
-					if ($pCheckAmount != 0) {
-						$discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
-						//echo 'ID#' . $product_id . ' Amount is: ' . $pCheckAmount . ' discount: ' . $discounted_price . '<br />';
-						//echo 'I SEE 2 for ' . $productPricing['products_discount_type'] . ' - ' . $productPricing['products_discount_type_from'] . ' - '. $pCheckAmount . ' new: ' . $discounted_price . ' qty: ' . $check_qty;
-					} else {
-						$discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
-					}
-				} else {
-					if (!$display_specials_price) {
-						// priced by attributes
-						if ($pCheckAmount != 0) {
-							$discounted_price = $pCheckAmount - ($pCheckAmount * ($productDiscounts['discount_price']/100));
-						} else {
-							$discounted_price = $display_price - ($display_price * ($productDiscounts['discount_price']/100));
-						}
-					} else {
-						$discounted_price = $display_specials_price - ($display_specials_price * ($productDiscounts['discount_price']/100));
-					}
-				}
-
-				break;
-			// actual price
-			case '2':
-				if ($productPricing['products_discount_type_from'] == '0') {
-					$discounted_price = $productDiscounts['discount_price'];
-				} else {
-					$discounted_price = $productDiscounts['discount_price'];
-				}
-				break;
-			// amount offprice
-			case '3':
-				if ($productPricing['products_discount_type_from'] == '0') {
-					$discounted_price = $display_price - $productDiscounts['discount_price'];
-				} else {
-					if (!$display_specials_price) {
-						$discounted_price = $display_price - $productDiscounts['discount_price'];
-					} else {
-						$discounted_price = $display_specials_price - $productDiscounts['discount_price'];
-					}
-				}
-				break;
-			// none
-			case '0':
-			default:
-				$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
-				break;
-		}
-	} else {
-		// No discount loaded, return actual price
-		$discounted_price = $pCheckAmount ? $pCheckAmount : zen_get_products_actual_price($product_id);
-	}
-
-    return $discounted_price;
-  }
-
-
-////
 // Return a product ID from a product ID with attributes
   function zen_get_prid( $uprid ) {
 	$ret = 0;
@@ -992,36 +780,6 @@ If a special exist * 10+9
 	return $ret;
   }
 
-
-////
-// Actual Price Retail
-// Specials and Tax Included
-  function zen_get_products_actual_price($products_id) {
-    global $gBitDb, $currencies;
-    $product_check = $gBitDb->query( "select `products_tax_class_id`, `products_price`, `products_commission`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS .
-			" where `products_id` = ?", array( $products_id ) );
-
-    $show_display_price = '';
-    $display_normal_price = zen_get_products_base_price($products_id);
-    $display_special_price = zen_get_products_special_price($products_id, true);
-    $display_sale_price = zen_get_products_special_price($products_id, false);
-
-    $products_actual_price = $display_normal_price;
-
-    if ($display_special_price) {
-      $products_actual_price = $display_special_price;
-    }
-    if ($display_sale_price) {
-      $products_actual_price = $display_sale_price;
-    }
-
-    // If Free, Show it
-    if ($product_check->fields['product_is_free'] == '1') {
-      $products_actual_price = 0;
-    }
-
-    return $products_actual_price;
-  }
 
 ////
 // return attributes_price_factor
@@ -1174,160 +932,50 @@ function zen_get_option_value( $pOptionId, $pValueId ) {
     return zen_round($price * $tax / 100, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places']);
   }
 
-//get specials price or sale price
-  function zen_get_products_special_price($product_id, $specials_price_only=false) {
-    global $gBitDb;
-    $product = $gBitDb->query( "select `products_price`, `products_model`, `master_categories_id`, `products_priced_by_attribute` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid( $product_id ) ) );
-      $category = $product->fields['master_categories_id'];
-
-
-    if ($product->RecordCount() > 0) {
-//  	  $product_price = $product->fields['products_price'];
-  	  $product_price = zen_get_products_base_price($product_id);
-    } else {
-  	  return false;
-    }
-
-    $specials = $gBitDb->query("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id` = '" . (int)$product_id . "' and `status` ='1'");
-    if ($specials->RecordCount() > 0) {
-//      if ($product->fields['products_priced_by_attribute'] == 1) {
-    	  $special_price = $specials->fields['specials_new_products_price'];
-    } else {
-  	  $special_price = false;
-    }
-
-    if(substr($product->fields['products_model'], 0, 4) == 'GIFT') {    //Never apply a salededuction to Ian Wilson's Giftvouchers
-      if (zen_not_null($special_price)) {
-        return $special_price;
-      } else {
-        return false;
-      }
-    }
-
-// return special price only
-    if ($specials_price_only==true) {
-      if (zen_not_null($special_price)) {
-        return $special_price;
-      } else {
-        return false;
-      }
-    } else {
-// get sale price
-
-// changed to use master_categories_id
-//      $product_to_categories = $gBitDb->query("select `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$product_id . "'");
-//      $category = $product_to_categories->fields['categories_id'];
-
-      $sale = $gBitDb->query("select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` from " . TABLE_SALEMAKER_SALES . " where `sale_categories_all` like '%," . $category . ",%' and `sale_status` = '1' and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')", array($product_price, $product_price) );
-      if ($sale->RecordCount() < 1) {
-         return $special_price;
-      }
-
-      if (!$special_price) {
-        $tmp_special_price = $product_price;
-      } else {
-        $tmp_special_price = $special_price;
-      }
-      switch ($sale->fields['sale_deduction_type']) {
-        case 0:
-          $sale_product_price = $product_price - $sale->fields['sale_deduction_value'];
-          $sale_special_price = $tmp_special_price - $sale->fields['sale_deduction_value'];
-          break;
-        case 1:
-          $sale_product_price = $product_price - (($product_price * $sale->fields['sale_deduction_value']) / 100);
-          $sale_special_price = $tmp_special_price - (($tmp_special_price * $sale->fields['sale_deduction_value']) / 100);
-          break;
-        case 2:
-          $sale_product_price = $sale->fields['sale_deduction_value'];
-          $sale_special_price = $sale->fields['sale_deduction_value'];
-          break;
-        default:
-          return $special_price;
-      }
-
-      if ($sale_product_price < 0) {
-        $sale_product_price = 0;
-      }
-
-      if ($sale_special_price < 0) {
-        $sale_special_price = 0;
-      }
-
-      if (!$special_price) {
-        return number_format($sale_product_price, 4, '.', '');
-    	} else {
-        switch($sale->fields['sale_specials_condition']){
-          case 0:
-            return number_format($sale_product_price, 4, '.', '');
-            break;
-          case 1:
-            return number_format($special_price, 4, '.', '');
-            break;
-          case 2:
-            return number_format($sale_special_price, 4, '.', '');
-            break;
-          default:
-            return number_format($special_price, 4, '.', '');
-        }
-      }
-    }
-  }
-
 ////
 // set the products_price_sorter
-  function zen_update_products_price_sorter($product_id) {
-    global $gBitDb;
-    if( !($products_price_sorter = zen_get_products_actual_price($product_id) ) ) {
-		$products_price_sorter = NULL;
+function zen_update_products_price_sorter($product_id) {
+    if( $product = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) ) ) {
+		$product->storePriceSorter();
 	}
-    $gBitDb->query("update " . TABLE_PRODUCTS . " set `products_price_sorter` = ? WHERE `products_id` = ?", array( $products_price_sorter, $product_id ) );
-  }
-
-
+}
 
 ////
 // enable shipping
   function zen_get_shipping_enabled($shipping_module) {
     global $PHP_SELF, $cart, $order;
 
+	$ret = true;
+
     // for admin always true if installed
     if (strstr($PHP_SELF, FILENAME_MODULES)) {
       return true;
     }
 
-    $check_cart_free = $_SESSION['cart']->in_cart_check('product_is_always_free_ship','1');
-    $check_cart_cnt = $_SESSION['cart']->count_contents();
-    $check_cart_weight = $_SESSION['cart']->show_weight();
+	if( !empty( $cart ) ) {
+		$checkCart = &$cart;
+//	} elseif( !empty( $order ) ) {
+//		$checkCart = &$order;
+	} elseif( !empty( $gBitCustomer->mCart ) ) {
+		$checkCart = &$gBitCustomer->mCart;
+	}
 
-    switch(true) {
-      // for admin always true if installed
-      case (strstr($PHP_SELF, FILENAME_MODULES)):
-        return true;
-        break;
-      // Free Shipping when 0 weight - enable freeshipper - ORDER_WEIGHT_ZERO_STATUS must be on
-      case (ORDER_WEIGHT_ZERO_STATUS == '1' and ($check_cart_weight == 0 and $shipping_module == 'freeshipper')):
-        return true;
-        break;
-      // Free Shipping when 0 weight - disable everyone - ORDER_WEIGHT_ZERO_STATUS must be on
-      case (ORDER_WEIGHT_ZERO_STATUS == '1' and ($check_cart_weight == 0 and $shipping_module != 'freeshipper')):
-        return false;
-        break;
-      // Always free shipping only true - enable freeshipper
-      case (($check_cart_free == $check_cart_cnt) and $shipping_module == 'freeshipper'):
-        return true;
-        break;
-      // Always free shipping only true - disable everyone
-      case (($check_cart_free == $check_cart_cnt) and $shipping_module != 'freeshipper'):
-        return false;
-        break;
-      // Always free shipping only is false - disable freeshipper
-      case (($check_cart_free != $check_cart_cnt) and $shipping_module == 'freeshipper'):
-        return false;
-        break;
-      default:
-        return true;
-        break;
-    }
+	if( is_object( $checkCart ) ) {
+		$check_cart_free = $checkCart->in_cart_check('product_is_always_free_ship','1');
+		$check_cart_cnt = $checkCart->count_contents();
+		$check_cart_weight = $checkCart->show_weight();
+
+
+		if( ORDER_WEIGHT_ZERO_STATUS == '1' and ($check_cart_weight == 0 and $shipping_module != 'freeshipper') ) {
+			$ret = false;
+		} elseif( ($check_cart_free == $check_cart_cnt) and $shipping_module != 'freeshipper' ) {
+			$ret = false;
+		} elseif( ($check_cart_free != $check_cart_cnt) and $shipping_module == 'freeshipper' ) {
+			$ret = false;
+		}
+	}
+
+	return $ret;
   }
 
 

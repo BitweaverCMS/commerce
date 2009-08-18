@@ -124,7 +124,7 @@
 	  $customerId = NULL;
 	}
 
-	global $gBitCustomer;
+	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
 
@@ -143,21 +143,11 @@
 		}
 	}
 
-// lookup information
-  require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
-// include shopping cart class
-  require_once(DIR_FS_CLASSES . 'shopping_cart.php');
+	
 
-// create the shopping cart & fix the cart if necesary
-	if( empty( $_SESSION['cart'] ) ) {
-		$_SESSION['cart'] = new shoppingCart;
-		if( $gBitUser->isRegistered() ) {
-			$_SESSION['cart']->restore_contents();
-		}
-	}
-  	if( is_object( $_SESSION['cart'] ) ) {
-		$_SESSION['cart']->total = NULL;
-	}
+	// lookup information
+	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
+
 	if( !isset( $_SESSION['cc_id'] ) ) {
 		$_SESSION['cc_id'] = NULL;
 	}

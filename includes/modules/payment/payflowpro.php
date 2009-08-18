@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.16 2009/05/22 19:57:56 tylerbello Exp $
+// $Id: payflowpro.php,v 1.17 2009/08/18 20:38:54 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //     I only made enough modifications to make it work with UNIX servers
@@ -66,7 +66,7 @@
 
       if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_PAYFLOWPRO_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYFLOWPRO_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYFLOWPRO_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;

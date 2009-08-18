@@ -77,8 +77,8 @@ class fedex {
 
 		if( is_object( $order ) ) {
 			$totals = $order->info['subtotal'];
-		} elseif( is_object( $_SESSION['cart'] ) ) {
-			$totals= $_SESSION['cart']->show_total();
+		} elseif( is_object( $gBitCustomer->mCart ) ) {
+			$totals= $gBitCustomer->mCart->show_total();
 		}
 		$this->_setInsuranceValue($totals / $shippingNumBoxes);
 

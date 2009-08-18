@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: payment.php,v 1.8 2005/12/06 14:51:40 spiderr Exp $
+// $Id: payment.php,v 1.9 2009/08/18 20:38:54 spiderr Exp $
 //
 
   class payment {
@@ -40,7 +40,7 @@
           reset($this->modules);
 
           // Free Payment Only shows
-          if (zen_get_configuration_key_value('MODULE_PAYMENT_FREECHARGER_STATUS') and ($_SESSION['cart']->show_total()==0 and $_SESSION['cart']->show_weight()==0)) {
+          if (zen_get_configuration_key_value('MODULE_PAYMENT_FREECHARGER_STATUS') and ($gBitCustomer->mCart->show_total()==0 and $gBitCustomer->mCart->show_weight()==0)) {
             $this->selected_module = $module;
             if (file_exists(DIR_FS_CATALOG . DIR_WS_MODULES . '/payment/' . 'freecharger.php')) {
               $include_modules[] = array('class'=> 'freecharger', 'file' => 'freecharger.php');

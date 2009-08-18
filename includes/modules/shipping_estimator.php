@@ -21,10 +21,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.9 2008/07/06 13:10:03 lsces Exp $
+// $Id: shipping_estimator.php,v 1.10 2009/08/18 20:38:54 spiderr Exp $
 //
 
-global $gBitDb, $order, $currencies, $total_weight, $total_count;
+global $gBitDb, $order, $currencies;
 
 ?>
 <!-- shipping_estimator //-->
@@ -40,7 +40,7 @@ global $gBitDb, $order, $currencies, $total_weight, $total_count;
               <table align="center" valign="top" width = "100%"><tr><td>
 <?php
 // Only do when something is in the cart
-if ($_SESSION['cart']->count_contents() > 0) {
+if ($gBitCustomer->mCart->count_contents() > 0) {
 
 // Could be placed in english.php
 // shopping cart quotes
@@ -76,7 +76,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
         $_SESSION['country_info'] = zen_get_countries($_POST['country_id'],true);
         $country_info = $_SESSION['country_info'];
         $order->delivery = array('postcode' => $_POST['zip_code'],
-                                 'country' => array('id' => $_POST['country_id'], 'title' => $country_info['countries_name'], 'iso_code_2' => $country_info['countries_iso_code_2'], 'iso_code_3' =>  $country_info['countries_iso_code_3']),
+                                 'country' => array('id' => $_POST['country_id'], 'title' => $country_info['countries_name'], 'countries_iso_code_2' => $country_info['countries_iso_code_2'], 'countries_iso_code_3' =>  $country_info['countries_iso_code_3']),
                                  'country_id' => $_POST['country_id'],
 //add state zone_id
                                  'zone_id' => $_POST['state'],
@@ -92,7 +92,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
 
 // fix here - check for error on $cart_country_id
         $order->delivery = array('postcode' => $_SESSION['cart_zip_code'],
-                                 'country' => array('id' => $_SESSION['cart_country_id'], 'title' => $country_info['countries_name'], 'iso_code_2' => $country_info['countries_iso_code_2'], 'iso_code_3' =>  $country_info['countries_iso_code_3']),
+                                 'country' => array('id' => $_SESSION['cart_country_id'], 'title' => $country_info['countries_name'], 'countries_iso_code_2' => $country_info['countries_iso_code_2'], 'countries_iso_code_3' =>  $country_info['countries_iso_code_3']),
                                  'country_id' => $_SESSION['cart_country_id'],
                                  'format_id' => zen_get_address_format_id($_SESSION['cart_country_id']));
       } else {
@@ -101,25 +101,24 @@ if ($_SESSION['cart']->count_contents() > 0) {
         $_SESSION['country_info'] = zen_get_countries(STORE_COUNTRY,true);
         $country_info = $_SESSION['country_info'];
         $order->delivery = array(//'postcode' => '',
-                                 'country' => array('id' => STORE_COUNTRY, 'title' => $country_info['countries_name'], 'iso_code_2' => $country_info['countries_iso_code_2'], 'iso_code_3' =>  $country_info['countries_iso_code_3']),
+                                 'country' => array('id' => STORE_COUNTRY, 'title' => $country_info['countries_name'], 'countries_iso_code_2' => $country_info['countries_iso_code_2'], 'countries_iso_code_3' =>  $country_info['countries_iso_code_3']),
                                  'country_id' => STORE_COUNTRY,
                                  'format_id' => zen_get_address_format_id($_POST['country_id']));
       }
       // set the cost to be able to calculate free shipping
-      $order->info = array('total' => $_SESSION['cart']->show_total(), // TAX ????
+      $order->info = array('total' => $gBitCustomer->mCart->show_total(), // TAX ????
                            'currency' => $currency,
                            'currency_value'=> $currencies->currencies[$currency]['value']);
     }
 // weight and count needed for shipping !
-    $total_weight = $_SESSION['cart']->show_weight();
-    $total_count = $_SESSION['cart']->count_contents();
-    require(DIR_FS_CLASSES . 'shipping.php');
-    $shipping_modules = new shipping;
-    $quotes = $shipping_modules->quote();
-    $order->info['subtotal'] = $_SESSION['cart']->show_total();
+
+    require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+    $shipping = new CommerceShipping();
+    $quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
+    $order->info['subtotal'] = $gBitCustomer->mCart->show_total();
 
 // set selections for displaying
-    $selected_country = $order->delivery['country']['id'];
+    $selected_country = $order->delivery['country']['countries_id'];
     $selected_address = $sendto;
   //}
 // eo shipping cost
@@ -137,7 +136,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
         $pass = false; break;
     }
     $free_shipping = false;
-    if ( ($pass == true) && ($_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) {
+    if ( ($pass == true) && ($gBitCustomer->mCart->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) {
       $free_shipping = true;
       include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/ot_shipping.php');
     }
@@ -145,7 +144,7 @@ if ($_SESSION['cart']->count_contents() > 0) {
     $free_shipping = false;
   }
   // begin shipping cost
-  if(!$free_shipping && $_SESSION['cart']->get_content_type() !== 'virtual'){
+  if(!$free_shipping && $gBitCustomer->mCart->get_content_type() !== 'virtual'){
     if (zen_not_null($_POST['sid'])){
       list($module, $method) = explode('_', $_POST['sid']);
       $_SESSION['cart_sid'] = $_POST['sid'];
@@ -156,9 +155,9 @@ if ($_SESSION['cart']->count_contents() > 0) {
       $method="";
     }
     if (zen_not_null($module)){
-      $selected_quote = $shipping_modules->quote($method, $module);
+      $selected_quote = $shipping->quote( $gBitCustomer->mCart->show_weight(), $method, $module);
       if($selected_quote[0]['error'] || !zen_not_null($selected_quote[0]['methods'][0]['cost'])){
-        $selected_shipping = $shipping_modules->cheapest();
+        $selected_shipping = $shipping->cheapest();
         $order->info['shipping_method'] = $selected_shipping['title'];
         $order->info['shipping_cost'] = $selected_shipping['cost'];
         $order->info['total']+= $selected_shipping['cost'];
@@ -171,14 +170,14 @@ if ($_SESSION['cart']->count_contents() > 0) {
         $selected_shipping['id'] = $selected_quote[0]['id'].'_'.$selected_quote[0]['methods'][0]['id'];
       }
     }else{
-      $selected_shipping = $shipping_modules->cheapest();
+      $selected_shipping = $shipping->cheapest();
       $order->info['shipping_method'] = $selected_shipping['title'];
       $order->info['shipping_cost'] = $selected_shipping['cost'];
       $order->info['total']+= $selected_shipping['cost'];
     }
   }
 // virtual products need a free shipping
-  if($_SESSION['cart']->get_content_type() == 'virtual') {
+  if($gBitCustomer->mCart->get_content_type() == 'virtual') {
     $order->info['shipping_method'] = CART_SHIPPING_METHOD_FREE_TEXT . ' ' . CART_SHIPPING_METHOD_ALL_DOWNLOADS;
     $order->info['shipping_cost'] = 0;
   }
@@ -208,7 +207,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
   if(sizeof($quotes)) {
     if ($_SESSION['customer_id']) {
       // logged in
-      $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $total_count . '</td></tr>';
+      $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $gBitCustomer->mCart->count_contents() . '</td></tr>';
       $addresses = $gBitDb->Execute("select `address_book_id`, `entry_city` as `city`, `entry_postcode` as `postcode`, `entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_country_id` as `country_id` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       // only display addresses if more than 1
       if ($addresses->RecordCount() > 1){
@@ -223,8 +222,8 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
     } else {
 // not logged in
 //      $ShipTxt.=zen_output_warning(CART_SHIPPING_OPTIONS_LOGIN);
-      $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $total_count . /*'&nbsp;-&nbsp;Weight: ' . $total_weight .*/ '</td></tr>' . "\n\n";
-      if($_SESSION['cart']->get_content_type() != 'virtual'){
+      $ShipTxt.='<tr><td colspan="3" class="main">' . CART_ITEMS . $gBitCustomer->mCart->count_contents() . '</td></tr>' . "\n\n";
+      if($gBitCustomer->mCart->get_content_type() != 'virtual'){
         $ShipTxt.='<tr><td class="main">' .
                   ENTRY_COUNTRY .'</td><td colspan="2" class="main">'. zen_get_country_list('country_id', $selected_country,'style="width=200"') . '</td></tr>' . "\n\n";
 //add state zone_id
@@ -246,7 +245,7 @@ echo '<strong>' . CART_SHIPPING_OPTIONS . '</strong>';
 	$ShipTxt.='<tr><td colspan="3">' . zen_draw_separator('pixel_trans.gif') . '</tr></td>';
       }
     }
-    if($_SESSION['cart']->get_content_type() == 'virtual'){
+    if($gBitCustomer->mCart->get_content_type() == 'virtual'){
       // virtual product/download
       //$ShipTxt.='<tr><td colspan="3" class="main">'.zen_draw_separator().'</td></tr>';
       $ShipTxt.='<tr><td class="main">' . CART_SHIPPING_METHOD_FREE_TEXT . ' ' . CART_SHIPPING_METHOD_ALL_DOWNLOADS . '</td></tr>';

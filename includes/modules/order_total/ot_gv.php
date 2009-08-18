@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.15 2008/01/01 21:53:38 spiderr Exp $
+// $Id: ot_gv.php,v 1.16 2009/08/18 20:38:54 spiderr Exp $
 //
 
   class ot_gv {
@@ -63,7 +63,7 @@
         if ($od_amount > 0) {
           $this->output[] = array('title' => $this->title . ':',
                            'text' => '-' . $currencies->format($this->deduction),
-                           'value' => $this->deduction);
+                           'value' => -1 * $this->deduction);
         }
       }
     }
@@ -114,10 +114,10 @@
 
 	function update_credit_account($pOpid) {
 		global $gBitDb, $order, $insert_id;
-		if (ereg('^GIFT', addslashes($order->products[$pOpid]['model']))) {
-			$gv_order_amount = ($order->products[$pOpid]['final_price'] * $order->products[$pOpid]['quantity']);
+		if (ereg('^GIFT', addslashes($order->contents[$pOpid]['model']))) {
+			$gv_order_amount = ($order->contents[$pOpid]['final_price'] * $order->contents[$pOpid]['quantity']);
 			if ($this->credit_tax=='true') {
-				$gv_order_amount = $gv_order_amount * (100 + $order->products[$pOpid]['tax']) / 100;
+				$gv_order_amount = $gv_order_amount * (100 + $order->contents[$pOpid]['tax']) / 100;
 			}
 			$gv_order_amount = $gv_order_amount * 100 / 100;
 			if (MODULE_ORDER_TOTAL_GV_QUEUE == 'false') {
@@ -137,9 +137,9 @@
 					$gBitDb->Execute("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values ('" . $_SESSION['customer_id'] . "', '" . $total_gv_amount . "')");
 				}
 			} else {
-				for( $j = 0; $j < $order->products[$pOpid]['quantity']; $j++ ) {
+				for( $j = 0; $j < $order->contents[$pOpid]['quantity']; $j++ ) {
 					// GV_QUEUE is true - so queue the gv for release by store owner
-					$gBitDb->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->products[$pOpid]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
+					$gBitDb->query("insert into " . TABLE_COUPON_GV_QUEUE . " (`customer_id`, `order_id`, `amount`, `date_created`, `ipaddr`) values ( ?, ?, ?, NOW(), ? )", array( $_SESSION['customer_id'], $insert_id, $order->contents[$pOpid]['final_price'], $_SERVER['REMOTE_ADDR'] ) );
 				}
 			}
 		}

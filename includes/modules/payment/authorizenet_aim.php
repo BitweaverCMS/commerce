@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.12 2007/12/30 18:41:47 spiderr Exp $
+// $Id: authorizenet_aim.php,v 1.13 2009/08/18 20:38:54 spiderr Exp $
 
 
   class authorizenet_aim {
@@ -58,7 +58,7 @@
 
       if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -238,8 +238,8 @@
 
 	  // Create a string that contains a listing of products ordered for the description field
 	  $description = '';
-	  foreach( array_keys( $order->products ) as $opid ) {
-	    $description .= $order->products[$opid]['name'] . '(qty: ' . $order->products[$opid]['quantity'] . ') + ';
+	  foreach( array_keys( $order->contents ) as $opid ) {
+	    $description .= $order->contents[$opid]['name'] . '(qty: ' . $order->contents[$opid]['quantity'] . ') + ';
 	  }
 	  // Remove the last "\n" from the string
 	  $description = substr($description, 0, -2);

@@ -19,7 +19,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_cod_fee.php,v 1.4 2006/12/19 00:11:33 spiderr Exp $
+// $Id: ot_cod_fee.php,v 1.5 2009/08/18 20:38:54 spiderr Exp $
 //
 
   class ot_cod_fee {
@@ -61,7 +61,7 @@
 	  if (substr_count($_SESSION['shipping']['id'], 'servicepakke') !=0) $cod_zones = split("[:,]", MODULE_ORDER_TOTAL_COD_FEE_SERVICEPAKKE);
 
             for ($i = 0; $i < count($cod_zones); $i++) {
-              if ($cod_zones[$i] == $order->delivery['country']['iso_code_2']) {
+              if ($cod_zones[$i] == $order->delivery['country']['countries_iso_code_2']) {
                   $cod_cost = $cod_zones[$i + 1];
                   $cod_country = true;
                   //print('match' . $i . ': ' . $cod_cost);
