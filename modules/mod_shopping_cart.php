@@ -17,26 +17,26 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.16 2007/05/01 13:28:45 spiderr Exp $
+// $Id: mod_shopping_cart.php,v 1.17 2009/08/18 20:45:50 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
+if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):
       $show_shopping_cart_box = true;
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '1'):
-      if( $_SESSION['cart']->count_contents() > 0 || ($gBitUser->isRegistered() && !empty( $gBitCustomer ) &&  ($gBitCustomer->getGiftBalance() > 0) ) ) {
+      if( $gBitCustomer->mCart->count_contents() > 0 || ($gBitUser->isRegistered() && !empty( $gBitCustomer ) &&  ($gBitCustomer->getGiftBalance() > 0) ) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;
       }
       break;
     case (SHOW_SHOPPING_CART_BOX_STATUS == '2'):
-      if ( ( ($_SESSION['cart']->count_contents() > 0) || ($gBitCustomer->getGiftBalance() > 0) ) && ($_GET['main_page'] != FILENAME_SHOPPING_CART) ) {
+      if ( ( ($gBitCustomer->mCart->count_contents() > 0) || ($gBitCustomer->getGiftBalance() > 0) ) && ($_GET['main_page'] != FILENAME_SHOPPING_CART) ) {
         $show_shopping_cart_box = true;
       } else {
         $show_shopping_cart_box = false;
@@ -46,13 +46,13 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
 
 
   if ($show_shopping_cart_box == true) {
-  if ($_SESSION['cart']->count_contents() > 0) {
+  if ($gBitCustomer->mCart->count_contents() > 0) {
 
   $id = 'shoppingcart';
   $content ="";
-  if ($_SESSION['cart']->count_contents() > 0) {
+  if ($gBitCustomer->mCart->count_contents() > 0) {
     $content = '<table border="0" width="100%" cellspacing="0" cellpadding="0">';
-    $products = $_SESSION['cart']->get_products();
+    $products = $gBitCustomer->mCart->get_products();
     for ($i=0, $n=sizeof($products); $i<$n; $i++) {
       $content .= '<tr><td align="right" valign="top" class="infoboxcontents">';
 
@@ -93,9 +93,9 @@ if( !empty( $_SESSION['cart'] ) && is_object( $_SESSION['cart'] ) ) {
     $content = BOX_SHOPPING_CART_EMPTY;
   }
 
-  if ($_SESSION['cart']->count_contents() > 0) {
+  if ($gBitCustomer->mCart->count_contents() > 0) {
     $content .= zen_draw_separator();
-    $content .= $currencies->format($_SESSION['cart']->show_total());
+    $content .= $currencies->format($gBitCustomer->mCart->show_total());
   }
   } else {
       $content = '';

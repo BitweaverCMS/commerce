@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: ipn_main_handler.php,v 1.4 2006/12/19 00:11:27 spiderr Exp $
+//  $Id: ipn_main_handler.php,v 1.5 2009/08/18 20:46:24 spiderr Exp $
 //
 DEFINE('MODULE_PAYMENT_PAYPAL_DOMAIN', 'www.paypal.com');
 DEFINE('MODULE_PAYMENT_PAYPAL_HANDLER', '/cgi-bin/webscr');
@@ -156,7 +156,7 @@ if(eregi("VERIFIED",$info) && $_POST['txn_type'] == 'web_accept' && $_POST['busi
     $order->create_add_products($new_order_id, 2);
     if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '12. Finalised Order');
     $order->send_order_email($new_order_id, 2);
-    $_SESSION['cart']->reset(true);
+    $gBitCustomer->mCart->reset(true);
   }
   if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '13. Sent Email');
 
