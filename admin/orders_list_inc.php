@@ -223,18 +223,18 @@
 
       $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
       $order = new order($oInfo->orders_id);
-      $contents[] = array('text' => 'Products Ordered: ' . sizeof($order->products) );
-      foreach( array_keys( $order->products) as $opid ) {
-        $contents[] = array('text' => $order->products[$opid]['quantity'] . '&nbsp;x&nbsp;' . $order->products[$opid]['name']);
+      $contents[] = array('text' => 'Products Ordered: ' . sizeof($order->contents) );
+      foreach( array_keys( $order->contents) as $opid ) {
+        $contents[] = array('text' => $order->contents[$opid]['quantity'] . '&nbsp;x&nbsp;' . $order->contents[$opid]['name']);
 
-        if (sizeof($order->products[$opid]['attributes']) > 0) {
-          for ($j=0; $j<sizeof($order->products[$opid]['attributes']); $j++) {
-            $contents[] = array('text' => '&nbsp;<i> - ' . $order->products[$opid]['attributes'][$j]['option'] . ': ' . $order->products[$opid]['attributes'][$j]['orders_value'] . '</i></nobr>' );
+        if (sizeof($order->contents[$opid]['attributes']) > 0) {
+          for ($j=0; $j<sizeof($order->contents[$opid]['attributes']); $j++) {
+            $contents[] = array('text' => '&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['orders_value'] . '</i></nobr>' );
           }
         }
       }
 
-      if (sizeof($order->products) > 0) {
+      if (sizeof($order->contents) > 0) {
         $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>');
       }
       break;
