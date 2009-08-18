@@ -524,22 +524,23 @@ BITCOMMERCE_INSTALL_PREFIX.'com_currencies' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
   customers_basket_id I4 PRIMARY AUTO,
   customers_id I4,
+  cookie C(64),
   products_id C(128) NOTNULL,
   customers_basket_quantity F DEFAULT '0' NOTNULL,
   final_price N(15,4),
-  customers_basket_date_added C(8)
+  date_added T
   CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
-  customers_id I4,
-  products_id C(128),
+  customers_basket_id I4 NOTNULL,
   products_options_id C(64),
   products_options_value_id I4,
   products_options_value_text C(64),
   products_options_sort_order X2 NOTNULL
-  CONSTRAINT ', CONSTRAINT `cust_bask_att_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `cust_bask_att_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` ),
+  CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_info' => "
@@ -1193,8 +1194,8 @@ $indices = array (
   'cp_active_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_coupons', 'cols' => ' coupon_active', 'opts' => NULL),
   'cp_type_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_coupons', 'cols' => 'coupon_type', 'opts' => NULL),
   'custb_customers_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket', 'cols' => 'customers_id', 'opts' => NULL),
-  'custba_cust_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att', 'cols' => 'customers_id', 'opts' => NULL ),
-  'custba_prod_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att', 'cols' => 'products_id', 'opts' => NULL ),
+  'custb_cookie_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket', 'cols' => 'cookie', 'opts' => NULL),
+  'custba_basket_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att', 'cols' => 'customers_basket_id', 'opts' => NULL ),
   'email_arc_to_address_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_email_archive', 'cols' => 'email_to_address', 'opts' => NULL),
   'email_arc_module_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_email_archive', 'cols' => 'module', 'opts' => NULL),
   'feat_status_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_featured', 'cols' => 'status', 'opts' => NULL),
