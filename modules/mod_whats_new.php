@@ -1,23 +1,23 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
+// |zen-cart Open Source E-commerce										  |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
+// | Copyright (c) 2003 The zen-cart developers							  |
+// |																	  |
+// | http://www.zen-cart.com/index.php									  |
+// |																	  |
+// | Portions Copyright (c) 2003 osCommerce								  |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | This source file is subject to version 2.0 of the GPL license,		  |
+// | that is bundled with this package in the file LICENSE, and is		  |
+// | available through the world-wide-web at the following url:			  |
+// | http://www.zen-cart.com/license/2_0.txt.							  |
 // | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
+// | to obtain it through the world-wide-web, please send a note to		  |
+// | license@zen-cart.com so we can mail you a copy immediately.		  |
 // +----------------------------------------------------------------------+
-// $Id: mod_whats_new.php,v 1.10 2007/05/05 18:26:09 spiderr Exp $
+// $Id: mod_whats_new.php,v 1.11 2009/08/18 20:44:00 spiderr Exp $
 //
 	global $gBitDb, $gBitProduct, $currencies;
 
@@ -31,12 +31,9 @@
 		$gBitSmarty->assign( 'moduleTitle', tra( 'New Products' ) );
 	}
 
-  if( $productList = $gBitProduct->getList( $listHash ) ) {
-  	$newProduct = current( $productList );
-    $whats_new_price = CommerceProduct::getDisplayPrice($newProduct['products_id']);
-    if( $newProduct['specials_new_products_price'] = zen_get_products_special_price($newProduct['products_id']) ) {
-		$newProduct['display_special_price'] = $currencies->display_price($newProduct['specials_new_products_price'], zen_get_tax_rate($newProduct['products_tax_class_id']));
+	if( $productList = $gBitProduct->getList( $listHash ) ) {
+		$newProduct = current( $productList );
+		$whats_new_price = CommerceProduct::getDisplayPrice( $newProduct['products_id'] );
+		$gBitSmarty->assign_by_ref( 'newProduct', $newProduct );
 	}
-	$gBitSmarty->assign_by_ref( 'newProduct', $newProduct );
-  }
 ?>
