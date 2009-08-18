@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.152 2009/08/18 21:13:00 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.153 2009/08/18 22:06:16 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -127,6 +127,16 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	// {{{ =================== Product Pricing Methods ==================== 
+
+	// User specific commission discount, used for  backing out commissions of an aggregate price, such as that returned by getBasePrice
+	function getCommissionUserDiscount() {
+		global $gBitUser;
+		$ret = 0;
+		if( $this->isValid() ) {
+			$ret = $this->hasUpdatePermission( FALSE ) ? $this->getField( 'products_commission' ) : 0;
+		}
+		return $ret;
+	}
 
 	// User specific commission charges
 	function getCommissionUserCharges() {
@@ -389,7 +399,7 @@ If a special exist * 10+9
 			if( $pAttributes ) {
 				foreach( $pAttributes as $optionId => $valueId ) {
 					$query = "SELECT `products_attributes_wt_pfix`||`products_attributes_wt` AS `weight` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-					$ret += (int)$this->mDb->getOne( $attribute_weight_query, array( (int)$option , (int)$value ) );
+					$ret += (int)$this->mDb->getOne( $query, array( (int)$option , (int)$value ) );
 				}
 			} // attributes weight
 		}

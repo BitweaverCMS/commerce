@@ -57,7 +57,7 @@ function popupWindowPrice(url) {
 			{/if}
 			{if $gBitProduct->hasAttributes() and $smarty.const.SHOW_PRODUCT_INFO_STARTING_AT == '1'}{tr}Starting at{/tr}:{/if}
 			{$gBitProduct->getDisplayPrice()}
-			{if $gBitProduct->getCommissionUserCharges() }
+			{if $gBitProduct->getCommissionUserDiscount() }
 				(<span class="success">{tr}Retail Price{/tr} {$gBitProduct->getPrice('products')}</span>)
 			{/if}
 		</h2>
