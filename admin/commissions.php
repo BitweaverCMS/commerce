@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: commissions.php,v 1.8 2009/08/17 02:17:16 spiderr Exp $
+//  $Id: commissions.php,v 1.9 2009/08/18 20:04:13 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -22,10 +22,7 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 
 $commissionManager = new CommerceProductCommission();
 
-$_REQUEST['commission_type'] = COMMISSION_TYPE_PRODUCT_SALE;
-
 $listHash  = array();
-$listHash['commission_type'] = $_REQUEST['commission_type'];
 $listHash['commissions_delay'] = $gBitSystem->getConfig( 'com_commissions_delay', '60' );
 $endEpoch = strtotime( "-".$listHash['commissions_delay']." days" );
 $listHash['commissions_due'] = $endEpoch;
@@ -39,21 +36,6 @@ if( !empty( $_REQUEST['save_payment'] ) ) {
 }
 
 if( $commissionsDue = $commissionManager->getCommissions( $listHash ) ) {
-	foreach( array_keys( $commissionsDue ) as $userId ) {
-		switch( $commissionsDue[$userId]['payment_method'] ) {
-			case 'paypal':
-				$commissionsDue[$userId]['commissions_paypal_address'] = LibertyContent::getPreference( 'commissions_paypal_address', NULL, $commissionsDue[$userId]['content_id'] );
-				break;
-			case 'worldpay':
-				$commissionsDue[$userId]['commissions_worldpay_address'] = LibertyContent::getPreference( 'commissions_worldpay_address', NULL, $commissionsDue[$userId]['content_id'] );
-				break;
-			case 'storecredit':
-				break;
-			case 'check':
-				$commissionsDue[$userId]['commissions_check_address'] = LibertyContent::getPreference( 'commissions_check_address', NULL, $commissionsDue[$userId]['content_id'] );
-				break;
-		}
-	}
 	$gBitSmarty->assign_by_ref( 'commissionsDue', $commissionsDue );
 }
 
