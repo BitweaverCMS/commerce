@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.1 2009/08/08 18:51:43 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.2 2009/08/18 19:56:39 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -30,104 +30,48 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->reset();
 	}
 
-	function restore_contents() {
-		global $gBitDb, $gBitUser;
+	function load() {
+		global $gBitUser;
 
-		if( !$gBitUser->isRegistered() ) {
-			return false;
+		$this->contents = array();
+
+		$bindVars[] = session_id();
+		if( $gBitUser->isRegistered() ) {
+			$whereSql = " OR `customers_id` = ?";
+			$bindVars[] = $gBitUser->mUserId;
 		}
 
-		// insert current cart contents in database
-		if (is_array($this->contents)) {
-			reset($this->contents);
-			while (list($products_id, ) = each($this->contents)) {
-//					$products_id = urldecode($products_id);
-				$qty = $this->contents[$products_id]['quantity'];
-				$product_query = "select `products_id`
-								from " . TABLE_CUSTOMERS_BASKET . "
-								where `customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `products_id` = '" . zen_db_input($products_id) . "'";
+		$query = "SELECT `customers_basket_id` AS `hash_key`, cb.* FROM " . TABLE_CUSTOMERS_BASKET . " cb WHERE `cookie`=? $whereSql";
+		if( $products = $this->mDb->getAssoc( $query, $bindVars ) ) {
+			foreach( $products as $basketId=>$basketProduct ) {
+				$this->contents[$basketProduct['products_id']] = $basketProduct;
+				$this->contents[$basketProduct['products_id']] = array('quantity' => $basketProduct['customers_basket_quantity'] );
 
-				$product = $gBitDb->Execute($product_query);
+				$query = "SELECT `products_options_id` AS `hash_key`, `products_options_id`, `products_options_value_id`, `products_options_value_text`
+						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
+						  WHERE cba.`customers_basket_id` = ?
+						  ORDER BY `products_options_sort_order`";
+				if( $attributes = $this->mDb->getAssoc( $query, array( $basketId ) ) ) {
 
-				if ($product->RecordCount()<=0) {
-					$sql = "insert into " . TABLE_CUSTOMERS_BASKET . "
-									(`customers_id`, `products_id`, `customers_basket_quantity`, `customers_basket_date_added`)
-									values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
-															 $qty . "', '" . date('Ymd') . "')";
-
-					$gBitDb->Execute($sql);
-
-					if (isset($this->contents[$products_id]['attributes'])) {
-						reset($this->contents[$products_id]['attributes']);
-						while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-							//clr 031714 udate query to include attribute value. This is needed for text attributes.
-							$attr_value = $this->contents[$products_id]['attributes_values'][$option];
-							$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $value);
-							if ($attr_value) {
-								$attr_value = zen_db_input($attr_value);
-							}
-							$sql = "insert into " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-																	(`customers_id`, `products_id`, `products_options_id`,
-																	 `products_options_value_id`, `products_options_value_text`, `products_options_sort_order`)
-																	 values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
-																	 $option . "', '" . $value . "', '" . $attr_value . "', '" . $products_options_sort_order . "')";
-							$gBitDb->Execute($sql);
-						}
+				foreach( $attributes as $productsOptionsId=>$attribute )
+					$this->contents[$basketProduct['products_id']]['attributes'][$productsOptionsId] = $attribute['products_options_value_id'];
+					//CLR 020606 if text attribute, then set additional information
+					if ($attribute['products_options_value_id'] == PRODUCTS_OPTIONS_VALUES_TEXT_ID) {
+						$this->contents[$basketProduct['products_id']]['attributes_values'][$productsOptionsId] = $attribute['products_options_value_text'];
 					}
-				} else {
-					$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . "
-									SET `customers_basket_quantity` = ?
-									WHERE `customers_id` = ? AND `products_id` = ?";
-
-					$gBitDb->query( $sql, array( $qty, (int)$_SESSION['customer_id'],	zen_db_input($products_id) ) );
-
 				}
 			}
-		}
-
-// reset per-session cart contents, but not the database contents
-		$this->reset(false);
-
-		$products_query = "select `products_id`, `customers_basket_quantity`
-											 from " . TABLE_CUSTOMERS_BASKET . "
-											 where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";
-		$products = $gBitDb->Execute($products_query);
-
-		while (!$products->EOF) {
-			$this->contents[$products->fields['products_id']] = array('quantity' => $products->fields['customers_basket_quantity']);
-// attributes
-// set contents in sort order
-
-			//CLR 020606 update query to pull attribute value_text. This is needed for text attributes.
-//				$attributes_query = zen_db_query("select products_options_id, products_options_value_id, products_options_value_text from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$customer_id . "' and `products_id` = '" . zen_db_input($products['products_id']) . "'");
-
-			$order_by = ' order by `products_options_sort_order`';
-
-			$attributes = $gBitDb->Execute("select `products_options_id`, `products_options_value_id`, `products_options_value_text`
-													 from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-													 where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-													 and `products_id` = '" . zen_db_input($products->fields['products_id']) . "' " . $order_by);
-
-			while (!$attributes->EOF) {
-				$this->contents[$products->fields['products_id']]['attributes'][$attributes->fields['products_options_id']] = $attributes->fields['products_options_value_id'];
-				//CLR 020606 if text attribute, then set additional information
-				if ($attributes->fields['products_options_value_id'] == PRODUCTS_OPTIONS_VALUES_TEXT_ID) {
-					$this->contents[$products->fields['products_id']]['attributes_values'][$attributes->fields['products_options_id']] = $attributes->fields['products_options_value_text'];
-				}
-				$attributes->MoveNext();
-			}
-			$products->MoveNext();
 		}
 
 		$this->cleanup();
 	}
 
 	function reset($reset_database = false) {
-		global $gBitDb, $gBitUser;
+		global $gBitUser;
 
 		$this->contents = array();
-		$this->total = 0;
-		$this->weight = 0;
+		$this->total = NULL;
+		$this->weight = NULL;
 		$this->content_type = false;
 
 		// shipping adjustment
@@ -136,40 +80,39 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->free_shipping_weight = 0;
 
 		if( $gBitUser->isRegistered() && ($reset_database == true)) {
-			$sql = "delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
-			$gBitDb->query($sql, array( $gBitUser->mUserId ) );
+			$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
+			$this->mDb->query($sql, array( $gBitUser->mUserId ) );
 
-			$sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = ?";
-			$gBitDb->query($sql, array( $gBitUser->mUserId ) );
+			$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = ?";
+			$this->mDb->query($sql, array( $gBitUser->mUserId ) );
 		}
 
 		unset($this->cartID);
 	}
 
-	function add_cart($products_id, $qty = '1', $attributes = '', $notify = true) {
-		global $gBitDb, $gBitUser;
-		$products_id = zen_get_uprid($products_id, $attributes);
+	function addToCart($pProductsKey, $pQty = '1', $attributes = '', $notify = true) {
+		 global $gBitUser;
+		$productsKey = zen_get_uprid($pProductsKey, $attributes);
 		if ($notify == true) {
-			$_SESSION['new_products_id_in_cart'] = $products_id;
+			$_SESSION['new_products_id_in_cart'] = $productsKey;
 		}
 
-		if ($this->in_cart($products_id)) {
-			$this->update_quantity($products_id, $qty, $attributes);
+		if ($this->in_cart($productsKey)) {
+			$this->updateQuantity( $productsKey, $pQty );
 		} else {
-			$this->contents[] = array($products_id);
-			$this->contents[$products_id] = array('quantity' => $qty);
-			if( $gBitUser->isRegistered() ) {
-				// insert into database
-				$sql = "insert into " . TABLE_CUSTOMERS_BASKET . " (`customers_id`, `products_id`, `customers_basket_quantity`, `customers_basket_date_added`) values ( ?, ?, ?, ? )";
-				$gBitDb->query( $sql, array( $gBitUser->mUserId, $products_id, $qty, date('Ymd') ) );
-			}
+			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
+			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
+			
+			// insert into database
+			$sql = "insert into " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_id`, `customers_basket_quantity`, `date_added`) values ( ?, ?, ?, ? )";
+			$this->mDb->query( $sql, array( $selectValue, $productsKey, $pQty, date('Ymd') ) );
+			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id`=? AND `$selectColumn`=?", array( $productsKey, $selectValue ) ); 
 
 			if (is_array($attributes)) {
 				reset($attributes);
-				while (list($option, $value) = each($attributes)) {
-					//CLR 020606 check if input was from text box.	If so, store additional attribute information
-					//CLR 020708 check if text input is blank, if so do not add to attribute lists
-					//CLR 030228 add htmlspecialchars processing.	This handles quotes and other special chars in the user input.
+				foreach( $attributes as $option=>$value ) {
+					// check if input was from text box.	If so, store additional attribute information
+					// check if text input is blank, if so do not add to attribute lists
 					$attr_value = NULL;
 					$blank_value = FALSE;
 					if (strstr($option, TEXT_PREFIX)) {
@@ -179,7 +122,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 							$option = substr($option, strlen(TEXT_PREFIX));
 							$attr_value = stripslashes($value);
 							$value = PRODUCTS_OPTIONS_VALUES_TEXT_ID;
-							$this->contents[$products_id]['attributes_values'][$option] = $attr_value;
 						}
 					}
 
@@ -187,143 +129,89 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						if (is_array($value) ) {
 							reset($value);
 							while (list($opt, $val) = each($value)) {
-								$this->contents[$products_id]['attributes'][$option.'_chk'.$val] = $val;
+								$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($productsKey), $option, $opt);
+								$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
+										(`customers_basket_id`, `products_id`, `products_options_id`, `products_options_value_id`, `products_options_sort_order`)
+										VALUES ( ?, ?, ?, ?, ? )";
+								$this->mDb->query($sql, array( $basketId, zen_get_prid( $productsKey ), (int)$option.'_chk'.$val, $val, $products_options_sort_order ) );
 							}
 						} else {
-							$this->contents[$products_id]['attributes'][$option] = $value;
-						}
-// insert into database
-					//CLR 020606 update db insert to include attribute value_text. This is needed for text attributes.
-						if( $gBitUser->isRegistered() ) {
-							if (is_array($value) ) {
-								reset($value);
-								while (list($opt, $val) = each($value)) {
-									$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $opt);
-									$sql = "insert into " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-											(`customers_id`, `products_id`, `products_options_id`, `products_options_value_id`, `products_options_sort_order`)
-											values ( ?, ?, ?, ?, ? )";
-									$this->mDb->query($sql, array( $gBitUser->mUserId, zen_db_input($products_id), (int)$option.'_chk'.$val, $val, $products_options_sort_order ) );
-								}
-							} else {
-								if ($attr_value) {
-									$attr_value = zen_db_input($attr_value);
-								}
-								$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $value);
-								$sql = "insert into " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-																		(`customers_id`, `products_id`, `products_options_id`, `products_options_value_id`, `products_options_value_text`, `products_options_sort_order`)
-																		values ('" . (int)$_SESSION['customer_id'] . "', '" . zen_db_input($products_id) . "', '" .
-																		(int)$option . "', '" . $value . "', '" . $attr_value . "', '" . $products_options_sort_order . "')";
-
-								$gBitDb->Execute($sql);
-							}
+							//CLR 020606 update db insert to include attribute value_text. This is needed for text attributes.
+							$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($productsKey), $option, $value);
+							$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_value_id`, `products_options_value_text`, `products_options_sort_order`) VALUES (?, ?, ?, ?, ?)";
+							$this->mDb->query( $sql, array( $basketId, $option, $value, $attr_value, $products_options_sort_order) );
 						}
 					}
 				}
 			}
 		}
 		$this->cleanup();
+		$this->load();
 
 // assign a temporary unique ID to the order contents to prevent hack attempts during the checkout procedure
 		$this->cartID = $this->generate_cart_id();
 	}
 
-	function update_quantity($products_id, $quantity = '', $attributes = '') {
-		global $gBitDb;
+	function verifyQuantity( $pProductsKey, $pQty ) {
 
-		if (empty($quantity)) return true; // nothing needs to be updated if theres no quantity, so we return true..
+		$pQty = (int)$pQty;
 
-		$this->contents[$products_id] = array('quantity' => $quantity);
-// update database
-		if ($_SESSION['customer_id']) {
-			$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . "
-							SET `customers_basket_quantity` = ?
-							WHERE `customers_id` = ? AND `products_id` = ?";
-
-			$gBitDb->query($sql, array( $quantity, (int)$_SESSION['customer_id'], zen_db_input($products_id) ) );
-
+		// verify qty to add
+		$add_max = zen_get_products_quantity_order_max($_REQUEST['products_id']);
+		$cart_qty = $gBitCustomer->mCart->in_cart_mixed($_REQUEST['products_id']);
+		$new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
+		if (($add_max == 1 and $cart_qty == 1)) {
+			// do not add
+			$new_qty = 0;
+		} else {
+			// adjust quantity if needed
+			if (($new_qty + $cart_qty > $add_max) and $add_max != 0) {
+				$new_qty = $add_max - $cart_qty;
+			}
+		}
+		if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
+			$messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
 		}
 
-		if (is_array($attributes)) {
-			reset($attributes);
-			while (list($option, $value) = each($attributes)) {
-				//CLR 020606 check if input was from text box.	If so, store additional attribute information
-				//CLR 030108 check if text input is blank, if so do not update attribute lists
-				//CLR 030228 add htmlspecialchars processing.	This handles quotes and other special chars in the user input.
-				$attr_value = NULL;
-				$blank_value = FALSE;
-				if (strstr($option, TEXT_PREFIX)) {
-					if (trim($value) == NULL) {
-						$blank_value = TRUE;
-					} else {
-						$option = substr($option, strlen(TEXT_PREFIX));
-						$attr_value = stripslashes($value);
-						$value = PRODUCTS_OPTIONS_VALUES_TEXT_ID;
-						$this->contents[$products_id]['attributes_values'][$option] = $attr_value;
-					}
-				}
+		if( $product = $this->getProductObject( $pProductsKey ) ) {
+			if( is_object( $product ) && $pQty > $product->getField( 'products_quantity_order_max' ) ) { 
+				// we are trying to add quantity greater than max purchable quantity
+				$pQty = $product->getField( 'products_quantity_order_max' );
+vd( $pQty );
+			}	
+		} else {
+			// product couldn't load, delete from card
+			$pQty = 0;
+		}
+		return $pQty;
+	}
 
-				if (!$blank_value) {
-					if (is_array($value) ) {
-						reset($value);
-						while (list($opt, $val) = each($value)) {
-							$this->contents[$products_id]['attributes'][$option.'_chk'.$val] = $val;
-						}
-					} else {
-						$this->contents[$products_id]['attributes'][$option] = $value;
-					}
-// update database
-					//CLR 020606 update db insert to include attribute value_text. This is needed for text attributes.
-					//CLR 030228 add zen_db_input() processing
-//					if (zen_session_is_registered('customer_id')) zen_db_query("update " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " set products_options_value_id = '" . (int)$value . "', products_options_value_text = '" . zen_db_input($attr_value) . "' where `customers_id` = '" . (int)$customer_id . "' and `products_id` = '" . zen_db_input($products_id) . "' and products_options_id = '" . (int)$option . "'");
+	function updateQuantity( $pProductsKey, $pQty ) {
+		global $gBitUser;
 
-					if ($attr_value) {
-						$attr_value = zen_db_input($attr_value);
-					}
-					if (is_array($value) ) {
-						reset($value);
-						while (list($opt, $val) = each($value)) {
-							$products_options_sort_order= zen_get_attributes_options_sort_order(zen_get_prid($products_id), $option, $opt);
-							$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-											SET `products_options_value_id` = ?
-											WHERE `customers_id` =? AND `products_id` =? AND `products_options_id` =?";
-
-							$gBitDb->query( $sql, array( $val, $_SESSION['customer_id'], $products_id, (int)$option.'_chk'.$val ) );
-						}
-					} elseif( is_int( $value ) ) {
-						if ($_SESSION['customer_id']) {
-							$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-											SET `products_options_value_id`=?, `products_options_value_text`=?
-											WHERE `customers_id` = ? AND `products_id` = ? AND `products_options_id` = ?";
-
-							$gBitDb->query( $sql, array( $value, $attr_value, $_SESSION['customer_id'], $products_id, $option ) );
-						}
-					}
-				}
+		$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
+		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
+		if( $basketId = $this->mDb->getOne( "SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `$selectColumn` = ? AND `products_id` = ?", array( $selectValue, $pProductsKey ) ) ) {
+			if( !empty( $pQty ) ) {
+				$this->contents[$pProductsKey]['quantity'] = $pQty;
+				$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . " SET `customers_basket_quantity` = ?  WHERE `customers_basket_id` = ?";
+				$this->mDb->query($sql, array( (int)$pQty, $basketId ) );
+			} else {
+				// because of foreign key constraints, need to delete attributes first, then the product
+				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_basket_id=?";
+				$this->mDb->query($sql, array( $basketId ) );
+				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `customers_basket_id`=?";
+				$this->mDb->query($sql, array( $basketId ) );
+				unset( $this->contents[$key] );
 			}
 		}
 	}
 
 	function cleanup() {
-		global $gBitDb;
-
 		reset($this->contents);
-		while (list($key,) = each($this->contents)) {
-			if (empty( $this->contents[$key]['quantity'] ) || $this->contents[$key]['quantity'] <= 0) {
-				unset($this->contents[$key]);
-// remove from database
-				if ($_SESSION['customer_id']) {
-					$sql = "delete from " . TABLE_CUSTOMERS_BASKET . "
-									where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-									and `products_id` = '" . $key . "'";
-
-					$gBitDb->Execute($sql);
-
-					$sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-									where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'
-									and `products_id` = '" . $key . "'";
-
-					$gBitDb->Execute($sql);
-				}
+		foreach( array_keys( $this->contents ) as $key ) {
+			if( empty( $this->contents[$key]['quantity'] ) || $this->contents[$key]['quantity'] <= 0 || !$this->getProductObject( $key ) ) {
+				$this->updateQuantity( $key, 0 );
 			}
 		}
 	}
@@ -332,8 +220,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$total_items = 0;
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($products_id, ) = each($this->contents)) {
-				$total_items += $this->get_quantity($products_id);
+			while (list($productsKey, ) = each($this->contents)) {
+				$total_items += $this->get_quantity($productsKey);
 			}
 		}
 
@@ -360,45 +248,21 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		return( $this->get_quantity( $pProductsId ) > 0 );
 	}
 
-	function remove($products_id) {
-		global $gBitDb;
-		//CLR 030228 add call zen_get_uprid to correctly format product ids containing quotes
-//			$products_id = zen_get_uprid($products_id, $attributes);
-		unset($this->contents[$products_id]);
-
-		if ($_SESSION['customer_id']) {
-			// remove from database
-			$sql = "delete from " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `products_id` = '" . zen_db_input($products_id) . "'";
-			$gBitDb->Execute($sql);
-
-			$sql = "delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = '" . (int)$_SESSION['customer_id'] . "' and `products_id` = '" . zen_db_input($products_id) . "'";
-			$gBitDb->Execute($sql);
-
-		}
-
-		// assign a temporary unique ID to the order contents to prevent hack attempts during the checkout procedure
-		$this->cartID = $this->generate_cart_id();
-	}
-
-	function remove_all() {
-		$this->reset();
-	}
 
 	function get_product_id_list() {
 		$product_id_list = '';
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($products_id, ) = each($this->contents)) {
-				$product_id_list .= ', ' . zen_db_input($products_id);
+			while (list($productsKey, ) = each($this->contents)) {
+				$product_id_list .= ', ' . zen_db_input($productsKey);
 			}
 		}
 
 		return substr($product_id_list, 2);
 	}
-
+/* use base class method
 	// calculates totals
 	function calculate( $pForceRecalculate=FALSE ) {
-		global $gBitDb;
 		if( is_null( $this->total ) || $pForceRecalculate ) {
 			$this->total = 0;
 			$this->weight = 0;
@@ -411,181 +275,57 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			if (!is_array($this->contents)) return 0;
 
 			reset($this->contents);
-			foreach( array_keys( $this->contents ) as $productsCartKey ) {
-				$qty = $this->contents[$productsCartKey]['quantity'];
-				$prid = zen_get_prid( $productsCartKey );
+			foreach( array_keys( $this->contents ) as $productsKey ) {
+				$qty = $this->contents[$productsKey]['quantity'];
 
 				// products price
-				$product = $this->getProductObject( $prid );
+				$product = $this->getProductObject( $productsKey );
 				// sometimes 0 hash things can get stuck in cart.
 				if( $product && $product->isValid() ) {
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
-					$products_price = $product->getPurchasePrice( $qty );
+					$products_price = $product->getPurchasePrice( $qty, $this->contents[$productsKey]['attributes'] );
 
 					// shipping adjustments
 					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-						$this->free_shipping_weight += ($qty * $product->getField('products_weight') );
+						$this->free_shipping_weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
 					}
 
 					$this->total += zen_add_tax($products_price, $products_tax) * $qty;
-					$this->weight += ($qty * $product->getField('products_weight') );
+					$this->weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
 				}
-
-				// attributes price
-				if (isset($this->contents[$productsCartKey]['attributes'])) {
-					reset($this->contents[$productsCartKey]['attributes']);
-					while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
-						$added_charge = $product->getAttributesPriceFinal( (int)$value, $qty );
-						$this->total += zen_add_tax($added_charge, $products_tax);
-					}
-				} // attributes price
-
-				// attributes weight
-				if (isset($this->contents[$productsCartKey]['attributes'])) {
-					reset($this->contents[$productsCartKey]['attributes']);
-					while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
-						$attribute_weight_query = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
-												FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-												WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-						$attribute_weight = $gBitDb->query( $attribute_weight_query, array( (int)$option , (int)$value ) );
-						
-						// adjusted count for free shipping
-						if ($product->getField('product_is_always_free_ship') != 1) {
-						$new_attributes_weight = $attribute_weight->fields['products_attributes_wt'];
-						} else {
-						$new_attributes_weight = 0;
-						}
-
-						// + or blank adds
-						if ($attribute_weight->fields['products_attributes_wt_pfix'] == '-') {
-							$this->weight -= $qty * $new_attributes_weight;
-						} else {
-							$this->weight += $qty * $new_attributes_weight;
-						}
-					}
-				} // attributes weight
-
 			}
 		}
 	}
+*/
 
-	function attributes_price( $products_id, $pTotalPrice=TRUE ) {
-		global $gBitDb;
-
-		$attributes_price = 0;
-		// check for attributes qty pricing (if pricing is negative, this can really screw pricing)
-		$qty = $this->in_cart_mixed_discount_quantity( $products_id );
-
-		if (isset($this->contents[$products_id]['attributes'])) {
-			reset($this->contents[$products_id]['attributes']);
-			while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
-				$prid = zen_get_prid( $products_id );
-				$product = $this->getProductObject( $prid );
-				$attributes_price += $product->getAttributesPriceFinal( (int)$value, $qty, $pTotalPrice );
-			}
-		}
-
-		return $attributes_price;
-	}
-
-
-	// one time attribute prices
-	// add to tpl_shopping_cart/orders
-	function attributes_price_onetime_charges( $pProductsId, $pQty=1 ) {
-		global $gBitDb;
-
-		$attributes_price_onetime = 0;
-
-		if (isset($this->contents[$pProductsId]['attributes'])) {
-			$product = $this->getProductObject( $pProductsId );
-
-			reset($this->contents[$pProductsId]['attributes']);
-			while (list($option, $value) = each($this->contents[$pProductsId]['attributes'])) {
-				if( $option = $product->getOptionValue( $option, $value ) ) {
-					if( $option['product_attribute_is_free'] != '1' && !$product->getField( 'product_is_free' ) ) {
-						// calculate additional one time charges
-						if( !empty( $option['attributes_price_onetime'] ) ) {
-							$attributes_price_onetime += $option['attributes_price_onetime'];
-						}
-						if( !empty( $option['attributes_pf_onetime'] ) ) {
-							$attributes_price_onetime = zen_get_attributes_price_factor( $product->mInfo['normal_price'], $product->mInfo['sale_price'], $option['attributes_pf_onetime'], $option['attributes_pf_onetime_offset']);
-						}
-						if( !empty( $option['attributes_qty_prices_onetime'] ) ) {
-							$attributes_price_onetime = zen_get_attributes_qty_prices_onetime($option['attributes_qty_prices_onetime'], $pQty);
-						}
-					}
+	// can take a productsKey or a straight productsId
+	function getProductObject( $pProductsMixed ) {
+		$productsId = zen_get_prid( $pProductsMixed );
+		if( BitBase::verifyId( $productsId ) ) {
+			if( !isset( $this->mProductObjects[$productsId] ) ) {
+				$this->mProductObjects[$productsId] = bc_get_commerce_product( zen_get_prid( $productsId ) );
+				if( $this->mProductObjects[$productsId]->load() ) {
+					$ret = &$this->mProductObjects[$productsId];
 				}
 			}
 		}
-
-		return $attributes_price_onetime;
-	}
-
-
-	function attributes_weight( $pCartProductsHash ) {
-		global $gBitDb;
-
-		$prid = zen_get_prid( $pCartProductsHash );
-		$attribute_weight = 0;
-
-		if (isset($this->contents[$pCartProductsHash]['attributes'])) {
-			reset($this->contents[$pCartProductsHash]['attributes']);
-			while (list($option, $value) = each($this->contents[$pCartProductsHash]['attributes'])) {
-				$sql = "SELECT `products_attributes_wt`, `products_attributes_wt_pfix`
-						FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-				$attribute_weight_info = $gBitDb->query( $sql, array( (int)$option, (int)$value ) );
-				// adjusted count for free shipping
-				$freeShip = $gBitDb->getOne("select `product_is_always_free_ship`
-												from " . TABLE_PRODUCTS . "
-												where `products_id` = ?", array( $prid ) );
-
-				if ( $freeShip != 1 ) {
-					$new_attributes_weight = $attribute_weight_info->fields['products_attributes_wt'];
-				} else {
-					$new_attributes_weight = 0;
-				}
-
-				// + or blank adds
-				if ($attribute_weight_info->fields['products_attributes_wt_pfix'] == '-') {
-					$attribute_weight -= $new_attributes_weight;
-				} else {
-					$attribute_weight += $attribute_weight_info->fields['products_attributes_wt'];
-				}
-			}
-		}
-
-		return $attribute_weight;
-	}
-
-
-	function getProductObject( $pProductsId ) {
-		if( BitBase::verifyId( $pProductsId ) ) {
-			if( !isset( $this->mProductObjects[$pProductsId] ) ) {
-				$this->mProductObjects[$pProductsId] = bc_get_commerce_product( zen_get_prid( $pProductsId ) );
-				if( $this->mProductObjects[$pProductsId]->load() ) {
-					$ret = &$this->mProductObjects[$pProductsId];
-				}
-			}
-		}
-		return $this->mProductObjects[$pProductsId];
+		return $this->mProductObjects[$productsId];
 	}
 
 	function get_products($check_for_valid_cart = false) {
-		global $gBitDb, $gBitProduct;
+		 global $gBitProduct;
 
 		if (!is_array($this->contents)) return false;
 
 		$products_array = array();
 		reset($this->contents);
-		while( list( $products_id, $productsHash ) = each( $this->contents ) ) {
-			$product = $this->getProductObject( zen_get_prid( $products_id ) );
+		while( list( $productsKey, $productsHash ) = each( $this->contents ) ) {
+			$product = $this->getProductObject( $productsKey );
 			if( $product && $product->isValid() ) {
 				$prid = $product->mProductsId;
 				$qty = $productsHash['quantity'];
-				$products_price = $product->getPurchasePrice( $qty );
 				if ($check_for_valid_cart == true) {
 					$check_quantity = $productsHash['quantity'];
 					$check_quantity_min = $product->getField( 'products_quantity_order_min' );
@@ -609,8 +349,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 							$_SESSION['cart_errors'] .= ERROR_PRODUCT . $product->getTitle() . ERROR_PRODUCT_QUANTITY_UNITS_SHOPPING_CART . ERROR_PRODUCT_QUANTITY_ORDERED . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ' . '<br />';
 						}
 					}
-
-				// Verify Valid Attributes
 				}
 
 				//clr 030714 update $products_array to include attribute value_text. This is needed for text attributes.
@@ -639,23 +377,23 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				}
 
 				$productHash =$product->mInfo;
-				$productHash['id'] = $products_id;
+				$productHash['id'] = $productsKey;
 				$productHash['name'] = $product->getField('products_name');
 				$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
 				$productHash['model'] = $product->getField('products_model');
 				$productHash['image'] = $product->getField('products_image');
 				$productHash['image_url'] = $product->getField('products_image_url');
-				$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $products_price);
 				$productHash['quantity'] = $new_qty;
 				if( $product->getField( 'products_commission' ) && !$product->getCommissionDiscount() ) {
-					$productHash['commission'] = ($products_price / $product->getField('actual_price')) * ($product->getField('products_commission') - $product->getCommissionDiscount());
+					$productHash['commission'] = $product->getField('products_commission');
 				} else {
 					$productHash['commission'] = 0;
 				}
-				$productHash['weight'] = $product->getField('products_weight') + $this->attributes_weight($products_id);
+				$productHash['weight'] = $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
 		// fix here
-				$productHash['final_price'] = $products_price + $this->attributes_price($products_id, FALSE);
-				$productHash['onetime_charges'] = $this->attributes_price_onetime_charges($products_id, $new_qty);
+				$productHash['price'] = ($product->getField('product_is_free') =='1' ? 0 : $product->getPurchasePrice( $new_qty, $this->contents[$productsKey]['attributes'] ));
+				$productHash['final_price'] = $productHash['price'];
+				$productHash['onetime_charges'] = $product->getOneTimeCharges( $new_qty, $this->contents[$productsKey]['attributes'] );
 				$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 				$productHash['tax'] = $product->getField('tax_rate');
 				$productHash['tax_description'] = $product->getField('tax_description');
@@ -688,7 +426,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	}
 
 	function get_content_type($gv_only = 'false') {
-		global $gBitDb;
 
 		$this->content_type = false;
 		$gift_voucher = 0;
@@ -696,20 +433,21 @@ class CommerceShoppingCart extends CommerceOrderBase {
 //			if ( (DOWNLOAD_ENABLED == 'true') && ($this->count_contents() > 0) ) {
 		if ( $this->count_contents() > 0 ) {
 			reset($this->contents);
-			while (list($products_id, ) = each($this->contents)) {
-				$free_ship_check = $gBitDb->query( "select `products_virtual`, `products_model`, `products_price` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid($products_id) ) );
+			while (list($productsKey, ) = each($this->contents)) {
 				if( $free_ship_check && ereg( '^GIFT', addslashes($free_ship_check->fields['products_model'] ) ) ) {
-					$gift_voucher += ($free_ship_check->fields['products_price'] + $this->attributes_price($products_id)) * $this->contents[$products_id]['quantity'];
+					if( $product = $this->getProductObject( $productsKey ) ) {
+						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['quantity'], $this->contents[$productsKey]['attributes'] );
+					}
 				}
-				if (isset($this->contents[$products_id]['attributes'])) {
-					reset($this->contents[$products_id]['attributes']);
-					while (list(, $value) = each($this->contents[$products_id]['attributes'])) {
+				if (isset($this->contents[$productsKey]['attributes'])) {
+					reset($this->contents[$productsKey]['attributes']);
+					while (list(, $value) = each($this->contents[$productsKey]['attributes'])) {
 						$virtual_check_query = "SELECT COUNT(*) as `total`
 												FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 													INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
 												WHERE pa.`products_options_values_id` = ?";
 
-						$virtualCount = $gBitDb->getOne( $virtual_check_query, array( (int)$value ) );
+						$virtualCount = $this->mDb->getOne( $virtual_check_query, array( (int)$value ) );
 
 						if ($virtualCount > 0) {
 							switch ($this->content_type) {
@@ -820,33 +558,32 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	}
 
 	// check mixed min/units
-	function in_cart_mixed($products_id) {
-		global $gBitDb;
+	function in_cart_mixed($pProductsKey) {
 		// if nothing is in cart return 0
 		if (!is_array($this->contents)) return 0;
 
-		if( is_array( $products_id ) ) {
-			$products_id = current( $products_id );
+		if( is_array( $pProductsKey ) ) {
+			$pProductsKey = current( $pProductsKey );
 		}
 		// check if mixed is on
-		$productQtyMixed = $gBitDb->GetOne("select `products_quantity_mixed` from " . TABLE_PRODUCTS .
-		" where `products_id` ='" .	zen_get_prid( $products_id ) . "'");
+		$productQtyMixed = $this->mDb->GetOne("select `products_quantity_mixed` from " . TABLE_PRODUCTS .
+		" where `products_id` ='" .	zen_get_prid( $pProductsKey ) . "'");
 
 		// if mixed attributes is off return qty for current attribute selection
 		if( $productQtyMixed == '0' ) {
-			return $this->get_quantity($products_id);
+			return $this->get_quantity($pProductsKey);
 		}
 
 		// compute total quantity regardless of attributes
 		$in_cart_mixed_qty = 0;
-		$chk_products_id= zen_get_prid($products_id);
+		$chk_products_id= zen_get_prid($pProductsKey);
 
 		// reset($this->contents); // breaks cart
 		$check_contents = $this->contents;
-		while (list($products_id, ) = each($check_contents)) {
-			$test_id = zen_get_prid($products_id);
+		while (list($pProductsKey, ) = each($check_contents)) {
+			$test_id = zen_get_prid($pProductsKey);
 			if ($test_id == $chk_products_id) {
-				$in_cart_mixed_qty += $check_contents[$products_id]['quantity'];
+				$in_cart_mixed_qty += $check_contents[$pProductsKey]['quantity'];
 			}
 		}
 		return $in_cart_mixed_qty;
@@ -854,14 +591,13 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	// check mixed discount_quantity
 	function in_cart_mixed_discount_quantity( $pProductsId ) {
-		global $gBitDb;
 		// if nothing is in cart return 0
 		$ret = 0;
 
 		if( is_array( $this->contents ) ) {
 			// check if mixed is on
 			$chk_products_id= zen_get_prid( $pProductsId );
-			if( $hasMixedQuantity = $gBitDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid( $chk_products_id ) ) ) ) {
+			if( $hasMixedQuantity = $this->mDb->getOne("select `products_mixed_discount_qty` from " . TABLE_PRODUCTS . " where `products_id` =?", array( zen_get_prid( $chk_products_id ) ) ) ) {
 				// compute total quantity regardless of attributes
 				// reset($this->contents); // breaks cart
 				$check_contents = $this->contents;
@@ -883,7 +619,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	// $check_value is the value being tested for - default is 1
 	// Syntax: $gBitCustomer->mCart->in_cart_check('product_is_free','1');
 	function in_cart_check($check_what, $check_value='1') {
-		global $gBitDb;
 		// if nothing is in cart return 0
 		if (!is_array($this->contents)) return 0;
 
@@ -891,13 +626,12 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$in_cart_check_qty=0;
 
 		reset($this->contents);
-		while (list($products_id, ) = each($this->contents)) {
-			$testing_id = zen_get_prid($products_id);
+		while (list($productsKey, ) = each($this->contents)) {
+			$testing_id = zen_get_prid($productsKey);
 			// check if field it true
-			$product_check = $gBitDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .
-		" where `products_id` ='" . $testing_id . "'");
+			$product_check = $this->mDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .  " where `products_id` = ?" , array( $testing_id ) );
 			if( $product_check == $check_value ) {
-				$in_cart_check_qty += $this->contents[$products_id]['quantity'];
+				$in_cart_check_qty += $this->contents[$productsKey]['quantity'];
 			}
 		}
 		return $in_cart_check_qty;
