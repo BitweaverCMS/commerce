@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.151 2009/08/18 19:58:09 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.152 2009/08/18 21:13:00 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -128,11 +128,12 @@ class CommerceProduct extends LibertyMime {
 
 	// {{{ =================== Product Pricing Methods ==================== 
 
-	function getCommissionDiscount() {
+	// User specific commission charges
+	function getCommissionUserCharges() {
 		global $gBitUser;
 		$ret = 0;
 		if( $this->isValid() ) {
-			$ret = $this->hasUpdatePermission( FALSE ) ? $this->getField( 'products_commission' ) : 0;
+			$ret = $this->hasUpdatePermission( FALSE ) ? 0 : $this->getField( 'products_commission' );
 		}
 		return $ret;
 	}
@@ -476,17 +477,17 @@ If a special exist * 10+9
 			// none
 			case (empty( $discountPrice )):
 			case '0':
-					$discounted_price = ($pCheckAmount ? $pCheckAmount : $this->getBasePrice()) - $this->getCommissionDiscount();
+					$discounted_price = ($pCheckAmount ? $pCheckAmount : $this->getBasePrice());
 				break;
 			// percentage discount
 			case '1':
 				if ($this->getField('products_discount_type_from') == '0') {
 					// priced by attributes
-					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price) - $this->getCommissionDiscount();
+					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price);
 				} elseif ( $display_specials_price ) {
-					$checkPrice = $display_specials_price - $this->getCommissionDiscount();
+					$checkPrice = $display_specials_price;
 				} else {
-					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price) - $this->getCommissionDiscount();
+					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price);
 				}
 				$discounted_price = $checkPrice - ($checkPrice * ($discountPrice/100));
 
@@ -1301,7 +1302,7 @@ If a special exist * 10+9
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
 			'products_quantity_order_max' => (!empty( $pParamHash['products_quantity_order_max'] ) && is_numeric( $pParamHash['products_quantity_order_max'] ) ? $pParamHash['products_quantity_order_max'] : 0),
 			'products_weight' => (!empty( $pParamHash['products_weight'] ) ? $pParamHash['products_weight'] : $this->getWeight()),
-			'products_commission' => (!empty( $pParamHash['products_commission'] ) && (double)$pParamHash['products_commission'] > 0 ? $pParamHash['products_commission'] : NULL),
+			'products_commission' => (!empty( $pParamHash['products_commission'] ) && (double)$pParamHash['products_commission'] > 0 && (double)$pParamHash['products_commission'] < '9999999999999' ? $pParamHash['products_commission'] : NULL),
 		);
 
 		// hashed by php type so values can be safely cast when sent into the DB. This is particularly important for real databases

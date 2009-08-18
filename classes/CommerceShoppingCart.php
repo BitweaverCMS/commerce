@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.2 2009/08/18 19:56:39 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.3 2009/08/18 21:13:00 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -384,7 +384,7 @@ vd( $pQty );
 				$productHash['image'] = $product->getField('products_image');
 				$productHash['image_url'] = $product->getField('products_image_url');
 				$productHash['quantity'] = $new_qty;
-				if( $product->getField( 'products_commission' ) && !$product->getCommissionDiscount() ) {
+				if( $product->getField( 'products_commission' ) && !$product->getCommissionUserCharges() ) {
 					$productHash['commission'] = $product->getField('products_commission');
 				} else {
 					$productHash['commission'] = 0;
