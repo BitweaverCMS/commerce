@@ -1,30 +1,32 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
+// |zen-cart Open Source E-commerce											
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
+// | Copyright (c) 2003 The zen-cart developers								
+// |																		
+// | http://www.zen-cart.com/index.php										
+// |																		
+// | Portions Copyright (c) 2003 osCommerce									
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
+// | This source file is subject to version 2.0 of the GPL license,			
+// | that is bundled with this package in the file LICENSE, and is			
+// | available through the world-wide-web at the following url:				
+// | http://www.zen-cart.com/license/2_0.txt.								
+// | If you did not receive a copy of the zen-cart license and are unable 
+// | to obtain it through the world-wide-web, please send a note to			
+// | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: shopping_cart.php,v 1.48 2009/08/08 13:29:39 spiderr Exp $
+// $Id: shopping_cart.php,v 1.49 2009/08/18 19:53:59 spiderr Exp $
 //
 
-class shoppingCart {
-	var $contents, $total, $weight, $cartID, $content_type, $free_shipping_item, $free_shipping_weight, $free_shipping_price, $mProductObjects;
+require_once( dirname( __FILE__ ).'/../../classes/CommerceOrderBase.php' );
+
+class shoppingCart extends CommerceOrderBase {
+	var $cartID, $content_type;
 
 	function shoppingCart() {
-		$this->mProductObjects = array();
+		parent::CommerceOrderBase();
 		$this->reset();
 	}
 
@@ -439,7 +441,7 @@ class shoppingCart {
 				if (isset($this->contents[$productsCartKey]['attributes'])) {
 					reset($this->contents[$productsCartKey]['attributes']);
 					while (list($option, $value) = each($this->contents[$productsCartKey]['attributes'])) {
-						$added_charge = $product->getAttributesPriceFinal( (int)$value, $qty );
+						$added_charge = $product->getAttributesPriceFinalRecurring( (int)$value, $qty );
 						$this->total += zen_add_tax($added_charge, $products_tax);
 					}
 				} // attributes price
@@ -485,7 +487,10 @@ class shoppingCart {
 			while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
 				$prid = zen_get_prid( $products_id );
 				$product = $this->getProductObject( $prid );
-				$attributes_price += $product->getAttributesPriceFinal( (int)$value, $qty, $pTotalPrice );
+				$attributes_price += $product->getAttributesPriceFinalRecurring( (int)$value, $qty );
+				if( $pTotalPrice ) {
+					$attributes_price += $product->getAttributesPriceFinalOnetime( (int)$value, $qty );
+				}
 			}
 		}
 
@@ -500,11 +505,11 @@ class shoppingCart {
 
 		$attributes_price_onetime = 0;
 
-		if (isset($this->contents[$products_id]['attributes'])) {
+		if (isset($this->contents[$pProductsId]['attributes'])) {
 			$product = $this->getProductObject( $pProductsId );
 
-			reset($this->contents[$products_id]['attributes']);
-			while (list($option, $value) = each($this->contents[$products_id]['attributes'])) {
+			reset($this->contents[$pProductsId]['attributes']);
+			while (list($option, $value) = each($this->contents[$pProductsId]['attributes'])) {
 				if( $option = $product->getOptionValue( $option, $value ) ) {
 					if( $option['product_attribute_is_free'] != '1' && !$product->getField( 'product_is_free' ) ) {
 						// calculate additional one time charges
