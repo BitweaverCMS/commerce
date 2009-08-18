@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.9 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: whos_online.php,v 1.10 2009/08/18 20:01:58 spiderr Exp $
 //
 
 
@@ -382,8 +382,8 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
         $cart->unserialize($broken_cart);
       }
 
-      if (is_object($_SESSION['cart'])) {
-        $products = $_SESSION['cart']->get_products();
+      if (is_object($gBitCustomer->mCart)) {
+        $products = $gBitCustomer->mCart->get_products();
         for ($i = 0, $n = sizeof($products); $i < $n; $i++) {
           $contents[] = array('text' => $products[$i]['quantity'] . ' x ' . '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_product_path($products[$i]['id']) . '&pID=' . $products[$i]['id']) . '">' . $products[$i]['name'] . '</a>');
 // cPath=23&pID=74
@@ -391,7 +391,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
 
         if (sizeof($products) > 0) {
           $contents[] = array('text' => zen_draw_separator('pixel_black.gif', '100%', '1'));
-          $contents[] = array('align' => 'right', 'text'  => TEXT_SHOPPING_CART_SUBTOTAL . ' ' . $currencies->format($_SESSION['cart']->show_total(), true, $_SESSION['currency']));
+          $contents[] = array('align' => 'right', 'text'  => TEXT_SHOPPING_CART_SUBTOTAL . ' ' . $currencies->format($gBitCustomer->mCart->show_total(), true, $_SESSION['currency']));
         } else {
           $contents[] = array('text' => '&nbsp;');
         }

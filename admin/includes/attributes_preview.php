@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: attributes_preview.php,v 1.10 2009/06/01 05:52:11 spiderr Exp $
+// $Id: attributes_preview.php,v 1.11 2009/08/18 20:01:58 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -63,7 +63,7 @@
         $order_by= ' order by LPAD(pa.`products_options_sort_order`,11,"0"), pa.`options_values_price`';
       }
 
-      $discount_type = zen_get_products_sale_discount_type((int)$_GET['products_id']);
+      $discount_type = $gBitProduct->getSaleDiscountType();
       $discount_amount = $gBitProduct->getPriceReduction();
       $show_onetime_charges_description = 'false';
       $show_attributes_qty_prices_description = 'false';
@@ -116,7 +116,7 @@
             if ($products_options->fields['attributes_discounted'] == 1) {
 // apply product discount to attributes if discount is on
 //              $new_attributes_price = $products_options->fields['options_values_price'];
-              $new_attributes_price = $gBitProduct->getAttributesPriceFinal( $products_options->fields["products_attributes_id"], 1, FALSE );
+              $new_attributes_price = $gBitProduct->getAttributesPriceFinalRecurring( $products_options->fields["products_attributes_id"], 1 );
               $new_attributes_price = $gBitProduct->getPriceReduction( true, $new_attributes_price );
             } else {
 // discount is off do not apply
@@ -196,14 +196,14 @@
 
 // radio buttons
 //echo $prod_id;
-//echo $_SESSION['cart']->in_cart($prod_id);
+//echo $gBitCustomer->mCart->in_cart($prod_id);
 
 
 
           if ($products_options_names->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
             if (false) {
-              if ($_SESSION['cart']->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']] == $products_options->fields['products_options_values_id']) {
-                $selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']];
+              if ($gBitCustomer->mCart->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']] == $products_options->fields['products_options_values_id']) {
+                $selected_attribute = $gBitCustomer->mCart->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']];
               } else {
                 $selected_attribute = false;
               }
@@ -300,7 +300,7 @@
           if ($products_options_names->fields['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX) {
             $string = $products_options_names->fields['products_options_id'].'_chk'.$products_options->fields['products_options_values_id'];
             if (false) {
-              if ($_SESSION['cart']->contents[$prod_id]['attributes'][$string] == $products_options->fields['products_options_values_id']) {
+              if ($gBitCustomer->mCart->contents[$prod_id]['attributes'][$string] == $products_options->fields['products_options_values_id']) {
                 $selected_attribute = true;
             } else {
                 $selected_attribute = false;
@@ -430,13 +430,13 @@
                 }
 
             } else {
-              $tmp_value = $_SESSION['cart']->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
+              $tmp_value = $gBitCustomer->mCart->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
               $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" size="' . $products_options_names->fields['products_options_size'] .'" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />  ';
               $tmp_html .= $products_options_details;
               $tmp_word_cnt_string = '';
 // calculate word charges
               $tmp_word_cnt =0;
-              $tmp_word_cnt_string = $_SESSION['cart']->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
+              $tmp_word_cnt_string = $gBitCustomer->mCart->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
               $tmp_word_cnt = zen_get_word_count($tmp_word_cnt_string, $products_options->fields['attributes_price_words_free']);
               $tmp_word_price = zen_get_word_count_price($tmp_word_cnt_string, $products_options->fields['attributes_price_words_free'], $products_options->fields['attributes_price_words']);
 
@@ -449,7 +449,7 @@
               }
 // calculate letter charges
               $tmp_letters_cnt =0;
-              $tmp_letters_cnt_string = $_SESSION['cart']->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
+              $tmp_letters_cnt_string = $gBitCustomer->mCart->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
               $tmp_letters_cnt = zen_get_letters_count($tmp_letters_cnt_string, $products_options->fields['attributes_price_letters_free']);
               $tmp_letters_price = zen_get_letters_count_price($tmp_letters_cnt_string, $products_options->fields['attributes_price_letters_free'], $products_options->fields['attributes_price_letters']);
 
@@ -471,9 +471,9 @@
             $number_of_uploads++;
 // $cart->contents[$_GET['products_id']]['attributes_values'][$products_options_name['products_options_id']]
             $tmp_html = '<input type="file" name="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" /><br />' .
-                         $_SESSION['cart']->contents[$prod_id]['attributes_values'][$products_options_names->fields['products_options_id']] .
+                         $gBitCustomer->mCart->contents[$prod_id]['attributes_values'][$products_options_names->fields['products_options_id']] .
                          zen_draw_hidden_field(UPLOAD_PREFIX . $number_of_uploads, $products_options_names->fields['products_options_id']) .
-                         zen_draw_hidden_field(TEXT_PREFIX . UPLOAD_PREFIX . $number_of_uploads, $_SESSION['cart']->contents[$prod_id]['attributes_values'][$products_options_names->fields['products_options_id']]);
+                         zen_draw_hidden_field(TEXT_PREFIX . UPLOAD_PREFIX . $number_of_uploads, $gBitCustomer->mCart->contents[$prod_id]['attributes_values'][$products_options_names->fields['products_options_id']]);
             $tmp_html  .= $products_options_details;
           }
 
@@ -580,8 +580,8 @@
           break;
           default:
             // normal dropdown menu display
-            if (isset($_SESSION['cart']->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']])) {
-              $selected_attribute = $_SESSION['cart']->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']];
+            if (isset($gBitCustomer->mCart->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']])) {
+              $selected_attribute = $gBitCustomer->mCart->contents[$prod_id]['attributes'][$products_options_names->fields['products_options_id']];
             } else {
               // selected set above
 //                echo 'Type ' . $products_options_names->fields['products_options_type'] . '<br />';
