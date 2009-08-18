@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.29 2009/05/25 17:40:08 spiderr Exp $
+//  $Id: application_top.php,v 1.30 2009/08/18 20:29:38 spiderr Exp $
 //
 
 require_once( '../../bit_setup_inc.php' );
@@ -368,4 +368,16 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
   if (!isset($_SESSION['html_editor_preference_status'])) {
     $_SESSION['html_editor_preference_status'] = HTML_EDITOR_PREFERENCE;
   }
+
+	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php' );
+	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
+		$oID = zen_db_prepare_input($_REQUEST['oID']);
+		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
+		    $order = new order($oID);
+			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
+		} else {
+			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
+		}
+	}
+
 ?>
