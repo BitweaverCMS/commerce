@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.11 2009/08/12 20:49:24 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.12 2009/08/18 20:32:09 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -111,7 +111,7 @@
             if ($products_options->fields['attributes_discounted'] == 1) {
 // apply product discount to attributes if discount is on
 //              $new_attributes_price = $products_options->fields['options_values_price'];
-              $new_attributes_price = $gBitProduct->getAttributesPriceFinal( $products_options->fields["products_options_values_id"], 1, FALSE );
+              $new_attributes_price = $gBitProduct->getAttributesPriceFinalRecurring( $products_options->fields["products_options_values_id"], 1 );
               $new_attributes_price = $this->getPriceReduction( true, $new_attributes_price );
             } else {
 // discount is off do not apply
