@@ -17,17 +17,15 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.16 2008/07/13 07:07:47 lsces Exp $
+// $Id: product_listing.php,v 1.17 2009/08/19 15:57:49 tylerbello Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
-
   if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0 and $show_submit == 'true' and $listing_split->number_of_rows > 0) {
     // bof: multiple products
     $how_many = 0;
     echo zen_draw_form('multiple_products_cart_quantity', zen_href_link($gBitProduct->getInfoPage(), zen_get_all_get_params(array('action')) . 'action=multiple_products_add_product'), 'post', 'enctype="multipart/form-data"');
   }
-
   $zc_col_count_description = 0;
   for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
     switch ($column_list[$col]) {
@@ -161,7 +159,6 @@
                                                'params' => 'class="data"',
                                                'text'  => $lc_text);
       }
-
       $listing->MoveNext();
     }
     $error_categories = false;
