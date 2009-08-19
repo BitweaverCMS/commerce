@@ -634,7 +634,7 @@ bt(); die;
 // Find quantity discount quantity mixed and not mixed
   function zen_get_products_quantity_discount_mixed($product_id, $qty) {
     global $gBitDb;
-    global $cart;
+    global $gBitCustomer;
 
     $product_discounts = $gBitDb->query("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
 
@@ -676,7 +676,7 @@ bt(); die;
 ////
 // Return quantity buy now
   function zen_get_buy_now_qty($product_id) {
-    global $cart;
+    global $gBitCustomer;
     $check_min = zen_get_products_quantity_order_min($product_id);
     $check_units = zen_get_products_quantity_order_units($product_id);
     $buy_now_qty=1;
@@ -913,7 +913,7 @@ function zen_update_products_price_sorter($product_id) {
 ////
 // enable shipping
   function zen_get_shipping_enabled($shipping_module) {
-    global $PHP_SELF, $cart, $order;
+    global $PHP_SELF, $order;
 
 	$ret = true;
 
@@ -922,11 +922,9 @@ function zen_update_products_price_sorter($product_id) {
       return true;
     }
 
-	if( !empty( $cart ) ) {
-		$checkCart = &$cart;
 //	} elseif( !empty( $order ) ) {
 //		$checkCart = &$order;
-	} elseif( !empty( $gBitCustomer->mCart ) ) {
+	if( !empty( $gBitCustomer->mCart ) ) {
 		$checkCart = &$gBitCustomer->mCart;
 	}
 
