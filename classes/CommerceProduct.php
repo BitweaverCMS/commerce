@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.154 2009/08/19 15:35:18 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.155 2009/08/19 15:59:48 tylerbello Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1080,13 +1080,25 @@ If a special exist * 10+9
 			}
 		}
 	}
-
+	function prepGetList(&$pListHash){
+		parent::prepGetList($pListHash);
+		if(empty($pListHash['query_string'])){
+			$pListHash['query_string'] = '';
+		}
+		$dynamicParams = array ('page', 'max_records','sort_mode');
+		foreach ($_GET as $key=>$value){
+			if(!in_array($key,$dynamicParams)){
+				$pListHash['query_string'].= "&$key=$value";
+			}
+		}	
+		
+	}
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
-			if( empty( $pListHash['sort_mode'] ) ) {
+		if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'products_date_added_desc';
 		}
-		BitBase::prepGetList( $pListHash );
+		$this->prepGetList( $pListHash );
 		$bindVars = array();
 		$selectSql = '';
 		$joinSql = '';
@@ -1102,7 +1114,6 @@ If a special exist * 10+9
 			$whereSql = ' lc.`content_status_id` >= ? ';
 			$bindVars[] = -99;
 		}
-
 
 // 		$selectSql .= ' , s.* ';
 		if( !empty( $pListHash['specials'] ) ) {
@@ -1133,7 +1144,22 @@ If a special exist * 10+9
 			$whereSql .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
-
+		if( !empty( $pListHash['upper_price_limit'] ) ){
+			$whereSql .= " AND p.`products_price` <= ? ";
+			array_push( $bindVars, $pListHash['upper_price_limit']);
+		}
+		if( !empty( $pListHash['lower_price_limit'] ) ){
+			$whereSql .= " AND p.`products_price` >= ? ";
+			array_push( $bindVars, $pListHash['lower_price_limit'] );
+		}
+		if($gBitSystem->isPackageActive( 'tags' )){
+			if( !empty( $pListHash['tag'] ) ){
+				$joinSql .= " INNER JOIN tags_content_map tcm ON ( lc.`content_id` = tcm.`content_id`) ";
+				$whereSql .= " AND tcm.`tag_id` = ? ";
+				array_push( $bindVars, $pListHash['tag'] );
+			}
+		}
+	
 		if( !empty( $pListHash['freshness'] ) ) {
 			if ( $pListHash['freshness'] == '1' ) {
 				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$this->mDb->SQLDate( 'Ym' );
@@ -1177,7 +1203,7 @@ If a special exist * 10+9
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 
 		$pListHash['total_count'] = 0;
-		$query = "select p.`products_id` AS `hash_key`, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
+		$query = "select p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
@@ -1187,7 +1213,7 @@ If a special exist * 10+9
 					WHERE $whereSql ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set
-			if( $rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1 ) {
+			if( ($rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1) && empty($pListHash['offset'])) {
 				$pListHash['total_count'] = $rs->RecordCount();
 			} else {
 				$countQuery = "select COUNT( p.`products_id` )
