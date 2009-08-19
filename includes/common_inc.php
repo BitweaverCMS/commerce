@@ -591,36 +591,6 @@ bt(); die;
 
 
 ////
-// Is the product free?
-  function zen_get_products_price_is_free($products_id) {
-    global $gBitDb;
-    $the_free_price = false;
-	if( !empty( $products_id ) ) {
-      $product_check = $gBitDb->getOne("select `product_is_free` from " . TABLE_PRODUCTS .
-			" where `products_id` = ?", array( $products_id ) );
-      if( $product_check == '1' ) {
-        $the_free_price = true;
-	  }
-    }
-    return $the_free_price;
-  }
-
-////
-// Is the product call for price?
-  function zen_get_products_price_is_call($products_id) {
-    global $gBitDb;
-    $the_call_price = false;
-	if( !empty( $products_id ) ) {
-      $product_check = $gBitDb->getOne("select `product_is_call` from " . TABLE_PRODUCTS .
-			" where `products_id` = ?", array( $products_id ) );
-      if ( $product_check == '1' ) {
-        $the_call_price = true;
-      }
-    }
-    return $the_call_price;
-  }
-
-////
 // Is the product priced by attributes?
   function zen_get_products_price_is_priced_by_attributes($products_id) {
     global $gBitDb;
