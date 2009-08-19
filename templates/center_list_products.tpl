@@ -4,8 +4,7 @@
 
 <table border="0" cellspacing="0" cellpadding="5">
 {section name=ix loop=$listBoxContents}
-	<tr>
-
+<tr>
     {section name=jx loop=$listBoxContents[ix]}
     <td style="width:{$listColWidth}%">
 		<span class="productimage"><a href="{$gBitProduct->getDisplayUrl($listBoxContents[ix][jx].products_id)}" /><img class="thumb" src="{$gBitProduct->getImageUrl($listBoxContents[ix][jx].products_id,'avatar')}"/></a></span>
@@ -20,9 +19,9 @@
 		</div>
     </td>
 	{/section}
-	</tr>
+</tr>
 {/section}
-
 </table>
+
 </div>
 {/if}
