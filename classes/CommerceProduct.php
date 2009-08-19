@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.153 2009/08/18 22:06:16 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.154 2009/08/19 15:35:18 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -411,45 +411,24 @@ If a special exist * 10+9
 	function getPurchasePrice( $pQuantity=1, $pAttributes=array() ) {
 		$ret = NULL;
 		if( $this->isValid() ) {
-			$ret = $this->getBasePrice();
-
-			// adjusted count for free shipping
-			if ($this->getField('product_is_always_free_ship') != 1 and $this->getField('products_virtual') != 1) {
-				$products_weight = $this->getField('products_weight');
+			if( $this->getField( 'product_is_free' ) ) {
 			} else {
-				$products_weight = 0;
-			}
+				// Base price always includes the commission. For purchasing, we might not have to pay it, so back it out
+				$ret = $this->getBasePrice() - $this->getCommissionUserDiscount();
 
-			$special_price = $this->getSalePrice();
-			if ($special_price and $this->getField('products_priced_by_attribute') == 0) {
-				$ret = $special_price;
-			} else {
-				$special_price = 0;
-			}
-
-			if (zen_get_products_price_is_free($this->mProductsId)) {
-				// no charge
-				$ret = 0;
-			}
-
-			// adjust price for discounts when priced by attribute
-			if( $this->getField('products_priced_by_attribute') == '1' && $this->hasAttributes() ) {
-				// reset for priced by attributes
-				if ($special_price) {
-					$ret = $special_price;
-				} else {
-					// get the base price quantity discount. attribute discounts will be calculated later
-					$ret = $this->getQuantityPrice( $pQuantity, $this->getBasePrice() );
+				// Product is on sale, that is our new starting point
+				if( $salePrice = $this->getSalePrice() ) {
+					$ret = $salePrice;
 				}
-			} else {
+
 				// discount qty pricing
 				if( $this->getField('products_discount_type') ) {
-					$ret = $this->getQuantityPrice( $pQuantity );
+					$ret = $this->getQuantityPrice( $pQuantity, $ret );
 				}
 			}
 
 			if( $pAttributes ) {
-				// attributes price
+				// loop through passed in attributes and add addition cost to the price
 				foreach( $pAttributes as $optionId => $att ) { 
 					if( is_numeric( $att ) ) {
 						// cart has a simple list of $optionId=$valueId
@@ -468,36 +447,40 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	function getQuantityPrice( $pQuantity, $pCheckAmount=0 ) {
+	// check a given price for a quantity discount. it is the responsibility of the calling function to determine if this method is appropirate, ie. it should check attributes_discounted,  etc...
+	function getQuantityPrice( $pQuantity, $pCheckAmount = NULL ) {
 		global $gBitDb, $gBitCustomer;
-		if( is_object( $gBitCustomer->mCart ) ) {
-			$new_qty = $gBitCustomer->mCart->in_cart_mixed_discount_quantity( $this->mProductsId );
-			// check for discount qty mix
-			if ($new_qty > $pQuantity) {
-				$pQuantity = $new_qty;
+		if( $this->getField( 'products_mixed_discount_qty' ) && is_object( $gBitCustomer->mCart ) ) {
+			$mixedQuantity = $gBitCustomer->mCart->in_cart_mixed_discount_quantity( $this->mProductsId );
+			// mixed attribute products are all considered in the total quantity discount
+			if( $mixedQuantity > $pQuantity) {
+				$pQuantity = $mixedQuantity;
 			}
 		}
 
-		$discountPrice = $gBitDb->getOne( "SELECT `discount_price` from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id`=? and `discount_qty` <= ? ORDER BY `discount_qty` DESC", array( $this->mProductsId, $pQuantity ) );
+		$discountPrice = $this->getDiscount( $pQuantity, 'discount_price' );
 
-		$display_price = $this->getBasePrice();
+		// we might have a 0 check amount, so check for is_null
+		if( is_null( $pCheckAmount ) ) {
+			$pCheckAmount = $this->getBasePrice();
+		}
 		$display_specials_price = $this->getSpecialPrice();
 
 		switch( $this->getField('products_discount_type') ) {
-			// none
+			// not discounted, return what was passed in
 			case (empty( $discountPrice )):
 			case '0':
-					$discounted_price = ($pCheckAmount ? $pCheckAmount : $this->getBasePrice());
+					$discounted_price = $pCheckAmount;
 				break;
 			// percentage discount
 			case '1':
 				if ($this->getField('products_discount_type_from') == '0') {
 					// priced by attributes
-					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price);
+					$checkPrice = $pCheckAmount;
 				} elseif ( $display_specials_price ) {
 					$checkPrice = $display_specials_price;
 				} else {
-					$checkPrice = (($pCheckAmount != 0) ? $pCheckAmount : $display_price);
+					$checkPrice = $pCheckAmount;
 				}
 				$discounted_price = $checkPrice - ($checkPrice * ($discountPrice/100));
 
@@ -509,17 +492,16 @@ If a special exist * 10+9
 			// amount offprice
 			case '3':
 				if ($this->getField('products_discount_type_from') == '0') {
-					$discounted_price = $display_price - $discountPrice;
+					$discounted_price = $pCheckAmount - $discountPrice;
 				} else {
 					if (!$display_specials_price) {
-						$discounted_price = $display_price - $discountPrice;
+						$discounted_price = $pCheckAmount - $discountPrice;
 					} else {
 						$discounted_price = $display_specials_price - $discountPrice;
 					}
 				}
 				break;
 		}
-
 		return $discounted_price;
 	}
 
@@ -709,6 +691,7 @@ If a special exist * 10+9
 				$attributes_price_final += zen_get_attributes_price_factor($display_normal_price, $display_special_price, $optionValue["attributes_price_factor"], $optionValue["attributes_pf_offset"]);
 
 			}
+
 			// qty discounts
 			$attributes_price_final += zen_get_attributes_qty_prices_onetime($optionValue["attributes_qty_prices"], $pQuantity);
 
@@ -2079,20 +2062,43 @@ If a special exist * 10+9
 		return( count( $this->mDiscounts ) );
 	}
 
-	function getDiscount( $pQuantity, $pDiscount ) {
+	// retrieve the discount parameter for an exact pQuantity value, this is used during storing of discounts
+	function lookupDiscount( $pQuantity, $pDiscount ) {
 		$ret = NULL;
-		if( !isset( $this->mDiscounts[$pQuantity] ) ) {
+		if( is_null( $this->mDiscounts ) ) {
 			$this->loadDiscounts();
 		}
-		if( !empty( $this->mDiscounts[$pQuantity][$pDiscount] ) ) {
-			$ret = $this->mDiscounts[$pQuantity][$pDiscount];
+		// mDiscounts is sorted by DESCending quantity so first one over the quantity is our greatest hit
+		foreach( array_keys( $this->mDiscounts ) as $discountQty ) {
+			if( $pQuantity == $discountQty ) {
+				if( !empty( $this->mDiscounts[$discountQty][$pDiscount] ) ) {
+					$ret = $this->mDiscounts[$discountQty][$pDiscount];
+				}
+			}
+		}
+		return $ret;
+	}
+
+	// retrieve the discount parameter for an arbitrary pQuantity
+	function getDiscount( $pQuantity, $pDiscount ) {
+		$ret = NULL;
+		if( is_null( $this->mDiscounts ) ) {
+			$this->loadDiscounts();
+		}
+		// mDiscounts is sorted by DESCending quantity so first one over the quantity is our greatest hit
+		foreach( array_keys( $this->mDiscounts ) as $discountQty ) {
+			if( $pQuantity >= $discountQty ) {
+				if( !empty( $this->mDiscounts[$discountQty][$pDiscount] ) ) {
+					$ret = $this->mDiscounts[$discountQty][$pDiscount];
+				}
+			}
 		}
 		return $ret;
 	}
 
 
 	function compareDiscount( &$pParamHash, $pDiscount ) {
-		$currentDiscount = $this->getDiscount( $pParamHash['discount_qty'], $pDiscount );
+		$currentDiscount = $this->lookupDiscount( $pParamHash['discount_qty'], $pDiscount );
 
 		if( (empty( $pParamHash[$pDiscount] ) && !empty( $currentDiscount ))
 			|| (!empty( $pParamHash[$pDiscount] ) && ($pParamHash[$pDiscount] != $currentDiscount) ) ) {
@@ -2123,7 +2129,7 @@ If a special exist * 10+9
 			$this->expungeDiscount( $pParamHash['discount_id'] );
 		} elseif( $this->verifyDiscount( $pParamHash ) ) {
 			$pParamHash['discounts_store']['products_id'] = $this->mProductsId;
-			$pParamHash['discounts_store']['discount_id'] = !empty( $pParamHash['discount_id'] ) ? $pParamHash['discount_id'] : $this->getDiscount( $pParamHash['discount_qty'], 'discount_id' );
+			$pParamHash['discounts_store']['discount_id'] = !empty( $pParamHash['discount_id'] ) ? $pParamHash['discount_id'] : $this->lookupDiscount( $pParamHash['discount_qty'], 'discount_id' );
 
 			// this is a little funky cause we also to an insert due to oddball updates
 			if( $pParamHash['discounts_store']['discount_id'] ) {
