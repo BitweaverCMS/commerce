@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cc_validation.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
+// $Id: cc_validation.php,v 1.3 2009/08/19 16:01:06 tylerbello Exp $
 //
 
   class cc_validation {
@@ -29,7 +29,7 @@
       if (ereg('^4[0-9]{12}([0-9]{3})?$', $this->cc_number) and CC_ENABLED_VISA=='1') {
         $this->cc_type = 'Visa';
       } elseif (ereg('^5[1-5][0-9]{14}$', $this->cc_number) and CC_ENABLED_MC=='1') {
-        $this->cc_type = 'Master Card';
+        $this->cc_type = 'MasterCard';
       } elseif (ereg('^3[47][0-9]{13}$', $this->cc_number) and CC_ENABLED_AMEX=='1') {
         $this->cc_type = 'American Express';
       } elseif (ereg('^3(0[0-5]|[68][0-9])[0-9]{11}$', $this->cc_number) and CC_ENABLED_DINERS_CLUB=='1') {
