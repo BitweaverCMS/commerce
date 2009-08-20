@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.42 2009/08/18 20:38:54 spiderr Exp $
+// $Id: application_top.php,v 1.43 2009/08/20 21:03:23 spiderr Exp $
 //
 // start the timer for the page parse time log
 	define('PAGE_PARSE_START_TIME', microtime());
@@ -202,29 +202,6 @@ function clean_input( &$pArray ) {
 
 
 		switch( $_REQUEST['action'] ) {
-			// customer wants to update the product quantity in their shopping cart
-			// delete checkbox or 0 quantity removes FROM cart
-			case 'update_product' : 
-				for ($i=0, $n=sizeof($_REQUEST['products_id']); $i<$n; $i++) {
-					if ( in_array($_POST['products_id'][$i], (is_array($_REQUEST['cart_delete']) ? $_REQUEST['cart_delete'] : array())) || $_POST['cart_quantity'][$i]==0) {
-						$gBitCustomer->mCart->updateQuantity( $_POST['products_id'][$i], 0 );
-					} else {
-						$attributes = ($_REQUEST['id'][$_POST['products_id'][$i]]) ? $_REQUEST['id'][$_POST['products_id'][$i]] : '';
-						$gBitCustomer->mCart->addToCart($_POST['products_id'][$i], $_POST['cart_quantity'][$i], $attributes, false);
-					}
-				}
-
-				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
-				break;
-
-			// remove individual products FROM cart
-			case 'remove_product':
-				if ( !empty( $_REQUEST['product_id'] ) ) {
-					$gBitCustomer->mCart->updateQuantity( $_REQUEST['product_id'], 0 );
-				}
-				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
-				break;
-
 			// customer adds a product FROM the products page
 			case 'add_product' :
 				if (isset($_POST['products_id']) && is_numeric($_POST['products_id'])) {
@@ -342,7 +319,7 @@ function clean_input( &$pArray ) {
 					zen_redirect(FILENAME_LOGIN);
 				}
 				break;
-				case 'cust_order' :		 
+			case 'cust_order' :		 
 				if ($_SESSION['customer_id'] && isset($_REQUEST['pid'])) {
 					if (zen_has_product_attributes($_REQUEST['pid'])) {
 						zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.6 2009/08/20 19:02:49 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.7 2009/08/20 21:03:23 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -45,7 +45,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		if( $products = $this->mDb->getAssoc( $query, $bindVars ) ) {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
-				$this->contents[$basketProduct['products_key']]['quantity'] = $basketProduct['customers_basket_quantity'];
 
 				$query = "SELECT `products_options_key` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, `products_options_value_text`
 						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
@@ -204,7 +203,7 @@ bt(); die;
 		global $gCommerceSystem;
 		foreach( $this->contents AS $productsKey => $productsHash ) {
 			$product = $this->getProductObject( $productsKey );
-			$check_quantity = $productsHash['quantity'];
+			$check_quantity = $productsHash['customers_basket_quantity'];
 			$check_quantity_min = $product->getField( 'products_quantity_order_min' );
 			// Check quantity min
 			if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
@@ -253,7 +252,7 @@ bt(); die;
 		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 		if( $basketId = $this->mDb->getOne( "SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `$selectColumn` = ? AND `products_key` = ?", array( $selectValue, $pProductsKey ) ) ) {
 			if( !empty( $pQty ) ) {
-				$this->contents[$pProductsKey]['quantity'] = $pQty;
+				$this->contents[$pProductsKey]['customers_basket_quantity'] = $pQty;
 				$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . " SET `customers_basket_quantity` = ?  WHERE `customers_basket_id` = ?";
 				$this->mDb->query($sql, array( (int)$pQty, $basketId ) );
 			} else {
@@ -271,7 +270,7 @@ bt(); die;
 	function cleanup() {
 		reset($this->contents);
 		foreach( array_keys( $this->contents ) as $key ) {
-			if( empty( $this->contents[$key]['quantity'] ) || $this->contents[$key]['quantity'] <= 0 || !$this->getProductObject( $key ) ) {
+			if( empty( $this->contents[$key]['customers_basket_quantity'] ) || $this->contents[$key]['customers_basket_quantity'] <= 0 || !$this->getProductObject( $key ) ) {
 				$this->updateQuantity( $key, 0 );
 			}
 		}
@@ -299,7 +298,7 @@ bt(); die;
 				$productId = $k;
 			}
 			if( $productId == $pProductsId ) {
-				$ret += $this->contents[$k]['quantity'];
+				$ret += $this->contents[$k]['customers_basket_quantity'];
 			}
 		}
 		return( $ret );
@@ -337,7 +336,7 @@ bt(); die;
 
 			reset($this->contents);
 			foreach( array_keys( $this->contents ) as $productsKey ) {
-				$qty = $this->contents[$productsKey]['quantity'];
+				$qty = $this->contents[$productsKey]['customers_basket_quantity'];
 
 				// products price
 				$product = $this->getProductObject( $productsKey );
@@ -438,7 +437,7 @@ bt(); die;
 			while (list($productsKey, ) = each($this->contents)) {
 				if( $free_ship_check && ereg( '^GIFT', addslashes($free_ship_check->fields['products_model'] ) ) ) {
 					if( $product = $this->getProductObject( $productsKey ) ) {
-						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['quantity'], $this->contents[$productsKey]['attributes'] );
+						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['customers_basket_quantity'], $this->contents[$productsKey]['attributes'] );
 					}
 				}
 				if (isset($this->contents[$productsKey]['attributes'])) {
@@ -584,7 +583,7 @@ bt(); die;
 		while (list($pProductsKey, ) = each($check_contents)) {
 			$test_id = zen_get_prid($pProductsKey);
 			if ($test_id == $chk_products_id) {
-				$in_cart_mixed_qty += $check_contents[$pProductsKey]['quantity'];
+				$in_cart_mixed_qty += $check_contents[$pProductsKey]['customers_basket_quantity'];
 			}
 		}
 		return $in_cart_mixed_qty;
@@ -605,7 +604,7 @@ bt(); die;
 				foreach( array_keys( $check_contents ) as $products_key ) {
 					$test_id = zen_get_prid($products_key);
 					if ($test_id == $chk_products_id) {
-						$ret += $check_contents[$products_key]['quantity'];
+						$ret += $check_contents[$products_key]['customers_basket_quantity'];
 					}
 				}
 			} else {
@@ -632,7 +631,7 @@ bt(); die;
 			// check if field it true
 			$product_check = $this->mDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .  " where `products_id` = ?" , array( $testing_id ) );
 			if( $product_check == $check_value ) {
-				$in_cart_check_qty += $this->contents[$productsKey]['quantity'];
+				$in_cart_check_qty += $this->contents[$productsKey]['customers_basket_quantity'];
 			}
 		}
 		return $in_cart_check_qty;
