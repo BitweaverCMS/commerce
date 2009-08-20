@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceOrderBase.php,v 1.1 2009/08/18 19:56:39 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceOrderBase.php,v 1.2 2009/08/20 21:14:22 spiderr Exp $
  *
  * Base class for handling common functionality between shipping cart and orders
  *
@@ -68,7 +68,7 @@ class CommerceOrderBase extends BitBase {
 
 			reset($this->contents);
 			foreach( array_keys( $this->contents ) as $productsKey ) {
-				$qty = $this->contents[$productsKey]['quantity'];
+				$qty = $this->contents[$productsKey]['products_quantity'];
 				if( !empty( $this->contents[$productsKey]['products_id'] ) ) {
 					// $productsKey will be orders_products_id for an order
 					$prid = $this->contents[$productsKey]['products_id']; 

@@ -45,7 +45,7 @@
 		{/if}
 	</td>
 	<td>
-		<input type="text" name="cart_quantity[{$productsKey}]" value="{$basket.customers_basket_quantity}" size="4">
+		<input type="text" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}" size="4">
 		{* remove multiple checkbox - can't find good home for now, but still should work <input type="checkbox" name="cart_delete[]" value="{$productsKey}"> *}
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{biticon package="icons" iname="edit-delete" iexplain="Remove from cart"}</a>
 	</td>

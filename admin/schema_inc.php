@@ -525,12 +525,13 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
   customers_basket_id I4 PRIMARY AUTO,
   customers_id I4,
   cookie C(64),
-  products_id C(128) NOTNULL,
-  customers_basket_quantity F DEFAULT '0' NOTNULL,
+  products_key C(128) NOTNULL,
+  products_id I4 NOTNULL,
+  products_quantity F DEFAULT '0' NOTNULL,
   final_price N(15,4),
   date_added T
-  CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
-",
+  CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+			  , CONSTRAINT `cust_bask_prod_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )' ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
