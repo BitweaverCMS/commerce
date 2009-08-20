@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.5 2009/08/20 18:45:06 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.6 2009/08/20 19:02:49 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -119,7 +119,7 @@ bt(); die;
 			}
 
 			// insert into database
-			$sql = "insert into " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `customers_basket_quantity`, `date_added`) values ( ?, ?, ?, ? )";
+			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `customers_basket_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
 			$this->mDb->query( $sql, array( $selectValue, $productsKey, zen_get_prid( $productsKey ), $pQty, date('Ymd') ) );
 			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $productsKey, $selectValue ) ); 
 
