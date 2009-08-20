@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.33 2009/08/18 20:38:54 spiderr Exp $
+// $Id: functions_lookups.php,v 1.34 2009/08/20 18:45:07 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -225,45 +225,6 @@
     return $product->fields['products_name'];
   }
 
-
-/**
- * Return a product's stock count. Check products_virtual and return that value if products_quantity is empty (i.e. virtual products are always in stock)
- *
- * @param int The product id of the product who's stock we want
-*/
-  function zen_get_products_stock($products_id) {
-    global $gBitDb;
-    $products_id = zen_get_prid($products_id);
-    $stock_query = "select `products_quantity`, `products_virtual` from " . TABLE_PRODUCTS . " where `products_id` = ?";
-    $stock_values = $gBitDb->query($stock_query, array( $products_id ) );
-
-	$ret = $stock_values->fields['products_quantity'];
-	if( empty( $stock_values->fields['products_quantity'] ) ) {
-		$ret = $stock_values->fields['products_virtual'];
-	}
-	return $ret;
-  }
-
-/**
- * Check if the required stock is available.
- *
- * If insufficent stock is available return an out of stock message
- *
- * @param int The product id of the product whos's stock is to be checked
- * @param int Is this amount of stock available
- *
- * @TODO naughty html in a function
-*/
-  function zen_check_stock($products_id, $products_quantity) {
-    $stock_left = zen_get_products_stock($products_id) - $products_quantity;
-    $out_of_stock = '';
-
-    if ($stock_left < 0) {
-      $out_of_stock = '<span class="markProductOutOfStock">' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '</span>';
-    }
-
-    return $out_of_stock;
-  }
 
   function zen_get_manufacturers($manufacturers_array = '') {
     global $gBitDb;

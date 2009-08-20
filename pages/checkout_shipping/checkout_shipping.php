@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.14 2009/08/12 21:04:07 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.15 2009/08/20 18:45:07 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -43,23 +43,16 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
   }
 
 // Validate Cart for checkout
-  $_SESSION['valid_to_checkout'] = true;
-  $gBitCustomer->mCart->get_products(true);
-  if ($_SESSION['valid_to_checkout'] == false) {
-    $messageStack->add('header', 'Please update your order ...', 'error');
-    zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-  }
+$_SESSION['valid_to_checkout'] = true;
+if( !$gBitCustomer->mCart->isValidForCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
 // Stock Check
-  if ( (STOCK_CHECK == 'true') && (STOCK_ALLOW_CHECKOUT != 'true') ) {
-    $products = $gBitCustomer->mCart->get_products();
-    for ($i=0, $n=sizeof($products); $i<$n; $i++) {
-      if (zen_check_stock($products[$i]['id'], $products[$i]['quantity'])) {
-        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-        break;
-      }
-    }
-  }
+if( !$gBitCustomer->mCart->stockCheck() ) {
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
 	// if no shipping destination address was selected, use the customers own address as default
 	if( empty( $_SESSION['sendto'] ) ) {

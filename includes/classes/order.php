@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.74 2009/08/18 20:38:54 spiderr Exp $
+// $Id: order.php,v 1.75 2009/08/20 18:45:06 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -577,8 +577,10 @@ class order extends CommerceOrderBase {
 								'telephone' => $billing_address->fields['entry_telephone'],
 								'format_id' => $billing_address->fields['address_format_id']);
 
-		$products = $gBitCustomer->mCart->get_products();
-		foreach( array_keys( $products ) as $opid ) {
+		foreach( array_keys( $gBitCustomer->mCart->contents ) as $productsKey ) {
+			$product = $this->getProductObject( $productsKey );
+vd( $basketProduct ); die;
+
 			$this->contents[$opid] = $products[$opid];
 			$this->contents[$opid]['final_price'] = $products[$opid]['price'] + $gBitCustomer->mCart->attributes_price($products[$opid]['id'], FALSE );
 			$this->contents[$opid]['onetime_charges'] = $gBitCustomer->mCart->attributes_price_onetime_charges($products[$opid]['id'], $products[$opid]['quantity']);
