@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.34 2009/08/20 18:45:07 spiderr Exp $
+// $Id: functions_lookups.php,v 1.35 2009/08/22 08:21:29 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -64,6 +64,8 @@
   function zen_get_countries($countries_id = '', $with_iso_codes = false) {
     global $gBitDb;
     $countries_array = array();
+bt();
+vd( $countries_id ); die;
     if (zen_not_null($countries_id)) {
     	if( is_numeric( $countries_id ) ) {
     		$whereSql = ' WHERE `countries_id` = ? ';
@@ -200,7 +202,7 @@
   function zen_get_zone_id( $pCountryId, $pZoneName ) {
 	global $gBitDb;
 
-	return $gBitDb->getOne( "SELECT `zone_code` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND `zone_name`=?".$whereSql, array( (int)$pCountryId, $pZoneName ) );
+	return $gBitDb->getOne( "SELECT `zone_code` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND `zone_name`=?", array( (int)$pCountryId, $pZoneName ) );
   }
 
 
