@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.10 2009/08/12 21:04:07 spiderr Exp $
+// $Id: header_php.php,v 1.11 2009/08/22 08:23:53 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($gBitCustomer->mCart->count_contents() <= 0) {
@@ -35,23 +35,11 @@
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
   }
 
-// avoid hack attempts during the checkout procedure by checking the internal cartID
-  if (isset($gBitCustomer->mCart->cartID) && $_SESSION['cartID']) {
-    if ($gBitCustomer->mCart->cartID != $_SESSION['cartID']) {
-      zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-    }
-  }
-
-// Stock Check
-  if ( (STOCK_CHECK == 'true') && (STOCK_ALLOW_CHECKOUT != 'true') ) {
-    $products = $gBitCustomer->mCart->get_products();
-    for ($i=0, $n=sizeof($products); $i<$n; $i++) {
-      if (zen_check_stock($products[$i]['id'], $products[$i]['quantity'])) {
-        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-        break;
-      }
-    }
-  }
+// Stock Check and more....
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
 // if no billing destination address was selected, use the customers own address as default
   if (!$_SESSION['billto']) {
@@ -99,8 +87,8 @@
   $payment_modules = new payment;
 
 // Load the selected shipping module(needed to calculate tax correctly)
-  require(DIR_FS_CLASSES . 'shipping.php');
-  $shipping_modules = new shipping($_SESSION['shipping']);
+  require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+  $shipping_modules = new CommerceShipping( $_SESSION['shipping'] );
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
 

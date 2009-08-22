@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.8 2009/08/12 21:04:06 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.9 2009/08/22 08:22:48 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -91,12 +91,9 @@
 
   foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
          '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['products_id'] ) . '">' . $order->contents[$opid]['name']. '</a>';
 
-    if (STOCK_CHECK == 'true') {
-      echo zen_check_stock(stripslashes($order->contents[$opid]['id']), $order->contents[$opid]['quantity']);
-    }
     if ( !empty( $order->contents[$opid]['attributes'] ) && (sizeof($order->contents[$opid]['attributes']) > 0) ) {
       for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {
         echo '<br /><nobr>&nbsp;<em> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'] . '</em></nobr>';
@@ -114,7 +111,7 @@
 	}
 
     echo '        <td class="main" align="right" valign="top">' .
-                    $currencies->display_price($order->contents[$opid]['final_price'], $order->contents[$opid]['tax'], $order->contents[$opid]['quantity']) .
+                    $currencies->display_price($order->contents[$opid]['final_price'], $order->contents[$opid]['tax'], $order->contents[$opid]['products_quantity']) .
                     ($order->contents[$opid]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax'], 1) : '') .
                   '</td>' . "\n" .
          '      </tr>' . "\n";

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.11 2009/08/12 21:04:06 spiderr Exp $
+// $Id: header_php.php,v 1.12 2009/08/22 08:22:48 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($gBitCustomer->mCart->count_contents() <= 0) {
@@ -30,12 +30,11 @@
     zen_redirect(FILENAME_LOGIN);
   }
 
-// avoid hack attempts during the checkout procedure by checking the internal cartID
-  if (isset($gBitCustomer->mCart->cartID) && $_SESSION['cartID']) {
-    if ($gBitCustomer->mCart->cartID != $_SESSION['cartID']) {
-      zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-    }
-  }
+// Stock Check and more....
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
 // if no shipping method has been selected, redirect the customer to the shipping method selection page
   if (!$_SESSION['shipping']) {
@@ -86,22 +85,9 @@
   }
 
 // load the selected shipping module
-  require(DIR_FS_CLASSES . 'shipping.php');
-  $shipping_modules = new shipping($_SESSION['shipping']);
+    require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+  $shipping_modules = new CommerceShipping($_SESSION['shipping']);
 
-// Stock Check
-  $any_out_of_stock = false;
-  if (STOCK_CHECK == 'true') {
-    foreach( array_keys( $order->products ) as $opid ) {
-      if (zen_check_stock($order->products[$opid]['id'], $order->products[$opid]['quantity'])) {
-        $any_out_of_stock = true;
-      }
-    }
-    // Out of Stock
-    if ( (STOCK_ALLOW_CHECKOUT != 'true') && ($any_out_of_stock == true) ) {
-      zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-    }
-  }
 
 // update customers_referral with $_SESSION['gv_id']
   if ($_SESSION['cc_id']) {

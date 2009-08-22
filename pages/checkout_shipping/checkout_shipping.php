@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.15 2009/08/20 18:45:07 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.16 2009/08/22 08:22:32 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -44,26 +44,21 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 
 // Validate Cart for checkout
 $_SESSION['valid_to_checkout'] = true;
-if( !$gBitCustomer->mCart->isValidForCheckout() ) {
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
 	$messageStack->add('header', 'Please update your order ...', 'error');
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-// Stock Check
-if( !$gBitCustomer->mCart->stockCheck() ) {
-	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-	// if no shipping destination address was selected, use the customers own address as default
-	if( empty( $_SESSION['sendto'] ) ) {
-		if( empty( $_SESSION['customer_default_address_id'] ) ) {
-			$_SESSION['customer_default_address_id'] = $gBitCustomer->getDefaultAddress();
-		}
-		$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-	} elseif ( !$gBitCustomer->isAddressOwner( $_SESSION['sendto'] ) ) {
-			$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-			$_SESSION['shipping'] = '';
+// if no shipping destination address was selected, use the customers own address as default
+if( empty( $_SESSION['sendto'] ) ) {
+	if( empty( $_SESSION['customer_default_address_id'] ) ) {
+		$_SESSION['customer_default_address_id'] = $gBitCustomer->getDefaultAddress();
 	}
+	$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+} elseif ( !$gBitCustomer->isAddressOwner( $_SESSION['sendto'] ) ) {
+		$_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+		$_SESSION['shipping'] = '';
+}
 
   require_once(DIR_FS_CLASSES . 'order.php');
   $order = new order;
