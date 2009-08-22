@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.10 2009/08/18 20:01:58 spiderr Exp $
+//  $Id: whos_online.php,v 1.11 2009/08/22 08:18:18 spiderr Exp $
 //
 
 
@@ -31,6 +31,8 @@ function zen_check_bot($checking) {
   }
 }
 
+
+$listing = (!empty( $_REQUEST['listing'] ) ? $_REQUEST['listing'] : '' );
 // host for current ip
 function zen_check_quantity($which) {
   global $gBitDb;
@@ -87,8 +89,10 @@ function zen_check_minutes($the_time_last_click) {
                 and `time_last_click` < '" . $xx_mins_ago_dead . "')");
                 
 //geoip initialization
-require_once(UTIL_PKG_PATH.'pear/Net/GeoIP.php');
-$geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_GeoIP::MEMORY_CACHE);
+if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
+	require_once(UTIL_PKG_PATH.'pear/Net/GeoIP.php');
+	$geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_GeoIP::MEMORY_CACHE);
+}
              
                 
 ?>
@@ -154,7 +158,6 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
       </tr>
 
 <?php
-          $listing= $_GET['listing'];
           switch ($listing) {
               case "ip_address":
               $order = "ip_address";
@@ -255,7 +258,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
                     }
                   ?>
                 </td>
-                <td class="dataTableContentWhois" align="left"><a href="http://www.dnsstuff.com/tools/whois.ch?ip=<?php echo $whos_online->fields['ip_address']; ?>" target="new"><?php echo '<u>' . $whos_online->fields['ip_address'] . '</u> ' . $geoip->lookupCountryName($whos_online->fields['ip_address']); ?></a></td>
+                <td class="dataTableContentWhois" align="left"><a href="http://www.dnsstuff.com/tools/whois.ch?ip=<?php echo $whos_online->fields['ip_address']; ?>" target="new"><?php echo '<u>' . $whos_online->fields['ip_address'] . '</u> ' . (!empty( $geoip ) ? $geoip->lookupCountryName($whos_online->fields['ip_address']) : ''); ?></a></td>
                 <td class="dataTableContentWhois"><?php echo date('H:i:s', $whos_online->fields['time_entry']); ?></td>
                 <td class="dataTableContentWhois" align="center"><?php echo date('H:i:s', $whos_online->fields['time_last_click']); ?></td>
                 <td class="dataTableContentWhois"><?php if (eregi('^(.*)' . zen_session_name() . '=[a-f,0-9]+[&]*(.*)', $whos_online->fields['last_page_url'], $array)) { echo $array[1] . $array[2]; } else { echo "<a href='".$whos_online->fields['last_page_url']."' target=new>". '<u>' . $whos_online->fields['last_page_url'] . '</u>' ."</a>"; } ?>&nbsp;</td>
@@ -292,7 +295,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
   $old_array = $whos_online;
   $whos_online->MoveNext();
   }
-  if (!$d) {
+  if( empty( $d ) ) {
     $d=0;
   }
   $total_dupes = $d;
@@ -319,7 +322,7 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
 <?php
   $heading = array();
   $contents = array();
-  if ($info) {
+  if( !empty( $info ) ) {
     $heading[] = array('text' => '<b>' . TABLE_HEADING_SHOPPING_CART . '</b>');
 
     if (STORE_SESSIONS == 'db') {
@@ -383,9 +386,9 @@ $geoip = Net_GeoIP::getInstance(UTIL_PKG_PATH.'pear/Net/GeoIP/GeoIP.dat', Net_Ge
       }
 
       if (is_object($gBitCustomer->mCart)) {
-        $products = $gBitCustomer->mCart->get_products();
-        for ($i = 0, $n = sizeof($products); $i < $n; $i++) {
-          $contents[] = array('text' => $products[$i]['quantity'] . ' x ' . '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_product_path($products[$i]['id']) . '&pID=' . $products[$i]['id']) . '">' . $products[$i]['name'] . '</a>');
+        foreach( array_keys( $gBitCustomer->mCart->contents ) as $productsKey ) {
+			$productsHash = $gBitCustomer->mCart->getProductsHash( $productsKey );
+          $contents[] = array('text' => $productsHash['products_quantity'] . ' x ' . '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_product_path($productsHash['products_id']) . '&pID=' . $productsHash['products_id']) . '">' . $productsHash['name'] . '</a>');
 // cPath=23&pID=74
         }
 
