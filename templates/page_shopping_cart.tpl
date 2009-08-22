@@ -79,7 +79,7 @@
 		<input type="submit" name="update_cart" value="{tr}Update Cart{/tr}" />
 	</td>
 	<td>
-		<a href="{$smarty.const.BITCOMMERCE_SSL_PKG_URI}?main_page=checkout_shipping" class="button">{tr}Checkout{/tr}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_shipping" class="button">{tr}Checkout{/tr}</a>
 	</td>
 <tr>
 </table>
