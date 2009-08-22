@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.6 2006/01/23 04:57:43 spiderr Exp $
+// $Id: checkout_process.php,v 1.7 2009/08/22 08:23:17 spiderr Exp $
 //
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
@@ -36,8 +36,8 @@
   require(DIR_FS_CLASSES . 'payment.php');
   $payment_modules = new payment($_SESSION['payment']);
 // load the selected shipping module
-  require(DIR_FS_CLASSES . 'shipping.php');
-  $shipping_modules = new shipping($_SESSION['shipping']);
+    require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+  $shipping_modules = new CommerceShipping($_SESSION['shipping']);
 
   require(DIR_FS_CLASSES . 'order.php');
   $order = new order;
