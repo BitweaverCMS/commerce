@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.13 2009/08/18 20:38:54 spiderr Exp $
+// $Id: ot_coupon.php,v 1.14 2009/08/22 08:29:58 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -43,29 +43,27 @@
 		}
 
 	function process() {
-		global $order, $currencies, $gBitDb;
+		global $order, $currencies, $gBitDb, $gBitCustomer;
 		if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
 		$this->deduction = $od_amount['total'];
 		if ($od_amount['total'] > 0) {
 			while (list($key, $value) = each($order->info['tax_groups'])) {
-			$tax_rate = zen_get_tax_rate_from_desc($key);
-			if( !empty( $od_amount[$key] ) ) {
-				$order->info['tax_groups'][$key] -= $od_amount[$key];
-				$order->info['total'] -=	$od_amount[$key];
-			}
+				$tax_rate = zen_get_tax_rate_from_desc($key);
+				if( !empty( $od_amount[$key] ) ) {
+					$order->info['tax_groups'][$key] -= $od_amount[$key];
+					$order->info['total'] -=	$od_amount[$key];
+				}
 			}
 			if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
-			$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
-			$zq_coupon_code = $gBitDb->Execute($sql);
-			$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
-			$order->info['total'] = $order->info['total'] - $od_amount['total'];
-			$this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
-						 'text' => '-' . $currencies->format($od_amount['total']),
-						 'value' => $od_amount['total']);
+				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
+				$zq_coupon_code = $gBitDb->Execute($sql);
+				$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
+				$order->info['total'] = $order->info['total'] - $od_amount['total'];
+				$this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
+							 'text' => '-' . $currencies->format($od_amount['total']),
+							 'value' => $od_amount['total']);
+			}
 		}
-	}
-$gBitDb->debug( 0 );
-//die;
 	}
 
 	function selection_test() {
@@ -76,6 +74,16 @@ $gBitDb->debug( 0 );
 		unset($_SESSION['cc_id']);
 	}
 
+	function get_order_total() {
+		global $gBitCustomer;
+		$gBitCustomer->mCart->calculate();
+		if( $this->include_shipping == 'true' ) {
+			$ret = $gBitCustomer->mCart->total;
+		} else {
+			$ret = $gBitCustomer->mCart->subtotal;
+		}
+		return $ret;
+	}
 
 	function pre_confirmation_check($order_total) {
 		global $order;
@@ -92,10 +100,10 @@ $gBitDb->debug( 0 );
 
 
 	function credit_selection() {
-		$selection = array('id' => $this->code,
-											 'module' => $this->title,
-											 'fields' => array(array('title' => 'Coupon Code',
-																							 'field' => zen_draw_input_field('dc_redeem_code'))));
+		$selection = array(  'id' => $this->code,
+							 'module' => $this->title,
+							 'fields' => array(array('title' => 'Coupon Code',
+							 'field' => zen_draw_input_field('dc_redeem_code'))));
 		return $selection;
 	}
 
@@ -154,8 +162,7 @@ $gBitDb->debug( 0 );
 		global $gBitDb, $insert_id;
 		$cc_id = $_SESSION['cc_id'];
 		if ($this->deduction !=0) {
-			$gBitDb->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . "
-									(coupon_id, redeem_date, redeem_ip, customer_id, order_id)
+			$gBitDb->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, redeem_date, redeem_ip, customer_id, order_id)
 						values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
 		}
 		$_SESSION['cc_id'] = "";
@@ -203,18 +210,15 @@ $gBitDb->debug( 0 );
 										break;
 										case 'Standard':
 											$ratio = $od_amount['total']/$this->get_order_total();
-											$products = $gBitCustomer->mCart->get_products();
-											for ($i=0; $i<sizeof($products); $i++) {
-												$t_prid = zen_get_prid($products[$i]['id']);
-												$cc_result = $gBitDb->Execute("select `products_tax_class_id`
-																									 from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
-
-												if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
-													$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-													$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-													if ($tax_rate > 0) {
-														$od_amount[$tax_desc] += (($products[$i]['final_price'] * $products[$i]['quantity']) * $tax_rate)/100 * $ratio;
-														$od_amount['tax'] += $od_amount[$tax_desc];
+											foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
+												if( $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
+													if( is_product_valid( $productKey, $_SESSION['cc_id'] ) ) {
+														$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+														$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+														if ($tax_rate > 0) {
+															$od_amount[$tax_desc] += (($products[$i]['final_price'] * $products[$i]['quantity']) * $tax_rate)/100 * $ratio;
+															$od_amount['tax'] += $od_amount[$tax_desc];
+														}
 													}
 												}
 											}
@@ -258,75 +262,6 @@ $gBitDb->debug( 0 );
 			}
 		}
 		return $od_amount;
-	}
-
-	function get_order_total() {
-		global	$order;
-		$products = $gBitCustomer->mCart->get_products();
-		$order_total = 0;
-		for ($i=0; $i<sizeof($products); $i++) {
-			if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
-				$order_total += $products[$i]['final_price'] * $products[$i]['quantity'];
-				if ($this->include_tax == 'true') {
-					$products_tax = zen_get_tax_rate($products[$i]['tax_class_id']);
-					$order_total += (zen_calculate_tax($products[$i]['final_price'], $products_tax))	 * $products[$i]['quantity'];
-				}
-			}
-		}
-		if ($this->include_shipping == 'true') $order_total += $order->info['shipping_cost'];
-		return $order_total;
-	}
-
-	function get_product_price($product_id) {
-		global $gBitDb, $order;
-		$products_id = zen_get_prid($product_id);
- // products price
-		$qty = $gBitCustomer->mCart->contents[$product_id]['quantity'];
-		$product = $gBitDb->Execute("select `products_id`, `products_price`, `products_tax_class_id`, `products_weight`
-														 from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id . "'");
-
-		if ($product->RecordCount() > 0) {
-			$prid = $product->fields['products_id'];
-			$products_tax = zen_get_tax_rate($product->fields['products_tax_class_id']);
-			$products_price = $product->fields['products_price'];
-			$specials = $gBitDb->Execute("select `specials_new_products_price`
-																from " . TABLE_SPECIALS . " where `products_id` = '" . $prid . "' and `status` = '1'");
-
-			if ($specials->RecordCount() > 0 ) {
-				$products_price = $specials->fields['specials_new_products_price'];
-			}
-			if ($this->include_tax == 'true') {
-				$total_price += ($products_price + zen_calculate_tax($products_price, $products_tax)) * $qty;
-			} else {
-				$total_price += $products_price * $qty;
-			}
-
-// attributes price
-			if (isset($gBitCustomer->mCart->contents[$product_id]['attributes'])) {
-				reset($gBitCustomer->mCart->contents[$product_id]['attributes']);
-				while (list($option, $value) = each($gBitCustomer->mCart->contents[$product_id]['attributes'])) {
-					$attribute_price = $gBitDb->Execute("SELECT `options_values_price`, `price_prefix`
-														 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-														 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-														 WHERE pom.`products_id` = ? AND pa.`products_options_id` = ? AND pom.`products_options_values_id` = ?", array( $prid, $option, $value ) );
-
-					if ($attribute_price->fields['price_prefix'] == '-') {
-						if ($this->include_tax == 'true') {
-							$total_price -= $qty * ($attribute_price->fields['options_values_price'] + zen_calculate_tax($attribute_price->fields['options_values_price'], $products_tax));
-						} else {
-							$total_price -= $qty * ($attribute_price->fields['options_values_price']);
-						}
-					} else {
-						if ($this->include_tax == 'true') {
-							$total_price += $qty * ($attribute_price->fields['options_values_price'] + zen_calculate_tax($attribute_price->fields['options_values_price'], $products_tax));
-						} else {
-							$total_price += $qty * ($attribute_price->fields['options_values_price']);
-						}
-					}
-				}
-			}
-		}
-		return $total_price;
 	}
 
 		function check() {
