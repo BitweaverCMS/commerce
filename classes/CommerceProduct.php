@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.155 2009/08/19 15:59:48 tylerbello Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.156 2009/08/22 08:19:46 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -161,8 +161,8 @@ class CommerceProduct extends LibertyMime {
 		if( $this->getField( 'products_priced_by_attribute' ) == '1' ) {
 			$the_options_id= 'x';
 			$the_base_price= 0;
-			foreach( array_keys( $this->mOptions ) as $optionId ) {
-				if( $this->mOptions[$optionsId]['attributes_required'] == '1' ) {
+			foreach( array_keys( $this->mOptions ) as $optionsId ) {
+				if( !empty( $this->mOptions[$optionsId]['attributes_required'] ) && $this->mOptions[$optionsId]['attributes_required'] == '1' ) {
 					$basePrice += $this->mOptions[$optionsId]['options_values_price'];
 				}
 			}
