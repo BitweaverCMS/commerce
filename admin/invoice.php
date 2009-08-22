@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.11 2009/08/18 20:03:54 spiderr Exp $
+//  $Id: invoice.php,v 1.12 2009/08/22 08:18:36 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -150,13 +150,13 @@
 <?php
     foreach ( array_keys( $order->contents ) as $opid ) {
       echo '      <tr class="dataTableRow">' . "\n" .
-           '        <td class="dataTableContent" valign="top" align="right">' . $order->contents[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
+           '        <td class="dataTableContent" valign="top" align="right">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
            '        <td class="dataTableContent" valign="top">' . $order->contents[$opid]['name'];
 
       if (isset($order->contents[$opid]['attributes']) && (($k = sizeof($order->contents[$opid]['attributes'])) > 0)) {
         for ($j = 0; $j < $k; $j++) {
           echo '<br><nobr><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'];
-          if ($order->contents[$opid]['attributes'][$j]['price'] != '0') echo ' (' . $order->contents[$opid]['attributes'][$j]['prefix'] . $currencies->format($order->contents[$opid]['attributes'][$j]['price'] * $order->contents[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
+          if ($order->contents[$opid]['attributes'][$j]['price'] != '0') echo ' (' . $order->contents[$opid]['attributes'][$j]['prefix'] . $currencies->format($order->contents[$opid]['attributes'][$j]['price'] * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
           if ($order->contents[$opid]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->contents[$opid]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
           echo '</i></small></nobr>';
         }
@@ -174,11 +174,11 @@
                       ($order->contents[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '') .
                     '</b></td>' . "\n" .
            '        <td class="dataTableContent" align="right" valign="top"><b>' .
-                      $currencies->format($order->contents[$opid]['final_price'] * $order->contents[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
+                      $currencies->format($order->contents[$opid]['final_price'] * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                       ($order->contents[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format($order->contents[$opid]['onetime_charges'], true, $order->info['currency'], $order->info['currency_value']) : '') .
                     '</b></td>' . "\n" .
            '        <td class="dataTableContent" align="right" valign="top"><b>' .
-                      $currencies->format(zen_add_tax($order->contents[$opid]['final_price'], $order->contents[$opid]['tax']) * $order->contents[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
+                      $currencies->format(zen_add_tax($order->contents[$opid]['final_price'], $order->contents[$opid]['tax']) * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                       ($order->contents[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '') .
                     '</b></td>' . "\n";
       echo '      </tr>' . "\n";

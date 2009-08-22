@@ -60,7 +60,7 @@
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
 	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($ordersProduct.products_id,'icon')}" />
-	<td class="item" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
+	<td class="item" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
 	<td class="item" valign="top" width="90%">
 		{$ordersProduct.name} [ {$ordersProduct.model} ]
 		{if !empty($ordersProduct.attributes)}

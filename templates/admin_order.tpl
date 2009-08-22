@@ -71,7 +71,7 @@ function getShippingQuotes( pOrderId ) {
           </tr>
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
-<td class="dataTableContent" valign="top" align="right">{$ordersProduct.quantity}&nbsp;x</td>
+<td class="dataTableContent" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
 <td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>{if $ordersProduct.products_version > 1}, v{$ordersProduct.products_version}{/if}</td>
 <td class="dataTableContent" valign="top">{$ordersProduct.model}</td>
 <td class="dataTableContent" align="right" valign="top">{if $ordersProduct.tax}{$ordersProduct.tax|zen_display_tax_value}%{/if}</td>
@@ -91,10 +91,10 @@ function getShippingQuotes( pOrderId ) {
 {/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
-	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.quantity}
+	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
 	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
-	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.quantity} 
+	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
 </td>
 <td class="dataTableContent" align="right" valign="top">
 	{if $ordersProduct.tax}
@@ -111,7 +111,7 @@ function getShippingQuotes( pOrderId ) {
 {section loop=$ordersProduct.attributes name=a}
 		<div class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
 			<nobr><em>&bull; {$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
-				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.quantity}
+				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
 			</em>
