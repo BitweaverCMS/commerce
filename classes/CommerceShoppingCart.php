@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.8 2009/08/20 21:14:22 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.9 2009/08/22 08:20:30 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -34,6 +34,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		global $gBitUser;
 
 		$this->contents = array();
+
+		$whereSql = '';
 
 		$bindVars[] = session_id();
 		if( $gBitUser->isRegistered() ) {
@@ -67,7 +69,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->cleanup();
 	}
 
-	function reset($reset_database = false) {
+	function reset() {
 		global $gBitUser;
 
 		$this->contents = array();
@@ -80,14 +82,12 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->free_shipping_price = 0;
 		$this->free_shipping_weight = 0;
 
-		if( $gBitUser->isRegistered() && ($reset_database == true)) {
-bt(); die;
-			$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `customers_id` = ?";
-			$this->mDb->query($sql, array( $gBitUser->mUserId ) );
-
-			$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_id` = ?";
-			$this->mDb->query($sql, array( $gBitUser->mUserId ) );
-		}
+		$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
+		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
+		$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE $selectColumn = ?)";
+		$this->mDb->query($sql, array( $selectValue ) );
+		$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `$selectColumn` = ?";
+		$this->mDb->query($sql, array( $selectValue ) );
 
 		unset($this->cartID);
 	}
@@ -359,7 +359,6 @@ bt(); die;
 		}
 	}
 */
-
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
 		$productsId = zen_get_prid( $pProductsMixed );
@@ -382,6 +381,8 @@ bt(); die;
 			$prid = $product->mProductsId;
 
 			$productHash =$product->mInfo;
+			// this is the stock quantity coming out of mInfo
+			unset( $productsHash['products_quantity'] );
 			$productHash['id'] = $pProductsKey;
 			$productHash['name'] = $product->getField('products_name');
 			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
@@ -392,15 +393,16 @@ bt(); die;
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
+			$productHash['tax_rate'] = zen_get_tax_rate($product->fields['products_tax_class_id']);
 			$productHash['final_price'] = $productHash['price'];
-			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , zen_get_tax_rate($productHash['tax_class_id']), $productHash['products_quantity'] );
+			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , $productHash['tax_rate'], $productHash['products_quantity'] );
 			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
-			$productHash['onetime_charges_display'] = $currencies->display_price($productHash['onetime_charges'], zen_get_tax_rate($productHash['tax_class_id']), 1);
+			$productHash['onetime_charges_display'] = $currencies->display_price($productHash['onetime_charges'], $productHash['tax_rate'], 1);
 			$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 			$productHash['tax'] = $product->getField('tax_rate');
 			$productHash['tax_description'] = $product->getField('tax_description');
-			$productHash['attributes'] = (isset( $productsHash['attributes'] ) ? $productsHash['attributes'] : '');
-			$productHash['attributes_values'] = (isset( $productsHash['attributes_values'] ) ? $productsHash['attributes_values'] : '');
+			$productHash['attributes'] = (isset( $this->contents[$pProductsKey]['attributes'] ) ? $this->contents[$pProductsKey]['attributes'] : '');
+			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
 		return $productHash;
 	}
