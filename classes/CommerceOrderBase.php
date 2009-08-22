@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceOrderBase.php,v 1.2 2009/08/20 21:14:22 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceOrderBase.php,v 1.3 2009/08/22 08:19:18 spiderr Exp $
  *
  * Base class for handling common functionality between shipping cart and orders
  *
@@ -81,20 +81,21 @@ class CommerceOrderBase extends BitBase {
 				$product = $this->getProductObject( $prid );
 				// sometimes 0 hash things can get stuck in cart.
 				if( $product && $product->isValid() ) {
+					$productAttributes = !empty( $this->contents[$productsKey]['attributes'] ) ? $this->contents[$productsKey]['attributes'] : array();
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
-					$products_price = $product->getPurchasePrice( $qty, $this->contents[$productsKey]['attributes'] );
-					$onetimeCharges = $product->getOneTimeCharges( $qty, $this->contents[$productsKey]['attributes'] );
+					$products_price = $product->getPurchasePrice( $qty, $productAttributes );
+					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
 
 					// shipping adjustments
 					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-						$this->free_shipping_weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
+						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
 					}
 
 					$this->total += zen_add_tax( (($products_price * $qty) + $onetimeCharges), $products_tax);
 					$this->subtotal += $this->total;
-					$this->weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
+					$this->weight += $product->getWeight( $qty, $productAttributes );
 				}
 			}
 		}
