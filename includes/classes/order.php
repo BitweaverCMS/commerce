@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.76 2009/08/22 08:25:43 spiderr Exp $
+// $Id: order.php,v 1.77 2009/08/22 08:32:44 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -167,7 +167,6 @@ class order extends CommerceOrderBase {
 					FROM " . TABLE_ORDERS_TOTAL . "
 					WHERE `orders_id` =	? AND class = 'ot_shipping'";
 			$shippingInfo = $gBitDb->getRow($shipping_method_query, array( (int)$order_id ) );
-vd( $order->fields );
 
 			$order_status_query = "select `orders_status_name`
 														 from " . TABLE_ORDERS_STATUS . "
