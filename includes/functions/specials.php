@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.7 2006/12/19 00:11:33 spiderr Exp $
+// $Id: specials.php,v 1.8 2009/08/22 21:29:04 spiderr Exp $
 //
 /**
  * @package ZenCart_Functions
@@ -48,7 +48,7 @@
     if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
-        zen_update_products_price_sorter($specials['products_id']);
+        zen_update_lowest_purchase_price($specials['products_id']);
       }
     }
   }
@@ -70,7 +70,7 @@
     if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '1');
-        zen_update_products_price_sorter($specials['products_id']);
+        zen_update_lowest_purchase_price($specials['products_id']);
       }
     }
 
@@ -84,7 +84,7 @@
     if( $rs = $gBitDb->Execute($specials_query) ) {
       while( $specials = $rs->FetchRow() ) {
         zen_set_specials_status($specials['specials_id'], '0');
-        zen_update_products_price_sorter($specials['products_id']);
+        zen_update_lowest_purchase_price($specials['products_id']);
       }
     }
   }

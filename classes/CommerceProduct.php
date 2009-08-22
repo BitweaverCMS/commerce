@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.156 2009/08/22 08:19:46 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.157 2009/08/22 21:29:04 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1356,7 +1356,7 @@ If a special exist * 10+9
 				'products_price',
 				'products_cogs',
 				'products_weight',
-				'products_price_sorter',
+				'lowest_purchase_price',
 			),
 		);
 
@@ -1398,8 +1398,12 @@ If a special exist * 10+9
 			}
 		}
 
-		if( empty( $pParamHash['products_price_sorter'] ) ) {
-			$pParamHash['products_price_sorter'] = $pParamHash['products_price'];
+		if( empty( $pParamHash['lowest_purchase_price'] ) ) {
+			if( $lowestPrice = $this->getLowestPrice() ) {
+				$pParamHash['lowest_purchase_price'] = $lowestPrice;
+			} else {
+				$pParamHash['lowest_purchase_price'] = $pParamHash['products_price'];
+			}
 		}
 
 		if( empty( $pParamHash['content_id'] ) ) {
@@ -1543,7 +1547,7 @@ If a special exist * 10+9
 	function storePriceSorter() {
 		global $gBitDb;
 		if( $this->isValid() ) {
-			$gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_price_sorter` = ? WHERE `products_id` = ?", array( $this->getLowestPrice(), $this->mProductsId ) );
+			$gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `lowest_purchase_price` = ? WHERE `products_id` = ?", array( $this->getLowestPrice(), $this->mProductsId ) );
 		}
 	}
 

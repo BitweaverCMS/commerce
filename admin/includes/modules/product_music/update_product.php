@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.9 2008/07/03 14:38:52 lsces Exp $
+//  $Id: update_product.php,v 1.10 2009/08/22 21:29:04 spiderr Exp $
 //
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
@@ -48,7 +48,7 @@
                                   'products_sort_order' => zen_db_prepare_input($_POST['products_sort_order']),
                                   'products_discount_type' => zen_db_prepare_input($_POST['products_discount_type']),
                                   'products_discount_type_from' => zen_db_prepare_input($_POST['products_discount_type_from']),
-                                  'products_price_sorter' => zen_db_prepare_input($_POST['products_price_sorter'])
+                                  'lowest_purchase_price' => zen_db_prepare_input($_POST['lowest_purchase_price'])
                                   );
 
 // when set to none remove from database
@@ -70,8 +70,8 @@
             $gBitDb->associateInsert(TABLE_PRODUCTS, $sql_data_array);
             $products_id = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
 
-            // reset products_price_sorter for searches etc.
-            zen_update_products_price_sorter($products_id);
+            // reset lowest_purchase_price for searches etc.
+            zen_update_lowest_purchase_price($products_id);
 
             $gBitDb->Execute("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . "
                                       (`products_id`, `categories_id`)
@@ -93,8 +93,8 @@
 
             $gBitDb->associateInsert(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
 
-            // reset products_price_sorter for searches etc.
-            zen_update_products_price_sorter((int)$products_id);
+            // reset lowest_purchase_price for searches etc.
+            zen_update_lowest_purchase_price((int)$products_id);
 
             $sql_data_array = array('artists_id' => zen_db_prepare_input($_POST['artists_id']),
                                     'record_company_id' => zen_db_prepare_input($_POST['record_company_id']),

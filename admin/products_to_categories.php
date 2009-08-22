@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_to_categories.php,v 1.16 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: products_to_categories.php,v 1.17 2009/08/22 21:29:03 spiderr Exp $
 
   require('includes/application_top.php');
 
@@ -300,8 +300,8 @@ function array_minus_array($a, $b) {
 
         while (!$reset_master_categories_id->EOF) {
           $gBitDb->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $reset_from_master . "' where `products_id` ='" . $reset_master_categories_id->fields['products_id'] . "'");
-          // reset products_price_sorter for searches etc.
-          zen_update_products_price_sorter($reset_master_categories_id->fields['products_id']);
+          // reset lowest_purchase_price for searches etc.
+          zen_update_lowest_purchase_price($reset_master_categories_id->fields['products_id']);
           $reset_master_categories_id->MoveNext();
         }
 
@@ -311,8 +311,8 @@ function array_minus_array($a, $b) {
 
       case 'set_master_categories_id':
         $gBitDb->Execute("update " . TABLE_PRODUCTS . " set `master_categories_id` ='" . $_GET['master_categories_id'] . "' where `products_id` ='" . $productsId . "'");
-        // reset products_price_sorter for searches etc.
-        zen_update_products_price_sorter($productsId);
+        // reset lowest_purchase_price for searches etc.
+        zen_update_lowest_purchase_price($productsId);
 
         zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, 'products_id=' . $_GET['products_id']));
         break;
@@ -368,7 +368,7 @@ function array_minus_array($a, $b) {
         }
 
         // recalculate price based on new master_categories_id
-        zen_update_products_price_sorter($productsId);
+        zen_update_lowest_purchase_price($productsId);
 
         if ($zv_check_master_categories_id == 'true') {
           $messageStack->add_session(SUCCESS_MASTER_CATEGORIES_ID, 'success');
@@ -382,7 +382,7 @@ function array_minus_array($a, $b) {
     }
   }
 
-  $product_to_copy = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`products_price_sorter`, p.`products_model`, p.master_categories_id, p.`products_image`
+  $product_to_copy = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`lowest_purchase_price`, p.`products_model`, p.master_categories_id, p.`products_image`
                                   from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd " . "
                          where p.`products_id` = '" . $productsId . "'
                          and p.`products_id` = pd.`products_id`

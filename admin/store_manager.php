@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: store_manager.php,v 1.13 2007/01/06 06:13:49 spiderr Exp $
+//  $Id: store_manager.php,v 1.14 2009/08/22 21:29:03 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -56,13 +56,13 @@
       zen_redirect(zen_href_link_admin(FILENAME_STORE_MANAGER));
       break;
 
-    case ('update_all_products_price_sorter'):
-    // reset products_price_sorter for searches etc.
+    case ('update_all_lowest_purchase_price'):
+    // reset lowest_purchase_price for searches etc.
     $sql = "select `products_id` from " . TABLE_PRODUCTS;
     $update_prices = $gBitDb->Execute($sql);
 
     while (!$update_prices->EOF) {
-      zen_update_products_price_sorter($update_prices->fields['products_id']);
+      zen_update_lowest_purchase_price($update_prices->fields['products_id']);
       $update_prices->MoveNext();
     }
     $messageStack->add_session(SUCCESS_PRODUCT_UPDATE_PRODUCTS_PRICE_SORTER, 'success');
@@ -439,7 +439,7 @@ if ($show_configuration_info == 'true') {
         <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_PRICE_SORTER_UPDATE; ?></td>
-            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_price_sorter') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
+            <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_lowest_purchase_price') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
           </tr>
         </table></td>
       </tr>

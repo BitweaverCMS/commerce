@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info_metatags.php,v 1.1 2008/07/14 13:06:45 lsces Exp $
+//  $Id: collect_info_metatags.php,v 1.2 2009/08/22 21:29:04 spiderr Exp $
 //
 
     $parameters = array(
@@ -40,7 +40,7 @@
 // check if new meta tags or existing
     $check_meta_tags_description = $gBitDb->Execute("select `products_id` from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where `products_id` ='" . (int)$_GET['pID'] . "'");
     if ($check_meta_tags_description->RecordCount() <= 0) {
-      $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`, p.`products_price_sorter`,
+      $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`, p.`lowest_purchase_price`,
                                       p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -48,7 +48,7 @@
                               and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
     } else {
-      $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`, p.`products_price_sorter`,
+      $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`, p.`lowest_purchase_price`,
                                       p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
                                       mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description`
@@ -154,7 +154,7 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
         <td><table border="3" cellspacing="4" cellpadding="6">
           <tr>
             <td class="main" colspan="2">
-              <?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . '<strong>' . TEXT_PRODUCTS_NAME . '</strong>' . '&nbsp;' . zen_get_products_name($_GET['pID'], $languages[$i]['id']) . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_MODEL . '</strong>&nbsp;' . $pInfo->products_model . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_PRICE_INFO . '</strong>&nbsp;' . $currencies->format($pInfo->products_price_sorter); ?>
+              <?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . '<strong>' . TEXT_PRODUCTS_NAME . '</strong>' . '&nbsp;' . zen_get_products_name($_GET['pID'], $languages[$i]['id']) . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_MODEL . '</strong>&nbsp;' . $pInfo->products_model . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_PRICE_INFO . '</strong>&nbsp;' . $currencies->format($pInfo->lowest_purchase_price); ?>
             </td>
           </tr>
           <tr>
@@ -184,6 +184,6 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
         <td class="main" align="left"><?php echo TEXT_INFO_META_TAGS_USAGE; ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_model', $pInfo->products_model) . zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorter) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_model', $pInfo->products_model) . zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_price) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
     </table></form>

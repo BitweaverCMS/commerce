@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.1 2008/07/14 13:30:14 lsces Exp $
+//  $Id: categories.php,v 1.2 2009/08/22 21:29:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -402,10 +402,10 @@
                           where `categories_id` = '" . (int)$categories_id . "'");
 
 // fix here - if this is a category with subcats it needs to know to loop through
-            // reset all products_price_sorter for moved category products
+            // reset all lowest_purchase_price for moved category products
             $reset_price_sorter = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id` ='" . (int)$categories_id . "'");
             while (!$reset_price_sorter->EOF) {
-              zen_update_products_price_sorter($reset_price_sorter->fields['products_id']);
+              zen_update_lowest_purchase_price($reset_price_sorter->fields['products_id']);
               $reset_price_sorter->MoveNext();
             }
 
@@ -424,8 +424,8 @@
         $messageStack->add_session(SUCCESS_ATTRIBUTES_DELETED . ' ID#' . $_GET['products_id'], 'success');
         $action='';
 
-        // reset products_price_sorter for searches etc.
-        zen_update_products_price_sorter($_GET['products_id']);
+        // reset lowest_purchase_price for searches etc.
+        zen_update_lowest_purchase_price($_GET['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $_GET['products_id'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
         break;

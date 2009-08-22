@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: easypopulate_functions.php,v 1.2 2006/12/19 00:11:30 spiderr Exp $
+// $Id: easypopulate_functions.php,v 1.3 2009/08/22 21:29:03 spiderr Exp $
 //
 
 function ep_get_uploaded_file($filename) {
@@ -195,12 +195,12 @@ function ep_update_cat_ids() {
 function ep_update_prices() {
 	global $gBitDb;
 	
-  // reset products_price_sorter for searches etc.
+  // reset lowest_purchase_price for searches etc.
   $sql = "select products_id from " . TABLE_PRODUCTS;
   $update_prices = $gBitDb->Execute($sql);
 
   while (!$update_prices->EOF) {
-    zen_update_products_price_sorter($update_prices->fields['products_id']);
+    zen_update_lowest_purchase_price($update_prices->fields['products_id']);
     $update_prices->MoveNext();
   }
 }

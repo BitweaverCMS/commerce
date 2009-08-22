@@ -903,8 +903,8 @@ function zen_get_option_value( $pOptionId, $pValueId ) {
   }
 
 ////
-// set the products_price_sorter
-function zen_update_products_price_sorter($product_id) {
+// set the lowest_purchase_price
+function zen_update_lowest_purchase_price($product_id) {
     if( $product = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) ) ) {
 		$product->storePriceSorter();
 	}

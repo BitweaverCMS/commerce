@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: general.php,v 1.49 2008/07/06 12:49:17 lsces Exp $
+//	$Id: general.php,v 1.50 2009/08/22 21:29:03 spiderr Exp $
 //
 
 ////
@@ -1482,8 +1482,8 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 			$products_copy_from->MoveNext();
 		} // end of products attributes while loop
 
-		 // reset products_price_sorter for searches etc.
-		 zen_update_products_price_sorter($products_id_to);
+		 // reset lowest_purchase_price for searches etc.
+		 zen_update_lowest_purchase_price($products_id_to);
 	} // end of no attributes or other errors
 } // eof: zen_copy_products_attributes
 
@@ -1998,7 +1998,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 		for ($i=0; $i<$n; $i++) {
 			$update_products_price = $gBitDb->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
 			while (!$update_products_price->EOF) {
-				zen_update_products_price_sorter($update_products_price->fields['products_id']);
+				zen_update_lowest_purchase_price($update_products_price->fields['products_id']);
 				$update_products_price->MoveNext();
 			}
 		}

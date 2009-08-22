@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.22 2009/08/12 19:16:39 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.23 2009/08/22 21:29:03 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -66,10 +66,10 @@
 
   if ($action == 'delete_special') {
     $gBitDb->query( "delete from " . TABLE_SPECIALS . " where `products_id`=?", array( $productsId ) );
-    $gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_price_sorter`=`products_price` WHERE `products_id`=?", array ( $productsId ) );
+    $gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `lowest_purchase_price`=`products_price` WHERE `products_id`=?", array ( $productsId ) );
 
-    // reset products_price_sorter for searches etc.
-    zen_update_products_price_sorter( $productsId );
+    // reset lowest_purchase_price for searches etc.
+    zen_update_lowest_purchase_price( $productsId );
 
     zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
   }
@@ -113,7 +113,7 @@
 				`products_priced_by_attribute`='" . (int)$_POST['products_priced_by_attribute'] . "',
 				`products_discount_type`='" . (int)$_POST['products_discount_type'] . "',
 				`products_discount_type_from`='" . (int)$_POST['products_discount_type_from'] . "',
-				`products_price_sorter`='" . (int)$_POST['products_price_sorter'] . "',
+				`lowest_purchase_price`='" . (int)$_POST['lowest_purchase_price'] . "',
 				`master_categories_id`='" . zen_db_prepare_input($master_categories_id) . "',
 				`products_mixed_discount_qty`='" . zen_db_prepare_input($_POST['products_mixed_discount_quantity']) . "'
 				where `products_id`='" . $productsId . "'",
@@ -163,8 +163,8 @@
 				$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_discount_type`='0' where `products_id`='" . $productsId . "'");
 			}
 
-			// reset products_price_sorter for searches etc.
-			zen_update_products_price_sorter($productsId);
+			// reset lowest_purchase_price for searches etc.
+			zen_update_lowest_purchase_price($productsId);
 			$messageStack->add_session(PRODUCT_UPDATE_SUCCESS, 'success');
 
         zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
@@ -391,7 +391,7 @@ if ($productsId == '') {
                                       p.`products_tax_class_id`,
                                       p.`products_quantity_order_min`, `products_quantity_order_units`, p.`products_quantity_order_max`,
                                       p.`product_is_free`, p.`product_is_call`, p.`products_quantity_mixed`, p.`products_priced_by_attribute`, p.`products_status`,
-                                      p.`products_discount_type`, p.`products_discount_type_from`, p.`products_price_sorter`,
+                                      p.`products_discount_type`, p.`products_discount_type_from`, p.`lowest_purchase_price`,
                                       pd.`products_name`,
                                       p.`master_categories_id`, p.`products_mixed_discount_qty`
                                from " . TABLE_PRODUCTS . " p, " .

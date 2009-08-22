@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.11 2006/12/19 00:11:31 spiderr Exp $
+//  $Id: collect_info.php,v 1.12 2009/08/22 21:29:04 spiderr Exp $
 //
 
     $parameters = array('products_name' => '',
@@ -48,7 +48,7 @@
                        'products_sort_order' => '0',
                        'products_discount_type' => '0',
                        'products_discount_type_from' => '0',
-                       'products_price_sorter' => '0',
+                       'lowest_purchase_price' => '0',
                        'master_categories_id' => ''
                        );
 
@@ -67,7 +67,7 @@
                                       p.`product_is_always_free_ship`, p.`products_qty_box_status`, p.`products_quantity_order_max`,
                                       p.`products_sort_order`,
                                       p.`products_discount_type`, p.`products_discount_type_from`,
-                                      p.`products_price_sorter`, p.`master_categories_id`
+                                      p.`lowest_purchase_price`, p.`master_categories_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd,
                                    " . TABLE_PRODUCT_MUSIC_EXTRA . " pe
                               where p.`products_id` = '" . (int)$_GET['pID'] . "'
@@ -287,7 +287,7 @@ if (zen_get_product_is_linked($_GET['pID']) == 'true') {
 echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id);
 echo zen_draw_hidden_field('products_discount_type', $pInfo->products_discount_type);
 echo zen_draw_hidden_field('products_discount_type_from', $pInfo->products_discount_type_from);
-echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorter);
+echo zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_price);
 ?>
           <tr>
             <td colspan="2" class="main" align="center"><?php echo (zen_get_categories_status($current_category_id) == '0' ? TEXT_CATEGORIES_STATUS_INFO_OFF : '') . ($out_status == true ? ' ' . TEXT_PRODUCTS_STATUS_INFO_OFF : ''); ?></td>

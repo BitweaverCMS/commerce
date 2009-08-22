@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.31 2008/07/14 13:07:21 lsces Exp $
+//  $Id: collect_info.php,v 1.32 2009/08/22 21:29:04 spiderr Exp $
 //
 
 		$parameters = array('products_name' => '',
@@ -53,7 +53,7 @@
 							'products_sort_order' => '0',
 							'products_discount_type' => '0',
 							'products_discount_type_from' => '0',
-							'products_price_sorter' => '0',
+							'lowest_purchase_price' => '0',
 							'master_categories_id' => '',
 							'purchase_group_id' => '',
 							'reorders_interval' => '',
@@ -337,7 +337,7 @@ if( !empty( $_GET['pID'] ) && zen_get_product_is_linked($_GET['pID']) == 'true')
 echo zen_draw_hidden_field('master_categories_id', (!empty($pInfo->master_categories_id) ? $pInfo->master_categories_id : $current_category_id ) );
 echo zen_draw_hidden_field('products_discount_type', $pInfo->products_discount_type);
 echo zen_draw_hidden_field('products_discount_type_from', $pInfo->products_discount_type_from);
-echo zen_draw_hidden_field('products_price_sorter', $pInfo->products_price_sorter);
+echo zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_price);
 ?>
 					<tr>
 						<td colspan="2" class="main" align="center"><?php echo (zen_get_categories_status($current_category_id) == '0' ? TEXT_CATEGORIES_STATUS_INFO_OFF : '') . ($out_status == true ? ' ' . TEXT_PRODUCTS_STATUS_INFO_OFF : ''); ?></td>

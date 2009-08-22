@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.15 2009/08/18 20:32:08 spiderr Exp $
+// $Id: main_template_vars.php,v 1.16 2009/08/22 21:29:04 spiderr Exp $
 //
   $sql = "select count(*) as `total`
           from " . TABLE_PRODUCTS . " p, " .
@@ -54,7 +54,7 @@
                   p.`products_weight`, p.`products_priced_by_attribute`, p.`product_is_free`,
                   p.`products_qty_box_status`,
                   p.`products_quantity_order_max`,
-                  p.`products_discount_type`, p.`products_discount_type_from`, p.`products_sort_order`, p.`products_price_sorter`
+                  p.`products_discount_type`, p.`products_discount_type_from`, p.`products_sort_order`, p.`lowest_purchase_price`
            from   " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
            where  p.`products_status` = '1'
            and    p.`products_id` = '" . (int)$_GET['products_id'] . "'
@@ -63,7 +63,7 @@
 
     $product_info = $gBitDb->Execute($sql);
 
-    $products_price_sorter = $product_info->fields['products_price_sorter'];
+    $lowest_purchase_price = $product_info->fields['lowest_purchase_price'];
 
     $products_price = $currencies->display_price($product_info->fields['products_price'],
                       zen_get_tax_rate($product_info->fields['products_tax_class_id']));
@@ -108,10 +108,10 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
         $prev_next_order= " order by p.`products_model`";
         break;
       case (3):
-        $prev_next_order= " order by p.`products_price_sorter`, pd.`products_name`";
+        $prev_next_order= " order by p.`lowest_purchase_price`, pd.`products_name`";
         break;
       case (4):
-        $prev_next_order= " order by p.`products_price_sorter`, p.`products_model`";
+        $prev_next_order= " order by p.`lowest_purchase_price`, p.`products_model`";
         break;
       case (5):
         $prev_next_order= " order by pd.`products_name`, p.`products_model`";
@@ -134,7 +134,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
       $current_category_id = $cPath_row->fields['categories_id'];
     }
 
-    $sql = "select p.`products_id`, p.`products_model`, p.`products_price_sorter`, pd.`products_name`, p.`products_sort_order`
+    $sql = "select p.`products_id`, p.`products_model`, p.`lowest_purchase_price`, pd.`products_name`, p.`products_sort_order`
             from   " . TABLE_PRODUCTS . " p, "
                      . TABLE_PRODUCTS_DESCRIPTION . " pd, "
                      . TABLE_PRODUCTS_TO_CATEGORIES . " ptc

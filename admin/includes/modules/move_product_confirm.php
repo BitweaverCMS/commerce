@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: move_product_confirm.php,v 1.6 2009/08/18 20:28:46 spiderr Exp $
+//  $Id: move_product_confirm.php,v 1.7 2009/08/22 21:29:04 spiderr Exp $
 //
 
         $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -42,8 +42,8 @@
                           where `products_id` = '" . (int)$products_id . "'");
           }
 
-          // reset products_price_sorter for searches etc.
-          zen_update_products_price_sorter((int)$products_id);
+          // reset lowest_purchase_price for searches etc.
+          zen_update_lowest_purchase_price((int)$products_id);
         } else {
           $messageStack->add_session(ERROR_CANNOT_MOVE_PRODUCT_TO_CATEGORY_SELF, 'error');
         }

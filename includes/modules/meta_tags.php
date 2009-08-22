@@ -15,7 +15,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.13 2006/12/19 00:11:33 spiderr Exp $
+// $Id: meta_tags.php,v 1.14 2009/08/22 21:29:04 spiderr Exp $
 //
 
 // Define Primary Section Output
@@ -156,12 +156,12 @@
 //  case 'product_info':
   case (strstr($_REQUEST['main_page'], 'product_') or strstr($_REQUEST['main_page'], 'document_')):
 /*
-    $sql = "select p.`products_id`, pd.`products_name`, pd.`products_description`, p.`products_model`, p.`products_price`, p.`products_tax_class_id`, p.`product_is_free`, p.`products_price_sorter`,
+    $sql = "select p.`products_id`, pd.`products_name`, pd.`products_description`, p.`products_model`, p.`products_price`, p.`products_tax_class_id`, p.`product_is_free`, p.`lowest_purchase_price`,
             p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
             mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd where p.`products_status` = '1' and p.`products_id` = '" . (int)$_REQUEST['products_id'] . "' and pd.`products_id` = p.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and mtpd.`products_id` = p.`products_id` and mtpd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 */
 
-    $sql= "select pd.`products_name`, pd.`products_description`, p.`products_model`, p.`products_price_sorter`, p.`products_tax_class_id`,
+    $sql= "select pd.`products_name`, pd.`products_description`, p.`products_model`, p.`lowest_purchase_price`, p.`products_tax_class_id`,
                                       p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
                                       mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description`
@@ -179,7 +179,7 @@
         $meta_products_price = '';
         $metatags_keywords = '';
 
-        $meta_products_price = ($product_info_metatags->fields['metatags_price_status'] == '1' ? SECONDARY_SECTION . ($product_info_metatags->fields['products_price_sorter'] > 0 ? $currencies->display_price($product_info_metatags->fields['products_price_sorter'], zen_get_tax_rate($product_info_metatags->fields['products_tax_class_id'])) : SECONDARY_SECTION . META_TAG_PRODUCTS_PRICE_IS_FREE_TEXT) : '');
+        $meta_products_price = ($product_info_metatags->fields['metatags_price_status'] == '1' ? SECONDARY_SECTION . ($product_info_metatags->fields['lowest_purchase_price'] > 0 ? $currencies->display_price($product_info_metatags->fields['lowest_purchase_price'], zen_get_tax_rate($product_info_metatags->fields['products_tax_class_id'])) : SECONDARY_SECTION . META_TAG_PRODUCTS_PRICE_IS_FREE_TEXT) : '');
 
         $meta_products_name .= ($product_info_metatags->fields['metatags_products_name_status'] == '1' ? $product_info_metatags->fields['products_name'] : '');
         $meta_products_name .= ($product_info_metatags->fields['metatags_title_status'] == '1' ? ' ' . $product_info_metatags->fields['metatags_title'] : '');

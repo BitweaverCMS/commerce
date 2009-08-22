@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: specials.php,v 1.16 2009/08/12 19:04:42 spiderr Exp $
+//  $Id: specials.php,v 1.17 2009/08/22 21:29:03 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -32,9 +32,9 @@
       case 'setflag':
         zen_set_specials_status($_GET['id'], $_GET['flag']);
 
-        // reset products_price_sorter for searches etc.
+        // reset lowest_purchase_price for searches etc.
         $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $_GET['id'] . "'");
-        zen_update_products_price_sorter($update_price->fields['products_id']);
+        zen_update_lowest_purchase_price($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, (isset($_GET['page']) ? 'page=' . $_GET['page'] . '&' : '') . 'sID=' . $_GET['id'], 'NONSSL'));
         break;
@@ -73,8 +73,8 @@
 
         $new_special = $gBitDb->Execute("select `specials_id` from " . TABLE_SPECIALS . " where `products_id` ='" . (int)$products_id . "'");
 
-        // reset products_price_sorter for searches etc.
-        zen_update_products_price_sorter((int)$products_id);
+        // reset lowest_purchase_price for searches etc.
+        zen_update_lowest_purchase_price((int)$products_id);
 
         } // nothing selected
         if ($_GET['go_back'] == 'ON'){
@@ -106,9 +106,9 @@
                           `specials_date_available` = '" . zen_db_input($specials_date_available) . "'
                       where `specials_id` = '" . (int)$specials_id . "'");
 
-        // reset products_price_sorter for searches etc.
+        // reset lowest_purchase_price for searches etc.
         $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . (int)$specials_id . "'");
-        zen_update_products_price_sorter($update_price->fields['products_id']);
+        zen_update_lowest_purchase_price($update_price->fields['products_id']);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page'] . '&sID=' . $specials_id));
         break;
@@ -121,14 +121,14 @@
         }
         $specials_id = zen_db_prepare_input($_GET['sID']);
 
-        // reset products_price_sorter for searches etc.
+        // reset lowest_purchase_price for searches etc.
         $update_price = $gBitDb->Execute("select `products_id` from " . TABLE_SPECIALS . " where `specials_id` = '" . $specials_id . "'");
         $update_price_id = $update_price->fields['products_id'];
 
         $gBitDb->Execute("delete from " . TABLE_SPECIALS . "
                       where specials_id = '" . (int)$specials_id . "'");
 
-        zen_update_products_price_sorter($update_price_id);
+        zen_update_lowest_purchase_price($update_price_id);
 
         zen_redirect(zen_href_link_admin(FILENAME_SPECIALS, 'page=' . $_GET['page']));
         break;

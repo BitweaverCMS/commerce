@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.9 2009/08/22 08:20:30 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.10 2009/08/22 21:29:04 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -27,7 +27,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	function CommerceShoppingCart() {
 		parent::CommerceOrderBase();
-		$this->reset();
 	}
 
 	function load() {
@@ -100,7 +99,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		}
 
 		$this->mDb->StartTrans();
-
 		if ($this->in_cart($productsKey)) {
 			$this->updateQuantity( $productsKey, $pQty );
 		} else {
@@ -118,7 +116,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			}
 
 			// insert into database
-			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `customers_basket_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
+			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `products_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
 			$this->mDb->query( $sql, array( $selectValue, $productsKey, zen_get_prid( $productsKey ), $pQty, date('Ymd') ) );
 			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $productsKey, $selectValue ) ); 
 
@@ -157,8 +155,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				}
 			}
 		}
-		$this->cleanup();
 		$this->mDb->CompleteTrans();
+		$this->cleanup();
 
 		$this->load();
 
@@ -253,7 +251,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		if( $basketId = $this->mDb->getOne( "SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `$selectColumn` = ? AND `products_key` = ?", array( $selectValue, $pProductsKey ) ) ) {
 			if( !empty( $pQty ) ) {
 				$this->contents[$pProductsKey]['products_quantity'] = $pQty;
-				$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . " SET `customers_basket_quantity` = ?  WHERE `customers_basket_id` = ?";
+				$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . " SET `products_quantity` = ?  WHERE `customers_basket_id` = ?";
 				$this->mDb->query($sql, array( (int)$pQty, $basketId ) );
 			} else {
 bt(); die;

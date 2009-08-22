@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_prices.php,v 1.10 2009/08/18 20:38:54 spiderr Exp $
+// $Id: functions_prices.php,v 1.11 2009/08/22 21:29:04 spiderr Exp $
 //
 //
 ////
@@ -202,7 +202,7 @@ If a special exist * 10
     for ($i=0; $i<$n; $i++) {
       $update_products_price = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $za_salemaker_categories[$i] . "'");
       while (!$update_products_price->EOF) {
-        zen_update_products_price_sorter($update_products_price->fields['products_id']);
+        zen_update_lowest_purchase_price($update_products_price->fields['products_id']);
         $update_products_price->MoveNext();
       }
     }

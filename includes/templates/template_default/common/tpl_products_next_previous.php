@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_products_next_previous.php,v 1.12 2006/12/19 00:11:34 spiderr Exp $
+// $Id: tpl_products_next_previous.php,v 1.13 2009/08/22 21:29:04 spiderr Exp $
 //
   /*
 
@@ -47,10 +47,10 @@
 				$prev_next_order= " order by p.`products_model`";
 				break;
 			case (3):
-				$prev_next_order= " order by p.`products_price_sorter`, pd.`products_name`";
+				$prev_next_order= " order by p.`lowest_purchase_price`, pd.`products_name`";
 				break;
 			case (4):
-				$prev_next_order= " order by p.`products_price_sorter`, p.`products_model`";
+				$prev_next_order= " order by p.`lowest_purchase_price`, p.`products_model`";
 				break;
 			case (5):
 				$prev_next_order= " order by pd.`products_name`, p.`products_model`";
@@ -77,7 +77,7 @@
 				}
 			}
 
-			$sql = "select p.`products_id`, p.`products_model`, p.`products_price_sorter`, pd.`products_name`, p.`products_sort_order`
+			$sql = "select p.`products_id`, p.`products_model`, p.`lowest_purchase_price`, pd.`products_name`, p.`products_sort_order`
 					from   " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc
 					where  p.`products_status` = '1' and p.`products_id` = pd.`products_id` and pd.`language_id`= ? and p.`products_id` = ptc.`products_id` and ptc.`categories_id` = ?
 					$prev_next_order ";

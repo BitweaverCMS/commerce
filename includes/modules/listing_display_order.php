@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: listing_display_order.php,v 1.2 2005/08/24 12:17:01 lsces Exp $
+// $Id: listing_display_order.php,v 1.3 2009/08/22 21:29:04 spiderr Exp $
 //
 ?>
 <?php
@@ -62,10 +62,10 @@ echo zen_draw_hidden_field('main_page', $_GET['main_page']);
       $order_by = " order by pd.`products_name` DESC";
       break;
     case ($_GET['disp_order'] == 3):
-      $order_by = " order by p.`products_price_sorter`, pd.`products_name`";
+      $order_by = " order by p.`lowest_purchase_price`, pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 4):
-      $order_by = " order by p.`products_price_sorter` DESC, pd.`products_name`";
+      $order_by = " order by p.`lowest_purchase_price` DESC, pd.`products_name`";
       break;
     case ($_GET['disp_order'] == 5):
       $order_by = " order by p.`products_model`";

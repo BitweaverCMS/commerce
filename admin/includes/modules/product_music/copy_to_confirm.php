@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: copy_to_confirm.php,v 1.7 2006/12/19 00:11:31 spiderr Exp $
+//  $Id: copy_to_confirm.php,v 1.8 2009/08/22 21:29:04 spiderr Exp $
 
         if (isset($_POST['products_id']) && isset($_POST['categories_id'])) {
           $products_id = zen_db_prepare_input($_POST['products_id']);
@@ -48,7 +48,7 @@
                                             `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
                                             `product_is_free`, `product_is_call`, `products_quantity_mixed`,
                                             `product_is_always_free_ship`, `products_qty_box_status`, `products_quantity_order_max`, `products_sort_order`,
-                                            `products_price_sorter`, `master_categories_id`
+                                            `lowest_purchase_price`, `master_categories_id`
                                      from " . TABLE_PRODUCTS . "
                                      where `products_id` = '" . (int)$products_id . "'");
 
@@ -60,7 +60,7 @@
                                        `products_quantity_order_min`, `products_quantity_order_units`, `products_priced_by_attribute`,
                                        `product_is_free`, product_is_call`, `products_quantity_mixed`,
                                        `product_is_always_free_ship`, `products_qty_box_status`, `products_quantity_order_max`, `products_sort_order`,
-                                       `products_price_sorter`, `master_categories_id`
+                                       `lowest_purchase_price`, `master_categories_id`
                                        )
                           values ('" . zen_db_input($product->fields['products_type']) . "',
                 '" . zen_db_input($product->fields['products_quantity']) . "',
@@ -83,7 +83,7 @@
                                   '" . zen_db_input($product->fields['products_qty_box_status']) . "',
                                   '" . zen_db_input($product->fields['products_quantity_order_max']) . "',
                                   '" . zen_db_input($product->fields['products_sort_order']) . "',
-                                  '" . zen_db_input($product->fields['products_price_sorter']) . "',
+                                  '" . zen_db_input($product->fields['lowest_purchase_price']) . "',
                                   '" . zen_db_input($product->fields['master_categories_id']) .
                                   "')");
 
@@ -167,8 +167,8 @@ if ( $_POST['copy_attributes']=='copy_attributes_yes' and $_POST['copy_as'] == '
 
           }
 
-          // reset products_price_sorter for searches etc.
-          zen_update_products_price_sorter($products_id);
+          // reset lowest_purchase_price for searches etc.
+          zen_update_lowest_purchase_price($products_id);
 
         }
         zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $categories_id . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));

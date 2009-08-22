@@ -249,7 +249,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products' => "
   products_sort_order I4,
   products_discount_type I1,
   products_discount_type_from I1,
-  products_price_sorter N(15,4),
+  lowest_purchase_price N(15,4),
   master_categories_id I4,
   products_mixed_discount_qty I1 NOTNULL default '1',
   metatags_title_status I1,
