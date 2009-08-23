@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.157 2009/08/22 21:29:04 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.158 2009/08/23 20:47:33 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -182,6 +182,10 @@ class CommerceProduct extends LibertyMime {
 			$salePrice = $this->getSalePrice();
 			if( $salePrice < $ret ) {
 				$ret = $salePrice;
+			}
+			// keep lowest_purchase_price updated
+			if( $ret != $this->getField( 'lowest_purchase_price' ) ) {
+				$this->mDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `lowest_purchase_price` = ? WHERE `products_id` = ?", array( $ret, $this->mProductsId ) );
 			}
 		}
 		return $ret;
@@ -1400,9 +1404,9 @@ If a special exist * 10+9
 
 		if( empty( $pParamHash['lowest_purchase_price'] ) ) {
 			if( $lowestPrice = $this->getLowestPrice() ) {
-				$pParamHash['lowest_purchase_price'] = $lowestPrice;
+				$pParamHash['product_store']['lowest_purchase_price'] = $lowestPrice;
 			} else {
-				$pParamHash['lowest_purchase_price'] = $pParamHash['products_price'];
+				$pParamHash['product_store']['lowest_purchase_price'] = $pParamHash['products_price'];
 			}
 		}
 
@@ -1541,16 +1545,6 @@ If a special exist * 10+9
 			parent::storeStatus( $pContentStatusId );
 		}
 	}
-
-	////
-	// store the products price sorter, which may change independent of products_price for sales, specials, etc.
-	function storePriceSorter() {
-		global $gBitDb;
-		if( $this->isValid() ) {
-			$gBitDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `lowest_purchase_price` = ? WHERE `products_id` = ?", array( $this->getLowestPrice(), $this->mProductsId ) );
-		}
-	}
-
 
 	function getProductType() {
 		global $gCommerceSystem;
