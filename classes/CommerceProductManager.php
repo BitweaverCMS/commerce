@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.7 2008/01/14 21:28:13 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.8 2009/08/24 18:29:34 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -44,7 +44,7 @@ class CommerceProductManager extends BitBase {
 				  	$joinSql
 				  	LEFT OUTER JOIN  " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON (cpa.`products_options_id`=cpo.`products_options_id`)
 				  $whereSql
-				  ORDER BY cpo.`products_options_name`, cpa.`products_options_sort_order`";
+				  ORDER BY cpo.`products_options_name`, cpa.`products_options_sort_order`, cpa.`products_options_values_name`";
 		if( $rs = $this->mDb->query( $query, $bindVars ) ) {
 			while( $row = $rs->fetchRow() ) {
 				if( empty( $ret[$row['hash_key']] ) ) {
