@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.10 2009/08/22 21:29:04 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.11 2009/08/24 18:32:34 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -249,12 +249,13 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 		if( $basketId = $this->mDb->getOne( "SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `$selectColumn` = ? AND `products_key` = ?", array( $selectValue, $pProductsKey ) ) ) {
+			$pQty = abs( $pQty );
 			if( !empty( $pQty ) ) {
+				// TODO products *can* take decimal values, and that needs to be handled here
 				$this->contents[$pProductsKey]['products_quantity'] = $pQty;
 				$sql = "UPDATE " . TABLE_CUSTOMERS_BASKET . " SET `products_quantity` = ?  WHERE `customers_basket_id` = ?";
-				$this->mDb->query($sql, array( (int)$pQty, $basketId ) );
+				$this->mDb->query($sql, array( $pQty, $basketId ) );
 			} else {
-bt(); die;
 				// because of foreign key constraints, need to delete attributes first, then the product
 				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_basket_id=?";
 				$this->mDb->query($sql, array( $basketId ) );
