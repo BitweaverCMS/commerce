@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.11 2009/08/24 18:32:34 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.12 2009/08/25 17:27:35 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -142,9 +142,9 @@ class CommerceShoppingCart extends CommerceOrderBase {
 							reset($value);
 							while (list($opt, $val) = each($value)) {
 								$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-										(`customers_basket_id`, `products_key`, `products_id`, `products_options_id`, `products_options_key`, `products_options_values_id`)
-										VALUES ( ?, ?, ?, ?, ? )";
-								$this->mDb->query($sql, array( $basketId, $productsKey, zen_get_prid( $productsKey ), (int)$option, (int)$option.'_chk'.$val, $val ) );
+										(`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`)
+										VALUES ( ?, ?, ?, ? )";
+								$this->mDb->query($sql, array( $basketId, (int)$option, (int)$option.'_chk'.$val, $val ) );
 							}
 						} else {
 							// update db insert to include attribute value_text. This is needed for text attributes.
@@ -203,22 +203,23 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$product = $this->getProductObject( $productsKey );
 			$check_quantity = $productsHash['products_quantity'];
 			$check_quantity_min = $product->getField( 'products_quantity_order_min' );
+			
 			// Check quantity min
-			if ($new_check_quantity = $this->in_cart_mixed($prid) ) {
+			if ($new_check_quantity = $this->in_cart_mixed( $productsKey ) ) {
 				$check_quantity = $new_check_quantity;
 			}
 
 			$fix_once = 0;
 			if ($check_quantity < $check_quantity_min) {
 				$fix_once ++;
-				$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ';
+				$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
 			}
 
 			// Check Quantity Units if not already an error on Quantity Minimum
 			if ($fix_once == 0) {
 				$check_units = $product->getField( 'products_quantity_order_units' );
 				if ( fmod($check_quantity,$check_units) != 0 ) {
-					$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display((int)$prid, false, true) . '</span> ';
+					$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
 				}
 			}
 
@@ -261,7 +262,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$this->mDb->query($sql, array( $basketId ) );
 				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `customers_basket_id`=?";
 				$this->mDb->query($sql, array( $basketId ) );
-				unset( $this->contents[$key] );
+				unset( $this->contents[$pProductsKey] );
 			}
 		}
 	}
@@ -319,10 +320,12 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 		return substr($product_id_list, 2);
 	}
-/* use base class method
+
 	// calculates totals
 	function calculate( $pForceRecalculate=FALSE ) {
+		global $gBitDb;
 		if( is_null( $this->total ) || $pForceRecalculate ) {
+			$this->subtotal = 0;
 			$this->total = 0;
 			$this->weight = 0;
 
@@ -331,33 +334,40 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$this->free_shipping_price = 0;
 			$this->free_shipping_weight = 0;
 
-			if (!is_array($this->contents)) return 0;
+			if( !is_array($this->contents) ) {
+				 return 0;
+			}
 
 			reset($this->contents);
 			foreach( array_keys( $this->contents ) as $productsKey ) {
 				$qty = $this->contents[$productsKey]['products_quantity'];
+				// $productsKey will be unique joined string of products_id:hash for cart, eg: 17054:be19531ba04f4dc3fd33bca49a16dca8 
+				$prid = zen_get_prid( $productsKey );
 
 				// products price
-				$product = $this->getProductObject( $productsKey );
+				$product = $this->getProductObject( $prid );
 				// sometimes 0 hash things can get stuck in cart.
 				if( $product && $product->isValid() ) {
+					$productAttributes = !empty( $this->contents[$productsKey]['attributes'] ) ? $this->contents[$productsKey]['attributes'] : array();
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
-					$products_price = $product->getPurchasePrice( $qty, $this->contents[$productsKey]['attributes'] );
+					$products_price = $product->getPurchasePrice( $qty, $productAttributes );
+					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
 
 					// shipping adjustments
 					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-						$this->free_shipping_weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
+						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
 					}
 
-					$this->total += zen_add_tax($products_price, $products_tax) * $qty;
-					$this->weight += $product->getWeight( $qty, $this->contents[$productsKey]['attributes'] );
+					$this->total += zen_add_tax( (($products_price * $qty) + $onetimeCharges), $products_tax);
+					$this->subtotal += $this->total;
+					$this->weight += $product->getWeight( $qty, $productAttributes );
 				}
 			}
 		}
 	}
-*/
+
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
 		$productsId = zen_get_prid( $pProductsMixed );
@@ -381,7 +391,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 			$productHash =$product->mInfo;
 			// this is the stock quantity coming out of mInfo
-			unset( $productsHash['products_quantity'] );
+			unset( $productHash['products_quantity'] );
 			$productHash['id'] = $pProductsKey;
 			$productHash['name'] = $product->getField('products_name');
 			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
@@ -392,7 +402,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
-			$productHash['tax_rate'] = zen_get_tax_rate($product->fields['products_tax_class_id']);
+			$productHash['tax_rate'] = zen_get_tax_rate( $product->getField( 'products_tax_class_id' ) );
 			$productHash['final_price'] = $productHash['price'];
 			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , $productHash['tax_rate'], $productHash['products_quantity'] );
 			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
@@ -436,7 +446,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		if ( $this->count_contents() > 0 ) {
 			reset($this->contents);
 			while (list($productsKey, ) = each($this->contents)) {
-				if( $free_ship_check && ereg( '^GIFT', addslashes($free_ship_check->fields['products_model'] ) ) ) {
+				if( ereg( '^GIFT', addslashes( $this->getField( 'products_model' ) ) ) ) {
 					if( $product = $this->getProductObject( $productsKey ) ) {
 						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['products_quantity'], $this->contents[$productsKey]['attributes'] );
 					}
@@ -468,7 +478,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						} else {
 							switch ($this->content_type) {
 								case 'virtual':
-									if ($free_ship_check->fields['products_virtual'] == '1') {
+									if ($this->getField( 'products_virtual' ) == '1') {
 										$this->content_type = 'virtual';
 									} else {
 										$this->content_type = 'mixed';
@@ -480,7 +490,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 									}
 									break;
 								case 'physical':
-									if ($free_ship_check->fields['products_virtual'] == '1') {
+									if ($this->getField( 'products_virtual' ) == '1') {
 										$this->content_type = 'mixed';
 										if ($gv_only == 'true') {
 											return $gift_voucher;
@@ -492,7 +502,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 									}
 									break;
 								default:
-									if ($free_ship_check->fields['products_virtual'] == '1') {
+									if ($this->getField( 'products_virtual' ) == '1') {
 										$this->content_type = 'virtual';
 									} else {
 										$this->content_type = 'physical';
@@ -503,7 +513,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				} else {
 					switch ($this->content_type) {
 						case 'virtual':
-							if ($free_ship_check->fields['products_virtual'] == '1') {
+							if ($this->getField( 'products_virtual' ) == '1') {
 								$this->content_type = 'virtual';
 							} else {
 								$this->content_type = 'mixed';
@@ -515,7 +525,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 							}
 							break;
 						case 'physical':
-							if ($free_ship_check->fields['products_virtual'] == '1') {
+							if ($this->getField( 'products_virtual' ) == '1') {
 								$this->content_type = 'mixed';
 								if ($gv_only == 'true') {
 									return $gift_voucher;
@@ -527,7 +537,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 							 }
 							break;
 						default:
-							if( $free_ship_check && $free_ship_check->fields['products_virtual'] == '1') {
+							if( $this->getField( 'products_virtual' ) == '1') {
 								$this->content_type = 'virtual';
 							 } else {
 								$this->content_type = 'physical';
