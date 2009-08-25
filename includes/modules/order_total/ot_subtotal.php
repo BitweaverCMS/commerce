@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_subtotal.php,v 1.5 2008/02/15 18:51:18 spiderr Exp $
+// $Id: ot_subtotal.php,v 1.6 2009/08/25 17:23:51 spiderr Exp $
 //
 
   class ot_subtotal {
@@ -36,8 +36,8 @@
       global $order, $currencies;
 
       $this->output[] = array('title' => $this->title . ':',
-                              'text' => $currencies->format($order->info['subtotal'], true, $order->info['currency'], $order->info['currency_value']),
-                              'value' => $order->info['subtotal']);
+                              'text' => $currencies->format($order->subtotal, true, $order->info['currency'], $order->info['currency_value']),
+                              'value' => $order->subtotal);
     }
 
     function check() {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_loworderfee.php,v 1.5 2009/08/18 20:38:54 spiderr Exp $
+// $Id: ot_loworderfee.php,v 1.6 2009/08/25 17:23:51 spiderr Exp $
 //
 
   class ot_loworderfee {
@@ -48,7 +48,7 @@
         }
 
 //        if ( ($pass == true) && ( ($order->info['total'] - $order->info['shipping_cost']) < MODULE_ORDER_TOTAL_LOWORDERFEE_ORDER_UNDER) ) {
-        if ( ($pass == true) && ( $order->info['subtotal'] < MODULE_ORDER_TOTAL_LOWORDERFEE_ORDER_UNDER) ) {
+        if ( ($pass == true) && ( $order->subtotal < MODULE_ORDER_TOTAL_LOWORDERFEE_ORDER_UNDER) ) {
           $charge_it = 'true';
           $cart_content_type = $gBitCustomer->mCart->get_content_type();
           $gv_content_only = $gBitCustomer->mCart->gv_only();
@@ -78,7 +78,7 @@
 
 // calculate from flat fee or percentage
             if (substr(MODULE_ORDER_TOTAL_LOWORDERFEE_FEE, -1) == '%') {
-              $low_order_fee = ($order->info['subtotal'] * (MODULE_ORDER_TOTAL_LOWORDERFEE_FEE/100));
+              $low_order_fee = ($order->subtotal * (MODULE_ORDER_TOTAL_LOWORDERFEE_FEE/100));
             } else {
               $low_order_fee = MODULE_ORDER_TOTAL_LOWORDERFEE_FEE;
             }

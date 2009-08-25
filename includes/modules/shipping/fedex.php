@@ -76,7 +76,7 @@ class fedex {
 		$this->_setWeight($shippingWeight);
 
 		if( is_object( $order ) ) {
-			$totals = $order->info['subtotal'];
+			$totals = $order->subtotal;
 		} elseif( is_object( $gBitCustomer->mCart ) ) {
 			$totals= $gBitCustomer->mCart->show_total();
 		}

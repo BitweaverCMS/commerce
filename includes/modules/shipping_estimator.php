@@ -21,7 +21,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.10 2009/08/18 20:38:54 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.11 2009/08/25 17:23:51 spiderr Exp $
 //
 
 global $gBitDb, $order, $currencies;
@@ -115,7 +115,7 @@ if ($gBitCustomer->mCart->count_contents() > 0) {
     require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
     $shipping = new CommerceShipping();
     $quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
-    $order->info['subtotal'] = $gBitCustomer->mCart->show_total();
+    $order->subtotal = $gBitCustomer->mCart->show_total();
 
 // set selections for displaying
     $selected_country = $order->delivery['country']['countries_id'];

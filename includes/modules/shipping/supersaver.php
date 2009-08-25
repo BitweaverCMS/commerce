@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: supersaver.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
+// $Id: supersaver.php,v 1.4 2009/08/25 17:22:21 spiderr Exp $
 //
   class supersaver {
     var $code, $title, $description, $icon, $enabled;
@@ -79,9 +79,9 @@
 		if( $desc ) {
 			$min = MODULE_SHIPPING_SUPERSAVER_MIN;
 			$max = MODULE_SHIPPING_SUPERSAVER_MAX;
-			if( !empty( $min ) && $order->info['subtotal'] < MODULE_SHIPPING_SUPERSAVER_MIN ) {
+			if( !empty( $min ) && $order->subtotal < MODULE_SHIPPING_SUPERSAVER_MIN ) {
 				$this->quotes['error'] = tra( 'You must spend at least '. $currencies->format( MODULE_SHIPPING_SUPERSAVER_MIN ).' to get SuperSaver Shipping.' ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
-			} elseif( !empty( $max ) && $order->info['subtotal'] > MODULE_SHIPPING_SUPERSAVER_MAX ) {
+			} elseif( !empty( $max ) && $order->subtotal > MODULE_SHIPPING_SUPERSAVER_MAX ) {
 				// no quote for you!
 				unset( $this->quotes );
 			} else {
