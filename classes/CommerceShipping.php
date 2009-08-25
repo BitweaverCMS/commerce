@@ -17,7 +17,7 @@
 // obtain it through the world-wide-web, please send a note to
 // license@zen-cart.com so we can mail you a copy immediately.
 // +----------------------------------------------------------------------+
-// $Id: CommerceShipping.php,v 1.1 2009/04/15 03:22:46 spiderr Exp $
+// $Id: CommerceShipping.php,v 1.2 2009/08/25 17:28:48 spiderr Exp $
 //
 
 class CommerceShipping {
@@ -125,7 +125,7 @@ class CommerceShipping {
 			reset($this->modules);
 			while (list(, $value) = each($this->modules)) {
 				$class = substr($value, 0, strrpos($value, '.'));
-				if ($GLOBALS[$class]->enabled) {
+				if( !empty( $GLOBALS[$class] ) && $GLOBALS[$class]->enabled) {
 					$quotes = $GLOBALS[$class]->quotes;
 					$size = sizeof($quotes['methods']);
 					for ($i=0; $i<$size; $i++) {

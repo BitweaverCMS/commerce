@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.11 2009/08/22 08:23:53 spiderr Exp $
+// $Id: header_php.php,v 1.12 2009/08/25 17:19:35 spiderr Exp $
 //
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($gBitCustomer->mCart->count_contents() <= 0) {
@@ -42,7 +42,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 }
 
 // if no billing destination address was selected, use the customers own address as default
-  if (!$_SESSION['billto']) {
+  if( empty( $_SESSION['billto'] ) ) {
     $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
   } else {
 // verify the selected billing address

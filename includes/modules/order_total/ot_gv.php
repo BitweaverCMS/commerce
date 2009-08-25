@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.16 2009/08/18 20:38:54 spiderr Exp $
+// $Id: ot_gv.php,v 1.17 2009/08/25 17:22:47 spiderr Exp $
 //
 
   class ot_gv {
@@ -39,7 +39,7 @@
       $this->tax_class  = MODULE_ORDER_TOTAL_GV_TAX_CLASS;
       $this->credit_class = true;
 	  $gvAmount = $currencies->format( $this->user_has_gv_account( $_SESSION['customer_id'] ) );
-		if (!zen_not_null(ltrim($_SESSION['cot_gv'], ' 0')) || $_SESSION['cot_gv'] == '0') {
+		if( (isset( $_SESSION['cot_gv'] ) && ltrim($_SESSION['cot_gv'], ' 0')) || empty( $_SESSION['cot_gv'] ) ) {
 			$gvNum = preg_replace( '/[^\d\.]/', '', $gvAmount );
 			if( is_numeric( $gvNum ) ) {
 				$_SESSION['cot_gv'] = ($order->info['total'] > $gvNum ? $gvNum : $order->info['total']);

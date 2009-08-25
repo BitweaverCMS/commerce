@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.16 2009/08/22 08:22:32 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.17 2009/08/25 17:19:52 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -156,7 +156,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 //			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 		}
 	} elseif( !$gBitUser->isRegistered() ) {
-	} elseif( $_REQUEST['change_address'] || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+	} elseif( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
 		if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
 			$gBitSmarty->assign( 'addresses', $addresses );
 		}
@@ -210,7 +210,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 		// if the modules status was changed when none were available, to save on implementing
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
-		if ( !$_SESSION['shipping'] || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
+		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
 			$_SESSION['shipping'] = $shipping->cheapest();
 		}
 

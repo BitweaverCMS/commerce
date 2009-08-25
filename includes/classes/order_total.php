@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: order_total.php,v 1.5 2005/11/15 22:01:21 spiderr Exp $
+// $Id: order_total.php,v 1.6 2009/08/25 17:25:05 spiderr Exp $
 //
 
   class order_total {
@@ -121,7 +121,7 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( $GLOBALS[$class]->credit_class ) {
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $GLOBALS[$class]->update_credit_account($i);
           }
         }
