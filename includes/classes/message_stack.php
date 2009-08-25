@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: message_stack.php,v 1.6 2007/10/31 11:24:24 spiderr Exp $
+// $Id: message_stack.php,v 1.7 2009/08/25 17:25:33 spiderr Exp $
 //
 
   class messageStack extends tableBox {
@@ -73,6 +73,7 @@
     }
 
 	function size($class=NULL) {
+		$count = 0;
 		$n = sizeof( $this->messages );
 		if( $class ) {
 			for ($i=0, $n=sizeof($this->messages); $i<$n; $i++) {
