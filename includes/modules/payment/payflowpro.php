@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.18 2009/08/22 08:27:28 spiderr Exp $
+// $Id: payflowpro.php,v 1.19 2009/08/25 17:24:34 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //		 I only made enough modifications to make it work with UNIX servers
@@ -498,8 +498,6 @@ function _buildNameValueList($pairs) {
 	$commpairs = array();
 
 	$pairs = array_merge($pairs, $commpairs);
-
-	if (PAYPAL_DEV_MODE == 'true') $this->log('_buildNameValueList - breakpoint 1 - pairs+commpairs: ' . print_r($pairs, true));
 
 	$string = array();
 	foreach ($pairs as $name => $value) {
