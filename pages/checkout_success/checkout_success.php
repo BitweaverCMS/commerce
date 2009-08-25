@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_success.php,v 1.6 2007/11/05 03:52:32 spiderr Exp $
+// $Id: checkout_success.php,v 1.7 2009/08/25 17:17:48 spiderr Exp $
 //
 
 global $newOrdersId;
@@ -34,7 +34,7 @@ if( $gBitCustomer->getGlobalNotifications() != '1' ) {
 }
 
 $gv_query = "SELECT `amount` from " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id`=?";
-$gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gCustomer->mCustomersId ) ) );
+$gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gBitUser->mUserId ) ) );
 
 // include template specific file name defines
 $define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
