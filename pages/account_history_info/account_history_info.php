@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.8 2009/08/12 21:04:06 spiderr Exp $
+// $Id: account_history_info.php,v 1.9 2009/08/25 17:20:14 spiderr Exp $
 //
 ?>
 <div align="center">
@@ -102,7 +102,7 @@
   }
   foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['quantity'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
          '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['id'] ) .'">'. $order->contents[$opid]['name'] . '</a>';
 
     if ( !empty( $order->contents[$opid]['attributes'] ) ) {
@@ -124,7 +124,7 @@
     }
 
     echo '          <td class="main" align="right" valign="top">' .
-                      $currencies->format(zen_add_tax($order->contents[$opid]['final_price'], $order->contents[$opid]['tax']) * $order->contents[$opid]['quantity'], true, $order->info['currency'], $order->info['currency_value']) .
+                      $currencies->format(zen_add_tax($order->contents[$opid]['final_price'], $order->contents[$opid]['tax']) * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) .
                       ($order->contents[$opid]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '').
                     '</td>' . "\n" .
          '        </tr>' . "\n";
