@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.158 2009/08/23 20:47:33 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.159 2009/08/25 17:28:01 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -195,18 +195,20 @@ class CommerceProduct extends LibertyMime {
 	// computes products_price + option groups lowest attributes price of each group when on
 	function getOneTimeCharges( $pQuantity, $pAttributes ) {
 		$ret = 0;
-		foreach( $pAttributes as $valueId ) {
-			if( $option = $this->getOptionValue( NULL, $valueId ) ) {
-				if( $option['product_attribute_is_free'] != '1' && !$this->getField( 'product_is_free' ) ) {
-					// calculate additional one time charges
-					if( !empty( $option['attributes_price_onetime'] ) ) {
-						$ret += $option['attributes_price_onetime'];
-					}
-					if( !empty( $option['attributes_pf_onetime'] ) ) {
-						$ret = zen_get_attributes_price_factor( $this->getBasePrice(), $this->getSalePrice(), $option['attributes_pf_onetime'], $option['attributes_pf_onetime_offset']);
-					}
-					if( !empty( $option['attributes_qty_prices_onetime'] ) ) {
-						$ret = zen_get_attributes_qty_prices_onetime($option['attributes_qty_prices_onetime'], $pQty);
+		if( !empty( $pAttributes ) ) {
+			foreach( $pAttributes as $valueId ) {
+				if( $option = $this->getOptionValue( NULL, $valueId ) ) {
+					if( $option['product_attribute_is_free'] != '1' && !$this->getField( 'product_is_free' ) ) {
+						// calculate additional one time charges
+						if( !empty( $option['attributes_price_onetime'] ) ) {
+							$ret += $option['attributes_price_onetime'];
+						}
+						if( !empty( $option['attributes_pf_onetime'] ) ) {
+							$ret = zen_get_attributes_price_factor( $this->getBasePrice(), $this->getSalePrice(), $option['attributes_pf_onetime'], $option['attributes_pf_onetime_offset']);
+						}
+						if( !empty( $option['attributes_qty_prices_onetime'] ) ) {
+							$ret = zen_get_attributes_qty_prices_onetime($option['attributes_qty_prices_onetime'], $pQty);
+						}
 					}
 				}
 			}
@@ -403,7 +405,7 @@ If a special exist * 10+9
 			if( $pAttributes ) {
 				foreach( $pAttributes as $optionId => $valueId ) {
 					$query = "SELECT `products_attributes_wt_pfix`||`products_attributes_wt` AS `weight` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-					$ret += (int)$this->mDb->getOne( $query, array( (int)$option , (int)$value ) );
+					$ret += (int)$this->mDb->getOne( $query, array( (int)$optionId, (int)$valueId ) );
 				}
 			} // attributes weight
 		}
@@ -442,7 +444,7 @@ If a special exist * 10+9
 						$optionId = $att['options_id'];
 						$valueId = $att['options_values_id'];
 					}
-					$ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), $products_tax);
+					$ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
 				}
 			}
 
