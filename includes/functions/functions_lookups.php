@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.37 2009/08/22 21:29:04 spiderr Exp $
+// $Id: functions_lookups.php,v 1.38 2009/08/25 17:24:47 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -64,8 +64,6 @@
   function zen_get_countries($countries_id = '', $with_iso_codes = false) {
     global $gBitDb;
     $countries_array = array();
-bt();
-vd( $countries_id ); die;
     if (zen_not_null($countries_id)) {
     	if( is_numeric( $countries_id ) ) {
     		$whereSql = ' WHERE `countries_id` = ? ';
