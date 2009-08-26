@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.14 2009/04/15 04:25:38 spiderr Exp $
+// $Id: usps.php,v 1.15 2009/08/26 21:11:35 spiderr Exp $
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
@@ -351,7 +351,7 @@ class usps {
 			}
 	// BOF: UPS USPS
 	//  mail('you@yourdomain.com','USPS rate quote response',$body,'From: <you@yourdomain.com>');
-			if ($transit && is_array($transreq) && ($order->delivery['country']['countries_id'] == STORE_COUNTRY)) {
+			if ($transit && !empty( $transreq ) && ($order->delivery['country']['countries_id'] == STORE_COUNTRY)) {
 				while (list($key, $value) = each($transreq)) {
 					if ($http->Get('/' . $api_dll . '?' . $value)) {
 						$transresp[$key] = $http->getBody();
@@ -465,48 +465,47 @@ class usps {
 
 				return array('error' => $number . ' - ' . $description);
 			} else {
-			$body = $response[0];
-			$services = array();
-			while (true) {
-				if ($start = strpos($body, '<Service ID=')) {
-					$body = substr($body, $start);
-					$end = strpos($body, '</Service>');
-					$services[] = substr($body, 0, $end+10);
-					$body = substr($body, $end+9);
-				} else {
-					break;
-				}
-			}
-
-	// BOF: UPS USPS
-			$allowed_types = array();
-			foreach( explode(", ", MODULE_SHIPPING_USPS_TYPES_INTL) as $value ) $allowed_types[$value] = $this->intl_types[$value];
-	// EOF: UPS USPS
-
-			$size = sizeof($services);
-			for ($i=0, $n=$size; $i<$n; $i++) {
-				if (strpos($services[$i], '<Postage>')) {
-					$service = ereg('<SvcDescription>(.*)</SvcDescription>', $services[$i], $regs);
-					$service = $regs[1];
-					$postage = ereg('<Postage>(.*)</Postage>', $services[$i], $regs);
-					$postage = $regs[1];
-		// BOF: UPS USPS
-					$time = ereg('<SvcCommitments>(.*)</SvcCommitments>', $services[$i], $tregs);
-					$time = $tregs[1];
-					$time = preg_replace('/Weeks$/', tra( 'Weeks' ), $time);
-					$time = preg_replace('/Days$/', tra( 'Days' ), $time);
-					$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
-
-					if( !in_array($service, $allowed_types) ) continue;
-		// EOF: UPS USPS
-					if (isset($this->service) && ($service != $this->service) ) {
-						continue;
+				$body = $response[0];
+				$services = array();
+				while (true) {
+					if ($start = strpos($body, '<Service ID=')) {
+						$body = substr($body, $start);
+						$end = strpos($body, '</Service>');
+						$services[] = substr($body, 0, $end+10);
+						$body = substr($body, $end+9);
+					} else {
+						break;
 					}
+				}
 
-					$rates[] = array($service => $postage);
-		// BOF: UPS USPS
-				if ($time != '') $transittime[$service] = ' (' . $time . ')';
-		// EOF: UPS USPS
+				$allowed_types = array();
+				if( MODULE_SHIPPING_USPS_TYPES_INTL != '--none--' ) {
+					foreach( explode(", ", MODULE_SHIPPING_USPS_TYPES_INTL) as $value ) {
+						$allowed_types[$value] = $this->intl_types[$value];
+					}
+				}
+
+				$size = sizeof($services);
+				for ($i=0, $n=$size; $i<$n; $i++) {
+					if (strpos($services[$i], '<Postage>')) {
+						$service = ereg('<SvcDescription>(.*)</SvcDescription>', $services[$i], $regs);
+						$service = $regs[1];
+						$postage = ereg('<Postage>(.*)</Postage>', $services[$i], $regs);
+						$postage = $regs[1];
+						$time = ereg('<SvcCommitments>(.*)</SvcCommitments>', $services[$i], $tregs);
+						$time = $tregs[1];
+						$time = preg_replace('/Weeks$/', tra( 'Weeks' ), $time);
+						$time = preg_replace('/Days$/', tra( 'Days' ), $time);
+						$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
+
+						if( !in_array($service, $allowed_types) || isset($this->service) && ($service != $this->service) ) {
+							continue;
+						}
+
+						$rates[] = array($service => $postage);
+						if ($time != '') {
+							$transittime[$service] = ' (' . $time . ')';
+						}
 					}
 				}
 			}
