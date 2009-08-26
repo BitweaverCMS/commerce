@@ -17,7 +17,7 @@
 // obtain it through the world-wide-web, please send a note to
 // license@zen-cart.com so we can mail you a copy immediately.
 // +----------------------------------------------------------------------+
-// $Id: CommerceShipping.php,v 1.2 2009/08/25 17:28:48 spiderr Exp $
+// $Id: CommerceShipping.php,v 1.3 2009/08/26 21:32:49 spiderr Exp $
 //
 
 class CommerceShipping {
@@ -127,14 +127,16 @@ class CommerceShipping {
 				$class = substr($value, 0, strrpos($value, '.'));
 				if( !empty( $GLOBALS[$class] ) && $GLOBALS[$class]->enabled) {
 					$quotes = $GLOBALS[$class]->quotes;
-					$size = sizeof($quotes['methods']);
-					for ($i=0; $i<$size; $i++) {
-						if ($quotes['methods'][$i]['cost']) {
-							$rates[] = array('id' => $quotes['id'] . '_' . $quotes['methods'][$i]['id'],
-															 'title' => $quotes['module'] . ' (' . $quotes['methods'][$i]['title'] . ')',
-															 'cost' => $quotes['methods'][$i]['cost'],
-															 'module' => $quotes['id']
-															 );
+					if( !empty( $quotes['methods'] ) ) {
+						$size = sizeof( $quotes['methods'] );
+						for ($i=0; $i<$size; $i++) {
+							if ($quotes['methods'][$i]['cost']) {
+								$rates[] = array('id' => $quotes['id'] . '_' . $quotes['methods'][$i]['id'],
+																 'title' => $quotes['module'] . ' (' . $quotes['methods'][$i]['title'] . ')',
+																 'cost' => $quotes['methods'][$i]['cost'],
+																 'module' => $quotes['id']
+																 );
+							}
 						}
 					}
 				}
