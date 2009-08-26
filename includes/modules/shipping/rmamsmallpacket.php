@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
   based upon
-  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
   based upon
-  $Id: rmamsmallpacket.php,v 1.3 2009/03/20 04:40:21 spiderr Exp $
+  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
 
   Copyright (c) 2006 Philip Clarke
 
@@ -35,12 +35,14 @@
 // class constructor
     function rmamsmallpacket () {
       $this->code = 'rmamsmallpacket';
-      $this->title = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_TITLE;
-      $this->description = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_DESCRIPTION;
-      $this->sort_order = MODULE_SHIPPING_RMAMSMALLPACKET_SORT_ORDER;
       $this->icon = 'shipping_ukam.gif';
-      $this->tax_class = MODULE_SHIPPING_RMAMSMALLPACKET_TAX_CLASS;
-      $this->enabled = ((MODULE_SHIPPING_RMAMSMALLPACKET_STATUS == 'True') ? true : false);
+		if( defined( 'MODULE_SHIPPING_RMAMSMALLPACKET_STATUS' ) ) {
+			$this->title = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_TITLE;
+			$this->description = MODULE_SHIPPING_RMAMSMALLPACKET_TEXT_DESCRIPTION;
+			$this->sort_order = MODULE_SHIPPING_RMAMSMALLPACKET_SORT_ORDER;
+			$this->tax_class = MODULE_SHIPPING_RMAMSMALLPACKET_TAX_CLASS;
+			$this->enabled = ((MODULE_SHIPPING_RMAMSMALLPACKET_STATUS == 'True') ? true : false);
+		}
 
       // CUSTOMIZE THIS SETTING FOR THE NUMBER OF ZONES NEEDED
       $this->num_zones = 2;
