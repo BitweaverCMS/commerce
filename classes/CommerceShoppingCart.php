@@ -17,10 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.12 2009/08/25 17:27:35 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.13 2009/08/26 21:33:07 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
+
+define( 'MAX_CART_QUANTITY', 9999999 );
 
 class CommerceShoppingCart extends CommerceOrderBase {
 	var $cartID, $content_type;
@@ -98,6 +100,11 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$_SESSION['new_products_id_in_cart'] = $productsKey;
 		}
 
+		// overflow protection
+		if( $pQty > MAX_CART_QUANTITY ) {
+			$pQty = MAX_CART_QUANTITY;
+		}
+
 		$this->mDb->StartTrans();
 		if ($this->in_cart($productsKey)) {
 			$this->updateQuantity( $productsKey, $pQty );
@@ -114,7 +121,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						break;
 				}
 			}
-
+	
 			// insert into database
 			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `products_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
 			$this->mDb->query( $sql, array( $selectValue, $productsKey, zen_get_prid( $productsKey ), $pQty, date('Ymd') ) );
@@ -246,6 +253,11 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	function updateQuantity( $pProductsKey, $pQty ) {
 		global $gBitUser;
+
+		// overflow protection
+		if( $pQty > MAX_CART_QUANTITY ) {
+			$pQty = MAX_CART_QUANTITY;
+		}
 
 		$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
