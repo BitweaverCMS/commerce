@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.17 2009/08/25 17:19:52 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.18 2009/08/26 21:31:05 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
@@ -38,7 +38,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
   }
 
 // if the customer is not logged on, redirect them to the login page
-  if (!$_SESSION['customer_id']) {
+  if( !$gBitUser->isRegistered() ) {
     $_SESSION['navigation']->set_snapshot();
   }
 
@@ -202,7 +202,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
 	}
-	if( zen_count_shipping_modules() && empty( $_REQUEST['change_address'] ) ) {
+	if( $gBitUser->isRegistered() && zen_count_shipping_modules() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
 		$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
 
