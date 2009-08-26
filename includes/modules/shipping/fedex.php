@@ -145,11 +145,11 @@ class fedex {
 								break;
 						}
 					} else {
-						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
-							$service_descr = $this->international_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
-						} else {
+//						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
+//							$service_descr = $this->international_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
+//						} else {
 							$service_descr = $this->international_types[$quoteCode];
-						}
+//						}
 					}
 					if( $pShipHash['method'] && $quoteCode != $pShipHash['method'] ) {
 						$skip = TRUE;
