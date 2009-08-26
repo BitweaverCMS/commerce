@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.14 2009/08/22 08:29:58 spiderr Exp $
+// $Id: ot_coupon.php,v 1.15 2009/08/26 21:30:09 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -100,7 +100,7 @@
 
 
 	function credit_selection() {
-		$selection = array(  'id' => $this->code,
+		$selection = array(	'id' => $this->code,
 							 'module' => $this->title,
 							 'fields' => array(array('title' => 'Coupon Code',
 							 'field' => zen_draw_input_field('dc_redeem_code'))));
@@ -109,7 +109,7 @@
 
 
 	function collect_posts() {
-		global $gBitDb, $currencies;
+		global $gBitCustomer, $currencies;
 		if ( !empty( $_POST['dc_redeem_code'] ) ) {
 			$coupon = new CommerceVoucher();
 			if ( !$coupon->load( $_POST['dc_redeem_code'] ) ) {
@@ -117,10 +117,9 @@
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
-				$products = $gBitCustomer->mCart->get_products();
 				$foundvalid = FALSE;
-				for ($i=0; $i<sizeof($products); $i++) {
-					if (is_product_valid($products[$i]['id'], $coupon->mCouponId ) ) {
+				foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
+					if ($this->is_product_valid( $productKey, $coupon->mCouponId ) ) {
 						$foundvalid = TRUE;
 					}
 				}
@@ -169,7 +168,7 @@
 	}
 
 	function calculate_deductions($order_total) {
-		global $gBitDb, $order;
+		global $gBitDb, $gBitCustomer, $order;
 
 		$tax_address = zen_get_tax_locations();
 		$od_amount['total'] = 0;
@@ -197,9 +196,8 @@
 						if ($od_amount['total']>$order_total) {
 							$od_amount['total'] = $order_total;
 						}
-						$products = $gBitCustomer->mCart->get_products();
-						for ($i=0; $i<sizeof($products); $i++) {
-							if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
+						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
+							if ($this->is_product_valid( $productKey, $_SESSION['cc_id'])) {
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
 									switch ($this->calculate_tax) {
 										case 'Credit Note':
@@ -216,7 +214,7 @@
 														$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														if ($tax_rate > 0) {
-															$od_amount[$tax_desc] += (($products[$i]['final_price'] * $products[$i]['quantity']) * $tax_rate)/100 * $ratio;
+															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['quantity']) * $tax_rate)/100 * $ratio;
 															$od_amount['tax'] += $od_amount[$tax_desc];
 														}
 													}
@@ -236,18 +234,18 @@
 										break;
 										case 'Standard':
 											$ratio = $od_amount['total']/$this->get_order_total();
-											$products = $gBitCustomer->mCart->get_products();
-											for ($i=0; $i<sizeof($products); $i++) {
-												$t_prid = zen_get_prid($products[$i]['id']);
-												$cc_result = $gBitDb->Execute("select `products_tax_class_id`
-																									 from " . TABLE_PRODUCTS . " where `products_id` = '" . $t_prid . "'");
+											foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
+												if( $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
+													$t_prid = zen_get_prid( $productKey );
+													$cc_result = $gBitDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
 
-												if (is_product_valid($products[$i]['id'], $_SESSION['cc_id'])) {
-													$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-													$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-													if ($tax_rate > 0) {
-														$od_amount[$tax_desc] += (($products[$i]['final_price'] * $products[$i]['quantity']) * $tax_rate)/100 * $ratio;
-														$od_amount['tax'] += $od_amount[$tax_desc];
+													if (is_product_valid($productHash['id'], $_SESSION['cc_id'])) {
+														$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+														$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+														if ($tax_rate > 0) {
+															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['quantity']) * $tax_rate)/100 * $ratio;
+															$od_amount['tax'] += $od_amount[$tax_desc];
+														}
 													}
 												}
 											}
@@ -263,6 +261,57 @@
 		}
 		return $od_amount;
 	}
+
+
+	function is_product_valid($pProductKey, $coupon_id) {
+		global $gBitDb;
+		$product_valid = false;
+		$product_id = zen_get_prid( $pProductKey );
+		if( is_numeric( $coupon_id ) ) {
+			$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
+			$couponsRs = $gBitDb->query($coupons_query, array( $coupon_id ) );
+
+			$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
+			$productModel = $gBitDb->getOne($product_query, array( $product_id ) );
+
+			if (ereg('^GIFT', $productModel)) {
+				return false;
+			}
+
+			if( empty( $couponsRs ) ) return true;
+			$product_valid = true;
+			while( $coupons = $couponsRs->fetchRow() ) {
+				if (($coupons['product_id'] != 0) && ($coupons['product_id'] != $product_id)) {
+					$product_valid = false;
+				}
+
+				if (($coupons['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
+					$product_valid = false;
+				}
+
+				if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='N')) {
+					$product_valid = true;
+				}
+
+				if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
+					$product_valid = true;
+				}
+
+				if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='Y')) {
+					$product_valid = false;
+				}
+
+				if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='Y')) {
+					$product_valid = false;
+				}
+
+				if ($product_valid == true) break;
+				
+			}
+		}
+		return $product_valid;
+	}
+
 
 		function check() {
 			global $gBitDb;
