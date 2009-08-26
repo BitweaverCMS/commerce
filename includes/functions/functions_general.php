@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.32 2007/01/06 09:46:13 squareing Exp $
+// $Id: functions_general.php,v 1.33 2009/08/26 21:28:20 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -674,59 +674,6 @@
     } else {
       return str_replace($from, $to, $string);
     }
-  }
-
-
-////
-  function is_product_valid($product_id, $coupon_id) {
-    global $gBitDb;
-	$product_valid = false;
-	$product_id = zen_get_prid( $product_id );
-	if( is_numeric( $coupon_id ) ) {
-		$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . "
-						WHERE `coupon_id` = ?
-						ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
-		$couponsRs = $gBitDb->query($coupons_query, array( $coupon_id ) );
-
-		$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
-		$productModel = $gBitDb->getOne($product_query, array( $product_id ) );
-
-		if (ereg('^GIFT', $productModel)) {
-			return false;
-		}
-
-		if( empty( $couponsRs ) ) return true;
-		$product_valid = true;
-		while( $coupons = $couponsRs->fetchRow() ) {
-			if (($coupons['product_id'] != 0) && ($coupons['product_id'] != $product_id)) {
-				$product_valid = false;
-			}
-
-			if (($coupons['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
-				$product_valid = false;
-			}
-
-			if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='N')) {
-				$product_valid = true;
-			}
-
-			if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
-				$product_valid = true;
-			}
-
-			if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='Y')) {
-				$product_valid = false;
-			}
-
-			if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='Y')) {
-				$product_valid = false;
-			}
-
-			if ($product_valid == true) break;
-			
-		}
-	}
-    return $product_valid;
   }
 
 
