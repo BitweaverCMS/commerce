@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: general.php,v 1.50 2009/08/22 21:29:03 spiderr Exp $
+//	$Id: general.php,v 1.51 2009/08/26 21:32:11 spiderr Exp $
 //
 
 ////
@@ -1857,11 +1857,14 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // USPS Methods 2.5
 // Alias function for Store configuration values in the Administration Tool
 	function zen_cfg_select_multioption($select_array, $key_value, $key = '') {
+		$string = '';
 		for ($i=0; $i<sizeof($select_array); $i++) {
 			$name = (($key) ? 'configuration[' . $key . '][]' : 'configuration_value');
 			$string .= '<br><input type="checkbox" name="' . $name . '" value="' . $select_array[$i] . '"';
 			$key_values = explode( ", ", $key_value);
-			if ( in_array($select_array[$i], $key_values) ) $string .= ' CHECKED';
+			if ( in_array($select_array[$i], $key_values) ) {
+				$string .= ' CHECKED';
+			}
 			$string .= '> ' . $select_array[$i];
 		}
 		$string .= '<input type="hidden" name="' . $name . '" value="--none--">';
