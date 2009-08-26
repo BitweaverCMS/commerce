@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.78 2009/08/25 17:30:16 spiderr Exp $
+// $Id: order.php,v 1.79 2009/08/26 21:12:28 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -455,43 +455,44 @@ class order extends CommerceOrderBase {
 						LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
 						WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
 			$billingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
-		}
-//STORE_PRODUCT_TAX_BASIS
 
-		switch( STORE_PRODUCT_TAX_BASIS ) {
-			case 'Shipping':
-				$taxAddressId = ($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
-				break;
-			case 'Billing':
-				$taxAddressId = $billToAddressId;
-				break;
-			case 'Store':
-				if ($billingAddress['entry_zone_id'] == STORE_ZONE) {
-					$taxAddressId = (int)$billToAddressId;
-				} else {
-					$taxAddressId = (int)($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
-				}
-				break;
-		 }
+			switch( STORE_PRODUCT_TAX_BASIS ) {
+				case 'Shipping':
+					$taxAddressId = ($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
+					break;
+				case 'Billing':
+					$taxAddressId = $billToAddressId;
+					break;
+				case 'Store':
+					if ($billingAddress['entry_zone_id'] == STORE_ZONE) {
+						$taxAddressId = (int)$billToAddressId;
+					} else {
+						$taxAddressId = (int)($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
+					}
+					break;
+			 }
 
-		if( !empty( $taxAddressId ) ) {
-			$tax_address_query = "SELECT ab.entry_country_id, ab.entry_zone_id, ab.`entry_state`
-								  FROM " . TABLE_ADDRESS_BOOK . " ab
-									LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-								  WHERE ab.`customers_id` = ?  and ab.`address_book_id` = ?";
-			$tax_address = $gBitDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
-		}
-
-		if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
-			if( $gBitCustomer->getZoneCount( $taxAddress['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $taxAddress['entry_state'], $taxAddress['entry_country_id'] )) ) {
-				$taxAddress['entry_zone_id'] = $zoneId;
+			//STORE_PRODUCT_TAX_BASIS
+			if( !empty( $taxAddressId ) ) {
+				$tax_address_query = "SELECT ab.entry_country_id, ab.entry_zone_id, ab.`entry_state`
+									  FROM " . TABLE_ADDRESS_BOOK . " ab
+										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+									  WHERE ab.`customers_id` = ?  and ab.`address_book_id` = ?";
+				$tax_address = $gBitDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
 			}
-			// maybe we have some newly updated zones and outdated address_book entries
-		} else {
-			$taxAddress = $defaultAddress;
+
+			if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
+				if( $gBitCustomer->getZoneCount( $taxAddress['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $taxAddress['entry_state'], $taxAddress['entry_country_id'] )) ) {
+					$taxAddress['entry_zone_id'] = $zoneId;
+				}
+				// maybe we have some newly updated zones and outdated address_book entries
+			} else {
+				$taxAddress = $defaultAddress;
+			}
+
 		}
 
-		$class =& $_SESSION['payment'];
+		$class = &$_SESSION['payment'];
 
 		$coupon_code = NULL;
 		if( !empty( $_SESSION['cc_id'] ) ) {
@@ -501,7 +502,7 @@ class order extends CommerceOrderBase {
 
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
-							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['value'] : NULL,
+							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
 							'payment_method' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->title : '',
 							'payment_module_code' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
 							'coupon_code' => $coupon_code,
