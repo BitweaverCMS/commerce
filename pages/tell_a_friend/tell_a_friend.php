@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tell_a_friend.php,v 1.1 2005/10/06 19:38:31 spiderr Exp $
+// $Id: tell_a_friend.php,v 1.2 2009/08/26 21:31:34 spiderr Exp $
 //
 ?>
 <?php echo zen_draw_form('email_friend', zen_href_link(FILENAME_TELL_A_FRIEND, 'action=process&products_id=' . $gBitProduct->mProductsId )); ?>
@@ -58,7 +58,7 @@
   </tr>
   <tr>
     <td class="main"><?php echo FORM_FIELD_FRIEND_EMAIL; ?></td>
-    <td class="main"><?php echo zen_draw_input_field('to_email_address', $_REQUEST['to_email_address']) . '&nbsp;<span class="inputRequirement">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>'; ?></td>
+    <td class="main"><?php echo zen_draw_input_field('to_email_address', (!empty( $_REQUEST['to_email_address'] ) ? $_REQUEST['to_email_address'] : '') ) . '&nbsp;<span class="inputRequirement">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>'; ?></td>
   </tr>
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo FORM_TITLE_FRIEND_MESSAGE; ?></td>
