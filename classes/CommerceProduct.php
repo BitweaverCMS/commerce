@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.159 2009/08/25 17:28:01 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.160 2009/08/27 22:57:38 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -2206,8 +2206,8 @@ Skip deleting of images for now
 					}
 				}
 */
-			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
-			$this->mDb->query("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 			// remove downloads if they exist
 			$remove_downloads= $this->mDb->query(	
@@ -2216,28 +2216,28 @@ Skip deleting of images for now
 					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	
 				 WHERE pom.`products_id` = ?", array( $this->mProductsId ) );
 			while (!$remove_downloads->EOF) {
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
+				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
 				$remove_downloads->MoveNext();
 			}
 
-			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			$this->mDb->query("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?)", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
-			$product_reviews = $this->mDb->query("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			while (!$product_reviews->EOF) {
-				$this->mDb->query("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
-							WHERE `reviews_id` = ?", array( $product_reviews->fields['reviews_id'] ) );
-				$product_reviews->MoveNext();
+			if( $productReviews = $this->mDb->getCol("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId )) ) {
+vd( $productReviews ); die;
+				foreach( $productReviews as $reviewId ) {
+					$this->mDb->query("DELETE FROM " . TABLE_REVIEWS_DESCRIPTION . " WHERE `reviews_id` = ?", array( $reviewId ) );
+				}
 			}
 
-			$this->mDb->query("delete FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			$this->mDb->query("delete FROM " . TABLE_FEATURED . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			$this->mDb->query("delete FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
-			$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_FEATURED . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			if( !$this->isPurchased() ) {
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
-				$this->mDb->query("delete FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
+				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				LibertyMime::expunge();
 			} else {
 				$this->update( array( 'related_content_id' => NULL ) );
