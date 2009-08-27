@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.79 2009/08/26 21:12:28 spiderr Exp $
+// $Id: order.php,v 1.80 2009/08/27 21:14:22 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -436,25 +436,29 @@ class order extends CommerceOrderBase {
 			$defaultAddress = $gBitDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
 
 			// default to primary address in case we have ended up here without anything previously selected
-			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : $defaultAddress['address_book_id'];
-			$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-					 FROM " . TABLE_ADDRESS_BOOK . " ab
-						 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-						 LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-					 WHERE ab.`customers_id`=? AND ab.`address_book_id`=?";
-			$shippingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $sendToAddressId ) );
-			if( !$shippingAddress ) {
-				$shippingAddress = $defaultAddress;
+			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : !empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL;
+			if( $sendToAddressId ) {
+				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
+						 FROM " . TABLE_ADDRESS_BOOK . " ab
+							 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+							 LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
+						 WHERE ab.`customers_id`=? AND ab.`address_book_id`=?";
+				$shippingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $sendToAddressId ) );
+				if( !$shippingAddress ) {
+					$shippingAddress = $defaultAddress;
+				}
 			}
 
 			// default to primary address in case we have ended up here without anything previously selected
-			$billToAddressId = !empty( $_SESSION['billto'] ) ? (int)$_SESSION['billto'] : $defaultAddress['address_book_id'];
-			$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-						FROM " . TABLE_ADDRESS_BOOK . " ab
-						LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-						LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-						WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-			$billingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
+			$billToAddressId = !empty( $_SESSION['billto'] ) ? (int)$_SESSION['billto'] : !empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL;
+			if( $billToAddressId ) {
+				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
+							FROM " . TABLE_ADDRESS_BOOK . " ab
+							LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
+							LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
+							WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
+				$billingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
+			}
 
 			switch( STORE_PRODUCT_TAX_BASIS ) {
 				case 'Shipping':
@@ -531,65 +535,74 @@ class order extends CommerceOrderBase {
 			}
 		}
 
-		$this->customer = array('firstname' => $defaultAddress['customers_firstname'],
-								'lastname' => $defaultAddress['customers_lastname'],
-								'company' => $defaultAddress['entry_company'],
-								'street_address' => $defaultAddress['entry_street_address'],
-								'suburb' => $defaultAddress['entry_suburb'],
-								'city' => $defaultAddress['entry_city'],
-								'postcode' => $defaultAddress['entry_postcode'],
-								'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
-								'zone_id' => $defaultAddress['entry_zone_id'],
-								'country' => array(
-									'countries_name' => $defaultAddress['countries_name'], 
-									'countries_id' => $defaultAddress['countries_id'], 
-									'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'], 
-									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
-								),
-								'format_id' => $defaultAddress['address_format_id'],
-								'telephone' => $defaultAddress['customers_telephone'],
-								'email_address' => $defaultAddress['customers_email_address']);
 
-		$this->delivery = array('firstname' => $shippingAddress['entry_firstname'],
-								'lastname' => $shippingAddress['entry_lastname'],
-								'company' => $shippingAddress['entry_company'],
-								'street_address' => $shippingAddress['entry_street_address'],
-								'suburb' => $shippingAddress['entry_suburb'],
-								'city' => $shippingAddress['entry_city'],
-								'postcode' => $shippingAddress['entry_postcode'],
-								'state' => ((zen_not_null($shippingAddress['entry_state'])) ? $shippingAddress['entry_state'] : $shippingAddress['zone_name']),
-								'zone_id' => $shippingAddress['entry_zone_id'],
-								'country' => array(
-									'countries_id' => $shippingAddress['countries_id'],
-									'countries_name' => $shippingAddress['countries_name'],
-									'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
-									'countries_iso_code_3' => $shippingAddress['countries_iso_code_3']),
-								'country_id' => $shippingAddress['entry_country_id'],
-								'telephone' => $shippingAddress['entry_telephone'],
-								'format_id' => $shippingAddress['address_format_id']);
+		if( !empty( $defaultAddress ) ) {
+			$this->customer = array('firstname' => $defaultAddress['customers_firstname'],
+									'lastname' => $defaultAddress['customers_lastname'],
+									'company' => $defaultAddress['entry_company'],
+									'street_address' => $defaultAddress['entry_street_address'],
+									'suburb' => $defaultAddress['entry_suburb'],
+									'city' => $defaultAddress['entry_city'],
+									'postcode' => $defaultAddress['entry_postcode'],
+									'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
+									'zone_id' => $defaultAddress['entry_zone_id'],
+									'country' => array(
+										'countries_name' => $defaultAddress['countries_name'], 
+										'countries_id' => $defaultAddress['countries_id'], 
+										'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'], 
+										'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
+									),
+									'format_id' => $defaultAddress['address_format_id'],
+									'telephone' => $defaultAddress['customers_telephone'],
+									'email_address' => $defaultAddress['customers_email_address']);
+		}
 
-		$this->billing = array('firstname' => $billingAddress['entry_firstname'],
-								'lastname' => $billingAddress['entry_lastname'],
-								'company' => $billingAddress['entry_company'],
-								'street_address' => $billingAddress['entry_street_address'],
-								'suburb' => $billingAddress['entry_suburb'],
-								'city' => $billingAddress['entry_city'],
-								'postcode' => $billingAddress['entry_postcode'],
-								'state' => ((zen_not_null($billingAddress['entry_state'])) ? $billingAddress['entry_state'] : $billingAddress['zone_name']),
-								'zone_id' => $billingAddress['entry_zone_id'],
-								'country' => array(
-									'countries_id' => $billingAddress['countries_id'],
-									'countries_name' => $billingAddress['countries_name'],
-									'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
-									'countries_iso_code_3' => $billingAddress['countries_iso_code_3']),
-								'country_id' => $billingAddress['entry_country_id'],
-								'telephone' => $billingAddress['entry_telephone'],
-								'format_id' => $billingAddress['address_format_id']);
+		if( !empty( $shippingAddress ) ) {
+			$this->delivery = array('firstname' => $shippingAddress['entry_firstname'],
+									'lastname' => $shippingAddress['entry_lastname'],
+									'company' => $shippingAddress['entry_company'],
+									'street_address' => $shippingAddress['entry_street_address'],
+									'suburb' => $shippingAddress['entry_suburb'],
+									'city' => $shippingAddress['entry_city'],
+									'postcode' => $shippingAddress['entry_postcode'],
+									'state' => ((zen_not_null($shippingAddress['entry_state'])) ? $shippingAddress['entry_state'] : $shippingAddress['zone_name']),
+									'zone_id' => $shippingAddress['entry_zone_id'],
+									'country' => array(
+										'countries_id' => $shippingAddress['countries_id'],
+										'countries_name' => $shippingAddress['countries_name'],
+										'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
+										'countries_iso_code_3' => $shippingAddress['countries_iso_code_3']),
+									'country_id' => $shippingAddress['entry_country_id'],
+									'telephone' => $shippingAddress['entry_telephone'],
+									'format_id' => $shippingAddress['address_format_id']);
+		}
+
+		if( !empty( $billingAddress ) ) {
+			$this->billing = array('firstname' => $billingAddress['entry_firstname'],
+									'lastname' => $billingAddress['entry_lastname'],
+									'company' => $billingAddress['entry_company'],
+									'street_address' => $billingAddress['entry_street_address'],
+									'suburb' => $billingAddress['entry_suburb'],
+									'city' => $billingAddress['entry_city'],
+									'postcode' => $billingAddress['entry_postcode'],
+									'state' => ((zen_not_null($billingAddress['entry_state'])) ? $billingAddress['entry_state'] : $billingAddress['zone_name']),
+									'zone_id' => $billingAddress['entry_zone_id'],
+									'country' => array(
+										'countries_id' => $billingAddress['countries_id'],
+										'countries_name' => $billingAddress['countries_name'],
+										'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
+										'countries_iso_code_3' => $billingAddress['countries_iso_code_3']),
+									'country_id' => $billingAddress['entry_country_id'],
+									'telephone' => $billingAddress['entry_telephone'],
+									'format_id' => $billingAddress['address_format_id']);
+		}
 
 		foreach( array_keys( $gBitCustomer->mCart->contents ) as $productsKey ) {
 			$this->contents[$productsKey] = $gBitCustomer->mCart->getProductHash( $productsKey );
-			$this->contents[$productsKey]['tax'] = zen_get_tax_rate( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
-			$this->contents[$productsKey]['tax_description'] = zen_get_tax_description( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
+			if( !empty( $taxAddress ) ) {
+				$this->contents[$productsKey]['tax'] = zen_get_tax_rate( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$productsKey]['tax_description'] = zen_get_tax_description( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
+			}
 
 			if ( !empty( $this->contents[$productsKey]['attributes'] ) ) {
 				$attributes  = $this->contents[$productsKey]['attributes'];
