@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.18 2009/08/26 21:31:05 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.19 2009/08/27 21:13:49 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
 global $gBitCustomer, $order;
 
-define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
+//define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
@@ -31,7 +31,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 
 // if the order contains only virtual products, forward the customer to the billing page as
 // a shipping address is not needed
-  if ( is_object( $order ) && $order->content_type == 'virtual') {
+  if ( is_object( $order ) && $gBitCustomer->mCart->get_content_type() == 'virtual') {
     $_SESSION['shipping'] = false;
     $_SESSION['sendto'] = false;
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
