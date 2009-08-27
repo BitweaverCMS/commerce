@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.13 2009/08/26 21:33:07 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.14 2009/08/27 21:15:12 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -401,6 +401,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		if( $product && $product->isValid() ) {
 			$prid = $product->mProductsId;
 
+			$attr = !empty( $this->contents[$pProductsKey]['attributes'] ) ?  $this->contents[$pProductsKey]['attributes'] : array();
+
 			$productHash =$product->mInfo;
 			// this is the stock quantity coming out of mInfo
 			unset( $productHash['products_quantity'] );
@@ -412,17 +414,17 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['image_url'] = $product->getField('products_image_url');
 			$productHash['products_quantity'] = $this->contents[$pProductsKey]['products_quantity'];
 			$productHash['commission'] = $product->getCommissionUserCharges();
-			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
-			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
+			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
+			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $attr );
 			$productHash['tax_rate'] = zen_get_tax_rate( $product->getField( 'products_tax_class_id' ) );
 			$productHash['final_price'] = $productHash['price'];
 			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , $productHash['tax_rate'], $productHash['products_quantity'] );
-			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $this->contents[$pProductsKey]['attributes'] );
+			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $attr );
 			$productHash['onetime_charges_display'] = $currencies->display_price($productHash['onetime_charges'], $productHash['tax_rate'], 1);
 			$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 			$productHash['tax'] = $product->getField('tax_rate');
 			$productHash['tax_description'] = $product->getField('tax_description');
-			$productHash['attributes'] = (isset( $this->contents[$pProductsKey]['attributes'] ) ? $this->contents[$pProductsKey]['attributes'] : '');
+			$productHash['attributes'] = $attr;
 			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
 		return $productHash;
@@ -454,106 +456,105 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->content_type = false;
 		$gift_voucher = 0;
 
-//			if ( (DOWNLOAD_ENABLED == 'true') && ($this->count_contents() > 0) ) {
 		if ( $this->count_contents() > 0 ) {
 			reset($this->contents);
-			while (list($productsKey, ) = each($this->contents)) {
-				if( ereg( '^GIFT', addslashes( $this->getField( 'products_model' ) ) ) ) {
-					if( $product = $this->getProductObject( $productsKey ) ) {
+			foreach( array_keys( $this->contents ) as $productsKey ) {
+				if( $product = $this->getProductObject( $productsKey ) ) {
+					if( ereg( '^GIFT', addslashes( $product->getField( 'products_model' ) ) ) ) {
 						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['products_quantity'], $this->contents[$productsKey]['attributes'] );
 					}
-				}
-				if (isset($this->contents[$productsKey]['attributes'])) {
-					reset($this->contents[$productsKey]['attributes']);
-					while (list(, $value) = each($this->contents[$productsKey]['attributes'])) {
-						$virtual_check_query = "SELECT COUNT(*) as `total`
-												FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-													INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
-												WHERE pa.`products_options_values_id` = ?";
+					if (isset($this->contents[$productsKey]['attributes'])) {
+						reset($this->contents[$productsKey]['attributes']);
+						while (list(, $value) = each($this->contents[$productsKey]['attributes'])) {
+							$virtual_check_query = "SELECT COUNT(*) as `total`
+													FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+														INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
+													WHERE pa.`products_options_values_id` = ?";
 
-						$virtualCount = $this->mDb->getOne( $virtual_check_query, array( (int)$value ) );
+							$virtualCount = $this->mDb->getOne( $virtual_check_query, array( (int)$value ) );
 
-						if ($virtualCount > 0) {
-							switch ($this->content_type) {
-								case 'physical':
-									$this->content_type = 'mixed';
-										if ($gv_only == 'true') {
-											return $gift_voucher;
-										} else {
-											return $this->content_type;
-										}
-									break;
-								default:
-									$this->content_type = 'virtual';
-									break;
-							}
-						} else {
-							switch ($this->content_type) {
-								case 'virtual':
-									if ($this->getField( 'products_virtual' ) == '1') {
-										$this->content_type = 'virtual';
-									} else {
+							if ($virtualCount > 0) {
+								switch ($this->content_type) {
+									case 'physical':
 										$this->content_type = 'mixed';
-										if ($gv_only == 'true') {
-											return $gift_voucher;
-										} else {
-											return $this->content_type;
-										}
-									}
-									break;
-								case 'physical':
-									if ($this->getField( 'products_virtual' ) == '1') {
-										$this->content_type = 'mixed';
-										if ($gv_only == 'true') {
-											return $gift_voucher;
-										} else {
-											return $this->content_type;
-										}
-									} else {
-										$this->content_type = 'physical';
-									}
-									break;
-								default:
-									if ($this->getField( 'products_virtual' ) == '1') {
+											if ($gv_only == 'true') {
+												return $gift_voucher;
+											} else {
+												return $this->content_type;
+											}
+										break;
+									default:
 										$this->content_type = 'virtual';
-									} else {
-										$this->content_type = 'physical';
-									}
+										break;
+								}
+							} else {
+								switch ($this->content_type) {
+									case 'virtual':
+										if ($product->getField( 'products_virtual' ) == '1') {
+											$this->content_type = 'virtual';
+										} else {
+											$this->content_type = 'mixed';
+											if ($gv_only == 'true') {
+												return $gift_voucher;
+											} else {
+												return $this->content_type;
+											}
+										}
+										break;
+									case 'physical':
+										if ($product->getField( 'products_virtual' ) == '1') {
+											$this->content_type = 'mixed';
+											if ($gv_only == 'true') {
+												return $gift_voucher;
+											} else {
+												return $this->content_type;
+											}
+										} else {
+											$this->content_type = 'physical';
+										}
+										break;
+									default:
+										if ($product->getField( 'products_virtual' ) == '1') {
+											$this->content_type = 'virtual';
+										} else {
+											$this->content_type = 'physical';
+										}
+								}
 							}
 						}
-					}
-				} else {
-					switch ($this->content_type) {
-						case 'virtual':
-							if ($this->getField( 'products_virtual' ) == '1') {
-								$this->content_type = 'virtual';
-							} else {
-								$this->content_type = 'mixed';
-								if ($gv_only == 'true') {
-									return $gift_voucher;
+					} else {
+						switch ($this->content_type) {
+							case 'virtual':
+								if ($product->getField( 'products_virtual' ) == '1') {
+									$this->content_type = 'virtual';
 								} else {
-									return $this->content_type;
+									$this->content_type = 'mixed';
+									if ($gv_only == 'true') {
+										return $gift_voucher;
+									} else {
+										return $this->content_type;
+									}
 								}
-							}
-							break;
-						case 'physical':
-							if ($this->getField( 'products_virtual' ) == '1') {
-								$this->content_type = 'mixed';
-								if ($gv_only == 'true') {
-									return $gift_voucher;
-								} else {
-									return $this->content_type;
-								}
-							 } else {
-								$this->content_type = 'physical';
-							 }
-							break;
-						default:
-							if( $this->getField( 'products_virtual' ) == '1') {
-								$this->content_type = 'virtual';
-							 } else {
-								$this->content_type = 'physical';
-							 }
+								break;
+							case 'physical':
+								if ($product->getField( 'products_virtual' ) == '1') {
+									$this->content_type = 'mixed';
+									if ($gv_only == 'true') {
+										return $gift_voucher;
+									} else {
+										return $this->content_type;
+									}
+								 } else {
+									$this->content_type = 'physical';
+								 }
+								break;
+							default:
+								if( $product->getField( 'products_virtual' ) == '1') {
+									$this->content_type = 'virtual';
+								 } else {
+									$this->content_type = 'physical';
+								 }
+						}
 					}
 				}
 			}
