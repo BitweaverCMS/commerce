@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.12 2009/08/12 21:04:07 spiderr Exp $
+// $Id: header_php.php,v 1.13 2009/08/27 21:25:27 spiderr Exp $
 //
 // if the customer is not logged on, redirect them to the login page
 // if there is nothing in the customers cart, redirect them to the shopping cart page
@@ -85,8 +85,8 @@
 
 	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
-	$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-	$breadcrumb->add(NAVBAR_TITLE_2);
+	$breadcrumb->add( tra( "Checkout" ), zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+	$breadcrumb->add( tra( "Payment Method" ) );
 
 	$addresses_count = zen_count_customer_address_book_entries();
 ?>
