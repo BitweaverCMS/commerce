@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.160 2009/08/27 22:57:38 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.161 2009/08/28 05:58:47 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -530,145 +530,80 @@ If a special exist * 10+9
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	function getDisplayPrice( $pProductsId=NULL ) {
+	function getDisplayPrice( $pProductsMixed=NULL ) {
 		global $gBitDb;
-		$ret = NULL;
+		$ret = '';
 
-		if( BitBase::verifyId( $pProductsId ) ) {
-			$priceProduct = bc_get_commerce_product( $pProductsId );
-		} elseif( empty( $pProductsId ) && !empty( $this ) && !empty( $this->mProductsId ) ) {
-			$priceProduct = &$this;
-		}
+		if( STORE_STATUS == '1' ) {
+			// Showcase no prices
+			$ret = '';
+		} elseif( CUSTOMERS_APPROVAL == '1' && !$gBitUser->isRegistered() ) {
+			// customer must be logged in to browse
+			$ret = '';
+		} elseif( CUSTOMERS_APPROVAL == '2' && !$gBitUser->isRegistered() ) {
+			// customer may browse but no prices
+			$ret = TEXT_LOGIN_FOR_PRICE_PRICE;
+		} elseif(CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM != '') {
+			// customer may browse but no prices
+			$ret = TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM;
+		} elseif(CUSTOMERS_APPROVAL_AUTHORIZATION != '0' && !$gBitUser->isRegistered()) {
+			// customer must be logged in to browse
+			$ret = TEXT_AUTHORIZATION_PENDING_PRICE;
+		} elseif((CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and CUSTOMERS_APPROVAL_AUTHORIZATION != '3') and $_SESSION['customers_authorization'] > '0') {
+			// customer must be logged in to browse
+			$ret = TEXT_AUTHORIZATION_PENDING_PRICE;
+		} else {
+			// proceed normally
 
-		if( $priceProduct && $priceProduct->isValid() ) {
-			// 0 = normal shopping
-			// 1 = Login to shop
-			// 2 = Can browse but no prices
-			// verify display of prices
-			switch (true) {
-				case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
-					// customer must be logged in to browse
-					return '';
-					break;
-				case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
-					// customer may browse but no prices
-					return TEXT_LOGIN_FOR_PRICE_PRICE;
-					break;
-				case (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM != ''):
-					// customer may browse but no prices
-					return TEXT_LOGIN_FOR_PRICE_PRICE_SHOWROOM;
-					break;
-				case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customer_id'] == ''):
-					// customer must be logged in to browse
-					return TEXT_AUTHORIZATION_PENDING_PRICE;
-					break;
-				case ((CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and CUSTOMERS_APPROVAL_AUTHORIZATION != '3') and $_SESSION['customers_authorization'] > '0'):
-					// customer must be logged in to browse
-					return TEXT_AUTHORIZATION_PENDING_PRICE;
-					break;
-				default:
-				// proceed normally
-				break;
+			if( empty( $pProductsMixed ) && !empty( $this ) && $this->isValid() ) {
+				$productHash = $this->mInfo;
+			} elseif( is_array( $pProductsMixed ) ) {
+				$productHash = $pProductsMixed;
+			} elseif( BitBase::verifyId( $pProductsMixed ) ) {
+				// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
+				$productHash = $gBitDb->getRow( "SELECT * FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ? ", array( (int)$pProductsMixed ) );
 			}
 
-			// show case only
-			if (STORE_STATUS != '0') {
-				if (STORE_STATUS == '1') {
-					return '';
-				}
-			}
-
-			// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
-			$product_check = $gBitDb->getRow("select `products_tax_class_id`, `products_price` , `products_commission`, `products_priced_by_attribute`, `product_is_free`, `product_is_call` from " . TABLE_PRODUCTS . " where `products_id` = ? ", array( (int)$priceProduct->mProductsId ) );
-
-			$show_display_price = '';
-			$display_normal_price = $priceProduct->getBasePrice();
-			$display_special_price = $priceProduct->getSpecialPrice();
-			$display_sale_price = $priceProduct->getSalePrice();
-
-			$show_sale_discount = '';
-			if (SHOW_SALE_DISCOUNT_STATUS == '1' and ($display_special_price != 0 or $display_sale_price != 0)) {
-				if ($display_sale_price) {
-					if (SHOW_SALE_DISCOUNT == 1) {
-						if ($display_normal_price != 0) {
-							$show_discount_amount = number_format(100 - (($display_sale_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS);
+			if( $productHash ) {
+				$show_sale_discount = '';
+				$discountAmount = $productHash['products_price'] - $productHash['lowest_purchase_price'];
+				if( $discountAmount > 0 ) {
+					$final_display_price = '<span class="normalprice discounted">' . CommerceProduct::getNotatedPrice( $productHash['products_price'], $productHash['products_tax_class_id'] ) . ' </span>';
+					$show_sale_price = '&nbsp;' . '<span class="productSpecialPrice">' . CommerceProduct::getNotatedPrice( $productHash['lowest_purchase_price'], $productHash['products_tax_class_id'] ) . '</span>';
+					if( SHOW_SALE_DISCOUNT_STATUS == '1' ) {
+						if (SHOW_SALE_DISCOUNT == 1) {
+							$show_sale_discount = '<div class="productPriceDiscount">' . tra( 'Save:&nbsp;' ) . number_format(100 - (($productHash['lowest_purchase_price'] / $productHash['products_price']) * 100),SHOW_SALE_DISCOUNT_DECIMALS) . tra( '% off' ) . '</div>';
 						} else {
-							$show_discount_amount = '';
+							$show_sale_discount = '<div class="productPriceDiscount">' . tra( 'Save:&nbsp;' ) . CommerceProduct::getNotatedPrice( $discountAmount, $productHash['products_tax_class_id'] ) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</div>';
 						}
-						$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . $show_discount_amount . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
-
-					} else {
-						$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . CommerceProduct::getNotatedPrice( ($display_normal_price - $display_sale_price), $product_check['products_tax_class_id'] ) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
 					}
+					$final_display_price .= $show_sale_price . $show_sale_discount;
 				} else {
-					if (SHOW_SALE_DISCOUNT == 1) {
-					$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . number_format(100 - (($display_special_price / $display_normal_price) * 100),SHOW_SALE_DISCOUNT_DECIMALS) . PRODUCT_PRICE_DISCOUNT_PERCENTAGE . '</span>';
+					$final_display_price = '<span class="normalprice">' . CommerceProduct::getNotatedPrice( $productHash['lowest_purchase_price'], $productHash['products_tax_class_id'] ) . ' </span>';
+				}
+
+
+				// If Free, Show it
+				$free_tag = '';
+				if ($productHash['product_is_free'] == '1') {
+					if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
+						$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
 					} else {
-					$show_sale_discount = '<span class="productPriceDiscount">' . '<br />' . PRODUCT_PRICE_DISCOUNT_PREFIX . CommerceProduct::getNotatedPrice( ($display_normal_price - $display_special_price), $product_check['products_tax_class_id'] ) . PRODUCT_PRICE_DISCOUNT_AMOUNT . '</span>';
+						$free_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_PRICE_IS_FREE, PRODUCTS_PRICE_IS_FREE_TEXT);
 					}
 				}
-			}
 
-			if ($display_special_price) {
-				$show_normal_price = '<span class="normalprice">' . CommerceProduct::getNotatedPrice( $display_normal_price, $product_check['products_tax_class_id'] ) . ' </span>';
-				if ($display_sale_price && $display_sale_price != $display_special_price) {
-					$show_special_price = '&nbsp;' . '<span class="productSpecialPriceSale">' . CommerceProduct::getNotatedPrice( $display_special_price, $product_check['products_tax_class_id'] ) . '</span>';
-					if ($product_check['product_is_free'] == '1') {
-						$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . '<s>' . CommerceProduct::getNotatedPrice( $display_sale_price, $product_check['products_tax_class_id'] ) . '</s>' . '</span>';
+				// If Call for Price, Show it
+				$call_tag = '';
+				if ($productHash['product_is_call']) {
+					if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
+						$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
 					} else {
-						$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . CommerceProduct::getNotatedPrice( $display_sale_price, $product_check['products_tax_class_id'] ) . '</span>';
+						$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
 					}
-				} else {
-					if ($product_check['product_is_free'] == '1') {
-						$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . '<s>' . CommerceProduct::getNotatedPrice( $display_special_price, $product_check['products_tax_class_id'] ) . '</s>' . '</span>';
-					} else {
-						$show_special_price = '&nbsp;' . '<span class="productSpecialPrice">' . CommerceProduct::getNotatedPrice( $display_special_price, $product_check['products_tax_class_id'] ) . '</span>';
-					}
-					$show_sale_price = '';
 				}
-			} else {
-				if ($display_sale_price) {
-					$show_normal_price = '<span class="normalprice">' . CommerceProduct::getNotatedPrice( $display_normal_price, $product_check['products_tax_class_id'] ) . ' </span>';
-					$show_special_price = '';
-					$show_sale_price = '<br />' . '<span class="productSalePrice">' . PRODUCT_PRICE_SALE . CommerceProduct::getNotatedPrice( $display_sale_price, $product_check['products_tax_class_id'] ) . '</span>';
-				} else {
-					if ($product_check['product_is_free'] == '1') {
-					$show_normal_price = '<s>' . CommerceProduct::getNotatedPrice( $display_normal_price, $product_check['products_tax_class_id'] ) . '</s>';
-					} else {
-						$show_normal_price = CommerceProduct::getNotatedPrice( $display_normal_price, $product_check['products_tax_class_id'] );
-					}
-					$show_special_price = '';
-					$show_sale_price = '';
-				}
+				$ret = $final_display_price . $free_tag . $call_tag;
 			}
-
-			if ($display_normal_price == 0) {
-				// don't show the $0.00
-				$final_display_price = $show_special_price . $show_sale_price . $show_sale_discount;
-			} else {
-				$final_display_price = $show_normal_price . $show_special_price . $show_sale_price . $show_sale_discount;
-			}
-
-			// If Free, Show it
-			$free_tag = '';
-			if ($product_check['product_is_free'] == '1') {
-				if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
-					$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
-				} else {
-					$free_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_PRICE_IS_FREE, PRODUCTS_PRICE_IS_FREE_TEXT);
-				}
-			}
-
-			// If Call for Price, Show it
-			$call_tag = '';
-			if ($product_check['product_is_call']) {
-				if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
-					$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
-				} else {
-					$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
-				}
-			}
-			$ret = $final_display_price . $free_tag . $call_tag;
 		}
 		return $ret;
 	}
@@ -1101,6 +1036,7 @@ If a special exist * 10+9
 	}
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
+$start = microtime( TRUE );
 		if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'products_date_added_desc';
 		}
@@ -1207,7 +1143,6 @@ If a special exist * 10+9
 		}
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
-
 		$pListHash['total_count'] = 0;
 		$query = "select p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					from " . TABLE_PRODUCTS . " p
@@ -1248,7 +1183,7 @@ If a special exist * 10+9
 
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = CommerceProduct::getDisplayPrice( $productId );
+				$ret[$productId]['display_price'] = CommerceProduct::getDisplayPrice( $ret[$productId] );
 			}
 		}
 
