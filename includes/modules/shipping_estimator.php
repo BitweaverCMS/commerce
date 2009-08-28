@@ -21,10 +21,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: shipping_estimator.php,v 1.11 2009/08/25 17:23:51 spiderr Exp $
+// $Id: shipping_estimator.php,v 1.12 2009/08/28 03:50:13 spiderr Exp $
 //
 
-global $gBitDb, $order, $currencies;
+global $gBitDb, $gBitCustomer, $order, $currencies;
 
 ?>
 <!-- shipping_estimator //-->
