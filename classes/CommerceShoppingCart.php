@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.14 2009/08/27 21:15:12 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.15 2009/09/02 16:22:59 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -385,8 +385,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$productsId = zen_get_prid( $pProductsMixed );
 		if( BitBase::verifyId( $productsId ) ) {
 			if( !isset( $this->mProductObjects[$productsId] ) ) {
-				$this->mProductObjects[$productsId] = bc_get_commerce_product( zen_get_prid( $productsId ) );
-				if( $this->mProductObjects[$productsId]->load() ) {
+				if( $this->mProductObjects[$productsId] = bc_get_commerce_product( zen_get_prid( $productsId ) ) ) {
 					$ret = &$this->mProductObjects[$productsId];
 				}
 			}
