@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.161 2009/08/28 05:58:47 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.162 2009/09/02 00:17:23 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -2160,7 +2160,6 @@ Skip deleting of images for now
 			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 			if( $productReviews = $this->mDb->getCol("SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `products_id` = ?", array( $this->mProductsId )) ) {
-vd( $productReviews ); die;
 				foreach( $productReviews as $reviewId ) {
 					$this->mDb->query("DELETE FROM " . TABLE_REVIEWS_DESCRIPTION . " WHERE `reviews_id` = ?", array( $reviewId ) );
 				}
