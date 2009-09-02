@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceProductManager.php,v 1.8 2009/08/24 18:29:34 spiderr Exp $
+//  $Id: CommerceProductManager.php,v 1.9 2009/09/02 21:59:20 spiderr Exp $
 //
 
 class CommerceProductManager extends BitBase {
@@ -168,7 +168,6 @@ class CommerceProductManager extends BitBase {
 
 	function storeOptionsValue( $pParamHash ) {
 		$this->mDb->StartTrans();
-$this->debug();
 		$ret = FALSE;
 		if( $this->verifyOptionsValue( $pParamHash ) ) {
 			if( !empty( $pParamHash['products_options_values_id'] ) ) {
