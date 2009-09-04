@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.80 2009/08/27 21:14:22 spiderr Exp $
+// $Id: order.php,v 1.81 2009/09/04 05:12:57 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -845,7 +845,6 @@ class order extends CommerceOrderBase {
 			$this->products_ordered_attributes = '';
 			if( !empty($this->contents[$productsKey]['attributes']) ) {
 				$attributes_exist = '1';
-$this->debug();
 				foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
 
 					$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['option_id'], (int)$this->contents[$productsKey]['attributes'][$j]['value_id'] );
