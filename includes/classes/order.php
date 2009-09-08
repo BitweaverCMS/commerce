@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.81 2009/09/04 05:12:57 spiderr Exp $
+// $Id: order.php,v 1.82 2009/09/08 21:03:32 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -436,7 +436,7 @@ class order extends CommerceOrderBase {
 			$defaultAddress = $gBitDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
 
 			// default to primary address in case we have ended up here without anything previously selected
-			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : !empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL;
+			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : (!empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL);
 			if( $sendToAddressId ) {
 				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
 						 FROM " . TABLE_ADDRESS_BOOK . " ab
@@ -450,7 +450,7 @@ class order extends CommerceOrderBase {
 			}
 
 			// default to primary address in case we have ended up here without anything previously selected
-			$billToAddressId = !empty( $_SESSION['billto'] ) ? (int)$_SESSION['billto'] : !empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL;
+			$billToAddressId = !empty( $_SESSION['billto'] ) ? (int)$_SESSION['billto'] : (!empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL);
 			if( $billToAddressId ) {
 				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
 							FROM " . TABLE_ADDRESS_BOOK . " ab
