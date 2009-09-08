@@ -92,7 +92,7 @@
 				<div class="row">
 					{formlabel label="Special Instructions or Comments About Your Order" for=""}
 					{forminput}
-						<textarea name="comments" wrap="soft" cols="60" rows="5"></textarea>
+						<textarea name="comments" wrap="soft" cols="60" rows="5">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
 </fieldset>
