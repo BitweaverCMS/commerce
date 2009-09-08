@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.19 2009/08/27 21:13:49 spiderr Exp $
+// $Id: checkout_shipping.php,v 1.20 2009/09/08 21:02:43 spiderr Exp $
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 
 global $gBitCustomer, $order;
 
-//define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
+define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
@@ -165,7 +165,6 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 		if (zen_not_null($_POST['comments'])) {
 			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
 		}
-		$comments = $_SESSION['comments'];
 
 		if ( (zen_count_shipping_modules() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
