@@ -124,10 +124,13 @@ class CommerceVoucher extends BitBase {
 	// merged/simplified
 	function adminSendCoupon( $pParamHash ) {
 		global $gBitUser, $gBitCustomer, $gBitSystem, $currencies;
+
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
 		$ret = FALSE;
 		if( !empty( $pParamHash['email_to'] ) && !empty( $pParamHash['amount'] ) )  {
+			$gBitDb->StartTrans();
+
 			if( empty( $pParamHash['from'] ) ) {
 				$pParamHash['from'] = EMAIL_FROM;
 			}
@@ -181,6 +184,7 @@ class CommerceVoucher extends BitBase {
 				$order->updateStatus( $status );
 			}
 			$ret = TRUE;
+			$gBitDb->CompleteTrans();
 		}
 		return $ret;
 	}
