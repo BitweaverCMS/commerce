@@ -129,7 +129,7 @@ class CommerceVoucher extends BitBase {
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
 		$ret = FALSE;
 		if( !empty( $pParamHash['email_to'] ) && !empty( $pParamHash['amount'] ) )  {
-			$gBitDb->StartTrans();
+			$this->mDb->StartTrans();
 
 			if( empty( $pParamHash['from'] ) ) {
 				$pParamHash['from'] = EMAIL_FROM;
@@ -184,7 +184,7 @@ class CommerceVoucher extends BitBase {
 				$order->updateStatus( $status );
 			}
 			$ret = TRUE;
-			$gBitDb->CompleteTrans();
+			$this->mDb->CompleteTrans();
 		}
 		return $ret;
 	}
