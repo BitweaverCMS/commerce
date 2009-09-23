@@ -308,7 +308,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_attributes_id I4 PRIMARY AUTO,
-  products_options_values_name C(64),
+  products_options_values_name C(128),
   products_options_id I4 NOTNULL,
   products_options_values_id I4 NOTNULL,
   options_values_price N(15,4),
@@ -361,7 +361,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_products_description' => "
   products_id I4 PRIMARY AUTO,
   language_id I4 NOTNULL default '1',
-  products_name C(64),
+  products_name C(160),
   products_description X,
   products_url C(255),
   products_viewed I2 default '0'
@@ -536,10 +536,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
   customers_basket_id I4 NOTNULL,
-  products_options_id C(64),
+  products_options_id I4 NOTNULL,
   products_options_value_id I4,
-  products_options_value_text C(64),
-  products_options_sort_order X2 NOTNULL
+  products_options_value_text C(64)
   CONSTRAINT ', CONSTRAINT `cust_bask_att_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` ),
   CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
@@ -792,7 +791,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   orders_id I4 NOTNULL,
   orders_products_id I4 NOTNULL,
   products_options C(32),
-  products_options_values C(64),
+  products_options_values C(128),
   options_values_price N(15,4),
   price_prefix C(1),
   product_attribute_is_free I1,
