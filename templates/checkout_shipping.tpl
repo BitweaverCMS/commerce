@@ -1,4 +1,5 @@
 {strip}
+
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}

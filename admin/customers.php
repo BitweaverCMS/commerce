@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers.php,v 1.16 2007/06/13 23:11:00 spiderr Exp $
+//  $Id: customers.php,v 1.17 2009/10/07 19:45:40 tylerbello Exp $
 //
 
   require('includes/application_top.php');
@@ -927,6 +927,7 @@ if ($processed == true) {
               $disp_order = "ci.`date_account_created` DESC";
           }
 ?>
+<a href="export_users.php">Export as CSV</a>
              <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent" align="center" valign="top">
@@ -981,7 +982,7 @@ if ($processed == true) {
       $search = "where c.`customers_lastname` like '%" . $keywords . "%' or c.`customers_firstname` like '%" . $keywords . "%' or c.`customers_email_address` like '%" . $keywords . "%' or c.`customers_telephone` like '%" . $keywords . "%' or a.`entry_company` like '%" . $keywords . "%' or a.`entry_street_address` like '%" . $keywords . "%' or a.`entry_city` like '%" . $keywords . "%' or a.`entry_postcode` like '%" . $keywords . "%'";
     }
     $new_fields=', c.`customers_telephone`, a.`entry_company`, a.`entry_street_address`, a.`entry_city`, a.`entry_postcode`, c.`customers_authorization`, c.`customers_referral`';
-    $customers_query_raw = "select c.`customers_id`, c.`customers_lastname`, c.`customers_firstname`, c.`customers_email_address`, c.`customers_group_pricing`, a.`entry_country_id`, a.`entry_company`, ci.`date_of_last_logon`, ci.`date_account_created` " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.`customers_id`= ci.`customers_info_id` left join " . TABLE_ADDRESS_BOOK . " a on c.`customers_id` = a.`customers_id` and c.`customers_default_address_id` = a.`address_book_id` " . $search . " order by $disp_order";
+    $customers_query_raw = "select c.`customers_id`, c.`customers_lastname`, c.`customers_firstname`, c.`customers_email_address`, c.`customers_group_pricing`, a.`entry_country_id`, a.`entry_company`, ci.`date_of_last_logon`, ci.`date_account_created` " . $new_fields . " from " . TABLE_CUSTOMERS . " c left join " . TABLE_CUSTOMERS_INFO . " ci on c.`customers_id`= ci.`customers_info_id` left join " . TABLE_ADDRESS_BOOK . " a on c.`customers_id` = a.`customers_id` and c.`customers_default_address_id` = a.`address_book_id` " . $search . " order by $disp_order LIMIT 100";
 
 // Split Page
 // reset page when page is unknown
