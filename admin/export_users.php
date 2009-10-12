@@ -16,12 +16,18 @@
 	foreach ($result as $res){
 		$users_export[$res['email']] = $res; //done like this to overwrite cases of users with multiple addresses and thus multiple entries	
 	}
-		$csv_output = "EmailAddress,FirstName,LastName,Address,City,State,Zip,Extra 1,Extra 2\n";//Extra 1 = customer id //Extra 2 = last purchase date
+	//Benchmark email format
+/*		$csv_output = "EmailAddress,FirstName,LastName,Address,City,State,Zip,Extra 1,Extra 2\n";//Extra 1 = customer id //Extra 2 = last purchase date
 	foreach ($users_export as $user){
 		$csv_output .= "$user[email],$user[entry_firstname],$user[entry_lastname],$user[entry_street_address],$user[entry_city],$user[entry_state],$user[entry_postcode],$user[customers_id],$user[last_purchase]\n";
+	}*/
+	//Mad Mimi etc. format
+	$csv_output = 'Email\n';
+	foreach ($users_export as $user){
+		$csv_output .= "$user[email]\n";
 	}
    header("Content-type: application/vnd.ms-excel");
-   header("Content-disposition: filename=users_export" . date("Y-m-d") . ".xls");
+   header("Content-disposition: filename=users_export" . date("Y-m-d") . ".csv");
    print $csv_output;
    exit;  
 ?>
