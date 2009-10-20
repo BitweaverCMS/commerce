@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.9 2006/12/19 00:11:32 spiderr Exp $
+// $Id: functions_email.php,v 1.10 2009/10/20 20:09:36 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -232,7 +232,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
   //check for some specifics that need to be included with all messages
   if( empty( $block['EMAIL_STORE_NAME'] ) )       $block['EMAIL_STORE_NAME']       = STORE_NAME;
-  if( empty( $block['EMAIL_STORE_URL'] ) )        $block['EMAIL_STORE_URL']        = '<a href="'.HTTP_CATALOG_SERVER . DIR_WS_CATALOG.'">'.STORE_NAME.'</a>';
+  if( empty( $block['EMAIL_STORE_URL'] ) )        $block['EMAIL_STORE_URL']        = '<a href="'. BITCOMMERCE_PKG_URI .'">'.STORE_NAME.'</a>';
   if( empty( $block['EMAIL_STORE_OWNER'] ) )      $block['EMAIL_STORE_OWNER']      = STORE_OWNER;
   if( empty( $block['EMAIL_FOOTER_COPYRIGHT'] ) ) $block['EMAIL_FOOTER_COPYRIGHT'] = EMAIL_FOOTER_COPYRIGHT;
   if( empty( $block['EMAIL_DISCLAIMER'] ) )       $block['EMAIL_DISCLAIMER']       = sprintf(EMAIL_DISCLAIMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
@@ -257,9 +257,9 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
     //prepare the "unsubscribe" link:
     if (function_exists( 'zen_catalog_href_link' )) {
-  $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',TEXT_UNSUBSCRIBE) . ' <a href="' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
+  $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',tra('Unsubscribe')) . ' <a href="' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
     } else {
-  $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',TEXT_UNSUBSCRIBE) . ' <a href="' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
+  $block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',tra('Unsubscribe')) . ' <a href="' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
     }
 
   //now replace the $BLOCK_NAME items in the template file with the values passed to this function's array
