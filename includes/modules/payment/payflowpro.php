@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.19 2009/08/25 17:24:34 spiderr Exp $
+// $Id: payflowpro.php,v 1.20 2009/10/20 20:07:03 spiderr Exp $
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //		 I only made enough modifications to make it work with UNIX servers
@@ -343,7 +343,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 
 			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
-				$order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
+				$order->info['cc_number'] = substr($_POST['cc_number'], 0, 6) . str_repeat('X', (strlen($_POST['cc_number']) - 6)) . substr($_POST['cc_number'], -4);
 			}
 
 		}
