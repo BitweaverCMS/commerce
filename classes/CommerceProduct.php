@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.162 2009/09/02 00:17:23 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.163 2009/10/22 19:23:08 tylerbello Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -2385,6 +2385,10 @@ Skip deleting of images for now
 
 	function isFree() {
 		return( !empty( $this->mInfo['product_is_free'] ) );
+	}
+		
+	function needsCheckoutReview($pItem){
+		return false;
 	}
 
 }
