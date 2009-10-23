@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.82 2009/09/08 21:03:32 spiderr Exp $
+// $Id: order.php,v 1.83 2009/10/23 21:12:14 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -1250,10 +1250,11 @@ class order extends CommerceOrderBase {
 	}
 
 	function getDisplayUrl( $page = '', $parameters = '', $connection = 'NONSSL') {
-		if (ENABLE_SSL_CATALOG == 'true') {
-			$link = HTTPS_CATALOG_SERVER . DIR_WS_HTTPS_CATALOG;
+		global $gCommerceSystem;
+		if( $gCommerceSystem->getConfig( 'ENABLE_SSL_CATALOG' ) == 'true') {
+			$link = BITCOMMERCE_PKG_SSL_URI;
 		} else {
-			$link = HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
+			$link = BITCOMMERCE_PKG_URI;
 		}
 
 		if( $this->isValid() ) {
