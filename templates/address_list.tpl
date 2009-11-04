@@ -8,13 +8,9 @@
 			{assign var=class value="row"}
 		{/if}
 		<div class="{$class}">
-			<div class="formlabel">{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked} Use this address</div>
-			{forminput}
-				<fieldset style="diplsay:block; margin-bottom:15px">
+			{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked}
 					{assign var=address value=$addresses[ix]}
 					{include file="bitpackage:bitcommerce/address_display.tpl"}
-				</fieldset>
-			{/forminput}
 		</div>
 	{/section}
 {/if}

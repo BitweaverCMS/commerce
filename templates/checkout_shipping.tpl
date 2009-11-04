@@ -4,7 +4,6 @@
 <div class="edit bitcommerce">
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
 		<div class="header">
-			<h1>{tr}Enter a New Shipping Address{/tr}</h1>
 		</div>
 
 		<div class="body">
@@ -14,16 +13,20 @@
 					{include file="bitpackage:bitcommerce/register_customer.tpl"}
 				{/if}
 
-				{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
-
+				<table><tr>
 				{if count( $addresses )}
-					<h3>{tr}...Or Choose From Your Address Book Entries{/tr}</h3>
+				<td>
+					<h1>{tr}Choose From Your Address Book or...{/tr}</h1>
 					{tr}Please select the preferred shipping address if this order is to be delivered elsewhere.{/tr}
-
-					<div class="row">
-						{include file="bitpackage:bitcommerce/address_list.tpl"}
-					</div>
+					{include file="bitpackage:bitcommerce/address_list.tpl"}
+				</td>
 				{/if}
+
+				<td>
+					<h1>{tr}Enter a New Shipping Address{/tr}</h1>
+					{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
+				</td>
+				</tr></table>
 
 				<div class="row">
 					{forminput}
