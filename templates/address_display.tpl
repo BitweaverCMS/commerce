@@ -1,13 +1,26 @@
-<div>
-	{$address.firstname} {$address.lastname}<br/>
-	{if $address.company}
-		{$address.company}<br/>
-	{/if}
-	{$address.street_address}<br/>
+{if empty($addressLinebreak)}
+	{assign var=addressLinebreak value='<br/>'}
+{/if}
+
+<span>
+<strong>{$address.firstname} {$address.lastname} {if $address.company}, {$address.company}{/if}</strong><br/>
+	{$address.street_address}
 	{if $address.suburb}
-		{$address.suburb}<br/>
+		{$addressLinebreak} {$address.suburb}
 	{/if}
-	{$address.city}, {$address.state} {$address.postcode}<br/>
-	{$address.country.countries_iso_code_3}<br/>
-	{$address.telephone}
-</div>
+	{$addressLinebreak}
+	{if $address.address_format_id==1}
+		{$address.city} , {$address.postcode}{$addressLinebreak}{$address.state},
+	{elseif $address.address_format_id==3}
+		{$address.city}{$addressLinebreak}{$address.postcode} - {$address.state},
+	{elseif $address.address_format_id==4}
+		{$address.city} ({$address.postcode}){$addressLinebreak}
+	{elseif $address.address_format_id==5}
+		{$address.postcode} {$address.city}{$addressLinebreak}
+	{else}
+		{$address.city}, {$address.state}    {$address.postcode}{$addressLinebreak}
+	{/if}
+	{$address.countries_name|default:$address.country.countries_name} {$address.telephone}
+
+</span>
+
