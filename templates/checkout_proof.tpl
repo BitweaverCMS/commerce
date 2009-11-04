@@ -2,7 +2,7 @@
 <div class="error"> Please verify the following products : </div>
 
 {foreach from=$pendingItems item = 'item' name='items'} 
-	{assign var='itemnum' value=$smarty.foreach.items.iteration}
+	{assign var='itemnum' value=$smarty.foreach.items.index}
 	{include file=$pendingTemplates.$itemnum}
 {/foreach}
 <div class="clear warning"> Click NEXT when you are ready to continue. Note that this is the final warning you will receive prior to ordering your product. </div>
