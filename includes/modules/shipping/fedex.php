@@ -39,14 +39,7 @@ class fedex {
 			'90' => 'FedEx Home Delivery<sup>&reg;</sup> (3-7 Days, Tues-Sat)',
 			'92' => 'FedEx Ground<sup>&reg;</sup> Service (3-7 Days, Mon-Fri)',
 		);
-		$this->international_types = array(
-			'01' => 'FedEx International Priority<sup>&reg;</sup>',
-			'03' => 'FedEx International Economy<sup>&reg;</sup>',
-			'06' => 'FedEx International First<sup>&reg;</sup>',
-			'90' => 'FedEx Home Delivery<sup>&reg;</sup>',
-			'92' => 'FedEx Ground<sup>&reg;</sup> Service',
-		);
-		$this->types = array(
+		$this->domestic_codes = array(
 			'01' => "FDX01: Priority",
 			'03' => "FDX03: Two Day",
 			'05' => "FDX05: Standard Overnight",
@@ -55,7 +48,20 @@ class fedex {
 			'92' => "FDX92: Ground Service",
 			'90' => "FDX90: Ground Home Delivery",
 		);
+		$this->international_types = array(
+			'01' => 'FedEx International Priority<sup>&reg;</sup>',
+			'03' => 'FedEx International Economy<sup>&reg;</sup>',
+			'06' => 'FedEx International First<sup>&reg;</sup>',
+			'92' => 'FedEx Ground<sup>&reg;</sup> Service',
+		);
+		$this->international_codes = array(
+			'01' => 'FDXI01: Intl Priority',
+			'03' => 'FDXI03: Intl Economy',
+			'06' => 'FDXI06: Intl First',
+			'92' => 'FDXI92: Intl Ground',
+		);
 	}
+
 	function quote( $pShipHash = array() ) {
 		global $order;
 		if( !empty( $pShipHash['method'] ) ) {
@@ -144,11 +150,13 @@ class fedex {
 								}
 								break;
 						}
+						$methodCode = $this->domestic_codes[$quoteCode];
 					} else {
 //						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
 //							$service_descr = $this->international_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
 //						} else {
 							$service_descr = $this->international_types[$quoteCode];
+							$methodCode = $this->international_codes[$quoteCode];
 //						}
 					}
 					if( $pShipHash['method'] && $quoteCode != $pShipHash['method'] ) {
@@ -158,7 +166,7 @@ class fedex {
 						$methods[] = array('id' => $quoteCode,
 							'title' => $service_descr,
 							'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shippingNumBoxes,
-							'code' => $this->types[$quoteCode],
+							'code' => $methodCode,
 						);
 					}
 				}
@@ -410,6 +418,7 @@ class fedex {
 			$this->intl = TRUE;
 		}
 		$rates = NULL;
+
 		while (isset($fedexData['1274-' . $i])) {
 			if ($this->intl) {
 				if (isset($this->international_types[$fedexData['1274-' . $i]])) {
