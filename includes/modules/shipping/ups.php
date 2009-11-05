@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ups.php,v 1.13 2009/11/04 16:03:31 spiderr Exp $
+// $Id: ups.php,v 1.14 2009/11/05 03:53:44 spiderr Exp $
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
@@ -88,7 +88,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
       if ( !empty( $pShipHash['method'] ) && (isset($this->types[$pShipHash['method']])) ) {
         $prod = $pShipHash['method'];
-      } else if ($order->delivery['country']['countries_iso_code_2'] == 'CA') {
+      } elseif ($order->delivery['country']['countries_iso_code_2'] == 'CA') {
   	    $prod = 'STD';
       } else {
         $prod = 'GNDRES';
@@ -313,7 +313,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
         $http->addHeader('Connection', 'Close');
 
         if ($http->Get('/using/services/rave/qcostcgi.cgi?' . $request)) $body = $http->getBody();
-
         $http->Disconnect();
       } else {
         return 'error';
