@@ -33,8 +33,8 @@ class fedex {
 		$this->domestic_types = array(
 			'01' => 'FedEx Priority Overnight<sup>&reg;</sup>',
 			'03' => 'FedEx 2Day<sup>&reg;</sup>',
-			'05' => 'FedEx Standard Overnight<sup>&reg;</sup>',
-			'06' => 'FedEx First Overnight<sup>&reg;</sup> ',
+//			'05' => 'FedEx Standard Overnight<sup>&reg;</sup>',
+//			'06' => 'FedEx First Overnight<sup>&reg;</sup> ',
 			'20' => 'FedEx Express Saver<sup>&reg;</sup> (3 Days)',
 			'90' => 'FedEx Home Delivery<sup>&reg;</sup> (3-7 Days, Tues-Sat)',
 			'92' => 'FedEx Ground<sup>&reg;</sup> Service (3-7 Days, Mon-Fri)',
