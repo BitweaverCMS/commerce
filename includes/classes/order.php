@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: order.php,v 1.83 2009/10/23 21:12:14 spiderr Exp $
+// $Id: order.php,v 1.84 2009/12/28 19:36:35 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -133,7 +133,11 @@ class order extends CommerceOrderBase {
 
 		$order_id = zen_db_prepare_input($order_id);
 
-		$order_query = "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`) WHERE `orders_id` = ?";
+		$order_query = "SELECT * 
+						FROM " . TABLE_ORDERS . " co 
+							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`) 
+							LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`) 
+						WHERE co.`orders_id` = ?";
 		$order = $gBitDb->query( $order_query, array( $order_id ) );
 
 		$totals_query = "select `title`, `text`, `class`, `orders_value` from " . TABLE_ORDERS_TOTAL . " where `orders_id` = '" . (int)$order_id . "' order by `sort_order`";
@@ -169,6 +173,7 @@ class order extends CommerceOrderBase {
 							'cc_owner' => $order->fields['cc_owner'],
 							'cc_number' => $order->fields['cc_number'],
 							'cc_expires' => $order->fields['cc_expires'],
+							'cc_ref_id' => $order->fields['ref_id'],
 							'date_purchased' => $order->fields['date_purchased'],
 							'orders_status_id' => $order->fields['orders_status'],
 							'orders_status' => $order_status->fields['orders_status_name'],
@@ -414,7 +419,6 @@ class order extends CommerceOrderBase {
 
 			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId, $_SESSION['languages_id'] ) ) ) {
 				while( !$rs->EOF ) {
-					$rs->fields['comments'] = str_replace( "\n",'<br/>', $rs->fields['comments'] );
 					array_push( $this->mHistory, $rs->fields );
 					$rs->MoveNext();
 				}
