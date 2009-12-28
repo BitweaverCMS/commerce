@@ -45,23 +45,19 @@ function editAddress( pAddress ) {
 			  </tr>
 			  <tr>
 				<td class="main">Type:</td>
-				<td class="main">{$order->info.cc_type}</td>
-			  </tr>
-			  <tr>
-				<td class="main">Owner:</td>
-				<td class="main">{$order->info.cc_owner}</td>
+				<td class="main">{$order->info.cc_type}: {$order->info.cc_owner}</td>
 			  </tr>
 			  <tr>
 				<td class="main">Number:</td>
 				<td class="main">{$order->info.cc_number}</td>
 			  </tr>
 			  <tr>
-				<td class="main">CVV:</td>
-				<td class="main">{$order->getField('cc_cvv')}</td>
+				<td class="main">Expires:</td>
+				<td class="main">{$order->info.cc_expires} CVV: {$order->getField('cc_cvv')}</td>
 			  </tr>
 			  <tr>
-				<td class="main">Expires:</td>
-				<td class="main">{$order->info.cc_expires}</td>
+				<td class="main">Trans ID:</td>
+				<td class="main">{$order->info.cc_ref_id}</td>
 			  </tr>
 		{/if}
 		</table>
