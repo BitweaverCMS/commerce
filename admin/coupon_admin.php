@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_admin.php,v 1.17 2006/12/27 20:50:06 spiderr Exp $
+//  $Id: coupon_admin.php,v 1.18 2009/12/28 19:33:35 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -145,7 +145,7 @@
         $messageStack->add(ERROR_NO_COUPON_AMOUNT, 'error');
       }
       if (!$_POST['coupon_code']) {
-        $coupon_code = CommerceCoupon::generateCouponCode();
+        $coupon_code = CommerceVoucher::generateCouponCode();
       }
       if ($_POST['coupon_code']) $coupon_code = $_POST['coupon_code'];
       $query1 = $gBitDb->query("select coupon_code
