@@ -1,11 +1,11 @@
 <h2>{tr}Order Status History{/tr}</h2>
-<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;origin=index&amp;action=update_order" method="post">
+<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;origin=index&amp;action=update_order" method="post"><div style="display:inline">
 	<strong>{tr}Status{/tr}</strong> {html_options name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<br/><strong>{tr}Comments{/tr}</strong>
 	<br/><textarea name="comments" wrap="soft"></textarea>
 	<br/> {biticon iname="internet-mail" iexplain="Notified"} <strong>{tr}Notify Customer{/tr}</strong> <input name="notify" type="checkbox">
 	<input type="submit" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
-</form>
+</div></form>
 {if $gBitOrder->loadHistory()}
 <ul class="orderhistory data">
 	{section loop=$gBitOrder->mHistory name=ix step=-1}

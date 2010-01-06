@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: invoice.php,v 1.12 2009/08/22 08:18:36 spiderr Exp $
+//  $Id: invoice.php,v 1.13 2010/01/06 18:25:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -35,8 +35,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
-<script language="javascript" src="includes/menu.js"></script>
+<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
+<script type="text/javascript" src="includes/menu.js"></script>
 </head>
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
 
@@ -155,10 +155,10 @@
 
       if (isset($order->contents[$opid]['attributes']) && (($k = sizeof($order->contents[$opid]['attributes'])) > 0)) {
         for ($j = 0; $j < $k; $j++) {
-          echo '<br><nobr><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'];
+          echo '<div style="white-space:nowrap;"><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'];
           if ($order->contents[$opid]['attributes'][$j]['price'] != '0') echo ' (' . $order->contents[$opid]['attributes'][$j]['prefix'] . $currencies->format($order->contents[$opid]['attributes'][$j]['price'] * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
           if ($order->contents[$opid]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->contents[$opid]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
-          echo '</i></small></nobr>';
+          echo '</i></small></div>';
         }
       }
 

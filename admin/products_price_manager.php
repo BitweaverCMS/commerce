@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_price_manager.php,v 1.23 2009/08/22 21:29:03 spiderr Exp $
+//  $Id: products_price_manager.php,v 1.24 2010/01/06 18:25:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -207,10 +207,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
-<script language="javascript" src="includes/menu.js"></script>
-<script language="javascript" src="includes/general.js"></script>
+<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
+<script type="text/javascript" src="includes/menu.js"></script>
+<script type="text/javascript" src="includes/general.js"></script>
 <link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
 <script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
 
@@ -482,20 +482,20 @@ if ($productsId == '') {
     }
 ?>
 <?php if ($pInfo->products_id != '') { ?>
-<script language="javascript">
+<script type="text/javascript">
 var ProductStartDate = new ctlSpiffyCalendarBox("ProductStartDate", "new_prices", "product_start", "btnDate1","<?php echo (($pInfo->products_date_available <= '0001-01-01') ? '' : zen_date_short($pInfo->products_date_available)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
 <?php } ?>
 
 <?php if ($fInfo->products_id != '') { ?>
-<script language="javascript">
+<script type="text/javascript">
 var FeaturedStartDate = new ctlSpiffyCalendarBox("FeaturedStartDate", "new_prices", "featured_start", "btnDate2","<?php echo (($fInfo->featured_date_available <= '0001-01-01') ? '' : zen_date_short($fInfo->featured_date_available)); ?>",scBTNMODE_CUSTOMBLUE);
 var FeaturedEndDate = new ctlSpiffyCalendarBox("FeaturedEndDate", "new_prices", "featured_end", "btnDate3","<?php echo (($fInfo->expires_date <= '0001-01-01') ? '' : zen_date_short($fInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
 <?php } ?>
 
 <?php if ($sInfo->products_id != '') { ?>
-<script language="javascript">
+<script type="text/javascript">
 var SpecialStartDate = new ctlSpiffyCalendarBox("SpecialStartDate", "new_prices", "special_start", "btnDate4","<?php echo (($sInfo->specials_date_available <= '0001-01-01') ? '' : zen_date_short($sInfo->specials_date_available)); ?>",scBTNMODE_CUSTOMBLUE);
 var SpecialEndDate = new ctlSpiffyCalendarBox("SpecialEndDate", "new_prices", "special_end", "btnDate5","<?php echo (($sInfo->expires_date <= '0001-01-01') ? '' : zen_date_short($sInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
@@ -593,7 +593,7 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
           <tr>
             <td class="main" width="200"><?php echo TEXT_PRODUCTS_PRICE_INFO; ?></td>
             <td class="main"><?php echo TEXT_PRICE . '<br />' . zen_draw_input_field('products_price', (isset($pInfo->products_price) ? $pInfo->products_price : '')); ?></td>
-            <td class="main"><?php echo TEXT_PRODUCT_AVAILABLE_DATE; ?><br /><script language="javascript">ProductStartDate.writeControl(); ProductStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><?php echo TEXT_PRODUCT_AVAILABLE_DATE; ?><br /><script type="text/javascript">ProductStartDate.writeControl(); ProductStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
             <td colspan="2" class="main"><?php echo zen_draw_radio_field('products_status', '1', $products_in_status) . '&nbsp;' . TEXT_PRODUCT_AVAILABLE . '<br />' . zen_draw_radio_field('products_status', '0', $products_out_status) . '&nbsp;' . TEXT_PRODUCT_NOT_AVAILABLE; ?></td>
           </tr>
 
@@ -650,8 +650,8 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
           <tr>
             <td class="main" width="200"><?php echo TEXT_SPECIALS_PRODUCT_INFO; ?></td>
             <td class="main"><?php echo TEXT_SPECIALS_SPECIAL_PRICE . '<br />' . zen_draw_input_field('specials_price', (isset($sInfo->specials_new_products_price) ? $sInfo->specials_new_products_price : '')); ?></td>
-            <td class="main"><?php echo TEXT_SPECIALS_AVAILABLE_DATE; ?><br /><script language="javascript">SpecialStartDate.writeControl(); SpecialStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
-            <td class="main"><?php echo TEXT_SPECIALS_EXPIRES_DATE; ?><br /><script language="javascript">SpecialEndDate.writeControl(); SpecialEndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><?php echo TEXT_SPECIALS_AVAILABLE_DATE; ?><br /><script type="text/javascript">SpecialStartDate.writeControl(); SpecialStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><?php echo TEXT_SPECIALS_EXPIRES_DATE; ?><br /><script type="text/javascript">SpecialEndDate.writeControl(); SpecialEndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
             <td class="main"><?php echo TEXT_SPECIALS_PRODUCTS_STATUS; ?><br />
               <?php echo zen_draw_radio_field('special_status', '1', $special_in_status) . '&nbsp;' . TEXT_SPECIALS_PRODUCT_AVAILABLE . '&nbsp;' . zen_draw_radio_field('special_status', '0', $special_out_status) . '&nbsp;' . TEXT_SPECIALS_PRODUCT_NOT_AVAILABLE; ?>
             </td>
@@ -695,8 +695,8 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
         <td><br><table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" width="200"><?php echo TEXT_FEATURED_PRODUCT_INFO; ?></td>
-            <td class="main"><?php echo TEXT_FEATURED_AVAILABLE_DATE ; ?><br /><script language="javascript">FeaturedStartDate.writeControl(); FeaturedStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
-            <td class="main"><?php echo TEXT_FEATURED_EXPIRES_DATE; ?><br /><script language="javascript">FeaturedEndDate.writeControl(); FeaturedEndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><?php echo TEXT_FEATURED_AVAILABLE_DATE ; ?><br /><script type="text/javascript">FeaturedStartDate.writeControl(); FeaturedStartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><?php echo TEXT_FEATURED_EXPIRES_DATE; ?><br /><script type="text/javascript">FeaturedEndDate.writeControl(); FeaturedEndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
             <td class="main"><?php echo TEXT_FEATURED_PRODUCTS_STATUS; ?><br />
               <?php echo zen_draw_radio_field('featured_status', '1', $featured_in_status) . '&nbsp;' . TEXT_FEATURED_PRODUCT_AVAILABLE . '&nbsp;' . zen_draw_radio_field('featured_status', '0', $featured_out_status) . '&nbsp;' . TEXT_FEATURED_PRODUCT_NOT_AVAILABLE; ?>
             </td>

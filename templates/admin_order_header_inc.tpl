@@ -33,13 +33,10 @@ function editAddress( pAddress ) {
 				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance|round:2}, ${$customerStats.gifts_balance|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
 			{/if}
 		{/if}
-		</td>
 	</td>
 	<td>
-
-
-		<table style="width:auto;">
 		{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
+		<table style="width:auto;">
 			  <tr>
 				<td colspan="2"><strong>Credit Card Info</strong></td>
 			  </tr>
@@ -59,8 +56,8 @@ function editAddress( pAddress ) {
 				<td class="main">Trans ID:</td>
 				<td class="main">{$order->info.cc_ref_id}</td>
 			  </tr>
-		{/if}
 		</table>
+		{/if}
 	</td>
 	</tr>
 	<tr>

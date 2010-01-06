@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: salemaker_popup.php,v 1.7 2006/12/19 00:11:29 spiderr Exp $
+//  $Id: salemaker_popup.php,v 1.8 2010/01/06 18:25:04 spiderr Exp $
 //
 
   require("includes/application_top.php");
@@ -29,7 +29,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
+<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
 </head>
 <body>
 <p class="main"><center><h1><?php echo HEADING_TITLE . ' - ' . $_GET['cname']; ?><?php echo zen_draw_separator(); ?></h1></center></p>

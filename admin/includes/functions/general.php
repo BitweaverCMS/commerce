@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: general.php,v 1.51 2009/08/26 21:32:11 spiderr Exp $
+//	$Id: general.php,v 1.52 2010/01/06 18:25:46 spiderr Exp $
 //
 
 ////
@@ -1834,13 +1834,11 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 
 	function zen_draw_admin_box($zf_header, $zf_content) {
 		$zp_boxes = '<li class="submenu">' . $zf_header['text'];
-		$zp_boxes .= '<UL>' . "\n";
+		$zp_boxes .= '<ul>' . "\n";
 		foreach( array_keys( $zf_content ) as $i ) {
-			$zp_boxes .= '<li>';
-			$zp_boxes .= '<a href="' . $zf_content[$i]['link'] . '">' . $zf_content[$i]['text'] . '</a>';
-			$zp_boxes .= '</li>' . "\n";
+			$zp_boxes .= '<li><a href="' . $zf_content[$i]['link'] . '">' . $zf_content[$i]['text'] . '</a></li>' . "\n";
 		}
-		$zp_boxes .= '</UL>' . "\n";
+		$zp_boxes .= '</ul>' . "\n";
 		$zp_boxes .= '</li>' . "\n";
 		return $zp_boxes;
 	}

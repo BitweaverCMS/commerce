@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: popup_image.php,v 1.3 2006/12/19 00:11:28 spiderr Exp $
+//  $Id: popup_image.php,v 1.4 2010/01/06 18:25:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -47,7 +47,7 @@
 <html <?php echo HTML_PARAMS; ?>>
 <head>
 <title><?php echo $page_title; ?></title>
-<script language="javascript"><!--
+<script type="text/javascript"><!--
 var i=0;
 
 function resize() {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: alt_nav.php,v 1.4 2005/10/06 21:01:43 spiderr Exp $
+//  $Id: alt_nav.php,v 1.5 2010/01/06 18:25:04 spiderr Exp $
 //
 
   require('includes/application_top.php');
@@ -30,7 +30,7 @@
 <script language="JavaScript" src="includes/menu.js" type="text/JavaScript"></script>
 <link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="includes/nde-basic.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
+<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
 <script type="text/javascript">
   <!--
   function init()

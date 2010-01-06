@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_confirmation.php,v 1.9 2009/08/22 08:22:48 spiderr Exp $
+// $Id: checkout_confirmation.php,v 1.10 2010/01/06 18:26:31 spiderr Exp $
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -96,7 +96,7 @@
 
     if ( !empty( $order->contents[$opid]['attributes'] ) && (sizeof($order->contents[$opid]['attributes']) > 0) ) {
       for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {
-        echo '<br /><nobr>&nbsp;<em> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'] . '</em></nobr>';
+        echo '<div style="white-space:nowrap;">&nbsp;<em> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'] . '</em></div>';
       }
     }
 

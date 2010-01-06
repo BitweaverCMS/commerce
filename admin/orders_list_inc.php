@@ -229,7 +229,7 @@
 
         if (sizeof($order->contents[$opid]['attributes']) > 0) {
           for ($j=0; $j<sizeof($order->contents[$opid]['attributes']); $j++) {
-            $contents[] = array('text' => '&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['orders_value'] . '</i></nobr>' );
+            $contents[] = array('text' => '&nbsp;<em> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['orders_value'] . '</em>' );
           }
         }
       }

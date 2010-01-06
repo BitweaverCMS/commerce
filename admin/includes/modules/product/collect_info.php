@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.32 2009/08/22 21:29:04 spiderr Exp $
+//  $Id: collect_info.php,v 1.33 2010/01/06 18:25:46 spiderr Exp $
 //
 
 		$parameters = array('products_name' => '',
@@ -172,10 +172,10 @@
 ?>
 <link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
 <script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
-<script language="javascript"><!--
+<script type="text/javascript"><!--
 	var dateAvailable = new ctlSpiffyCalendarBox("dateAvailable", "new_product", "products_date_available","btnDate1","<?php echo $pInfo->products_date_available; ?>",scBTNMODE_CUSTOMBLUE);
 //--></script>
-<script language="javascript"><!--
+<script type="text/javascript"><!--
 var tax_rates = new Array();
 <?php
 		for ($i=0, $n=sizeof($tax_class_array); $i<$n; $i++) {
@@ -361,7 +361,7 @@ echo zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_pric
 					</tr>
 					<tr>
 						<td class="main"><?php echo TEXT_PRODUCTS_DATE_AVAILABLE; ?><br /><small>(YYYY-MM-DD)</small></td>
-						<td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;'; ?><script language="javascript">dateAvailable.writeControl(); dateAvailable.dateFormat="yyyy-MM-dd";</script></td>
+						<td class="main"><?php echo zen_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;'; ?><script type="text/javascript">dateAvailable.writeControl(); dateAvailable.dateFormat="yyyy-MM-dd";</script></td>
 					</tr>
 					<tr>
 						<td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
@@ -539,7 +539,7 @@ for( $i=1; $i<=12; $i++ ) {
 						<td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
 					</tr>
 
-<script language="javascript"><!--
+<script type="text/javascript"><!--
 updateGross();
 //--></script>
 <?php
