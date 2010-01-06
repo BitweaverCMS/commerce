@@ -2,8 +2,8 @@
 <tr><th colspan="4">{tr}Order List{/tr}</th></tr>
 <tr><td colspan="4">
 {form}
-{tr}Search{/tr}:
-<input type="text" style="width:auto" size="15" name="search" value="{$smarty.request.search}"/>
+{html_options name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
+: <input type="text" style="width:auto" size="15" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
 <select name="orders_status_comparison">
 	<option value="">{tr}Exactly{/tr}</option>
 	<option value=">=" {if $smarty.session.orders_status_comparison == '>='}selected="selected"{/if}>{tr}At Least{/tr}</option>

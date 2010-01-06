@@ -1,23 +1,23 @@
 <?php
 //
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
-// +----------------------------------------------------------------------+
-// $Id: order.php,v 1.84 2009/12/28 19:36:35 spiderr Exp $
+// +------------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce											|
+// +------------------------------------------------------------------------+
+// | Copyright (c) 2003 The zen-cart developers								|
+// |																		|
+// | http://www.zen-cart.com/index.php										|
+// |																		|
+// | Portions Copyright (c) 2003 osCommerce									|
+// +------------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,			|
+// | that is bundled with this package in the file LICENSE, and is			|
+// | available through the world-wide-web at the following url:				|
+// | http://www.zen-cart.com/license/2_0.txt.								|
+// | If you did not receive a copy of the zen-cart license and are unable 	|
+// | to obtain it through the world-wide-web, please send a note to			|
+// | license@zen-cart.com so we can mail you a copy immediately.			|
+// +------------------------------------------------------------------------+
+// $Id: order.php,v 1.85 2010/01/06 18:26:59 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -84,36 +84,42 @@ class order extends CommerceOrderBase {
 		}
 
 		if( !empty( $pListHash['search'] ) ) {
-			$whereSql .= " AND ( ";
-			$whereSql .= " LOWER(`delivery_name`) like ? OR ";
-			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
-			$whereSql .= " LOWER(`billing_name`) like ? OR ";
-			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
-			$whereSql .= " LOWER(uu.`email`) like ? OR ";
-			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
-			if( is_numeric( $pListHash['search'] ) ) {
-				$whereSql .= " `order_total` = ? OR ";
-				$bindVars[] = $pListHash['search'];
-			}
-			if( is_numeric( $pListHash['search'] ) ) {
-				if( strpos( $pListHash['search'], '.' ) === FALSE ) {
-					$whereSql .= " o.`orders_id` = ? OR ";
+			if( !empty( $pListHash['search_scope'] ) && $pListHash['search_scope'] == 'history' ) {
+				$joinSql .= " INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON(osh.`orders_id`=o.`orders_id`) ";
+				$whereSql .= " AND LOWER(osh.`text`) LIKE ? ";
+				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+			} else {
+				$whereSql .= " AND ( ";
+				$whereSql .= " LOWER(`delivery_name`) like ? OR ";
+				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+				$whereSql .= " LOWER(`billing_name`) like ? OR ";
+				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+				$whereSql .= " LOWER(uu.`email`) like ? OR ";
+				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+				if( is_numeric( $pListHash['search'] ) ) {
+					$whereSql .= " `order_total` = ? OR ";
 					$bindVars[] = $pListHash['search'];
 				}
-				$whereSql .= " o.`order_total` = ? OR ";
-				$bindVars[] = $pListHash['search'];
+				if( is_numeric( $pListHash['search'] ) ) {
+					if( strpos( $pListHash['search'], '.' ) === FALSE ) {
+						$whereSql .= " o.`orders_id` = ? OR ";
+						$bindVars[] = $pListHash['search'];
+					}
+					$whereSql .= " o.`order_total` = ? OR ";
+					$bindVars[] = $pListHash['search'];
+				}
+				$whereSql .= " LOWER(uu.`real_name`) like ? ";
+				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+				$whereSql .= " ) ";
 			}
-			$whereSql .= " LOWER(uu.`real_name`) like ? ";
-			$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
-			$whereSql .= " ) ";
 		}
 
 		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'o.`date_purchased`' )." AS `purchase_time` $selectSql
 					FROM " . TABLE_ORDERS . " o
 						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`)
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
-						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
 					$joinSql
+						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
 					WHERE `class` = 'ot_total' $whereSql
 					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
@@ -916,7 +922,7 @@ class order extends CommerceOrderBase {
 			'<tr>' .
 			'<td class="product-details" align="right" valign="top" width="30">' . $this->contents[$productsKey]['products_quantity'] . '&nbsp;x</td>' .
 			'<td class="product-details" valign="top">' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') .
-			'<nobr><small><em> '. $this->products_ordered_attributes .'</em></small></nobr></td>' .
+			'<span style="white-space:nowrap;"><small><em> '. $this->products_ordered_attributes .'</em></small></span></td>' .
 			'<td class="product-details-num" valign="top" align="right">' .
 				$currencies->display_price($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity']) .
 				($this->contents[$productsKey]['onetime_charges'] !=0 ?

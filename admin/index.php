@@ -1,37 +1,46 @@
 <?php
 //
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-//  $Id: index.php,v 1.27 2009/12/22 21:01:47 spiderr Exp $
+// +------------------------------------------------------------------------+
+// |zen-cart Open Source E-commerce											|
+// +------------------------------------------------------------------------+
+// | Copyright (c) 2003 The zen-cart developers								|
+// |																		|
+// | http://www.zen-cart.com/index.php										|
+// |																		|
+// | Portions Copyright (c) 2003 osCommerce									|
+// +------------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license,			|
+// | that is bundled with this package in the file LICENSE, and is			|
+// | available through the world-wide-web at the following url:				|
+// | http://www.zen-cart.com/license/2_0.txt.								|
+// | If you did not receive a copy of the zen-cart license and are unable 	|
+// | to obtain it through the world-wide-web, please send a note to			|
+// | license@zen-cart.com so we can mail you a copy immediately.			|
+// +------------------------------------------------------------------------+
+//	$Id: index.php,v 1.28 2010/01/06 18:21:23 spiderr Exp $
 //
-  $version_check_index=true;
-  require('includes/application_top.php');
-global $language;
-  $languages = zen_get_languages();
-  $languages_array = array();
-  $languages_selected = DEFAULT_LANGUAGE;
-  for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
-    $languages_array[] = array('id' => $languages[$i]['code'],
-                               'text' => $languages[$i]['name']);
-    if ($languages[$i]['directory'] == $language) {
-      $languages_selected = $languages[$i]['code'];
-    }
-  }
+	$version_check_index=true;
+	require('includes/application_top.php');
+
+	if( !empty( $_REQUEST['top_search'] ) ) {
+		switch( $_REQUEST['top_search_scope'] ) {
+			case 'order_num':
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['orders_search'] );
+				break;
+		}	
+	}
+
+	global $language;
+	$languages = zen_get_languages();
+	$languages_array = array();
+	$languages_selected = DEFAULT_LANGUAGE;
+	for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
+		$languages_array[] = array('id' => $languages[$i]['code'],
+															 'text' => $languages[$i]['name']);
+		if ($languages[$i]['directory'] == $language) {
+			$languages_selected = $languages[$i]['code'];
+		}
+	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?php echo HTML_PARAMS; ?>>
@@ -42,17 +51,17 @@ global $language;
 <link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS" />
 <script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
+	<!--
+	function init()
+	{
+		cssjsmenu('navbar');
+		if (document.getElementById)
+		{
+			var kill = document.getElementById('hoverJS');
+			kill.disabled = true;
+		}
+	}
+	// -->
 </script>
 </head>
 <body onload="init()">
@@ -61,29 +70,29 @@ global $language;
 <!-- header_eof //-->
  <?php
 
-  $customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
+	$customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
 
-  $products = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '1'");
+	$products = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '1'");
 
-  $products_off = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '0'");
+	$products_off = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '0'");
 
-  $reviews = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS);
-  $reviews_pending = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS . " WHERE `status`='0'");
+	$reviews = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS);
+	$reviews_pending = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS . " WHERE `status`='0'");
 
-  $newsletters = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS . " WHERE `customers_newsletter` = '1'");
+	$newsletters = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS . " WHERE `customers_newsletter` = '1'");
 
-  $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
-  $counter = $gBitDb->Execute($counter_query);
-  $counter_startdate = $counter->fields['startdate'];
-//  $counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
-  $counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
+	$counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
+	$counter = $gBitDb->Execute($counter_query);
+	$counter_startdate = $counter->fields['startdate'];
+//	$counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
+	$counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
 
-  $specials = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '0'");
-  $specials_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '1'");
-  $featured = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '0'");
-  $featured_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '1'");
-  $salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
-  $salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
+	$specials = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '0'");
+	$specials_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '1'");
+	$featured = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '0'");
+	$featured_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '1'");
+	$salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
+	$salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
 
 
 ?>
@@ -101,9 +110,15 @@ global $language;
 		$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
 	} 
 
+	if( !empty( $_REQUEST['search_scope'] ) ) {
+		$listHash['search_scope'] = $_REQUEST['search_scope'];
+		$_SESSION['search_scope'] = $_REQUEST['search_scope'];
+	}
 	if( !empty( $_REQUEST['search'] ) ) {
 		$listHash['search'] = $_REQUEST['search'];
+		$_SESSION['search'] = $_REQUEST['search'];
 	}
+	$gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
 
 	if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 		$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
@@ -125,18 +140,18 @@ global $language;
 
 <div id="coltwo">
 <table class="data">
-   <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
-<?php   $orders_contents = '';
+	 <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
+<?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
-			  FROM " . TABLE_ORDERS . " co
+				FROM " . TABLE_ORDERS . " co
 				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
-			  GROUP BY `orders_status_name`, `orders_status_id`
-			  ORDER BY `orders_status_id` DESC";
-  if( $rs = $gBitDb->query( $query ) ) {
-	  while( $orders_status = $rs->fetchRow() ) {
+				GROUP BY `orders_status_name`, `orders_status_id`
+				ORDER BY `orders_status_id` DESC";
+	if( $rs = $gBitDb->query( $query ) ) {
+		while( $orders_status = $rs->fetchRow() ) {
 		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
-	  }
-  }
+		}
+	}
 ?>
 </table>
 <?php
@@ -151,9 +166,9 @@ global $language;
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_REVIEWS . '</td><td>' . $reviews . '</td></tr>';
-    if (REVIEWS_APPROVAL=='1') {
-	  echo '<td><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></td><td>' . $reviews_pending. '</td></tr>';
-    }
+		if (REVIEWS_APPROVAL=='1') {
+		echo '<td><a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'status=1', 'NONSSL') . '">' . BOX_ENTRY_REVIEWS_PENDING . '</a></td><td>' . $reviews_pending. '</td></tr>';
+		}
 	echo '<tr><td>' . BOX_ENTRY_NEWSLETTERS . '</td><td> ' . $newsletters . '</td></tr>';
 
 	echo '<tr><td>' . BOX_ENTRY_SPECIALS_EXPIRED . '</td><td> ' . $specials . '</td></tr>';
