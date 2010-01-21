@@ -47,6 +47,9 @@ function getShippingQuotes( pOrderId ) {
 
 
 <h1 class="header">
+	<div class="floaticon">
+		<a href="{$smarty.server.REQUEST_URI}">{biticon iname='view-refresh'}</a>
+	</div>
 	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo;</a>
 	{$smarty.const.HEADING_TITLE} 
 	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">&raquo;</a>
