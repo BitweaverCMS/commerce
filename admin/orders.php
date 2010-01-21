@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.56 2009/08/18 20:30:32 spiderr Exp $
+//  $Id: orders.php,v 1.57 2010/01/21 19:23:41 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -222,6 +222,12 @@
 			}
 		  break;
 		}
+		}
+		if( !empty( $_REQUEST['delete_status'] ) ) {
+			if( $gBitUser->isAdmin() ) {
+				$order->expungeStatus( $_REQUEST['delete_status'] );
+				bit_redirect( $_SERVER['PHP_SELF'].'?oID='.$_REQUEST['oID'] );
+			}
 		}
 	}
 

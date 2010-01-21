@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: order.php,v 1.85 2010/01/06 18:26:59 spiderr Exp $
+// $Id: order.php,v 1.86 2010/01/21 19:23:41 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -1064,6 +1064,10 @@ class order extends CommerceOrderBase {
 			$ret = $this->info['orders_status_id'];
 		}
 		return $ret;
+	}
+
+	function expungeStatus( $pOrdersStatusHistoryId ) {
+		$this->mDb->query( "DELETE FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_status_history_id`=?", array( $pOrdersStatusHistoryId ) );
 	}
 
 	function updateStatus( $pParamHash ) {
