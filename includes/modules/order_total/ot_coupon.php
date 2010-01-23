@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.16 2009/10/23 21:12:32 spiderr Exp $
+// $Id: ot_coupon.php,v 1.17 2010/01/23 19:12:52 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -113,7 +113,7 @@
 		if ( !empty( $_POST['dc_redeem_code'] ) ) {
 			$coupon = new CommerceVoucher();
 			if ( !$coupon->load( $_POST['dc_redeem_code'] ) ) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON), 'SSL',true, false));
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$_POST['dc_redeem_code'] ), 'SSL',true, false));
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
@@ -124,12 +124,12 @@
 					}
 				}
 				if (!$foundvalid) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$_POST['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
 
 				if( !$coupon->isRedeemable() ) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'] ), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$_POST['dc_redeem_code'] ), 'SSL',true, false));
 				}
 
 				if ($coupon->getField('coupon_type')=='S') {
@@ -147,7 +147,7 @@
 				$_SESSION['cc_id'] = $coupon->mCouponId;
 			}
 			if( !empty( $_POST['submit_redeem_coupon_x'] ) && !$_POST['gv_redeem_code']) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE), 'SSL', true, false));
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$_POST['dc_redeem_code']), 'SSL', true, false));
 			}
 		}
 	}
