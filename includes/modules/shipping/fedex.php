@@ -269,11 +269,11 @@ class fedex {
 			if (MODULE_SHIPPING_FEDEX_TIMEOUT != 'NONE') curl_setopt($ch, CURLOPT_TIMEOUT, MODULE_SHIPPING_FEDEX_TIMEOUT);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array("Referer: " . STORE_NAME,
-																								 "Host: " . $this->server,
-																								 "Accept: image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*",
-																								 "Pragma:",
-																								 "Content-Type:image/gif"));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(	"Referer: " . STORE_NAME,
+														"Host: " . $this->server,
+														"Accept: image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*",
+														"Pragma:",
+														"Content-Type:image/gif"));
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 			$reply = curl_exec($ch);
 			curl_close ($ch);
