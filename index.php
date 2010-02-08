@@ -17,13 +17,13 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.28 2009/08/18 20:47:38 spiderr Exp $
+// $Id: index.php,v 1.29 2010/02/08 21:27:21 wjames5 Exp $
 //
 
 	// These classes need to be included first so they get written to the session properly
 	require_once('includes/classes/navigation_history.php');
 
-	require_once('../bit_setup_inc.php');
+	require_once('../kernel/setup_inc.php');
 
 	require_once('includes/application_top.php');
 

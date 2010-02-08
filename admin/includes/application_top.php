@@ -17,10 +17,10 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.30 2009/08/18 20:29:38 spiderr Exp $
+//  $Id: application_top.php,v 1.31 2010/02/08 21:27:21 wjames5 Exp $
 //
 
-require_once( '../../bit_setup_inc.php' );
+require_once( '../../kernel/setup_inc.php' );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
