@@ -105,8 +105,8 @@
 {literal}
 <script type="text/javascript">
 function editOptionsValue( pOptValId ) {
-	flip( 'optval'+pOptValId+'edit' );
-	flip( 'optval'+pOptValId+'display' );
+	BitBase.toggleElementDisplay( 'optval'+pOptValId+'edit', 'block' );
+	BitBase.toggleElementDisplay( 'optval'+pOptValId+'display', 'block' );
 	return false;
 }
 function saveOptionsValue( pOptValId ) {

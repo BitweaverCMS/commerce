@@ -66,7 +66,7 @@
 
 					{if $gBitSystem->isFeatureActive( 'user_password_generator' )}
 						<div class="row">
-							{formlabel label="<a href=\"javascript:genPass('genepass','pass1','pass2');\">{tr}Generate a password{/tr}</a>" for="email"}
+							{formlabel label="<a href=\"javascript:BitBase.genPass('genepass','pass1','pass2');\">{tr}Generate a password{/tr}</a>" for="email"}
 							{forminput}
 								<input id="genepass" type="text" />
 								{formhelp note="You can use this link to create a random password. Make sure you make a note of it somewhere to log in to this site in the future."}

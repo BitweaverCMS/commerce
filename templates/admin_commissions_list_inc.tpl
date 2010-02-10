@@ -11,8 +11,7 @@
 		<td class="item {$oddeven}">{$commission.email}</td>
 		<td class="item {$oddeven}" style="text-align:right">{$commission.commission_sum|string_format:"$%.2f"}</td>
 		<td class="item {$oddeven}">
-	{*		<img src="/themes/icon_styles/tango/small/appointment-new.png" alt="Affiliate History" onclick="toggle('{$userId}details');"/>  *}
-			<a href="#" onclick="toggle('enterpayment{$userId}');return false;">Enter Payment</a>
+			<a href="#" onclick="BitBase.toggleElementDisplay('enterpayment{$userId}','block',true);return false;">Enter Payment</a>
 		</td>
 		<td class="item">{$commission.payment_method}</td>
 	</tr>
