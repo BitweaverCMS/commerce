@@ -44,12 +44,12 @@
 {literal}
 <script type="text/javascript">
 function updatePaymentMethod() {
-	hideById('commissionstorecredit');
-	hideById('commissionpaypal');
-	hideById('commissionworldpay');
-	hideById('commissioncheck');
+	BitBase.hideById('commissionstorecredit');
+	BitBase.hideById('commissionpaypal');
+	BitBase.hideById('commissionworldpay');
+	BitBase.hideById('commissioncheck');
 	methodValue = 'commission'+document.getElementById('commissions_payment_method').value;
-	showById(methodValue);
+	BitBase.showById(methodValue);
 	return true;
 }
 
