@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reports_dhtml.php,v 1.5 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: reports_dhtml.php,v 1.6 2010/02/15 05:53:55 spiderr Exp $
 //
 
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_REPORTS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_REPORTS_PRODUCTS_VIEWED, 'link' => zen_href_link_admin(FILENAME_STATS_PRODUCTS_VIEWED, '', 'NONSSL'));
+  $za_contents[] = array('text' => tra( 'Products Sales By Type' ), 'link' => zen_href_link_admin( 'stats_products_types', '', 'NONSSL' ) );
   $za_contents[] = array('text' => BOX_REPORTS_PRODUCTS_PURCHASED, 'link' => zen_href_link_admin(FILENAME_STATS_PRODUCTS_PURCHASED, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_REPORTS_ORDERS_TOTAL, 'link' => zen_href_link_admin(FILENAME_STATS_CUSTOMERS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_REPORTS_PRODUCTS_LOWSTOCK, 'link' => zen_href_link_admin(FILENAME_STATS_PRODUCTS_LOWSTOCK, '', 'NONSSL'));

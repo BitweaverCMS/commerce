@@ -51,6 +51,18 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers' => "
   customers_referral C(32)
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests' => "
+  interests_id I4 PRIMARY AUTO,
+  interests_name C(64)
+",
+
+BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests_map' => "
+  interests_id I4 NOT NULL,
+  customers_id I4 NOT NULL
+  CONSTRAINT 'CONSTRAINT com_cust_interest_int_ref FOREIGN KEY (interests_id) REFERENCES com_customers_interests (interests_id), 
+				CONSTRAINT com_cust_interest_cust_ref FOREIGN KEY (customers_id) REFERENCES com_customers (customers_id)'
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_upgrade_exceptions' => "
   upgrade_exception_id I2 PRIMARY AUTO,
   sql_file C(50),

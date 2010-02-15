@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.4 2009/02/25 17:44:56 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.5 2010/02/15 05:53:55 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -47,6 +47,42 @@
 				case 'day':
 				break;
 			}
+		}
+
+		function getRevenueByOption( $pParamHash ) {
+			$ret = array();
+
+			$whereSql = '';
+
+			$sql = "SELECT copa.`products_options_values_id` AS `hash_key`, copa.`products_options_id`, copa.`products_options`, COALESCE( cpa.`products_options_values_name`, copa.`products_options_values`) AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+					FROM " . TABLE_ORDERS . " co
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
+						INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.`products_options_values_id`=copa.`products_options_values_id`)
+					WHERE co.`orders_status` > 0 $whereSql
+					GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, cpa.`products_options_values_name`, copa.`products_options_id`
+					ORDER BY copa.`products_options`, SUM(cop.`products_quantity`), copa.`products_options_values`";
+
+			$ret = $this->mDb->getAll( $sql );
+			return $ret;
+		}
+
+		function getRevenueByType( $pParamHash ) {
+			$ret = array();
+
+			$whereSql = '';
+
+			$sql = "SELECT cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, SUM(cop.`products_quantity` * cop.`products_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+					FROM " . TABLE_ORDERS . " co
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
+						INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
+						INNER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON(cpt.`type_id`=cp.`products_type`)
+					WHERE co.`orders_status` > 0 $whereSql
+					GROUP BY cpt.type_id, cpt.`type_name`, cpt.type_class
+					ORDER BY SUM(cop.`products_quantity` * cop.`products_price`)";
+
+			$ret = $this->mDb->getAssoc( $sql );
+			return $ret;
 		}
 	}
 ?>
