@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.57 2010/01/21 19:23:41 spiderr Exp $
+//  $Id: orders.php,v 1.58 2010/02/15 05:47:16 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -250,19 +250,11 @@
 		$gBitSmarty->assign( 'notificationBlock', $module->admin_notification($oID) );
 	}
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
-
-	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' );
-
-?>
-
-</td>
-<td valign="top" style="width:33%;">
-	
-<?php
-
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 
-	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' );
+
+	print '<div class="span-16">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
+	print '<div class="span-8 last">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
 
 	// check if order has open gv
 	$gv_check = $gBitDb->query("select `order_id`, `unique_id`
