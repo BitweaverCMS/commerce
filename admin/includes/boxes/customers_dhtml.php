@@ -17,13 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: customers_dhtml.php,v 1.7 2007/05/01 12:51:48 spiderr Exp $
+//  $Id: customers_dhtml.php,v 1.8 2010/02/18 20:47:32 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_CUSTOMERS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_ORDERS, 'link' => zen_href_link_admin(FILENAME_ORDERS, '', 'NONSSL'));
+  $za_contents[] = array('text' => tra('Interests'), 'link' => zen_href_link_admin('interests.php', '', 'NONSSL'));
   $za_contents[] = array('text' => tra('Commissions'), 'link' => zen_href_link_admin('commissions.php', '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_LOCALIZATION_ORDERS_STATUS, 'link' => zen_href_link_admin(FILENAME_ORDERS_STATUS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_GROUP_PRICING, 'link' => zen_href_link_admin(FILENAME_GROUP_PRICING, '', 'NONSSL'));

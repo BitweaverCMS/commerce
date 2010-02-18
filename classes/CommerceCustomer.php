@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.31 2009/08/18 19:59:11 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.32 2010/02/18 20:47:32 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
@@ -391,5 +391,39 @@ class CommerceCustomer extends BitBase {
 		return 'en';
 	}
 
+	function storeInterest( $pParamHash ) {
+		if( !empty( $pParamHash['interests_name'] ) ) {
+			$interestName = trim( substr( $pParamHash['interests_name'], 0, 64 ) );
+			if( @BitBase::verifyId( $pParamHash['interests_id'] ) ) {
+				$this->mDb->associateUpdate( TABLE_CUSTOMERS_INTERESTS, array( 'interests_name' => $interestName ), array( 'interests_id' => $pParamHash['interests_id'] ) );
+			} else {
+				$interestsId = $this->mDb->GenID( 'com_customers_interests_id_seq' );
+				$this->mDb->associateInsert( TABLE_CUSTOMERS_INTERESTS, array( 'interests_name' => $interestName, 'interests_id' => $interestsId ) );
+			}
+		}
+	}
+
+	function expungeInterest( $pInterestsId ) {
+		if( BitBase::verifyId( $pInterestsId ) ) {
+			$this->mDb->StartTrans();
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `interests_id`=?", array( $pInterestsId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
+			$this->mDb->CompleteTrans();
+		}
+	}
+
+	function getInterest( $pInterestsId ) {
+		$ret = array();
+		if( BitBase::verifyId( $pInterestsId ) ) {
+			$ret = $this->mDb->getRow( "SELECT * FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
+		}
+		return $ret;
+	}
+
+	// Can be called statically, and is for user registration
+	function getInterests() {
+		global $gBitDb;
+		return( $gBitDb->getAssoc( "SELECT `interests_id`, `interests_name` FROM `".BITCOMMERCE_DB_PREFIX."com_customers_interests` ORDER BY `interests_name` " ) );
+	}
 }
 ?>

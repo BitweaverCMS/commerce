@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.15 2007/04/12 23:51:53 spiderr Exp $
+// $Id: database_tables.php,v 1.16 2010/02/18 20:47:32 spiderr Exp $
 //
 
 // define the database table names used in the project
@@ -46,6 +46,8 @@
   define('TABLE_COUPONS_DESCRIPTION', '`'.BITCOMMERCE_DB_PREFIX . 'com_coupons_description`');
   define('TABLE_CURRENCIES', '`'.BITCOMMERCE_DB_PREFIX . 'com_currencies`');
   define('TABLE_CUSTOMERS', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers`');
+  define('TABLE_CUSTOMERS_INTERESTS_MAP', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_interests_map`');
+  define('TABLE_CUSTOMERS_INTERESTS', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_interests`');
   define('TABLE_CUSTOMERS_BASKET', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_basket`');
   define('TABLE_CUSTOMERS_BASKET_ATTRIBUTES', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_basket_att`');
   define('TABLE_CUSTOMERS_INFO', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_info`');
