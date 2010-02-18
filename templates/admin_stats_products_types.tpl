@@ -1,9 +1,16 @@
-<h1 class="header">
+<div class="header">
 	<div class="floaticon">
 		<a href="{$smarty.server.REQUEST_URI}">{biticon iname='view-refresh'}</a>
 	</div>
-	{tr}Product Sales Summary{/tr}
-</h1>
+	<h1>{tr}Product Sales Summary{/tr}</h1>
+<div style="display:inline-block;padding:6px;">
+<input id="calendarfrom" name="calendarfrom" value="{$smarty.request.calendarfrom|default:$smarty.session.date_from}" onchange="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)" style="width:7em;" /> {biticon ipackage="icons" iname="office-calendar" iexplain="Choose From Data" id="calendarfrompic"}
+    &nbsp; {tr}to{/tr} &nbsp;
+<input id="calendarto" name="calendarto" value="{$smarty.request.calendarto|default:$smarty.session.date_to}" onchange="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)" style="width:7em;" /> {biticon ipackage="icons" iname="office-calendar" iexplain="Choose From Data" id="calendartopic"}
+<input type="submit" name="change_dates" value="Go" onclick="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)"/>
+<div id="datehelp"></div>
+	</div>
+</div>
 
 <table class="data stats span-12">
 	<caption>{tr}Product Sales By Type{/tr}</caption>

@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/stats_products_types.php,v 1.1 2010/02/15 05:53:55 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/stats_products_types.php,v 1.2 2010/02/18 17:31:30 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -18,6 +18,12 @@
 define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 require('includes/application_top.php');
+global $gBitThemes;
+$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar.js' );
+$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/lang/calendar-en.js' );
+$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-setup.js' );
+$gBitThemes->loadCss( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-win2k-cold-1.css' );
+
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
 $stats = new CommerceStatistics();
