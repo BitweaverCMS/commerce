@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.1 2010/02/18 20:49:25 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.2 2010/02/19 22:32:06 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -23,6 +23,20 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
 if( !empty( $_REQUEST['action'] ) ) {
 	switch( $_REQUEST['action'] ) {
+		case 'deletec2i':
+			// Ajax method
+			if( $gBitCustomer->expungeCustomerInterest( $_REQUEST ) ) {
+				print '<div class="success">'.tra('Removed').'</div>';
+			}
+die;
+			break;
+		case 'savec2i':
+			// Ajax method
+			if( $gBitCustomer->storeCustomerInterest( $_REQUEST ) ) {
+				print '<div class="success">'.tra('Saved').'</div>';
+			}
+die;
+			break;
 		case 'save':
 			$gBitCustomer->storeInterest( $_REQUEST );
 			bit_redirect( $_SERVER['PHP_SELF'] );

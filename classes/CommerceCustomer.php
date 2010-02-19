@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.32 2010/02/18 20:47:32 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.33 2010/02/19 22:32:06 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
@@ -416,6 +416,32 @@ class CommerceCustomer extends BitBase {
 		$ret = array();
 		if( BitBase::verifyId( $pInterestsId ) ) {
 			$ret = $this->mDb->getRow( "SELECT * FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
+		}
+		return $ret;
+	}
+
+	function getCustomerInterests( $pCustomersId ) {
+		global $gBitDb;
+		$ret = $gBitDb->getAssoc( "SELECT ci.`interests_id`, ci.`interests_name`, cim.`customers_id` AS `is_interested` FROM " . TABLE_CUSTOMERS_INTERESTS . " ci LEFT OUTER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(ci.`interests_id`=cim.`interests_id` AND cim.`customers_id`=?) ORDER BY `interests_name`", array( $pCustomersId ) );
+		return $ret;
+	}
+
+	function expungeCustomerInterest( $pParamHash ) {
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pParamHash['customers_id'] ) && @BitBase::verifyId( $pParamHash['interests_id'] ) ) {
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP ." WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
+			$ret = TRUE;
+		}
+		return $ret;
+	}
+
+	function storeCustomerInterest( $pParamHash ) {
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pParamHash['customers_id'] ) && @BitBase::verifyId( $pParamHash['interests_id'] ) ) {
+			if( !($this->mDb->getOne( "SELECT `interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) ) ) ) {
+				$this->mDb->query( "INSERT INTO " . TABLE_CUSTOMERS_INTERESTS_MAP ." (`customers_id`,`interests_id`) VALUES (?,?)", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
+				$ret = TRUE;
+			}
 		}
 		return $ret;
 	}
