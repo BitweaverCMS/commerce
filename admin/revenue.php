@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: revenue.php,v 1.1 2008/09/24 19:41:14 spiderr Exp $
+//  $Id: revenue.php,v 1.2 2010/02/20 14:27:15 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -23,13 +23,20 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 	$gBitUser->verifyTicket();
 }
 
-$statsManager = new CommerceStatistics();
 $listHash['max_records']  = -1;
 if( $_REQUEST['period'] ) {
 	$listHash['period'] = $_REQUEST['period'];
 }
-$gBitSmarty->assign_by_ref( 'stats', $statsManager->getAggregateRevenue( $listHash ) );
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
+$stats = new CommerceStatistics();
+if( !empty( $_REQUEST['timeframe'] ) ) {
+	$gBitSmarty->assign_by_ref( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
+	$gBitSmarty->assign_by_ref( 'statsByOption', $stats->getRevenueByOption( $_REQUEST ) );
+	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( $_REQUEST ) );
+	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
+} else {
+	$gBitSmarty->assign_by_ref( 'stats', $stats->getAggregateRevenue( $listHash ) );
+	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
+}
 ?>
 

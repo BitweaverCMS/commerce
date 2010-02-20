@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/stats_products_types.php,v 1.2 2010/02/18 17:31:30 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/stats_products_types.php,v 1.3 2010/02/20 14:27:15 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -28,8 +28,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
 $stats = new CommerceStatistics();
 
-$gBitSmarty->assign_by_ref( 'typesStats', $stats->getRevenueByType( $_REQUEST ) );
-$gBitSmarty->assign_by_ref( 'optionsStats', $stats->getRevenueByOption( $_REQUEST ) );
+$gBitSmarty->assign_by_ref( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
+$gBitSmarty->assign_by_ref( 'statsByOption', $stats->getRevenueByOption( $_REQUEST ) );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_stats_products_types.tpl' );
 
