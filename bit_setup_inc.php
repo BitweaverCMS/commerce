@@ -43,23 +43,48 @@ if( defined( 'FLAT_STORAGE_NAME' ) ) {
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
-		'content_expunge_function' => 'bitcommerce_expunge',
+		'content_expunge_function' => 'bitcommerce_content_expunge',
+		'users_expunge_function'	=> 'bitcommerce_user_expunge',
+		'users_register_function'   => 'bitcommerce_user_register',
 	) );
-}
 
-function bitcommerce_expunge ( &$pObject ) {
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-	if( $relProduct = bc_get_commerce_product( array( 'related_content_id' => $pObject->mContentId ) ) ) {
-		// do not delete products if related content is getting deleted, but product has been purchased
-		if( $relProduct->isPurchased() ) {
-			$relProduct->update( array( 'related_content_id' => NULL ) );
-		} else {
-			$relProduct->expunge();
+	function bitcommerce_content_expunge ( &$pObject ) {
+		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		if( $relProduct = bc_get_commerce_product( array( 'related_content_id' => $pObject->mContentId ) ) ) {
+			// do not delete products if related content is getting deleted, but product has been purchased
+			if( $relProduct->isPurchased() ) {
+				$relProduct->update( array( 'related_content_id' => NULL ) );
+			} else {
+				$relProduct->expunge();
+			}
 		}
+
 	}
 
+	// make sure all mail_queue messages from a deleted user are nuked
+	function bitcommerce_user_expunge( &$pObject ) {
+		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) ) {
+			require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+			$pObject->mDb->StartTrans();
+			$exCustomer = new CommerceCustomer( $pObject->mUserId );
+			if( $exCustomer->load() ) {
+				$exCustomer->expunge();
+			}
+			$pObject->mDb->CompleteTrans();
+		}
+	}
+	
+	function bitcommerce_user_register( &$pObject ) {
+		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) && !empty( $_REQUEST['com_interests'] ) ) {
+			CommerceCustomer::syncBitUser( $pObject->mInfo );
+			$newCustomer = new CommerceCustomer( $pObject->mUserId );
+			foreach( $_REQUEST['com_interests'] as $intId ) {
+				$newCustomer->storeCustomerInterest( array( 'customers_id' => $pObject->mUserId, 'interests_id' => $intId ) );
+			}
+		}
+	}
 }
-
 
 
 ?>
