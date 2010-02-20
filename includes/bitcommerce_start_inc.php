@@ -73,12 +73,6 @@
     }
   }
 
-
-
-
-
-
-
 	// Load db classes
 	global $gCommerceSystem, $gBitDb, $gBitSmarty;
 	$gCommerceSystem = new CommerceSystem();
@@ -103,47 +97,30 @@
 //	}
   }
 
-// include the cache class
-  require_once(DIR_FS_CLASSES . 'cache.php');
-  $zc_cache = new cache;
+	// include the cache class
+	require_once(DIR_FS_CLASSES . 'cache.php');
+	$zc_cache = new cache;
 
-// sniffer class
-  require_once(DIR_FS_CLASSES . 'sniffer.php');
-  $sniffer = new sniffer;
+	// sniffer class
+	require_once(DIR_FS_CLASSES . 'sniffer.php');
+	$sniffer = new sniffer;
 
 	global $gBitUser;
 	if( !empty( $_SESSION['customer_id'] ) && !$gBitUser->isRegistered() ) {
-		// we have lost our bitweaver
+		// we have lost our bitweaver login
 		unset( $_SESSION['customer_id'] );
 		$customerId = NULL;
 	} elseif( $gBitUser->isRegistered() ) {
-	  CommerceCustomer::syncBitUser( $gBitUser->mInfo );
-	  $_SESSION['customer_id'] = $gBitUser->mUserId;
-	  $customerId = $gBitUser->mUserId;
+		CommerceCustomer::syncBitUser( $gBitUser->mInfo );
+		$_SESSION['customer_id'] = $gBitUser->mUserId;
+		$customerId = $gBitUser->mUserId;
 	} else {
-	  $customerId = NULL;
+		$customerId = NULL;
 	}
 
 	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
-
-	if( $gBitUser->isRegistered() && empty( $_SESSION['customer_id'] ) ) {
-		// Set theme related directories
-		$sql = "SELECT count(*) as `total` FROM " . TABLE_CUSTOMERS . "
-				WHERE `customers_id` = '" . zen_db_input( $gBitUser->mUserId ) . "'";
-		$check_user = $gBitDb->Execute($sql);
-		if( empty( $check_user['fields']['total'] ) ) {
-			$_REQUEST['action'] = 'process';
-			$email_format = zen_db_prepare_input( $gBitUser->mInfo['email'] );
-			if( $space = strpos( $gBitUser->mInfo['real_name'], ' ' ) ) {
-				$firstname = zen_db_prepare_input( substr( $gBitUser->mInfo['real_name'], 0, $space ) );
-				$lastname = zen_db_prepare_input( $gBitUser->mInfo['lastname'], $space );
-			}
-		}
-	}
-
-	
 
 	// lookup information
 	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
@@ -152,16 +129,16 @@
 		$_SESSION['cc_id'] = NULL;
 	}
 
-// include currencies class and create an instance
-  require_once(DIR_FS_CLASSES . 'currencies.php');
+	// include currencies class and create an instance
+	require_once(DIR_FS_CLASSES . 'currencies.php');
 	global $currencies;
 	$currencies = new currencies();
 	$gBitSmarty->assign_by_ref( 'gCommerceCurrencies', $currencies );
 
-  require_once(DIR_FS_CLASSES . 'category_tree.php');
+	require_once(DIR_FS_CLASSES . 'category_tree.php');
 
-// taxes
-  require_once(DIR_FS_FUNCTIONS . 'functions_taxes.php');
+	// taxes
+	require_once(DIR_FS_FUNCTIONS . 'functions_taxes.php');
 
 
 
