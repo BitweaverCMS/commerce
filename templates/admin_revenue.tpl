@@ -13,7 +13,7 @@
 	</div>
 	<div class="body">
 
-	<table class="data">
+	<table class="data span-18">
 	<tr>
 		<th class="item">{tr}Period{/tr}</th>
 		<th class="item" style="width:50%;text-align:left">{tr}Revenue{/tr}</th>
@@ -24,7 +24,7 @@
 		{if $statKey != 'stats'}
 	{cycle assign="oddeven" values="odd,even"}
 	<tr>
-		<td class="item {$oddeven}">{$statKey}</td>
+		<td class="item {$oddeven}"><a href="{$smarty.server.php_self}?period={$smarty.request.period}&timeframe={$statKey|escape:url}">{$statKey}</td>
 		<td class="item {$oddeven}"><span style="background-color:#def;display:inline-block;width:{math equation="round(100*(gross/max))" gross=$statHash.gross_revenue max=$stats.stats.gross_revenue_max}%">${$statHash.gross_revenue}</span></td>
 		<td class="item {$oddeven}"><span style="background:#def;display:inline-block;width:{math equation="round(100*(count/max))" count=$statHash.order_count max=$stats.stats.order_count_max}%">{$statHash.order_count}</span></td>
 		<td class="item {$oddeven}" style="text-align:right">${$statHash.avg_order_size}</td>
