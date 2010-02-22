@@ -20,24 +20,35 @@
 </div>
 <div class="span-12 last">
 <table class="data stats">
-	<caption>{tr}Customer Stats{/tr}</caption>
+	<caption>{tr}Customer Create Product Stats{/tr}</caption>
 	<thead>
+	<tr>
+		<th></th>
+		<th></th>
+		<th>Conversion Rate</th>
+	</tr>
 	</thead>
 	<tbody>
 	<tr>
-		<td>New Registrations</td><td class="item">{$statsCustomers.new_registrations}</td>
+		<td>New Registrations</td><td class="item">{$statsCustomers.new_registrations}</td><td></td>
 	</tr>
 	<tr>
-		<td class="item">New Customers That Created Products</td><td class="item">{$statsCustomers.new_customers_that_created_products}</td>
+		<td class="item">New Customers That Created Products</td>
+		<td class="item">{$statsCustomers.new_customers_that_created_products}</td>
+		<td class="item selected">{math equation="round(x/y*100)" y=$statsCustomers.new_registrations x=$statsCustomers.new_customers_that_created_products}%</td>
 	</tr>
 	<tr>
-		<td class="item">New Customers That Purchased New Products</td><td class="item">{$statsCustomers.new_customers_that_purchased_new_products}</td>
+		<td class="item">New Customers That Purchased New Products</td>
+		<td class="item">{$statsCustomers.new_customers_that_purchased_new_products}</td>
+		<td class="item selected">{math equation="round(x/y*100)" x=$statsCustomers.new_customers_that_purchased_new_products y=$statsCustomers.new_customers_that_created_products}%</td>
 	</tr>
 	<tr>
 		<td class="item">New Products Created By New Customers</td><td class="item">{$statsCustomers.new_products_created_by_new_customers}</td>
 	</tr>
 	<tr>
-		<td class="item">New Products Purchased By New Customers</td><td class="item">{$statsCustomers.new_products_purchased_by_new_customers}</td>
+		<td class="item">New Products Purchased By New Customers</td>
+		<td class="item">{$statsCustomers.new_products_purchased_by_new_customers}</td>
+		<td class="item selected">{math equation="round(x/y*100)" x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_new_customers}%</td>
 	</tr>
 	<tr>
 		<td class="item">Total Unique Products Purchased</td><td class="item">{$statsCustomers.unique_products_ordered}</td>
