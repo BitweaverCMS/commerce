@@ -70,6 +70,7 @@
 		<td class="item">{$statsCustomers.new_products_purchased_by_all_customers-$statsCustomers.new_products_purchased_by_new_customers}</td>
 		<td class="item selected">{math equation="round((w-x)/(y-z)*100)" w=$statsCustomers.new_products_purchased_by_all_customers x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_all_customers z=$statsCustomers.new_products_created_by_new_customers}%</td>
 	</tr>
+	<tr><th colspan="3">{tr}Totals{/tr}</th></tr>
 	<tr>
 		<td class="item">Total Unique Products Purchased</td>
 		<td class="item">{$statsCustomers.unique_products_ordered}</td>
