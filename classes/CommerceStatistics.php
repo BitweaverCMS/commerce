@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.7 2010/02/22 19:23:46 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.8 2010/02/22 23:18:20 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -60,7 +60,7 @@
 				$bindVars[] = $pParamHash['timeframe'];
 			}
 
-			$sql = "SELECT copa.`products_options_values_id` AS `hash_key`, copa.`products_options_id`, copa.`products_options`, COALESCE( cpa.`products_options_values_name`, copa.`products_options_values`) AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+			$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_id`, copa.`products_options`, COALESCE( cpa.`products_options_values_name`, copa.`products_options_values`) AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 					FROM " . TABLE_ORDERS . " co
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
@@ -74,36 +74,51 @@
 		}
 
 		function getCustomerConversions( $pParamHash ) {
+//$this->debug();
 			$ret = array();
 
+			// #### Total Registrations
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array();
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
+				$whereSql .= ' WHERE '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$sqlFunc = 'getAssoc';
+				// foo selection is to force hash with keys to be selected, else a simple array is returned with just registeration count
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' AS `hash_key`, 1 AS `foo`, ';
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) );
 			}
-			$sql = "SELECT COUNT( DISTINCT `user_id` ) 
+			$sql = "SELECT $selectSql COUNT( DISTINCT `user_id` ) as `new_registrations`
 					FROM `".BIT_DB_PREFIX."users_users` uu
-					WHERE 1=1 $whereSql";
-			$ret['new_registrations'] = $this->mDb->getOne( $sql, $bindVars );
-
-//$this->debug();
+					$whereSql";
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 	
 			// #### All Customers That Created Products
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$sqlFunc = 'getAssoc';
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 			}
-			$sql = "SELECT COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_all_customers`
+			$sql = "SELECT $selectSql COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_all_customers`
 					FROM `".BIT_DB_PREFIX."liberty_content` lc
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
 					WHERE `content_type_guid`=? $whereSql";
-			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 			// #### New Customers That Created Products
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -111,30 +126,43 @@
 				$bindVars[] = $pParamHash['timeframe'];
 				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$sqlFunc = 'getAssoc';
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 			}
-			$sql = "SELECT COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_new_customers`
+			$sql = "SELECT $selectSql COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_new_customers`
 					FROM `".BIT_DB_PREFIX."liberty_content` lc
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
 					WHERE `content_type_guid`=? $whereSql";
-			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 			// #### New Products Purchased By All Customers
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$sqlFunc = 'getAssoc';
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).', ';
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 			}
-			$sql = "SELECT COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_all_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_purchased_new_products`
+			$sql = "SELECT $selectSql COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_all_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_purchased_new_products`
 					FROM `".BIT_DB_PREFIX."liberty_content` lc
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
 						INNER JOIN " . TABLE_PRODUCTS . " cp ON(lc.`content_id`=cp.`content_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cp.`products_id`=cop.`products_id`)
 						INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
 					WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
-			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 			// #### New Product Purchased By New Customers
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -142,28 +170,55 @@
 				$bindVars[] = $pParamHash['timeframe'];
 				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+				$sqlFunc = 'getAssoc';
 			}
-			$sql = "SELECT COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_new_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_purchased_new_products`
+			$sql = "SELECT $selectSql COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_new_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_purchased_new_products`
 					FROM `".BIT_DB_PREFIX."liberty_content` lc
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
 						INNER JOIN " . TABLE_PRODUCTS . " cp ON(lc.`content_id`=cp.`content_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cp.`products_id`=cop.`products_id`)
 						INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
 					WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
-			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
+			// #### Unique Totals
+			$sqlFunc = 'getRow';
+			$selectSql = '';
 			$whereSql = '';
 			$bindVars = array();
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+				$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+				$sqlFunc = 'getAssoc';
 			}
-			$sql = "SELECT COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
+			$sql = "SELECT $selectSql COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
 					FROM " . TABLE_ORDERS_PRODUCTS . " cop 
 						INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
 					WHERE co.`orders_status`>0 $whereSql";
-			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+			$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 $this->debug(0);
+
+			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$maxStats = array();
+				foreach( array_keys( $ret ) as $periodKey ) {
+					if( is_array( $ret[$periodKey] ) ) {
+						foreach( array_keys( $ret[$periodKey] ) as $statKey ) {
+							if( empty( $maxStats[$statKey] ) || $maxStats[$statKey] < $ret[$periodKey][$statKey] ) {
+								$maxStats[$statKey] = $ret[$periodKey][$statKey];
+							}
+						}
+					}
+				}
+				$ret['max_stats'] = $maxStats;
+			}
 
 			return $ret;
 		}

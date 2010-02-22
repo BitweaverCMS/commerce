@@ -31,11 +31,11 @@ $gBitSmarty->assign( 'revenueTitle', 'Quarterly' );
 $gBitSmarty->assign( 'statPeriod', 'Y-\QQ' );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_revenue_inc.tpl' );
 
-$listHash = array( 'period' => 'Y', 'max_records' => 10 );
+$listHash = array( 'period' => 'Y-', 'max_records' => 10 );
 $statData = $stats->getAggregateRevenue( $listHash );	
 $gBitSmarty->assign_by_ref( 'stats', $statData );
 $gBitSmarty->assign( 'revenueTitle', 'Yearly' );
-$gBitSmarty->assign( 'statPeriod', 'Y' );
+$gBitSmarty->assign( 'statPeriod', 'Y-' );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_revenue_inc.tpl' );
 
 ?>

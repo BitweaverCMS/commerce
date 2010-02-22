@@ -78,6 +78,9 @@
 	<tr>
 		<td class="item">Total Orders</td><td class="item">{$statsCustomers.total_orders}</td>
 	</tr>
+	<tr>
+		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_PATH}admin/revenue.php?period={$smarty.request.period}&">{tr}All Time Periods{/tr}</a></td>
+	</tr>
 	</tbody>
 </table>
 

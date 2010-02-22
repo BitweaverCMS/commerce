@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//	$Id: index.php,v 1.28 2010/01/06 18:21:23 spiderr Exp $
+//	$Id: index.php,v 1.29 2010/02/22 23:18:20 spiderr Exp $
 //
 	$version_check_index=true;
 	require('includes/application_top.php');
@@ -35,8 +35,7 @@
 	$languages_array = array();
 	$languages_selected = DEFAULT_LANGUAGE;
 	for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
-		$languages_array[] = array('id' => $languages[$i]['code'],
-															 'text' => $languages[$i]['name']);
+		$languages_array[] = array( 'id' => $languages[$i]['code'], 'text' => $languages[$i]['name'] );
 		if ($languages[$i]['directory'] == $language) {
 			$languages_selected = $languages[$i]['code'];
 		}
