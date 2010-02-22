@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.6 2010/02/20 14:24:45 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.7 2010/02/22 19:23:46 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -88,6 +88,22 @@
 			$ret['new_registrations'] = $this->mDb->getOne( $sql, $bindVars );
 
 //$this->debug();
+
+	
+			// #### All Customers That Created Products
+			$whereSql = '';
+			$bindVars = array( 'bitproduct' );
+			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+				$bindVars[] = $pParamHash['timeframe'];
+			}
+			$sql = "SELECT COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_all_customers`
+					FROM `".BIT_DB_PREFIX."liberty_content` lc
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
+					WHERE `content_type_guid`=? $whereSql";
+			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+
+			// #### New Customers That Created Products
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -102,8 +118,23 @@
 					WHERE `content_type_guid`=? $whereSql";
 			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
 
+			// #### New Products Purchased By All Customers
+			$whereSql = '';
+			$bindVars = array( 'bitproduct' );
+			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+				$bindVars[] = $pParamHash['timeframe'];
+			}
+			$sql = "SELECT COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_all_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_purchased_new_products`
+					FROM `".BIT_DB_PREFIX."liberty_content` lc
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
+						INNER JOIN " . TABLE_PRODUCTS . " cp ON(lc.`content_id`=cp.`content_id`)
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cp.`products_id`=cop.`products_id`)
+						INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
+					WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
+			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
 
-
+			// #### New Product Purchased By New Customers
 			$whereSql = '';
 			$bindVars = array( 'bitproduct' );
 			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -120,7 +151,6 @@
 						INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
 					WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
 			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
-$this->debug(0);
 
 			$whereSql = '';
 			$bindVars = array();
@@ -133,6 +163,7 @@ $this->debug(0);
 						INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
 					WHERE co.`orders_status`>0 $whereSql";
 			$ret = array_merge( $ret, $this->mDb->getRow( $sql, $bindVars ) );
+$this->debug(0);
 
 			return $ret;
 		}
