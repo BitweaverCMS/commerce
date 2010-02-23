@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.9 2010/02/23 20:12:20 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.10 2010/02/23 21:22:12 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -114,12 +114,11 @@
 				$sqlFunc = 'getAssoc';
 			}
 			LibertyContent::prepGetList( $pParamHash );
-			$sql = "SELECT $selectSql co.`customers_id`, SUM( co.`order_total`) AS `total_revenue`, COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
-					FROM " . TABLE_ORDERS_PRODUCTS . " cop 
-						INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
+			$sql = "SELECT $selectSql co.`customers_id`, SUM( co.`order_total`) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
+					FROM " . TABLE_ORDERS . " co 
 					WHERE co.`orders_status`>0 $whereSql 
 					GROUP BY co.`customers_id` $groupSql
-					ORDER BY SUM( co.`order_total`) DESC, COUNT( DISTINCT( `products_id` ) ) DESC";
+					ORDER BY SUM( co.`order_total`) DESC";
 			if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
 				while( $row = $rs->fetchRow() ) {
 					$ret[current($row)] = $row;
