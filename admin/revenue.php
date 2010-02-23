@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: revenue.php,v 1.3 2010/02/22 23:18:20 spiderr Exp $
+//  $Id: revenue.php,v 1.4 2010/02/23 20:12:20 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -33,6 +33,8 @@ if( !empty( $_REQUEST['timeframe'] ) ) {
 	$gBitSmarty->assign_by_ref( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
 	$gBitSmarty->assign_by_ref( 'statsByOption', $stats->getRevenueByOption( $_REQUEST ) );
 	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( $_REQUEST ) );
+	$gBitSmarty->assign_by_ref( 'valuableInterests' , $stats->getMostValuableInterests( $_REQUEST ) );
+	$gBitSmarty->assign_by_ref( 'valuableCustomers' , $stats->getMostValuableCustomers( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
 } else {
 	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );

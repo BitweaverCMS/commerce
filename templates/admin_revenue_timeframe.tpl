@@ -20,7 +20,7 @@
 </div>
 <div class="span-12 last">
 <table class="data stats">
-	<caption>{tr}Customer Create Product Stats{/tr}</caption>
+	<caption>{tr}Customer Created Products Stats{/tr}</caption>
 	<thead>
 	<tr>
 		<th colspan="2">{tr}New Customers{/tr}</th>
@@ -85,6 +85,56 @@
 </table>
 
 </div>
+
+<div class="span-12 last">
+<table class="data stats">
+	<caption>{tr}Revenue By Interest{/tr}</caption>
+	<thead>
+	<tr>
+		<th>{tr}Interest{/tr}</th>
+		<th>{tr}Orders{/tr}</th>
+		<th>{tr}Amount{/tr}</th>
+		<th>{tr}Avg. Size{/tr}</th>
+	</tr>
+	</thead>
+	<tbody>
+	{foreach from=$valuableInterests item=interest key=interestsId}
+	<tr>
+		<td class="item">{$interest.interests_name}</td>
+		<td class="item">{$interest.total_orders}</td>
+		<td class="item currency">${$interest.total_revenue|round:2}</td>
+		<td class="item currency">${math equation="round(x/y,2)" x=$interest.total_revenue y=$interest.total_orders}</td>
+	</tr>
+	{/foreach}
+	</tbody>
+</table>
+</div>
+
+
+<div class="span-12 last">
+<table class="data stats">
+	<caption>{tr}Most Valuable Customers{/tr}</caption>
+	<thead>
+	<tr>
+		<th>{tr}Customer{/tr}</th>
+		<th>{tr}Orders{/tr}</th>
+		<th>{tr}Amount{/tr}</th>
+		<th>{tr}Avg. Size{/tr}</th>
+	</tr>
+	</thead>
+	<tbody>
+	{foreach from=$valuableCustomers item=cust key=custId}
+	<tr>
+		<td class="item">{displayname user_id=$custId}<div class="floaticon"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?user_id={$custId}">Orders</div></td>
+		<td class="item">{$cust.total_orders}</td>
+		<td class="item currency">${$cust.total_revenue|round:2}</td>
+		<td class="item currency">${math equation="round(x/y,2)" x=$cust.total_revenue y=$cust.total_orders}</td>
+	</tr>
+	{/foreach}
+	</tbody>
+</table>
+</div>
+
 
 	</div><!-- end .body -->
 </div><!-- end .bitcommerce -->

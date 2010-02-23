@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.8 2010/02/22 23:18:20 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.9 2010/02/23 20:12:20 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -70,6 +70,61 @@
 					ORDER BY copa.`products_options`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values`";
 
 			$ret = $this->mDb->getAll( $sql, $bindVars );
+			return $ret;
+		}
+
+		function getMostValuableInterests( $pParamHash ) {
+			$selectSql = '';
+			$whereSql = '';
+			$groupSql = '';
+			$bindVars = array();
+			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
+				$selectSql = ' ci.`interests_name` AS `hash_key`, ';
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+				$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+				$sqlFunc = 'getAssoc';
+			}
+			$sql = "SELECT $selectSql ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
+					FROM " . TABLE_CUSTOMERS_INTERESTS . " ci , " . TABLE_ORDERS . " co, " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim 
+					WHERE co.`orders_status`>0 
+						AND cim.`customers_id`=co.`customers_id` 
+						AND cim.`interests_id`=ci.`interests_id` 
+						AND ci.`interests_id` = (SELECT cim2.`interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim2 WHERE cim2.`customers_id`=co.`customers_id` AND cim2.`customers_id`=co.`customers_id` LIMIT 1)
+						$whereSql
+					GROUP BY ci.`interests_name` $groupSql
+					ORDER BY SUM( co.`order_total`) DESC";
+			$ret = $this->mDb->getAssoc( $sql, $bindVars );
+			return $ret;
+		}
+
+		function getMostValuableCustomers( $pParamHash ) {
+			$selectSql = '';
+			$whereSql = '';
+			$groupSql = '';
+			$bindVars = array();
+			if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
+				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+				$bindVars[] = $pParamHash['timeframe'];
+			} elseif( !empty( $pParamHash['period'] ) ) {
+				$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+				$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+				$sqlFunc = 'getAssoc';
+			}
+			LibertyContent::prepGetList( $pParamHash );
+			$sql = "SELECT $selectSql co.`customers_id`, SUM( co.`order_total`) AS `total_revenue`, COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
+					FROM " . TABLE_ORDERS_PRODUCTS . " cop 
+						INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
+					WHERE co.`orders_status`>0 $whereSql 
+					GROUP BY co.`customers_id` $groupSql
+					ORDER BY SUM( co.`order_total`) DESC, COUNT( DISTINCT( `products_id` ) ) DESC";
+			if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
+				while( $row = $rs->fetchRow() ) {
+					$ret[current($row)] = $row;
+				}
+			}
 			return $ret;
 		}
 
