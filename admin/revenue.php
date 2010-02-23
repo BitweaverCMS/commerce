@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: revenue.php,v 1.4 2010/02/23 20:12:20 spiderr Exp $
+//  $Id: revenue.php,v 1.5 2010/02/23 20:59:04 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -41,5 +41,17 @@ if( !empty( $_REQUEST['timeframe'] ) ) {
 	$gBitSmarty->assign_by_ref( 'stats', $stats->getAggregateRevenue( $listHash ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
 }
-?>
+
+function list_customers_interests( $pCustomersId ) {
+	$ret = 'none';
+	if( $interests = CommerceCustomer::getCustomerInterests( $pCustomersId ) ) {
+		$ret = '';
+		foreach( $interests as $i ) {
+			if( $i['is_interested'] ) {
+				$ret .= $i['interests_name'].',';
+			}
+		}
+	} 	
+	return $ret;
+}
 
