@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.2 2010/02/19 22:32:06 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.3 2010/02/25 23:11:03 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -15,9 +15,9 @@
  */
 
 
-define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 require('includes/application_top.php');
+define('HEADING_TITLE', tra( 'Customer Interests' ) );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
 
@@ -58,11 +58,4 @@ $gBitSmarty->assign_by_ref( 'interestsList', $gBitCustomer->getInterests() );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_interests.tpl' );
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
-
-?>
-
-<!-- footer_eof //-->
-<br />
-</body>
-</html>
-<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
+require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
