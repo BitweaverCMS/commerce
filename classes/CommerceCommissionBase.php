@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommissionBase.php,v 1.2 2009/08/17 02:34:47 spiderr Exp $
+//  $Id: CommerceCommissionBase.php,v 1.3 2010/02/25 19:47:06 spiderr Exp $
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
@@ -29,6 +29,9 @@ class CommerceCommissionBase extends BitBase {
 		$pParamHash['payment_store']['payer_user_id'] = $gBitUser->mUserId;
 		if( empty( $pParamHash['period_start_date'] ) ) {
 			$pParamHash['period_start_date'] = '1970-01-01';
+		}
+		if( empty( $pParamHash['period_end_date'] ) ) {
+			$pParamHash['period_end_date'] = date( 'Y-m-d' );
 		}
 		$pParamHash['payment_store']['period_start_date'] =  $this->mDb->mDb->DBTimeStamp( $pParamHash['period_start_date'].' 00:00:00-0' );
 		$pParamHash['payment_store']['period_end_date'] = $this->mDb->mDb->DBTimeStamp( $pParamHash['period_end_date'].' 23:59:59-0' );
