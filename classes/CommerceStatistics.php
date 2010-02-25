@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.10 2010/02/23 21:22:12 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.11 2010/02/25 19:47:24 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -113,7 +113,7 @@
 				$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
 				$sqlFunc = 'getAssoc';
 			}
-			LibertyContent::prepGetList( $pParamHash );
+			BitBase::prepGetList( $pParamHash );
 			$sql = "SELECT $selectSql co.`customers_id`, SUM( co.`order_total`) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 					FROM " . TABLE_ORDERS . " co 
 					WHERE co.`orders_status`>0 $whereSql 
