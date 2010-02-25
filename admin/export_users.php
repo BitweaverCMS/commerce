@@ -6,7 +6,7 @@
 	global $gBitDb,$gBitSystem;
 
 if( !empty( $_REQUEST['export'] ) ) {
-	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, ". $gBitDb->SqlIntToTimestamp( 'ms.unsubscribe_date' ) ." AS `unsubscribe_date`
+	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `customer_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_date`, ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`
 			FROM users_users uu
 			 	 INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.user_id = uu.user_id) 
 				LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.`customers_id`=uu.`user_id)
@@ -14,8 +14,8 @@ if( !empty( $_REQUEST['export'] ) ) {
 				 LEFT JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.countries_id = cab.entry_country_id)
 				 LEFT JOIN " . TABLE_ORDERS . " co ON (cab.customers_id = co.customers_id)
 				 LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.user_id = uu.user_id)
-	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0
-			GROUP BY uu.email,uu.real_name,uu.user_id,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ms.unsubscribe_date,ccou.countries_name
+	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0 AND co.`orders_status` > 0
+			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ms.unsubscribe_date,ccou.countries_name
 			ORDER BY RANDOM(), uu.`user_id`";
 
 	$max = (!empty( $_REQUEST['num_records'] ) ? $_REQUEST['num_records'] : NULL );
