@@ -7,7 +7,6 @@
 {literal}
 <script type="text/javascript">/* <![CDATA[ */
 function storeCustomerInterest( pInterestsId, pChecked ) {
-console.log( pChecked );
 	var action = pChecked ? 'savec2i' : 'deletec2i';
 	jQuery.ajax({
 		data: 'action='+action+'&interests_id='+pInterestsId+'&customers_id='+{/literal}{$order->customer.id}{literal},
