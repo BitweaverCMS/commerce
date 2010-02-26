@@ -96,6 +96,13 @@
 	{/forminput}
 </div>
 <div class="row">
+	{formlabel label="Total Revenue"}
+	{forminput}
+		<input type="checkbox" name="total_revenue" value="y" checked="checked" />
+		{formhelp note=""}
+	{/forminput}
+</div>
+<div class="row">
 	{formlabel label="Registration Interests"}
 	{forminput}
 		<input type="checkbox" name="interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />
