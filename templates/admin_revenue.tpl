@@ -20,8 +20,8 @@
 		<th colspan="3" style="border:none">Existing Customer Products</th>
 	</tr>
 	<tr>
-		<th class="item">{tr}Period{/tr}</th>
-		<th class="item" style="width:22%;text-align:left">{tr}Revenue{/tr}</th>
+		<th class="item" style="width:6em">{tr}Period{/tr}</th>
+		<th class="item" style="width:20%;text-align:left">{tr}Revenue{/tr}</th>
 		<th class="item" style="width:10%;text-align:left">{tr}Orders{/tr}</th>
 		<th class="item" style="text-align:right">{tr}Avg. Size{/tr}</th>
 		<th class="item">{tr}Registrations{/tr}</th>
