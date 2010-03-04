@@ -39,7 +39,7 @@
 */
 
   function zen_sanitize_string($string) {
-    $string = ereg_replace(' +', ' ', $string);
+    $string = preg_replace('/ +/', ' ', $string);
     return preg_replace("/[<>]/", '_', $string);
   }
 
@@ -149,7 +149,7 @@
 // clean up the link after processing
     while (strstr($link, '&amp;&amp;')) $link = str_replace('&amp;&amp;', '&amp;', $link);
 
-    $link = ereg_replace('&', '&amp;', $link);
+    $link = preg_replace('/&/', '&amp;', $link);
     return $link;
   }
 
