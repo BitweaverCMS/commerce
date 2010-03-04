@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders.php,v 1.59 2010/02/19 22:32:06 spiderr Exp $
+//  $Id: orders.php,v 1.60 2010/03/04 21:36:36 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -150,7 +150,7 @@
 				if( $order->updateStatus( $_REQUEST ) ) {
 					if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
 						// adjust download_maxdays based on current date
-						$zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
+						$zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 						$update_downloads_query = "UPDATE " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " SET download_maxdays=?, download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`=?";
 						$gBitDb->query($update_downloads_query, array( $zc_max_days, (int)$oID ) );
 					}
@@ -201,7 +201,7 @@
 			  $check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status,
 										  date_purchased from " . TABLE_ORDERS . "
 										  where `orders_id` = '" . $_REQUEST['oID'] . "'");
-			  $zc_max_days = date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
+			  $zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
 			  $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
 			  $gBitDb->Execute($update_downloads_query);
