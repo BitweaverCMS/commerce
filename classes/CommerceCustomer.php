@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.34 2010/02/20 21:48:26 spiderr Exp $
+//  $Id: CommerceCustomer.php,v 1.35 2010/03/05 21:27:36 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
@@ -438,6 +438,18 @@ class CommerceCustomer extends BitBase {
 		global $gBitDb;
 		$ret = $gBitDb->getAssoc( "SELECT ci.`interests_id`, ci.`interests_name`, cim.`customers_id` AS `is_interested` FROM " . TABLE_CUSTOMERS_INTERESTS . " ci LEFT OUTER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(ci.`interests_id`=cim.`interests_id` AND cim.`customers_id`=?) ORDER BY `interests_name`", array( $pCustomersId ) );
 		return $ret;
+	}
+
+	function getUninterestedCustomers() {
+		global $gBitDb;
+		$sql = "SELECT uu.`user_id` AS `hash_key`, MAX(co.`orders_id`) AS `most_recent_order`, MAX(co.`date_purchased`) AS `most_recent_date`, COUNT(co.`orders_id`) AS `num_orders`, SUM(co.`order_total`) AS `total_revenue`
+				FROM `".BIT_DB_PREFIX."users_users` uu 
+					INNER JOIN " . TABLE_ORDERS . " co ON (uu.`user_id`=co.`customers_id`) 
+					LEFT JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " ccim ON (ccim.`customers_id`=co.`customers_id`) 
+				WHERE co.`orders_status` > 0 AND ccim.`interests_id` IS NULL 
+				GROUP BY (uu.`user_id`) 
+				ORDER BY SUM(co.`order_total`) DESC";
+		return $gBitDb->getAssoc( $sql );
 	}
 
 	function expungeCustomerInterest( $pParamHash ) {

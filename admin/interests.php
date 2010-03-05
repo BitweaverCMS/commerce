@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.3 2010/02/25 23:11:03 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.4 2010/03/05 21:27:36 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -20,6 +20,7 @@ require('includes/application_top.php');
 define('HEADING_TITLE', tra( 'Customer Interests' ) );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
+$mid = 'bitpackage:bitcommerce/admin_interests.tpl';
 
 if( !empty( $_REQUEST['action'] ) ) {
 	switch( $_REQUEST['action'] ) {
@@ -52,10 +53,13 @@ die;
 } elseif( !empty( $_REQUEST['save_options'] ) ) {
 	$gBitSystem->storeConfig( 'commerce_register_interests', !empty( $_REQUEST['commerce_register_interests'] ) ? 'y' : NULL );
 	bit_redirect( $_SERVER['PHP_SELF'] );
+} elseif( !empty( $_REQUEST['uninterested'] ) ) {
+	$gBitSmarty->assign_by_ref( 'uninterestedCustomers', CommerceCustomer::getUninterestedCustomers() );
+	$mid = 'bitpackage:bitcommerce/admin_uninterested_customers.tpl';
 }
 
 $gBitSmarty->assign_by_ref( 'interestsList', $gBitCustomer->getInterests() );
-print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_interests.tpl' );
+print $gBitSmarty->fetch( $mid, tra( 'Customer Interests' ) );
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
 require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
