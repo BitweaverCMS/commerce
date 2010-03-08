@@ -4,19 +4,17 @@ http://www.oscommerce.com
 Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
-$Id: stylesheet.css,v 1.5 2009/12/22 21:01:28 spiderr Exp $
+$Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
 */
 @import url("menu.css");/* including stylesheet for dhtml menu */
 @import url("index.css");/* including stylesheet for index.php */
 a{
-color:#0000ff;
 text-decoration:none;
 }
 body,html,#content table{
 font:normal normal 11px Verdana,sans-serif;
 }
 a:hover{
-color:#0000ff;
 text-decoration:underline;
 }
 a.headerLink:link{
