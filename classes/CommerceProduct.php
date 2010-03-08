@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.163 2009/10/22 19:23:08 tylerbello Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.164 2010/03/08 21:54:23 bitweaver Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1306,13 +1306,23 @@ $start = microtime( TRUE );
 				// We have not previously set this product_store key, as in a derived class, so lets go with default processing...
 				if( !isset( $pParamHash['product_store'][$key] ) ) {
 					$val = 	(isset( $pParamHash[$key] ) ? $pParamHash[$key] : $this->getField( $key ));
-					if( $type == 'id' ) {
-						// id's should be non-zero or NULL because of id's
-						if( empty( $val ) ) {
-							$val = NULL;
-						}
-					} else {
-						settype( $val, $type );
+					switch( $type ) {
+						case 'id':
+							// id's should be non-zero or NULL because of id's
+							if( empty( $val ) ) {
+								$val = NULL;
+							}
+							break;
+						case 'double':
+							$val = (double)$val;
+							if( empty( $val ) && $val !== 0 ) {
+								// we have an empty string, set to NULL cuz some databases are picky about empty strings in numeric fields
+								$val = NULL;
+							}
+							break;
+						default:
+							settype( $val, $type );
+							break;
 					}
 					$pParamHash['product_store'][$key] = $val;
 				}
@@ -1343,7 +1353,8 @@ $start = microtime( TRUE );
 			if( $lowestPrice = $this->getLowestPrice() ) {
 				$pParamHash['product_store']['lowest_purchase_price'] = $lowestPrice;
 			} else {
-				$pParamHash['product_store']['lowest_purchase_price'] = $pParamHash['products_price'];
+				// we have an empty string, set to NULL cuz some databases are picky about empty strings in numeric fields
+				$pParamHash['product_store']['lowest_purchase_price'] = (double)$pParamHash['products_price'];
 			}
 		}
 
