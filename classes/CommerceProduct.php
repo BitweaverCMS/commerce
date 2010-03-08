@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.164 2010/03/08 21:54:23 bitweaver Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.165 2010/03/08 23:18:55 bitweaver Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1187,7 +1187,7 @@ $start = microtime( TRUE );
 			}
 		}
 
-		$pListHash['page'] = !empty( $pListHash['page'] ) && is_numeric( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1;
+		$pListHash['page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_count'] / $pListHash['max_records'] );
 		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'] + 1;
