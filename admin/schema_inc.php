@@ -59,8 +59,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests_map' => "
   interests_id I4 NOT NULL,
   customers_id I4 NOT NULL
-  CONSTRAINT 'CONSTRAINT com_cust_interest_int_ref FOREIGN KEY (interests_id) REFERENCES com_customers_interests (interests_id), 
-				CONSTRAINT com_cust_interest_cust_ref FOREIGN KEY (customers_id) REFERENCES com_customers (customers_id)'
+  CONSTRAINT ', CONSTRAINT com_cust_interest_int_ref FOREIGN KEY (interests_id) REFERENCES com_customers_interests (interests_id)
+			  , CONSTRAINT com_cust_interest_cust_ref FOREIGN KEY (customers_id) REFERENCES com_customers (customers_id)'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_upgrade_exceptions' => "
@@ -551,8 +551,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   products_options_id I4 NOTNULL,
   products_options_value_id I4,
   products_options_value_text C(64)
-  CONSTRAINT ', CONSTRAINT `cust_bask_att_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` ),
-  CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
+  CONSTRAINT ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_info' => "
