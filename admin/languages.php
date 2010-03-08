@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.16 2010/01/06 18:25:04 spiderr Exp $
+//  $Id: languages.php,v 1.17 2010/03/08 23:35:29 spiderr Exp $
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
@@ -185,11 +185,7 @@
         $image = zen_db_prepare_input($_POST['image']);
         $directory = zen_db_prepare_input($_POST['directory']);
         $sort_order = zen_db_prepare_input($_POST['sort_order']);
-        $gBitDb->Execute("update " . TABLE_LANGUAGES . "
-		              set name = '" . zen_db_input($name) . "', `code` = `" . zen_db_input($code) . "',
-					  image = '" . zen_db_input($image) . "', directory = '" . zen_db_input($directory) . "',
-					  `sort_order` = '" . zen_db_input($sort_order) . "'
-					  where languages_id = '" . (int)$lID . "'");
+        $gBitDb->query( "UPDATE " . TABLE_LANGUAGES . " SET `name` = ?, `code` = ?, `image` = ?, `directory`=?, `sort_order` = ?  WHERE `languages_id` = ?", array( zen_db_input($name), zen_db_input($code),  zen_db_input($image), zen_db_input($directory), zen_db_input($sort_order), (int)$lID ) );
 
         if ($_POST['default'] == 'on') {
           $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
