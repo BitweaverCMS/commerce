@@ -2031,7 +2031,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (4,'Canada Dollars', 'CAD', '', '', '.', ',', '2', '1.2115475341', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (5,'Australia Dollars', 'AUD', '', '', '.', ',', '2', '1.3121995036', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (6,'Japan Yen', 'JPY', '', '&yen;', '.', ',', '2', '112.2350011215', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_languages` VALUES (1,'English', 'en', 'icon.gif', 'english',1)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_languages` VALUES (1,'English', 'en', 'icon.gif', 'en',1)",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '1', '1', 'Pending')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '2', '1', 'Processing')",
