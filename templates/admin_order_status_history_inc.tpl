@@ -4,7 +4,7 @@
 	<br/><strong>{tr}Comments{/tr}</strong>
 	<br/><textarea name="comments" wrap="soft"></textarea>
 	<br/> {biticon iname="internet-mail" iexplain="Notified"} <strong>{tr}Notify Customer{/tr}</strong> <input name="notify" type="checkbox">
-	<input type="submit" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
+	<input type="submit" class="minibutton" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
 </div></form>
 {if $gBitOrder->loadHistory()}
 <ul class="orderhistory data">
