@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.165 2010/03/08 23:18:55 bitweaver Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.166 2010/03/16 05:34:36 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -637,7 +637,7 @@ If a special exist * 10+9
 			$attributes_price_final += zen_get_attributes_qty_prices_onetime($optionValue["attributes_qty_prices"], $pQuantity);
 
 			// per word and letter charges
-			if( $optionValue['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
+			if( !empty( $optionValue['products_options_type'] ) && $optionValue['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT) {
 				// calc per word or per letter
 			}
 
