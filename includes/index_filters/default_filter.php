@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: default_filter.php,v 1.13 2009/08/22 21:29:04 spiderr Exp $
+// $Id: default_filter.php,v 1.14 2010/03/16 04:18:43 spiderr Exp $
 //
 // show the products of a specified manufacturer
 	$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -60,7 +60,7 @@ $listing_sql = "select " . $select_column_list . " p.`products_id`, p.`manufactu
       $_GET['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;
     }
 
-    if ( (!isset($_GET['sort'])) || (!ereg('[1-8][ad]', $_GET['sort'])) || (substr($_GET['sort'], 0, 1) > sizeof($column_list)) )
+    if ( (!isset($_GET['sort'])) || (!preg_match('/[1-8][ad]/', $_GET['sort'])) || (substr($_GET['sort'], 0, 1) > sizeof($column_list)) )
     {
       for ($i=0, $n=sizeof($column_list); $i<$n; $i++)
       {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.12 2009/08/18 20:32:08 spiderr Exp $
+// $Id: main_template_vars_attributes.php,v 1.13 2010/03/16 04:18:43 spiderr Exp $
 //
 //////////////////////////////////////////////////
 //// BOF: attributes
@@ -411,13 +411,8 @@
             if ($_POST['id']) {
                 reset($_POST['id']);
                 while(list($key,$value) = each($_POST['id'])) {
-//echo ereg_replace('txt_', '', $key) . '#';
-//print_r($_POST['id']);
-//echo $products_options_names->fields['products_options_id'].'|';
-//echo $value.'|';
-//echo $products_options->fields['products_options_values_id'].'#';
-                  if ((ereg_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'])) {
-//                  if ((ereg_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'] and $value == $products_options->fields['products_options_values_id'])) {
+                  if ((str_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'])) {
+//                  if ((str_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'] and $value == $products_options->fields['products_options_values_id'])) {
                     $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" size="' . $products_options_names->fields['products_options_size'] .'" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . stripslashes($value) .'" />  ';
                     $tmp_html .= $products_options_details;
                     break;

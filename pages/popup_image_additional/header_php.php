@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2006/12/19 00:11:37 spiderr Exp $
+// $Id: header_php.php,v 1.6 2010/03/16 04:18:43 spiderr Exp $
 //
   $_SESSION['navigation']->remove_current_page();
 
@@ -32,7 +32,7 @@
 $products_image = $products_values->fields['products_image'];
 
 $products_image_extention = substr($products_image, strrpos($products_image, '.'));
-$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+$products_image_base = preg_replace( "/$products_image_extention/", '', $products_image );
 $products_image_medium = $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
 $products_image_large = $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
 ?>

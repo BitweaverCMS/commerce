@@ -17,14 +17,14 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2006/12/19 00:11:39 spiderr Exp $
+// $Id: header_php.php,v 1.6 2010/03/16 04:18:43 spiderr Exp $
 //
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
 //present the option to unsubscribe, with a confirm button/link
   if (isset($_GET['unsubscribe_address'])) {
-    $unsubscribe_address = ereg_replace('[^0-9A-Za-z@._-]', '', $_GET['unsubscribe_address']); 
+    $unsubscribe_address = preg_replace('/[^0-9A-Za-z@._-]/', '', $_GET['unsubscribe_address']); 
     if ($unsubscribe_address=='')  zen_redirect(zen_href_link(FILENAME_ACCOUNT_NEWSLETTERS));
   } else {
     $unsubscribe_address = '';

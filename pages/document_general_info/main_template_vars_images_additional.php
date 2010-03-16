@@ -17,26 +17,26 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images_additional.php,v 1.3 2005/10/06 21:01:51 spiderr Exp $
+// $Id: main_template_vars_images_additional.php,v 1.4 2010/03/16 04:18:43 spiderr Exp $
 //
 ?>
 <?php
 if ($products_image != '') {
 // prepare image name
 $products_image_extention = substr($products_image, strrpos($products_image, '.'));
-$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+$products_image_base = str_replace($products_image_extention, '', $products_image);
 
 // if in a subdirectory
   if (strrpos($products_image, '/')) {
     $products_image_match = substr($products_image, strrpos($products_image, '/')+1);
 //echo 'TEST 1: I match ' . $products_image_match . ' - ' . $file . ' -  base ' . $products_image_base . '<br>';
-    $products_image_match = ereg_replace($products_image_extention, '', $products_image_match) . '_';
+    $products_image_match = str_replace($products_image_extention, '', $products_image_match) . '_';
     $products_image_base = $products_image_match;
   }
 
-$products_image_directory = ereg_replace($products_image, '', substr($products_image, strrpos($products_image, '/')));
+$products_image_directory = str_replace($products_image, '', substr($products_image, strrpos($products_image, '/')));
 if ($products_image_directory != '') {
-  $products_image_directory = DIR_WS_IMAGES . ereg_replace($products_image_directory, '', $products_image) . "/";
+  $products_image_directory = DIR_WS_IMAGES . str_replace($products_image_directory, '', $products_image) . "/";
 } else {
   $products_image_directory = DIR_WS_IMAGES;
 }
@@ -51,7 +51,7 @@ if ($products_image_directory != '') {
 //          if(preg_match("/" . $products_image_match . "/i", $file) == '1') {
           if(preg_match("/" . $products_image_base . "/i", $file) == '1') {
             if ($file != $products_image) {
-              if ($products_image_base . ereg_replace($products_image_base, '', $file) == $file) {
+              if ($products_image_base . str_replace($products_image_base, '', $file) == $file) {
                 $products_image_match_array[] = $file;
 //  echo 'I AM A MATCH ' . $file . '<br>';
               } else {
@@ -82,7 +82,7 @@ if ($products_image_directory != '') {
 
       $new_images_cnt ++;
       $file = $products_image_match_array[$i];
-      $products_image_large_additional = ereg_replace(DIR_WS_IMAGES, DIR_WS_IMAGES . 'large/', $products_image_directory) . ereg_replace($products_image_extention, '', $file) . IMAGE_SUFFIX_LARGE . $products_image_extention;
+      $products_image_large_additional = str_replace(DIR_WS_IMAGES, DIR_WS_IMAGES . 'large/', $products_image_directory) . str_replace($products_image_extention, '', $file) . IMAGE_SUFFIX_LARGE . $products_image_extention;
       if (!file_exists($products_image_large_additional)) {
         $products_image_large_additional = $products_image_directory . $file;
       }
