@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.6 2008/02/13 01:48:42 spiderr Exp $
+// $Id: language.php,v 1.7 2010/03/16 00:43:12 spiderr Exp $
 //
 
   class language {
@@ -112,7 +112,7 @@
 			for ($i=0, $n=sizeof($this->browser_languages); $i<$n; $i++) {
 				reset($this->languages);
 				while (list($key, $value) = each($this->languages)) {
-					if (eregi('^(' . $value[0] . ')(;q=[0-9]\\.[0-9])?$', $this->browser_languages[$i]) && isset($this->catalog_languages[$key])) {
+					if (preg_match('/^(' . $value[0] . ')(;q=[0-9]\\.[0-9])?$/i', $this->browser_languages[$i]) && isset($this->catalog_languages[$key])) {
 						$this->language = $this->catalog_languages[$key];
 						break 2;
 					}
