@@ -17,12 +17,12 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images.php,v 1.3 2005/10/06 21:01:53 spiderr Exp $
+// $Id: main_template_vars_images.php,v 1.4 2010/03/16 21:12:57 spiderr Exp $
 //
 ?>
 <?php
 $products_image_extention = substr($products_image, strrpos($products_image, '.'));
-$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+$products_image_base = str_replace($products_image_extention, '', $products_image);
 $products_image_medium = $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
 $products_image_large = $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
 

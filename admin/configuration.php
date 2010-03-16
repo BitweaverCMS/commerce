@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.13 2010/01/06 18:25:04 spiderr Exp $
+//  $Id: configuration.php,v 1.14 2010/03/16 21:12:56 spiderr Exp $
 //
 
   define('HEADING_TITLE', 'Configuration Settings');
@@ -142,7 +142,7 @@ if ($gID == 7) {
   while (!$configuration->EOF) {
     if (zen_not_null($configuration->fields['use_function'])) {
       $use_function = $configuration->fields['use_function'];
-      if (ereg('->', $use_function)) {
+      if ( strpos( $use_function, '->' ) !== FALSE ) {
         $class_method = explode('->', $use_function);
         if (!is_object(${$class_method[0]})) {
           include(DIR_WS_CLASSES . $class_method[0] . '.php');

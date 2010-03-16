@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: modules.php,v 1.23 2010/01/06 18:25:04 spiderr Exp $
+//  $Id: modules.php,v 1.24 2010/03/16 21:12:56 spiderr Exp $
 //
   require('includes/application_top.php');
 
@@ -57,7 +57,7 @@
 // BOF: UPS USPS
           if( is_array( $value ) ){
             $value = implode( ", ", $value);
-            $value = ereg_replace (", --none--", "", $value);
+            $value = str_replace (", --none--", "", $value);
           }
 // EOF: UPS USPS
           $gBitDb->query("update " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = ?", array( $value, $key ) );

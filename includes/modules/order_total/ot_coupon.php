@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.17 2010/01/23 19:12:52 spiderr Exp $
+// $Id: ot_coupon.php,v 1.18 2010/03/16 21:12:57 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -274,7 +274,7 @@
 			$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
 			$productModel = $gBitDb->getOne($product_query, array( $product_id ) );
 
-			if (ereg('^GIFT', $productModel)) {
+			if (preg_match('/^GIFT/', $productModel)) {
 				return false;
 			}
 

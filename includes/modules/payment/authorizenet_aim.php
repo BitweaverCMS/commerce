@@ -22,7 +22,7 @@
 // | Module created by Eric Stamper - 02/05/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.13 2009/08/18 20:38:54 spiderr Exp $
+// $Id: authorizenet_aim.php,v 1.14 2010/03/16 21:12:57 spiderr Exp $
 
 
   class authorizenet_aim {
@@ -298,7 +298,7 @@
 
 	  // concatenate the submission data and put into variable $data
 	  while(list($key, $value) = each($submit_data)) {
-	    $data .= $key . '=' . urlencode(ereg_replace(',', '', $value)) . '&';
+	    $data .= $key . '=' . urlencode(str_replace(',', '', $value)) . '&';
 	  }
 
 	  // Remove the last "&" from the string

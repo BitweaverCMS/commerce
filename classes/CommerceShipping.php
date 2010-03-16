@@ -17,7 +17,7 @@
 // obtain it through the world-wide-web, please send a note to
 // license@zen-cart.com so we can mail you a copy immediately.
 // +----------------------------------------------------------------------+
-// $Id: CommerceShipping.php,v 1.3 2009/08/26 21:32:49 spiderr Exp $
+// $Id: CommerceShipping.php,v 1.4 2010/03/16 21:12:57 spiderr Exp $
 //
 
 class CommerceShipping {
@@ -64,11 +64,11 @@ class CommerceShipping {
 			$shipHash['shipping_num_boxes'] = 1;
 			$shipHash['shipping_weight'] = $pShippingWeight;
 
-			$za_tare_array = split("[:,]" , SHIPPING_BOX_WEIGHT);
+			$za_tare_array = preg_split("/[:,]/" , SHIPPING_BOX_WEIGHT);
 			$zc_tare_percent= $za_tare_array[0];
 			$zc_tare_weight= $za_tare_array[1];
 
-			$za_large_array = split("[:,]" , SHIPPING_BOX_PADDING);
+			$za_large_array = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
 			$zc_large_percent= $za_large_array[0];
 			$zc_large_weight= $za_large_array[1];
 

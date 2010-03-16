@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: whos_online.php,v 1.12 2010/01/06 18:25:04 spiderr Exp $
+//  $Id: whos_online.php,v 1.13 2010/03/16 21:12:56 spiderr Exp $
 //
 
 
@@ -261,7 +261,7 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
                 <td class="dataTableContentWhois" align="left"><a href="http://www.dnsstuff.com/tools/whois.ch?ip=<?php echo $whos_online->fields['ip_address']; ?>" target="new"><?php echo '<u>' . $whos_online->fields['ip_address'] . '</u> ' . (!empty( $geoip ) ? $geoip->lookupCountryName($whos_online->fields['ip_address']) : ''); ?></a></td>
                 <td class="dataTableContentWhois"><?php echo date('H:i:s', $whos_online->fields['time_entry']); ?></td>
                 <td class="dataTableContentWhois" align="center"><?php echo date('H:i:s', $whos_online->fields['time_last_click']); ?></td>
-                <td class="dataTableContentWhois"><?php if (eregi('^(.*)' . zen_session_name() . '=[a-f,0-9]+[&]*(.*)', $whos_online->fields['last_page_url'], $array)) { echo $array[1] . $array[2]; } else { echo "<a href='".$whos_online->fields['last_page_url']."' target=new>". '<u>' . $whos_online->fields['last_page_url'] . '</u>' ."</a>"; } ?>&nbsp;</td>
+                <td class="dataTableContentWhois"><?php if (preg_match('/^(.*)/i' . zen_session_name() . '=[a-f,0-9]+[&]*(.*)', $whos_online->fields['last_page_url'], $array)) { echo $array[1] . $array[2]; } else { echo "<a href='".$whos_online->fields['last_page_url']."' target=new>". '<u>' . $whos_online->fields['last_page_url'] . '</u>' ."</a>"; } ?>&nbsp;</td>
               </tr>
 <?php
   // show host name

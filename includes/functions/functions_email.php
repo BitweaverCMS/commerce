@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.10 2009/10/20 20:09:36 spiderr Exp $
+// $Id: functions_email.php,v 1.11 2010/03/16 21:12:57 spiderr Exp $
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');
@@ -42,7 +42,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
     if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
 
     // Parse "from" addresses for "name" <email@address.com> structure, and supply name/address info from it.
-    if (eregi(" *([^<]*) *<([^>]*)> *",$from_email_address,$regs)) {
+    if ( preg_match("/ *([^<]*) *<([^>]*)> */i",$from_email_address,$regs)) {
       $from_email_name = trim($regs[1]);
       $from_email_address = $regs[2];
     }
@@ -51,10 +51,10 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
   // loop thru multiple email recipients if more than one listed  --- (esp for the admin's "Extra" emails)...
   foreach(explode(',',$to_address) as $key=>$value) {
-    if (eregi(" *([^<]*) *<([^>]*)> *",$value,$regs)) {
+    if (preg_match("/ *([^<]*) *<([^>]*)> */i",$value,$regs)) {
       $to_name = str_replace('"', '', trim($regs[1]));
       $to_email_address = $regs[2];
-    } elseif (eregi(" *([^ ]*) *",$value,$regs)) {
+    } elseif (preg_match("/ *([^ ]*) */i",$value,$regs)) {
       $to_email_address = trim($regs[1]);
     }
     if (!isset($to_email_address)) $to_email_address=$to_address; //if not more than one, just use the main one.

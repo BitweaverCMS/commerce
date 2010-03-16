@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: http_client.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
+// $Id: http_client.php,v 1.3 2010/03/16 21:12:57 spiderr Exp $
 //
 
   class httpClient {
@@ -375,7 +375,7 @@
         $str = fgets($this->socket, 1024);
         $finished = ($str == $lastLine);
         if (!$finished) {
-          list($hdr, $value) = split(': ', $str, 2);
+          list($hdr, $value) = explode(': ', $str, 2);
 // nasty workaround broken multiple same headers (eg. Set-Cookie headers) @FIXME
           if (isset($headers[$hdr])) {
             $headers[$hdr] .= '; ' . trim($value);

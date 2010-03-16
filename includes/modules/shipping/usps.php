@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: usps.php,v 1.15 2009/08/26 21:11:35 spiderr Exp $
+// $Id: usps.php,v 1.16 2010/03/16 21:12:57 spiderr Exp $
 //
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
@@ -380,10 +380,10 @@ class usps {
 		$rates = array();
 		if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY) {
 			if (sizeof($response) == '1') {
-				if (ereg('<Error>', $response[0])) {
-					$number = ereg('<Number>(.*)</Number>', $response[0], $regs);
+				if (preg_match('#<Error>#', $response[0])) {
+					$number = preg_match('#<Number>(.*)</Number>#', $response[0], $regs);
 					$number = $regs[1];
-					$description = ereg('<Description>(.*)</Description>', $response[0], $regs);
+					$description = preg_match('#<Description>(.*)</Description>#', $response[0], $regs);
 					$description = $regs[1];
 
 					return array('error' => $number . ' - ' . $description);
@@ -392,10 +392,10 @@ class usps {
 
 			$n = sizeof($response);
 			for ($i=0; $i<$n; $i++) {
-				if (strpos($response[$i], '<Postage>')) {
-					$service = ereg('<Service>(.*)</Service>', $response[$i], $regs);
+				if( strpos( $response[$i], '<Postage>' ) !== FALSE ) {
+					$service = preg_match('#<Service>(.*)</Service>#', $response[$i], $regs);
 					$service = $regs[1];
-					$postage = ereg('<Postage>(.*)</Postage>', $response[$i], $regs);
+					$postage = preg_match('#<Postage>(.*)</Postage>#', $response[$i], $regs);
 					$postage = $regs[1];
 
 					$rates[] = array($service => $postage);
@@ -403,7 +403,7 @@ class usps {
 					if ($transit) {
 						switch ( strtoupper( $service ) ) {
 							case 'EXPRESS':     
-								$time = ereg('<MonFriCommitment>(.*)</MonFriCommitment>', $transresp[$service], $tregs);
+								$time = preg_match('#<MonFriCommitment>(.*)</MonFriCommitment>#', $transresp[$service], $tregs);
 								$time = $tregs[1];
 								if ($time == '' || $time == 'No Data') {
 									$time = '1 - 2 ' . tra( 'Days' );
@@ -412,7 +412,7 @@ class usps {
 								}
 								break;
 							case 'PRIORITY':    
-								$time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+								$time = preg_match('#<Days>(.*)</Days>#', $transresp[$service], $tregs);
 								$time = $tregs[1];
 								if ($time == '' || $time == 'No Data') {
 									$time = '2 - 3 ' . tra( 'Days' );
@@ -423,7 +423,7 @@ class usps {
 								}
 								break;
 							case 'PARCEL':      
-								$time = ereg('<Days>(.*)</Days>', $transresp[$service], $tregs);
+								$time = preg_match('#<Days>(.*)</Days>#', $transresp[$service], $tregs);
 								$time = $tregs[1];
 								if ($time == '' || $time == 'No Data') {
 									$time = '4 - 7 ' . tra( 'Days' );
@@ -457,10 +457,10 @@ class usps {
 //}
 
 		} else {
-			if (ereg('<Error>', $response[0])) {
-				$number = ereg('<Number>(.*)</Number>', $response[0], $regs);
+			if (preg_match('#<Error>#', $response[0])) {
+				$number = preg_match('#<Number>(.*)</Number>#', $response[0], $regs);
 				$number = $regs[1];
-				$description = ereg('<Description>(.*)</Description>', $response[0], $regs);
+				$description = preg_match('#<Description>(.*)</Description>#', $response[0], $regs);
 				$description = $regs[1];
 
 				return array('error' => $number . ' - ' . $description);
@@ -487,12 +487,12 @@ class usps {
 
 				$size = sizeof($services);
 				for ($i=0, $n=$size; $i<$n; $i++) {
-					if (strpos($services[$i], '<Postage>')) {
-						$service = ereg('<SvcDescription>(.*)</SvcDescription>', $services[$i], $regs);
+					if( strpos( $services[$i], '<Postage>' ) !== FALSE ) {
+						$service = preg_match('#<SvcDescription>(.*)</SvcDescription>#', $services[$i], $regs);
 						$service = $regs[1];
-						$postage = ereg('<Postage>(.*)</Postage>', $services[$i], $regs);
+						$postage = preg_match('#<Postage>(.*)</Postage>#', $services[$i], $regs);
 						$postage = $regs[1];
-						$time = ereg('<SvcCommitments>(.*)</SvcCommitments>', $services[$i], $tregs);
+						$time = preg_match('#<SvcCommitments>(.*)</SvcCommitments>#', $services[$i], $tregs);
 						$time = $tregs[1];
 						$time = preg_replace('/Weeks$/', tra( 'Weeks' ), $time);
 						$time = preg_replace('/Days$/', tra( 'Days' ), $time);

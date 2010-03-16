@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: phplot.php,v 1.2 2005/10/06 21:01:44 spiderr Exp $
+//  $Id: phplot.php,v 1.3 2010/03/16 21:12:57 spiderr Exp $
 
 /*
   PHPLOT 4.4.6 Copyright (c) 1998-2001 Afan Ottenheimer
@@ -685,7 +685,7 @@ class PHPlot{
 			if ($which_valign == 'top') { 
 				$which_ypos = $which_ypos - ImageFontHeight($which_font);
 			}
-			$which_text = ereg_replace("\r","",$which_text);
+			$which_text = str_replace("\r","",$which_text);
 			$str = split("\n",$which_text); //multiple lines submitted by Remi Ricard
 			$height = ImageFontHeight($which_font);
 			$width = ImageFontWidth($which_font);

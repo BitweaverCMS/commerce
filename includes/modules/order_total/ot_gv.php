@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_gv.php,v 1.17 2009/08/25 17:22:47 spiderr Exp $
+// $Id: ot_gv.php,v 1.18 2010/03/16 21:12:57 spiderr Exp $
 //
 
   class ot_gv {
@@ -87,7 +87,7 @@
       if ($_SESSION['cot_gv'] > 0) {
       if ($this->include_shipping == 'false') $order_total -= $order->info['shipping_cost'];
       if ($this->include_tax == 'false') $order_total -= $order->info['tax'];
-        if (ereg('[^0-9/.]', trim($_SESSION['cot_gv']))) {
+        if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
           zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
         }
         if ($_SESSION['cot_gv'] > $this->user_has_gv_account($_SESSION['customer_id'])) {
@@ -114,7 +114,7 @@
 
 	function update_credit_account($pOpid) {
 		global $gBitDb, $order, $insert_id;
-		if (ereg('^GIFT', addslashes($order->contents[$pOpid]['model']))) {
+		if (preg_match('/^GIFT/', addslashes($order->contents[$pOpid]['model']))) {
 			$gv_order_amount = ($order->contents[$pOpid]['final_price'] * $order->contents[$pOpid]['quantity']);
 			if ($this->credit_tax=='true') {
 				$gv_order_amount = $gv_order_amount * (100 + $order->contents[$pOpid]['tax']) / 100;

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_images_additional.php,v 1.4 2010/03/16 04:18:43 spiderr Exp $
+// $Id: main_template_vars_images_additional.php,v 1.5 2010/03/16 21:12:57 spiderr Exp $
 //
 ?>
 <?php
@@ -82,7 +82,7 @@ if ($products_image_directory != '') {
 
       $new_images_cnt ++;
       $file = $products_image_match_array[$i];
-      $products_image_large_additional = ereg_replace(DIR_WS_IMAGES, DIR_WS_IMAGES . 'large/', $products_image_directory) . ereg_replace($products_image_extention, '', $file) . IMAGE_SUFFIX_LARGE . $products_image_extention;
+      $products_image_large_additional = str_replace(DIR_WS_IMAGES, DIR_WS_IMAGES . 'large/', $products_image_directory) . str_replace($products_image_extention, '', $file) . IMAGE_SUFFIX_LARGE . $products_image_extention;
       if (!file_exists($products_image_large_additional)) {
         $products_image_large_additional = $products_image_directory . $file;
       }

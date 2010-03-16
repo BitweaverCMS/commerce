@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.167 2010/03/16 05:37:05 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.168 2010/03/16 21:12:57 spiderr Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -1810,12 +1810,7 @@ $start = microtime( TRUE );
 						if ( !empty( $pSelectedId ) ) {
 							reset($pSelectedId);
 							while(list($key,$value) = each($pSelectedId)) {
-			//echo ereg_replace('txt_', '', $key) . '#';
-			//print_r($pSelectedId);
-			//echo $this->mOptions[$optionsId]['products_options_id'].'|';
-			//echo $value.'|';
-			//echo $vals['products_options_values_id'].'#';
-								if ((ereg_replace('txt_', '', $key) == $this->mOptions[$optionsId]['products_options_id'])) {
+								if ((str_replace('txt_', '', $key) == $this->mOptions[$optionsId]['products_options_id'])) {
 									$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . stripslashes($value) .'" />	';
 									$tmp_html .= $products_options_details;
 									break;
@@ -2136,7 +2131,7 @@ Skip deleting of images for now
 				if ($duplicate_image < 2 ) {
 					$products_image = $product_image->fields['products_image'];
 					$products_image_extention = substr($products_image, strrpos($products_image, '.'));
-					$products_image_base = ereg_replace($products_image_extention, '', $products_image);
+					$products_image_base = str_replace($products_image_extention, '', $products_image);
 
 					$filename_medium = 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
 							$filename_large = 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;

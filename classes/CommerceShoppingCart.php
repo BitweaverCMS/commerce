@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.16 2010/03/16 05:34:02 spiderr Exp $
+// $Id: CommerceShoppingCart.php,v 1.17 2010/03/16 21:12:57 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -459,7 +459,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			reset($this->contents);
 			foreach( array_keys( $this->contents ) as $productsKey ) {
 				if( $product = $this->getProductObject( $productsKey ) ) {
-					if( ereg( '^GIFT', addslashes( $product->getField( 'products_model' ) ) ) ) {
+					if( preg_match( '/^GIFT/', addslashes( $product->getField( 'products_model' ) ) ) ) {
 						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['products_quantity'], $this->contents[$productsKey]['attributes'] );
 					}
 					if (isset($this->contents[$productsKey]['attributes'])) {

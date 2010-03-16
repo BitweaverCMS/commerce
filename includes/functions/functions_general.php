@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_general.php,v 1.33 2009/08/26 21:28:20 spiderr Exp $
+// $Id: functions_general.php,v 1.34 2010/03/16 21:12:57 spiderr Exp $
 //
 /**
  * General Function Repository.
@@ -139,7 +139,7 @@
     $search_str = trim(strtolower($search_str));
 
 // Break up $search_str on whitespace; quoted string will be reconstructed later
-    $pieces = split('[[:space:]]+', $search_str);
+    $pieces = preg_split('/[\s]+/', $search_str);
     $objects = array();
     $tmpstring = '';
     $flag = '';
@@ -180,7 +180,7 @@
 */
 
 // Add this word to the $tmpstring, starting the $tmpstring
-        $tmpstring = trim(ereg_replace('"', ' ', $pieces[$k]));
+        $tmpstring = trim(str_replace('"', ' ', $pieces[$k]));
 
 // Check for one possible exception to the rule. That there is a single quoted word.
         if (substr($pieces[$k], -1 ) == '"') {
@@ -230,7 +230,7 @@
    $piece onto the tail of the string, push the $tmpstring onto the $haves,
    kill the $tmpstring, turn the $flag "off", and return.
 */
-            $tmpstring .= ' ' . trim(ereg_replace('"', ' ', $pieces[$k]));
+            $tmpstring .= ' ' . trim(str_replace('"', ' ', $pieces[$k]));
 
 // Push the $tmpstring onto the array of stuff to search for
             $objects[] = trim($tmpstring);
@@ -516,7 +516,7 @@
 ////
 // Get the number of times a word/character is present in a string
   function zen_word_count($string, $needle) {
-    $temp_array = split($needle, $string);
+    $temp_array = explode($needle, $string);
 
     return sizeof($temp_array);
   }
@@ -528,7 +528,7 @@
 
 	if (empty($modules)) return $count;
 
-	$modules_array = split(';', $modules);
+	$modules_array = explode(';', $modules);
 
 	for ($i=0, $n=sizeof($modules_array); $i<$n; $i++) {
 		$class = substr($modules_array[$i], 0, strrpos($modules_array[$i], '.'));
@@ -563,11 +563,11 @@
         $char = chr(zen_rand(0,255));
       }
       if ($type == 'mixed') {
-        if (eregi('^[a-z0-9]$', $char)) $rand_value .= $char;
+        if (preg_match('/^[a-z0-9]$/i', $char)) $rand_value .= $char;
       } elseif ($type == 'chars') {
-        if (eregi('^[a-z]$', $char)) $rand_value .= $char;
+        if (preg_match('/^[a-z]$/i', $char)) $rand_value .= $char;
       } elseif ($type == 'digits') {
-        if (ereg('^[0-9]$', $char)) $rand_value .= $char;
+        if (preg_match('/^[0-9]$/', $char)) $rand_value .= $char;
       }
     }
 
@@ -670,7 +670,7 @@
 // nl2br() prior PHP 4.2.0 did not convert linefeeds on all OSs (it only converted \n)
   function zen_convert_linefeeds($from, $to, $string) {
     if ((PHP_VERSION < "4.0.5") && is_array($from)) {
-      return ereg_replace('(' . implode('|', $from) . ')', $to, $string);
+      return preg_replace('/(' . implode('|', $from) . ')/', $to, $string);
     } else {
       return str_replace($from, $to, $string);
     }

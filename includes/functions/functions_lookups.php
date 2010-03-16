@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.38 2009/08/25 17:24:47 spiderr Exp $
+// $Id: functions_lookups.php,v 1.39 2010/03/16 21:12:57 spiderr Exp $
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {
@@ -406,12 +406,12 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 		$check_valid = true;
 
 		// text required validation
-		if (ereg('^txt_', $option)) {
+		if (preg_match('/^txt_/', $option)) {
 			$query = "SELECT `attributes_display_only`, `attributes_required` 
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
-		  $check_attributes = $gBitDb->query( $query, array( $product_id, ereg_replace('txt_', '', $option), '0'  ) );
+		  $check_attributes = $gBitDb->query( $query, array( $product_id, str_replace('txt_', '', $option), '0'  ) );
 		// text cannot be blank
 		  if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
 			$check_valid = false;
