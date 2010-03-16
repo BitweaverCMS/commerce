@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: tools_dhtml.php,v 1.13 2010/03/16 01:40:41 spiderr Exp $
+//  $Id: tools_dhtml.php,v 1.14 2010/03/16 05:22:16 spiderr Exp $
 //
   $za_contents = array();
   $za_heading = array();
@@ -57,7 +57,7 @@ echo zen_draw_admin_box($za_heading, $za_contents);
 		<option value="order_num">Lookup Order #</option>
 	</select>
 	<input name="orders_search" value="" size="6"/>
-	<input type="submit" name="top_search" class="minibutton" value="{tr}Go{/tr}"/>
+	<input type="submit" name="top_search" class="minibutton" value="Go"/>
 </div></form></li>
 <!-- tools_eof //-->
 
