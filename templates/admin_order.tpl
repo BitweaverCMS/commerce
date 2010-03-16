@@ -198,7 +198,7 @@ function getShippingQuotes( pOrderId ) {
 	</div></form>
 {form method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
 	{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" style="width:100px;" />
-	<input type="submit" name="combine" value="{tr}Combine{/tr}" class="button" />
+	<input type="submit" name="combine" value="{tr}Combine{/tr}" class="button minibutton" />
 	<br/><input type="checkbox" name="combine_notify" value="on" checked="checked"/>Notify Customer
 	<br/><em class="small">Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</em>
 {/form}
