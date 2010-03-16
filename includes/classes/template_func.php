@@ -16,7 +16,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: template_func.php,v 1.4 2005/10/06 21:01:47 spiderr Exp $
+// $Id: template_func.php,v 1.5 2010/03/16 03:56:44 spiderr Exp $
 //
 
   class template_func {
@@ -47,9 +47,9 @@
 //	echo 'template_default/' . $template_dir . '=' . $template_code;
       if (template_func::file_exists($current_template . $current_page, $template_code)) {
         return $current_template . $current_page . '/';
-      } elseif (template_func::file_exists(DIR_WS_TEMPLATES . 'template_default/' . $current_page, ereg_replace('/', '', $template_code), $debug)) {
+      } elseif (template_func::file_exists(DIR_WS_TEMPLATES . 'template_default/' . $current_page, str_replace('/', '', $template_code), $debug)) {
         return DIR_WS_TEMPLATES . 'template_default/' . $current_page;
-      } elseif (template_func::file_exists($current_template . $template_dir, ereg_replace('/', '', $template_code), $debug)) {
+      } elseif (template_func::file_exists($current_template . $template_dir, str_replace('/', '', $template_code), $debug)) {
         return $current_template . $template_dir;
       } else {
         return DIR_WS_TEMPLATES . 'template_default/' . $template_dir;

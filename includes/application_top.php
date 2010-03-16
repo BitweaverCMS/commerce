@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.44 2009/08/25 17:26:26 spiderr Exp $
+// $Id: application_top.php,v 1.45 2010/03/16 03:56:44 spiderr Exp $
 //
 // start the timer for the page parse time log
 	define('PAGE_PARSE_START_TIME', microtime());
@@ -41,10 +41,10 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
 
 
 // Sanitize get parameters in the url
-	if( isset($_GET['products_id']) ) $_GET['products_id'] = ereg_replace('[^0-9a-f:]', '', $_GET['products_id']);
-	if (isset($_REQUEST['manufacturers_id'])) $_REQUEST['manufacturers_id'] = ereg_replace('[^0-9]', '', $_REQUEST['manufacturers_id']);
-	if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = ereg_replace('[^0-9_]', '', $_REQUEST['cPath']);
-	if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = ereg_replace('[^0-9a-zA-Z_]', '', $_REQUEST['main_page']);
+	if( isset($_GET['products_id']) ) $_GET['products_id'] = preg_replace('/[^0-9a-f:]/', '', $_GET['products_id']);
+	if (isset($_REQUEST['manufacturers_id'])) $_REQUEST['manufacturers_id'] = preg_replace('/[^0-9]/', '', $_REQUEST['manufacturers_id']);
+	if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = preg_replace('/[^0-9_]/', '', $_REQUEST['cPath']);
+	if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = preg_replace('/[^0-9a-zA-Z_]/', '', $_REQUEST['main_page']);
 
 	clean_input( $_REQUEST );
 
@@ -53,7 +53,7 @@ function clean_input( &$pArray ) {
 		if( is_array( $pArray[$key] ) ) {
 		clean_input( $pArray );
 	} else {
-			$pArray[$key] = ereg_replace('[<>]', '', $value);
+			$pArray[$key] = preg_replace('/[<>]/', '', $value);
 	}
 	}
 }
