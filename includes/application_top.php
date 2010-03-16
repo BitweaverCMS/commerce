@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.45 2010/03/16 03:56:44 spiderr Exp $
+// $Id: application_top.php,v 1.46 2010/03/16 05:34:53 spiderr Exp $
 //
 // start the timer for the page parse time log
 	define('PAGE_PARSE_START_TIME', microtime());
@@ -51,10 +51,10 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
 function clean_input( &$pArray ) {
 	while (list($key, $value) = each($pArray)) {
 		if( is_array( $pArray[$key] ) ) {
-		clean_input( $pArray );
-	} else {
-			$pArray[$key] = preg_replace('/[<>]/', '', $value);
-	}
+			clean_input( $pArray );
+		} else {
+				$pArray[$key] = preg_replace('/[<>]/', '', $value);
+		}
 	}
 }
 
