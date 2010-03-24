@@ -86,22 +86,8 @@
 
 				{if $gBitSystem->isFeatureActive('users_random_number_reg')}
 					<hr />
-
-					<div class="row">
-						{formfeedback error=$userErrors.users_random_number_reg}
-						{formlabel label="Your registration code"}
-						{forminput}
-							<img src="{$smarty.const.USERS_PKG_URL}random_num_img.php" alt="{tr}Random Image{/tr}"/>
-						{/forminput}
-					</div>
-
-					<div class="row">
-						{formlabel label="Registration code" for="regcode"}
-						{forminput}
-							<input type="text" maxlength="8" size="8" name="regcode" id="regcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
-							{formhelp note="Please copy the code above into this field. This is a security feature to avoid automatic registration by bots."}
-						{/forminput}
-					</div>
+					{formfeedback error=$errors.captcha}
+					{captcha force=true variant=row}
 				{/if}
 
 			{/if}

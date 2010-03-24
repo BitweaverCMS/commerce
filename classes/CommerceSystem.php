@@ -37,6 +37,12 @@ class CommerceSystem extends BitBase {
 		}
 		return $ret;
 	}
+
+	function setHeadingTitle( $pTitle ) {
+		if( !defined( 'HEADING_TITLE' ) ) {
+			define( 'HEADING_TITLE', $pTitle );
+		}
+	}
 }
 
 ?>
