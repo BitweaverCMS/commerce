@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: order.php,v 1.86 2010/01/21 19:23:41 spiderr Exp $
+// $Id: order.php,v 1.87 2010/03/26 20:44:03 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -71,13 +71,13 @@ class order extends CommerceOrderBase {
 			$bindVars[] = $pListHash['user_id'];
 		}
 
-		if( !empty( $pListHash['orders_status_id'] ) ) {
+		if( isset( $pListHash['orders_status_id'] ) ) {
 			$whereSql .= ' AND `orders_status`'.$comparison.'? ';
 			$bindVars[] = $pListHash['orders_status_id'];
 		}
 
 		if( empty( $pListHash['sort_mode'] ) ) {
-			$pListHash['sort_mode'] = 'o.orders_id_desc';
+			$pListHash['sort_mode'] = 'co.orders_id_desc';
 		}
 		if( empty( $pListHash['max_records'] ) ) {
 			$pListHash['max_records'] = -1;
@@ -85,7 +85,7 @@ class order extends CommerceOrderBase {
 
 		if( !empty( $pListHash['search'] ) ) {
 			if( !empty( $pListHash['search_scope'] ) && $pListHash['search_scope'] == 'history' ) {
-				$joinSql .= " INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON(osh.`orders_id`=o.`orders_id`) ";
+				$joinSql .= " INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON(osh.`orders_id`=co.`orders_id`) ";
 				$whereSql .= " AND LOWER(osh.`text`) LIKE ? ";
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
 			} else {
@@ -102,10 +102,10 @@ class order extends CommerceOrderBase {
 				}
 				if( is_numeric( $pListHash['search'] ) ) {
 					if( strpos( $pListHash['search'], '.' ) === FALSE ) {
-						$whereSql .= " o.`orders_id` = ? OR ";
+						$whereSql .= " co.`orders_id` = ? OR ";
 						$bindVars[] = $pListHash['search'];
 					}
-					$whereSql .= " o.`order_total` = ? OR ";
+					$whereSql .= " co.`order_total` = ? OR ";
 					$bindVars[] = $pListHash['search'];
 				}
 				$whereSql .= " LOWER(uu.`real_name`) like ? ";
@@ -114,12 +114,24 @@ class order extends CommerceOrderBase {
 			}
 		}
 
-		$query = "SELECT o.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, o.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'o.`date_purchased`' )." AS `purchase_time` $selectSql
-					FROM " . TABLE_ORDERS . " o
-						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(o.`orders_status`=os.`orders_status_id`)
-						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(o.`customers_id`=uu.`user_id`)
+		if( !empty( $pListHash['interests_id'] ) ) {
+			$joinSql .= " INNER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(cim.`customers_id`=co.`customers_id`)
+						INNER JOIN " . TABLE_CUSTOMERS_INTERESTS . " ci ON(ci.`interests_id`=cim.`interests_id`) ";
+			$whereSql .= ' AND cim.`interests_id` = ?';
+			$bindVars[] = $pListHash['interests_id'];
+		}
+
+		if( !empty( $pListHash['period'] ) && !empty( $pListHash['timeframe'] ) ) {
+			$whereSql .= ' AND '.$gBitDb->mDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
+			$bindVars[] = $pListHash['timeframe'];
+		}
+
+		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
+					FROM " . TABLE_ORDERS . " co
+						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status`=os.`orders_status_id`)
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(co.`customers_id`=uu.`user_id`)
 					$joinSql
-						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (o.`orders_id` = ot.`orders_id`)
+						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id`)
 					WHERE `class` = 'ot_total' $whereSql
 					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
@@ -127,6 +139,13 @@ class order extends CommerceOrderBase {
 				$ret[$row['orders_id']] = $row;
 				if( !empty( $pListHash['recent_comment'] ) ) {
 					$ret[$row['orders_id']]['comments'] = $gBitDb->getOne( "SELECT `comments` FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) );
+				}
+				if( !empty( $pListHash['orders_products'] ) ) {
+					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cop.*, cp.*
+							FROM " . TABLE_ORDERS_PRODUCTS . " cop 
+								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
+							WHERE cop.`orders_id`=?";
+					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
 				}
 			}
 		}
