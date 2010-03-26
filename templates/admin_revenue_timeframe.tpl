@@ -79,7 +79,7 @@
 		<td class="item">Total Orders</td><td class="item">{$statsCustomers.total_orders}</td>
 	</tr>
 	<tr>
-		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_PATH}admin/revenue.php?period={$smarty.request.period}&">{tr}All Time Periods{/tr}</a></td>
+		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$smarty.request.period}&">{tr}All Time Periods{/tr}</a></td>
 	</tr>
 	</tbody>
 </table>
@@ -100,7 +100,7 @@
 	<tbody>
 	{foreach from=$valuableInterests item=interest key=interestsId}
 	<tr>
-		<td class="item">{$interest.interests_name}</td>
+		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$smarty.request.period}&timeframe={$smarty.request.timeframe}&interests_id={$interest.interests_id}">{$interest.interests_name}</a></td>
 		<td class="item">{$interest.total_orders}</td>
 		<td class="item currency">${$interest.total_revenue|round:2}</td>
 		<td class="item currency">${math equation="round(x/y,2)" x=$interest.total_revenue y=$interest.total_orders}</td>
