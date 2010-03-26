@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.11 2010/02/25 19:47:24 spiderr Exp $
+//  $Id: CommerceStatistics.php,v 1.12 2010/03/26 20:44:22 spiderr Exp $
 //
 	class CommerceStatistics extends BitBase {
 
@@ -87,14 +87,14 @@
 				$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
 				$sqlFunc = 'getAssoc';
 			}
-			$sql = "SELECT $selectSql ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
+			$sql = "SELECT $selectSql ci.`interests_id`, ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 					FROM " . TABLE_CUSTOMERS_INTERESTS . " ci , " . TABLE_ORDERS . " co, " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim 
 					WHERE co.`orders_status`>0 
 						AND cim.`customers_id`=co.`customers_id` 
 						AND cim.`interests_id`=ci.`interests_id` 
 						AND ci.`interests_id` = (SELECT cim2.`interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim2 WHERE cim2.`customers_id`=co.`customers_id` AND cim2.`customers_id`=co.`customers_id` LIMIT 1)
 						$whereSql
-					GROUP BY ci.`interests_name` $groupSql
+					GROUP BY ci.`interests_name`, ci.`interests_id` $groupSql
 					ORDER BY SUM( co.`order_total`) DESC";
 			$ret = $this->mDb->getAssoc( $sql, $bindVars );
 			return $ret;

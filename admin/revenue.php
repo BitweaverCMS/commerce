@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: revenue.php,v 1.5 2010/02/23 20:59:04 spiderr Exp $
+//  $Id: revenue.php,v 1.6 2010/03/26 20:44:22 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -29,7 +29,16 @@ if( $_REQUEST['period'] ) {
 }
 
 $stats = new CommerceStatistics();
-if( !empty( $_REQUEST['timeframe'] ) ) {
+if( !empty( $_REQUEST['interests_id'] ) ) {
+	$interests = $gBitCustomer->getInterests();
+	$gBitSmarty->assign_by_ref( 'interestsList', $interests );
+	$gBitSmarty->assign( 'interestsName', $interests[$_REQUEST['interests_id']] );
+	$_REQUEST['orders_products'] = TRUE;
+	$_REQUEST['orders_status_comparison'] = '>';
+	$_REQUEST['orders_status_id'] = 0;
+	$gBitSmarty->assign_by_ref( 'listOrders', order::getList( $_REQUEST ) );
+	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_interest.tpl', tra( 'Revenue By Interest' ).' '.$interests[$_REQUEST['interests_id']].' : '.$_REQUEST['timeframe'] , array( 'display_mode' => 'admin' ) );
+} elseif( !empty( $_REQUEST['timeframe'] ) ) {
 	$gBitSmarty->assign_by_ref( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
 	$gBitSmarty->assign_by_ref( 'statsByOption', $stats->getRevenueByOption( $_REQUEST ) );
 	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( $_REQUEST ) );
