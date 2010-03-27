@@ -16,7 +16,7 @@
 					{formfeedback error=$userErrors.validate}
 					{formlabel label="Username" for="email"}
 					{forminput}
-						<input type="text" name="email" id="email" value="{$reg.email}"/>
+						<input type="text" name="email" id="email" value="{$reg.email|default:$smarty.request.email}"/>
 					{/forminput}
 				</div>
 
@@ -29,7 +29,7 @@
 					{formfeedback error=$userErrors.email}
 					{formlabel label="Email" for="email"}
 					{forminput}
-						<input type="text" name="email" id="email" value="{$reg.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+						<input type="text" name="email" id="email" value="{$reg.email|default:$smarty.request.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
 					{/forminput}
 				</div>
 
@@ -52,7 +52,7 @@
 						{formfeedback error=$userErrors.password}
 						{formlabel label="Password" for="pass"}
 						{forminput}
-							<input id="pass1" type="password" name="password" value="{$reg.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input id="pass1" type="password" name="password" value="{$reg.password|default:$smarty.request.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
 							{formhelp note="If this is your first time registering, confirm your password below."}
 						{/forminput}
 					</div>
@@ -60,7 +60,7 @@
 					<div class="row">
 						{formlabel label="Repeat password" for="password2"}
 						{forminput}
-							<input id="password2" type="password" name="password2" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							<input id="password2" type="password" name="password2" value="{$smarty.request.password2}" /> <acronym title="{tr}Required{/tr}">*</acronym>
 						{/forminput}
 					</div>
 
