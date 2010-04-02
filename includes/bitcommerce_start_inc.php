@@ -258,4 +258,4 @@ if( !empty( $gBitProduct ) ) {
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
-?>
+
