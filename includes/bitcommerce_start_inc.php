@@ -1,4 +1,5 @@
 <?php
+	global $gBitProduct;
 	$directory_array = array();
 
 // Set the local configuration parameters - mainly for developers
