@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: list_orders.php,v 1.1 2006/12/11 23:21:05 spiderr Exp $
+//  $Id: list_orders.php,v 1.2 2010/04/02 15:43:34 spiderr Exp $
 //
 	$version_check_index=true;
 	require('includes/application_top.php');
@@ -51,6 +51,8 @@
 	if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
 		$listHash['user_id'] = $_REQUEST['user_id'];
 	}
+
+	$listHash['orders_products'] = TRUE;
 
 	$orders = order::getList( $listHash );
 	$gBitSmarty->assign_by_ref( 'listOrders', $orders );

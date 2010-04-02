@@ -1,6 +1,6 @@
 <table class="data">
 <tr><th colspan="4">{tr}Order List{/tr}</th></tr>
-{if $searchScope}
+{if $searchScopes}
 <tr><td colspan="4">
 {form}
 {html_options name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
