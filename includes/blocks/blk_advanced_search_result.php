@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.9 2009/08/22 21:29:04 spiderr Exp $
+// $Id: blk_advanced_search_result.php,v 1.10 2010/04/06 19:23:16 spiderr Exp $
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,
@@ -75,7 +75,7 @@
   }
 
 //  $select_str = "select distinct " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.`products_price`) as final_price ";
-  $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`lowest_purchase_price` ";
+  $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`lowest_purchase_price`, p.`products_priced_by_attribute` ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     $select_str .= ", SUM(tr.tax_rate) as tax_rate ";

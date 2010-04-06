@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.18 2010/03/08 23:36:57 spiderr Exp $
+// $Id: product_listing.php,v 1.19 2010/04/06 19:23:16 spiderr Exp $
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');
@@ -122,7 +122,7 @@
 
 // more info in place of buy now
             $lc_button = '';
-            if (zen_has_product_attributes($listing->fields['products_id']) or PRODUCT_LIST_PRICE_BUY_NOW == '0') {
+            if( $listing->fields['products_priced_by_attribute'] || PRODUCT_LIST_PRICE_BUY_NOW == '0' || zen_has_product_attributes( $listing->fields['products_id'] ) ) {
               $lc_button = '<a href="' . CommerceProduct::getDisplayUrl( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
             } else {
               if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0) {
