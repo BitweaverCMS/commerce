@@ -510,7 +510,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   restrict_to_shipping X,
   coupon_active C(1) NOTNULL default 'Y',
   date_created T,
-  date_modified T
+  date_modified T,
+  admin_note X
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_coupons_description' => "
