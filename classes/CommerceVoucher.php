@@ -134,6 +134,8 @@ class CommerceVoucher extends BitBase {
 			if( empty( $pParamHash['from'] ) ) {
 				$pParamHash['from'] = EMAIL_FROM;
 			}
+			$adminNote = !empty( $pParamHash['admin_note'] ) ? $pParamHash['admin_note'] : NULL;
+
 			$from = zen_db_prepare_input( $pParamHash['from'] );
 			if( empty( $pParamHash['subject'] ) ) {
 				$pParamHash['subject'] = $gBitSystem->getConfig( 'site_title' ).' '.tra( "Gift Certificate" );
@@ -168,7 +170,7 @@ class CommerceVoucher extends BitBase {
 			$message .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
 
 			// Now create the coupon main entry
-			$this->mDb->query("insert into " . TABLE_COUPONS . " (coupon_code, coupon_type, coupon_amount, date_created) values ( ?, 'G', ?, now())", array( $id1, $pParamHash['amount'] ) );
+			$this->mDb->query("insert into " . TABLE_COUPONS . " (coupon_code, coupon_type, coupon_amount, date_created, admin_note) values ( ?, 'G', ?, now(), ?)", array( $id1, $pParamHash['amount'], $adminNote ) );
 			$insert_id = zen_db_insert_id( TABLE_COUPONS, 'coupon_id' );
 			$this->mDb->query( "INSERT INTO " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ( ?, '0', ?, ?, now() )", array( $insert_id, $gBitUser->getDisplayName(), $pParamHash['email_to'] ) );
 

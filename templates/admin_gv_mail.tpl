@@ -1,3 +1,6 @@
+
+{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
+
 <div class="admin bitcommerce">
 	<div class="header">
 		<h1 class="header">{tr}Send Gift Certificate To Customers{/tr}</h1>
@@ -230,6 +233,14 @@ function check_form(form_name) {
 	{formlabel label="Message"}
 	{forminput}
 		<textarea name="message" wrap="soft" cols="60" rows="15">{$smarty.request.message|default:$smarty.const.TEXT_GV_ANNOUNCE|strip_tags|stripslashes|escape|trim}</textarea>
+	{/forminput}
+</div>
+
+<div class="row">
+	{formlabel label="Admin Note"}
+	{forminput}
+		<input type="text" name="admin_note" value="{$smarty.request.message|strip_tags|stripslashes|escape|trim}"/>
+		{formhelp note="Enter the reason for this gift certificate. It will NOT be visible to the customer."}
 	{/forminput}
 </div>
 
