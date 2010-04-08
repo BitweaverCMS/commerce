@@ -30,6 +30,15 @@ class CommerceVoucher extends BitBase {
 		return( count( $this->mInfo ) );
 	}
 
+	function expunge() {
+		if( $this->isValid() ) {
+			$query = "DELETE FROM " . TABLE_COUPON_EMAIL_TRACK . " WHERE `coupon_id`=?";
+			$this->mDb->query( $query, array( $this->mCouponId ) );
+			$query = "DELETE FROM " . TABLE_COUPONS . " WHERE `coupon_id`=?";
+			$this->mDb->query( $query, array( $this->mCouponId ) );
+		}
+	}
+
 	function isValid() {
 		return( !empty( $this->mCouponId ) && is_numeric( $this->mCouponId ) );
 	}

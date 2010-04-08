@@ -17,19 +17,31 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: gv_sent.php,v 1.10 2010/04/08 04:01:52 spiderr Exp $
+//	$Id: gv_sent.php,v 1.11 2010/04/08 04:50:44 spiderr Exp $
 //
 
 require('includes/application_top.php');
+
+$feedback = array();
+
+if( !empty( $_REQUEST['action'] ) ) {
+	if( $_REQUEST['action'] == 'delete' ) {
+		$gBitUser->verifyTicket();
+		$coupon = new CommerceVoucher( $_REQUEST['gid'] );
+		$coupon->expunge();
+		bit_redirect( $_SERVER['PHP_SELF'] );
+	}
+}
+
+$gBitSmarty->assign( 'feedback', $feedback );
 
 $sql = "SELECT c.`coupon_id` AS `hash_key`, c.coupon_amount, c.coupon_code, c.coupon_id, et.sent_firstname, et.sent_lastname, et.customer_id_sent, et.emailed_to, et.date_sent, rt.`customer_id`, rt.`redeem_date`, rt.`redeem_ip`, rt.`order_id`
 		FROM " . TABLE_COUPONS . " c
 			INNER JOIN " . TABLE_COUPON_EMAIL_TRACK . " et ON(c.coupon_id=et.coupon_id)
 			LEFT JOIN " . TABLE_COUPON_REDEEM_TRACK . " rt ON(c.coupon_id=rt.coupon_id)
 		ORDER BY date_sent desc";
-$offset = (!empty( $_REQUEST['page'] ) ? $_REQUEST['page'] * MAX_DISPLAY_SEARCH_RESULTS : 0);
 $couponList = array();
-if( $rs = $gBitDb->query( $sql, array(), MAX_DISPLAY_SEARCH_RESULTS, $offset ) ) {
+if( $rs = $gBitDb->query( $sql ) ) {
 	while( $row = $rs->fetchRow() ) {
 		$couponList[$row['hash_key']] = $row;
 	}
