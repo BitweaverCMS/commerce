@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: order.php,v 1.87 2010/03/26 20:44:03 spiderr Exp $
+// $Id: order.php,v 1.88 2010/04/08 17:53:27 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -112,6 +112,12 @@ class order extends CommerceOrderBase {
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
 				$whereSql .= " ) ";
 			}
+		}
+
+		if( !empty( $pListHash['products_options_values_id'] ) ) {
+			$joinSql .= " INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa ON(opa.`orders_id`=co.`orders_id`) ";
+			$whereSql .= ' AND opa.`products_options_values_id` = ?';
+			$bindVars[] = $pListHash['products_options_values_id'];
 		}
 
 		if( !empty( $pListHash['interests_id'] ) ) {
