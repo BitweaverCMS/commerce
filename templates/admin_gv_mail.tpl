@@ -45,9 +45,16 @@
 {/if}
 
 <div class="row">
-	{formlabel label="Text-Only Message"}
+	{formlabel label="Email Message"}
 	{forminput}
 		{$smarty.request.message|escape|nl2br}
+	{/forminput}
+</div>
+
+<div class="row">
+	{formlabel label="Admin Note"}
+	{forminput}
+		{$smarty.request.admin_note|escape|nl2br}
 	{/forminput}
 </div>
 
