@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-//	$Id: gv_sent.php,v 1.11 2010/04/08 04:50:44 spiderr Exp $
+//	$Id: gv_sent.php,v 1.12 2010/04/08 05:08:49 spiderr Exp $
 //
 
 require('includes/application_top.php');
@@ -35,7 +35,7 @@ if( !empty( $_REQUEST['action'] ) ) {
 
 $gBitSmarty->assign( 'feedback', $feedback );
 
-$sql = "SELECT c.`coupon_id` AS `hash_key`, c.coupon_amount, c.coupon_code, c.coupon_id, et.sent_firstname, et.sent_lastname, et.customer_id_sent, et.emailed_to, et.date_sent, rt.`customer_id`, rt.`redeem_date`, rt.`redeem_ip`, rt.`order_id`
+$sql = "SELECT c.`coupon_id` AS `hash_key`, c.coupon_amount, c.coupon_code, c.coupon_id, c.admin_note, et.sent_firstname, et.sent_lastname, et.customer_id_sent, et.emailed_to, et.date_sent, rt.`customer_id`, rt.`redeem_date`, rt.`redeem_ip`, rt.`order_id`
 		FROM " . TABLE_COUPONS . " c
 			INNER JOIN " . TABLE_COUPON_EMAIL_TRACK . " et ON(c.coupon_id=et.coupon_id)
 			LEFT JOIN " . TABLE_COUPON_REDEEM_TRACK . " rt ON(c.coupon_id=rt.coupon_id)
