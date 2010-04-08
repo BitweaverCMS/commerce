@@ -17,52 +17,62 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: list_orders.php,v 1.2 2010/04/02 15:43:34 spiderr Exp $
+//  $Id: list_orders.php,v 1.3 2010/04/08 17:50:45 spiderr Exp $
 //
-	$version_check_index=true;
-	require('includes/application_top.php');
+$version_check_index=true;
+require('includes/application_top.php');
 
-	require_once( DIR_FS_CLASSES.'order.php' );
+require_once( DIR_FS_CLASSES.'order.php' );
 
-	define( 'HEADING_TITLE', 'List Orders' );
+define( 'HEADING_TITLE', 'List Orders' );
 
-	$listHash = array( 'max_records' => '250', 'recent_comment' => TRUE );
-	if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
-		$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-		$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-	} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-		unset( $_SESSION['orders_status_comparison'] );
-	} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
-		$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
-	} 
+$listHash = array( 'max_records' => '250', 'recent_comment' => TRUE );
+if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
+	$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+	$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+	unset( $_SESSION['orders_status_comparison'] );
+} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
+	$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
+} 
 
-	if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
-		$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
-		$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
-	} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-		unset( $_SESSION['orders_status_id'] );
-	} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
-		$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
-	}
+if( @BitBase::verifyId( $_REQUEST['products_options_values_id'] ) ) {
+	$listHash['products_options_values_id'] = $_REQUEST['products_options_values_id'];
+}
 
-	if( !empty( $_REQUEST['search'] ) ) {
-		$listHash['search'] = $_REQUEST['search'];
-	}
-	if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
-		$listHash['user_id'] = $_REQUEST['user_id'];
-	}
+if( !empty( $_REQUEST['period'] ) ) {
+	$listHash['period'] = $_REQUEST['period'];
+}
+if( !empty( $_REQUEST['timeframe'] ) ) {
+	$listHash['timeframe'] = $_REQUEST['timeframe'];
+}
 
-	$listHash['orders_products'] = TRUE;
+if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
+	$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
+	$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
+} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+	unset( $_SESSION['orders_status_id'] );
+} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
+	$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
+}
 
-	$orders = order::getList( $listHash );
-	$gBitSmarty->assign_by_ref( 'listOrders', $orders );
-	$statuses = commerce_get_statuses( TRUE );
-	$statuses['all'] = 'All';
-	$gBitSmarty->assign( 'commerceStatuses', $statuses );
+if( !empty( $_REQUEST['search'] ) ) {
+	$listHash['search'] = $_REQUEST['search'];
+}
+if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
+	$listHash['user_id'] = $_REQUEST['user_id'];
+}
 
-	$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
-	
-	require('includes/application_bottom.php');
-	require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
+$listHash['orders_products'] = TRUE;
 
-?>
+$orders = order::getList( $listHash );
+$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+$statuses = commerce_get_statuses( TRUE );
+$statuses['all'] = 'All';
+$gBitSmarty->assign( 'commerceStatuses', $statuses );
+
+$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+
+require('includes/application_bottom.php');
+require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
+
