@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.168 2010/03/16 21:12:57 spiderr Exp $
+ * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.169 2010/04/18 02:27:23 wjames5 Exp $
  *
  * Product class for handling all production manipulation
  *
@@ -33,7 +33,7 @@ class CommerceProduct extends LibertyMime {
 		LibertyMime::LibertyMime();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
-						'content_description' => 'Product',
+						'content_name' => 'Product',
 						'handler_class' => 'CommerceProduct',
 						'handler_package' => 'bitcommerce',
 						'handler_file' => 'classes/CommerceProduct.php',
