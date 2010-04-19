@@ -16,7 +16,7 @@ if( !empty( $_REQUEST['export'] ) ) {
 				 LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.user_id = uu.user_id)
 	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0
 			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ms.unsubscribe_date,ccou.countries_name
-			ORDER BY RANDOM(), uu.`user_id`";
+			ORDER BY uu.`user_id`";
 
 	$max = (!empty( $_REQUEST['num_records'] ) ? $_REQUEST['num_records'] : NULL );
 	if( $rs = $gBitDb->query($sql,array( $gBitSystem->getConfig('users_validate_email_group') ), $max ) )  {
