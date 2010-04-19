@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: coupon_restrict.php,v 1.11 2010/01/06 18:25:04 spiderr Exp $
+//  $Id: coupon_restrict.php,v 1.12 2010/04/19 21:46:32 spiderr Exp $
 //
   define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
   require('includes/application_top.php');
@@ -175,7 +175,7 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>"><input type="hidden" name="tk" value="<?php global $gBitUser; echo $gBitUser->mTicket; ?>" />
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
@@ -266,7 +266,7 @@
                   </tr>
                 </table></td>
               </tr>
-              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>">
+              <tr><form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_category&info=' . $restrictId, 'NONSSL'); ?>"><input type="hidden" name="tk" value="<?php global $gBitUser; echo $gBitUser->mTicket; ?>" />
                 <td colspan="7"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
 <?php
@@ -284,9 +284,9 @@
       }
 ?>
                     <td class="smallText" valign="top"><?php echo HEADER_CATEGORY_NAME; ?></td>
-                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $restrictId, 'NONSSL'); ?>">
+                    <td class="smallText" align="left"></td><form name="restrict_product" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'info=' . $restrictId, 'NONSSL'); ?>"><input type="hidden" name="tk" value="<?php global $gBitUser; echo $gBitUser->mTicket; ?>" />
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('cPath_prod', zen_get_category_tree(), $current_category_id, 'onChange="this.form.submit();"'); ?></td></form>
-                    <form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $restrictId, 'NONSSL'); ?>">
+                    <form name="restrict_category" method="post" action="<?php echo zen_href_link_admin('coupon_restrict.php', zen_get_all_get_params(array('info', 'action', 'x', 'y')) . 'action=add_product&info=' . $restrictId, 'NONSSL'); ?>"><input type="hidden" name="tk" value="<?php global $gBitUser; echo $gBitUser->mTicket; ?>" />
                     <td class="smallText" valign="top"><?php echo HEADER_PRODUCT_NAME; ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('products', $products_array, $current_category_id); ?></td>
                     <td class="smallText" align="left"><?php echo zen_draw_pull_down_menu('restrict_status', $restrict_array); ?></td>
