@@ -4,7 +4,7 @@
 	</div>
 	<div class="body">
 
-	{form name="coupon" method="post" action="`$smarty.const.PHP_SELF`?action=update&oldaction=`$smarty.get.action`&amp;cid=`$smarty.get.cid`"}
+	{form name="coupon" method="post" action="`$smarty.server.PHP_SELF`?action=update&oldaction=`$smarty.get.action`&amp;cid=`$smarty.get.cid`"}
 		<div class="row">
 			{formlabel label=$smarty.const.COUPON_NAME}
 			{forminput}
