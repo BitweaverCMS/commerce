@@ -9,7 +9,7 @@
 function storeCustomerInterest( pInterestsId, pChecked ) {
 	var action = pChecked ? 'savec2i' : 'deletec2i';
 	jQuery.ajax({
-		data: 'action='+action+'&interests_id='+pInterestsId+'&customers_id='+{/literal}{$order->customer.id}{literal},
+		data: 'action='+action+'&interests_id='+pInterestsId+'&customers_id='+{/literal}{$order->customer.user_id}{literal},
 		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/interests.php{literal}",
 		timeout: 60000,
 		success: function(r) { 
