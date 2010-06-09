@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_shopping_cart.php,v 1.17 2009/08/18 20:45:50 spiderr Exp $
+// $Id$
 //
 	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 

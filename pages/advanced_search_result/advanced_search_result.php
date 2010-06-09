@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: advanced_search_result.php,v 1.1 2005/10/06 19:38:27 spiderr Exp $
+// $Id$
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">

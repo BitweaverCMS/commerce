@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_discount_prices.php,v 1.5 2006/12/19 00:11:33 spiderr Exp $
+// $Id$
 //
 
   require(DIR_FS_MODULES . 'require_languages.php');

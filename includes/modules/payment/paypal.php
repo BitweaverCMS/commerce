@@ -20,7 +20,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: paypal.php,v 1.9 2009/08/18 20:38:54 spiderr Exp $
+//  $Id$
 //
 
 // Note this is temporary

@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: user_register_inc.php,v 1.1 2010/02/18 17:27:48 spiderr Exp $
+//  $Id$
 //
 
 global $gBitSmarty, $gBitSystem;

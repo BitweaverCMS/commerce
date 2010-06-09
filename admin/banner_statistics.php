@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: banner_statistics.php,v 1.9 2010/01/06 18:25:04 spiderr Exp $
+//  $Id$
 //
 
 

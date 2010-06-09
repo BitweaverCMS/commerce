@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: meta_tags.php,v 1.5 2009/04/01 00:44:43 spiderr Exp $
+// $Id$
 //
 
 // in case bitcommerce was started up during a service call

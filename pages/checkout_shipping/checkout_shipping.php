@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping.php,v 1.20 2009/09/08 21:02:43 spiderr Exp $
+// $Id$
 //
 require(DIR_FS_CLASSES . 'http_client.php');
 

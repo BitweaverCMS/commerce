@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: item.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id$
 //
 
 define('MODULE_SHIPPING_ITEM_TEXT_TITLE', 'Per Item');

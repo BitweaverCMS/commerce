@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_book_process.php,v 1.2 2005/10/09 19:47:32 spiderr Exp $
+// $Id$
 //
 
 ?>

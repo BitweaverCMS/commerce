@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: revenue.php,v 1.6 2010/03/26 20:44:22 spiderr Exp $
+//  $Id$
 //
 
 require('includes/application_top.php');

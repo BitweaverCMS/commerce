@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to		|
 // | license@zen-cart.com so we can mail you a copy immediately.		|
 // +----------------------------------------------------------------------+
-//	$Id: coupon_restrict.php,v 1.13 2010/04/20 04:13:06 spiderr Exp $
+//	$Id$
 //
 define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
 require('includes/application_top.php');

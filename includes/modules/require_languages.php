@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: require_languages.php,v 1.4 2006/02/24 04:13:06 spiderr Exp $
+// $Id$
 //
 // determine language or template language file
   if (file_exists($language_page_directory . $template_dir . '/' . $current_page_base . '.php')) {

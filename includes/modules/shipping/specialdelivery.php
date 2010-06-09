@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: specialdelivery.php,v 1.4 2009/08/26 21:10:43 spiderr Exp $
+  $Id$
   based upon
-  $Id: specialdelivery.php,v 1.4 2009/08/26 21:10:43 spiderr Exp $
+  $Id$
   based upon
-  $Id: specialdelivery.php,v 1.4 2009/08/26 21:10:43 spiderr Exp $
+  $Id$
 
   Copyright (c) 2006 Philip Clarke
 

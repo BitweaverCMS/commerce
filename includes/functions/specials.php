@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: specials.php,v 1.8 2009/08/22 21:29:04 spiderr Exp $
+// $Id$
 //
 /**
  * @package ZenCart_Functions

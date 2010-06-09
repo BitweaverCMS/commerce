@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: record_company_filter.php,v 1.8 2009/08/22 21:29:04 spiderr Exp $
+// $Id$
 //
 // show the products of a specified music_genre
     if (isset($_GET['record_company_id']))

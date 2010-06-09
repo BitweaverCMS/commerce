@@ -18,7 +18,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id: header_php.php,v 1.7 2006/12/19 00:11:39 spiderr Exp $
+// $Id$
 
 //
 	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {

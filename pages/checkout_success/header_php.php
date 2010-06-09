@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.15 2007/11/05 03:52:13 spiderr Exp $
+// $Id$
 //
 // if the customer is not logged on, redirect them to the shopping cart page
   if (!$_SESSION['customer_id']) {

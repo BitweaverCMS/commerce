@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: developers_tool_kit.php,v 1.3 2005/10/06 21:01:46 spiderr Exp $
+//  $Id$
 //
   define('HEADING_TITLE', 'Developers Tool Kit');
   define('TABLE_CONFIGURATION_TABLE', 'Lookup CONSTANT Definitions');

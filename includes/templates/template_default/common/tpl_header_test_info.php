@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_header_test_info.php,v 1.5 2009/08/18 20:33:15 spiderr Exp $
+// $Id$
 //
 ?>
     <table class="centershop" border="0" cellspacing="0" cellpadding="0">

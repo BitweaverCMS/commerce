@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: category_tree.php,v 1.3 2005/11/03 15:12:26 spiderr Exp $
+// $Id$
 //
 
   class category_tree {

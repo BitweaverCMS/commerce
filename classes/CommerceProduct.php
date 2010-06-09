@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceProduct.php,v 1.169 2010/04/18 02:27:23 wjames5 Exp $
+ * @version	$Header$
  *
  * Product class for handling all production manipulation
  *

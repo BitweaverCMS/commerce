@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tell_a_friend.php,v 1.2 2009/08/26 21:31:34 spiderr Exp $
+// $Id$
 //
 ?>
 <?php echo zen_draw_form('email_friend', zen_href_link(FILENAME_TELL_A_FRIEND, 'action=process&products_id=' . $gBitProduct->mProductsId )); ?>

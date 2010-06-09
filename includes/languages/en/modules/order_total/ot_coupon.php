@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.2 2005/11/15 22:01:21 spiderr Exp $
+// $Id$
 //
 
   define('MODULE_ORDER_TOTAL_COUPON_TITLE', 'Discount Coupons');

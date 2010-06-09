@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: footer.php,v 1.5 2008/06/25 22:21:07 spiderr Exp $
+//  $Id$
 //
 
 $obcontent = ob_get_contents();

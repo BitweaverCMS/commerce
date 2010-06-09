@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: new_products.php,v 1.19 2008/07/13 06:56:10 lsces Exp $
+// $Id$
 //
 	global $gBitProduct, $gBitSmarty;
   $title = sprintf(TABLE_HEADING_NEW_PRODUCTS, strftime('%B'));

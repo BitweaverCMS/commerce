@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: supersaver.php,v 1.4 2009/08/25 17:22:21 spiderr Exp $
+// $Id$
 //
   class supersaver {
     var $code, $title, $description, $icon, $enabled;

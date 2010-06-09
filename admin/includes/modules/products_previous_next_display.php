@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: products_previous_next_display.php,v 1.5 2006/09/02 23:35:37 spiderr Exp $
+//  $Id$
 //
 
 // used following load of products_previous_next.php

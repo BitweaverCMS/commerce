@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: configuration.php,v 1.3 2005/11/22 12:11:13 gilesw Exp $
+//  $Id$
 //
 
 define('TABLE_HEADING_CONFIGURATION_TITLE', 'Title');

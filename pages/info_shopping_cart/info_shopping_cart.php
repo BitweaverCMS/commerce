@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: info_shopping_cart.php,v 1.1 2005/10/06 19:38:29 spiderr Exp $
+// $Id$
 //
 ?>
 <p class="main"><strong><h1><?php echo HEADING_TITLE; ?></h1></strong><br /><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></p>

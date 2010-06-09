@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: payflowpro.php,v 1.20 2009/10/20 20:07:03 spiderr Exp $
+// $Id$
 //
 // JJ: This code really needs cleanup as there's some code that really isn't called at all.
 //		 I only made enough modifications to make it work with UNIX servers

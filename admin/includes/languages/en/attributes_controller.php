@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: attributes_controller.php,v 1.4 2006/06/10 12:13:15 spiderr Exp $
+//  $Id$
 //
 
 define('HEADING_TITLE_OPT', 'Product Options');

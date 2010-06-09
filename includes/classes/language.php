@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: language.php,v 1.7 2010/03/16 00:43:12 spiderr Exp $
+// $Id$
 //
 
   class language {

@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/stats_products_types.php,v 1.3 2010/02/20 14:27:15 spiderr Exp $
+ * @version	$Header$
  *
  * Product class for handling all production manipulation
  *

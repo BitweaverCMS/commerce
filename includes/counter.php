@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: counter.php,v 1.4 2006/12/19 00:11:32 spiderr Exp $
+// $Id$
 //
 
   $counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;

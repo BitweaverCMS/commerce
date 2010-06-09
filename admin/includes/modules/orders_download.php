@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: orders_download.php,v 1.6 2007/08/16 07:31:22 spiderr Exp $
+//  $Id$
 
 	global $gBitDb;
 

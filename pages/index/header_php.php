@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.7 2005/11/30 07:46:29 spiderr Exp $
+// $Id$
 //
 
 // the following cPath references come from application_top.php

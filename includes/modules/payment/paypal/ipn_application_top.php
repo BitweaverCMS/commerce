@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ipn_application_top.php,v 1.7 2009/08/18 20:33:15 spiderr Exp $
+// $Id$
 //
 
 // start the timer for the page parse time log

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_address_book.php,v 1.5 2006/12/19 00:11:32 spiderr Exp $
+// $Id$
 //
   $addresses_query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
                              `entry_company` as `company`, `entry_street_address` as `street_address`,

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: list_orders.php,v 1.3 2010/04/08 17:50:45 spiderr Exp $
+//  $Id$
 //
 $version_check_index=true;
 require('includes/application_top.php');

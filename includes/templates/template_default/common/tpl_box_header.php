@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_box_header.php,v 1.1 2005/07/05 05:59:02 bitweaver Exp $
+// $Id$
 //
 ?>
 <?php echo $content; ?>

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: gv_send.php,v 1.5 2006/12/15 19:17:28 spiderr Exp $
+// $Id$
 //
 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_new_listing.php,v 1.9 2008/07/13 07:07:46 lsces Exp $
+// $Id$
 //
 
 ?>

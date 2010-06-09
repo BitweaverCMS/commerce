@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_list_box_content.php,v 1.4 2005/08/03 13:04:41 spiderr Exp $
+// $Id$
 //
 
 //print_r($list_box_contents);

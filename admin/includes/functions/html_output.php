@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: html_output.php,v 1.9 2008/11/08 06:53:00 spiderr Exp $
+//  $Id$
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );

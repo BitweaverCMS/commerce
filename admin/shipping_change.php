@@ -5,7 +5,7 @@
 // | http://www.bitcommerce.org/                                          |
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: shipping_change.php,v 1.1 2009/08/18 20:41:14 spiderr Exp $
+//  $Id$
 require('includes/application_top.php');
 require_once( DIR_FS_CLASSES.'order.php');
 

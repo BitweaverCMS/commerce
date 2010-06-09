@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: ipn_main_handler.php,v 1.5 2009/08/18 20:46:24 spiderr Exp $
+//  $Id$
 //
 DEFINE('MODULE_PAYMENT_PAYPAL_DOMAIN', 'www.paypal.com');
 DEFINE('MODULE_PAYMENT_PAYPAL_HANDLER', '/cgi-bin/webscr');

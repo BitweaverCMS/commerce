@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product_meta_tags.php,v 1.7 2008/07/03 14:38:52 lsces Exp $
+//  $Id$
 //
 
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {

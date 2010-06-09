@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: filenames.php,v 1.6 2008/07/10 12:24:40 lsces Exp $
+// $Id$
 //
 
 

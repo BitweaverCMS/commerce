@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: products_all.php,v 1.3 2006/12/19 00:11:38 spiderr Exp $
+// $Id$
 //
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">

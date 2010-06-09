@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.5 2006/12/19 00:11:36 spiderr Exp $
+// $Id$
 //
 
   $sql = "select `customers_authorization` from " . TABLE_CUSTOMERS . " where `customers_id` ='" . $_SESSION['customer_id'] . "'";

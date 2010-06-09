@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.5 2007/01/06 17:29:38 spiderr Exp $
+// $Id$
 //
 	if (file_exists(DIR_FS_PAGES . $current_page_base . '/main_template_vars.php')) {
 		$body_code = DIR_FS_PAGES . $current_page_base . '/main_template_vars.php';

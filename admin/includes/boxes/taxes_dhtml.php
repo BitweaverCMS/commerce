@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: taxes_dhtml.php,v 1.6 2005/10/06 21:01:44 spiderr Exp $
+//  $Id$
 //
 
   $za_contents = array();

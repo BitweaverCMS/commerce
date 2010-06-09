@@ -1,6 +1,6 @@
 <?php
 /*
-  $Id: specialdelivery9am.php,v 1.1 2006/11/01 19:12:17 lsces Exp $
+  $Id$
   part of the big_royalmail.php shippin module
 */
 

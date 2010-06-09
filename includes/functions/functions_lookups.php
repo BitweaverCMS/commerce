@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_lookups.php,v 1.39 2010/03/16 21:12:57 spiderr Exp $
+// $Id$
 //
 //
   function zen_get_order_status_name($order_status_id, $language_id = '') {

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: preview_info.php,v 1.1 2008/07/14 13:06:45 lsces Exp $
+//  $Id$
 //
 
 	if (zen_not_null($_POST)) {

@@ -5,7 +5,7 @@
 // | http://www.bitcommerce.org/                                          |
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: packingslip.php,v 1.9 2009/08/18 20:30:09 spiderr Exp $
+//  $Id$
 
 require('includes/application_top.php');
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php' );

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: popup_attributes_qty_prices.php,v 1.4 2007/01/06 06:13:51 spiderr Exp $
+// $Id$
 //
 ?>
 <body>

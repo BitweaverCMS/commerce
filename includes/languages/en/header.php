@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header.php,v 1.2 2005/07/10 17:31:44 spiderr Exp $
+// $Id$
 //
 
 // header text in includes/header.php

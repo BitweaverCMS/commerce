@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_book.php,v 1.2 2005/10/06 21:01:48 spiderr Exp $
+// $Id$
 //
 
 define('NAVBAR_TITLE_1', 'My Account');

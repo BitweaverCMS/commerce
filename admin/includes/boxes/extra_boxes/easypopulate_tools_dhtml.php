@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: easypopulate_tools_dhtml.php,v 1.1 2005/11/22 12:51:30 gilesw Exp $
+// $Id$
 //
   $za_contents[] = array('text' => BOX_TOOLS_EASYPOPULATE, 'link' => zen_href_link_admin(FILENAME_EASYPOPULATE, '', 'NONSSL'));
 ?>

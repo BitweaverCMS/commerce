@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: sqlpatch.php,v 1.3 2005/10/06 21:01:46 spiderr Exp $
+//  $Id$
 //
   define('HEADING_TITLE','SQL Query Executor');
   define('HEADING_WARNING','BE SURE TO DO A FULL DATABASE BACKUP BEFORE RUNNING SCRIPTS HERE');

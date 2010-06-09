@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: mod_manufacturers.php,v 1.9 2006/12/14 12:15:24 lsces Exp $
+// $Id$
 //
 	global $gBitDb, $gBitProduct;
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );

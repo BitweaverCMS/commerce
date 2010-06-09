@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reviews.php,v 1.4 2007/08/12 08:37:33 lsces Exp $
+//  $Id$
 //
 
 define('HEADING_TITLE', 'Reviews');

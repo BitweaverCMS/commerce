@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: categories.php,v 1.4 2006/06/24 05:11:48 spiderr Exp $
+//  $Id$
 //
 
 define('HEADING_TITLE', 'Categories / Products');

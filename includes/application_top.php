@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: application_top.php,v 1.46 2010/03/16 05:34:53 spiderr Exp $
+// $Id$
 //
 // start the timer for the page parse time log
 	define('PAGE_PARSE_START_TIME', microtime());

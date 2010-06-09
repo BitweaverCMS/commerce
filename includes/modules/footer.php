@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: footer.php,v 1.4 2007/05/05 18:22:47 spiderr Exp $
+// $Id$
 //
 
   require($template->get_template_dir($footer_template, DIR_WS_TEMPLATE, $current_page_base,'common'). '/'. $footer_template);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: update_product.php,v 1.1 2008/07/14 13:16:22 lsces Exp $
+//  $Id$
 //
 	if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
 		$action = 'new_product';

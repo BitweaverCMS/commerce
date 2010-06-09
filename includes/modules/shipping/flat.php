@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: flat.php,v 1.6 2009/03/20 04:40:20 spiderr Exp $
+// $Id$
 //
 
   class flat {

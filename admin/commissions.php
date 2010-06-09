@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: commissions.php,v 1.9 2009/08/18 20:04:13 spiderr Exp $
+//  $Id$
 //
 
 require('includes/application_top.php');

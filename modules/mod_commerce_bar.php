@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: mod_commerce_bar.php,v 1.2 2009/08/18 20:45:50 spiderr Exp $
+//  $Id$
 //
 	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 

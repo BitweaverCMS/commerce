@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: account_history_info.php,v 1.10 2010/01/06 18:26:31 spiderr Exp $
+// $Id$
 //
 ?>
 <div align="center">

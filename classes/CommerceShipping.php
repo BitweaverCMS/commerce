@@ -17,7 +17,7 @@
 // obtain it through the world-wide-web, please send a note to
 // license@zen-cart.com so we can mail you a copy immediately.
 // +----------------------------------------------------------------------+
-// $Id: CommerceShipping.php,v 1.4 2010/03/16 21:12:57 spiderr Exp $
+// $Id$
 //
 
 class CommerceShipping {

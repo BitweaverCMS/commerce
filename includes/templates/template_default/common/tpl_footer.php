@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_footer.php,v 1.5 2007/08/16 21:21:58 spiderr Exp $
+// $Id$
 //
 	require_once( DIR_FS_INCLUDES . 'functions/banner.php' );
 

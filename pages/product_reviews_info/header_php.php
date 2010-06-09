@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.11 2008/07/06 13:07:10 lsces Exp $
+// $Id$
 //
   if (isset($_GET['reviews_id']) && zen_not_null($_GET['reviews_id']) && isset($_GET['products_id']) && zen_not_null($_GET['products_id'])) {
 

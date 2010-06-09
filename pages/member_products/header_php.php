@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: header_php.php,v 1.1 2006/09/19 07:13:00 spiderr Exp $
+// $Id$
 //
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: move_product_confirm.php,v 1.7 2009/08/22 21:29:04 spiderr Exp $
+//  $Id$
 //
 
         $products_id = zen_db_prepare_input($_POST['products_id']);

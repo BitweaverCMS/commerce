@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_account_history.php,v 1.8 2008/07/06 12:54:49 lsces Exp $
+// $Id$
 //
   $orders_total = zen_count_customer_orders();
 

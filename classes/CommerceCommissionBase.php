@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommissionBase.php,v 1.3 2010/02/25 19:47:06 spiderr Exp $
+//  $Id$
 //
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );

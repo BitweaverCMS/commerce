@@ -1,10 +1,10 @@
 <?
 /*
-  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
+  $Id$
   based upon
-  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
+  $Id$
   based upon
-  $Id: rmamsmallpacket.php,v 1.4 2009/08/26 21:09:35 spiderr Exp $
+  $Id$
 
   Copyright (c) 2006 Philip Clarke
 

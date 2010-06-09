@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_block_no_account_history.php,v 1.1 2005/08/04 07:24:04 spiderr Exp $
+// $Id$
 //
 ?>
       <table border="0" width="100%" cellspacing="2" cellpadding="2" class="plainBox">

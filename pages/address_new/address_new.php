@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: address_new.php,v 1.5 2009/08/27 21:25:09 spiderr Exp $
+// $Id$
 //
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;

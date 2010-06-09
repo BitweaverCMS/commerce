@@ -23,7 +23,7 @@
 // | Module created by Eric Stamper - 01/30/2004                          |
 // | Released under GPL                                                   |
 // +----------------------------------------------------------------------+
-// $Id: authorizenet_aim.php,v 1.1 2005/07/08 06:12:33 spiderr Exp $
+// $Id$
 
 
 // Admin Configuration Items

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ssl_check.php,v 1.2 2005/10/11 03:50:14 spiderr Exp $
+// $Id$
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">

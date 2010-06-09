@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_taxes.php,v 1.7 2006/01/13 23:48:33 spiderr Exp $
+// $Id$
 //
 //
 ////

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: new_product_preview.php,v 1.4 2007/08/16 09:19:11 lsces Exp $
+//  $Id$
 
 // copy image only if modified
 	if( empty( $_REQUEST['read'] ) ) {

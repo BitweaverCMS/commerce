@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: box.php,v 1.3 2005/10/06 21:01:44 spiderr Exp $
+//  $Id$
 //
 /*
   Example usage:

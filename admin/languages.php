@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: languages.php,v 1.17 2010/03/08 23:35:29 spiderr Exp $
+//  $Id$
 
   require('includes/application_top.php');
   $action = (isset($_GET['action']) ? $_GET['action'] : '');

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: functions_email.php,v 1.11 2010/03/16 21:12:57 spiderr Exp $
+// $Id$
 //
 //
 define('EMAIL_SYSTEM_DEBUG','off');

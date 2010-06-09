@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: product_listing.php,v 1.19 2010/04/06 19:23:16 spiderr Exp $
+// $Id$
 //
   $show_submit = zen_run_normal();
   $listing_split = new splitPageResults($listing_sql, MAX_DISPLAY_PRODUCTS_LISTING, 'p.`products_id`', 'page');

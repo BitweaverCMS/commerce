@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-// $Id: order.php,v 1.88 2010/04/08 17:53:27 spiderr Exp $
+// $Id$
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );

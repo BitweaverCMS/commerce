@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping_address.php,v 1.2 2006/12/19 00:11:36 spiderr Exp $
+// $Id$
 //
 	if ($messageStack->size('checkout_address') > 0) {
 		$gBitSmarty->assign( 'errors', $messageStack->output('checkout_address') );

@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/classes/CommerceOrderBase.php,v 1.4 2009/08/25 17:27:35 spiderr Exp $
+ * @version	$Header$
  *
  * Base class for handling common functionality between shipping cart and orders
  *

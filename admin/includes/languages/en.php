@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: en.php,v 1.10 2006/02/22 03:54:06 spiderr Exp $
+//  $Id$
 //
 
 // look in your $PATH_LOCALE/locale directory for available locales..

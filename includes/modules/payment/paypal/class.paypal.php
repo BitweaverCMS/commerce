@@ -17,6 +17,6 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: class.paypal.php,v 1.1 2005/07/05 05:59:10 bitweaver Exp $
+// $Id$
 //
 ?>

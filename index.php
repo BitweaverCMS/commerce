@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: index.php,v 1.29 2010/02/08 21:27:21 wjames5 Exp $
+// $Id$
 //
 
 	// These classes need to be included first so they get written to the session properly

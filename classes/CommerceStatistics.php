@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceStatistics.php,v 1.13 2010/04/08 17:51:51 spiderr Exp $
+//  $Id$
 //
 	class CommerceStatistics extends BitBase {
 

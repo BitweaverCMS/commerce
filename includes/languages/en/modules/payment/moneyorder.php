@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: moneyorder.php,v 1.3 2007/04/01 05:32:06 spiderr Exp $
+// $Id$
 //
 
   define('MODULE_PAYMENT_MONEYORDER_TEXT_TITLE', 'Check/Money Order');

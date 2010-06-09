@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: blk_advanced_search_result.php,v 1.10 2010/04/06 19:23:16 spiderr Exp $
+// $Id$
 //
 // create column list
   $define_list = array('PRODUCT_LIST_MODEL' => PRODUCT_LIST_MODEL,

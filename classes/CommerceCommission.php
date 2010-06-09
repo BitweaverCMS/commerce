@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCommission.php,v 1.11 2009/08/17 01:54:11 spiderr Exp $
+//  $Id$
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommissionBase.php' );

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: checkout_process.php,v 1.8 2010/05/13 23:36:13 spiderr Exp $
+// $Id$
 //
 
 	require_once(DIR_FS_MODULES . 'require_languages.php');

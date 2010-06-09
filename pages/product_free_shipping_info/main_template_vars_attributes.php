@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars_attributes.php,v 1.13 2010/03/16 21:12:57 spiderr Exp $
+// $Id$
 //
 //////////////////////////////////////////////////
 //// BOF: attributes

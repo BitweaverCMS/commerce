@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_box_default_single.php,v 1.2 2005/10/06 21:01:49 spiderr Exp $
+// $Id$
 //
 
 // choose box images based on box position

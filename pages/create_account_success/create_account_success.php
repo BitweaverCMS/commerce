@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: create_account_success.php,v 1.1 2005/10/06 19:38:28 spiderr Exp $
+// $Id$
 //
 ?>
 <table  width="100%" border="0" cellspacing="2" cellpadding="2">

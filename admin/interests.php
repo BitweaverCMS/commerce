@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/admin/interests.php,v 1.4 2010/03/05 21:27:36 spiderr Exp $
+ * @version	$Header$
  *
  * Product class for handling all production manipulation
  *

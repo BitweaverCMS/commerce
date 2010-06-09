@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_commerce/templates/admin_bitcommerce.tpl,v 1.5 2007/10/31 12:44:01 spiderr Exp $ *}
+{* $Header$ *}
 {strip}
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 

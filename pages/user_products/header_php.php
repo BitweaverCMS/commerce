@@ -1,5 +1,5 @@
 <?php
-// $Id: header_php.php,v 1.8 2007/07/16 21:47:16 spiderr Exp $
+// $Id$
 //
 
 if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId ) {

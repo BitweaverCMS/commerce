@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: column_left.php,v 1.4 2005/10/06 21:01:44 spiderr Exp $
+//  $Id$
 //
 
   require(DIR_WS_BOXES . 'configuration.php');

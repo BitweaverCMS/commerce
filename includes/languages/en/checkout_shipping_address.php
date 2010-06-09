@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: checkout_shipping_address.php,v 1.4 2010/03/24 19:24:29 spiderr Exp $
+// $Id$
 //
 //define('NAVBAR_TITLE', 'Change Shipping Address');
 //define('NAVBAR_TITLE_1', 'Checkout');

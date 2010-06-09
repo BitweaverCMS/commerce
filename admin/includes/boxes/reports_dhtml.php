@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: reports_dhtml.php,v 1.6 2010/02/15 05:53:55 spiderr Exp $
+//  $Id$
 //
 
   $za_contents = array();

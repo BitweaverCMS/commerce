@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: ot_subtotal.php,v 1.1 2005/07/08 06:12:32 spiderr Exp $
+// $Id$
 //
 
   define('MODULE_ORDER_TOTAL_SUBTOTAL_TITLE', 'Sub-Total');

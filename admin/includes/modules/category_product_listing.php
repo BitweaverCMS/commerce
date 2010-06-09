@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: category_product_listing.php,v 1.17 2008/07/10 12:26:25 lsces Exp $
+//  $Id$
 //
 ?>
     <table border="0" width="100%" cellspacing="0" cellpadding="2">

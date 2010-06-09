@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: banner.php,v 1.13 2008/07/06 12:56:16 lsces Exp $
+// $Id$
 //
 /**
  * @package ZenCart_Functions

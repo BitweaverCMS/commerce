@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: collect_info.php,v 1.13 2010/01/06 18:25:46 spiderr Exp $
+//  $Id$
 //
 
     $parameters = array('products_name' => '',

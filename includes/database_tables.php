@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: database_tables.php,v 1.16 2010/02/18 20:47:32 spiderr Exp $
+// $Id$
 //
 
 // define the database table names used in the project

@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: html_graphs.php,v 1.7 2006/12/19 00:11:30 spiderr Exp $
+// $Id$
 //
 
 ////

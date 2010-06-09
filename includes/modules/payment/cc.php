@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: cc.php,v 1.6 2009/08/18 20:38:54 spiderr Exp $
+// $Id$
 //
 
   class cc {

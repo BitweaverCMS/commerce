@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_commerce/admin/pump_bitcommerce_inc.php,v 1.2 2010/03/08 23:35:56 spiderr Exp $
+ * @version $Header$
  * @package install
  * @subpackage pumps
  */

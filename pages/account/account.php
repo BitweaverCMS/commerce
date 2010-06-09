@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 /**
- * @version	$Header: /cvsroot/bitweaver/_bit_commerce/pages/account/account.php,v 1.3 2009/03/28 20:18:08 spiderr Exp $
+ * @version	$Header$
  *
  * System class for handling the liberty package
  *

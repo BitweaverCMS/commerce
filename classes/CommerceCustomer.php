@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceCustomer.php,v 1.35 2010/03/05 21:27:36 spiderr Exp $
+//  $Id$
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );

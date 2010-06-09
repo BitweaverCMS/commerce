@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id: application_top.php,v 1.31 2010/02/08 21:27:21 wjames5 Exp $
+//  $Id$
 //
 
 require_once( '../../kernel/setup_inc.php' );

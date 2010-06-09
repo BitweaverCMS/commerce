@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: upload.php,v 1.2 2005/10/06 21:01:47 spiderr Exp $
+// $Id$
 //
 // iii changed:  all references to $message_stack were commented out, since it is not defined here
 

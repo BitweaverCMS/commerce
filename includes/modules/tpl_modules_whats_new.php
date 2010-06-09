@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: tpl_modules_whats_new.php,v 1.1 2005/08/04 07:24:08 spiderr Exp $
+// $Id$
 //
 //
 //

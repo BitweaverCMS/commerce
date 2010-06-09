@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id: main_template_vars.php,v 1.20 2007/12/03 05:54:53 spiderr Exp $
+// $Id$
 //
 
 	$sql = "SELECT COUNT(*) as `total`

@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id: CommerceOrderManager.php,v 1.1 2007/07/03 07:12:53 spiderr Exp $
+//  $Id$
 //
 
 class CommerceOrderManager extends BitBase {
