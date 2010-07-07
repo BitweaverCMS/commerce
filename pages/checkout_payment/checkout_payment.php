@@ -112,9 +112,9 @@
 ?>
 <?php
     if ( ($selection[$i]['id'] == $_SESSION['payment']) || ($n == 1) ) {
-      echo '  <tr id="defaultSelected" class="moduleRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
+      echo '  <tr id="defaultSelected" class="moduleRowSelected">';
     } else {
-      echo '  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, ' . $radio_buttons . ')">' . "\n";
+      echo '  <tr class="moduleRow">';
     }
 ?>
     <td class="plainBoxHeading" colspan="2"><?php echo $selection[$i]['module']; ?></td>
@@ -183,7 +183,7 @@
     for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
     	if( !empty( $selection[$i] ) ) {
 ?>
-  <tr class="moduleRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
+  <tr class="moduleRow">
     <td class="main" colspan="2"><?php echo $selection[$i]['module']; ?></td>
     <td class="main" colspan="2"align="right" colspan="2"><?php if( !empty( $selection[$i]['checkbox'] ) ) { echo $selection[$i]['checkbox']; } ?></td>
   </tr>
