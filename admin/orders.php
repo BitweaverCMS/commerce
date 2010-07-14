@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-//  $Id$
+//  $Id: orders.php,v 1.61 2010/07/14 15:19:58 spiderr Exp $
 //
 
 	define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
@@ -52,7 +52,13 @@
 		} elseif( !empty( $_REQUEST['address_type'] ) ) {
 			$addressType = $_REQUEST['address_type'];
 			$entry = $order->$addressType;
-			$countryId = zen_get_country_id( $entry['country'] );
+			if( isset( $entry['country']['countries_id'] ) ) {
+				$countryId =  $entry['country']['countries_id'];
+			} elseif( is_string( $entry['country'] ) ) {
+				$countryId = zen_get_country_id( $entry['country'] );
+			} else {
+				$countryId = NULL;
+			}
 			if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
 				$statePullDown = zen_draw_input_field('state', $entry['state'] );
 				$gBitSmarty->assign( 'statePullDown', $statePullDown );
