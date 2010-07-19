@@ -151,7 +151,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 								$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
 										(`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`)
 										VALUES ( ?, ?, ?, ? )";
-								$this->mDb->query($sql, array( $basketId, (int)$option, (int)$option.'_chk'.$val, $val ) );
+								$this->mDb->query($sql, array( $basketId, (int)$option, (int)$option.'_chk'.$val, (int)$val ) );
 							}
 						} else {
 							// update db insert to include attribute value_text. This is needed for text attributes.
