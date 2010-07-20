@@ -205,6 +205,7 @@
                            WHERE `categories_id` = '" . (int)$cPath_array[$i] . "'
                            and `language_id` = '" . (int)$_SESSION['languages_id'] . "'";
 
+
       $categories = $gBitDb->Execute($categories_query);
 
       if ($categories->RecordCount() > 0) {
@@ -237,7 +238,6 @@ if ( !empty( $_REQUEST['products_id'] ) && is_numeric( $_REQUEST['products_id'] 
 		if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
 			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 		}
-		$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
 	}
 } elseif( class_exists( 'CommerceProduct' ) ) {
 	$gBitProduct = new CommerceProduct();
@@ -251,7 +251,9 @@ $gComCategory = new CommerceCategory( $_REQUEST['cPath'] );
 if( !empty( $_REQUEST['cPath'] ) && is_numeric( $_REQUEST['cPath'] ) ) {
 	$breadcrumb->add( zen_get_category_name( $_REQUEST['cPath'], $_SESSION['languages_id']), zen_href_link( FILENAME_DEFAULT, 'cPath=' . $_REQUEST['cPath'] ) );
 }
-
+if($gBitProduct->isValid() ) {
+	$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
+}
 if( !empty( $gBitProduct ) ) {
 	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
 }
