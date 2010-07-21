@@ -160,17 +160,17 @@
       return $selection;
     }
 
-    function apply_credit() {
-      global $gBitDb, $order;
-      if ($_SESSION['cot_gv'] != 0) {
-        $gv_result = $gBitDb->Execute("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = '" . $_SESSION['customer_id'] . "'");
-        $gv_payment_amount = $this->deduction;
-        $gv_amount = $gv_result->fields['amount'] - $gv_payment_amount;
-        $gBitDb->Execute("update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $gv_amount . "' where `customer_id` = '" . $_SESSION['customer_id'] . "'");
-      }
-      $_SESSION['cot_gv'] = false;
-      return $gv_payment_amount;
-    }
+	function apply_credit() {
+		global $gBitDb, $order;
+		$ret = 0;
+		if ($_SESSION['cot_gv'] != 0) {
+			$ret = $this->deduction;
+			$gv_amount = $gBitDb->getOne("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $_SESSION['customer_id'] ) ) - $gv_payment_amount;
+			$gBitDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount` = '" . $gv_amount . "' WHERE `customer_id` = ?", array( $_SESSION['customer_id'] ) );
+		}
+		$_SESSION['cot_gv'] = false;
+		return $ret;
+	}
 
 
     function collect_posts() {

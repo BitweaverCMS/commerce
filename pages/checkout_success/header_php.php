@@ -28,12 +28,10 @@
   $notify_string='';
   if (isset($_GET['action']) && ($_GET['action'] == 'update')) {
     $notify_string = 'action=notify&';
-    $notify = $_POST['notify'];
-//    if (!is_array($notify)) $notify = array($notify);
 
-    if (is_array($notify)) {
-      for ($i=0, $n=sizeof($notify); $i<$n; $i++) {
-        $notify_string .= 'notify[]=' . $notify[$i] . '&';
+    if( !empty( $_POST['notify'] ) && is_array( $_POST['notify'] ) ) {
+      for ($i=0, $n=sizeof( $_POST['notify'] ); $i<$n; $i++) {
+        $notify_string .= 'notify[]=' . $_POST['notify'][$i] . '&';
       }
       if (strlen($notify_string) > 0) $notify_string = substr($notify_string, 0, -1);
     }

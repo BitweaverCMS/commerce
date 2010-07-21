@@ -186,7 +186,7 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( $GLOBALS[$class]->credit_class) {
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $GLOBALS[$class]->apply_credit();
           }
         }
@@ -201,8 +201,9 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( $GLOBALS[$class]->credit_class ) {
-            $_SESSION[$post_var] = 'c_' . $GLOBALS[$class]->code;
+          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
+            $post_var = 'c' . $GLOBALS[$class]->code;
+            $_SESSION[$post_var] = NULL;
           }
         }
       }

@@ -1013,7 +1013,7 @@ class order extends CommerceOrderBase {
 				$html_msg['PRODUCTS_DETAIL']='<table class="product-details" border="0" width="100%" cellspacing="0" cellpadding="2">' . $this->products_ordered_html . '</table>';
 
 //order totals area
-				$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
+				$html_ot = '<td class="order-totals-text" align="right" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
 				for ($i=0, $n=sizeof($order_totals); $i<$n; $i++) {
 					$email_order .= strip_tags($order_totals[$i]['title']) . ' ' . strip_tags($order_totals[$i]['text']) . "\n";
 				$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . $order_totals[$i]['title'] . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' .($order_totals[$i]['text']) .'</td></tr><tr>';
@@ -1045,13 +1045,13 @@ class order extends CommerceOrderBase {
 													EMAIL_SEPARATOR . "\n";
 					$payment_class = $_SESSION['payment'];
 					$email_order .= $GLOBALS[$payment_class]->title . "\n\n";
-					if ($GLOBALS[$payment_class]->email_footer) {
+					if( !empty( $GLOBALS[$payment_class]->email_footer ) ) {
 						$email_order .= $GLOBALS[$payment_class]->email_footer . "\n\n";
 					}
 				}
 		$html_msg['PAYMENT_METHOD_TITLE']	= (is_object($GLOBALS[$_SESSION['payment']]) ? EMAIL_TEXT_PAYMENT_METHOD : '') ;
 		$html_msg['PAYMENT_METHOD_DETAIL'] = (is_object($GLOBALS[$_SESSION['payment']]) ? $GLOBALS[$payment_class]->title : '' );
-		$html_msg['PAYMENT_METHOD_FOOTER'] = (is_object($GLOBALS[$_SESSION['payment']]) ? $GLOBALS[$payment_class]->email_footer : '');
+		$html_msg['PAYMENT_METHOD_FOOTER'] = (is_object($GLOBALS[$_SESSION['payment']]) && !empty( $GLOBALS[$payment_class]->email_footer ) ? $GLOBALS[$payment_class]->email_footer : '');
 
 // include disclaimer
 				$email_order .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
