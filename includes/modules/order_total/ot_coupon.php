@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			 |
 // | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ot_coupon.php,v 1.20 2010/07/21 03:42:31 spiderr Exp $
 //
 
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
@@ -43,7 +43,7 @@
 		}
 
 	function process() {
-		global $order, $currencies, $gBitDb, $gBitCustomer;
+		global $order, $currencies, $gBitDb;
 		if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
 		$this->deduction = $od_amount['total'];
 		if ($od_amount['total'] > 0) {
@@ -134,7 +134,7 @@
 
 				if ($coupon->getField('coupon_type')=='S') {
 					if( $coupon->getField( 'restrict_to_shipping' ) ) {
-						$shippingMethods = split( ',', $coupon->getField( 'restrict_to_shipping' ) );
+						$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
 						if( in_array( $order->info['shipping_method_code'], $shippingMethods ) ) {
 							$coupon_amount = $order->info['shipping_cost'];
 						}
@@ -179,7 +179,7 @@
 				if ($coupon->getField( 'coupon_minimum_order' ) <= $order_total) {
 					if ($coupon->getField( 'coupon_type' )=='S') {
 						if( $coupon->getField( 'restrict_to_shipping' ) ) {
-							$shippingMethods = split( ',', $coupon->getField( 'restrict_to_shipping' ) );
+							$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
 							if( in_array( $order->info['shipping_method_code'], $shippingMethods ) ) {
 								$od_amount['total'] = $order->info['shipping_cost'];
 							}
