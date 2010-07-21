@@ -63,18 +63,8 @@
 				break;
 			}
 
-			if (!$current_category_id) {
-				$sql = "SELECT `categories_id`
-					from   " . TABLE_PRODUCTS_TO_CATEGORIES . "
-					where  `products_id` ='" .  (int)$_GET['products_id']
-					. "'";
-
-				$cPath_row = $gBitDb->Execute($sql);
-				if ( $cPath_row->fields['categories_id'] ) {
-				$current_category_id = $cPath_row->fields['categories_id'];
-				} else {
-				$current_category_id = 0;
-				}
+			if( empty( $current_category_id ) ) {
+				$current_category_id = $gBitDb->getOne( "SELECT `categories_id` from   " . TABLE_PRODUCTS_TO_CATEGORIES . " where  `products_id` =?", array( (int)$_GET['products_id'] ) );
 			}
 
 			$sql = "select p.`products_id`, p.`products_model`, p.`lowest_purchase_price`, pd.`products_name`, p.`products_sort_order`
@@ -94,7 +84,7 @@
 		$next_item = NULL;
 		$position = NULL;
 		// if invalid product id skip
-		if (is_array($id_array)) {
+		if( !empty( $id_array ) ) {
 			reset ($id_array);
 			$counter = 0;
 			while (list($key, $value) = each ($id_array)) {

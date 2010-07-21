@@ -214,7 +214,8 @@
 														$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														if ($tax_rate > 0) {
-															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['quantity']) * $tax_rate)/100 * $ratio;
+															if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
+															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
 															$od_amount['tax'] += $od_amount[$tax_desc];
 														}
 													}
@@ -243,7 +244,8 @@
 														$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 														if ($tax_rate > 0) {
-															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['quantity']) * $tax_rate)/100 * $ratio;
+															if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
+															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
 															$od_amount['tax'] += $od_amount[$tax_desc];
 														}
 													}

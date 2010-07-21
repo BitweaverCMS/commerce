@@ -43,6 +43,4 @@ define('TEXT_EMAIL_VIA', 'via');
 
 // suggest not using # vs No as some spamm protection block emails with these subjects
 define('EMAIL_ORDER_NUMBER_SUBJECT', ' No: ');
-define('HEADING_ADDRESS_INFORMATION','Address Information');
 define('HEADING_SHIPPING_METHOD','Shipping Method');
-?>
