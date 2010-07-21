@@ -17,7 +17,7 @@
 // | to obtain it through the world-wide-web, please send a note to			
 // | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: CommerceShoppingCart.php,v 1.19 2010/07/21 03:13:12 spiderr Exp $
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
@@ -372,8 +372,9 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
 					}
 
-					$this->total += zen_add_tax( (($products_price * $qty) + $onetimeCharges), $products_tax);
-					$this->subtotal += $this->total;
+					$productsTotal = zen_add_tax( (($products_price * $qty) + $onetimeCharges), $products_tax);
+					$this->total += $productsTotal;
+					$this->subtotal += $productsTotal;
 					$this->weight += $product->getWeight( $qty, $productAttributes );
 				}
 			}
