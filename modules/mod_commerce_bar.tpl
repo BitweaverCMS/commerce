@@ -6,7 +6,7 @@
 {if count($gCommerceCurrencies->currencies) > 1}
 <a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart">{$sessionCart->count_contents()} {if $sessionCart->count_contents()==1}{tr}Item{/tr}{else}{tr}Items{/tr}{/if}</a>
 ( {$gCommerceCurrencies->format($sessionCart->show_total())} ) 
-	<a href="" onclick="showById('currencychooser');return false;">{$smarty.session.currency|default:$smarty.const.DEFAULT_CURRENCY} &raquo; &euro;,&yen;</a>
+	<a href="" onclick="BitBase.showById('currencychooser');return false;">{$smarty.session.currency|default:$smarty.const.DEFAULT_CURRENCY} &raquo; &euro;,&yen;</a>
 	<form action="{$smarty.server.REQUEST_URI}" id="currencychooser" style="display:none">
 	<select name="currency" onchange="this.form.submit()">
 		<option value="">Change Currency...</option>

@@ -8,88 +8,33 @@ $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
 */
 @import url("menu.css");/* including stylesheet for dhtml menu */
 @import url("index.css");/* including stylesheet for index.php */
-a{
-text-decoration:none;
-}
-body,html,#content table{
-font:normal normal 11px Verdana,sans-serif;
-}
-a:hover{
-text-decoration:underline;
-}
-a.headerLink:link{
-color:#ffffff;
-font-weight:bold;
-text-decoration:none;
-}
-a.headerLink:visited{
-color:#ffffff;
-font-weight:bold;
-text-decoration:none;
-}
-a.headerLink:hover{
-color:#ffffff;
-font-weight:bold;
-text-decoration:underline;
-}
-a.headerLink:active{
-color:#ffffff;
-font-weight:bold;
-text-decoration:none;
-}
-a.menuBoxContentLink:link{
-color:#0000ff;
-text-decoration:none;
-}
-a.menuBoxContentLink:visited{
-color:#0000ff;
-text-decoration:none;
-}
-a.menuBoxContentLink:hover{
-color:#0000ff;
-text-decoration:underline;
-}
-a.menuBoxContentLink:active{
-color:#0000ff;
-text-decoration:none;
-}
-a.menuBoxHeadingLink:link{
-color:#0000ff;
-font-weight:bold;
-text-decoration:none;
-}
-a.menuBoxHeadingLink:visited{
-color:#0000ff;
-font-weight:bold;
-text-decoration:none;
-}
-a.menuBoxHeadingLink:hover{
-color:#0000ff;
-font-weight:bold;
-text-decoration:none;
-}
-a.menuBoxHeadingLink:active{
-color:#0000ff;
-font-weight:bold;
-text-decoration:none;
-}
-a.splitPageLink:link{
-color:#0000ff;
-text-decoration:none;
-}
-a.splitPageLink:visited{
-color:#0000ff;
-text-decoration:none;
-}
-a.splitPageLink:hover{
-background-color:#ffff33;
-color:#0000ff;
-text-decoration:underline;
-}
-a.splitPageLink:active{
-color:#0000ff;
-text-decoration:none;
-}
+a{ text-decoration:none; }
+body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
+
+.active{}
+.inactive	{ background-color:#ddd; }
+.pending	{ background-color:#ffe; }
+.active		{ background-color:#efe; }
+.expired	{ background-color:#fee; }
+
+a:hover{ text-decoration:underline; }
+a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }
+a.headerLink:visited{ color:#ffffff; font-weight:bold; text-decoration:none; }
+a.headerLink:hover{ color:#ffffff; font-weight:bold; text-decoration:underline; }
+a.headerLink:active{ color:#ffffff; font-weight:bold; text-decoration:none; }
+a.menuBoxContentLink:link{ color:#0000ff; text-decoration:none; }
+a.menuBoxContentLink:visited{ color:#0000ff; text-decoration:none; }
+a.menuBoxContentLink:hover{ color:#0000ff; text-decoration:underline; }
+a.menuBoxContentLink:active{ color:#0000ff; text-decoration:none; }
+a.menuBoxHeadingLink:link{ color:#0000ff; font-weight:bold; text-decoration:none; }
+a.menuBoxHeadingLink:visited{ color:#0000ff; font-weight:bold; text-decoration:none; }
+a.menuBoxHeadingLink:hover{ color:#0000ff; font-weight:bold; text-decoration:none; }
+a.menuBoxHeadingLink:active{ color:#0000ff; font-weight:bold; text-decoration:none; }
+a.splitPageLink:link{ color:#0000ff; text-decoration:none; }
+a.splitPageLink:visited{ color:#0000ff; text-decoration:none; }
+a.splitPageLink:hover{ background-color:#ffff33; color:#0000ff; text-decoration:underline; }
+a.splitPageLink:active{ color:#0000ff; text-decoration:none; }
+
 checkbox,input,radio,select,textarea,file{
 font-size:11px;
 }

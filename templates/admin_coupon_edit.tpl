@@ -1,10 +1,21 @@
 <div class="admin bitcommerce">
 	<div class="header">
-		<h1 class="header">{tr}{$smarty.const.HEADING_TITLE}{/tr}</h1>
+		<h1 class="header">{if $gCoupon->isValid()}{tr}Edit Coupon:{/tr} {$gCoupon->getField('coupon_code')|escape}{else}{tr}Create New Coupon{/tr}{/if}</h1>
 	</div>
 	<div class="body">
 
-	{form name="coupon" method="post" action="`$smarty.server.PHP_SELF`?action=update&oldaction=`$smarty.get.action`&amp;cid=`$smarty.get.cid`"}
+	{formfeedback hash=$gCoupon->mFeedback}
+
+	{form name="coupon" method="post" action="`$smarty.server.PHP_SELF`"}
+		<input type="hidden" name="cid" value="{$smarty.get.cid}">
+		<input type="hidden" name="action" value="store">
+		<div class="row">
+			{formlabel label=$smarty.const.COUPON_CODE}
+			{forminput}
+				<input type="text" name="coupon_code" value="{$smarty.post.coupon_code|escape}"/>
+				{formhelp note=$smarty.const.COUPON_CODE_HELP}
+			{/forminput}
+		</div>
 		<div class="row">
 			{formlabel label=$smarty.const.COUPON_NAME}
 			{forminput}
@@ -21,7 +32,7 @@
 			{forminput}
 				{foreach from=$languages key=i item=lang}
 					{assign var=langId value=$lang.id}
-					<div><input type="text" name="coupon_desc[{$langId}]" value="{$smarty.post.coupon_desc.$langId|escape}"/> {$lang.name|escape}</div>
+					<div><input type="text" name="coupon_description[{$langId}]" value="{$smarty.post.coupon_description.$langId|escape}"/> {$lang.name|escape}</div>
 				{/foreach}
 				{formhelp note=$smarty.const.COUPON_NAME_HELP}
 			{/forminput}
@@ -37,7 +48,7 @@
 		<div class="row">
 			{formlabel label=$smarty.const.COUPON_MIN_ORDER}
 			{forminput}
-				<input type="text" name="coupon_min_order" value="{$smarty.post.coupon_min_order|escape}"/>
+				<input type="text" name="coupon_minimum_order" value="{$smarty.post.coupon_minimum_order|escape}"/>
 				{formhelp note=$smarty.const.COUPON_MIN_ORDER_HELP}
 			{/forminput}
 		</div>
@@ -48,14 +59,7 @@
 				{formhelp note=$smarty.const.COUPON_FREE_SHIP_HELP}
 			{/forminput}
 		</div>
-		<div class="row">
-			{formlabel label=$smarty.const.COUPON_CODE}
-			{forminput}
-				<input type="text" name="coupon_code" value="{$smarty.post.coupon_code|escape}"/>
-				{formhelp note=$smarty.const.COUPON_CODE_HELP}
-			{/forminput}
-		</div>
-		<div class="row">
+{*		<div class="row">
 			{formlabel label="Product Restrictions"}
 			{forminput}
 				<input type="text" name="restrict_to_products" value="{$smarty.post.restrict_to_products|escape}"/>
@@ -70,16 +74,24 @@
 			{/forminput}
 		</div>
 		<div class="row">
+			{formlabel label="Minimum Quantity"}
+			{forminput}
+				<input type="text" name="restrict_to_quantity" value="{$smarty.post.restrict_to_quantity|escape}"/>
+				{formhelp note="Comma seperated list of category ID's"}
+			{/forminput}
+		</div>
+*}
+		<div class="row">
 			{formlabel label=$smarty.const.COUPON_USES_COUPON}
 			{forminput}
-				<input type="text" name="coupon_uses_coupon" value="{$smarty.post.coupon_uses_coupon|escape}"/>
+				<input type="text" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_COUPON_HELP}
 			{/forminput}
 		</div>
 		<div class="row">
 			{formlabel label=$smarty.const.COUPON_USES_USER}
 			{forminput}
-				<input type="text" name="coupon_uses_user" value="{$smarty.post.coupon_uses_user|escape}"/>
+				<input type="text" name="uses_per_user" value="{$smarty.post.uses_per_user|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_USER_HELP}
 			{/forminput}
 		</div>
@@ -97,8 +109,16 @@
 				{formhelp note=$smarty.const.COUPON_FINISHDATE_HELP}
 			{/forminput}
 		</div>
+		<div class="row">
+			{formlabel label="Administration Note"}
+			{forminput}
+				<textarea name="admin_note">{$smarty.post.admin_note|escape}</textarea>
+				{formhelp note="Administrator's private note, not visible to customers."}
+			{/forminput}
+		</div>
+
 		<div class="row submit">
-			<input type="submit" class="button" name="Preview" value="Preview"/>
+			<input type="submit" class="button" name="Save" value="Save"/>
 			<a href="{$smarty.server.PHP_SELF}?cid={$smarty.request.cid}" class="button">{tr}Cancel{/tr}</a>
 		</div>
 	{/form}

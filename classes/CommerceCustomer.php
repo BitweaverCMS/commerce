@@ -1,15 +1,12 @@
 <?php
-//
-// +----------------------------------------------------------------------+
-// | bitcommerce                                                          |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2007 bitcommerce.org                                   |
-// |                                                                      |
-// | http://www.bitcommerce.org                                           |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license        |
-// +----------------------------------------------------------------------+
-//  $Id$
+// +--------------------------------------------------------------------+
+// | Copyright (c) 2005-2010 bitcommerce.org							|
+// | http://www.bitcommerce.org											|
+// | This source file is subject to version 2.0 of the GPL license		|
+// +--------------------------------------------------------------------+
+// | Portins Copyright (c) 2003 The zen-cart developers					|
+// | Portions Copyright (c) 2003 osCommerce								|	
+// +--------------------------------------------------------------------+
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );

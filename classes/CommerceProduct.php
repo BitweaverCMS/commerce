@@ -1143,7 +1143,7 @@ $start = microtime( TRUE );
 		}
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
-		$pListHash['total_count'] = 0;
+		$pListHash['total_records'] = 0;
 		$query = "select p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					from " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
@@ -1155,7 +1155,7 @@ $start = microtime( TRUE );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set
 			if( ($rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1) && empty($pListHash['offset'])) {
-				$pListHash['total_count'] = $rs->RecordCount();
+				$pListHash['total_records'] = $rs->RecordCount();
 			} else {
 				$countQuery = "select COUNT( p.`products_id` )
 							from " . TABLE_PRODUCTS . " p
@@ -1164,7 +1164,7 @@ $start = microtime( TRUE );
 							INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 							$joinSql
 							WHERE $whereSql ";
-				$pListHash['total_count'] = $this->mDb->getOne( $countQuery, $bindVars );
+				$pListHash['total_records'] = $this->mDb->getOne( $countQuery, $bindVars );
 			}
 
 			$ret = $rs->GetAssoc();
@@ -1188,7 +1188,7 @@ $start = microtime( TRUE );
 		}
 
 		$pListHash['page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
-		$pListHash['total_pages'] = ceil( $pListHash['total_count'] / $pListHash['max_records'] );
+		$pListHash['total_pages'] = ceil( $pListHash['total_records'] / $pListHash['max_records'] );
 		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'] + 1;
 		$pListHash['block_pages'] = 5;
