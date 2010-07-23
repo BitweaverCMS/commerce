@@ -66,10 +66,6 @@
     return $gBitDb->Execute($query);
   }
 
-  function zen_db_insert_id() {
-    return mysql_insert_id();
-  }
-
   function zen_db_output($string) {
     return htmlspecialchars($string);
   }
