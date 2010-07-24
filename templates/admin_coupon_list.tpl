@@ -22,9 +22,11 @@
 			<th>&nbsp;</th>
 			<th>{smartlink ititle="Coupon Code" isort="coupon_code" icontrol=$listInfo }</th>
 			<th>{tr}Amount{/tr}</th>
-			<th colspan="2">{tr}Redeemed{/tr} {smartlink ititle="$" isort="redeemed_sum" icontrol=$listInfo iorder="desc"} {smartlink ititle="#" isort="redeemed_count" icontrol=$listInfo iorder="desc"}</th>
+			<th class="currency">{smartlink ititle="#" isort="redeemed_count" icontrol=$listInfo iorder="desc"}</th>
+			<th class="currency">{smartlink ititle="Cost" isort="redeemed_sum" icontrol=$listInfo iorder="desc"}</th>
+			<th class="currency">{smartlink ititle="Income" isort="redeemed_revenue" icontrol=$listInfo iorder="desc"}</th>
 			<th>{smartlink ititle="Start" isort="coupon_start_date" icontrol=$listInfo iorder="desc"} / {tr}First{/tr}</th>
-			<th>{smartlink ititle="End" isort="coupon_expire_date" icontrol=$listInfo iorder="desc"} / {tr}End{/tr}</th>
+			<th>{smartlink ititle="End" isort="coupon_expire_date" icontrol=$listInfo iorder="desc"} / {tr}List{/tr}</th>
 			<th></th>
 		</tr>
 
@@ -41,9 +43,10 @@
 				<strong>{if $coupon.redeemed_count > 0}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=report&amp;cid={$couponId}">{/if}{$coupon.coupon_code}{if $coupon.redeemed_count > 0}</a>{/if}</strong> <em>{$coupon.coupon_name|escape}</em>
 				<br/>{$coupon.coupon_description}
 			</td>
-			<td class="item">{if $coupon.coupon_type=='P'}{$coupon.coupon_amount}%{elseif $coupon.coupon_type=='S'}<em>{tr}FREE SHIP{/tr}</em>{else}{$gCommerceCurrencies->format($coupon.coupon_amount)}{/if} {$coupon.restrict_to_shipping}</td>
-			<td class="item currency">${$coupon.redeemed_sum|number_format:2}</td>
-			<td class="item">{$coupon.redeemed_count}</td>
+			<td class="item currency">{if $coupon.coupon_type=='P'}{$coupon.coupon_amount}%{elseif $coupon.coupon_type=='S'}<em>{tr}FREE SHIP{/tr}</em>{else}{$gCommerceCurrencies->format($coupon.coupon_amount)}{/if} {$coupon.restrict_to_shipping}</td>
+			<td class="item currency">{$coupon.redeemed_count}</td>
+			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_sum)}</td>
+			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_revenue)}</td>
 			<td class="item">{$coupon.coupon_start_date|strtotime|bit_short_datetime}<div class="date">{$coupon.redeemed_first_date|strtotime|bit_short_datetime}</div></td>
 			<td class="item">{$coupon.coupon_expire_date|strtotime|bit_short_datetime}<div class="date">{$coupon.redeemed_first_date|strtotime|bit_short_datetime}</div></td>
 		</tr>

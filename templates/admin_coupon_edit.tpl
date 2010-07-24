@@ -82,6 +82,13 @@
 		</div>
 *}
 		<div class="row">
+			{formlabel label="Shipping Restrictions"}
+			{forminput}
+				<input type="text" name="restrict_to_shipping" value="{$smarty.post.restrict_to_shipping|escape}"/>
+				{formhelp note="Comma seperated list of shipping_code's (e.g. 'USPSPRI') will only allow enumerated shipping methods if Free Shipping is selected."}
+			{/forminput}
+		</div>
+		<div class="row">
 			{formlabel label=$smarty.const.COUPON_USES_COUPON}
 			{forminput}
 				<input type="text" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>

@@ -25,7 +25,7 @@
 			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$redeem.order_id}">{$redeem.order_id}</a></td>
 			<td class="item">{displayname hash=$redeem}</td>
 			<td class="item">{$redeem.redeem_ip}</td>
-			<td class="item currency">${$redeem.orders_value|number_format:2}</td>
+			<td class="item currency">{$gCommerceCurrencies->format($redeem.orders_value)}</td>
 			<td class="item">{$redeem.redeem_date|strtotime|bit_short_datetime}</td>
 		</tr>
 		{/foreach}

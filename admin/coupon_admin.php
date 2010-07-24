@@ -157,7 +157,7 @@
 		} else {
 			$title = tra( 'Create Coupon' );
 		}
-vd( $_POST );
+
 		$mid = 'bitpackage:bitcommerce/admin_coupon_edit.tpl';
 		break;
 	default:

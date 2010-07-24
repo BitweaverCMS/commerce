@@ -11,11 +11,16 @@ $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
 a{ text-decoration:none; }
 body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
 
+.admin.bitcommerce .data td.item, 
+.admin.bitcommerce .data th {text-align:left}
+
 .active{}
 .inactive	{ background-color:#ddd; }
 .pending	{ background-color:#ffe; }
 .active		{ background-color:#efe; }
 .expired	{ background-color:#fee; }
+.admin.bitcommerce .data td.item.currency,
+.admin.bitcommerce .data th.currency	{ text-align:right; }
 
 a:hover{ text-decoration:underline; }
 a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }
