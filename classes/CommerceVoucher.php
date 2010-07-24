@@ -472,10 +472,11 @@ restrict_to_shipping
 restrict_to_quantity
 */
 
-		$sql = "SELECT cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, MAX( `redeem_date` ) AS `redeemed_first_date`, MIN( `redeem_date` ) AS `redeemed_last_date`, COALESCE( SUM( cot.`orders_value` ), 0 ) AS `redeemed_sum`, COALESCE( COUNT( cot.`orders_value` ), 0 ) AS `redeemed_count`, COALESCE( SUM( cot2.`orders_value` ), 0 ) AS `redeemed_revenue`
+		$sql = "SELECT cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, MAX( `redeem_date` ) AS `redeemed_first_date`, MIN( `redeem_date` ) AS `redeemed_last_date`, COALESCE( SUM( cot.`orders_value` ), 0 ) AS `redeemed_sum`, COALESCE( COUNT( cot.`orders_value` ), 0 ) AS `redeemed_count`, COALESCE( SUM( cot2.`orders_value` ), 0 ) AS `redeemed_revenue`, COUNT(ccr.`coupon_id`) AS `restrictions_count`
 				FROM " . TABLE_COUPONS . " cc
 					LEFT OUTER JOIN " . TABLE_COUPONS_DESCRIPTION . " ccd ON (cc.`coupon_id`=ccd.`coupon_id` AND ccd.`language_id`=?)
 					LEFT OUTER JOIN  " . TABLE_COUPON_REDEEM_TRACK . " ccrt ON (ccrt.`coupon_id`=cc.`coupon_id`)
+					LEFT OUTER JOIN  " . TABLE_COUPON_RESTRICT . " ccr ON (ccr.`coupon_id`=cc.`coupon_id`)
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (ccrt.`customer_id`=uu.`user_id`)
 					LEFT OUTER JOIN " . TABLE_ORDERS_TOTAL . " cot ON (ccrt.`order_id`=cot.`orders_id` AND cot.`class`='ot_coupon' AND UPPER(cot.`title`) LIKE '%'||UPPER(cc.`coupon_code`)||'%')
 					LEFT OUTER JOIN " . TABLE_ORDERS_TOTAL . " cot2 ON (ccrt.`order_id`=cot2.`orders_id` AND cot2.`class`='ot_total' )
