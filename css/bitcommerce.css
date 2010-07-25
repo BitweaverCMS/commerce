@@ -396,7 +396,7 @@ ul.breadcrumbs li { list-style-type:none; padding:0; margin:0; }
 ul.breadcrumbs { border:1px solid #dedede; height:2.3em; width:auto; float:left; }
 ul.breadcrumbs li { float:left; line-height:2.3em; padding-left:.75em; color:#777; }
 ul.breadcrumbs li a { text-decoration:none; display:block; padding:0 15px 0 0; background:url(../images/breadcrumb_arrow.gif) no-repeat right center; } 
-ul.breadcrumbs li:last-child a { text-decoration:none; display:block; padding:0 15px 0 0; background:none; } 
+ul.breadcrumbs li:last-child a { background:none; } 
 ul.breadcrumbs li a:link, #crumbs li a:visited { text-decoration:none; }
 .commercebar { margin: 5px; overflow:hidden; clear:both; }
 .commercebar .navigation { float:right }
