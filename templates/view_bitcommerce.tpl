@@ -1,3 +1,1 @@
-<div class="display bitcart">
-	{$bitcommerceCenter}
-</div>
+{$bitcommerceCenter}

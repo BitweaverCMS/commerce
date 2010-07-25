@@ -19,6 +19,16 @@
 // +----------------------------------------------------------------------+
 // $Id: stylesheet.css,v 1.13 2009/08/28 06:39:10 spiderr Exp $
 */
+
+td.currency,
+th.currency	{ text-align:right; }
+.clickable { cursor:pointer; text-decoration:underline; }
+
+.shoppingcart th,
+.shoppingcart td	{ padding:15px; }
+.shoppingcart .subtotal 		{ font-size:16px; font-weight:900; }
+.shoppingcart .subtotal td	{ vertical-align: middle; text-align:right; }
+
 .centershop {
 	padding: 0px;
 	margin: 0px auto;
@@ -380,6 +390,16 @@ SPAN.category-subs-parent {
 SPAN.category-subs-selected {
   font-weight: bold;
 }
+
+ul.breadcrumbs, 
+ul.breadcrumbs li { list-style-type:none; padding:0; margin:0; }
+ul.breadcrumbs { border:1px solid #dedede; height:2.3em; width:auto; float:left; }
+ul.breadcrumbs li { float:left; line-height:2.3em; padding-left:.75em; color:#777; }
+ul.breadcrumbs li a { text-decoration:none; display:block; padding:0 15px 0 0; background:url(../images/breadcrumb_arrow.gif) no-repeat right center; } 
+ul.breadcrumbs li:last-child a { text-decoration:none; display:block; padding:0 15px 0 0; background:none; } 
+ul.breadcrumbs li a:link, #crumbs li a:visited { text-decoration:none; }
+.commercebar { margin: 5px; overflow:hidden; clear:both; }
+.commercebar .navigation { float:right }
 
 /* attribute images table */
 TABLE.products-attributes-images {

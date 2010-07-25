@@ -193,9 +193,7 @@
 // include the breadcrumb class and start the breadcrumb trail
   require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
   $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'breadcrumb', $breadcrumb );
-
-  $breadcrumb->add( tra( 'Shopping' ), BITCOMMERCE_PKG_URL );
+  $gBitSmarty->assign_by_ref( 'gCommerceBreadcrumbs', $breadcrumb );
 
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
@@ -260,4 +258,5 @@ if( !empty( $gBitProduct ) ) {
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
+$gBitThemes->loadCss( BITCOMMERCE_PKG_PATH.'css/bitcommerce.css' );
 

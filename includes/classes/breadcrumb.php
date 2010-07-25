@@ -21,38 +21,26 @@
 //
 
 class breadcrumb {
-	var $_trail;
+	var $mTrail;
 
 	function breadcrumb() {
 		$this->reset();
 	}
 
 	function reset() {
-		$this->_trail = array();
+		$this->mTrail = array();
+	}
+
+	function hasCrumbs () {
+		return count( $this->mTrail );
 	}
 
 	function add($title, $link = '') {
-		$this->_trail[] = array('title' => $title, 'link' => $link);
-	}
-
-	function trail($separator = '&nbsp;&nbsp;') {
-		$trail_string = '';
-
-		for ($i=0, $n=sizeof($this->_trail); $i<$n; $i++) {
-			if (isset($this->_trail[$i]['link']) && zen_not_null($this->_trail[$i]['link'])) {
-				$trail_string .= '<a class="crumb'.$i.'" href="' . $this->_trail[$i]['link'] . '">' . $this->_trail[$i]['title'] . '</a>';
-			} else {
-				$trail_string .= $this->_trail[$i]['title'];
-			}
-
-			if (($i+1) < $n) $trail_string .= $separator;
-		}
-
-		return $trail_string;
+		$this->mTrail[] = array('title' => $title, 'link' => $link);
 	}
 
 	function last() {
-		$trail_size = sizeof($this->_trail);
-		return $this->_trail[$trail_size-1]['title'];
+		$trail_size = sizeof($this->mTrail);
+		return $this->mTrail[$trail_size-1]['title'];
 	}
 }
