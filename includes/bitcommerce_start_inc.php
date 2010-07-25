@@ -1,5 +1,6 @@
 <?php
-	global $gBitProduct;
+	// globalize the major singletons
+	global $gBitProduct, $gCommerceSystem, $gBitDb, $gBitSmarty, $gBitThemes, $gBitUser;
 	$directory_array = array();
 
 // Set the local configuration parameters - mainly for developers
@@ -75,7 +76,6 @@
   }
 
 	// Load db classes
-	global $gCommerceSystem, $gBitDb, $gBitSmarty;
 	$gCommerceSystem = new CommerceSystem();
 	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
 
@@ -106,7 +106,6 @@
 	require_once(DIR_FS_CLASSES . 'sniffer.php');
 	$sniffer = new sniffer;
 
-	global $gBitUser;
 	if( !empty( $_SESSION['customer_id'] ) && !$gBitUser->isRegistered() ) {
 		// we have lost our bitweaver login
 		unset( $_SESSION['customer_id'] );
