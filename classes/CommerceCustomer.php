@@ -1,10 +1,11 @@
 <?php
+// :vim:tabstop=4:
 // +--------------------------------------------------------------------+
 // | Copyright (c) 2005-2010 bitcommerce.org							|
 // | http://www.bitcommerce.org											|
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
-// | Portins Copyright (c) 2003 The zen-cart developers					|
+// | Portions Copyright (c) 2003 The zen-cart developers				|
 // | Portions Copyright (c) 2003 osCommerce								|	
 // +--------------------------------------------------------------------+
 //

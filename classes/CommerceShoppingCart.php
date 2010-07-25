@@ -1,23 +1,13 @@
 <?php
-//
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce											
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers								
-// |																		
-// | http://www.zen-cart.com/index.php										
-// |																		
-// | Portions Copyright (c) 2003 osCommerce									
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			
-// | that is bundled with this package in the file LICENSE, and is			
-// | available through the world-wide-web at the following url:				
-// | http://www.zen-cart.com/license/2_0.txt.								
-// | If you did not receive a copy of the zen-cart license and are unable 
-// | to obtain it through the world-wide-web, please send a note to			
-// | license@zen-cart.com so we can mail you a copy immediately.			
-// +----------------------------------------------------------------------+
-// $Id: CommerceShoppingCart.php,v 1.19 2010/07/21 03:13:12 spiderr Exp $
+// :vim:tabstop=4:
+// +--------------------------------------------------------------------+
+// | Copyright (c) 2005-2010 bitcommerce.org							|
+// | http://www.bitcommerce.org											|
+// | This source file is subject to version 2.0 of the GPL license		|
+// +--------------------------------------------------------------------+
+// | Portions Copyright (c) 2003 The zen-cart developers				|
+// | Portions Copyright (c) 2003 osCommerce								|	
+// +--------------------------------------------------------------------+
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
