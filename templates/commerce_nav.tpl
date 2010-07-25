@@ -1,5 +1,5 @@
 	{include file="bitpackage:bitcommerce/breadcrumbs_inc.tpl"}
-	<div class="navigation">
+	<div class="navbar">
 		<span style="display:inline-block">
 		{if $navPreviousUrl}
 			<a href="{$navPreviousUrl}">&laquo;</a>
