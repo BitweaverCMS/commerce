@@ -399,7 +399,7 @@ ul.breadcrumbs li a { text-decoration:none; display:block; padding:0 15px 0 0; b
 ul.breadcrumbs li:last-child a { text-decoration:none; display:block; padding:0 15px 0 0; background:none; } 
 ul.breadcrumbs li a:link, #crumbs li a:visited { text-decoration:none; }
 .commercebar { margin: 5px; overflow:hidden; clear:both; }
-.commercebar .navigation { float:right }
+.commercebar .navbar { float:right; width:auto; padding:0; margin:0; clear:none; border:0; }
 
 /* attribute images table */
 TABLE.products-attributes-images {
