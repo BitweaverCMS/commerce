@@ -946,6 +946,49 @@ If a special exist * 10+9
 		}
 	}
 
+	/**
+	 * Attempt to create a brief description of this object, most useful for <meta name="description" />
+	 *
+	 * @return array list of aliases
+	 */
+	function generateDescription() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			if( $this->getField( 'metatags_description' ) ) {
+				$ret = $this->getField( 'metatags_description' );
+			} elseif( $this->getField( 'products_description' ) ) {
+				$ret = $this->getField( 'products_description' ); 
+			} else {
+				$ret = parent::generateDescription();
+			}
+			if( $ret ) {
+				$ret = $this->getTypeName().': '.$ret;
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Attempt to create a collection of relevant words about this object, most useful for <meta name="keywords" />
+	 *
+	 * @return array list of aliases
+	 */
+	function generateKeywords() {
+		$ret = array();
+		if( $this->isValid() ) {
+			if( $this->getField( 'metatags_keywords' ) ) {
+				$ret = $this->getField( 'metatags_keywords' );
+			}
+			foreach( array( 'products_manufacturers_model', 'categories_name', 'manufacturers_name', 'real_name', 'products_model', 'type_name' ) as $key ) {
+				if( $this->getField( $key ) ) {
+					$ret[] = $this->getField( $key );
+				}
+			}
+			$ret = array_merge( $ret, parent::generateKeywords() );
+		}
+		return $ret;
+	}
+	
 	function getTypeName() {
 		if( $this->isValid() ) {
 			return( $this->mInfo['type_name'] );
