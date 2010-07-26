@@ -20,6 +20,13 @@
 {/literal}
 </script>
 	{else}
+{if !empty($gBitProduct) && $gBitProduct->isValid()}
+	{if $gBitProduct->getField('summary')}
+<meta name="description" content="{$gBitProduct->getField('summary')|escape}">
+	{elseif $gBitProduct->getField('products_description')}
+<meta name="description" content="{$gBitProduct->getTypeName()|escape}: {$gBitProduct->getField('products_description')|strip_tags|truncate:250|escape}"/>
+	{/if}
+{/if}
 {if defined($smarty.const.META_TAG_KEYWORDS)}
 <meta name="keywords" content="{$smarty.const.META_TAG_KEYWORDS}" />
 {/if}
