@@ -1,6 +1,10 @@
+{strip}
 	{if $listInfo.total_pages == 1}
+<div class="pagination">
 		{tr}Displaying all {$listInfo.item_name|default:products}{/tr}
-	{else}
+</div>
+	{elseif $listInfo.page_records}
+<div class="pagination">
 		{tr}Displaying <strong>{$listInfo.offset+1}</strong> to <strong>{math equation="x + y" x=$listInfo.offset y=$listInfo.page_records}</strong> (of <strong>{$listInfo.total_records}</strong> {$listInfo.item_name|default:products}){/tr}
 		<br/>
 		{assign var=pageUrl value="`$smarty.server.PHP_SELF`?`$listInfo.query_string`"}
@@ -29,5 +33,6 @@
 		{if $listInfo.current_page < $listInfo.total_pages}
 		<a href="{$pageUrl}&page={$listInfo.current_page+1}&max_records={$listInfo.max_records}&sort_mode={$listInfo.sort_mode}">{tr}Next{/tr} &raquo;</a>
 		{/if}
+</div>
 	{/if}
-	<div style="clear:both;">&nbsp;</div>
+{/strip}
