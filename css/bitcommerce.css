@@ -210,9 +210,9 @@ TD.footertop, TD.footerbottom {
 -------------------------------------*/
 .cartBox, .addtocart {
 	width: 300px;
-	background: #eff4f8;
+	background: #eee;
 	padding: 5px;
-	border: 1px dotted #ffb062;
+	border: 1px solid #ddd;
 }
 
 .cartBox .row { margin:0; }
@@ -392,10 +392,10 @@ SPAN.category-subs-selected {
 }
 
 ul.breadcrumbs, 
-ul.breadcrumbs li { list-style-type:none; padding:0; margin:0; }
+ul.breadcrumbs li { list-style-type:none; padding:0; margin:0;background:white; }
 ul.breadcrumbs { border:1px solid #dedede; height:2.3em; width:auto; float:left; }
 ul.breadcrumbs li { float:left; line-height:2.3em; padding-left:.75em; color:#777; }
-ul.breadcrumbs li a { text-decoration:none; display:block; padding:0 15px 0 0; background:url(../images/breadcrumb_arrow.gif) no-repeat right center; } 
+ul.breadcrumbs li a { text-decoration:none; display:block; padding:0 15px 0 0; color:#888; background:url(../images/breadcrumb_arrow.gif) no-repeat right center; } 
 ul.breadcrumbs li:last-child a { background:none; } 
 ul.breadcrumbs li a:link, #crumbs li a:visited { text-decoration:none; }
 .commercebar { margin: 5px; overflow:hidden; clear:both; }
