@@ -35,7 +35,7 @@
 
 
       if (PRODUCT_FEATURED_LIST_IMAGE != '0') {
-        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $featured_products->fields, 'avatar' ), $featured_products->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
+        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $featured_products->fields['products_id'], 'avatar' ), $featured_products->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
       } else {
         $display_products_image = '';
       }
@@ -124,72 +124,76 @@
           <tr>
             <td width="<?php echo IMAGE_FEATURED_PRODUCTS_LISTING_WIDTH + 10; ?>" valign="top" class="main" align="center">
               <?php
-                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 1000 and configuration_value <= 1999) order by LPAD(configuration_value,11,0)");
+                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' ORDER BY configuration_value ");
                 while (!$disp_sort_order->EOF) {
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_IMAGE') {
-                    echo $display_products_image;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_QUANTITY') {
-                    echo $display_products_quantity;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_BUY_NOW') {
-                    echo $display_products_button;
-                  }
+                  if( $disp_sort_order->fields['configuration_value'] >= 1000 && $disp_sort_order->fields['configuration_value'] <= 1999 ) {
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_IMAGE') {
+						echo $display_products_image;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_QUANTITY') {
+						echo $display_products_quantity;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_BUY_NOW') {
+						echo $display_products_button;
+					  }
 
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_NAME') {
-                    echo $display_products_name;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MODEL') {
-                    echo $display_products_model;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MANUFACTURER') {
-                    echo $display_products_manufacturers_name;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_PRICE') {
-                    echo $display_products_price;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_WEIGHT') {
-                    echo $display_products_weight;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_DATE_ADDED') {
-                    echo $display_products_date_added;
-                  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_NAME') {
+						echo $display_products_name;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MODEL') {
+						echo $display_products_model;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MANUFACTURER') {
+						echo $display_products_manufacturers_name;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_PRICE') {
+						echo $display_products_price;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_WEIGHT') {
+						echo $display_products_weight;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_DATE_ADDED') {
+						echo $display_products_date_added;
+					  }
+					}
                   $disp_sort_order->MoveNext();
                 }
               ?>
             </td>
             <td colspan="2" valign="top" class="main">
               <?php
-                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' and (configuration_value >= 2000 and configuration_value <= 2999) order by LPAD(configuration_value,11,0)");
+                $disp_sort_order = $gBitDb->Execute("select configuration_key, configuration_value from " . TABLE_CONFIGURATION . " where configuration_group_id='" . $group_id . "' order by configuration_value");
                 while (!$disp_sort_order->EOF) {
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_IMAGE') {
-                    echo $display_products_image;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_QUANTITY') {
-                    echo $display_products_quantity;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_BUY_NOW') {
-                    echo $display_products_button;
-                  }
+                  if( $disp_sort_order->fields['configuration_value'] >= 2000 && $disp_sort_order->fields['configuration_value'] <= 2999 ) {
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_IMAGE') {
+						echo $display_products_image;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_QUANTITY') {
+						echo $display_products_quantity;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_BUY_NOW') {
+						echo $display_products_button;
+					  }
 
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_NAME') {
-                    echo $display_products_name;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MODEL') {
-                    echo $display_products_model;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MANUFACTURER') {
-                    echo $display_products_manufacturers_name;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_PRICE') {
-                    echo $display_products_price;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_WEIGHT') {
-                    echo $display_products_weight;
-                  }
-                  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_DATE_ADDED') {
-                    echo $display_products_date_added;
-                  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_NAME') {
+						echo $display_products_name;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MODEL') {
+						echo $display_products_model;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_MANUFACTURER') {
+						echo $display_products_manufacturers_name;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_PRICE') {
+						echo $display_products_price;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_WEIGHT') {
+						echo $display_products_weight;
+					  }
+					  if ($disp_sort_order->fields['configuration_key'] == 'PRODUCT_FEATURED_LIST_DATE_ADDED') {
+						echo $display_products_date_added;
+					  }
+					}
                   $disp_sort_order->MoveNext();
                 }
               ?>

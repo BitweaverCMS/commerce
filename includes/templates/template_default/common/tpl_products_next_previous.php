@@ -145,10 +145,10 @@
 			$gBitSmarty->assign( 'navPosition', $position );
 			$gBitSmarty->assign( 'navCounter', $counter );
 			if( !empty( $previous ) ) {
-				$gBitSmarty->assign( 'navPreviousUrl', zen_href_link(zen_get_info_page($previous), "cPath=$cPath&products_id=$previous") );
+				$gBitSmarty->assign( 'navPreviousUrl', CommerceProduct::getDisplayUrl( $previous ) );
 			}
 			if( !empty( $next_item ) ) {
-				$gBitSmarty->assign( 'navNextUrl', zen_href_link(zen_get_info_page($next_item), "cPath=$cPath&products_id=$next_item") );
+				$gBitSmarty->assign( 'navNextUrl', CommerceProduct::getDisplayUrl( $next_item ) );
 			}
 
 /*
