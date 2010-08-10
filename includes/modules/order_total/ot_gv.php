@@ -165,8 +165,8 @@
 		$ret = 0;
 		if ($_SESSION['cot_gv'] != 0) {
 			$ret = $this->deduction;
-			$gv_amount = $gBitDb->getOne("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $_SESSION['customer_id'] ) ) - $gv_payment_amount;
-			$gBitDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount` = '" . $gv_amount . "' WHERE `customer_id` = ?", array( $_SESSION['customer_id'] ) );
+			$gv_amount = $gBitDb->getOne("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $_SESSION['customer_id'] ) ) - $this->deduction;
+			$gBitDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount` = ? WHERE `customer_id` = ?", array( $gv_amount, $_SESSION['customer_id'] ) );
 		}
 		$_SESSION['cot_gv'] = false;
 		return $ret;
