@@ -370,7 +370,7 @@ class order extends CommerceOrderBase {
 					}
 
 					// shipping adjustments
-					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (ereg('^GIFT', addslashes($product->getField('products_model'))))) {
+					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
 						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
