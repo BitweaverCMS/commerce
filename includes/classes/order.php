@@ -23,12 +23,12 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
 
 class order extends CommerceOrderBase {
-		var $mOrdersId;
-		var $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
-				$products_ordered, $products_ordered_email;
+	var $mOrdersId;
+	var $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
+			$products_ordered, $products_ordered_email;
 
-		function order($order_id = '') {
-			parent::CommerceOrderBase();
+	function order($order_id = '') {
+		parent::CommerceOrderBase();
 		$this->mOrdersId = $order_id;
 		$this->info = array();
 		$this->totals = array();
@@ -400,6 +400,7 @@ class order extends CommerceOrderBase {
 
 			$gBitProduct->invokeServices( 'commerce_expunge_order_function', $this );
 
+			$gBitDb->query("DELETE FROM " . TABLE_COUPON_REDEEM_TRACK . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
 			$gBitDb->query("DELETE FROM " . TABLE_COUPON_GV_QUEUE . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
 			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
 			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
@@ -780,7 +781,7 @@ class order extends CommerceOrderBase {
 //		$gBitDb->CompleteTrans();
 
 		return( $this->mOrdersId );
-		}
+	}
 
 
 	function	create_add_products($zf_insert_id, $zf_mode = false) {
