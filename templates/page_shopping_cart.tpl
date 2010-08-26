@@ -99,4 +99,5 @@
 
 
 	{/form}
-</div><!-- end .body -->
+	</div><!-- end .body -->
+</div>
