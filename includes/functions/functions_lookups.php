@@ -56,12 +56,31 @@
 	}
 
 /**
+ * Returns an array with zones for a given country
+ *
+ * @param int determines country list
+*/
+function zen_get_country_zones( $pCountryId ) {
+	global $gBitDb;
+	$ret = array();
+	if( BitBase::verifyId( $pCountryId ) ) {
+		$sql = "SELECT `zone_id` AS `hash_key`, `zone_id`, `zone_name` 
+				FROM " . TABLE_ZONES . " 
+				WHERE `zone_country_id` = ? 
+				ORDER BY `zone_name`";
+		$bindVars = array( $pCountryId );
+		$ret = $gBitDb->getAssoc( $sql, $bindVars );
+	}
+	return $ret;
+}
+
+/**
  * Returns an array with countries
  *
  * @param int If set limits to a single country
  * @param boolean If true adds the iso codes to the array
 */
-  function zen_get_countries($countries_id = '', $with_iso_codes = false) {
+function zen_get_countries($countries_id = '', $with_iso_codes = false) {
     global $gBitDb;
     $countries_array = array();
     if (zen_not_null($countries_id)) {
@@ -104,7 +123,7 @@
     }
 
     return $countries_array;
-  }
+}
 
 
 	function zen_get_country_id( $pCountryName ) {
@@ -134,13 +153,13 @@
   }
 
 
-	function zen_get_zone_by_name( $pCountryId, $pName ) {
-		global $gBitDb;
-		$sql = "SELECT *
-				FROM " . TABLE_ZONES . "
-				WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
-		return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%' ) ) );
-	}
+function zen_get_zone_by_name( $pCountryId, $pName ) {
+	global $gBitDb;
+	$sql = "SELECT *
+			FROM " . TABLE_ZONES . "
+			WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
+	return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%' ) ) );
+}
 
 
 ////
@@ -178,7 +197,7 @@
   function zen_get_zone_code( $pCountryId, $pZoneMixed, $pDefaultZone ) {
 	global $gBitDb;
 
-	if( is_integer( $pZoneMixed ) ) {
+	if( is_numeric( $pZoneMixed ) ) {
 		$whereSql = ' AND `zone_id`=?';
 	} else {
 		$whereSql = ' AND `zone_name`=?';
