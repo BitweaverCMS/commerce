@@ -209,10 +209,6 @@ TD.footertop, TD.footerbottom {
 /*miscellaneous areas
 -------------------------------------*/
 .cartBox, .addtocart {
-	width: 300px;
-	background: #eee;
-	padding: 5px;
-	border: 1px solid #ddd;
 }
 
 .cartBox .row { margin:0; }
