@@ -253,16 +253,34 @@
 
 ////
 // Creates a pull-down list of countries
+function zen_get_country_zone_list( $pName, $pCountriesId, $pSelected = '', $pParameters = '') {
+	$ret = '';
+	if( $zones = zen_get_country_zones( $pCountriesId ) ) {
+		$zoneArray = array(array('id' => '', 'text' => tra('Please Choose Your State') ));
+		foreach( $zones as $zoneId=>$zoneHash ) {
+			$zoneArray[] = array('id' => $zoneHash['zone_id'], 'text' => $zoneHash['zone_name']);
+		}
+		if( !empty( $pSelected ) && !is_numeric( $pSelected ) ) {
+			$pSelected = zen_get_zone_id( $pCountriesId, $pSelected );
+		}
+		$ret = zen_draw_pull_down_menu( $pName, $zoneArray, $pSelected, $pParameters );
+	}
+	return $ret;
+}
+
+////
+// Creates a pull-down list of countries
   function zen_get_country_list($name, $selected = '', $parameters = '') {
-    $countries_array = array(array('id' => '', 'text' => tra('Please Choose Your Country') ));
-    $countries = zen_get_countries();
+    if( $countries = zen_get_countries() ) {
+		$countries_array = array(array('id' => '', 'text' => tra('Please Choose Your Country') ));
 
-    for ($i=0, $n=sizeof($countries); $i<$n; $i++) {
-      $countries_array[] = array('id' => $countries[$i]['countries_id'], 'text' => $countries[$i]['countries_name']);
-    }
+		for ($i=0, $n=sizeof($countries); $i<$n; $i++) {
+		  $countries_array[] = array('id' => $countries[$i]['countries_id'], 'text' => $countries[$i]['countries_name']);
+		}
 
-	if( !empty( $selected ) && !is_numeric( $selected ) ) {
-		$selected = zen_get_country_id( $selected );
+		if( !empty( $selected ) && !is_numeric( $selected ) ) {
+			$selected = zen_get_country_id( $selected );
+		}
 	}
 
     return zen_draw_pull_down_menu($name, $countries_array, $selected, $parameters);
