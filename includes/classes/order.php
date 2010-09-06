@@ -32,6 +32,7 @@ class order extends CommerceOrderBase {
 		$this->mOrdersId = $order_id;
 		$this->info = array();
 		$this->totals = array();
+		$this->subtotal = 0;
 		$this->contents = array();
 		$this->customer = array();
 		$this->delivery = array();
