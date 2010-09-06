@@ -121,6 +121,7 @@
 	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
+	$gBitSmarty->assign_by_ref( 'gBitCustomer', $gBitCustomer );
 
 	// lookup information
 	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
