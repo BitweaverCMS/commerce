@@ -1,7 +1,6 @@
 {literal}
 <script type="text/javascript">//<![CDATA[
 function updateShippingQuote( pForm ) {
-	BitBase.fade( 'shippingquote', 1, 'up' );
 	$('#shippingquotes').html('{/literal}{biticon ipackage=liberty iname=busy iexplain=Loading style="vertical-align:middle;padding-right:5px"}<em>{tr}Getting Shipping Estimate{/tr}</em>{literal}');
 	jQuery.ajax({
 		data: $(pForm).serialize(),
@@ -18,27 +17,25 @@ function updateShippingQuote( pForm ) {
 <div id="shippingestimate">
 
 {form}
+{legend legend="Shipping Estimate"}
+
 <input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}"/>
-<input type="hidden" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
 {foreach from=$smarty.request.id key=attrId item=attrVal}
 	<input type="hidden" name="id[{$attrId}]" value="{$attrVal}"/>
 {/foreach}
 
-{legend legend="Shipping Estimate"}
-{if $gBitCustomer->mCart && $gBitCustomer->mCart->count_contents()}
-	{tr}Items in Cart:{/tr} {$gBitCustomer->mCart->count_contents()}
-{/if}
-{assign var=addresses value=$gBitCustomer->getAddresses()}
+<p>{tr}Shipping prices are an estimate only. The actual amount may vary once a final total is calculated during checkout.{/tr}</p>
+
 {if $addresses}
 <div class="row">
 	<select onchange="updateShippingQuote( this.form );" name="address_id" id="addressid">
 	{foreach from=$addresses item=addr}
-		<option value="{$addr.address_book_id}" {if $smarty.request.address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
+		<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
 	{/foreach}
 	</select>
 </div>
 <div class="row">
-	{formlabel label="Ship To:"}
+	{formlabel label="Ship To"}
 	{forminput}
 		{$selAddr.address_format_id|zen_address_format:$selAddr:1:' ':'<br />'}
 	{/forminput}
@@ -65,11 +62,36 @@ function updateShippingQuote( pForm ) {
 		<input type="text" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
 	{/forminput}
 </div>
+	{/if}
+{/if}
+
+	{if $gBitProduct->isValid()}
+<div class="row">
+	{formlabel label="Product"}
+	{forminput}
+		{$gBitProduct->getTitle()|escape}
+	{/forminput}
+</div>
+	{elseif !$gBitProduct->isValid() && $gBitCustomer->mCart && $gBitCustomer->mCart->count_contents()}
+<div class="row">
+	{formlabel label="Items in Cart"}
+	{forminput}
+		{$gBitCustomer->mCart->count_contents()}
+	{/forminput}
+</div>
+	{/if}
+
+	{if $smarty.request.cart_quantity}
+<div class="row">
+	{formlabel label="Quantity"}
+	{forminput}
+		<input type="text" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+	{/forminput}
+</div>
+	{/if}
 <div class="row submit">
 	<input type="button" class="minibutton" value="Update" onclick="updateShippingQuote( this.form )"/>
 </div>
-	{/if}
-{/if}
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}
 	{tr}Free Shipping{/tr} {tr}- Downloads{/tr}
 {elseif $freeShipping == 1}
