@@ -45,7 +45,7 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 	} elseif( empty( $_SESSION['cart_address_id'] ) ) {
 		// no selected address yet, snag the first one
 		$first = current( $addresses );
-		$_SESSION['cart_address_id'] = $gBitCusomter->getField( 'customers_default_address_id', $first['address_id'] );
+		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_id'] );
 	}
 
 	$gBitSmarty->assign_by_ref( 'addresses', $addresses );
