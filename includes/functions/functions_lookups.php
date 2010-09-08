@@ -80,49 +80,48 @@ function zen_get_country_zones( $pCountryId ) {
  * @param int If set limits to a single country
  * @param boolean If true adds the iso codes to the array
 */
-function zen_get_countries($countries_id = '', $with_iso_codes = false) {
+function zen_get_countries( $pCountryMixed = '', $with_iso_codes = false) {
     global $gBitDb;
-    $countries_array = array();
-    if (zen_not_null($countries_id)) {
-    	if( is_numeric( $countries_id ) ) {
+
+    $ret = array();
+	$whereSql = '';
+	$bindVars = array();
+
+    if (zen_not_null($pCountryMixed)) {
+    	if( is_numeric( $pCountryMixed ) ) {
     		$whereSql = ' WHERE `countries_id` = ? ';
     	} else {
-    		$countries_id = strtoupper( $countries_id );
+    		$pCountryMixed = strtoupper( $pCountryMixed );
     		$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
     	}
-      if ($with_iso_codes == true) {
-        $countries = "select `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `countries_id`
-                      from " . TABLE_COUNTRIES . "
-					  $whereSql
-                      order by `countries_name`";
-        $countries_values = $gBitDb->query( $countries, array( $countries_id ) );
-        $countries_array = array('countries_name' => $countries_values->fields['countries_name'],
-                                 'countries_iso_code_2' => $countries_values->fields['countries_iso_code_2'],
-                                 'countries_iso_code_3' => $countries_values->fields['countries_iso_code_3'],
-								 'countries_id' => $countries_values->fields['countries_id']);
-      } else {
-        $countries = "select `countries_name`
-                      from " . TABLE_COUNTRIES . "
-                      $whereSql ";
-        $countries_values = $gBitDb->query( $countries, array( $countries_id ) );
-        $countries_array = array('countries_name' => $countries_values->fields['countries_name']);
-      }
-    } else {
-      $countries = "select `countries_id`, `countries_name`
-                    from " . TABLE_COUNTRIES . "
-                    order by `countries_name`";
+		$bindVars = array( $pCountryMixed );
+	}
 
-      $countries_values = $gBitDb->Execute($countries);
+	$countries = "SELECT *
+				  FROM " . TABLE_COUNTRIES . "
+				  $whereSql
+				  ORDER BY `countries_name`";
+	if( $rs = $gBitDb->query( $countries, $bindVars ) ) {
+		while( !$rs->EOF ) {
+			$row = array( 'countries_id' => $rs->fields['countries_id'],
+						  'countries_name' => $rs->fields['countries_name'],
+						  'address_format_id' => $rs->fields['address_format_id']
+						);
 
-      while (!$countries_values->EOF) {
-        $countries_array[] = array('countries_id' => $countries_values->fields['countries_id'],
-                                   'countries_name' => $countries_values->fields['countries_name']);
+			if( $with_iso_codes == true ) {
+				$row['countries_iso_code_2'] = $rs->fields['countries_iso_code_2'];
+				$row['countries_iso_code_3'] = $rs->fields['countries_iso_code_3'];
+			}
+			if( $rs->RecordCount() == 1 ) {
+				$ret = $row;
+			} else {
+				$ret[] = $row;
+			}
+			$rs->MoveNext();
+		}
+	}
 
-        $countries_values->MoveNext();
-      }
-    }
-
-    return $countries_array;
+    return $ret;
 }
 
 
