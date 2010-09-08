@@ -98,7 +98,7 @@ class fedex {
 		$fedexQuote = $this->_getQuote();
 		if (is_array($fedexQuote)) {
 			if (isset($fedexQuote['error'])) {
-				$this->quotes = array('module' => $this->title1, 'error' => $fedexQuote['error']);
+				$this->quotes = array('module' => $this->title, 'error' => $fedexQuote['error']);
 			} else {
 				switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
 					case (0):
@@ -129,23 +129,23 @@ class fedex {
 						$service_descr = $this->domestic_types[$quoteCode];
 						switch ($quoteCode) {
 							case 90:
-								if ($order->delivery['company'] != '') {
+								if( empty( $order->delivery['company'] ) ) {
 									$skip = TRUE;
 								}
 								break;
 							case 92:
 								if ($this->country == "CA") {
-									if ($order->delivery['company'] == '') {
+									if( empty( $order->delivery['company'] ) ) {
 										$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
 									}
 								} else {
-									if ($order->delivery['company'] == '') {
+									if( empty( $order->delivery['company'] ) ) {
 										$skip = TRUE;
 									}
 								}
 								break;
 							default:
-								if ($this->country != "CA" && $quoteCode < "90" && $order->delivery['company'] == '') {
+								if ($this->country != "CA" && $quoteCode < "90" && empty( $order->delivery['company'] )) {
 									$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
 								}
 								break;
@@ -374,10 +374,13 @@ class fedex {
 		$data .= '117,"' . $this->country . '"'; // Origin country
 		$dest_zip = str_replace(array(' ', '-'), '', $order->delivery['postcode']);
 		$data .= '17,"' . $dest_zip . '"'; // Recipient zip code
-		if ($order->delivery['country']['countries_iso_code_2'] == "US" || $order->delivery['country']['countries_iso_code_2'] == "CA" || $order->delivery['country']['countries_iso_code_2'] == "PR") {
-			$state = zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], ''); // Recipient state
-			if ($state == "QC") {
-				$state = "PQ";
+		if( $order->delivery['country']['countries_iso_code_2'] == "US" || $order->delivery['country']['countries_iso_code_2'] == "CA" || $order->delivery['country']['countries_iso_code_2'] == "PR" ) {
+			$state = '';
+			if( !empty(  $order->delivery['zone_id'] ) ) {
+				$state = zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], ''); // Recipient state
+				if ($state == "QC") {
+					$state = "PQ";
+				}
 			}
 			$data .= '16,"' . $state . '"'; // Recipient state
 		}
@@ -394,7 +397,7 @@ class fedex {
 			$data .= '1415,"' . $this->insurance . '"'; // Insurance value
 			$data .= '68,"USD"'; // Insurance value currency
 		}
-		if ($order->delivery['company'] == '' && MODULE_SHIPPING_FEDEX_RESIDENTIAL == 0) {
+		if (empty( $order->delivery['company'] ) && MODULE_SHIPPING_FEDEX_RESIDENTIAL == 0) {
 			$data .= '440,"Y"'; // Residential address
 		}else {
 			$data .= '440,"N"'; // Business address, use if adding a residential surcharge
