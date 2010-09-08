@@ -283,7 +283,10 @@ class CommerceCustomer extends BitBase {
 				$whereSql = " AND `customers_id`=?";
 				array_push( $bindVars, $this->mCustomerId );
 			}
-			$query = "SELECT * FROM " . TABLE_ADDRESS_BOOK . " WHERE `address_book_id`=? $whereSql";
+			$query = "SELECT * 
+					  FROM " . TABLE_ADDRESS_BOOK . " cab
+						INNER JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id`=cab.`entry_country_id`)
+					  WHERE `address_book_id`=? $whereSql";
 			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
 				$ret = $rs->fields;
 			}
