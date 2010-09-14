@@ -113,11 +113,13 @@
 				$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
 				$sqlFunc = 'getAssoc';
 			}
+
 			BitBase::prepGetList( $pParamHash );
-			$sql = "SELECT $selectSql co.`customers_id`, SUM( co.`order_total`) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
+			$sql = "SELECT $selectSql co.`customers_id`, uu.`registration_date`, SUM( co.`order_total`) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 					FROM " . TABLE_ORDERS . " co 
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (co.`customers_id`=uu.`user_id`)
 					WHERE co.`orders_status`>0 $whereSql 
-					GROUP BY co.`customers_id` $groupSql
+					GROUP BY co.`customers_id`, uu.`registration_date` $groupSql
 					ORDER BY SUM( co.`order_total`) DESC";
 			if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
 				while( $row = $rs->fetchRow() ) {
