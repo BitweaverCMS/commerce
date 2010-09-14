@@ -14,7 +14,7 @@ $listHash = array( 'period' => 'Y-\WeekW', 'max_records' => 13 );
 $statData = $stats->getAggregateRevenue( $listHash );	
 $gBitSmarty->assign_by_ref( 'stats', $statData );
 $gBitSmarty->assign( 'revenueTitle', 'Weekly' );
-$gBitSmarty->assign( 'statPeriod', 'Y-W' );
+$gBitSmarty->assign( 'statPeriod', 'Y-\WeekW' );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_revenue_inc.tpl' );
 
 $listHash = array( 'period' => 'Y-m', 'max_records' => 13 );
