@@ -530,26 +530,6 @@
 	}
 
 
-////
-// return an array with country zones
-	function zen_get_country_zones($country_id) {
-		global $gBitDb;
-		$zones_array = array();
-		$zones = $gBitDb->Execute("SELECT `zone_id`, `zone_name`
-													 FROM " . TABLE_ZONES . "
-													 WHERE `zone_country_id` = '" . (int)$country_id . "'
-													 ORDER BY `zone_name`");
-
-		while (!$zones->EOF) {
-			$zones_array[] = array('id' => $zones->fields['zone_id'],
-														 'text' => $zones->fields['zone_name']);
-			$zones->MoveNext();
-		}
-
-		return $zones_array;
-	}
-
-
 	function zen_prepare_country_zones_pull_down($country_id = '') {
 // preset the width of the drop-down for Netscape
 		$pre = '';
