@@ -125,7 +125,9 @@
 	<tbody>
 	{foreach from=$valuableCustomers item=cust key=custId}
 	<tr>
-		<td class="item">{displayname user_id=$custId}</td>
+		<td class="item">{displayname user_id=$custId}
+		<div class="date floatright">Reg. {$cust.registration_date|bit_short_date}</div>
+</td>
 		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?user_id={$custId}">{$cust.total_orders}</a></td>
 		<td class="item currency">${$cust.total_revenue|round:2}</td>
 		<td class="item currency">${math equation="round(x/y,2)" x=$cust.total_revenue y=$cust.total_orders}</td>
