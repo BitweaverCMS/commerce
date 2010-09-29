@@ -60,7 +60,7 @@ class order extends CommerceOrderBase {
 	}
 
 	function getList( $pListHash ) {
-		global $gBitDb;
+		global $gBitDb, $gBitSystem;
 		$bindVars = array();
 		$ret = array();
 		$selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -131,6 +131,12 @@ class order extends CommerceOrderBase {
 		if( !empty( $pListHash['period'] ) && !empty( $pListHash['timeframe'] ) ) {
 			$whereSql .= ' AND '.$gBitDb->mDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pListHash['timeframe'];
+		}
+
+		if( $gBitSystem->isPackageActive( 'stats' ) ) {
+			$selectSql .= " , sru.`referer_url` ";
+			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
+						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 		}
 
 		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql

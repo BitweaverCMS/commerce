@@ -116,7 +116,7 @@
 	<caption>{tr}Most Valuable Customers{/tr}</caption>
 	<thead>
 	<tr>
-		<th>{tr}Customer{/tr}</th>
+		<th>{tr}Customer{/tr} [<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$smarty.request.period}&timeframe={$smarty.request.timeframe}&referer=all">Referers</a>]</th>
 		<th>{tr}Orders{/tr}</th>
 		<th>{tr}Amount{/tr}</th>
 		<th>{tr}Avg. Size{/tr}</th>
@@ -126,16 +126,22 @@
 	{foreach from=$valuableCustomers item=cust key=custId}
 	<tr>
 		<td class="item">{displayname user_id=$custId}
-		<div class="date floatright">Reg. {$cust.registration_date|bit_short_date}</div>
-</td>
+		</td>
 		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?user_id={$custId}">{$cust.total_orders}</a></td>
 		<td class="item currency">${$cust.total_revenue|round:2}</td>
 		<td class="item currency">${math equation="round(x/y,2)" x=$cust.total_revenue y=$cust.total_orders}</td>
 	</tr>
 	<tr>
-		<td class="small">{$custId|list_customers_interests}</td>
+		<td colspan="4">
+			<span class="date">Reg. {$cust.registration_date|bit_short_date}</span> 
+			{if $cust.referer_url}<a href="{$cust.referer_url}" target="_new" title="{$cust.referer_url|escape}">{$cust.referer_url|stats_referer_display_short|escape}</a>{/if}
+<br/><span class="small">{$custId|list_customers_interests}</span>
+		</td>
 	</tr>
 	{/foreach}
+	<tr>
+		<td colspan="4"></td>
+	</tr>
 	</tbody>
 </table>
 </div>
