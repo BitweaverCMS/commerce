@@ -75,11 +75,11 @@ function getShippingQuotes( pOrderId ) {
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>{if $ordersProduct.products_version > 1}, v{$ordersProduct.products_version}{/if}</td>
-<td class="dataTableContent" valign="top">{$ordersProduct.model}</td>
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
+<td class="dataTableContent" valign="top">{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}</td>
 <td class="dataTableContent" align="right" valign="top">{if $ordersProduct.tax}{$ordersProduct.tax|zen_display_tax_value}%{/if}</td>
-<td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}
-	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+<td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}}{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
 	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
 </td>
 <td class="dataTableContent" align="right" valign="top">
@@ -88,15 +88,15 @@ function getShippingQuotes( pOrderId ) {
 	{if $ordersProduct.onetime_charges}
 		{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax)}
 		{if $ordersProduct.onetime_charges != $onetimePlusTax}
-			<br /> {$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}
+			<br /> {$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY} /{$currencies->format($onetimePlusTax,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 		{/if}
 	{/if}
 {/if}
 </td>
 <td class="dataTableContent" align="right" valign="top">
 	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
-	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}
-	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY} /{$currencies->format($finalQty,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
 	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
 </td>
 <td class="dataTableContent" align="right" valign="top">
