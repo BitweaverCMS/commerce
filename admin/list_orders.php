@@ -50,10 +50,6 @@ if( !empty( $_REQUEST['timeframe'] ) ) {
 if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 	$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
 	$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
-} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-	unset( $_SESSION['orders_status_id'] );
-} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
-	$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
 }
 
 if( !empty( $_REQUEST['search'] ) ) {
