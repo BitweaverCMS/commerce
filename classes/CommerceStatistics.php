@@ -13,6 +13,71 @@
 //
 class CommerceStatistics extends BitBase {
 
+// {{{ =================== Customers ====================
+
+	function getAbandonedCustomers( &$pParamHash ) {
+		return $this->getCustomerActivity( $pParamHash, FALSE );
+	}
+	function getRetainedCustomers( &$pParamHash ) {
+		return $this->getCustomerActivity( $pParamHash );
+	}
+
+	function getCustomerActivity( &$pParamHash, $pRetained=TRUE ) {
+		$sortMode = '';
+		if( !empty( $pParamHash['sort_mode'] ) ) {
+			switch( $pParamHash['sort_mode'] ) {
+				case 'orders_asc':
+					$sortMode = 'COUNT(`orders_id`) ASC, ';
+					break;
+				case 'orders_desc':
+					$sortMode = 'COUNT(`orders_id`) DESC, ';
+					break;
+				case 'first_purchase_asc':
+					$sortMode = 'MIN(co.`date_purchased`) ASC, ';
+					break;
+				case 'first_purchase_desc':
+					$sortMode = 'MIN(co.`date_purchased`) DESC, ';
+					break;
+				case 'last_purchase_asc':
+					$sortMode = 'MAX(co.`date_purchased`) ASC, ';
+					break;
+				case 'last_purchase_desc':
+					$sortMode = 'MAX(co.`date_purchased`) DESC, ';
+					break;
+				case 'revenue_asc':
+					$sortMode = 'SUM(co.`order_total`) DESC, ';
+					break;
+			}
+		} else {
+			$pParamHash['sort_mode'] = 'revenue_desc';
+		}
+
+		$comparison = $pRetained ? '<' : '>';
+
+		$sortMode .= 'SUM(co.`order_total`) DESC';
+
+		BitBase::prepGetList( $pParamHash );
+
+		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`
+				FROM com_orders co 
+					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
+				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > interval '2 years' 
+				GROUP BY  uu.`user_id`,uu.`real_name`, uu.`login`
+				HAVING NOW() - MIN(co.date_purchased) > interval '2 years' AND NOW() - MAX(co.date_purchased) ".$comparison." interval '2 years' ORDER BY $sortMode";
+		if( $rs = $this->mDb->query( $sql ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$ret['customers'][$row['user_id']] = $row;
+				@$ret['totals']['orders'] += $row['orders'];
+				@$ret['totals']['revenue'] += $row['revenue'];
+				@$ret['totals']['customers']++;
+			}
+		}
+		return $ret;
+	}
+
+// }}}
+
+// {{{ =================== Revenue ====================
 	function getAggregateRevenue( $pParamHash ) {
 		if( empty( $pParamHash['period'] ) ) {
 			$pParamHash['period'] = 'Y-m';
@@ -424,3 +489,6 @@ function commerce_statistics_referer_sort( $a, $b, $pSort='revenue', $pDirection
     return ( $a[$pSort] < $b[$pSort] ) ? $pDirection * -1 : $pDirection * 1;
 }
 
+// }}} 
+
+/* vim: :set fdm=marker : */

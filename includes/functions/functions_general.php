@@ -981,8 +981,6 @@
     return $zp_result;
   }
 
-
-
 /////////////////////////////////////////////
 ////
 // call additional function files

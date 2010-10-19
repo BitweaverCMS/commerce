@@ -1,5 +1,4 @@
 <?php
-//
 // +----------------------------------------------------------------------+
 // | bitcommerce                                                          |
 // +----------------------------------------------------------------------+
@@ -9,8 +8,6 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id$
-//
 
 require('includes/application_top.php');
 
@@ -24,7 +21,7 @@ if( count( $_POST ) > 2 ) {
 }
 
 $_REQUEST['max_records']  = -1;
-if( $_REQUEST['period'] ) {
+if( !empty( $_REQUEST['period'] ) ) {
 	$listHash['period'] = $_REQUEST['period'];
 }
 
