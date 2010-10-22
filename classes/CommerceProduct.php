@@ -1171,7 +1171,7 @@ $start = microtime( TRUE );
 			if( is_numeric( $pListHash['category_id'] ) ) {
 				$joinSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
 				$whereSql .= " AND c.`categories_id`=? ";
-				array_push( $bindVars, $pListHash['category_id'] );
+				array_push( $bindVars, (int)$pListHash['category_id'] );
 			}
 		}
 
