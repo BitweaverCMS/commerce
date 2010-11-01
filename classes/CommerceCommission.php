@@ -13,6 +13,7 @@
 //
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommissionBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php' );
 
 define( 'COMMISSION_TYPE_PRODUCT_SALE', 'product sale' );
 
