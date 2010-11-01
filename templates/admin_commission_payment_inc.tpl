@@ -1,4 +1,3 @@
-
 {if !$commission.payment_method}
 	<div class="row">
 		{formlabel label="Payment Method"}
@@ -40,6 +39,12 @@
 			{formlabel label="Check Number"}
 			{forminput}
 				<input type="text" name="payment_reference_number" value="" />
+			{/forminput}
+		</div>
+		<div class="row">
+			{formlabel label="Check Address"}
+			{forminput}
+			{$commission.user_id|@zen_address_label:$commission.commissions_check_address:true}
 			{/forminput}
 		</div>
 	{else}
