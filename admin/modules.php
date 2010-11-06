@@ -296,7 +296,7 @@
           $keys .= '<b>' . $value['title'] . '</b><br>';
           if ($value['use_function']) {
             $use_function = $value['use_function'];
-            if (ereg('->', $use_function)) {
+			if( strpos( $use_function, '->' ) !== FALSE ) {
               $class_method = explode('->', $use_function);
               if (!is_object(${$class_method[0]})) {
                 include(DIR_WS_CLASSES . $class_method[0] . '.php');
