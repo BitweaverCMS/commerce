@@ -142,7 +142,7 @@ define('BOX_TAXES_TAX_RATES', 'Tax Rates');
 define('BOX_HEADING_REPORTS', 'Reports');
 define('BOX_REPORTS_PRODUCTS_VIEWED', 'Products Viewed');
 define('BOX_REPORTS_PRODUCTS_PURCHASED', 'Products Purchased');
-define('BOX_REPORTS_ORDERS_TOTAL', 'Customer Orders-Total');
+define('BOX_REPORTS_ORDERS_TOTAL', 'Customer Orders');
 define('BOX_REPORTS_PRODUCTS_LOWSTOCK', 'Products Low Stock');
 define('BOX_REPORTS_CUSTOMERS_REFERRALS', 'Customers Referral');
 
