@@ -58,6 +58,7 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$gBitSmarty->assign_by_ref( 'valuableCustomers' , $stats->getMostValuableCustomers( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue By Timeframe' , array( 'display_mode' => 'admin' ));
 } else {
+	$listHash['max_records'] = -1;
 	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );
 	$gBitSmarty->assign_by_ref( 'stats', $stats->getAggregateRevenue( $listHash ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
