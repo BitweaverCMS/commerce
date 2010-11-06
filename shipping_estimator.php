@@ -108,7 +108,7 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 	// we are unregistered, or have no addresses
 	$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
 	// used as a check below for existence of states
-	$stateMenu = zen_get_country_zone_list( 'zone_id', $order->delivery['country']['countries_id'], $_SESSION['cart_zone_id'] );
+	$stateMenu = zen_get_country_zone_list( 'zone_id', $order->delivery['country']['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
 	$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
 
 }
