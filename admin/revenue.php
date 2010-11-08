@@ -25,6 +25,11 @@ if( !empty( $_REQUEST['period'] ) ) {
 	$listHash['period'] = $_REQUEST['period'];
 }
 
+if( isset( $_REQUEST['compare'] ) && is_array( $_REQUEST['compare'] ) ) {
+	// flip array for easy lookup
+	$_REQUEST['compare'] = array_flip( $_REQUEST['compare'] );
+}
+
 $stats = new CommerceStatistics();
 if( !empty( $_REQUEST['interests_id'] ) ) {
 	$interests = $gBitCustomer->getInterests();
