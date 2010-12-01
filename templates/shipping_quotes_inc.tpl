@@ -2,14 +2,15 @@
 <dl>
 {section name=ix loop=$quotes}
 	{if $quotes[ix].methods || $quotes[ix].error}
-	<dt>
-	</dt>
 		{counter assign=radioButtons start=0}
 		<div class="row">
-			<div class="formlabel">{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{else}{$quotes[ix].module for=""}{/if}</div>
+			<dt class="formlabel">{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{else}{$quotes[ix].module for=""}{/if}</dt>
 			{forminput}
-		{formfeedback error=$quotes[ix].error}
+				{formfeedback error=$quotes[ix].error}
 				{if $quotes[ix].methods}
+					{if $quotes[ix].weight}
+						<dd>{$quotes[ix].weight}</dd>
+					{/if}
 					{section name=jx loop=$quotes[ix].methods}
 						<dd>
 						{* set the radio button to be checked if it is the method chosen *}
