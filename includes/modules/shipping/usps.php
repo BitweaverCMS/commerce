@@ -496,7 +496,7 @@ class usps {
 						$time = $tregs[1];
 						$time = preg_replace('/Weeks$/', tra( 'Weeks' ), $time);
 						$time = preg_replace('/Days$/', tra( 'Days' ), $time);
-						$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
+						$time = preg_replace('/Day$/', tra( 'Day' ), $time);
 
 						if( !in_array($service, $allowed_types) || isset($this->service) && ($service != $this->service) ) {
 							continue;
