@@ -430,7 +430,7 @@ $this->debug(0);
 				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`)";
 
 		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
-			while( $row = $rs->fetchRow() ) {
+			while( $rs && $row = $rs->fetchRow() ) {
 				if( $urlHash = parse_url( $row['referer_url'] ) ) {
 					@$ret['hosts'][$urlHash['host']]['revenue'] += $row['total_revenue'];
 					@$ret['hosts'][$urlHash['host']]['units'] += $row['total_units'];
