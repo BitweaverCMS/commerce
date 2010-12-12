@@ -25,6 +25,7 @@ function editAddress( pAddress ) {
 	{$order->customer.telephone}<br/>
 {/if}
 		<a href="mailto:{$order->customer.email_address}">{$order->customer.email_address}</a><br/>
+		{if $order->customer.referer_url}{$order->customer.referer_url|stats_referer_display_short}<br/>{/if}
 		IP: {$order->info.ip_address}<br/>
 		{if $customerStats.orders_count == 1}<em>First Order</em>
 		{else}
