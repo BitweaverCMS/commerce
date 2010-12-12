@@ -85,6 +85,10 @@ if( !empty( $_REQUEST['export'] ) ) {
 				if( !$headerSet ) { $header[] = 'country'; }
 				$csvOutput[] = ucwords( strtolower( trim( $row['countries_name'] ) ) );
 			}
+			if( !empty( $_REQUEST['content_count'] ) ) {
+				if( !$headerSet ) { $header[] = 'content_count'; }
+				$csvOutput[] = $gBitDb->getOne( "SELECT COUNT(*) FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `user_id`=?", array( $row['user_id'] ) );
+			}
 			if( !empty( $_REQUEST['total_revenue'] ) ) {
 				if( !$headerSet ) { $header[] = 'total_revenue'; }
 				$csvOutput[] = round( $row['total_revenue'], 2 );

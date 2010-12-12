@@ -103,6 +103,13 @@
 	{/forminput}
 </div>
 <div class="row">
+	{formlabel label="Content Created Count"}
+	{forminput}
+		<input type="checkbox" name="content_count" value="y" checked="checked" />
+		{formhelp note=""}
+	{/forminput}
+</div>
+<div class="row">
 	{formlabel label="Registration Interests"}
 	{forminput}
 		<input type="checkbox" name="interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />
