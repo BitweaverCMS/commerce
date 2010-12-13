@@ -1,21 +1,21 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
+// |zen-cart Open Source E-commerce											
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
+// | Copyright (c) 2003 The zen-cart developers								
+// |																		
+// | http://www.zen-cart.com/index.php										
+// |																		
+// | Portions Copyright (c) 2003 osCommerce									
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
+// | This source file is subject to version 2.0 of the GPL license,			
+// | that is bundled with this package in the file LICENSE, and is			
+// | available through the world-wide-web at the following url:				
+// | http://www.zen-cart.com/license/2_0.txt.								
+// | If you did not receive a copy of the zen-cart license and are unable 
+// | to obtain it through the world-wide-web, please send a note to			
+// | license@zen-cart.com so we can mail you a copy immediately.			
 // +----------------------------------------------------------------------+
 //	$Id$
 //
@@ -72,17 +72,30 @@
 
 	switch ($getAction) {
 	case 'report':
-		BitBase::prepGetList( $_REQUEST );
-		if( empty ( $_REQUEST['listInfo']['sort_mode'] ) ) {
-			$_REQUEST['listInfo']['sort_mode'] = 'redeem_date_desc';
+		// pagination sucks for pages like this
+		$_REQUEST['max_records'] = 1000;
+		if( empty ( $_REQUEST['sort_mode'] ) ) {
+			$_REQUEST['sort_mode'] = 'redeem_date_desc';
 		}
-		$sql = "SELECT ccrt.`unique_id`, ccrt.*,cot.*,uu.*
+		BitBase::prepGetList( $_REQUEST );
+
+		$joinSql = '';
+		$selectSql = '';	
+		if( $gBitSystem->isPackageActive( 'stats' ) ) {
+			$joinSql .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
+						  LEFT OUTER JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (srum.`referer_url_id`=sru.`referer_url_id`)";
+			$selectSql .= ", sru.`referer_url`";
+		}
+		$sql = "SELECT ccrt.`unique_id`, ccrt.`order_id`, ccrt.`redeem_ip`, ccrt.`redeem_date`, cot.`orders_value`, co.`order_total`, uu.`user_id`, uu.`login`, uu.`real_name`, uu.`email`, COUNT(co.`orders_id`) AS `previous_orders`, `redeem_date` - MIN(co.`date_purchased`) AS `customers_age` $selectSql
 				FROM " . TABLE_COUPON_REDEEM_TRACK . " ccrt
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (ccrt.`customer_id`=uu.`user_id`)
+					LEFT OUTER JOIN " . TABLE_ORDERS . " co ON (uu.`user_id`=co.`customers_id` AND co.`date_purchased`<=ccrt.`redeem_date`)
 					LEFT OUTER JOIN " . TABLE_COUPONS . " cc ON (ccrt.`coupon_id`=cc.`coupon_id`)
 					LEFT OUTER JOIN " . TABLE_ORDERS_TOTAL . " cot ON (ccrt.`order_id`=cot.`orders_id` AND cot.`class`='ot_coupon' AND UPPER(cot.`title`) LIKE '%'||UPPER(cc.`coupon_code`)||'%')
+					$joinSql
 				WHERE ccrt.`coupon_id` = ?
-				ORDER BY ".$gBitDb->convertSortmode( $_REQUEST['listInfo']['sort_mode'] );
+				GROUP BY ccrt.`unique_id`, ccrt.`order_id`, ccrt.`redeem_ip`, ccrt.`redeem_date`, cot.`orders_value`, co.`order_total`, uu.`user_id`, uu.`login`, uu.`real_name`, uu.`email` $selectSql
+				ORDER BY ".$gBitDb->convertSortmode( $_REQUEST['sort_mode'] );
 		$bindVars = array( $_REQUEST['cid'] );
 
 		if( empty( $_REQUEST['page'] ) ) {
@@ -92,6 +105,9 @@
 		$_REQUEST['offset'] = ($_REQUEST['page'] ? (($_REQUEST['page'] -1) * $_REQUEST['max_records']) : 0);
 		if( $rs = $gBitDb->query( $sql, $bindVars, $_REQUEST['max_records'], $_REQUEST['offset'] ) ) {
 			while( $row = $rs->fetchRow() ) {
+				$orderHistory = $gBitDb->getRow( "SELECT COUNT(`orders_id`) AS `previous_orders`, MIN(`date_purchased`) AS `first_purchase_date` FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `date_purchased` <= ?", array( $row['user_id'], $row['redeem_date'] ) ); 
+				$row['previous_orders'] = $orderHistory['previous_orders'];
+				$row['customers_age'] = substr( $row['customers_age'], 0, strrpos( $row['customers_age'], ' ' ));
 				$redeemList[$row['unique_id']] = $row;
 			}
 			$_REQUEST['listInfo']['page_records'] = $rs->RecordCount();
