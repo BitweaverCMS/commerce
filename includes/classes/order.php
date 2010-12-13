@@ -180,7 +180,7 @@ class order extends CommerceOrderBase {
 						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 		}
 
-		$order_query = "SELECT * $selectSql
+		$order_query = "SELECT co.*, uu.*, cpccl.* $selectSql
 						FROM " . TABLE_ORDERS . " co 
 							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`) 
 							$joinSql
