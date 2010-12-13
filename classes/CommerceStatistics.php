@@ -118,6 +118,7 @@ class CommerceStatistics extends BitBase {
 		$ret = array();
 
 		$bindVars = array();
+		$selectSql = '';
 		$whereSql = '';
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -429,33 +430,32 @@ $this->debug(0);
 				GROUP BY sru.`referer_url`, co.`customers_id`
 				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`)";
 
-		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
-			while( $rs && $row = $rs->fetchRow() ) {
-				if( $urlHash = parse_url( $row['referer_url'] ) ) {
-					@$ret['hosts'][$urlHash['host']]['revenue'] += $row['total_revenue'];
-					@$ret['hosts'][$urlHash['host']]['units'] += $row['total_units'];
-					@$ret['hosts'][$urlHash['host']]['orders'] += $row['total_orders'];
-					@$ret['hosts'][$urlHash['host']]['customers']++;
-					$searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE));
-					if( $searchTerm ) {
-						parse_str( $urlHash['query'] );
-						if( !empty( $$searchTerm ) ) {	
-							$urlKey = $$searchTerm;
-						}
-					} else {
-						$urlKey = $row['referer_url'];
-						@$ret['hosts'][$urlHash['host']]['referer_urls'][$row['referer_url']]++;
+		$rows = $this->mDb->getAll( $sql, $bindVars );
+		foreach( $rows as $row ) {
+			if( $urlHash = parse_url( $row['referer_url'] ) ) {
+				@$ret['hosts'][$urlHash['host']]['revenue'] += $row['total_revenue'];
+				@$ret['hosts'][$urlHash['host']]['units'] += $row['total_units'];
+				@$ret['hosts'][$urlHash['host']]['orders'] += $row['total_orders'];
+				@$ret['hosts'][$urlHash['host']]['customers']++;
+				$searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE));
+				if( $searchTerm ) {
+					parse_str( $urlHash['query'] );
+					if( !empty( $$searchTerm ) ) {	
+						$urlKey = $$searchTerm;
 					}
-					@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['revenue'] += $row['total_revenue'];
-					@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['units'] += $row['total_units'];
-					@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['orders'] += $row['total_orders'];
-					@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['customers'] ++;
-
-					@$ret['totals']['revenue'] += $row['total_revenue'];
-					@$ret['totals']['units'] += $row['total_units'];
-					@$ret['totals']['orders'] += $row['total_orders'];
-					@$ret['totals']['customers']++;
+				} else {
+					$urlKey = $row['referer_url'];
+					@$ret['hosts'][$urlHash['host']]['referer_urls'][$row['referer_url']]++;
 				}
+				@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['revenue'] += $row['total_revenue'];
+				@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['units'] += $row['total_units'];
+				@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['orders'] += $row['total_orders'];
+				@$ret['hosts'][$urlHash['host']]['refs'][$urlKey]['customers'] ++;
+
+				@$ret['totals']['revenue'] += $row['total_revenue'];
+				@$ret['totals']['units'] += $row['total_units'];
+				@$ret['totals']['orders'] += $row['total_orders'];
+				@$ret['totals']['customers']++;
 			}
 		}
 

@@ -167,13 +167,23 @@ class order extends CommerceOrderBase {
 	}
 
 	function load($order_id) {
-		global $gBitDb;
+		global $gBitDb, $gBitSystem;
+
+		$selectSql = '';
+		$joinSql = '';
 
 		$order_id = zen_db_prepare_input($order_id);
 
-		$order_query = "SELECT * 
+		if( $gBitSystem->isPackageActive( 'stats' ) ) {
+			$selectSql .= " , sru.`referer_url` ";
+			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
+						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
+		}
+
+		$order_query = "SELECT * $selectSql
 						FROM " . TABLE_ORDERS . " co 
 							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`) 
+							$joinSql
 							LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`) 
 						WHERE co.`orders_id` = ?";
 		$order = $gBitDb->query( $order_query, array( $order_id ) );
@@ -236,6 +246,10 @@ class order extends CommerceOrderBase {
 								'format_id' => $order->fields['customers_address_format_id'],
 								'telephone' => $order->fields['customers_telephone'],
 								'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
+
+		if( !empty( $order->fields['referer_url'] ) ) {
+			$this->customer['referer_url'] = $order->fields['referer_url'];
+		}
 
 		$this->delivery = array('name' => $order->fields['delivery_name'],
 								'company' => $order->fields['delivery_company'],

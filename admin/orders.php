@@ -83,7 +83,7 @@
 		$optionsList = $productManager->getOptions();
 		$optionsList[0] = "Add new order option...";
 		$gBitSmarty->assign_by_ref( 'optionsList', $optionsList );
- 
+
 		$gBitSmarty->assign_by_ref( 'order', $order ); 
 		$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
 		if( !empty( $_REQUEST['del_ord_prod_att_id'] ) ) {
