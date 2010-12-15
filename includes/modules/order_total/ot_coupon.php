@@ -124,6 +124,7 @@
 					}
 				}
 				if (!$foundvalid) {
+bt(); die;
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$_POST['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
@@ -189,73 +190,80 @@
 						$od_amount['type'] = 'S';
 					} else {
 						if ($coupon->getField( 'coupon_type' ) == 'P') {
-							$od_amount['total'] = zen_round($order_total*($coupon->getField( 'coupon_amount' )/100), 2);
+							// Max discount is a sum of percentages of valid products
+							$totalDiscount = 0;
 						} else {
-							$od_amount['total'] = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
+							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
 						}
-						if ($od_amount['total']>$order_total) {
-							$od_amount['total'] = $order_total;
-						}
+						$runningDiscount = 0;
 						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-							if ($this->is_product_valid( $productKey, $_SESSION['cc_id'])) {
+							if( $this->is_product_valid( $productKey, $_SESSION['cc_id']) && $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
+								// _P_ercentage discount
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
-									switch ($this->calculate_tax) {
-										case 'Credit Note':
-											$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-											$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-											$od_amount[$tax_desc] = $od_amount['total'] / 100 * $tax_rate;
-											$od_amount['tax'] += $od_amount[$tax_desc];
-										break;
-										case 'Standard':
-											$ratio = $od_amount['total']/$this->get_order_total();
-											foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-												if( $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
-													if( $this->is_product_valid( $productKey, $_SESSION['cc_id'] ) ) {
-														$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-														$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-														if ($tax_rate > 0) {
-															if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
-															$od_amount['tax'] += $od_amount[$tax_desc];
-														}
-													}
-												}
-											}
-										break;
-										default:
+									$itemDiscount = round( ($productHash['final_price'] * $productHash['products_quantity']) * ($coupon->getField( 'coupon_amount' )/100), 2 );
+									$totalDiscount += $itemDiscount;
+									if( $runningDiscount < $totalDiscount ) {
+										$runningDiscount += $itemDiscount;
 									}
-								}
-								if ($coupon->getField( 'coupon_type' ) == 'F') {
+									if( $runningDiscount > $totalDiscount ) {
+										$runningDiscount = $totalDiscount;
+										$itemDiscount = 0;
+									}
 									switch ($this->calculate_tax) {
 										case 'Credit Note':
 											$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
 											$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-											$od_amount[$tax_desc] = $od_amount['total'] / 100 * $tax_rate;
+											$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
 											$od_amount['tax'] += $od_amount[$tax_desc];
-										break;
+											break;
 										case 'Standard':
-											$ratio = $od_amount['total']/$this->get_order_total();
-											foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-												if( $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
-													$t_prid = zen_get_prid( $productKey );
-													$cc_result = $gBitDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
+											$ratio = $runningDiscount / $this->get_order_total();
+											$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+											$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+											if ($tax_rate > 0) {
+												if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
+												$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+												$od_amount['tax'] += $od_amount[$tax_desc];
+											}
+											break;
+									}
+								// _F_ixed discount
+								} elseif ($coupon->getField( 'coupon_type' ) == 'F') {
+									switch ($this->calculate_tax) {
+										case 'Credit Note':
+											$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
+											$od_amount['tax'] += $od_amount[$tax_desc];
+											break;
+										case 'Standard':
+											$ratio = $runningDiscount/$this->get_order_total();
+											$t_prid = zen_get_prid( $productKey );
+											$cc_result = $gBitDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
 
-													if ($this->is_product_valid($productHash['id'], $_SESSION['cc_id'])) {
-														$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-														$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-														if ($tax_rate > 0) {
-															if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-															$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
-															$od_amount['tax'] += $od_amount[$tax_desc];
-														}
-													}
+											if ($this->is_product_valid($productHash['id'], $_SESSION['cc_id'])) {
+												if( $runningDiscount < $totalDiscount ) {
+													$runningDiscount += ($productHash['final_price'] * $productHash['products_quantity']);
+												}
+												if( $runningDiscount > $totalDiscount ) {
+													$runningDiscount = $totalDiscount;
+												}
+												$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+												$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+												if ($tax_rate > 0) {
+													if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
+													$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+													$od_amount['tax'] += $od_amount[$tax_desc];
 												}
 											}
-										break;
-										default:
+											break;
 									}
 								}
 							}
+						}
+						$od_amount['total'] = $runningDiscount;
+						if ($od_amount['total']>$order_total) {
+							$od_amount['total'] = $order_total;
 						}
 					}
 				}
@@ -273,10 +281,10 @@
 			$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
 			$couponsRs = $gBitDb->query($coupons_query, array( $coupon_id ) );
 
-			$product_query = "SELECT `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?";
-			$productModel = $gBitDb->getOne($product_query, array( $product_id ) );
+			
+			$productInfo = $gBitDb->getRow( "SELECT `master_categories_id`, `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( $product_id ) );
 
-			if (preg_match('/^GIFT/', $productModel)) {
+			if (preg_match('/^GIFT/', $productInfo['products_model'])) {
 				return false;
 			}
 
@@ -287,28 +295,23 @@
 					$product_valid = false;
 				}
 
-				if (($coupons['category_id'] !=0) && (!zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
-					$product_valid = false;
+				if( !empty( $coupons['category_id'] ) ) {
+					// check master cat quickly, or go deep diving
+					if ( ($productInfo['master_categories_id'] ==  $coupons['category_id']) || zen_product_in_category($product_id, $coupons['category_id']) ) {
+						$product_valid = $coupons['coupon_restrict']=='N';
+					} else {
+						if( $coupons['coupon_restrict']=='N' ) {
+							$product_valid = false;
+						}
+					}
+				} else {
+					if( $coupons['product_id'] == (int)$product_id ) {
+						$product_valid = $coupons['coupon_restrict']=='N';
+					}
 				}
-
-				if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='N')) {
-					$product_valid = true;
+				if ($product_valid == true) {
+					break;
 				}
-
-				if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='N')) {
-					$product_valid = true;
-				}
-
-				if (($coupons['product_id'] == (int)$product_id) && ($coupons['coupon_restrict']=='Y')) {
-					$product_valid = false;
-				}
-
-				if (($coupons['category_id'] !=0) && (zen_product_in_category($product_id, $coupons['category_id'])) && ($coupons['coupon_restrict']=='Y')) {
-					$product_valid = false;
-				}
-
-				if ($product_valid == true) break;
-				
 			}
 		}
 		return $product_valid;
