@@ -124,7 +124,6 @@
 					}
 				}
 				if (!$foundvalid) {
-bt(); die;
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$_POST['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
