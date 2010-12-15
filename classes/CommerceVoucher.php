@@ -110,7 +110,7 @@ class CommerceVoucher extends BitBase {
 			}
 		}
 
-		foreach( array( 'uses_per_coupon', 'uses_per_user', 'coupon_minimum_order', 'restrict_to_shipping', 'restrict_to_products', 'restrict_to_categories', 'coupon_start_date', 'coupon_expire_date', 'admin_note' ) as $field ) {
+		foreach( array( 'uses_per_coupon', 'uses_per_user', 'coupon_minimum_order', 'quantity_max', 'restrict_to_shipping', 'restrict_to_products', 'restrict_to_categories', 'coupon_start_date', 'coupon_expire_date', 'admin_note' ) as $field ) {
 			$pParamHash['coupon_store'][$field] = !empty( $pParamHash[$field] ) ? trim( $pParamHash[$field] ) : NULL;
 		}
 
