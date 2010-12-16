@@ -119,12 +119,12 @@
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
 				$foundvalid = FALSE;
 				foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-					if ($this->is_product_valid( $productKey, $coupon->mCouponId ) ) {
+					$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
+					if ($this->is_product_valid( $productHash ) ) {
 						$foundvalid = TRUE;
 					}
 				}
 				if (!$foundvalid) {
-bt(); die;
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$_POST['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
@@ -197,7 +197,8 @@ bt(); die;
 						}
 						$runningDiscount = 0;
 						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-							if( $this->is_product_valid( $productKey, $_SESSION['cc_id']) && $productHash = $gBitCustomer->mCart->getProductHash( $productKey ) ) {
+							$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
+							if( $productHash && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
 								// _P_ercentage discount
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
 									$itemDiscount = round( ($productHash['final_price'] * $productHash['products_quantity']) * ($coupon->getField( 'coupon_amount' )/100), 2 );
@@ -241,7 +242,7 @@ bt(); die;
 											$t_prid = zen_get_prid( $productKey );
 											$cc_result = $gBitDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
 
-											if ($this->is_product_valid($productHash['id'], $_SESSION['cc_id'])) {
+											if ($this->is_product_valid( $productHash, $_SESSION['cc_id'])) {
 												if( $runningDiscount < $totalDiscount ) {
 													$runningDiscount += ($productHash['final_price'] * $productHash['products_quantity']);
 												}
@@ -273,48 +274,68 @@ bt(); die;
 	}
 
 
-	function is_product_valid($pProductKey, $coupon_id) {
+	function is_product_valid( $pProductHash, $coupon_id) {
 		global $gBitDb;
-		$product_valid = false;
-		$product_id = zen_get_prid( $pProductKey );
+		$ret = false;
+
 		if( is_numeric( $coupon_id ) ) {
-			$coupons_query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
-			$couponsRs = $gBitDb->query($coupons_query, array( $coupon_id ) );
+			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
+			if( $rs = $gBitDb->query( $query, array( $coupon_id ) ) ) {
+				// gifts are not valid, so only check non-gifts
+				if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
+					$ret = TRUE;
+					while( $restriction = $rs->fetchRow() ) {
 
-			
-			$productInfo = $gBitDb->getRow( "SELECT `master_categories_id`, `products_model` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( $product_id ) );
+						// specific product_id  - are we exclusive or inclusive?
+						if( !empty( $restriction['product_id'] ) ) {
+							if( $restriction['product_id'] == $pProductHash['products_id'] ) {
+								$ret &= ($restriction['coupon_restrict'] == 'N'); // Exact match
+							} else {
+								$ret &= ($restriction['coupon_restrict'] != 'N');
+							}
+						}
 
-			if (preg_match('/^GIFT/', $productInfo['products_model'])) {
-				return false;
-			}
+						// specific category_id  - are we exclusive or inclusive?
+						if( !empty( $restriction['category_id'] ) ) {
+							// check master cat quickly, or go deep diving
+							if ( ($pProductHash['master_categories_id'] ==  $restriction['category_id']) || zen_product_in_category($pProductHash['products_id'], $restriction['category_id']) ) {
+								$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
+							} else {
+								$ret &= ($restriction['coupon_restrict']!='N');
+							}
+						}
 
-			if( empty( $couponsRs ) ) return true;
-			$product_valid = true;
-			while( $coupons = $couponsRs->fetchRow() ) {
-				if (($coupons['product_id'] != 0) && ($coupons['product_id'] != $product_id)) {
-					$product_valid = false;
-				}
+						// specific product_type_id  - are we exclusive or inclusive?
+						if( !empty( $restriction['product_type_id'] ) ) {
+							// check master cat quickly, or go deep diving
+							if( $restriction['product_type_id'] == $pProductHash['products_type'] ) {
+								$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
+							} else {
+								$ret &= ($restriction['coupon_restrict']!='N');
+							}
+						}
 
-				if( !empty( $coupons['category_id'] ) ) {
-					// check master cat quickly, or go deep diving
-					if ( ($productInfo['master_categories_id'] ==  $coupons['category_id']) || zen_product_in_category($product_id, $coupons['category_id']) ) {
-						$product_valid = $coupons['coupon_restrict']=='N';
-					} else {
-						if( $coupons['coupon_restrict']=='N' ) {
-							$product_valid = false;
+						// specific products_options_values_id  - are we exclusive or inclusive?
+						if( !empty( $restriction['products_options_values_id'] ) ) {
+							if( !empty( $pProductHash['attributes'] ) ) {
+								if( in_array( $restriction['products_options_values_id'], $pProductHash['attributes'] ) ) {
+									$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
+								} else {
+									$ret &= ($restriction['coupon_restrict']!='N');
+								}
+							} else {
+								$ret = FALSE;
+							}
 						}
 					}
+
 				} else {
-					if( $coupons['product_id'] == (int)$product_id ) {
-						$product_valid = $coupons['coupon_restrict']=='N';
-					}
-				}
-				if ($product_valid == true) {
-					break;
+					// no restrictions
+					$ret = TRUE;
 				}
 			}
 		}
-		return $product_valid;
+		return $ret;
 	}
 
 

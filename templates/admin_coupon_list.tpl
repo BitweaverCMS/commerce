@@ -12,6 +12,11 @@
 				<option value="Y" {if $smarty.request.status=='Y'}selected="selected"{/if}>{tr}Active Coupons{/tr}</option>
 				<option value="N" {if $smarty.request.status=='N'}selected="selected"{/if}>{tr}Inactive Coupons{/tr}</option>
 			</select>							
+			<select name="uses" onchange="this.form.submit();">
+				<option value="+" {if $smarty.request.uses=='+'}selected="selected"{/if}>{tr}Multiple Use{/tr}</option>
+				<option value="1" {if $smarty.request.uses=='1'}selected="selected"{/if}>{tr}Single Use{/tr}</option>
+				<option value="" {if empty($smarty.request.uses)}selected="selected"{/if}>All Coupons</option>
+			</select>							
 		</form>
 		<div class="floaticon"><a href="{$smarty.server.PHP_SELF}?action=new" class="button">{tr}Create Coupon{/tr}</a></div>
 	</div>

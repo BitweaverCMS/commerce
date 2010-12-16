@@ -490,7 +490,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_restrict' => "
   restrict_id I4 PRIMARY AUTO,
   coupon_id I4,
   product_id I4,
-  category_id I4,
+  product_type_id I4,
+  products_options_values_id I4,
+  cproductategory_id I4,
   coupon_restrict C(1) NOTNULL default 'N'
 ",
 
@@ -502,6 +504,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   coupon_minimum_order N(8,4),
   coupon_start_date T,
   coupon_expire_date T,
+  quantity_limit I4,
   uses_per_coupon I2 NOTNULL default '1',
   uses_per_user I2,
   restrict_to_products C(255),

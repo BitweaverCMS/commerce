@@ -107,14 +107,18 @@
 			while( $row = $rs->fetchRow() ) {
 				$orderHistory = $gBitDb->getRow( "SELECT COUNT(`orders_id`) AS `previous_orders`, MIN(`date_purchased`) AS `first_purchase_date` FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `date_purchased` <= ?", array( $row['user_id'], $row['redeem_date'] ) ); 
 				$row['previous_orders'] = $orderHistory['previous_orders'];
-				$row['customers_age'] = substr( $row['customers_age'], 0, strrpos( $row['customers_age'], ' ' ));
+				if( !empty( $row['customers_age'] ) ) {
+					$row['customers_age'] = substr( $row['customers_age'], 0, strrpos( $row['customers_age'], ' ' ));
+				} else {
+					$row['customers_age'] = NULL;
+				}
 				$redeemList[$row['unique_id']] = $row;
-				$summary['history'][$row['previous_orders']]['order_count'] = (int)($summary['history'][$row['previous_orders']]['order_count']) + 1;
-				$summary['history'][$row['previous_orders']]['revenue'] += $row['order_total'];
-				$summary['history'][$row['previous_orders']]['discount'] += $row['coupon_value'];
-				$summary['total']['order_count']++;
-				$summary['total']['revenue'] += $row['order_total'];
-				$summary['total']['discount'] += $row['coupon_value'];
+				@$summary['history'][$row['previous_orders']]['order_count'] = (int)($summary['history'][$row['previous_orders']]['order_count']) + 1;
+				@$summary['history'][$row['previous_orders']]['revenue'] += $row['order_total'];
+				@$summary['history'][$row['previous_orders']]['discount'] += $row['coupon_value'];
+				@$summary['total']['order_count']++;
+				@$summary['total']['revenue'] += $row['order_total'];
+				@$summary['total']['discount'] += $row['coupon_value'];
 			}
 			$_REQUEST['listInfo']['page_records'] = $rs->RecordCount();
 			$_REQUEST['cant'] = $gBitDb->getOne( "SELECT COUNT(*) FROM " . TABLE_COUPON_REDEEM_TRACK . " ccrt  WHERE ccrt.`coupon_id` = ?", $bindVars ); 
@@ -129,7 +133,7 @@
 		$_REQUEST['listInfo']['total_pages'] = ceil( $_REQUEST['listInfo']['total_records'] / $_REQUEST['max_records']);
 
 		$gBitSmarty->assign_by_ref( 'redeemList', $redeemList );
-		$title = tra( 'Edit Coupon' ).' : '.$coupon['coupon_code'];
+		$title = tra( 'Coupon Report' ).' : '.$_REQUEST['cid'];
 		$mid = 'bitpackage:bitcommerce/admin_coupon_report.tpl';
 		break;
 	case 'edit':
