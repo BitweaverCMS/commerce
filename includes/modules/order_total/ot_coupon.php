@@ -120,7 +120,7 @@
 				$foundvalid = FALSE;
 				foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
 					$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
-					if ($this->is_product_valid( $productHash ) ) {
+					if ($this->is_product_valid( $productHash, $coupon->mCouponId ) ) {
 						$foundvalid = TRUE;
 					}
 				}
