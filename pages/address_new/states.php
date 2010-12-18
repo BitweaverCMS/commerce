@@ -1,7 +1,7 @@
 <?php
 require_once( '../../../kernel/setup_inc.php' );
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-
+require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
@@ -11,9 +11,7 @@ if( empty( $entry['country_id'] ) ) {
 }
 
 if ( !empty( $entry['country_id'] ) ) {
-	if( $zones = CommerceCustomer::getCountryZones( $entry['country_id'] ) ) {
-		$stateInput = zen_draw_pull_down_menu('state', $zones, '', '', false, TRUE );
-	} else {
+	if( !($stateInput = zen_get_country_zone_list('state', $entry['country_id'], (!empty( $entry['entry_zone_id'] ) ? $entry['entry_zone_id'] : '') )) ) { 
 		$stateInput = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
 	}
 } else {

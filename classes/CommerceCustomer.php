@@ -289,6 +289,7 @@ class CommerceCustomer extends BitBase {
 					  WHERE `address_book_id`=? $whereSql";
 			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
 				$ret = $rs->fields;
+				$ret['country_id'] = $ret['entry_country_id'];
 			}
 		}
 		return( $ret );

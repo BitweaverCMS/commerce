@@ -283,7 +283,7 @@ function zen_get_country_zone_list( $pName, $pCountriesId, $pSelected = '', $pPa
 		}
 	}
 
-    return zen_draw_pull_down_menu($name, $countries_array, $selected, $parameters.' id="addr_country_id" ');
+    return zen_draw_pull_down_menu($name, $countries_array, $selected, $parameters);
   }
 
 	function commerce_country_select( $pParams ) {

@@ -23,42 +23,40 @@ if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
 
+$gBitSmarty->assign( 'address', $entry );
+
 if( empty( $entry['country_id'] ) ) {
 	$entry['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
 }
 
-	global $gBitSmarty, $gBitDb, $gBitCustomer;
-	$gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
-	$gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
-	$gBitSmarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
-	if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
-		$gBitSmarty->assign( 'collectState', TRUE );
-		if ( !empty( $entry['country_id'] ) ) {
-			if( $zones = CommerceCustomer::getCountryZones( $entry['country_id'] ) ) {
-				$stateInput = zen_draw_pull_down_menu('state', $zones, '', '', false, TRUE );
-			} else {
-				$stateInput = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
-			}
-		} else {
-			$stateInput = zen_draw_input_field('state');
+global $gBitSmarty, $gBitDb, $gBitCustomer;
+$gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
+$gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
+$gBitSmarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
+if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
+	$gBitSmarty->assign( 'collectState', TRUE );
+	if ( !empty( $entry['country_id'] ) ) {
+		if( !($stateInput = zen_get_country_zone_list('state', $entry['country_id'], (!empty( $entry['entry_zone_id'] ) ? $entry['entry_zone_id'] : '') )) ) { 
+			$stateInput = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
 		}
-		$gBitSmarty->assign( 'stateInput', $stateInput );
+	} else {
+		$stateInput = zen_draw_input_field('state');
 	}
+	$gBitSmarty->assign( 'stateInput', $stateInput );
+}
 
-	$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'], ' onchange="updateStates(this.value)" ' ) );
+$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'], ' onchange="updateStates(this.value)" ' ) );
 
-	if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {
-		$gBitSmarty ->assign( 'primaryCheck', TRUE );
-	}
+if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {
+	$gBitSmarty ->assign( 'primaryCheck', TRUE );
+}
 
-	if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
-		$gBitSmarty->assign( 'addresses', $addresses );
-	}
+if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
+	$gBitSmarty->assign( 'addresses', $addresses );
+}
 
-	if( !empty( $_SESSION['sendto'] ) ) {
-		$gBitSmarty->assign( 'sendToAddressId', $_SESSION['sendto'] );
-	}
+if( !empty( $_SESSION['sendto'] ) ) {
+	$gBitSmarty->assign( 'sendToAddressId', $_SESSION['sendto'] );
+}
 
-	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/address_new.tpl' );
-?>
-
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/address_new.tpl' );

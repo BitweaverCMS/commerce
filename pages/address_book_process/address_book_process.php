@@ -20,12 +20,18 @@
 // $Id$
 //
 
+if (isset($_GET['edit'])) { 
+	$pageTitle = 'Update Address Book Entry'; 
+} elseif (isset($_GET['delete'])) { 
+	$pageTitle = 'Delete Address Book Entry';
+} else { 
+	$pageTitle = 'New Address Book Entry'; 
+}
 ?>
+<fieldset>
+	<legend><?php print tra( $pageTitle );?></legend>
 <?php if (!isset($_GET['delete'])) echo zen_draw_form('addressbook', zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, (isset($_GET['edit']) ? 'edit=' . $_GET['edit'] : ''), 'SSL'), 'post', 'onsubmit="return check_form(addressbook);"'); ?>
-  <table border="0" width="100%" cellspacing="2" cellpadding="2">
-    <tr>
-      <td class="pageHeading" colspan="3"><?php if (isset($_GET['edit'])) { echo HEADING_TITLE_MODIFY_ENTRY; } elseif (isset($_GET['delete'])) { echo HEADING_TITLE_DELETE_ENTRY; } else { echo HEADING_TITLE_ADD_ENTRY; } ?></td>
-    </tr>
+  <table>
 <?php
   if ($messageStack->size('addressbook') > 0) {
 ?>
@@ -56,7 +62,9 @@
   } else {
 ?>
     <tr>
-      <td class="plainBox" colspan="2"><?php require(DIR_FS_MODULES . 'address_book_details.php'); ?></td>
+      <td colspan="2"> 
+	<?php require_once( BITCOMMERCE_PKG_PATH.'pages/address_new/address_new.php' ); ?>
+		</td>
     </tr>
 <?php
     if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
@@ -77,3 +85,4 @@
   }
 ?>
 </table><?php if (!isset($_GET['delete'])) echo '</form>'; ?>
+</fieldset>

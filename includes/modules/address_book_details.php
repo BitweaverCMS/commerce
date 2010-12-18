@@ -19,5 +19,5 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-  require( DIR_FS_MODULES . 'tpl_modules_address_book_details.php');
-?>
+
+require( DIR_FS_MODULES . 'tpl_modules_address_book_details.php');
