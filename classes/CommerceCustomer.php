@@ -232,7 +232,10 @@ class CommerceCustomer extends BitBase {
 			$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 			if (ACCOUNT_STATE == 'true') {
 				if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
-					if( $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					if( is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+						$pParamHash['address_store']['entry_zone_id'] = $pParamHash['state'];
+						$pParamHash['address_store']['entry_state'] = $zoneName;
+					} elseif( $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 						$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 						$pParamHash['address_store']['entry_zone_id'] = $zoneId;
 					} else {
@@ -396,6 +399,13 @@ class CommerceCustomer extends BitBase {
 	function getZoneCount( $pCountryId ) {
 		$query = "SELECT count(*) as `total` from " . TABLE_ZONES . " WHERE `zone_country_id` = ?";
 		return( $this->mDb->getOne( $query, array( $pCountryId ) ) );
+	}
+
+	function getZoneName( $pZoneId, $pCountryId ) {
+		$zone_query =  "SELECT distinct `zone_name`
+						FROM " . TABLE_ZONES . "
+						WHERE `zone_country_id` = ? AND `zone_id` = ?";
+		return( $this->mDb->getOne($zone_query, array( $pCountryId, $pZoneId ) ) );
 	}
 
 	function getZoneId( $pZone, $pCountryId ) {
