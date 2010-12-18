@@ -1,6 +1,5 @@
 {tr}<span class="inputrequirement">* Required information</span>{/tr}
 {formfeedback error=$errors.customers_id}
-<fieldset>
 {if $collectGender}
 	<div class="row">
 		{formfeedback error=$errors.gender}
@@ -59,8 +58,8 @@
 <div class="row">
 	{formlabel label="State/Province" for=""}
 	{formfeedback error=$errors.state}
-	{forminput}
-		{$statePullDown}<acronym title="{tr}Required{/tr}">*</acronym>
+	{forminput id="addr_state"}
+		{$stateInput}<acronym title="{tr}Required{/tr}">*</acronym>
 	{/forminput}
 </div>
 {/if}
@@ -94,5 +93,17 @@
 	{/forminput}
 </div>
 {/if}
-</fieldset>
 
+{literal}
+<script type="text/javascript">//<![CDATA[
+function updateStates( pCountryId ) {
+	var ajax = new BitBase.SimpleAjax();
+	var donefn = function (r){
+		BitBase.hideSpinner();	
+		document.getElementById('addr_state').innerHTML = r.responseText;
+	};
+	
+	ajax.connect("{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}{literal}pages/address_new/states.php", "country_id="+pCountryId, donefn, "GET");
+}
+//]]></script>
+{/literal}

@@ -20,11 +20,10 @@
 					{include file="bitpackage:bitcommerce/address_list.tpl"}
 				</div>
 				{/if}
-
-				<div class="span-8 last">
-					<h1>{tr}Enter a New Shipping Address{/tr}</h1>
+				
+				{legend legend="Enter a New Shipping Address"}
 					{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
-				</div>
+				{/legend}
 
 				<div class="row">
 					{forminput}

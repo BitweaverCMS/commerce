@@ -35,17 +35,17 @@ if( empty( $entry['country_id'] ) ) {
 		$gBitSmarty->assign( 'collectState', TRUE );
 		if ( !empty( $entry['country_id'] ) ) {
 			if( $zones = CommerceCustomer::getCountryZones( $entry['country_id'] ) ) {
-				$statePullDown = zen_draw_pull_down_menu('state', $zones, '', '', false, TRUE );
+				$stateInput = zen_draw_pull_down_menu('state', $zones, '', '', false, TRUE );
 			} else {
-				$statePullDown = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
+				$stateInput = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
 			}
 		} else {
-			$statePullDown = zen_draw_input_field('state');
+			$stateInput = zen_draw_input_field('state');
 		}
-		$gBitSmarty->assign( 'statePullDown', $statePullDown );
+		$gBitSmarty->assign( 'stateInput', $stateInput );
 	}
 
-	$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'] ) );
+	$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $entry['country_id'], ' onchange="updateStates(this.value)" ' ) );
 
 	if ((isset($_GET['edit']) && ($_SESSION['customer_default_address_id'] != $_GET['edit'])) || (isset($_GET['edit']) == false) ) {
 		$gBitSmarty ->assign( 'primaryCheck', TRUE );
