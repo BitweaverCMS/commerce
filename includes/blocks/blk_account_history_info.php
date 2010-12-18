@@ -20,8 +20,6 @@
 // $Id$
 //
 
-	vd( $order );
-
   while (!$statuses->EOF) {
 
     require( DIR_FS_BLOCKS . 'tpl_block_account_history_info.php');

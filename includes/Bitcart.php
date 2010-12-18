@@ -38,7 +38,7 @@ class Bitcart
 		}
 
 		$languages = zen_get_languages();
-vd( $languages );
+
 		for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 			$manufacturers_url_array = $pParamHash['manufacturers_url'];
 			$language_id = $languages[$i]['id'];
