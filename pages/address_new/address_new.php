@@ -19,6 +19,8 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
+global $gBitSmarty, $gBitDb, $gBitCustomer;
+
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }
@@ -29,7 +31,6 @@ if( empty( $entry['country_id'] ) ) {
 	$entry['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
 }
 
-global $gBitSmarty, $gBitDb, $gBitCustomer;
 $gBitSmarty ->assign( 'collectGender', defined( 'ACCOUNT_GENDER' ) && ACCOUNT_GENDER == 'true' );
 $gBitSmarty ->assign( 'collectCompany', defined( 'ACCOUNT_COMPANY' ) && ACCOUNT_COMPANY == 'true' );
 $gBitSmarty ->assign( 'collectSuburb', defined( 'ACCOUNT_SUBURB' ) && ACCOUNT_SUBURB == 'true' );
