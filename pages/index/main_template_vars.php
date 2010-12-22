@@ -163,12 +163,10 @@
 // add the product filters for other product types here
 //
 if (isset($_REQUEST['typefilter'])) {
-//die('here1');
   require(DIR_FS_INCLUDES . 'index_filters/' . $_REQUEST['typefilter'] . '_filter.php');
 } else {
   require(DIR_FS_INCLUDES . 'index_filters/default_filter.php');
 }
-//die('here2');
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -20,9 +20,9 @@
 // $Id$
 //
 
-//print_r($list_box_contents);
+
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<table>
   <?php
   for($row=0;$row<sizeof($list_box_contents);$row++) {
     $params = "";

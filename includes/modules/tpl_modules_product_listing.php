@@ -20,7 +20,7 @@
 // $Id$
 //
 ?>
-<table border="0" width="100%" cellspacing="2" cellpadding="0">
+<table>
 <?php
 // only show when there is something to submit and enabled
     if( !empty( $show_top_submit_button ) && $show_top_submit_button == 'true') {
