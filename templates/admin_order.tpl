@@ -108,7 +108,7 @@ function getShippingQuotes( pOrderId ) {
 </td>
 </tr>
 <tr class="dataTableRow">
-	<td><a href="product_history.php?products_id={$ordersProduct.products_id}"><img src="/themes/icon_styles/tango/small/appointment-new.png" title="Products History" alt="H" /></a></td>
+	<td><a href="product_history.php?products_id={$ordersProduct.products_id}">{biticon iname="appointment-new" iexplain="Products History"}</a></td>
 	<td class="dataTableContent" colspan="7">
 {if !empty( $ordersProduct.attributes )}
 {section loop=$ordersProduct.attributes name=a}
