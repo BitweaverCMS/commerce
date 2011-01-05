@@ -208,6 +208,12 @@ class CommerceProductManager extends BitBase {
 		return $ret;
 	}
 
+	function getProductTypes() {
+		$ret = array();
+		$ret = $this->mDb->getAssoc( "SELECT `type_id` AS `hash_key`, * FROM " . TABLE_PRODUCT_TYPES );
+		return $ret;
+	}
+
 
 	function expungeOptionsValue( $pOptionsValuesId ) {
 		if( BitBase::verifyId( $pOptionsValuesId ) ) {

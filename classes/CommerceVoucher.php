@@ -42,6 +42,15 @@ class CommerceVoucher extends BitBase {
 			}
 			if( ($this->mInfo = $this->mDb->getRow( $query, $bindVars )) ) {
 				$this->mCouponId = $this->mInfo['coupon_id'];
+				$bindVars = array( $_SESSION['languages_id'], $_SESSION['languages_id'], $this->mCouponId );
+				$query = "SELECT `restrict_id` AS `hash_key`, ccr.*, cpd.`products_name`, ccatd.`categories_name`, cpa.`products_options_values_name`, cpt.`type_name` 
+						  FROM " . TABLE_COUPON_RESTRICT . " ccr
+							LEFT OUTER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " cpd ON (ccr.`product_id`=cpd.`products_id` AND cpd.`language_id`=?)
+							LEFT OUTER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " ccatd ON (ccr.`category_id`=ccatd.`categories_id` AND ccatd.`language_id`=?)
+							LEFT OUTER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON (ccr.`products_options_values_id`=cpa.`products_options_values_id`)
+							LEFT OUTER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON (ccr.`product_type_id`=cpt.`type_id`)
+						  WHERE `coupon_id` = ?";
+				$this->mRestrictions = $this->mDb->getAssoc( $query, $bindVars );
 			}
 		}
 		return( count( $this->mInfo ) );
@@ -164,9 +173,24 @@ class CommerceVoucher extends BitBase {
 		return( empty( $this->mFeedback['errors'] ) );
 	}
 
-	function storeRestriction( $pColumnName, $pId, $pAllow ) {
+	function storeRestriction( $pParamHash ) {
 		if( $this->isValid() ) {
-			$this->mDb->query("INSERT INTO " . TABLE_COUPON_RESTRICT . " (`coupon_id`, `".$pColumnName."`, `coupon_restrict`) VALUES (?, ?, ?)", array( $this->mCouponId, $pId, $pAllow ) );
+			$whereSql = '';
+			$columns = array( 'coupon_id' => $this->mCouponId );
+			$bindVars = array( $this->mCouponId );
+
+			foreach( array( 'category_id', 'product_id', 'product_type_id', 'products_options_values_id' ) as $col ) {
+				if( !empty( $pParamHash[$col] ) && BitBase::verifyId( $pParamHash[$col] ) ) {
+					$whereSql .= ' AND `'.$col.'`=?';
+					$bindVars[] = $pParamHash[$col];
+					$columns[$col] = $pParamHash[$col];
+				}
+			}
+
+			if( !$this->mDb->getOne( "SELECT `restrict_id` FROM " . TABLE_COUPON_RESTRICT . " WHERE coupon_id = ? $whereSql", $bindVars ) ) {
+				$columns['coupon_restrict'] = ($pParamHash['restrict_status']=='Deny') ? 'Y' : 'N';
+				$this->mDb->AssociateInsert( TABLE_COUPON_RESTRICT, $columns );
+			}
 		}
 	}
 /*
@@ -174,24 +198,6 @@ class CommerceVoucher extends BitBase {
 		$status = $gBitDb->getOne( "SELECT coupon_restrict FROM " . TABLE_COUPON_RESTRICT . " WHERE restrict_id = ?", array( $_GET['info'] ) );
 		$new_status = ($status == 'N') ? 'Y' : 'N'; 
 		$gBitDb->query( "UPDATE " . TABLE_COUPON_RESTRICT . " SET coupon_restrict = ? WHERE restrict_id = ?", array( $new_status, $_GET['info'] ) );
-		break;
-	case 'add_category':
-		if( !empty( $_POST['cPath'] ) ) {
-			$test_query=$gBitDb->query( "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE coupon_id = ? and category_id = ?", array( $_GET['cid'], $_POST['cPath'] ) );
-			if( $test_query->RecordCount() < 1 ) {
-				$status = ($_POST['restrict_status']=='Deny') ? 'Y' : 'N';
-				$gBitDb->query("INSERT INTO " . TABLE_COUPON_RESTRICT . " (coupon_id, category_id, coupon_restrict) VALUES (?, ?, ?)", array( $_GET['cid'], $_POST['cPath'], $status ) );
-			}
-		}
-		break;
-	case 'add_product':
-		if( !empty( $_POST['products'] ) ) {
-			$test_query=$gBitDb->query( "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE coupon_id = ? AND product_id = ?", array( $_GET['cid'], $_POST['products'] ) );
-			if ($test_query->RecordCount() < 1) {
-				$status = ($_POST['restrict_status']=='Deny') ? 'Y' : 'N';
-				$gBitDb->query("INSERT INTO " . TABLE_COUPON_RESTRICT . " (coupon_id, product_id, coupon_restrict) VALUES (?, ?, ?)", array( $_GET['cid'], $_POST['products'], $status ) );
-			}
-		}
 		break;
 	case 'remove':
 		if( !empty( $_GET['info'] ) ) {
