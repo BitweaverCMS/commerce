@@ -492,7 +492,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_restrict' => "
   product_id I4,
   product_type_id I4,
   products_options_values_id I4,
-  cproductategory_id I4,
+  category_id I4,
   coupon_restrict C(1) NOTNULL default 'N'
 ",
 
