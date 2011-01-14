@@ -128,6 +128,10 @@ class CommerceProduct extends LibertyMime {
 		return $ret;
 	}
 
+	function getProductsModel() {
+		return $this->getField( 'products_model', 'Product' );
+	}
+
 	// {{{ =================== Product Pricing Methods ==================== 
 
 	// User specific commission discount, used for  backing out commissions of an aggregate price, such as that returned by getBasePrice
