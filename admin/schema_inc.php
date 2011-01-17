@@ -552,9 +552,10 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
+  products_options_key C(64),
   customers_basket_id I4 NOTNULL,
   products_options_id I4 NOTNULL,
-  products_options_value_id I4,
+  products_options_values_id I4,
   products_options_value_text C(64)
   CONSTRAINT ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
