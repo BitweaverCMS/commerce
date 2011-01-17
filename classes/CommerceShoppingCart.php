@@ -260,7 +260,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$this->mDb->query($sql, array( $pQty, $basketId ) );
 			} else {
 				// because of foreign key constraints, need to delete attributes first, then the product
-				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_basket_id=?";
+				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where `customers_basket_id`=?";
 				$this->mDb->query($sql, array( $basketId ) );
 				$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `customers_basket_id`=?";
 				$this->mDb->query($sql, array( $basketId ) );
