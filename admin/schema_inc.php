@@ -346,6 +346,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_price_letters N(15,4),
   attributes_price_letters_free I2,
   attributes_html_attrib X,
+  products_options_html_attrib X,
   attributes_required I1,
   purchase_group_id I4
 
