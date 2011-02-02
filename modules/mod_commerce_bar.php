@@ -11,11 +11,11 @@
 // +----------------------------------------------------------------------+
 //  $Id$
 //
-	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
+global $gBitDb, $gCommerceSystem, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-	if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) && $gBitCustomer->mCart->count_contents() > 0 ) {
-		$gBitSmarty->assign_by_ref( 'sessionCart', $gBitCustomer->mCart );
-	}
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) && $gBitCustomer->mCart->count_contents() > 0 ) {
+	$gBitSmarty->assign_by_ref( 'sessionCart', $gBitCustomer->mCart );
+}
 
 ?>

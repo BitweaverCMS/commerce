@@ -19,14 +19,15 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gBitProduct;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	if( $gBitProduct->isValid() && $gBitUser->isRegistered() ) {
-		$gBitSmarty->assign( 'notificationExists', $gBitProduct->hasNotification( $gBitUser->mUserId ) );
+if( $gBitProduct->isValid() && $gBitUser->isRegistered() ) {
+	$gBitSmarty->assign( 'notificationExists', $gBitProduct->hasNotification( $gBitUser->mUserId ) );
 
-		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle', tra( 'Notifications' ) );
-		}
+	if( empty( $moduleTitle ) ) {
+		$gBitSmarty->assign( 'moduleTitle', tra( 'Notifications' ) );
 	}
+}
 
 ?>

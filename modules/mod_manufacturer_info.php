@@ -19,34 +19,35 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gBitProduct;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-  if (isset($_GET['products_id'])) {
-    $manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.`manufacturers_name`, m.`manufacturers_image`,
-                                  mi.`manufacturers_url`
-                           from " . TABLE_MANUFACTURERS . " m
-                           left join " . TABLE_MANUFACTURERS_INFO . " mi
-                           on (m.`manufacturers_id` = mi.`manufacturers_id`
-                           and mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'), " . TABLE_PRODUCTS . " p
-                           where p.`products_id` = '" . (int)$_GET['products_id'] . "'
-                           and p.`manufacturers_id` = m.`manufacturers_id`";
+if (isset($_GET['products_id'])) {
+$manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.`manufacturers_name`, m.`manufacturers_image`,
+							  mi.`manufacturers_url`
+					   from " . TABLE_MANUFACTURERS . " m
+					   left join " . TABLE_MANUFACTURERS_INFO . " mi
+					   on (m.`manufacturers_id` = mi.`manufacturers_id`
+					   and mi.`languages_id` = '" . (int)$_SESSION['languages_id'] . "'), " . TABLE_PRODUCTS . " p
+					   where p.`products_id` = '" . (int)$_GET['products_id'] . "'
+					   and p.`manufacturers_id` = m.`manufacturers_id`";
 
-    $manufacturer_info_sidebox = $gBitDb->Execute($manufacturer_info_sidebox_query);
+$manufacturer_info_sidebox = $gBitDb->Execute($manufacturer_info_sidebox_query);
 
-	if ($manufacturer_info_sidebox->RecordCount() > 0) {
-		$sideboxManufacturerInfo = $manufacturer_info_sidebox->fields;
-		if (zen_not_null($manufacturer->fields['manufacturers_image'])) {
-			$sideboxManufacturerInfo['manufacturers_image_url'] .= DIR_WS_IMAGES . $manufacturer->fields['manufacturers_image'];
-		}
-		$gBitSmarty->assign( 'sideboxManufacturerInfo', $sideboxManufacturerInfo );
-
-	//	require($template->get_template_dir('tpl_manufacturer_info.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturer_info.php');
-		$title =  BOX_HEADING_MANUFACTURER_INFO;
-		$left_corner = false;
-		$right_corner = false;
-		$right_arrow = false;
-		$title_link = false;
-	//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-		}
+if ($manufacturer_info_sidebox->RecordCount() > 0) {
+	$sideboxManufacturerInfo = $manufacturer_info_sidebox->fields;
+	if (zen_not_null($manufacturer->fields['manufacturers_image'])) {
+		$sideboxManufacturerInfo['manufacturers_image_url'] .= DIR_WS_IMAGES . $manufacturer->fields['manufacturers_image'];
 	}
+	$gBitSmarty->assign( 'sideboxManufacturerInfo', $sideboxManufacturerInfo );
+
+//	require($template->get_template_dir('tpl_manufacturer_info.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturer_info.php');
+	$title =  BOX_HEADING_MANUFACTURER_INFO;
+	$left_corner = false;
+	$right_corner = false;
+	$right_arrow = false;
+	$title_link = false;
+//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+	}
+}
 ?>

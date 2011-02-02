@@ -19,15 +19,16 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gBitProduct;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	// test if box should display
-	$show_tell_a_friend= false;
+// test if box should display
+$show_tell_a_friend= false;
 
-	if( $gBitProduct->isValid() && !($_GET['main_page']==FILENAME_TELL_A_FRIEND) ) {
-		$gBitSmarty->assign( 'sideboxTellFriend', TRUE );
-		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle', tra( 'Tell a friend' ) );
-		}
+if( $gBitProduct->isValid() && !($_GET['main_page']==FILENAME_TELL_A_FRIEND) ) {
+	$gBitSmarty->assign( 'sideboxTellFriend', TRUE );
+	if( empty( $moduleTitle ) ) {
+		$gBitSmarty->assign( 'moduleTitle', tra( 'Tell a friend' ) );
 	}
+}
 ?>

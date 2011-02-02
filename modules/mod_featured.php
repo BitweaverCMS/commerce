@@ -19,15 +19,19 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $currencies;
+global $gBitDb, $gCommerceSystem, $gBitProduct, $currencies;
 
-   	$listHash['max_records'] = 1; // ? MAX_RANDOM_SELECT_FEATURED_PRODUCTS;
-	$listHash['sort_mode'] = 'random';
-	$listHash['featured'] = TRUE;
-	if( $sideboxFeature = $gBitProduct->getList( $listHash ) ) {
-		$sideboxFeature = current( $sideboxFeature );
-		$whats_new_price = CommerceProduct::getDisplayPrice($sideboxFeature['products_id']);
+if( empty( $gCommerceSystem ) ) {
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+}
 
-		$gBitSmarty->assign_by_ref( 'sideboxFeature', $sideboxFeature );
-	}
+$listHash['max_records'] = 1; // ? MAX_RANDOM_SELECT_FEATURED_PRODUCTS;
+$listHash['sort_mode'] = 'random';
+$listHash['featured'] = TRUE;
+if( $sideboxFeature = $gBitProduct->getList( $listHash ) ) {
+	$sideboxFeature = current( $sideboxFeature );
+	$whats_new_price = CommerceProduct::getDisplayPrice($sideboxFeature['products_id']);
+
+	$gBitSmarty->assign_by_ref( 'sideboxFeature', $sideboxFeature );
+}
 ?>

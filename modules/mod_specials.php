@@ -19,20 +19,21 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $currencies;
+global $gBitDb, $gBitProduct, $currencies;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 // test if box should display
-	$listHash['max_records'] = 1;
-	$listHash['sort_mode'] = 'random';
-	$listHash['specials'] = TRUE;
+$listHash['max_records'] = 1;
+$listHash['sort_mode'] = 'random';
+$listHash['specials'] = TRUE;
 
-	if( $specialsList = $gBitProduct->getList( $listHash ) ) {
-		$sideboxSpecial = current( $specialsList );
-		$sideboxSpecial['display_special_price'] = CommerceProduct::getDisplayPrice( $sideboxSpecial['products_id'] );
+if( $specialsList = $gBitProduct->getList( $listHash ) ) {
+	$sideboxSpecial = current( $specialsList );
+	$sideboxSpecial['display_special_price'] = CommerceProduct::getDisplayPrice( $sideboxSpecial['products_id'] );
 
-		$gBitSmarty->assign( 'sideboxSpecial', $sideboxSpecial );
-	}
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Specials' ) );
-	}
+	$gBitSmarty->assign( 'sideboxSpecial', $sideboxSpecial );
+}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', tra( 'Specials' ) );
+}
 ?>

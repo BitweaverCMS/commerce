@@ -19,19 +19,24 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gCommerceSystem, $gBitProduct;
 
-    $main_category_tree = new category_tree;
-    $row = 0;
-    $box_categories_array = array();
+if( empty( $gCommerceSystem ) ) {
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+}
+
+
+$main_category_tree = new category_tree;
+$row = 0;
+$box_categories_array = array();
 
 // don't build a tree when no categories
-    $check_categories = $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCT_TYPES . " pt, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc where pt.`type_master_type` = '3' and ptc.`product_type_id` = pt.`type_id` and c.`categories_id` = ptc.`category_id` and c.`categories_status`=1");
-    if ($check_categories) {
-		$gBitSmarty->assign( 'sideboxDocumentCategories', $main_category_tree->zen_category_tree('3') );
-  		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle', tra( 'Documents' ) );
-		}
-    }
+$check_categories = $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCT_TYPES . " pt, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc where pt.`type_master_type` = '3' and ptc.`product_type_id` = pt.`type_id` and c.`categories_id` = ptc.`category_id` and c.`categories_status`=1");
+if ($check_categories) {
+	$gBitSmarty->assign( 'sideboxDocumentCategories', $main_category_tree->zen_category_tree('3') );
+	if( empty( $moduleTitle ) ) {
+		$gBitSmarty->assign( 'moduleTitle', tra( 'Documents' ) );
+	}
+}
 
 ?>

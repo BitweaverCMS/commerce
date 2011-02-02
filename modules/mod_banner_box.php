@@ -19,17 +19,19 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $banner;
-	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
-	require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
+global $gBitDb, $gCommerceSystem, $gBitProduct, $banner;
 
-	$banner_box_group= SHOW_BANNERS_GROUP_SET7;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
+require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
 
-	if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
-		$gBitSmarty->assign( 'bannerContent', zen_display_banner('static', $bannerRs ) );
-	}
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Sponsors' ) );
-	}
+$banner_box_group= SHOW_BANNERS_GROUP_SET7;
+
+if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
+	$gBitSmarty->assign( 'bannerContent', zen_display_banner('static', $bannerRs ) );
+}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', tra( 'Sponsors' ) );
+}
 
 ?>

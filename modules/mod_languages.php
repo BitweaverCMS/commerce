@@ -19,25 +19,27 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $lng;
+global $gBitDb, $gCommerceSystem, $gBitProduct, $lng;
 
-	$show_languages= false;
-	if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
-		$show_languages= true;
-	}
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	if ($show_languages == true) {
-		if (!isset($lng) || (isset($lng) && !is_object($lng))) {
-		    require_once( BITCOMMERCE_PKG_PATH.'includes/classes/language.php' );
-			$lng = new language;
-		}
-		reset($lng->catalog_languages);
-		$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
-		$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
-		$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
-		$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
+$show_languages= false;
+if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
+	$show_languages= true;
+}
+
+if ($show_languages == true) {
+	if (!isset($lng) || (isset($lng) && !is_object($lng))) {
+		require_once( BITCOMMERCE_PKG_PATH.'includes/classes/language.php' );
+		$lng = new language;
 	}
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Languages' ) );
-	}
+	reset($lng->catalog_languages);
+	$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
+	$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
+	$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
+	$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
+}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', tra( 'Languages' ) );
+}
 ?>

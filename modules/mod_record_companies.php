@@ -19,37 +19,37 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+global $gBitDb, $gBitProduct;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	$record_company_query = "select record_company_id, record_company_name
-			from " . TABLE_RECORD_COMPANY . "
-			order by `record_company_name`";
+$record_company_query = "select record_company_id, record_company_name
+		from " . TABLE_RECORD_COMPANY . "
+		order by `record_company_name`";
 
-	$record_company = $gBitDb->Execute($record_company_query);
+$record_company = $gBitDb->Execute($record_company_query);
 
-	if ($record_company->RecordCount()>0) {
-		$number_of_rows = $record_company->RecordCount()+1;
-	}
-	
+if ($record_company->RecordCount()>0) {
+	$number_of_rows = $record_company->RecordCount()+1;
+}
+
 // Display a list
-	$record_company_array = array();
-	if ( !isset($_GET['record_company_id']) or
-			$_GET['record_company_id'] == '' ) {
-		$record_company_array[] = tra( 'Please Select' );
-	} else {
-		$record_company_array[] = tra( '- Reset -' );
-	}
+$record_company_array = array();
+if ( !isset($_GET['record_company_id']) or
+		$_GET['record_company_id'] == '' ) {
+	$record_company_array[] = tra( 'Please Select' );
+} else {
+	$record_company_array[] = tra( '- Reset -' );
+}
 
-	while (!$record_company->EOF) {
-		$record_company_name = ((strlen($record_company->fields['record_company_name']) > MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) ? substr($record_company->fields['record_company_name'], 0, MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) . '..' : $record_company->fields['record_company_name']);
-		$record_company_array[$record_company->fields['record_company_id']] = $record_company_name;
-		$record_company->MoveNext();
-	}
+while (!$record_company->EOF) {
+	$record_company_name = ((strlen($record_company->fields['record_company_name']) > MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) ? substr($record_company->fields['record_company_name'], 0, MAX_DISPLAY_RECORD_COMPANY_NAME_LEN) . '..' : $record_company->fields['record_company_name']);
+	$record_company_array[$record_company->fields['record_company_id']] = $record_company_name;
+	$record_company->MoveNext();
+}
 
-	$gBitSmarty->assign( 'record_company', $record_company_array );
+$gBitSmarty->assign( 'record_company', $record_company_array );
 
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Record Companies' ) );
-	}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', tra( 'Record Companies' ) );
+}
 ?>

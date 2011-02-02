@@ -19,20 +19,21 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gBitProduct;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
-	$listHash['reviews'] = TRUE;
-	if( $gBitProduct->isValid() ) {
-		$listHash['products_id'] = $gBitProduct->mProductsId;
-	}
-	$listHash['max_records'] = MAX_RANDOM_SELECT_REVIEWS;
-	if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
-		$gBitSmarty->assign( 'sideboxReview', current( $sideboxReview ) );
-	} elseif ( $gBitProduct->isValid() ) {
-		$gBitSmarty->assign( 'reviewProductsId', $gBitProduct->getField( 'products_id' ) );
-		$gBitSmarty->assign( 'writeReview', TRUE );
-	}
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' ) );
-	}
+$listHash['reviews'] = TRUE;
+if( $gBitProduct->isValid() ) {
+	$listHash['products_id'] = $gBitProduct->mProductsId;
+}
+$listHash['max_records'] = MAX_RANDOM_SELECT_REVIEWS;
+if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
+	$gBitSmarty->assign( 'sideboxReview', current( $sideboxReview ) );
+} elseif ( $gBitProduct->isValid() ) {
+	$gBitSmarty->assign( 'reviewProductsId', $gBitProduct->getField( 'products_id' ) );
+	$gBitSmarty->assign( 'writeReview', TRUE );
+}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' ) );
+}
 ?>

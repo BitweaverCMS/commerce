@@ -19,10 +19,11 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+
 if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
   switch (true) {
     case (SHOW_SHOPPING_CART_BOX_STATUS == '0'):

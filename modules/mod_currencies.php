@@ -19,28 +19,33 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct, $currencies;
+global $gBitDb, $gCommerceSystem, $gBitProduct, $currencies;
 
-	// test if box should display
-	$show_currencies= false;
+if( empty( $gCommerceSystem ) ) {
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+}
 
-	if( substr( basename( $_SERVER['PHP_SELF'] ), 0, 8 ) != 'checkout' ) {
-		$show_currencies= true;
-	}
 
-	if ($show_currencies == true) {
-		if( isset( $currencies ) && is_object( $currencies ) ) {
-			reset( $currencies->currencies );
-			$currenciesHash = array();
-			while( list( $key, $value ) = each( $currencies->currencies ) ) {
-				$currenciesHash[$key] = $value['title'];
-			}
+// test if box should display
+$show_currencies= false;
 
-			$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
-			$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
-			if( empty( $moduleTitle ) ) {
-				$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
-			}
+if( substr( basename( $_SERVER['PHP_SELF'] ), 0, 8 ) != 'checkout' ) {
+	$show_currencies= true;
+}
+
+if ($show_currencies == true) {
+	if( isset( $currencies ) && is_object( $currencies ) ) {
+		reset( $currencies->currencies );
+		$currenciesHash = array();
+		while( list( $key, $value ) = each( $currencies->currencies ) ) {
+			$currenciesHash[$key] = $value['title'];
+		}
+
+		$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
+		$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
+		if( empty( $moduleTitle ) ) {
+			$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
 		}
 	}
+}
 ?>

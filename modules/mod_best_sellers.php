@@ -19,75 +19,79 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gBitProduct, $gCommerceSystem;
+
+if( empty( $gCommerceSystem ) ) {
+	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+}
 
 // test if box should display
-  $show_best_sellers= false;
+$show_best_sellers= false;
 
-  if( $gBitUser->isValid() ) {
-    if( $gBitUser->isRegistered() ) {
-      $check_query = 'select count(*) as "count"
-                      from ' . TABLE_CUSTOMERS_INFO . "
-                      where `customers_info_id` = ?
-                      and `global_product_notifications` = '1'";
+if( $gBitUser->isValid() ) {
+if( $gBitUser->isRegistered() ) {
+  $check_query = 'select count(*) as "count"
+				  from ' . TABLE_CUSTOMERS_INFO . "
+				  where `customers_info_id` = ?
+				  and `global_product_notifications` = '1'";
 
-      $check = $gBitDb->query( $check_query, array( $gBitUser->mUserId ) );
+  $check = $gBitDb->query( $check_query, array( $gBitUser->mUserId ) );
 
-      if ($check->fields['count'] > 0) {
-        $show_best_sellers= true;
-      }
-    }
-  } else {
-    $show_best_sellers= true;
+  if ($check->fields['count'] > 0) {
+	$show_best_sellers= true;
+  }
+}
+} else {
+$show_best_sellers= true;
+}
+
+if ($show_best_sellers == true) {
+
+if (isset($current_category_id) && ($current_category_id > 0)) {
+  $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
+						 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
+								. TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c
+						 where p.`products_status` = '1'
+						 and p.products_ordered > 0
+						 and p.`products_id` = pd.`products_id`
+						 and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+						 and p.`products_id` = p2c.`products_id`
+						 and p2c.`categories_id` = c.`categories_id`
+						 and '" . (int)$current_category_id . "' in (c.`categories_id`, c.`parent_id`)
+						 order by p.products_ordered desc, pd.`products_name`";
+
+  $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
+
+} else {
+  $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
+						 from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
+						 where p.`products_status` = '1'
+						 and p.products_ordered > 0
+						 and p.`products_id` = pd.`products_id`
+						 and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
+						 order by p.products_ordered desc, pd.`products_name`";
+
+  $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
+}
+
+if ($best_sellers->RecordCount() >= MIN_DISPLAY_BESTSELLERS) {
+  $title =  BOX_HEADING_BESTSELLERS;
+  $box_id =  bestsellers;
+  $rows = 0;
+  while (!$best_sellers->EOF) {
+	$rows++;
+	$bestsellers_list[$rows]['id'] = $best_sellers->fields['products_id'];
+	$bestsellers_list[$rows]['name']  = $best_sellers->fields['products_name'];
+	$best_sellers->MoveNext();
   }
 
-  if ($show_best_sellers == true) {
-
-    if (isset($current_category_id) && ($current_category_id > 0)) {
-      $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
-                             from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, "
-                                    . TABLE_PRODUCTS_TO_CATEGORIES . " p2c, " . TABLE_CATEGORIES . " c
-                             where p.`products_status` = '1'
-                             and p.products_ordered > 0
-                             and p.`products_id` = pd.`products_id`
-                             and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                             and p.`products_id` = p2c.`products_id`
-                             and p2c.`categories_id` = c.`categories_id`
-                             and '" . (int)$current_category_id . "' in (c.`categories_id`, c.`parent_id`)
-                             order by p.products_ordered desc, pd.`products_name`";
-
-      $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
-
-    } else {
-      $best_sellers_query = "select distinct p.`products_id`, pd.`products_name`, p.products_ordered
-                             from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                             where p.`products_status` = '1'
-                             and p.products_ordered > 0
-                             and p.`products_id` = pd.`products_id`
-                             and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
-                             order by p.products_ordered desc, pd.`products_name`";
-
-      $best_sellers = $gBitDb->Execute($best_sellers_query, MAX_DISPLAY_BESTSELLERS);
-    }
-
-    if ($best_sellers->RecordCount() >= MIN_DISPLAY_BESTSELLERS) {
-      $title =  BOX_HEADING_BESTSELLERS;
-      $box_id =  bestsellers;
-      $rows = 0;
-      while (!$best_sellers->EOF) {
-        $rows++;
-        $bestsellers_list[$rows]['id'] = $best_sellers->fields['products_id'];
-        $bestsellers_list[$rows]['name']  = $best_sellers->fields['products_name'];
-        $best_sellers->MoveNext();
-      }
-
-      $left_corner = false;
-      $right_corner = false;
-      $right_arrow = false;
-      $title_link = false;
-  //	require($template->get_template_dir('tpl_best_sellers.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_best_sellers.php');
-      $title =  BOX_HEADING_BESTSELLERS;
-  //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-    }
-  }
+  $left_corner = false;
+  $right_corner = false;
+  $right_arrow = false;
+  $title_link = false;
+//	require($template->get_template_dir('tpl_best_sellers.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_best_sellers.php');
+  $title =  BOX_HEADING_BESTSELLERS;
+//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+}
+}
 ?>

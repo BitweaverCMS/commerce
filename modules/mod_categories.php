@@ -19,20 +19,20 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	global $gBitDb, $gBitProduct;
+global $gBitDb, $gCommerceSystem, $gBitProduct;
 
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-    $main_category_tree = new category_tree;
-    $row = 0;
-    $box_categories_array = array();
+require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+$main_category_tree = new category_tree;
+$row = 0;
+$box_categories_array = array();
 
 // don't build a tree when no categories
-    if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
-		$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
-    }
-	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Categories' ) );
-	}
+if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
+	$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
+}
+if( empty( $moduleTitle ) ) {
+	$gBitSmarty->assign( 'moduleTitle', tra( 'Categories' ) );
+}
 
 //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
 ?>
