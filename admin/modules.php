@@ -23,6 +23,11 @@
 
   $set = (isset($_GET['set']) ? $_GET['set'] : '');
 
+	// Fulfillment and Payment need full admin permissions
+	if ($set == 'payment' || $set == 'fulfillment' ) {
+		$gBitUser->verifyPermission( 'p_admin' );
+	}
+
   if (zen_not_null($set)) {
     switch ($set) {
       case 'shipping':
