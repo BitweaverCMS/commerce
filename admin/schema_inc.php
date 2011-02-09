@@ -708,6 +708,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_meta_tags_products_desc' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
 	commissions_payments_id I4 PRIMARY AUTO,
+	commission_type C(64) NOTNULL,
 	payee_user_id I4 NOTNULL,
 	payer_user_id I4 NOTNULL,
 	period_start_date T NOTNULL,
