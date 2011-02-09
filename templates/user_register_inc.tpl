@@ -1,3 +1,4 @@
+{if $comInterests}
 <div class="row">
 	{formlabel label="Interests"}
 	{forminput}
@@ -7,4 +8,4 @@
 		{formhelp note="Let us know your interests so we can best serve you."}
 	{/forminput}
 </div>
-
+{/if}
