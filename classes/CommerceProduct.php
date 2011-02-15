@@ -117,7 +117,7 @@ class CommerceProduct extends LibertyMime {
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
-					$ret['products_image_url'] = CommerceProduct::getImageUrl( $ret['products_image'] );
+					$ret['products_image_url'] = $ret['type_class']::getImageUrl( $ret['products_image'] );
 				} else {
 					$ret['products_image_url'] = NULL;
 				}
@@ -1022,19 +1022,18 @@ If a special exist * 10+9
 	}
 
 	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		return( BIT_ROOT_PATH.CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
+		$ret = BIT_ROOT_PATH.self::getImageUrl( $pProductsId, $pSize );
+		if( !file_exists( dirname( $ret ) ) ) {
+			mkdir_p( dirname( $ret ) );
+		}
+		return $ret;
 	}
 
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		return( CommerceProduct::getImageUrl( $pProductsId, $pSize ) );
+		return( self::getImageUrl( $pProductsId, $pSize ) );
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
-//		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mStorage ) ) {
-//			$thumbImage = current( $this->mStorage );
-//			$ret = $thumbImage['thumbnail_url'][$pSize];
-//error_log( $pSize );			
-
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
@@ -1085,7 +1084,7 @@ If a special exist * 10+9
 	}
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
-$start = microtime( TRUE );
+
 		if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'products_date_added_desc';
 		}
@@ -1220,9 +1219,10 @@ $start = microtime( TRUE );
 			global $currencies;
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
-				$ret[$productId]['display_url'] = CommerceProduct::getDisplayUrl( $ret[$productId]['products_id'] );
+				require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
+				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrl( $ret[$productId]['products_id'] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = CommerceProduct::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
+					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
 				}
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
@@ -1232,7 +1232,7 @@ $start = microtime( TRUE );
 
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = CommerceProduct::getDisplayPrice( $ret[$productId] );
+				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPrice( $ret[$productId] );
 			}
 		}
 
@@ -1525,12 +1525,17 @@ $start = microtime( TRUE );
 
 			if( !empty( $fileHash ) ) {
 				global $gBitSystem;
-				$fileHash['dest_path']		= str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.BITCOMMERCE_PKG_NAME.'/'.($this->mProductsId % 1000).'/'.$this->mProductsId.'/';
-				mkdir_p( BIT_ROOT_PATH.$fileHash['dest_path'] );
+				if( !empty( $pParamHash['dest_path'] ) ) {
+					$fileHash['dest_path']	= $pParamHash['dest_path'];
+				} else {
+					$fileHash['dest_path']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
+				}
+				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_path'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
+
 				liberty_process_image( $fileHash, empty( $pParamHash['copy_file'] ) );
 			}
 		}
