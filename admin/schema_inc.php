@@ -464,8 +464,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_email_track' => "
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_customer' => "
-  customer_id I4,
+  customer_id I4 PRIMARY,
   amount N(8,4)
+  CONSTRAINT ', CONSTRAINT `coupon_gv_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_queue' => "
@@ -548,7 +549,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
   final_price N(15,4),
   date_added T
   CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
-			  , CONSTRAINT `cust_bask_prod_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )' ",
+			  , CONSTRAINT `cust_bask_prod_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )' 
+",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_attributes_id I4 PRIMARY AUTO,
@@ -1233,7 +1235,6 @@ $indices = array (
   'orders_status_ods_cust_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => ' orders_status, orders_id, customers_id ', 'opts' => NULL),
   'orders_prod_orders_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products', 'cols' => 'orders_id', 'opts' => NULL),
   'orders_prod_prod_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products', 'cols' => 'products_id', 'opts' => NULL),
-  'orders_prod_orders_prod_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products', 'cols' => 'orders_id, products_id', 'opts' => array('UNIQUE')),
   'orders_prod_att_orders_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att', 'cols' => 'orders_id', 'opts' => NULL),
   'orders_prod_att_prod_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att', 'cols' => 'orders_products_id ', 'opts' => NULL),
   'orders_prod_dld_orders_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld', 'cols' => 'orders_id', 'opts' => NULL),
