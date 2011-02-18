@@ -328,6 +328,7 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 
 			$errors = ($commErrNo != 0 ? "\n(" . $commErrNo . ') ' . $commError : '');
 
+			$this->pnref = '';
 			# Check result
 			if( isset( $responseHash['PNREF'] ) ) {
 				$this->pnref = $responseHash['PNREF'];
