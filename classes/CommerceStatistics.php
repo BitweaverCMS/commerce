@@ -406,15 +406,28 @@ $this->debug(0);
 			$includes = explode( ',', $pParamHash['include'] );
 			foreach( $includes  as $in ) {
 				$whereSql .= " AND LOWER( `referer_url` ) LIKE ? ";
-				$bindVars[] = '%'.strtolower( trim( $in ) ).'%';
+				$bindVars[] = '%'.strtolower( trim( urlencode( $in ) ) ).'%';
 			}
+/*
+			// OR the terms
+
+			$max = count( $includes );
+			for( $i = 0; $i < $max; $i++ ) {
+				$whereSql .= " LOWER( `referer_url` ) LIKE ? ";
+				$bindVars[] = '%'.strtolower( trim( urlencode( $includes[$i] ) ) ).'%';
+				if( $i <  $max - 1 ) {
+					$whereSql .= ' OR ';
+				}
+			}
+			$whereSql .= ' ) ';
+*/
 		}
 
 		if( !empty( $pParamHash['exclude'] ) ) {
 			$excludes = explode( ',', $pParamHash['exclude'] );
 			foreach( $excludes  as $ex ) {
 				$whereSql .= " AND LOWER( `referer_url` ) NOT LIKE ? ";
-				$bindVars[] = '%'.strtolower( trim( $ex ) ).'%';
+				$bindVars[] = '%'.strtolower( trim( urlencode( $ex ) ) ).'%';
 			}
 		}
 
