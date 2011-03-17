@@ -1219,7 +1219,12 @@ If a special exist * 10+9
 			global $currencies;
 			foreach( array_keys( $ret ) as $productId ) {
 				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
-				require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
+				if( !empty( $ret[$productId]['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] ) ) {
+					require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
+				}
+				if( empty( $ret[$productId]['type_class'] ) ) {
+					$ret[$productId]['type_class'] = 'CommerceProduct';
+				}
 				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrl( $ret[$productId]['products_id'] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
