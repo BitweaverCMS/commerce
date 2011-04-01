@@ -944,10 +944,18 @@ If a special exist * 10+9
 
 
 
-	function getTitle() {
-		if( $this->isValid() ) {
-			return( $this->mInfo['products_name'] );
+	function getTitle( $pAuxHash = NULL ) {
+		$ret = NULL;
+		if( !empty( $pAuxHash ) ) {
+			if( !empty( $pAuxHash['products_name'] ) ) {
+				$ret = $pAuxHash['products_name'];
+			} elseif( !empty( $pAuxHash['title'] ) ) {
+				$ret = $pAuxHash['title'];
+			}
+		} elseif( $this->isValid() ) {
+			$ret = $this->mInfo['products_name'];
 		}
+		return $ret;
 	}
 
 	/**
