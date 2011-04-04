@@ -1157,6 +1157,11 @@ If a special exist * 10+9
 				array_push( $bindVars, $pListHash['tag'] );
 			}
 		}
+
+		if( !empty( $pListHash['content_id_list'] ) ) { // you can use an array of titles
+			$whereSql .= " AND p.`content_id` IN ( ".implode( ',',array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
+			$bindVars = array_merge( $bindVars, $pListHash['content_id_list'] );
+		}
 	
 		if( !empty( $pListHash['freshness'] ) ) {
 			if ( $pListHash['freshness'] == '1' ) {
