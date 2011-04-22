@@ -12,8 +12,6 @@
 
 $gContent = &$gBitProduct;
 
-$res = $gBitDb->query( $sql, array( (int)$_GET['products_id'], (int)$_SESSION['languages_id'] ) );
-
 if ( $gBitProduct->isAvailable() ) {
 	require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_attributes.php');
 	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
@@ -36,6 +34,7 @@ if ( $gBitProduct->isAvailable() ) {
 		include_once ( LIBERTY_PKG_PATH.'comments_inc.php' );
 	}
 } else {
+	define( 'HEADING_TITLE', tra( 'Product not found' ) );
 	$mid = 'bitpackage:bitcommerce/product_not_available.tpl';
 }
 
