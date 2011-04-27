@@ -8,7 +8,7 @@ $columnCount 				= !empty( $moduleParams['module_params']['columns'] ) ? $module
 $listHash['max_records']	= !empty( $moduleParams['module_rows'] ) ? $moduleParams['module_rows'] : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
 $listHash['offset'] 		= $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
 $listHash['sort_mode']		= !empty( $moduleParams['sort_mode'] ) ? $moduleParams['sort_mode'] : 'random';
-$listHash['thumbnail_size'] = 'small';
+$listHash['thumbnail_size'] = 'medium';
 
 if( !empty( $gQueryUser ) && $gQueryUser->mUserId ) {
 	$listHash['user_id'] = $gQueryUser->mUserId;
@@ -50,6 +50,7 @@ if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listH
 	}
 	$gBitSmarty->assign( 'productListTitle', $title );
 }
+$gBitSmarty->assign_by_ref( 'listedProducts', $listedProducts );
 $gBitSmarty->assign( 'listBoxContents', $listBoxContents );
 
 ?>
