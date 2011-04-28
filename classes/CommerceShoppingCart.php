@@ -98,7 +98,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->mDb->StartTrans();
 		if ($this->in_cart($productsKey)) {
 			$this->updateQuantity( $productsKey, $pQty );
-		} else {
+		} elseif( $exists = $this->mDb->GetOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( $productsKey ) ) ) {
 			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 
