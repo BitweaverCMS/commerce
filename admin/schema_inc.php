@@ -466,7 +466,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_email_track' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_customer' => "
   customer_id I4 PRIMARY,
   amount N(8,4)
-  CONSTRAINT ', CONSTRAINT `coupon_gv_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `coupon_gv_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_queue' => "
