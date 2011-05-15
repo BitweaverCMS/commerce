@@ -1,13 +1,13 @@
 <?php
-// +----------------------------------------------------------------------+
-// | bitcommerce																													|
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2011 bitcommerce.org																	 |
-// |																																			|
-// | http://www.bitcommerce.org																					 |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license				|
-// +----------------------------------------------------------------------+
+// +--------------------------------------------------------------------+
+// | bitcommerce														|
+// +--------------------------------------------------------------------+
+// | Copyright (c) 2011 bitcommerce.org									|
+// |																	|
+// | http://www.bitcommerce.org											|
+// +--------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license		|
+// +--------------------------------------------------------------------+
 
 
 chdir( '../../../../' );
@@ -16,7 +16,9 @@ require_once( 'amazonmws_setup_inc.php' );
 	
 
 if( !empty( $_REQUEST['mws_process_order'] ) ) {
-	amazon_process_order( $_REQUEST['amazon_order_id'] );
+	if( $ordersId = amazon_process_order( $_REQUEST['amazon_order_id'] ) ) {
+		bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$ordersId );
+	}
 } else {
 }
 

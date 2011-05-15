@@ -19,8 +19,21 @@
 		</tr>
 
 		{foreach from=$orderList item=azOrder name=orderList}
-		<tr class="{if $azOrder->getOrderStatus() != 'Shipped'}active{/if}">a
-			<td>{$azOrder->getAmazonOrderId()}<div class="date">{$azOrder->getPurchaseDate()|strtotime|bit_short_datetime}</div></td>
+		<tr class="{if $azOrder->getOrderStatus() != 'Shipped'}active{/if}">
+			<td>
+				{$azOrder->getAmazonOrderId()}<div class="date">{$azOrder->getPurchaseDate()|strtotime|bit_short_datetime}</div>
+				<div>
+				{assign var=localOrdersId value=$azOrder->getAmazonOrderId()|amazon_order_is_processed }
+				{if $localOrdersId}
+					<strong><a href="{$smarty.const.BITCOMMERCE_PKG_PATH}admin/orders.php?oID={$localOrdersId}">{$localOrdersId}</a></strong>
+				{else}
+					{form}
+						<input type="hidden" name="amazon_order_id" value="{$azOrder->getAmazonOrderId()}"/>
+						<input type="submit" class="minibutton" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
+					{/form}
+				{/if}
+				</div>
+			</td>
 			<td>
 				{if $azOrder->isSetShippingAddress()}
 {assign var=shippingAddress value=$azOrder->getShippingAddress()}
@@ -51,13 +64,6 @@
 				{/foreach}
 				</ol>
 			</td>
-			<td>
-				{if $azOrder->getNumberOfItemsUnshipped()}
-					{form}
-						<input type="hidden" name="amazon_order_id" value="{$azOrder->getAmazonOrderId()}"/>
-						<input type="submit" class="minibutton" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
-					{/form}
-				{/if}
 		</tr>
 		{/foreach}
 		</table>

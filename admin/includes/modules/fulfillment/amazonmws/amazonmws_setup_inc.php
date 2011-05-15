@@ -1,7 +1,21 @@
 <?php
+// +--------------------------------------------------------------------+
+// | bitcommerce														|
+// +--------------------------------------------------------------------+
+// | Copyright (c) 2011 bitcommerce.org									|
+// |																	|
+// | http://www.bitcommerce.org											|
+// +--------------------------------------------------------------------+
+// | This source file is subject to version 2.0 of the GPL license		|
+// +--------------------------------------------------------------------+
+
  
-global $gCommerceSystem;
+global $gCommerceSystem, $gBitSystem;
  
+if( !defined( 'MODULE_FULFILLMENT_AMAZONMWS_STATUS' ) || MODULE_FULFILLMENT_AMAZONMWS_STATUS != 'True' ) {
+	$gBitSystem->fatalError( 'AmazonMWS module is not active' );
+}
+
 /************************************************************************
 * REQUIRED
 * 
@@ -93,9 +107,16 @@ function amazon_mws_get_order_items( $pAmazonOrderId ) {
 	return $ret;
 }
 
+function amazon_order_is_processed( $pAmazonOrderId ) {
+	global $gBitDb;
+	return $gBitDb->getOne( "SELECT `orders_id` FROM " . TABLE_ORDERS . " WHERE `aux_orders_id`=?", array( $pAmazonOrderId ) );
+}
+
+// returns new orders_id
 function amazon_process_order( $pAmazonOrderId ) {
-	global $gAmazonMWS, $gBitUser, $gCommerceSystem;
-	vd( $pAmazonOrderId );
+	global $gAmazonMWS, $gBitUser, $gCommerceSystem, $gBitCustomer, $currencies, $order;
+
+	$ret = NULL;	
 	$request = new MarketplaceWebServiceOrders_Model_GetOrderRequest();
 	$request->setSellerId(MERCHANT_ID);
 	// @TODO: set request. Action can be passed as MarketplaceWebServiceOrders_Model_GetOrderRequest
@@ -105,10 +126,13 @@ function amazon_process_order( $pAmazonOrderId ) {
 	$orderIds = new MarketplaceWebServiceOrders_Model_OrderIdList();
 	$orderIds->setId( array( $pAmazonOrderId ) );
 	$request->setAmazonOrderId($orderIds);
-
 	$holdUser = $gBitUser;
-	$gBitUser = new BitPermUser( $holdUser->lookupHomepage( $gCommerceSystem->getConfig( 'MODULE_FULFILLMENT_AMAZONMWS_LOCAL_USERNAME', 'amazonmws' ) ) );
-	$gBitUser->load();
+	$azUser = new BitPermUser( $holdUser->lookupHomepage( $gCommerceSystem->getConfig( 'MODULE_FULFILLMENT_AMAZONMWS_LOCAL_USERNAME', 'amazonmws' ) ) );
+	$azUser->load();
+	$gBitUser = $azUser;
+	$gBitCustomer = new CommerceCustomer( $gBitUser->mUserId );
+	$gBitCustomer->syncBitUser( $gBitUser->mInfo );
+	$_SESSION['customer_id'] = $gBitUser->mUserId;
 
 	try {
 		$response = $gAmazonMWS->getOrder($request);
@@ -116,52 +140,51 @@ function amazon_process_order( $pAmazonOrderId ) {
 		if ($response->isSetGetOrderResult()) { 
 			$getOrderResult = $response->getGetOrderResult();
 			if ($getOrderResult->isSetOrders()) { 
+				$oldCwd = getcwd();
+				chdir( BITCOMMERCE_PKG_PATH );
+
 				$azOrderList = $getOrderResult->getOrders();
 
-				require_once(DIR_FS_CLASSES . 'order.php');
-				$newOrder = new order;
-				$newOrder->contents = array();
-				$newOrder->customer = array();
-				$newOrder->delivery = array();
-
-				$newOrder->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
-									'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
-									'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
-									'payment_method' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->title : '',
-									'payment_module_code' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
-									'coupon_code' => $coupon_code,
-									'subtotal' => 0,
-									'tax' => 0,
-									'total' => 0,
-									'tax_groups' => array(),
-									'comments' => (isset($_SESSION['comments']) ? $_SESSION['comments'] : ''),
-									'ip_address' => $_SERVER['REMOTE_ADDR']
-									);
 				if( $azOrders = $azOrderList->getOrder() ) {
+					require_once(DIR_FS_CLASSES . 'order.php');
+					$order = new order;
+					$order->initOrder();
+
+					$order->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
+										'subtotal' => 0,
+										'tax' => 0,
+										'total' => 0,
+										'tax_groups' => array(),
+										'comments' => (isset($_SESSION['comments']) ? $_SESSION['comments'] : ''),
+										'ip_address' => $_SERVER['REMOTE_ADDR']
+										);
 					$azOrder = current( $azOrders );
 
 					// Setup delivery address
+					if( $orderTotal = $azOrder->getOrderTotal() ) {
+						$order->info['total'] = $orderTotal->getAmount();
+						$order->info['currency'] = $orderTotal->getCurrencyCode();
+						$order->info['currency_value'] = $currencies->currencies[$order->info['currency']]['currency_value'];
+					}
+
 					if( $shippingAddress = $azOrder->getShippingAddress() ) {
-						$newOrder->delivery = array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
+						$country = zen_get_countries( zen_get_country_id( $shippingAddress->getCountryCode() ), TRUE );
+						$zoneName = zen_get_zone_name_by_code( $country['countries_id'], $shippingAddress->getStateOrRegion() );
+						$order->delivery = array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
 												'lastname' => substr( $shippingAddress->getName(), strpos( $shippingAddress->getName(), ' ' ) + 1 ),
 											//	'company' => $defaultAddress['entry_company'],
 												'street_address' => $shippingAddress->getAddressLine1(),
 												'suburb' => trim( $shippingAddress->getAddressLine2().' '.$shippingAddress->getAddressLine3() ),
 												'city' => $shippingAddress->getCity(),
 												'postcode' => $shippingAddress->getPostalCode(),
-												'state' => $shippingAddress->getStateOrRegion(),
-											//	'zone_id' => $defaultAddress['entry_zone_id'],
-												'country' => array(
-											//		'countries_name' => $defaultAddress['countries_name'], 
-											//		'countries_id' => $defaultAddress['countries_id'], 
-													'countries_iso_code_2' => $shippingAddress->getCountryCode(), 
-											//		'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
-												),
-											//	'format_id' => $defaultAddress['address_format_id'],
+												'state' => $zoneName,
+												'country' => $country,
+												'format_id' => $country['address_format_id'],
 												'telephone' => $shippingAddress->getPhone(),
 											//	'email_address' => $defaultAddress['customers_email_address']
 											);
-						$newOrder->customer = $newOrder->delivery;
+						$order->customer = $order->delivery;
+						$order->billing = $order->delivery;
 					}
 
 					// Setup shipping
@@ -174,47 +197,114 @@ function amazon_process_order( $pAmazonOrderId ) {
 							break;
 					}
 
+//					$order->contents['payment_method'] = ,
+//					$order->contents['payment_module_code'] = !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
+
 					$azOrderItems = amazon_mws_get_order_items( $azOrder->getAmazonOrderId() );
 					$azOrderItem = $azOrderItems->getOrderItem();
 					foreach( $azOrderItem as $azi ) {
-/*
-						{if $azi->getQuantityOrdered()}{$azi->getQuantityOrdered()} x {/if}
-						<a href="{$gBitProduct->getDisplayUrl($azi->getSellerSKU())}">{$azi->getSellerSKU()} {$azi->getTitle()|escape}</a>
-						{assign var=lineTotal value=0}
-						<div class="floatright">
-							{if $azi->getItemPrice()}{assign var=itemPrice value=$azi->getItemPrice()}{$itemPrice->getAmount()}{assign var=lineTotal value=$lineTotal+$itemPrice->getAmount()}{/if} 
-							{if $lineTotal} = {$lineTotal} {$itemPrice->getCurrencyCode()}{/if}
-						</div>
-*/
+						// hardcode an attribtue for testing
+						$testSku = $azi->getSellerSKU().':38,12';
+						list( $productsId, $attrString ) = explode( ':', $testSku, 2 );
+						$productsKey = $productsId.':ASIN-'.$azi->getASIN();
+						$order->contents[$productsKey] = $gBitCustomer->mCart->getProductHash( $productsKey );
+						$order->contents[$productsKey]['products_quantity'] = $azi->getQuantityOrdered();
+						$order->contents[$productsKey]['products_name'] = $azi->getTitle();
+						if( $itemPrice = $azi->getItemPrice() ) {
+//							{$itemTax->getCurrencyCode()}
+							$order->contents[$productsKey]['price'] = $itemPrice->getAmount();
+							$order->contents[$productsKey]['final_price'] = $itemPrice->getAmount();
+						}
+						if( $itemTax = $azi->getItemTax() ) {
+//							{$itemTax->getCurrencyCode()}
+							$order->contents[$productsKey]['tax'] = $itemTax->getAmount();
+						}
+						if( $shippingPrice = $azi->getShippingPrice() ) {
+//							{$itemTax->getCurrencyCode()}
+							$order->info['shipping_cost'] = $shippingPrice->getAmount();
+						}
+
+			
+						// stock up the attributes	
+						if( $attrs = explode( ',', $attrString ) ) {
+							foreach( $attrs as $optionValueId ) {
+								$optionId = $order->mDb->getOne( "SELECT cpa.`products_options_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " cpa WHERE cpa.`products_options_values_id`=?", array( $optionValueId ) );
+								$order->contents[$productsKey]['attributes'][$optionId.'_'.$optionValueId] = $optionValueId;
+							}
+						}
+
+						if ( !empty( $order->contents[$productsKey]['attributes'] ) ) {
+							$attributes  = $order->contents[$productsKey]['attributes'];
+							$order->contents[$productsKey]['attributes'] = array();
+							$subindex = 0;
+							foreach( $attributes as $option=>$value ) {
+								$optionValues = zen_get_option_value( zen_get_options_id( $option ), (int)$value );
+								// Determine if attribute is a text attribute and change products array if it is.
+								if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
+									$attr_value = $order->contents[$productsKey]['attributes_values'][$option];
+								} else {
+									$attr_value = $optionValues['products_options_values_name'];
+								}
+
+								$order->contents[$productsKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
+																						 'value' => $attr_value,
+																						 'option_id' => $option,
+																						 'value_id' => $value,
+																						 'prefix' => $optionValues['price_prefix'],
+																						 'price' => $optionValues['options_values_price']);
+
+								$subindex++;
+							}
+						}
+
+						$shown_price = (zen_add_tax($order->contents[$productsKey]['final_price'], $order->contents[$productsKey]['tax']) * $order->contents[$productsKey]['products_quantity'])
+										+ zen_add_tax($order->contents[$productsKey]['onetime_charges'], $order->contents[$productsKey]['tax']);
+						$order->subtotal += $shown_price;
+
+						$products_tax = $order->contents[$productsKey]['tax'];
+						$products_tax_description = $order->contents[$productsKey]['tax_description'];
+						if (DISPLAY_PRICE_WITH_TAX == 'true') {
+							$order->info['tax'] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+							if (isset($order->info['tax_groups']["$products_tax_description"])) {
+								$order->info['tax_groups']["$products_tax_description"] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+							} else {
+								$order->info['tax_groups']["$products_tax_description"] = $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+							}
+						} else {
+							$order->info['tax'] += ($products_tax / 100) * $shown_price;
+							if (isset($order->info['tax_groups']["$products_tax_description"])) {
+								$order->info['tax_groups']["$products_tax_description"] += ($products_tax / 100) * $shown_price;
+							} else {
+								$order->info['tax_groups']["$products_tax_description"] = ($products_tax / 100) * $shown_price;
+							}
+						}
+						$order->info['tax'] = zen_round($order->info['tax'],2);
+
 						if( $azi->isSetShippingPrice() ) {
 							$shippingPrice = $azi->getShippingPrice();
 							$shipping['cost'] += $shippingPrice->getAmount();
 						}
 					}
 				
-					$newOrder->info['shipping_method'] = $shipping['title'];
-					$newOrder->info['shipping_method_code'] = $shipping['code'];
-					$newOrder->info['shipping_module_code'] = $shipping['id'];
-					$newOrder->info['shipping_cost'] = $shipping['cost'];
-			vd( $newOrder );	
-					require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-					$shipping_modules = new CommerceShipping($_SESSION['shipping']);
-/*
+					$order->info['shipping_method'] = $shipping['title'];
+					$order->info['shipping_method_code'] = $shipping['code'];
+					$order->info['shipping_module_code'] = $shipping['id'];
 
-	require(DIR_FS_CLASSES . 'order_total.php');
-	$order_total_modules = new order_total;
-	$order_totals = $order_total_modules->pre_confirmation_check();
-	$order_totals = $order_total_modules->process();
-
-$gBitDb->mDb->StartTrans();
-// load the before_process function from the payment modules
-	$payment_modules->before_process();
-
-	$insert_id = $order->create($order_totals, 2);
-	$order->create_add_products($insert_id);
-*/
-
+					$_SESSION['sendto'] = NULL;
+					unset( $_SESSION['cot_gv'] );
+					require_once( DIR_FS_CLASSES . 'order_total.php' );
+					global $order_total_modules;
+					$order_total_modules = new order_total;
+					$order_totals = $order_total_modules->pre_confirmation_check();
+					$order_totals = $order_total_modules->process();
+					if( $ordersId = $order->create( $order_totals, 2 ) ) {
+						$order->create_add_products( $ordersId );
+						$ret = $ordersId;
+						$order->updateStatus( array( 'status' => MODULE_FULFILLMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID ) );
+					}
+					$order->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `aux_orders_id`=? WHERE `orders_id`=?", array( $azOrder->getAmazonOrderId(), $ordersId ) );
 				}
+				chdir( $oldCwd );
 			}
 		}
 	} catch (MarketplaceWebServiceOrders_Exception $ex) {
@@ -227,6 +317,10 @@ $gBitDb->mDb->StartTrans();
 	}
 
 	$gBitUser = $holdUser;
+	$gBitCustomer = new CommerceCustomer( $gBitUser->mUserId );
+	$_SESSION['customer_id'] = $gBitUser->mUserId;
+
+	return $ret;
 }
 
 

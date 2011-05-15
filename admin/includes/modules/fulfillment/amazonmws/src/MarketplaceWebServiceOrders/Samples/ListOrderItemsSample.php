@@ -76,7 +76,7 @@ include_once ('.config.inc.php');
  ***********************************************************************/
  $request = new MarketplaceWebServiceOrders_Model_ListOrderItemsRequest();
  $request->setSellerId(MERCHANT_ID);
- $request->setAmazonOrderId("<AMAZON ORDER ID>");
+ $request->setAmazonOrderId( $_REQUEST['azoid'][0] );
  // @TODO: set request. Action can be passed as MarketplaceWebServiceOrders_Model_ListOrderItemsRequest
  // object or array of parameters
  invokeListOrderItems($service, $request);
