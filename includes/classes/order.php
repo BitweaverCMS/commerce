@@ -30,18 +30,22 @@ class order extends CommerceOrderBase {
 	function order($order_id = '') {
 		parent::CommerceOrderBase();
 		$this->mOrdersId = $order_id;
-		$this->info = array();
-		$this->totals = array();
-		$this->subtotal = 0;
-		$this->contents = array();
-		$this->customer = array();
-		$this->delivery = array();
+		$this->initOrder();
 
 		if (zen_not_null($order_id)) {
 			$this->load($order_id);
 		} else {
 			$this->cart();
 		}
+	}
+
+	function initOrder() {
+		$this->info = array();
+		$this->totals = array();
+		$this->subtotal = 0;
+		$this->contents = array();
+		$this->customer = array();
+		$this->delivery = array();
 	}
 
 	function getField( $pField ) {
