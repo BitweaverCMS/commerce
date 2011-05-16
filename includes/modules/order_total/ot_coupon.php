@@ -1,46 +1,46 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
+// |zen-cart Open Source E-commerce										|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
+// | Copyright (c) 2004 The zen-cart developers							|
+// |																	|
+// | http://www.zen-cart.com/index.php									|
+// |																	|
+// | Portions Copyright (c) 2003 osCommerce								|
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
+// | This source file is subject to version 2.0 of the GPL license,		|
+// | that is bundled with this package in the file LICENSE, and is		|
+// | available through the world-wide-web at the following url:			|
+// | http://www.zen-cart.com/license/2_0.txt.							|
 // | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
+// | to obtain it through the world-wide-web, please send a note to		|
+// | license@zen-cart.com so we can mail you a copy immediately.		|
 // +----------------------------------------------------------------------+
 // $Id: ot_coupon.php,v 1.20 2010/07/21 03:42:31 spiderr Exp $
 //
 
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
-	class ot_coupon {
-		var $title, $output;
+class ot_coupon {
+	var $title, $output;
 
-		function ot_coupon() {
+	function ot_coupon() {
 
-			$this->code = 'ot_coupon';
-			$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
-			$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
-			$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
-			$this->user_prompt = '';
-			$this->sort_order = MODULE_ORDER_TOTAL_COUPON_SORT_ORDER;
-			$this->include_shipping = MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING;
-			$this->include_tax = MODULE_ORDER_TOTAL_COUPON_INC_TAX;
-			$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
-			$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
-			$this->credit_class = true;
-			$this->output = array();
+		$this->code = 'ot_coupon';
+		$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
+		$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
+		$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
+		$this->user_prompt = '';
+		$this->sort_order = MODULE_ORDER_TOTAL_COUPON_SORT_ORDER;
+		$this->include_shipping = MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING;
+		$this->include_tax = MODULE_ORDER_TOTAL_COUPON_INC_TAX;
+		$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
+		$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
+		$this->credit_class = true;
+		$this->output = array();
 
-		}
+	}
 
 	function process() {
 		global $order, $currencies, $gBitDb;
@@ -59,9 +59,9 @@
 				$zq_coupon_code = $gBitDb->Execute($sql);
 				$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
 				$order->info['total'] = $order->info['total'] - $od_amount['total'];
-				$this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
-							 'text' => '-' . $currencies->format($od_amount['total']),
-							 'value' => $od_amount['total']);
+				$this->output[] = array( 'title' => $this->title . ': ' . $this->coupon_code . ' :',
+										 'text' => '-' . $currencies->format($od_amount['total']),
+										 'value' => $od_amount['total'] );
 			}
 		}
 	}
