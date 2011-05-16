@@ -387,6 +387,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	function getProductHash( $pProductsKey = false ) {
 		 global $gBitProduct, $currencies;
 
+		$productHash = array();
+
 		$product = $this->getProductObject( $pProductsKey );
 		if( $product && $product->isValid() ) {
 			$prid = $product->mProductsId;
