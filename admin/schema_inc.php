@@ -773,7 +773,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   last_modified T,
   date_purchased T,
   orders_date_finished T,
-  aux_orders_id C(128),
   orders_status I2,
   currency C(3),
   currency_value N(14,6),
