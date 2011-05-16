@@ -25,7 +25,7 @@
 				<div>
 				{assign var=localOrdersId value=$azOrder->getAmazonOrderId()|amazon_order_is_processed }
 				{if $localOrdersId}
-					<strong><a href="{$smarty.const.BITCOMMERCE_PKG_PATH}admin/orders.php?oID={$localOrdersId}">{$localOrdersId}</a></strong>
+					<strong><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$localOrdersId}">{$localOrdersId}</a></strong>
 				{else}
 					{form}
 						<input type="hidden" name="amazon_order_id" value="{$azOrder->getAmazonOrderId()}"/>

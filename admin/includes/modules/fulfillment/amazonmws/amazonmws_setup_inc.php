@@ -12,7 +12,7 @@
  
 global $gCommerceSystem, $gBitSystem;
  
-if( !defined( 'MODULE_FULFILLMENT_AMAZONMWS_STATUS' ) || MODULE_FULFILLMENT_AMAZONMWS_STATUS != 'True' ) {
+if( !defined( 'MODULE_PAYMENT_AMAZONMWS_STATUS' ) || MODULE_PAYMENT_AMAZONMWS_STATUS != 'True' ) {
 	$gBitSystem->fatalError( 'AmazonMWS module is not active' );
 }
 
@@ -22,8 +22,8 @@ if( !defined( 'MODULE_FULFILLMENT_AMAZONMWS_STATUS' ) || MODULE_FULFILLMENT_AMAZ
 * Access Key ID and Secret Acess Key ID, obtained from:
 * http://aws.amazon.com
 ***********************************************************************/
-define('AWS_ACCESS_KEY_ID', $gCommerceSystem->getConfig('MODULE_FULFILLMENT_AMAZONMWS_AWS_ACCESS_KEY_ID') ); // '<Your Access Key ID>');
-define('AWS_SECRET_ACCESS_KEY', $gCommerceSystem->getConfig('MODULE_FULFILLMENT_AMAZONMWS_SECRET_KEY' ) );  
+define('AWS_ACCESS_KEY_ID', $gCommerceSystem->getConfig('MODULE_PAYMENT_AMAZONMWS_AWS_ACCESS_KEY_ID') ); // '<Your Access Key ID>');
+define('AWS_SECRET_ACCESS_KEY', $gCommerceSystem->getConfig('MODULE_PAYMENT_AMAZONMWS_SECRET_KEY' ) );  
 
 /************************************************************************
 * REQUIRED
@@ -40,8 +40,8 @@ define('APPLICATION_VERSION', '3.0.0');
 * All MWS requests must contain the seller's merchant ID and
 * marketplace ID.
 ***********************************************************************/
-define ('MERCHANT_ID', $gCommerceSystem->getConfig('MODULE_FULFILLMENT_AMAZONMWS_MERCHANT_ID') );
-define ('MARKETPLACE_ID', $gCommerceSystem->getConfig('MODULE_FULFILLMENT_AMAZONMWS_MARKETPLACE_ID') );
+define ('MERCHANT_ID', $gCommerceSystem->getConfig('MODULE_PAYMENT_AMAZONMWS_MERCHANT_ID') );
+define ('MARKETPLACE_ID', $gCommerceSystem->getConfig('MODULE_PAYMENT_AMAZONMWS_MARKETPLACE_ID') );
 
 /************************************************************************ 
 * OPTIONAL ON SOME INSTALLATIONS
@@ -109,7 +109,7 @@ function amazon_mws_get_order_items( $pAmazonOrderId ) {
 
 function amazon_order_is_processed( $pAmazonOrderId ) {
 	global $gBitDb;
-	return $gBitDb->getOne( "SELECT `orders_id` FROM " . TABLE_ORDERS . " WHERE `aux_orders_id`=?", array( $pAmazonOrderId ) );
+	return $gBitDb->getOne( "SELECT `orders_id` FROM " . TABLE_ORDERS_TOTAL . " WHERE class='pay_amazonmws' AND `title` LIKE ?", array( "%$pAmazonOrderId" ) );
 }
 
 // returns new orders_id
@@ -127,7 +127,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 	$orderIds->setId( array( $pAmazonOrderId ) );
 	$request->setAmazonOrderId($orderIds);
 	$holdUser = $gBitUser;
-	$azUser = new BitPermUser( $holdUser->lookupHomepage( $gCommerceSystem->getConfig( 'MODULE_FULFILLMENT_AMAZONMWS_LOCAL_USERNAME', 'amazonmws' ) ) );
+	$azUser = new BitPermUser( $holdUser->lookupHomepage( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_AMAZONMWS_LOCAL_USERNAME', 'amazonmws' ) ) );
 	$azUser->load();
 	$gBitUser = $azUser;
 	$gBitCustomer = new CommerceCustomer( $gBitUser->mUserId );
@@ -172,7 +172,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 						$zoneName = zen_get_zone_name_by_code( $country['countries_id'], $shippingAddress->getStateOrRegion() );
 						$order->delivery = array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
 												'lastname' => substr( $shippingAddress->getName(), strpos( $shippingAddress->getName(), ' ' ) + 1 ),
-											//	'company' => $defaultAddress['entry_company'],
+												'company' => NULL,
 												'street_address' => $shippingAddress->getAddressLine1(),
 												'suburb' => trim( $shippingAddress->getAddressLine2().' '.$shippingAddress->getAddressLine3() ),
 												'city' => $shippingAddress->getCity(),
@@ -181,7 +181,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 												'country' => $country,
 												'format_id' => $country['address_format_id'],
 												'telephone' => $shippingAddress->getPhone(),
-											//	'email_address' => $defaultAddress['customers_email_address']
+												'email_address' => NULL
 											);
 						$order->customer = $order->delivery;
 						$order->billing = $order->delivery;
@@ -196,9 +196,6 @@ function amazon_process_order( $pAmazonOrderId ) {
 							$shipping['code'] = 'USPSREG';
 							break;
 					}
-
-//					$order->contents['payment_method'] = ,
-//					$order->contents['payment_module_code'] = !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
 
 					$azOrderItems = amazon_mws_get_order_items( $azOrder->getAmazonOrderId() );
 					$azOrderItem = $azOrderItems->getOrderItem();
@@ -285,24 +282,33 @@ function amazon_process_order( $pAmazonOrderId ) {
 							$shipping['cost'] += $shippingPrice->getAmount();
 						}
 					}
-				
+			
+					foreach ( array( 'cc_type', 'cc_owner', 'cc_number', 'cc_expires', 'coupon_code' ) as $key ) {
+						$order->info[$key] = NULL;
+					}
 					$order->info['shipping_method'] = $shipping['title'];
 					$order->info['shipping_method_code'] = $shipping['code'];
 					$order->info['shipping_module_code'] = $shipping['id'];
+					$order->info['payment_module_code'] = 'amazonmws';
+					$order->info['payment_method'] = 'Amazon Order';
 
 					$_SESSION['sendto'] = NULL;
+					$_SESSION['shipping'] = $shipping;
 					unset( $_SESSION['cot_gv'] );
 					require_once( DIR_FS_CLASSES . 'order_total.php' );
 					global $order_total_modules;
 					$order_total_modules = new order_total;
 					$order_totals = $order_total_modules->pre_confirmation_check();
+					require_once( DIR_WS_MODULES.'payment/amazonmws.php' );
+					$amazon = new amazonmws( $azOrder->getAmazonOrderId() );
+					$amazonOutput = $amazon->process();
 					$order_totals = $order_total_modules->process();
+					array_splice( $order_totals, count( $order_totals ) - 1, 0, array( $amazonOutput ) );
 					if( $ordersId = $order->create( $order_totals, 2 ) ) {
 						$order->create_add_products( $ordersId );
 						$ret = $ordersId;
-						$order->updateStatus( array( 'status' => MODULE_FULFILLMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID ) );
+						$order->updateStatus( array( 'status' => MODULE_PAYMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID ) );
 					}
-					$order->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `aux_orders_id`=? WHERE `orders_id`=?", array( $azOrder->getAmazonOrderId(), $ordersId ) );
 				}
 				chdir( $oldCwd );
 			}
