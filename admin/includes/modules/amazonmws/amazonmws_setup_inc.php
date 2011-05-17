@@ -200,8 +200,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 					$azOrderItems = amazon_mws_get_order_items( $azOrder->getAmazonOrderId() );
 					$azOrderItem = $azOrderItems->getOrderItem();
 					foreach( $azOrderItem as $azi ) {
-						// hardcode an attribtue for testing
-						$testSku = $azi->getSellerSKU().':38,12';
+						$testSku = $azi->getSellerSKU();
 						list( $productsId, $attrString ) = explode( ':', $testSku, 2 );
 						$productsKey = $productsId.':ASIN-'.$azi->getASIN();
 						$order->contents[$productsKey] = $gBitCustomer->mCart->getProductHash( $productsKey );

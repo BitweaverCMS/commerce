@@ -10,7 +10,7 @@
 // +--------------------------------------------------------------------+
 
 
-chdir( '../../../../' );
+chdir( '../../../' );
 require_once( 'includes/application_top.php' );
 require_once( 'amazonmws_setup_inc.php' );
 	
