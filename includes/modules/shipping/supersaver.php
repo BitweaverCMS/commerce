@@ -88,6 +88,7 @@
 				$this->quotes['note'] = tra( MODULE_SHIPPING_SUPERSAVER_DESC );
 				$this->quotes['methods'] = array(array('id' => $this->code,
 											'title' => $desc,
+											'code' => 'supersaver',
 											'cost' => MODULE_SHIPPING_SUPERSAVER_COST + MODULE_SHIPPING_SUPERSAVER_HANDLING));
 				if ($this->tax_class > 0) {
 					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
