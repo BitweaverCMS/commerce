@@ -901,26 +901,6 @@
 
 
 ////
-  function zen_html_entity_decode($given_html, $quote_style = ENT_QUOTES) {
-    $trans_table = array_flip(get_html_translation_table( HTML_SPECIALCHARS, $quote_style ));
-    $trans_table['&#39;'] = "'";
-    return ( strtr( $given_html, $trans_table ) );
-  }
-
-////
-//CLR 030228 Add function zen_decode_specialchars
-// Decode string encoded with htmlspecialchars()
-  function zen_decode_specialchars($string){
-    $string=str_replace('&gt;', '>', $string);
-    $string=str_replace('&lt;', '<', $string);
-    $string=str_replace('&#039;', "'", $string);
-    $string=str_replace('&quot;', "\"", $string);
-    $string=str_replace('&amp;', '&', $string);
-
-    return $string;
-  }
-
-////
 // find module directory
 // include template specific immediate /modules files
 // new_products, products_new_listing, featured_products, featured_products_listing, product_listing, specials_index, upcoming,

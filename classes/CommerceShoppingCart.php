@@ -387,6 +387,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	function getProductHash( $pProductsKey = false ) {
 		 global $gBitProduct, $currencies;
 
+		$productHash = array();
+
 		$product = $this->getProductObject( $pProductsKey );
 		if( $product && $product->isValid() ) {
 			$prid = $product->mProductsId;
@@ -402,7 +404,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['model'] = $product->getField('products_model');
 			$productHash['image'] = $product->getField('products_image');
 			$productHash['image_url'] = $product->getField('products_image_url');
-			$productHash['products_quantity'] = $this->contents[$pProductsKey]['products_quantity'];
+			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $attr );
