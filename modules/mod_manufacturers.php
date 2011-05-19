@@ -53,7 +53,7 @@ if( $manufacturers = $gBitDb->Execute($manufacturer_sidebox_query) ) {
   $number_of_rows = count( $manufacturers->RecordCount() )+1;
 
 // Display a list
-$manufacturer_sidebox_array = array( '' => tra('Please Select') );
+$manufacturer_sidebox_array = array( '' => 'Please Select') ;
 
 while( $manufacturer_sidebox = $manufacturers->fetchRow() ) {
   $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox['manufacturers_name']);
@@ -62,7 +62,7 @@ while( $manufacturer_sidebox = $manufacturers->fetchRow() ) {
 //$gBitSmarty->assign( 'manufacturersPulldown', zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, (isset($_GET['manufacturers_id']) ? $_GET['manufacturers_id'] : ''), 'onchange="this.form.submit();" size="' . MAX_MANUFACTURERS_LIST . '" style="width: 100%"') . zen_hide_session_id() );
 $gBitSmarty->assign( 'manufacturers', $manufacturer_sidebox_array );
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Manufacturers' ) );
+	$gBitSmarty->assign( 'moduleTitle',  'Manufacturers' ) ;
 }
 
 }

@@ -40,6 +40,6 @@ if ($show_languages == true) {
 	$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Languages' ) );
+	$gBitSmarty->assign( 'moduleTitle',  'Languages' ) ;
 }
 ?>

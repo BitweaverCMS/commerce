@@ -62,7 +62,7 @@ if( $gBitUser->isRegistered() ) {
 
 	}
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Order History' ) );
+		$gBitSmarty->assign( 'moduleTitle',  'Order History' ) ;
 	}
 }
 ?>
