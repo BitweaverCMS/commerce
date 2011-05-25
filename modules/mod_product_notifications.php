@@ -26,7 +26,7 @@ if( $gBitProduct->isValid() && $gBitUser->isRegistered() ) {
 	$gBitSmarty->assign( 'notificationExists', $gBitProduct->hasNotification( $gBitUser->mUserId ) );
 
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Notifications' ) );
+		$gBitSmarty->assign( 'moduleTitle',  'Notifications' ) ;
 	}
 }
 

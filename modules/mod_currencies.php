@@ -44,7 +44,7 @@ if ($show_currencies == true) {
 		$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
 		$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
 		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
+			$gBitSmarty->assign( 'moduleTitle',  'Currencies' ) ;
 		}
 	}
 }

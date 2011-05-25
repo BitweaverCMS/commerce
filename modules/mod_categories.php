@@ -31,7 +31,7 @@ if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where
 	$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Categories' ) );
+	$gBitSmarty->assign( 'moduleTitle', 'Categories' );
 }
 
 //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);

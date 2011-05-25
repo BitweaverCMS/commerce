@@ -31,7 +31,7 @@ if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
 	$gBitSmarty->assign( 'bannerContent', zen_display_banner('static', $bannerRs ) );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Sponsors' ) );
+	$gBitSmarty->assign( 'moduleTitle',  'Sponsors' ) ;
 }
 
 ?>

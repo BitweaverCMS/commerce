@@ -35,9 +35,9 @@ if ($music_genres->RecordCount()>0) {
 	$music_genres_array = array();
 	if ( !isset($_GET['music_genre_id']) or
 		$_GET['music_genre_id'] == '' ) {
-		$music_genres_array[] = tra( 'Please Select' );
+		$music_genres_array[] =  'Please Select' ;
 	} else {
-		$music_genres_array[] = tra( '- Reset -' );
+		$music_genres_array[] =  '- Reset -' ;
 	}
 
 	while (!$music_genres->EOF) {
@@ -50,6 +50,6 @@ if ($music_genres->RecordCount()>0) {
 
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Music Genres' ) );
+	$gBitSmarty->assign( 'moduleTitle',  'Music Genres' ) ;
 }
 ?>

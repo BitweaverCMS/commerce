@@ -35,7 +35,7 @@ $check_categories = $gBitDb->getOne("select `categories_id` from " . TABLE_CATEG
 if ($check_categories) {
 	$gBitSmarty->assign( 'sideboxDocumentCategories', $main_category_tree->zen_category_tree('3') );
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Documents' ) );
+		$gBitSmarty->assign( 'moduleTitle',  'Documents' ) ;
 	}
 }
 

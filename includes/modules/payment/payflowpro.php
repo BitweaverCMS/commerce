@@ -356,165 +356,42 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-		 if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
-			 $url="test-payflow.verisign.com";
-		 } else {
-			 $url="payflow.verisign.com";
-		 }
-
-	if (MODULE_PAYMENT_PAYFLOWPRO_SERVEROS=='Windows') { // for Windows servers only
-		$objCOM = new COM("PFProCOMControl.PFProCOMControl.1");
-		$ctx1 = $objCOM->CreateContext($url, 443, 30, "", 0, "", "");
-		$result = $objCOM->SubmitTransaction($ctx1, $parmList, strlen($parmList));
-		$objCOM->DestroyContext($ctx1);
-
-		} else {	// end Windows version
-
-			$parmList = str_replace('"','~',$parmList);
-
-		 // The following method requires that the "pfpro" components be compiled into PHP on your server.
-		 // Detailed information on the compiling process is contained here:	http://www.php.net/manual/en/ref.pfpro.php
-			$transaction = array(USER=> MODULE_PAYMENT_PAYFLOWPRO_LOGIN,
-								 PWD => MODULE_PAYMENT_PAYFLOWPRO_PWD,
-								 VENDOR=> MODULE_PAYMENT_PAYFLOWPRO_LOGIN,
-								 PARTNER=> MODULE_PAYMENT_PAYFLOWPRO_PARTNER,
-								 TRXTYPE => ((MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization') ? 'A' : 'S'),
-								 TENDER=> 'C',
-								 ZIP=> $order->customer['postcode'],
-								 COMMENT1=> 'CustID:' . $_SESSION['customer_id'] . '+OrderID:' . $nextOrderId . '+Email:'. $order->customer['email_address'],
-								 COMMENT2=> (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') ? '+++Test Transaction+++' : '',
-								 ACCT=> $order->info['cc_number'],
-								 EXPDATE=> $order->info['cc_expires'],
-								 CVV2=> $order->info['cc_cvv'],
-								 AMT=> number_format($order->info['total'], 2,'.',''),
-								 NAME=> $order->billing['firstname'] . ' ' . $order->billing['lastname'],
-								 STREET => $order->customer['street_address']
-			);
-		putenv("LD_LIBRARY_PATH=".getenv("LD_LIBRARY_PATH").":".DIR_FS_CATALOG."includes/modules/payment/payflowpro");
-		putenv("PFPRO_CERT_PATH=".MODULES_PAYMENT_PAYFLOW_PRO_CERT_PATH);
-		$resultcodes=exec(DIR_FS_CATALOG.'includes/modules/payment/payflowpro/pfpro '.$url. ' 443 "'.$parmList.'" 30	2>&1', $output, $return_value);
-
-		$resultStrings	= explode( '&', $resultcodes );
-		$responseHash = array();
-		foreach( $resultStrings as $s ) {
-			list($key, $val) = explode( '=', $s, 2 );
-			$responseHash[$key] = $val;
-		}
-
-		//debug code
-		if( $gDebug ){
-			echo "calling exec " . (DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30	2>&1')."<BR>\n";
-			echo "RESULTS:<BR>\n";
-			print_r($resultcodes);
-			echo "<BR>\n";
-			exit;
-		}
-
-			//$debug='ON';
-		list($strA, $strB) = split ('[|]', $resultcodes);
-		if ($debug=='ON') $messageStack->add_session("valueA: " . $strA,'error');
-		if ($debug=='ON') $messageStack->add_session("valueB: " . $strB,'error');
-		if ($debug=='ON' || (zen_not_null($return_value) && $return_value!='0')) $messageStack->add_session('Result code: '.$return_value, 'caution');
-		if ($debug=='ON') foreach($output as $key=>$value) {$messageStack->add_session("$key => $value<br />",'caution'); }
-		exec("exit");
-
-		$return = '&'.$output[0].'&';
-
-		# Check result
-		if( isset( $responseHash['PNREF'] ) ) {
-			$this->pnref = $responseHash['PNREF'];
-		}
-
-		if( isset( $responseHash['RESULT'] ) ) {
-			$this->result = $responseHash['RESULT'];
-		} else {
-			$this->result = 'X';
-		}
-
-		while (list ($key, $val) = each ($output)) {
-			$result_list .= $key.'='.urlencode($val).'&';
-		}
-
-		$this->result_list = $result_list;
-
-		if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
-			//replace middle CC num with XXXX
-			$order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
-		}
-
-
-		$message .= DIR_FS_CATALOG.'includes/modules/payment/bin/pfpro '.$url. ' 443 "'.$parmList.'" 30 ';
-		$message .= $url ."\n";
-		$message .= $this->result ."\n";
-		$message .= $result_list ."\n";
-		$message .= $this->pnref ."\n";
-		$message .= $return ."\n";
-		if ($debug=='ON') {
-			zen_mail(STORE_NAME.'payflow pro debug - pre pfpro_process()', EMAIL_FROM, 'payflow pro debug codes' , $message, STORE_NAME, EMAIL_FROM);
-		}
-	}//End of if Not Windows (else)
-*/
-}
-
-/**
- * Take an array of name-value pairs and return a properly
- * formatted list. Enforces the following rules:
- *
- *	 - Names must be uppercase, all characters must match [A-Z].
- *	 - Values cannot contain quotes.
- *	 - If values contain & or =, the name has the length appended to
- *		 it in brackets (NAME[4] for a 4-character value.
- *
- * If any of the "cannot" conditions are violated the function
- * returns false, and the caller must abort and not proceed with
- * the transaction.
- */
-function _buildNameValueList($pairs) {
-	// Add the parameters that are always sent.
-	$commpairs = array();
-
-	$pairs = array_merge($pairs, $commpairs);
-
-	$string = array();
-	foreach ($pairs as $name => $value) {
-		if (preg_match('/[^A-Z_0-9]/', $name)) {
-			if (PAYPAL_DEV_MODE == 'true') $this->log('_buildNameValueList - datacheck - ABORTING - preg_match found invalid submission key: ' . $name . ' (' . $value . ')');
-			return false;
-		}
-		// remove quotation marks
-		$value = str_replace('"', '', $value);
-		// if the value contains a & or = symbol, handle it differently
-		$string[] = $name . '[' . strlen($value) . ']=' . $value;
 	}
 
-	$this->lastParamList = implode('&', $string);
-	return $this->lastParamList;
-}
+	/**
+	 * Take an array of name-value pairs and return a properly
+	 * formatted list. Enforces the following rules:
+	 *
+	 *	 - Names must be uppercase, all characters must match [A-Z].
+	 *	 - Values cannot contain quotes.
+	 *	 - If values contain & or =, the name has the length appended to
+	 *		 it in brackets (NAME[4] for a 4-character value.
+	 *
+	 * If any of the "cannot" conditions are violated the function
+	 * returns false, and the caller must abort and not proceed with
+	 * the transaction.
+	 */
+	function _buildNameValueList($pairs) {
+		// Add the parameters that are always sent.
+		$commpairs = array();
+
+		$pairs = array_merge($pairs, $commpairs);
+
+		$string = array();
+		foreach ($pairs as $name => $value) {
+			if (preg_match('/[^A-Z_0-9]/', $name)) {
+				if (PAYPAL_DEV_MODE == 'true') $this->log('_buildNameValueList - datacheck - ABORTING - preg_match found invalid submission key: ' . $name . ' (' . $value . ')');
+				return false;
+			}
+			// remove quotation marks
+			$value = str_replace('"', '', $value);
+			// if the value contains a & or = symbol, handle it differently
+			$string[] = $name . '[' . strlen($value) . ']=' . $value;
+		}
+
+		$this->lastParamList = implode('&', $string);
+		return $this->lastParamList;
+	}
 
   /**
    * Take a name/value response string and parse it into an
