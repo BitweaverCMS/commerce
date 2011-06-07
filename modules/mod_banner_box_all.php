@@ -51,6 +51,6 @@ if( $rs = $gBitDb->Execute($sql) ) {
 }
 
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Sponsors' ) );
+	$gBitSmarty->assign( 'moduleTitle',  'Sponsors' ) ;
 }
 ?>

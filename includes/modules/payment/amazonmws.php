@@ -51,6 +51,14 @@ class amazonmws extends BitBase {
 		return $ret;
 	}
 
+	function selection() {
+		return "";
+	}
+
+	function javascript_validation() {
+		return "";
+	}
+
 	function getAmazonSellerFee( $pFee ) {
 		$feePercentage = 0;
 		$feeClosing = 0;
