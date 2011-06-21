@@ -33,7 +33,7 @@ class CommerceOrderBase extends BitBase {
 	function getProductObject( $pProductsId ) {
 		if( BitBase::verifyId( $pProductsId ) ) {
 			if( !isset( $this->mProductObjects[$pProductsId] ) ) {
-				$this->mProductObjects[$pProductsId] = new CommerceProduct( zen_get_prid( $pProductsId ) );
+				$this->mProductObjects[$pProductsId] = bc_get_commerce_product( zen_get_prid( $pProductsId ) );
 				if( $this->mProductObjects[$pProductsId]->load() ) {
 					$ret = &$this->mProductObjects[$pProductsId];
 				}
