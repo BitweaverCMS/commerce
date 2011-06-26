@@ -846,6 +846,16 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld' => "
   CONSTRAINT ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
+    orders_products_id I4 NOTNULL PRIMARY,
+    customers_id I4 NOTNULL,
+    expires_date T,
+    expires_last_notification T,
+    expires_notices I4 NOTNULL DEFAULT 3
+    CONSTRAINT ', CONSTRAINT `expires_customer_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BIT_DB_PREFIX."users_users` (`user_id`)
+				, CONSTRAINT `expires_orders_products_ref` FOREIGN KEY (`orders_products_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products` (`orders_products_id`)'
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
   orders_status_id I4 PRIMARY,
   language_id I4 NOTNULL default '1',

@@ -65,6 +65,7 @@
       $this->quotes = array('id' => $this->code,
                             'module' => MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE,
                             'methods' => array(array('id' => $this->code,
+													 'code' => $this->code,
                                                      'title' => MODULE_SHIPPING_STOREPICKUP_TEXT_WAY,
                                                      'cost' => MODULE_SHIPPING_STOREPICKUP_COST)));
 
