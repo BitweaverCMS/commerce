@@ -149,8 +149,6 @@
 // set the top level domains
   $http_domain = zen_get_top_level_domain(HTTP_SERVER);
   $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-  $current_domain = (($request_type == 'NONSSL') ? $http_domain : $https_domain);
-  if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
 
 // include cache functions if enabled
   if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') require_once(DIR_WS_FUNCTIONS . 'cache.php');
@@ -166,29 +164,12 @@
   zen_session_name('zenid');
   zen_session_save_path(SESSION_WRITE_DIRECTORY);
 
-// set the session cookie parameters
-    session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
 // set the session ID if it exists
    if (isset($_REQUEST[zen_session_name()])) {
      zen_session_id($_REQUEST[zen_session_name()]);
    } elseif ( ($request_type == 'SSL') && isset($_REQUEST[zen_session_name()]) ) {
      zen_session_id($_REQUEST[zen_session_name()]);
    }
-
-// start the session
-  $session_started = false;
-  if (SESSION_FORCE_COOKIE_USE == 'True') {
-    zen_setcookie('cookie_test', 'please_accept_for_session', time()+60*60*24*30, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
-    if (isset($_COOKIE['cookie_test'])) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } else {
-    zen_session_start();
-    $session_started = true;
-  }
 
 // include the breadcrumb class and start the breadcrumb trail
   require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
