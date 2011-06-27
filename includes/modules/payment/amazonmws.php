@@ -157,6 +157,7 @@ class amazonmws extends BitBase {
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('AWS Access Key ID', 'MODULE_PAYMENT_AMAZONMWS_AWS_ACCESS_KEY_ID','', '', '6', '4', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Secret Key', 'MODULE_PAYMENT_AMAZONMWS_SECRET_KEY','', '', '6', '4', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Initial Order Status', 'MODULE_PAYMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID', '20', 'Orders with this status will be processed for fulfillment<br />(\'Transferred\' recommended)', '6', '5', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Default Attributes', 'MODULE_PAYMENT_AMAZONMWS_DEFAULT_ATTRIBUTES','', 'Comma separated list of <a href=\"products_options.php\">product options ids</a> that will be used if amazon SKU has none.', '6', '4', now())");
 
 		if( !$gBitUser->lookupHomepage( 'amazonmws' ) ) {
 			$newUser = new BitPermUser();
@@ -183,6 +184,7 @@ class amazonmws extends BitBase {
 			'MODULE_PAYMENT_AMAZONMWS_AWS_ACCESS_KEY_ID',		
 			'MODULE_PAYMENT_AMAZONMWS_SECRET_KEY',		
 			'MODULE_PAYMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID',
+			'MODULE_PAYMENT_AMAZONMWS_DEFAULT_ATTRIBUTES',
 		 );
 	 }
 
