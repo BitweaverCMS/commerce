@@ -220,9 +220,11 @@ function amazon_process_order( $pAmazonOrderId ) {
 							$order->info['shipping_cost'] = $shippingPrice->getAmount();
 						}
 
-			
+						if( empty( $attrString ) ) {
+							$attrString = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_AMAZONMWS_DEFAULT_ATTRIBUTES' ); 
+						}
 						// stock up the attributes	
-						if( $attrs = explode( ',', $attrString ) ) {
+						if( $attrString && $attrs = explode( ',', $attrString ) ) {
 							foreach( $attrs as $optionValueId ) {
 								$optionId = $order->mDb->getOne( "SELECT cpa.`products_options_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " cpa WHERE cpa.`products_options_values_id`=?", array( $optionValueId ) );
 								$order->contents[$productsKey]['attributes'][$optionId.'_'.$optionValueId] = $optionValueId;
