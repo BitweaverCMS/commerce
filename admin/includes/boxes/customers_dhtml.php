@@ -24,6 +24,9 @@
   $za_heading = array('text' => BOX_HEADING_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_CUSTOMERS, 'link' => zen_href_link_admin(FILENAME_CUSTOMERS, '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_CUSTOMERS_ORDERS, 'link' => zen_href_link_admin(FILENAME_ORDERS, '', 'NONSSL'));
+if( defined( 'MODULE_PAYMENT_AMAZONMWS_STATUS' ) || MODULE_PAYMENT_AMAZONMWS_STATUS == 'True' ) {
+  $za_contents[] = array('text' => tra('Amazon Orders'), 'link' => zen_href_link_admin( 'includes/modules/amazonmws/index.php', '', 'NONSSL'));
+}
   $za_contents[] = array('text' => tra('Interests'), 'link' => zen_href_link_admin('interests.php', '', 'NONSSL'));
   $za_contents[] = array('text' => tra('Commissions'), 'link' => zen_href_link_admin('commissions.php', '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_LOCALIZATION_ORDERS_STATUS, 'link' => zen_href_link_admin(FILENAME_ORDERS_STATUS, '', 'NONSSL'));
