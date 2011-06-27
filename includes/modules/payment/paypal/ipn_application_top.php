@@ -105,8 +105,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 // set the top level domains
   $http_domain = zen_get_top_level_domain(HTTP_SERVER);
   $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-  $current_domain = (($request_type == 'NONSSL') ? $http_domain : $https_domain);
-  if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
 
 
 // include shopping cart class
@@ -123,9 +121,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   zen_session_name('zenid');
   zen_session_save_path(SESSION_WRITE_DIRECTORY);
 
-// set the session cookie parameters
-    session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
 // set the session ID if it exists
    if (isset($_POST[zen_session_name()])) {
      zen_session_id($_POST[zen_session_name()]);
@@ -133,40 +128,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
      zen_session_id($_GET[zen_session_name()]);
    }
 
-// start the session
-  $session_started = false;
-  if (SESSION_FORCE_COOKIE_USE == 'True') {
-    zen_setcookie('cookie_test', 'please_accept_for_session', time()+60*60*24*30, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
-    if (isset($_COOKIE['cookie_test'])) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } elseif (SESSION_BLOCK_SPIDERS == 'True') {
-    $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-    $spider_flag = false;
-
-    if (zen_not_null($user_agent)) {
-      $spiders = file(DIR_WS_INCLUDES . 'spiders.txt');
-
-      for ($i=0, $n=sizeof($spiders); $i<$n; $i++) {
-        if (zen_not_null($spiders[$i])) {
-          if (is_integer(strpos($user_agent, trim($spiders[$i])))) {
-            $spider_flag = true;
-            break;
-          }
-        }
-      }
-    }
-
-    if ($spider_flag == false) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } else {
-    zen_session_start();
-    $session_started = true;
-  }
 if (!$_SESSION['customer_id']) {
   $sql = "select * from " . TABLE_PAYPAL_SESSION . " where session_id = '" . $session_stuff[1] . "'";
   $stored_session = $gBitDb->Execute($sql);
@@ -225,7 +186,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   if ($template_query->RecordCount() > 0) {
       $template_dir = $template_query->fields['template_dir'];
   }
-//if (template_switcher_available=="YES") $template_dir = templateswitch_custom($current_domain);
+
   define('DIR_WS_TEMPLATE', DIR_WS_TEMPLATES . $template_dir . '/');
 
   define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_TEMPLATE . 'images/');

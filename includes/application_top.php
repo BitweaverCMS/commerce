@@ -183,10 +183,6 @@ function clean_input( &$pArray ) {
 
 // Shopping cart actions
 	if (isset($_REQUEST['action'])) {
-// redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled
-		if ($session_started == false) {
-			zen_redirect(zen_href_link(FILENAME_COOKIE_USAGE));
-		}
 
 		if (DISPLAY_CART == 'true') {
 			$goto =	FILENAME_SHOPPING_CART;
