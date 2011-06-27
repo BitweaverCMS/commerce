@@ -362,7 +362,7 @@ class CommerceCustomer extends BitBase {
 	function getAddresses( $pCustomerId=NULL ) {
 		global $gBitDb;
 		$ret = NULL;
-		if( is_null( $pCustomerId ) && !empty( $this->mCustomerId ) ) {
+		if( is_null( $pCustomerId ) && $this && !empty( $this->mCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
 		}
 		if( is_numeric( $pCustomerId ) ) {
