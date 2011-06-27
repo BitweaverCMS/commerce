@@ -41,8 +41,12 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
   }
 
-  if (isset($_POST['payment'])) $_SESSION['payment'] = $_POST['payment'];
-  $_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
+	if (isset($_POST['payment'])) {
+		$_SESSION['payment'] = $_POST['payment'];
+	}
+	if( !empty( $_POST['comments'] ) ) {
+		$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
+	}
 
   if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     if (!isset($_POST['conditions']) || ($_POST['conditions'] != '1')) {
@@ -66,7 +70,6 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
     unset($_SESSION['payment']);
     $_SESSION['payment'] = '';
   }
-
 
   $payment_modules = new payment($_SESSION['payment']);
   $payment_modules->update_status();
