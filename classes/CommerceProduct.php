@@ -1543,12 +1543,12 @@ If a special exist * 10+9
 
 			if( !empty( $fileHash ) ) {
 				global $gBitSystem;
-				if( !empty( $pParamHash['dest_path'] ) ) {
-					$fileHash['dest_path']	= $pParamHash['dest_path'];
+				if( !empty( $pParamHash['dest_branch'] ) ) {
+					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_path']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
+					$fileHash['dest_branch']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
 				}
-				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_path'] );
+				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
