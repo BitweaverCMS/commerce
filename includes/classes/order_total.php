@@ -167,12 +167,10 @@
           $order_total=$this->get_order_total_main($class,$order_total);
           if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
-//echo $total_deductions . '#'.$order_total;
             $order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);
           }
         }
         $difference = $order->info['total'] - $total_deductions;
-//die('here');
         if ( $difference <= 0.009 ) {
           $credit_covers = true;
         }

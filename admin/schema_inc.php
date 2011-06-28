@@ -846,6 +846,16 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld' => "
   CONSTRAINT ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
+    orders_products_id I4 NOTNULL PRIMARY,
+    customers_id I4 NOTNULL,
+    expires_date T,
+    expires_last_notification T,
+    expires_notices I4 NOTNULL DEFAULT 3
+    CONSTRAINT ', CONSTRAINT `expires_customer_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BIT_DB_PREFIX."users_users` (`user_id`)
+				, CONSTRAINT `expires_orders_products_ref` FOREIGN KEY (`orders_products_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products` (`orders_products_id`)'
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
   orders_status_id I4 PRIMARY,
   language_id I4 NOTNULL default '1',
@@ -1549,8 +1559,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Read Only option type - Ignore for Add to Cart', 'PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED', '1', 'When a Product only uses READONLY attributes, should the Add to Cart button be On or Off?<br />0= OFF<br />1= ON', '13', '37', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Enable GZip Compression', 'GZIP_LEVEL', '0', '0= off 1= on', '14', '1', 'zen_cfg_select_option(array(''0'', ''1''),', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Session Directory', 'SESSION_WRITE_DIRECTORY', '/tmp', 'If sessions are file based, store them in this directory.', '15', '1', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Cookie Domain', 'SESSION_USE_FQDN', 'True', 'If True the full domain name will be used to store the cookie, e.g. www.mydomain.com. If False only a partial domain name will be used, e.g. mydomain.com. If you are unsure about this, always leave set to true.', '15', '2', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Force Cookie Use', 'SESSION_FORCE_COOKIE_USE', 'False', 'Force the use of sessions when cookies are only enabled.', '15', '2', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check SSL Session ID', 'SESSION_CHECK_SSL_SESSION_ID', 'False', 'Validate the SSL_SESSION_ID on every secure HTTPS page request.', '15', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check User Agent', 'SESSION_CHECK_USER_AGENT', 'False', 'Validate the clients browser user agent on every page request.', '15', '4', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check IP Address', 'SESSION_CHECK_IP_ADDRESS', 'False', 'Validate the clients IP address on every page request.', '15', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",

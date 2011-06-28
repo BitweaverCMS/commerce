@@ -1053,7 +1053,6 @@ function reset_bitcommerce_layout() {
     $domain_array = explode('.', $url);
     $domain_size = sizeof($domain_array);
     if ($domain_size > 1) {
-      if (SESSION_USE_FQDN == 'True') return $url;
       if (is_numeric($domain_array[$domain_size-2]) && is_numeric($domain_array[$domain_size-1])) {
         return false;
       } else {
