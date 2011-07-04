@@ -385,7 +385,7 @@
 				if( strpos( $ret['customers_age'], ' ' ) ) {
 					$ret['customers_age'] = substr( $ret['customers_age'], 0, strrpos( $ret['customers_age'], ' ' ));
 				}
-				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=`cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
+				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
 			}
 		}
 		return $ret;
