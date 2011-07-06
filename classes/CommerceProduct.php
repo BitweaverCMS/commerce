@@ -54,11 +54,11 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	// Override LibertyBase method
-	function getNewObject( $pClass, $pContentId, $pLoadContent ) {
+	function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
-	function load( $pFullLoad = TRUE ) {
+	function load( $pFullLoad = TRUE, $pPluginParams = NULL  ) {
 		global $gBitUser;
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
@@ -84,7 +84,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	// LibertyMime override
-	function getStorageSubDirName() {
+	function getStorageSubDirName( $pFileHash = NULL ) {
 		return 'products';
 	}
 
@@ -1037,7 +1037,7 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
+	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL, $pDefault=TRUE ) {
 		return( self::getImageUrl( $pProductsId, $pSize ) );
 	}
 
