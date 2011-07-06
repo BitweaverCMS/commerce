@@ -154,12 +154,6 @@ if( !empty( $order ) ) {
 			}
 
 			if( $order->updateStatus( $_REQUEST ) ) {
-				if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
-					// adjust download_maxdays based on current date
-					$zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
-					$update_downloads_query = "UPDATE " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " SET download_maxdays=?, download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`=?";
-					$gBitDb->query($update_downloads_query, array( $zc_max_days, (int)$oID ) );
-				}
 				$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
 			} else {
 				$messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
