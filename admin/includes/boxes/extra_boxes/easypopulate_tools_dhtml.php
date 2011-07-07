@@ -19,5 +19,5 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-  $za_contents[] = array('text' => BOX_TOOLS_EASYPOPULATE, 'link' => zen_href_link_admin(FILENAME_EASYPOPULATE, '', 'NONSSL'));
+  $za_contents[] = array('text' => tra( 'Easy Populate' ), 'link' => zen_href_link_admin(FILENAME_EASYPOPULATE, '', 'NONSSL'));
 ?>

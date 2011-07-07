@@ -63,7 +63,7 @@
 
     function add_session($message, $type = 'error') {
 
-      if (!$_SESSION['messageToStack']) {
+      if( empty( $_SESSION['messageToStack'] ) ) {
         $_SESSION['messageToStack'] = array();
       }
 

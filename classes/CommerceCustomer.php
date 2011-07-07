@@ -98,7 +98,7 @@ class CommerceCustomer extends BitBase {
 		}
 	}
 
-	function syncBitUser( $pInfo ) {
+	static function syncBitUser( $pInfo ) {
 		global $gBitDb;
 		// bitcommerce customers table to bitweaver users_users table
 		$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
