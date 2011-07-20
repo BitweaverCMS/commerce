@@ -610,7 +610,12 @@
 ////
 	function zen_cfg_pull_down_zone_list($zone_id, $key = '') {
 		$name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
-		return zen_draw_pull_down_menu($name, zen_get_country_zones(STORE_COUNTRY), $zone_id);
+		$zones = zen_get_country_zones(STORE_COUNTRY);
+		foreach( array_keys( $zones ) AS $key ) {
+			$zones[$key]['id'] = $key;
+			$zones[$key]['text'] = $zones[$key]['zone_name'];
+		}
+		return zen_draw_pull_down_menu($name, $zones, $zone_id);
 	}
 
 

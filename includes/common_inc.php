@@ -254,7 +254,7 @@
 		$default = stripslashes( $GLOBALS[$name] );
 	}
 
-    for ($i=0, $n=sizeof($values); $i<$n; $i++) {
+    foreach( array_keys( $values ) as $i ) {
       $field .= '<option value="' . zen_output_string($values[$i]['id']) . '"';
       if ($default == $values[$i]['id']) {
         $field .= ' selected="selected"';
