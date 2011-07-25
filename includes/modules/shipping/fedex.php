@@ -395,8 +395,9 @@ class fedex {
 		$data .= '1529,"1"'; // Quote discounted rates
 		if ($this->insurance > 0) {
 			$data .= '1415,"' . $this->insurance . '"'; // Insurance value
-			$data .= '68,"USD"'; // Insurance value currency
+			$data .= '68,"'.DEFAULT_CURRENCY.'"'; // Insurance value currency
 		}
+
 		if (empty( $order->delivery['company'] ) && MODULE_SHIPPING_FEDEX_RESIDENTIAL == 0) {
 			$data .= '440,"Y"'; // Residential address
 		}else {
@@ -413,6 +414,7 @@ class fedex {
 			$this->error_message = 'No data returned from Fedex, perhaps the Fedex site is down';
 			return array('error' => $this->error_message);
 		}
+
 		$fedexData = $this->_ParseFedex($fedexData);
 		$i = 1;
 		if ($this->country == $order->delivery['country']['countries_iso_code_2']) {
