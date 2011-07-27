@@ -30,16 +30,17 @@ class CommerceOrderBase extends BitBase {
 		$this->mProductObjects = array();
 	}
 
-	function getProductObject( $pProductsId ) {
-		if( BitBase::verifyId( $pProductsId ) ) {
-			if( !isset( $this->mProductObjects[$pProductsId] ) ) {
-				$this->mProductObjects[$pProductsId] = bc_get_commerce_product( zen_get_prid( $pProductsId ) );
-				if( $this->mProductObjects[$pProductsId]->load() ) {
-					$ret = &$this->mProductObjects[$pProductsId];
+	// can take a productsKey or a straight productsId
+	function getProductObject( $pProductsMixed ) {
+		$productsId = zen_get_prid( $pProductsMixed );
+		if( BitBase::verifyId( $productsId ) ) {
+			if( !isset( $this->mProductObjects[$productsId] ) ) {
+				if( $this->mProductObjects[$productsId] = bc_get_commerce_product( $productsId ) ) {
+					$ret = &$this->mProductObjects[$productsId];
 				}
 			}
 		}
-		return $this->mProductObjects[$pProductsId];
+		return $this->mProductObjects[$productsId];
 	}
 
 	function getWeight() {
