@@ -948,7 +948,7 @@ function zen_update_lowest_purchase_price($product_id) {
 		$checkCart = &$gBitCustomer->mCart;
 	}
 
-	if( is_object( $checkCart ) ) {
+	if( !empty( $checkCart ) && is_object( $checkCart ) ) {
 		$check_cart_free = $checkCart->in_cart_check('product_is_always_free_ship','1');
 		$check_cart_cnt = $checkCart->count_contents();
 		$check_cart_weight = $checkCart->show_weight();
