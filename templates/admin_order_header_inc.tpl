@@ -18,7 +18,8 @@ function editAddress( pAddress ) {
 <tr>
 	<td valign="top">
 		{$order->info.date_purchased|bit_long_datetime}<br/>
-		{displayname hash=$order->customer} (ID: {$order->customer.user_id} <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">orders</a> <a href="product_history.php?user_id={$order->customer.user_id}">{biticon iname="appointment-new" iexplain="Users Products History"}</a>)
+		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
+		<a href="product_history.php?user_id={$order->customer.user_id}">{biticon iname="appointment-new" iexplain="Customer Sales History"}</a>
 		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" ibiticon="users/assume_user" iforce=icon} 
 		<br/>
 {if $order->customer.telephone}
@@ -26,10 +27,9 @@ function editAddress( pAddress ) {
 {/if}
 		<a href="mailto:{$order->customer.email_address}">{$order->customer.email_address}</a><br/>
 		{if $order->customer.referer_url}{$order->customer.referer_url|stats_referer_display_short}<br/>{/if}
-		IP: {$order->info.ip_address}<br/>
 		{if $customerStats.orders_count == 1}<em>First Order</em>
 		{else}
-		<strong>Tier {$customerStats.tier|round}</strong>: {$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2} {tr}over{/tr} {$customerStats.customers_age}
+		<strong>Tier {$customerStats.tier|round}</strong>: <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">{$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2} {tr}over{/tr} {$customerStats.customers_age}</a> 
 			{if $customerStats.gifts_redeemed || $customerStats.gifts_balance}<br/>
 				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance|round:2}, ${$customerStats.gifts_balance|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
 			{/if}
@@ -59,6 +59,7 @@ function editAddress( pAddress ) {
 			  </tr>
 		</table>
 		{/if}
+		IP: {$order->info.ip_address}
 	</td>
 	</tr>
 	<tr>
