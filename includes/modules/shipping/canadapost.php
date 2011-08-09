@@ -200,38 +200,42 @@ class canadapost
 					{
 						case 'CA':
 							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN'));
-							$lettermail_service = sprintf("Lettermail: estimated %d-%d business days", round($this->turnaround_time / 24 + 2), round($this->turnaround_time / 24 + 4)); 
+							$lettermailName = "Lettermail";
+							$lettermailDelivery = sprintf( "estimated %d-%d business days", round( $this->turnaround_time / 24 + 2 ), round( $this->turnaround_time / 24 + 4 ) ); 
 							//factor in turnaround time
 							break;
 						case 'US':
 							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA'));
-							$lettermail_service = "U.S.A Letter-post, up to 2 weeks";
+							$lettermailName = "U.S.A Letter-post";
+							$lettermailDelivery = "up to 2 weeks";
 							break;
 						default:
 							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL')); //Use overseas rate if not Canada or US
-							$lettermail_service = "INTL Letter-post, up to 2 weeks";
+							$lettermailName = "INTL Letter-post";
+							$lettermailDelivery = "up to 2 weeks";
 					}
 					for ($i = 0; $i < sizeof($table_cost); $i += 2) //Lookup the correct rate
 					{
 						if (round($shippingWeight, 3) <= $table_cost[$i])
 						{
-							$lettermail_cost = $table_cost[$i + 1];
+							$lettermailCost = $table_cost[$i + 1];
 							break;
 						}
 					}
-					if ($lettermail_cost > 0) $canadapostQuote[count($canadapostQuote)] = array($lettermail_service => $lettermail_cost);
+					if( !empty( $lettermailCost ) ) {
+						$canadapostQuote[] = array( 'name' => $lettermailName, 'cost' => $lettermailCost, 'delivery' => $lettermailDelivery );
+					}
 				}
-				if (is_array($canadapostQuote) && sizeof($canadapostQuote) > 0) {
+				if( !empty( $canadapostQuote ) ) {
 					$methods = array();
-					for ($i = 0; $i < sizeof($canadapostQuote); $i ++)
-					{
-						list ($type, $cost) = each($canadapostQuote[$i]);
-						$type = html_entity_decode($type);
-						if ($this->cp_online_handling == true) {
-							$methods[] = array('id' => $type , 'title' => $type , 'cost' => $cost + $this->handling_cp);
+					foreach( $canadapostQuote as $quote ) {
+						$method = array( 'id' => $quote['name'], 'code'=> $quote['name'], 'title' => $quote['name'].' '.$quote['delivery'], 'cost' => $quote['cost'] );
+						if( $this->cp_online_handling == true ) {
+							$method['cost'] += $this->handling_cp;
 						} else {
-							$methods[] = array('id' => $type , 'title' => $type , 'cost' => (MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING + $cost));
+							$method['cost'] += (float)MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING;
 						}
+						$methods[] = $method;
 					}
 					if ($this->tax_class > 0)
 					{
@@ -332,21 +336,25 @@ class canadapost
 		{
 			$packing_xml = $this->parsetag("packing", $resultXml); //pull out the packaging info
 			$strProduct = substr($resultXml, strpos($resultXml, "<product id=") + strlen("<product id=>"), strpos($resultXml, "</product>") - strlen("<product id=>") - strpos($resultXml, "<product id="));
-			$index = 0;
 			$aryProducts = false;
 			while (strpos($resultXml, "</product>"))
 			{
 				$cpnumberofboxes = substr_count($resultXml, "<expediterWeight");
 				$this->boxCount = $cpnumberofboxes;
-				$name = substr($resultXml, strpos($resultXml, "<name>") + strlen("<name>"), strpos($resultXml, "</name>") - strlen("<name>") - strpos($resultXml, "<name>"));
+				$name = html_entity_decode( substr($resultXml, strpos($resultXml, "<name>") + strlen("<name>"), strpos($resultXml, "</name>") - strlen("<name>") - strpos($resultXml, "<name>")) );
 				$rate = substr($resultXml, strpos($resultXml, "<rate>") + strlen("<rate>"), strpos($resultXml, "</rate>") - strlen("<rate>") - strpos($resultXml, "<rate>"));
+				if( preg_match( '/<product id="([0-9]+)"/', $resultXml, $matches ) ) {
+					$code = $matches[1];
+				} else {
+					$code = $name;
+				}
+vd( $code );vd( $name );
 				$shippingDate = substr($resultXml, strpos($resultXml, "<shippingDate>") + strlen("<shippingDate>"), strpos($resultXml, "</shippingDate>") - strlen("<shippingDate>") - strpos($resultXml, "<shippingDate>"));
 				$deliveryDate = substr($resultXml, strpos($resultXml, "<deliveryDate>") + strlen("<deliveryDate>"), strpos($resultXml, "</deliveryDate>") - strlen("<deliveryDate>") - strpos($resultXml, "<deliveryDate>"));
 				$deliveryDayOfWeek = substr($resultXml, strpos($resultXml, "<deliveryDayOfWeek>") + strlen("<deliveryDayOfWeek>"), strpos($resultXml, "</deliveryDayOfWeek>") - strlen("<deliveryDayOfWeek>") - strpos($resultXml, "<deliveryDayOfWeek>"));
 				$nextDayAM = substr($resultXml, strpos($resultXml, "<nextDayAM>") + strlen("<nextDayAM>"), strpos($resultXml, "</nextDayAM>") - strlen("<nextDayAM>") - strpos($resultXml, "<nextDayAM>"));
 				$packingID = substr($resultXml, strpos($resultXml, "<packingID>") + strlen("<packingID>"), strpos($resultXml, "</packingID>") - strlen("<packingID>") - strpos($resultXml, "<packingID>"));
-				$aryProducts[$index] = array($name . ', ' . $deliveryDate => $rate);
-				$index ++;
+				$aryProducts[] = array( 'cost' => $rate, 'name' => $name, 'delivery' => $deliveryDate, 'cost' => $rate );
 				$resultXml = substr($resultXml, strpos($resultXml, "</product>") + strlen("</product>"));
 			}
 			/* Lettermail is available if the only user-defined 'box' that Canada Post returns is one that begins with "lettermail" */
@@ -361,6 +369,43 @@ class canadapost
 			}
 		}
 	}
+
+
+/*
+function _uc_canadapost_service_list() {
+  return array(
+    // Domestic Products 
+    '1010' => t('Canada Post Regular'),
+    '1020' => t('Canada Post Expedited'),
+    '1030' => t('Canada Post Xpresspost'),
+    '1040' => t('Canada Post Priority Courier'),
+
+    // US Products
+    '2005' => t('Canada Post Small Packets Surface USA'),
+    '2015' => t('Canada Post Small Packets Air USA'),
+    '2020' => t('Canada Post Expedited US Business Contract'),
+    '2030' => t('Canada Post Xpresspost USA'),
+    '2040' => t('Canada Post Priority Worldwide USA'),
+    '2050' => t('Canada Post Priority Worldwide PAK USA'),
+
+    // International Products
+    '3005' => t('Canada Post Small Packets Surface International'),
+    '3010' => t('Canada Post Surface International'),
+    '3015' => t('Canada Post Small Packets Air International'),
+    '3020' => t('Canada Post Air International'),
+    '3025' => t('Canada Post Xpresspost International'),
+    '3040' => t('Canada Post Priority Worldwide International'),
+    '3050' => t('Canada Post Priority Worldwide PAK International'),
+  );
+
+  // No longer supported?
+  //'1120' => t('Canada Post Expedited Evening'),
+  //'1130' => t('Canada Post Xpresspost Evening'),
+  //'1220' => t('Canada Post Expedited Saturday'),
+  //'1230' => t('Canada Post Xpresspost Saturday'),
+  //'2025' => t('Canada Post Expedited US Commercial'),
+}
+*/
 
 	/**
 	 * translate regular ascii chars to xml
