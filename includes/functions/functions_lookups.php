@@ -672,45 +672,35 @@ function zen_get_info_page($zf_product_id) {
 
 ////
 // stop regular behavior based on customer/store settings
-  function zen_run_normal() {
-    $zc_run = 'false';
-    switch (true) {
-      case (DOWN_FOR_MAINTENANCE == 'true'):
-      // down for maintenance
-        $zc_run = 'false';
-        break;
-      case (STORE_STATUS >= 1):
-      // showcase no prices
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
-      // show room only
-      // customer may browse but no prices
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '3'):
-      // show room only
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customer_id'] == ''):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customers_authorization'] > '0'):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      default:
-      // proceed normally
-        $zc_run = 'true';
-        break;
-    }
-    return $zc_run;
-  }
+function zen_run_normal() {
+	$ret = 'false';
+
+	if( defined( 'DOWN_FOR_MAINTENANCE' ) && DOWN_FOR_MAINTENANCE == 'true') {
+		// down for maintenance
+		$ret = 'false';
+	} elseif( defined( 'STORE_STATUS' ) && STORE_STATUS >= 1 ) {
+		// showcase no prices
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '1' && empty( $_SESSION['customer_id'] ) ) {
+		// customer must be logged in to browse
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '2' && empty( $_SESSION['customer_id'] ) ) {
+		// show room only: customer may browse but no prices
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '3' ) {
+		// show room only
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL_AUTHORIZATION' ) && CUSTOMERS_APPROVAL_AUTHORIZATION != '0' && empty( $_SESSION['customer_id'] ) ) {
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL_AUTHORIZATION' ) && CUSTOMERS_APPROVAL_AUTHORIZATION != '0' && !empty( $_SESSION['customers_authorization'] ) ) {
+		// customer must be logged in to browse
+		$ret = 'false';
+	} else {
+		// proceed normally
+		$ret = 'true';
+	}
+	return $ret;
+}
 
 ///
 // no price check
