@@ -32,7 +32,7 @@
       $this->server = Array();
       $this->database = Array();
       $this->phpBB = Array();
-      $this->get_phpBB_info();
+//      $this->get_phpBB_info();
     }
 
     function get_phpBB_info() {
