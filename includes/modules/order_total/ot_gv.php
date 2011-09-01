@@ -206,7 +206,7 @@ function apply_credit() {
 				$gBitDb->query("insert into	" . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, customer_id, redeem_ip) values ( now(), ?, ?, ?)", array( $gv_result->fields['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
 				if ($customer_gv) {
 					// already has gv_amount so update
-					$gBitDb->array( "update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = '" . $total_gv_amount . "' where `customer_id` = ?" . array( $gBitUser->mUserId ) );
+					$gBitDb->query( "update " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = ? where `customer_id` = ?", array( $total_gv_amount, $gBitUser->mUserId ) );
 				} else {
 					// no gv_amount so insert
 					$gBitDb->query("insert into " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values (?, ?)", array( $gBitUser->mUserId, $total_gv_amount ) );
