@@ -19,7 +19,7 @@
 {else}
 <div id="attrlist" {$listStyle} >
 
-<a href="{$smarty.server.PHP_SELF}?products_options_id=new">{tr}New Option{/tr}</a> &bull; <a href="{$smarty.server.PHP_SELF}?products_options_values_id=new">{tr}New Option Value{/tr}</a>
+<a href="{$smarty.server.PHP_SELF}?products_options_id=new" class="minibutton">{tr}New Option{/tr}</a> <a href="{$smarty.server.PHP_SELF}?products_options_values_id=new" class="minibutton">{tr}New Option Value{/tr}</a>
 
 
 	<ul class="data">
