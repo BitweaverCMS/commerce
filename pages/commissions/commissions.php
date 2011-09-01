@@ -26,9 +26,10 @@ if( $addresses = $gBitCustomer->getAddresses( $gBitCustomer->mCustomerId ) ) {
 	$gBitSmarty->assign( 'defaultAddressId', $gBitUser->getPreference( 'commissions_check_address', $gBitCustomer->getDefaultAddress() ) );
 }
 
+$paymentOptions[''] = tra( 'Please Select Below...' );
 $paymentOptions['storecredit'] = tra( 'Store Credit' );
-$paymentOptions['paypal'] = 'PayPal';
-$paymentOptions['worldpay'] = 'WorldPay';
+$paymentOptions['paypal'] = tra( 'PayPal' );
+$paymentOptions['worldpay'] = tra( 'WorldPay' );
 $paymentOptions['check'] = tra( 'Check' );
 $gBitSmarty->assign( 'paymentOptions', $paymentOptions );
 
