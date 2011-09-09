@@ -348,7 +348,7 @@ class canadapost
 				} else {
 					$code = $name;
 				}
-vd( $code );vd( $name );
+
 				$shippingDate = substr($resultXml, strpos($resultXml, "<shippingDate>") + strlen("<shippingDate>"), strpos($resultXml, "</shippingDate>") - strlen("<shippingDate>") - strpos($resultXml, "<shippingDate>"));
 				$deliveryDate = substr($resultXml, strpos($resultXml, "<deliveryDate>") + strlen("<deliveryDate>"), strpos($resultXml, "</deliveryDate>") - strlen("<deliveryDate>") - strpos($resultXml, "<deliveryDate>"));
 				$deliveryDayOfWeek = substr($resultXml, strpos($resultXml, "<deliveryDayOfWeek>") + strlen("<deliveryDayOfWeek>"), strpos($resultXml, "</deliveryDayOfWeek>") - strlen("<deliveryDayOfWeek>") - strpos($resultXml, "<deliveryDayOfWeek>"));
