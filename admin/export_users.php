@@ -6,20 +6,30 @@
 	global $gBitDb,$gBitSystem;
 
 if( !empty( $_REQUEST['export'] ) ) {
-	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `total_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_date`, ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`
+	$selectSql = '';
+	$joinSql = '';
+	$groupSql = '';
+	if( $gBitSystem->isPackageActive( 'newsletters' ) ) {
+		$selectSql = ", ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`";
+		$joinSql = " LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.`user_id` = uu.`user_id`) ";
+		$groupSql = " ,ms.unsubscribe_date ";
+	}
+
+	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `total_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_date` $selectSql
 			FROM users_users uu
-			 	 INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.user_id = uu.user_id) 
-				LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.`customers_id`=uu.`user_id)
-				 LEFT JOIN " . TABLE_ADDRESS_BOOK ." cab ON (cc.customers_default_address_id = cab.address_book_id)
-				 LEFT JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.countries_id = cab.entry_country_id)
+			 	 INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`user_id` = uu.`user_id`) 
+				LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.`customers_id`=uu.`user_id`)
+				 LEFT JOIN " . TABLE_ADDRESS_BOOK ." cab ON (cc.`customers_default_address_id` = cab.`address_book_id`)
+				 LEFT JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id` = cab.`entry_country_id`)
 				 LEFT JOIN " . TABLE_ORDERS . " co ON (cab.customers_id = co.customers_id AND co.`orders_status` > 0)
-				 LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.user_id = uu.user_id)
+				 $joinSql
 	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0
-			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ms.unsubscribe_date,ccou.countries_name
+			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ccou.countries_name $groupSql
 			ORDER BY uu.`user_id`";
 
 	$max = (!empty( $_REQUEST['num_records'] ) ? $_REQUEST['num_records'] : NULL );
-	if( $rs = $gBitDb->query($sql,array( $gBitSystem->getConfig('users_validate_email_group') ), $max ) )  {
+vd( $gBitSystem->getConfig('users_validate_email_group', 3) );
+	if( $rs = $gBitDb->query($sql,array( $gBitSystem->getConfig('users_validate_email_group', 3) ), $max ) )  {
 		$tempFH = tmpfile();
 		$headerSet = FALSE;
 		while( $row = $rs->fetchRow() ) {

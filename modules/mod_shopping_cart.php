@@ -53,27 +53,29 @@ if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
   $content ="";
   if ($gBitCustomer->mCart->count_contents() > 0) {
     $content = '<table border="0" width="100%" cellspacing="0" cellpadding="0">';
-    $products = $gBitCustomer->mCart->get_products();
-    for ($i=0, $n=sizeof($products); $i<$n; $i++) {
+    foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
+      $product = $gBitCustomer->mCart->getProductObject( $productKey );
+
+      $productId = zen_get_prid( $productKey );
       $content .= '<tr><td align="right" valign="top" class="infoboxcontents">';
 
-      if( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $productId)) {
         $content .= '<span class="newItemInCart">';
       } else {
         $content .= '<span class="infoboxcontents">';
       }
 
-      $content .= $products[$i]['quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrl( zen_get_prid( $products[$i]['id'] ) ) . '">';
+      $content .= $gBitCustomer->mCart->contents[$productKey]['products_quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrl( zen_get_prid( $productId ) ) . '">';
 
-      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $productId)) {
         $content .= '<span class="newItemInCart">';
       } else {
         $content .= '<span class="infoboxcontents">';
       }
 
-      $content .= $products[$i]['name'] . '</span></a></td></tr>';
+      $content .= $product->getTitle() . '</span></a></td></tr>';
 
-      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $products[$i]['id'])) {
+      if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $productId)) {
         $_SESSION['new_products_id_in_cart'] = '';
       }
     }
