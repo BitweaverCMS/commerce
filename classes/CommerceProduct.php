@@ -2488,7 +2488,7 @@ function bc_get_commerce_product( $pLookupMixed ) {
 		$lookupValue = current( $pLookupMixed );
 	} elseif( is_numeric( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = $pLookupMixed;
+		$lookupValue = (int)$pLookupMixed;
 	}
 
 	if( !empty( $lookupValue ) ) {
