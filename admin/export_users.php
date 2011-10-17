@@ -28,7 +28,7 @@ if( !empty( $_REQUEST['export'] ) ) {
 			ORDER BY uu.`user_id`";
 
 	$max = (!empty( $_REQUEST['num_records'] ) ? $_REQUEST['num_records'] : NULL );
-vd( $gBitSystem->getConfig('users_validate_email_group', 3) );
+
 	if( $rs = $gBitDb->query($sql,array( $gBitSystem->getConfig('users_validate_email_group', 3) ), $max ) )  {
 		$tempFH = tmpfile();
 		$headerSet = FALSE;
