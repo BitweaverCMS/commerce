@@ -449,8 +449,7 @@ $this->debug(0);
 				@$ret['hosts'][$urlHash['host']]['units'] += $row['total_units'];
 				@$ret['hosts'][$urlHash['host']]['orders'] += $row['total_orders'];
 				@$ret['hosts'][$urlHash['host']]['customers']++;
-				$searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE));
-				if( $searchTerm ) {
+				if( !empty( $urlHash['query'] ) && $searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE)) ) {
 					parse_str( $urlHash['query'] );
 					if( !empty( $$searchTerm ) ) {	
 						$urlKey = $$searchTerm;
