@@ -12,6 +12,8 @@
 	</div>
 	<div class="body">
 
+		{formfeedback error=$errors}
+
 		{include file="bitpackage:bitcommerce/admin_commissions_list_inc.tpl"}
 
 	</div><!-- end .body -->

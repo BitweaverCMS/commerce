@@ -13,7 +13,7 @@
 	{foreach from=$gCoupon->mRestrictions item=r}
 		<li class="item {if $r.coupon_restrict=='Y'}restricted{else}permitted{/if}">
 			<div class="floaticon">
-				<a class="" href="{$smarty.server.PHP_SELF}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=switch_status">{if $r.coupon_restrict=='Y'}{biticon ipackage="bitcommerce" iname="icon_status_red" iexplain="Restricted"}{else}{biticon ipackage="bitcommerce" iname="icon_status_green" iexplain="Permitted"}{/if}</a>
+				<a class="" href="{$smarty.server.PHP_SELF}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=switch_status">{if $r.coupon_restrict=='Y'}{biticon ipackage="bitcommerce" iname="icon_status_red" iexplain="Restricted"}{elseif $r.coupon_restrict=='O'}{biticon ipackage="bitcommerce" iname="icon_status_yellow" iexplain="Restricted"}{else}{biticon ipackage="bitcommerce" iname="icon_status_green" iexplain="Permitted"}{/if}</a>
 				<a class="" href="{$smarty.server.PHP_SELF}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{biticon iname="edit-delete" iexplain="Remove"}</a>
 			</div>
 			{if $r.category_id}<strong>{tr}Category{/tr}:</strong> {$r.categories_name}<br/>{/if}
@@ -76,8 +76,9 @@
 	{formlabel label="Restriction"}
 	{forminput}
 		<select name="restrict_status">
-			<option value="Deny" selected="selected">Deny</option>
-			<option value="Allow" selected="selected">Allow</option>
+			<option value="Deny" selected="selected">{tr}Deny{/tr}</option>
+			<option value="Maybe" selected="selected">{tr}Allow - Optional{/tr}</option>
+			<option value="Allow" selected="selected">{tr}Allow - Mandatory{/tr}</option>
 		</select>
 	{/forminput}
 </div>

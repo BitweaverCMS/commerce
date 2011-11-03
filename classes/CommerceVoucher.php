@@ -188,7 +188,13 @@ class CommerceVoucher extends BitBase {
 			}
 
 			if( !$this->mDb->getOne( "SELECT `restrict_id` FROM " . TABLE_COUPON_RESTRICT . " WHERE coupon_id = ? $whereSql", $bindVars ) ) {
-				$columns['coupon_restrict'] = ($pParamHash['restrict_status']=='Deny') ? 'Y' : 'N';
+				if( $pParamHash['restrict_status'] == 'Allow' ) {
+					$columns['coupon_restrict'] = 'N';
+				} elseif( $pParamHash['restrict_status'] == 'Maybe' ) {
+					$columns['coupon_restrict'] = 'O';
+				} else {
+					$columns['coupon_restrict'] = 'Y';
+				}
 				$this->mDb->AssociateInsert( TABLE_COUPON_RESTRICT, $columns );
 			}
 		}
