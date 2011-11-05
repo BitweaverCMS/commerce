@@ -279,13 +279,13 @@ class ot_coupon {
 		$ret = false;
 
 		if( is_numeric( $coupon_id ) ) {
+			$ret = TRUE;
 			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
 			if( $rs = $gBitDb->query( $query, array( $coupon_id ) ) ) {
 				// gifts are not valid, so only check non-gifts
 				if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
-					$ret = FALSE;
+					$ret = ($rs->RecordCount() == 0); // if there are restictions, assume false
 					while( $restriction = $rs->fetchRow() ) {
-
 						// specific product_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['product_id'] ) ) {
 							if( $restriction['product_id'] == $pProductHash['products_id'] ) {
@@ -335,7 +335,6 @@ class ot_coupon {
 				}
 			}
 		}
-
 		return $ret;
 	}
 
