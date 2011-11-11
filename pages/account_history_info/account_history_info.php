@@ -44,7 +44,20 @@
           <td class="main"><strong><?php echo HEADING_PAYMENT_METHOD; ?></strong></td>
         </tr>
         <tr>
-          <td class="main"><?php echo $order->info['payment_method']; ?></td>
+          <td class="main">
+<?php 
+				echo $order->info['payment_method']; 
+				foreach( array( 'cc_owner', 'cc_number', 'cc_ref_id' ) as $key ) {
+					$value = trim( $order->getField( $key ) );
+					if( !empty( $value ) ) {
+						echo '<div>';
+						echo '<em>'.tra( ucwords( str_replace( '_', ' ', $key ) ) ).'</em> ';
+						echo $value;
+						echo '</div>';
+					}
+				}
+?>
+		</td>
         </tr>
       </table>
     </td>
