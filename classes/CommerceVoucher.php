@@ -262,6 +262,7 @@ class CommerceVoucher extends BitBase {
 						  FROM " . TABLE_COUPON_REDEEM_TRACK . " ccrt
 							LEFT JOIN " . TABLE_ORDERS . " co ON (ccrt.`order_id`=co.`orders_id`)
 						  WHERE coupon_id = ? AND customer_id = ? 
+						  GROUP BY `orders_status`
 						  ORDER BY `orders_status` DESC
 						  LIMIT 1";
 				$redeemCountCustomer = $this->mDb->getAssoc( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
