@@ -33,8 +33,8 @@ class fedex {
 		$this->domestic_types = array(
 			'01' => 'FedEx Priority Overnight<sup>&reg;</sup>',
 			'03' => 'FedEx 2Day<sup>&reg;</sup>',
-//			'05' => 'FedEx Standard Overnight<sup>&reg;</sup>',
-//			'06' => 'FedEx First Overnight<sup>&reg;</sup> ',
+			'05' => 'FedEx Standard Overnight<sup>&reg;</sup>',
+			'06' => 'FedEx First Overnight<sup>&reg;</sup> ',
 			'20' => 'FedEx Express Saver<sup>&reg;</sup> (3 Days)',
 			'90' => 'FedEx Home Delivery<sup>&reg;</sup> (3-7 Days, Tues-Sat)',
 			'92' => 'FedEx Ground<sup>&reg;</sup> Service (3-7 Days, Mon-Fri)',
@@ -121,54 +121,53 @@ class fedex {
 				);
 
 				$methods = array();
+				$quotedTypes = array_map( 'trim', explode( ",",MODULE_SHIPPING_FEDEX_TYPES ) );
 				foreach ($fedexQuote as $type => $cost) {
-					$skip = FALSE;
-					$this->surcharge = 0;
 					$quoteCode = substr($type,0,2);
-					if ($this->intl === FALSE) {
-						$service_descr = $this->domestic_types[$quoteCode];
-						switch ($quoteCode) {
-							case 90:
-								if( empty( $order->delivery['company'] ) ) {
-									$skip = TRUE;
-								}
-								break;
-							case 92:
-								if ($this->country == "CA") {
-									if( empty( $order->delivery['company'] ) ) {
-										$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
-									}
-								} else {
-									if( empty( $order->delivery['company'] ) ) {
+					
+						$skip = FALSE;
+						$this->surcharge = 0;
+						$methodCode = NULL;
+						if ($this->intl === FALSE && in_array( $this->domestic_codes[$quoteCode], $quotedTypes ) ) {
+							$service_descr = $this->domestic_types[$quoteCode];
+							switch ($quoteCode) {
+								case 90:
+									if( !empty( $order->delivery['company'] ) ) {
 										$skip = TRUE;
 									}
-								}
-								break;
-							default:
-								if ($this->country != "CA" && $quoteCode < "90" && empty( $order->delivery['company'] )) {
-									$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
-								}
-								break;
-						}
-						$methodCode = $this->domestic_codes[$quoteCode];
-					} else {
-//						if (strlen($type) > 2 && MODULE_SHIPPING_FEDEX_TRANSIT == 'True') {
-//							$service_descr = $this->international_types[$quoteCode] . ' (' . substr($type,2,1) . ' days)';
-//						} else {
+									break;
+								case 92:
+									if ($this->country == "CA") {
+										if( empty( $order->delivery['company'] ) ) {
+											$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
+										}
+									} else {
+										if( empty( $order->delivery['company'] ) ) {
+											$skip = TRUE;
+										}
+									}
+									break;
+								default:
+									if ($this->country != "CA" && $quoteCode < "90" && empty( $order->delivery['company'] )) {
+										$this->surcharge = MODULE_SHIPPING_FEDEX_RESIDENTIAL;
+									}
+									break;
+							}
+							$methodCode = $this->domestic_codes[$quoteCode];
+						} elseif( in_array( $this->international_codes[$quoteCode], $quotedTypes ) ) {
 							$service_descr = $this->international_types[$quoteCode];
 							$methodCode = $this->international_codes[$quoteCode];
-//						}
-					}
-					if( $pShipHash['method'] && $quoteCode != $pShipHash['method'] ) {
-						$skip = TRUE;
-					}
-					if (!$skip) {
-						$methods[] = array('id' => $quoteCode,
-							'title' => $service_descr,
-							'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shippingNumBoxes,
-							'code' => $methodCode,
-						);
-					}
+						}
+						if( $pShipHash['method'] && $quoteCode != $pShipHash['method'] ) {
+							$skip = TRUE;
+						}
+						if( !$skip && !empty( $methodCode ) ) {
+							$methods[] = array('id' => $quoteCode,
+								'title' => $service_descr,
+								'cost' => (MODULE_SHIPPING_FEDEX_SURCHARGE + $this->surcharge + $cost) * $shippingNumBoxes,
+								'code' => $methodCode,
+							);
+						}
 				}
 
 				$this->quotes['methods'] = $methods;
@@ -205,6 +204,21 @@ class fedex {
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Your Fedex Account Number', 'MODULE_SHIPPING_FEDEX_ACCOUNT', 'NONE', 'Enter the fedex Account Number assigned to you, required', '6', '11', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Your Fedex Meter ID', 'MODULE_SHIPPING_FEDEX_METER', 'NONE', 'Enter the Fedex MeterID assigned to you, set to NONE to obtain a new meter number', '6', '12', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('cURL Path', 'MODULE_SHIPPING_FEDEX_CURL', 'NONE', 'Enter the path to the cURL program, normally, leave this set to NONE to execute cURL using PHP', '6', '12', now())");
+
+		$methods = '';
+		$methodOptions;
+		foreach( $this->domestic_codes as $key=>$type ) {
+			$methods .= "$type, ";
+			$methodOptions .= "\'$type\', ";
+		}
+		foreach( $this->international_codes as $key=>$type ) {
+			$methods .= "$type, ";
+			$methodOptions .= "\'$type\', ";
+		}
+		
+		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ( 'Shipping Methods:', 'MODULE_SHIPPING_FEDEX_TYPES', '".$methods."', 'Select the FedEx services to be offered.', '6', '13', 'zen_cfg_select_multioption(array(".$methodOptions."), ', now() )");
+
+
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Debug Mode', 'MODULE_SHIPPING_FEDEX_DEBUG', 'False', 'Turn on Debug', '6', '19', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Weight Units', 'MODULE_SHIPPING_FEDEX_WEIGHT', 'LBS', 'Weight Units:', '6', '19', 'zen_cfg_select_option(array(\'LBS\', \'KGS\'), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('First line of street address', 'MODULE_SHIPPING_FEDEX_ADDRESS_1', 'NONE', 'Enter the first line of your ship from street address, required', '6', '13', now())");
@@ -232,7 +246,7 @@ class fedex {
 	}
 
 	function keys() {
-		return array('MODULE_SHIPPING_FEDEX_STATUS', 'MODULE_SHIPPING_FEDEX_ACCOUNT', 'MODULE_SHIPPING_FEDEX_METER', 'MODULE_SHIPPING_FEDEX_CURL', 'MODULE_SHIPPING_FEDEX_DEBUG', 'MODULE_SHIPPING_FEDEX_WEIGHT', 'MODULE_SHIPPING_FEDEX_SERVER', 'MODULE_SHIPPING_FEDEX_ADDRESS_1', 'MODULE_SHIPPING_FEDEX_ADDRESS_2', 'MODULE_SHIPPING_FEDEX_CITY', 'MODULE_SHIPPING_FEDEX_STATE', 'MODULE_SHIPPING_FEDEX_POSTAL', 'MODULE_SHIPPING_FEDEX_PHONE', 'MODULE_SHIPPING_FEDEX_DROPOFF', 'MODULE_SHIPPING_FEDEX_SURCHARGE', 'MODULE_SHIPPING_FEDEX_LIST_RATES', 'MODULE_SHIPPING_FEDEX_INSURE', 'MODULE_SHIPPING_FEDEX_RESIDENTIAL', 'MODULE_SHIPPING_FEDEX_ENVELOPE', 'MODULE_SHIPPING_FEDEX_WEIGHT_SORT', 'MODULE_SHIPPING_FEDEX_TIMEOUT', 'MODULE_SHIPPING_FEDEX_TAX_CLASS','MODULE_SHIPPING_FEDEX_SORT_ORDER');
+		return array('MODULE_SHIPPING_FEDEX_STATUS', 'MODULE_SHIPPING_FEDEX_ACCOUNT', 'MODULE_SHIPPING_FEDEX_METER', 'MODULE_SHIPPING_FEDEX_CURL', 'MODULE_SHIPPING_FEDEX_TYPES', 'MODULE_SHIPPING_FEDEX_DEBUG', 'MODULE_SHIPPING_FEDEX_WEIGHT', 'MODULE_SHIPPING_FEDEX_SERVER', 'MODULE_SHIPPING_FEDEX_ADDRESS_1', 'MODULE_SHIPPING_FEDEX_ADDRESS_2', 'MODULE_SHIPPING_FEDEX_CITY', 'MODULE_SHIPPING_FEDEX_STATE', 'MODULE_SHIPPING_FEDEX_POSTAL', 'MODULE_SHIPPING_FEDEX_PHONE', 'MODULE_SHIPPING_FEDEX_DROPOFF', 'MODULE_SHIPPING_FEDEX_SURCHARGE', 'MODULE_SHIPPING_FEDEX_LIST_RATES', 'MODULE_SHIPPING_FEDEX_INSURE', 'MODULE_SHIPPING_FEDEX_RESIDENTIAL', 'MODULE_SHIPPING_FEDEX_ENVELOPE', 'MODULE_SHIPPING_FEDEX_WEIGHT_SORT', 'MODULE_SHIPPING_FEDEX_TIMEOUT', 'MODULE_SHIPPING_FEDEX_TAX_CLASS','MODULE_SHIPPING_FEDEX_SORT_ORDER');
 	}
 
 	function _setService($service) {
