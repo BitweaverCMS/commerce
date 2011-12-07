@@ -91,7 +91,7 @@ class order extends CommerceOrderBase {
 		if( !empty( $pListHash['search'] ) ) {
 			if( !empty( $pListHash['search_scope'] ) && $pListHash['search_scope'] == 'history' ) {
 				$joinSql .= " INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON(osh.`orders_id`=co.`orders_id`) ";
-				$whereSql .= " AND LOWER(osh.`text`) LIKE ? ";
+				$whereSql .= " AND LOWER(osh.`comments`) LIKE ? ";
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
 			} else {
 				$whereSql .= " AND ( ";
