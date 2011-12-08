@@ -226,16 +226,19 @@ class canadapost
 						$canadapostQuote[] = array( 'name' => $lettermailName, 'cost' => $lettermailCost, 'delivery' => $lettermailDelivery );
 					}
 				}
+
 				if( !empty( $canadapostQuote ) ) {
 					$methods = array();
-					foreach( $canadapostQuote as $quote ) {
-						$method = array( 'id' => $quote['name'], 'code'=> $quote['name'], 'title' => $quote['name'].' '.$quote['delivery'], 'cost' => $quote['cost'] );
-						if( $this->cp_online_handling == true ) {
-							$method['cost'] += $this->handling_cp;
-						} else {
-							$method['cost'] += (float)MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING;
+					foreach( $canadapostQuote as $quoteCode => $quote ) {
+						if( empty( $pShipHash['method'] ) || $quoteCode == $pShipHash['method'] ) {
+							$method = array( 'id' => $quote['code'], 'title' => $quote['name'], 'delivery' => $quote['delivery'], 'cost' => $quote['cost'] );
+							if( $this->cp_online_handling == true ) {
+								$method['cost'] += $this->handling_cp;
+							} else {
+								$method['cost'] += (float)MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING;
+							}
+							$methods[] = $method;
 						}
-						$methods[] = $method;
 					}
 					if ($this->tax_class > 0)
 					{
@@ -253,7 +256,6 @@ class canadapost
 				$ret['error'] = $errmsg;
 			}
 		}
-
 		return $ret;
 	}
 
@@ -354,7 +356,7 @@ class canadapost
 				$deliveryDayOfWeek = substr($resultXml, strpos($resultXml, "<deliveryDayOfWeek>") + strlen("<deliveryDayOfWeek>"), strpos($resultXml, "</deliveryDayOfWeek>") - strlen("<deliveryDayOfWeek>") - strpos($resultXml, "<deliveryDayOfWeek>"));
 				$nextDayAM = substr($resultXml, strpos($resultXml, "<nextDayAM>") + strlen("<nextDayAM>"), strpos($resultXml, "</nextDayAM>") - strlen("<nextDayAM>") - strpos($resultXml, "<nextDayAM>"));
 				$packingID = substr($resultXml, strpos($resultXml, "<packingID>") + strlen("<packingID>"), strpos($resultXml, "</packingID>") - strlen("<packingID>") - strpos($resultXml, "<packingID>"));
-				$aryProducts[] = array( 'cost' => $rate, 'name' => $name, 'delivery' => $deliveryDate, 'cost' => $rate );
+				$aryProducts[$code] = array( 'cost' => $rate, 'code' => $code, 'name' => tra('Canada Post').' '.tra( $name ), 'delivery' => $deliveryDate, 'cost' => $rate );
 				$resultXml = substr($resultXml, strpos($resultXml, "</product>") + strlen("</product>"));
 			}
 			/* Lettermail is available if the only user-defined 'box' that Canada Post returns is one that begins with "lettermail" */
@@ -372,39 +374,48 @@ class canadapost
 
 
 /*
-function _uc_canadapost_service_list() {
-  return array(
-    // Domestic Products 
-    '1010' => t('Canada Post Regular'),
-    '1020' => t('Canada Post Expedited'),
-    '1030' => t('Canada Post Xpresspost'),
-    '1040' => t('Canada Post Priority Courier'),
+	function _canadapost_get_service_name( $pServiceCode ) {
+		$services = _canadapost_service_list();
+		$ret = '';
+		if( !empty( $services[$pServiceCode] ) ) {
+			$ret = $services[$pServiceCode];
+		}
+		return $ret;
+	}
 
-    // US Products
-    '2005' => t('Canada Post Small Packets Surface USA'),
-    '2015' => t('Canada Post Small Packets Air USA'),
-    '2020' => t('Canada Post Expedited US Business Contract'),
-    '2030' => t('Canada Post Xpresspost USA'),
-    '2040' => t('Canada Post Priority Worldwide USA'),
-    '2050' => t('Canada Post Priority Worldwide PAK USA'),
+	function _canadapost_service_list() {
+	  return array(
+		// Domestic Products 
+		'1010' => tra('Canada Post').' '.tra('Regular'),
+		'1020' => tra('Canada Post').' '.tra('Expedited'),
+		'1030' => tra('Canada Post').' '.tra('Xpresspost'),
+		'1040' => tra('Canada Post').' '.tra('Priority Courier'),
 
-    // International Products
-    '3005' => t('Canada Post Small Packets Surface International'),
-    '3010' => t('Canada Post Surface International'),
-    '3015' => t('Canada Post Small Packets Air International'),
-    '3020' => t('Canada Post Air International'),
-    '3025' => t('Canada Post Xpresspost International'),
-    '3040' => t('Canada Post Priority Worldwide International'),
-    '3050' => t('Canada Post Priority Worldwide PAK International'),
-  );
+		// US Products
+		'2005' => tra('Canada Post').' '.tra('Small Packets Surface USA'),
+		'2015' => tra('Canada Post').' '.tra('Small Packets Air USA'),
+		'2020' => tra('Canada Post').' '.tra('Expedited US Business Contract'),
+		'2030' => tra('Canada Post').' '.tra('Xpresspost USA'),
+		'2040' => tra('Canada Post').' '.tra('Priority Worldwide USA'),
+		'2050' => tra('Canada Post').' '.tra('Priority Worldwide PAK USA'),
 
-  // No longer supported?
-  //'1120' => t('Canada Post Expedited Evening'),
-  //'1130' => t('Canada Post Xpresspost Evening'),
-  //'1220' => t('Canada Post Expedited Saturday'),
-  //'1230' => t('Canada Post Xpresspost Saturday'),
-  //'2025' => t('Canada Post Expedited US Commercial'),
-}
+		// International Products
+		'3005' => tra('Canada Post').' '.tra('Small Packets Surface International'),
+		'3010' => tra('Canada Post').' '.tra('Surface International'),
+		'3015' => tra('Canada Post').' '.tra('Small Packets Air International'),
+		'3020' => tra('Canada Post').' '.tra('Air International'),
+		'3025' => tra('Canada Post').' '.tra('Xpresspost International'),
+		'3040' => tra('Canada Post').' '.tra('Priority Worldwide International'),
+		'3050' => tra('Canada Post').' '.tra('Priority Worldwide PAK International'),
+	  );
+
+	  // No longer supported?
+	  //'1120' => tra('Canada Post').' '.tra('Expedited Evening'),
+	  //'1130' => tra('Canada Post').' '.tra('Xpresspost Evening'),
+	  //'1220' => tra('Canada Post').' '.tra('Expedited Saturday'),
+	  //'1230' => tra('Canada Post').' '.tra('Xpresspost Saturday'),
+	  //'2025' => tra('Canada Post').' '.tra('Expedited US Commercial'),
+	}
 */
 
 	/**
