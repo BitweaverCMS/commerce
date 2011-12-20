@@ -231,7 +231,7 @@ class canadapost
 					$methods = array();
 					foreach( $canadapostQuote as $quoteCode => $quote ) {
 						if( empty( $pShipHash['method'] ) || $quoteCode == $pShipHash['method'] ) {
-							$method = array( 'id' => $quote['code'], 'title' => $quote['name'], 'delivery' => $quote['delivery'], 'cost' => $quote['cost'] );
+							$method = array( 'id' => $quote['code'], 'code' => $quote['code'], 'title' => $quote['name'], 'delivery' => $quote['delivery'], 'cost' => $quote['cost'] );
 							if( $this->cp_online_handling == true ) {
 								$method['cost'] += $this->handling_cp;
 							} else {
