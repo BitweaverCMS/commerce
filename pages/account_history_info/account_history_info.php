@@ -49,6 +49,9 @@
 				echo $order->info['payment_method']; 
 				foreach( array( 'cc_owner', 'cc_number', 'cc_ref_id' ) as $key ) {
 					$value = trim( $order->getField( $key ) );
+					if( $key == 'cc_number' ) {
+						$value = substr($value, 0, 6) . str_repeat('X', (strlen($value) - 6)) . substr($value, -4);
+					}
 					if( !empty( $value ) ) {
 						echo '<div>';
 						echo '<em>'.tra( ucwords( str_replace( '_', ' ', $key ) ) ).'</em> ';
