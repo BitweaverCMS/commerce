@@ -79,11 +79,20 @@ class CommerceStatistics extends BitBase {
 
 // {{{ =================== Revenue ====================
 	function getAggregateRevenue( $pParamHash ) {
+
+		$bindVars = array();
+		$whereSql = '';
+
 		if( empty( $pParamHash['period'] ) ) {
 			$pParamHash['period'] = 'Y-m';
 		}
 		if( empty( $pParamHash['max_records'] ) ) {
 			$pParamHash['max_records'] = 12;
+		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
 		}
 		
 		$ret = array();
@@ -91,8 +100,8 @@ class CommerceStatistics extends BitBase {
 		$ret['stats']['order_count_max'] = 0;
 
 		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
-				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` ORDER BY `hash_key` DESC";
-		$bindVars = array();
+				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` $whereSql
+				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['hash_key']] = $row;
@@ -126,6 +135,11 @@ class CommerceStatistics extends BitBase {
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_values_id`, copa.`products_options_id`, copa.`products_options`, copa.`products_options_values` AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
@@ -152,6 +166,12 @@ class CommerceStatistics extends BitBase {
 			$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
 			$sqlFunc = 'getAssoc';
 		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		$sql = "SELECT $selectSql ci.`interests_id`, ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 				FROM " . TABLE_CUSTOMERS_INTERESTS . " ci , " . TABLE_ORDERS . " co, " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim 
 				WHERE co.`orders_status`>0 
@@ -183,6 +203,11 @@ class CommerceStatistics extends BitBase {
 			$sqlFunc = 'getAssoc';
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		if( $gBitSystem->isPackageActive( 'stats' ) ) {
 			$selectSql .= " , sru.`referer_url` ";
 			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
@@ -367,6 +392,11 @@ $this->debug(0);
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		$sql = "SELECT cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, SUM(cop.`products_quantity` * cop.`products_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
@@ -401,6 +431,11 @@ $this->debug(0);
 			}
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		if( !empty( $pParamHash['include'] ) ) {
 			$includes = explode( ',', $pParamHash['include'] );
 			foreach( $includes  as $in ) {
