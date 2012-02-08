@@ -59,7 +59,7 @@
 		<h4><?php echo HEADING_ORDER_COMMENTS; ?></h4>
 		<?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br(zen_output_string_protected($order->info['comments'])) . zen_draw_hidden_field('comments', $order->info['comments'])); ?>
 	</td>
-     <td class="main" align="right"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+     <td class="main" class="alignright"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
   </tr>
   <tr>
     <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
@@ -67,31 +67,33 @@
 <?php
 //  }
 ?>
-  <tr>
-    <td class="main" colspan="3">
-      <table border="0"  width="100%" cellspacing="0" cellpadding="2">
 <?php
   if (sizeof($order->info['tax_groups']) > 1) {
 ?>
         <tr>
-          <td class="plainBoxHeading" colspan="2"><?php echo HEADING_PRODUCTS; ?>
+          <td class="plainBoxHeading"><?php echo HEADING_PRODUCTS; ?>
           &nbsp;&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-          <td class="smallText" align="right"><?php echo HEADING_TAX; ?></td>
-          <td class="smallText" align="right"><?php echo HEADING_TOTAL; ?></td>
+          <td class="smallText" class="alignright"><?php echo HEADING_TAX; ?></td>
+          <td class="smallText" class="alignright"><?php echo HEADING_TOTAL; ?></td>
         </tr>
 <?php
   } else {
 ?>
         <tr>
           <td colspan="2" ><h4><?php echo HEADING_PRODUCTS; ?></h4></td>
-          <td align="right"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+          <td class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
         </tr>
 <?php
   }
+?>
+  <tr>
+    <td class="main" colspan="2">
+      <table border="0"  width="100%" cellspacing="0" cellpadding="2">
 
+<?php
   foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
-         '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
+         '          <td class="main" class="alignright" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
          '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['products_id'] ) . '">' . $order->contents[$opid]['name']. '</a>';
 
     if ( !empty( $order->contents[$opid]['attributes'] ) && (sizeof($order->contents[$opid]['attributes']) > 0) ) {
@@ -103,14 +105,14 @@
     echo '        </td>' . "\n";
 
     if ( !empty( $order->info['tax_groups'] ) && sizeof($order->info['tax_groups']) > 1) {
-		echo '            <td class="main" valign="top" align="right">';
+		echo '            <td class="main" valign="top" class="alignright">';
 		if( !empty( $order->contents[$opid]['tax'] ) ) {
 			echo zen_display_tax_value($order->contents[$opid]['tax']) . '%';
 		}
 		echo '</td>' . "\n";
 	}
 
-    echo '        <td class="main" align="right" valign="top">' .
+    echo '        <td class="main" class="alignright" valign="top">' .
                     $currencies->display_price($order->contents[$opid]['final_price'], $order->contents[$opid]['tax'], $order->contents[$opid]['products_quantity']) .
                     ($order->contents[$opid]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax'], 1) : '') .
                   '</td>' . "\n" .
@@ -121,7 +123,7 @@
     </td>
   </tr>
   <tr>
-    <td class="main" align="right" colspan="3">
+    <td class="main" class="alignright" colspan="2">
       <table border="0"  cellspacing="0" cellpadding="2">
 <?php
   if (MODULE_ORDER_TOTAL_INSTALLED) {
@@ -140,7 +142,7 @@
 ?>
   <tr>
     <td class="main" colspan="2"><?php echo HEADING_SHIPPING_METHOD; ?>  <?php echo $order->info['shipping_method']; ?></td>
-    <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+    <td class="main" class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
   </tr>
   <tr>
     <td class="main" colspan="3"><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
@@ -151,7 +153,7 @@ $class =& $_SESSION['payment'];
 ?>
   <tr>
     <td colspan="2"><h4><?php echo HEADING_PAYMENT_METHOD; ?></h4> </td>
-    <td class="main" align="right"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+    <td class="main" class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
   </tr>
   <tr>
     <td colspan="3">
@@ -187,7 +189,7 @@ $class =& $_SESSION['payment'];
   </tr>
   <tr>
     <td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
-    <td align="right" class="main">
+    <td class="alignleft" class="main">
 <?php
   if (isset($$_SESSION['payment']->form_action_url)) {
     $form_action_url = $$_SESSION['payment']->form_action_url;
