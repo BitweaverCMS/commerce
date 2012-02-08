@@ -14,18 +14,20 @@
 				{/if}
 
 				{if count( $addresses )}
-				<div class="span-8">
+				<div class="width50p floatleft">
 					<h1>{tr}Choose From Your Address Book or...{/tr}</h1>
 					{tr}Please select the preferred shipping address if this order is to be delivered elsewhere.{/tr}
 					{include file="bitpackage:bitcommerce/address_list.tpl"}
 				</div>
 				{/if}
 				
-				{legend legend="Enter a New Shipping Address"}
-					{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
-				{/legend}
+				<div class="width50p floatleft">
+					{legend legend="Enter a New Shipping Address"}
+						{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
+					{/legend}
+				</div>
 
-				<div class="row">
+				<div class="row clear">
 					{forminput}
 						<input type="submit" name="" value="Cancel" />
 						<input type="submit" name="submit_address" value="Continue" />
