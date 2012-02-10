@@ -75,8 +75,8 @@
           $size = sizeof($GLOBALS[$class]->output);
           for ($i=0; $i<$size; $i++) {
             $output_string .= '              <tr>' . "\n" .
-                              '                <td align="right" class="' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Text">' . $GLOBALS[$class]->output[$i]['title'] . '</td>' . "\n" .
-                              '                <td align="right" class="' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Amount">' . $GLOBALS[$class]->output[$i]['text'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Text">' . $GLOBALS[$class]->output[$i]['title'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Amount">' . $GLOBALS[$class]->output[$i]['text'] . '</td>' . "\n" .
                               '              </tr>';
           }
         }

@@ -971,10 +971,10 @@ class order extends CommerceOrderBase {
 									$this->products_ordered_attributes . "\n";
 			$this->products_ordered_html .=
 			'<tr>' .
-			'<td class="product-details" align="right" valign="top" width="30">' . $this->contents[$productsKey]['products_quantity'] . '&nbsp;x</td>' .
+			'<td class="product-details alignright" valign="top" width="30">' . $this->contents[$productsKey]['products_quantity'] . '&nbsp;x</td>' .
 			'<td class="product-details" valign="top">' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') .
 			'<span style="white-space:nowrap;"><small><em> '. $this->products_ordered_attributes .'</em></small></span></td>' .
-			'<td class="product-details-num" valign="top" align="right">' .
+			'<td class="product-details-num alignright" valign="top">' .
 				$currencies->display_price($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity']) .
 				($this->contents[$productsKey]['onetime_charges'] !=0 ?
 						'</td></tr><tr><td class="product-details">' . TEXT_ONETIME_CHARGES_EMAIL . '</td>' .
@@ -1037,7 +1037,7 @@ class order extends CommerceOrderBase {
 		$html_msg['PRODUCTS_DETAIL']='<table class="product-details" border="0" width="100%" cellspacing="0" cellpadding="2">' . $this->products_ordered_html . '</table>';
 
 //order totals area
-		$html_ot = '<td class="order-totals-text" align="right" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
+		$html_ot = '<td class="order-totals-text alignright" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num alignright" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
 		for ($i=0, $n=sizeof($order_totals); $i<$n; $i++) {
 			$email_order .= strip_tags($order_totals[$i]['title']) . ' ' . strip_tags($order_totals[$i]['text']) . "\n";
 		$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . $order_totals[$i]['title'] . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' .($order_totals[$i]['text']) .'</td></tr><tr>';
