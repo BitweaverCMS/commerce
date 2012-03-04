@@ -54,7 +54,12 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	// Override LibertyBase method
-	function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
+		return bc_get_commerce_product( array( 'products_id' => $pPrimaryId ) );
+	}
+
+	// Override LibertyBase method
+	public static function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
@@ -2470,6 +2475,15 @@ Skip deleting of images for now
 		return false;
 	}
 
+	/**
+	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
+	 *
+	 * @access public
+	 * @return the preview string
+	 **/
+	function getViewableFields() {
+		return array_merge( parent::getViewableFields(), array( 'products_id' ) );
+	}
 }
 
 
