@@ -20,20 +20,20 @@
 // $Id$
 //
 
-//define('NAVBAR_TITLE_1', 'Checkout');
-//define('NAVBAR_TITLE_2', 'Change Billing Address');
+//define('NAVBAR_TITLE_1', tra( 'Checkout' ) );
+//define('NAVBAR_TITLE_2', tra( 'Change Billing Address' ) );
 
-//define('HEADING_TITLE', 'Enter Your Billing Information');
+//define('HEADING_TITLE', tra( 'Enter Your Billing Information' ) );
 
-//define('TABLE_HEADING_PAYMENT_ADDRESS', 'Billing Address');
-define('TEXT_SELECTED_PAYMENT_DESTINATION', 'This is the current billing address. Please make sure it matches the information on your credit card statement or correct it using the form below.');
-define('TITLE_PAYMENT_ADDRESS', '<strong>Billing Address:</strong>');
+//define('TABLE_HEADING_PAYMENT_ADDRESS', tra( 'Billing Address' ) );
+define('TEXT_SELECTED_PAYMENT_DESTINATION', tra( 'This is the current billing address. Please make sure it matches the information on your credit card statement or correct it using the form below.' ) );
+define('TITLE_PAYMENT_ADDRESS', tra( '<strong>Billing Address:</strong>' ) );
 
-define('TEXT_SELECT_OTHER_PAYMENT_DESTINATION', 'Please select the preferred billing address if the invoice to this order is to be delivered elsewhere.');
-//define('TITLE_PLEASE_SELECT', 'Please Select');
+define('TEXT_SELECT_OTHER_PAYMENT_DESTINATION', tra( 'Please select the preferred billing address if the invoice to this order is to be delivered elsewhere.' ) );
+//define('TITLE_PLEASE_SELECT', tra( 'Please Select' ) );
 
-define('TABLE_HEADING_NEW_PAYMENT_ADDRESS', '...Or Choose From Your Address Book Entries');
+define('TABLE_HEADING_NEW_PAYMENT_ADDRESS', tra( '...Or Choose From Your Address Book Entries' ) );
 
-//define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Continue</strong>');
-//define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- to payment method.');
+//define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', tra( '<strong>Continue</strong>' ) );
+//define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', tra( '- to payment method.' ) );
 ?>

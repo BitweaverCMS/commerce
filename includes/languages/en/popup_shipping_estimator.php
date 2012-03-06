@@ -19,5 +19,5 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-define('HEADING_SEARCH_HELP', 'Shipping Estimator:');
+define('HEADING_SEARCH_HELP', tra( 'Shipping Estimator:' ) );
 ?>

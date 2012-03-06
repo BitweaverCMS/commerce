@@ -20,8 +20,8 @@
 // $Id$
 //
 
-define('HEADING_SEARCH_HELP', 'Search Help');
-define('TEXT_SEARCH_HELP', 'Keywords may be separated by AND and/or OR statements for greater control of the search results.<br /><br />For example, <u>Microsoft AND mouse</u> would generate a result set that contain both words. However, for <u>mouse OR keyboard</u>, the result set returned would contain both or either words.<br /><br />Exact matches can be searched for by enclosing keywords in double-quotes.<br /><br />For example, <u>"notebook computer"</u> would generate a result set which match the exact string.<br /><br />Brackets can be used for further control on the result set.<br /><br />For example, <u>Microsoft and (keyboard or mouse or "visual basic")</u>.');
-define('TEXT_CLOSE_WINDOW', '<u>Close Window</u> [x]');
+define('HEADING_SEARCH_HELP', tra( 'Search Help' ) );
+define('TEXT_SEARCH_HELP', tra( 'Keywords may be separated by AND and/or OR statements for greater control of the search results.For example, <u>Microsoft AND mouse</u> would generate a result set that contain both words. However, for <u>mouse OR keyboard</u>, the result set returned would contain both or either words.Exact matches can be searched for by enclosing keywords in double-quotes.For example, <u>"notebook computer"</u> would generate a result set which match the exact string.Brackets can be used for further control on the result set.For example, <u>Microsoft and (keyboard or mouse or "visual basic")</u>.' ) );
+define('TEXT_CLOSE_WINDOW', tra( '<u>Close Window</u> [x]' ) );
 
 ?>

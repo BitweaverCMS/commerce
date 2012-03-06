@@ -20,6 +20,6 @@
 // $Id$
 //
 
-  define('MODULE_PAYMENT_COD_TEXT_TITLE', 'Cash on Delivery');
-  define('MODULE_PAYMENT_COD_TEXT_DESCRIPTION', 'Cash on Delivery');
+  define('MODULE_PAYMENT_COD_TEXT_TITLE', tra( 'Cash on Delivery' ) );
+  define('MODULE_PAYMENT_COD_TEXT_DESCRIPTION', tra( 'Cash on Delivery' ) );
 ?>

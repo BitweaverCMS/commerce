@@ -20,9 +20,9 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_TABLE_TEXT_TITLE', 'Table Rate');
-define('MODULE_SHIPPING_TABLE_TEXT_DESCRIPTION', 'Table Rate');
-define('MODULE_SHIPPING_TABLE_TEXT_WAY', 'Best Way');
-define('MODULE_SHIPPING_TABLE_TEXT_WEIGHT', 'Weight');
-define('MODULE_SHIPPING_TABLE_TEXT_AMOUNT', 'Amount');
+define('MODULE_SHIPPING_TABLE_TEXT_TITLE', tra( 'Table Rate' ) );
+define('MODULE_SHIPPING_TABLE_TEXT_DESCRIPTION', tra( 'Table Rate' ) );
+define('MODULE_SHIPPING_TABLE_TEXT_WAY', tra( 'Best Way' ) );
+define('MODULE_SHIPPING_TABLE_TEXT_WEIGHT', tra( 'Weight' ) );
+define('MODULE_SHIPPING_TABLE_TEXT_AMOUNT', tra( 'Amount' ) );
 ?>

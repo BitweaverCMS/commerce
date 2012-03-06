@@ -20,20 +20,20 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Login');
-define('HEADING_TITLE', 'Welcome, Please Sign In');
+define('NAVBAR_TITLE', tra( 'Login' ) );
+define('HEADING_TITLE', tra( 'Welcome, Please Sign In' ) );
 
-define('HEADING_NEW_CUSTOMER', 'New? Please Provide Your Billing Information');
-define('TEXT_NEW_CUSTOMER_INTRODUCTION', 'Creating a login profile with ' . STORE_NAME . ' allows you to shop faster, track the status of your current orders and review your previous orders.');
+define('HEADING_NEW_CUSTOMER', tra( 'New? Please Provide Your Billing Information' ) );
+define('TEXT_NEW_CUSTOMER_INTRODUCTION', tra( 'Creating a login profile with ' . STORE_NAME . ' allows you to shop faster, track the status of your current orders and review your previous orders.' ) );
 
-define('HEADING_RETURNING_CUSTOMER', 'Returning Customers: Please Log In');
+define('HEADING_RETURNING_CUSTOMER', tra( 'Returning Customers: Please Log In' ) );
 
-define('TEXT_PASSWORD_FORGOTTEN', 'Forgot your password?');
+define('TEXT_PASSWORD_FORGOTTEN', tra( 'Forgot your password?' ) );
 
-define('TEXT_LOGIN_ERROR', 'Error: Sorry, there is no match for that e-mail address and/or password.');
-define('TEXT_VISITORS_CART', '<strong>Note:</strong> Your &quot;Visitors Cart&quot; contents will be merged with your &quot;Members Cart&quot; contents once you have logged on. <a href="javascript:session_win();">[More Info]</a>');
+define('TEXT_LOGIN_ERROR', tra( 'Error: Sorry, there is no match for that e-mail address and/or password.' ) );
+define('TEXT_VISITORS_CART', tra( '<strong>Note:</strong> Your &quot;Visitors Cart&quot; contents will be merged with your &quot;Members Cart&quot; contents once you have logged on. <a href="javascript:session_win();">[More Info]</a>' ) );
 
-define('TABLE_HEADING_PRIVACY_CONDITIONS', '<span class="privacyconditions">Privacy Statement</span>');
-define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', '<span class="privacydescription">Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read</span> <a href="' . zen_href_link(FILENAME_PRIVACY, '', 'SSL') . '"><u>here</u></a>.');
-define('TEXT_PRIVACY_CONDITIONS_CONFIRM', '<span class="privacyagree">I have read and agreed to your privacy statement.</span>');
+define('TABLE_HEADING_PRIVACY_CONDITIONS', tra( '<span class="privacyconditions">Privacy Statement</span>' ) );
+define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', '<span class="privacydescription">Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read</span> <a href="' . zen_href_link(FILENAME_PRIVACY, '', tra( 'SSL') . '"><u>here</u></a>.' ) );
+define('TEXT_PRIVACY_CONDITIONS_CONFIRM', tra( '<span class="privacyagree">I have read and agreed to your privacy statement.</span>' ) );
 ?>

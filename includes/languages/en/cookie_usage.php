@@ -20,15 +20,15 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Cookie Usage');
-define('HEADING_TITLE', 'Cookie Usage');
+define('NAVBAR_TITLE', tra( 'Cookie Usage' ) );
+define('HEADING_TITLE', tra( 'Cookie Usage' ) );
 
-define('TEXT_INFORMATION', 'We have detected that your browser does not support cookies, or cookies have been disabled.');
-define('TEXT_INFORMATION_2', 'To continue shopping online, we encourage you to enable cookies on your browser.');
-define('TEXT_INFORMATION_3', 'For <strong>Internet Explorer</strong> browsers, please follow these instructions:<br /><ol><li>Click on the Tools menubar, and select Internet Options</li><li>Select the Security tab, and reset the security level to Medium</li></ol>');
-define('TEXT_INFORMATION_4', 'We have taken this security measurement for your benefit, and apologize if this causes any inconvenience.');
-define('TEXT_INFORMATION_5', 'Please contact the store owner if you have any questions relating to this requirement, or to continue purchasing products offline.');
+define('TEXT_INFORMATION', tra( 'We have detected that your browser does not support cookies, or cookies have been disabled.' ) );
+define('TEXT_INFORMATION_2', tra( 'To continue shopping online, we encourage you to enable cookies on your browser.' ) );
+define('TEXT_INFORMATION_3', tra( 'For <strong>Internet Explorer</strong> browsers, please follow these instructions:<ol><li>Click on the Tools menubar, and select Internet Options</li><li>Select the Security tab, and reset the security level to Medium</li></ol>' ) );
+define('TEXT_INFORMATION_4', tra( 'We have taken this security measurement for your benefit, and apologize if this causes any inconvenience.' ) );
+define('TEXT_INFORMATION_5', tra( 'Please contact the store owner if you have any questions relating to this requirement, or to continue purchasing products offline.' ) );
 
-define('BOX_INFORMATION_HEADING', '<strong>Cookie Privacy and Security</strong>');
-define('BOX_INFORMATION', 'Cookies must be enabled to purchase online on this store, this is to embrace privacy and security related issues regarding your visit to this site.<br /><br />By enabling cookie support on your browser, the communication between you and this site is strengthened to be certain it is you who are making transactions on your own behalf, and to prevent leakage of your privacy information.');
+define('BOX_INFORMATION_HEADING', tra( '<strong>Cookie Privacy and Security</strong>' ) );
+define('BOX_INFORMATION', tra( 'Cookies must be enabled to purchase online on this store, this is to embrace privacy and security related issues regarding your visit to this site.By enabling cookie support on your browser, the communication between you and this site is strengthened to be certain it is you who are making transactions on your own behalf, and to prevent leakage of your privacy information.' ) );
 ?>

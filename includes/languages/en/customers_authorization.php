@@ -20,8 +20,8 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Customers Authorization Pending');
-define('HEADING_TITLE', 'Customer Authorization Pending ...');
-define('CUSTOMERS_AUTHORIZATION_TEXT_INFORMATION', 'Thank you for requesting Authorization for our store.<br /><br />We will contact you as soon as possible.');
-define('CUSTOMERS_AUTHORIZATION_STATUS_TEXT', 'To verify your Authorization status ... Click here:');
+define('NAVBAR_TITLE', tra( 'Customers Authorization Pending' ) );
+define('HEADING_TITLE', tra( 'Customer Authorization Pending ...' ) );
+define('CUSTOMERS_AUTHORIZATION_TEXT_INFORMATION', tra( 'Thank you for requesting Authorization for our store.We will contact you as soon as possible.' ) );
+define('CUSTOMERS_AUTHORIZATION_STATUS_TEXT', tra( 'To verify your Authorization status ... Click here:' ) );
 ?>

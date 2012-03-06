@@ -20,38 +20,38 @@
 // $Id$
 //
 
-define('TEXT_PRODUCT_NOT_FOUND', 'Sorry, the product was not found.');
-define('TEXT_CURRENT_REVIEWS', 'Current Reviews:');
-define('TEXT_MORE_INFORMATION', 'For more information, please visit this product\'s <a href="%s" target="_blank">webpage</a>.');
-define('TEXT_DATE_ADDED', 'This product was added to our catalog on %s.');
-define('TEXT_DATE_AVAILABLE', '<font color="#ff0000">This product will be in stock on %s.</font>');
-define('TEXT_ALSO_PURCHASED_PRODUCTS', 'Customers who bought this product also purchased...');
-define('TEXT_PRODUCT_OPTIONS', '<strong>Please Choose:</strong>');
-define('TEXT_PRODUCT_MANUFACTURER', 'Manufactured by: ');
-define('TEXT_PRODUCT_WEIGHT', 'Shipping Weight: ');
-define('TEXT_PRODUCT_WEIGHT_UNIT', ' lbs');
-define('TEXT_PRODUCT_QUANTITY', ' Units in Stock');
-define('TEXT_PRODUCT_MODEL', 'Model: ');
+define('TEXT_PRODUCT_NOT_FOUND', tra( 'Sorry, the product was not found.' ) );
+define('TEXT_CURRENT_REVIEWS', tra( 'Current Reviews:' ) );
+define('TEXT_MORE_INFORMATION', tra( 'For more information, please visit this product\'s <a href="%s" target="_blank">webpage</a>.' ) );
+define('TEXT_DATE_ADDED', tra( 'This product was added to our catalog on %s.' ) );
+define('TEXT_DATE_AVAILABLE', tra( '<font color="#ff0000">This product will be in stock on %s.</font>' ) );
+define('TEXT_ALSO_PURCHASED_PRODUCTS', tra( 'Customers who bought this product also purchased...' ) );
+define('TEXT_PRODUCT_OPTIONS', tra( '<strong>Please Choose:</strong>' ) );
+define('TEXT_PRODUCT_MANUFACTURER', tra( 'Manufactured by: ' ) );
+define('TEXT_PRODUCT_WEIGHT', tra( 'Shipping Weight: ' ) );
+define('TEXT_PRODUCT_WEIGHT_UNIT', tra( ' lbs' ) );
+define('TEXT_PRODUCT_QUANTITY', tra( ' Units in Stock' ) );
+define('TEXT_PRODUCT_MODEL', tra( 'Model: ' ) );
 
 
 
 // previous next product
-define('PREV_NEXT_PRODUCT', 'Product ');
-define('PREV_NEXT_FROM', ' from ');
-define('IMAGE_BUTTON_PREVIOUS','Previous Item');
-define('IMAGE_BUTTON_NEXT','Next Item');
-define('IMAGE_BUTTON_RETURN_TO_PRODUCT_LIST','Back to Product List');
+define('PREV_NEXT_PRODUCT', tra( 'Product ' ) );
+define('PREV_NEXT_FROM', tra( ' from ' ) );
+define('IMAGE_BUTTON_PREVIOUS', tra( 'Previous Item' ) );
+define('IMAGE_BUTTON_NEXT', tra( 'Next Item' ) );
+define('IMAGE_BUTTON_RETURN_TO_PRODUCT_LIST', tra( 'Back to Product List' ) );
 
 // missing products
-//define('TABLE_HEADING_NEW_PRODUCTS', 'New Products For %s');
-//define('TABLE_HEADING_UPCOMING_PRODUCTS', 'Upcoming Products');
-//define('TABLE_HEADING_DATE_EXPECTED', 'Date Expected');
+//define('TABLE_HEADING_NEW_PRODUCTS', tra( 'New Products For %s' ) );
+//define('TABLE_HEADING_UPCOMING_PRODUCTS', tra( 'Upcoming Products' ) );
+//define('TABLE_HEADING_DATE_EXPECTED', tra( 'Date Expected' ) );
 
-define('TEXT_ATTRIBUTES_PRICE_WAS',' [was: ');
-define('TEXT_ATTRIBUTE_IS_FREE',' now is: Free]');
-define('TEXT_ONETIME_CHARGE_SYMBOL', ' *');
-define('TEXT_ONETIME_CHARGE_DESCRIPTION', ' One time charges may apply');
-define('TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK','Quantity Discounts Available');
+define('TEXT_ATTRIBUTES_PRICE_WAS', tra( ' [was: ' ) );
+define('TEXT_ATTRIBUTE_IS_FREE', tra( ' now is: Free]' ) );
+define('TEXT_ONETIME_CHARGE_SYMBOL', tra( ' *' ) );
+define('TEXT_ONETIME_CHARGE_DESCRIPTION', tra( ' One time charges may apply' ) );
+define('TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK', tra( 'Quantity Discounts Available' ) );
 define('ATTRIBUTES_QTY_PRICE_SYMBOL', zen_image(DIR_WS_TEMPLATE_ICONS . 'icon_status_green.gif', TEXT_ATTRIBUTES_QTY_PRICE_HELP_LINK, 10, 10) . '&nbsp;');
 
 ?>
