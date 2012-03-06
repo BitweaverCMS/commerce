@@ -59,7 +59,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_interests_map' => "
   interests_id I4 NOT NULL,
   customers_id I4 NOT NULL
-  CONSTRAINTS ', CONSTRAINT com_cust_interest_int_ref FOREIGN KEY (`interests_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_interests` (`interests_id`)
+  CONSTRAINT ', CONSTRAINT com_cust_interest_int_ref FOREIGN KEY (`interests_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_interests` (`interests_id`)
 			  , CONSTRAINT com_cust_interest_cust_ref FOREIGN KEY (`customers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers` (`customers_id`)'
 ",
 
@@ -102,7 +102,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_address_book' => "
   entry_country_id I4,
   entry_zone_id I4,
   entry_telephone C(32)
-  CONSTRAINTS ', CONSTRAINT `addr_book_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+  CONSTRAINT ', CONSTRAINT `addr_book_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
   			  , CONSTRAINT `addr_book_zone_ref` FOREIGN KEY ( `entry_zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_zones`( `zone_id` )
   			  , CONSTRAINT `addr_book_country_ref` FOREIGN KEY ( `entry_country_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_countries`( `countries_id` )'
 ",
@@ -154,7 +154,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_banners_history' => "
   banners_shown I2,
   banners_clicked I2,
   banners_history_date T
-  CONSTRAINTS ', CONSTRAINT `bann_hist_banners_ref` FOREIGN KEY ( `banners_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_banners`( `banners_id` )'
+  CONSTRAINT ', CONSTRAINT `bann_hist_banners_ref` FOREIGN KEY ( `banners_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_banners`( `banners_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_categories' => "
@@ -172,7 +172,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_categories_description' => "
   language_id I4 PRIMARY NOTNULL default '1',
   categories_name C(32) NOTNULL,
   categories_description X2
-  CONSTRAINTS ', CONSTRAINT `cat_desc_cat_ref` FOREIGN KEY ( `categories_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_categories`( `categories_id` )'
+  CONSTRAINT ', CONSTRAINT `cat_desc_cat_ref` FOREIGN KEY ( `categories_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_categories`( `categories_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_configuration' => "
@@ -223,7 +223,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_product_types' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_product_types_to_category' => "
   product_type_id I4,
   category_id I4
-  CONSTRAINTS ', CONSTRAINT `prod_types_to_cat_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )
+  CONSTRAINT ', CONSTRAINT `prod_types_to_cat_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )
   			 , CONSTRAINT `prod_types_to_cat_cat_ref` FOREIGN KEY ( `category_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_categories`( `categories_id` )'
 ",
 
@@ -274,7 +274,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products' => "
   reorders_interval C(256),
   reorders_pending I4
 
-  CONSTRAINTS ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+  CONSTRAINT ', CONSTRAINT `prod_content_id_ref` FOREIGN KEY ( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 			  , CONSTRAINT `prod_rel_content_id_ref` FOREIGN KEY ( `related_content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 			  , CONSTRAINT `prod_pur_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )
 			  , CONSTRAINT `prod_type_ref` FOREIGN KEY ( `products_type` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )
@@ -333,7 +333,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   attributes_required I1,
   purchase_group_id I4
 
-  CONSTRAINTS ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )
+  CONSTRAINT ', CONSTRAINT `prod_attr_options_id_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )
 			  , CONSTRAINT `prod_attr_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )
   			'
 ",
@@ -342,7 +342,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
  products_id I4 PRIMARY,
  products_options_values_id I4 PRIMARY,
  override_price N(15,4)
- CONSTRAINTS ', CONSTRAINT `prod_optmap_products_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+ CONSTRAINT ', CONSTRAINT `prod_optmap_products_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
@@ -359,7 +359,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_description' => "
   products_description X,
   products_url C(255),
   products_viewed I2 default '0'
-  CONSTRAINTS ', CONSTRAINT `prod_desc_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `prod_desc_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_discount_quantity' => "
@@ -367,21 +367,21 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_discount_quantity' => "
   products_id I4,
   discount_qty FLOAT DEFAULT '0' NOTNULL,
   discount_price N(15,4)
-  CONSTRAINTS ', CONSTRAINT `prod_disc_qty_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `prod_disc_qty_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_notifications' => "
   products_id I4,
   customers_id I4,
   date_added T
-  CONSTRAINTS ', CONSTRAINT `prod_noti_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+  CONSTRAINT ', CONSTRAINT `prod_noti_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
               , CONSTRAINT `prod_noti_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_to_categories' => "
   products_id I4 PRIMARY,
   categories_id I4 PRIMARY
-  CONSTRAINTS ', CONSTRAINT `p2c_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
+  CONSTRAINT ', CONSTRAINT `p2c_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
   			  , CONSTRAINT `p2c_categories_id_ref` FOREIGN KEY ( `categories_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_categories`( `categories_id` )'
 ",
 
@@ -392,7 +392,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_product_music_extra' => "
   artists_id I4,
   record_company_id I4,
   music_genre_id I4
-  CONSTRAINTS ', CONSTRAINT `prod_music_xtra_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `prod_music_xtra_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_music_genre' => "
@@ -447,7 +447,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_email_track' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_customer' => "
   customer_id I4 PRIMARY,
   amount N(8,4)
-  CONSTRAINTS ', CONSTRAINT `coupon_gv_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `coupon_gv_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_coupon_gv_queue' => "
@@ -529,7 +529,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket' => "
   products_quantity F DEFAULT '0' NOTNULL,
   final_price N(15,4),
   date_added T
-  CONSTRAINTS ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+  CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
 			  , CONSTRAINT `cust_bask_prod_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )' 
 ",
 
@@ -540,7 +540,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   products_options_id I4 NOTNULL,
   products_options_values_id I4,
   products_options_value_text C(64)
-  CONSTRAINTS ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
+  CONSTRAINT ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_info' => "
@@ -580,7 +580,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_featured' => "
   date_status_change T,
   status I1 NOTNULL default '1',
   featured_date_available date NOTNULL default '0001-01-01'
-  CONSTRAINTS ', CONSTRAINT `featured_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `featured_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_files_uploaded' => "
@@ -588,7 +588,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_files_uploaded' => "
   sesskey C(32),
   customers_id I4,
   files_uploaded_name C(64)
-  CONSTRAINTS ', CONSTRAINT `files_up_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `files_up_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_geo_zones' => "
@@ -628,7 +628,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_manufacturers_info' => "
   manufacturers_url C(255),
   url_clicked I4,
   date_last_click T
-  CONSTRAINTS ', CONSTRAINT `manf_info_manf_id_ref` FOREIGN KEY ( `manufacturers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_manufacturers`( `manufacturers_id` )'
+  CONSTRAINT ', CONSTRAINT `manf_info_manf_id_ref` FOREIGN KEY ( `manufacturers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_manufacturers`( `manufacturers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_suppliers_info' => "
@@ -637,7 +637,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_suppliers_info' => "
   suppliers_url C(255),
   url_clicked I4,
   date_last_click T
-  CONSTRAINTS ', CONSTRAINT `supp_info_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_suppliers`( `suppliers_id` )'
+  CONSTRAINT ', CONSTRAINT `supp_info_supp_id_ref` FOREIGN KEY ( `suppliers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_suppliers`( `suppliers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_media_manager' => "
@@ -665,7 +665,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_media_clips' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_media_to_products' => "
   media_id I4 PRIMARY,
   product_id I4 PRIMARY
-  CONSTRAINTS ', CONSTRAINT `m2p_products_id_ref` FOREIGN KEY ( `product_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `m2p_products_id_ref` FOREIGN KEY ( `product_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_newsletters' => "
@@ -686,7 +686,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_meta_tags_products_desc' => "
   metatags_title C(255),
   metatags_keywords X,
   metatags_description X
-  CONSTRAINTS ', CONSTRAINT `meta_tags_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `meta_tags_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
@@ -701,7 +701,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
 	payment_method C(250) NOTNULL,
 	payment_reference_number C(250),
 	payment_note x
-    CONSTRAINTS ', CONSTRAINT `com_commissions_payer_ref` FOREIGN KEY ( `payer_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )
+    CONSTRAINT ', CONSTRAINT `com_commissions_payer_ref` FOREIGN KEY ( `payer_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )
                 , CONSTRAINT `com_commissions_payee_ref` FOREIGN KEY ( `payee_user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
 ",
 
@@ -761,7 +761,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   order_tax N(14,2),
   paypal_ipn_id I4,
   ip_address C(15)
-  CONSTRAINTS ', CONSTRAINT `orders_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `orders_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
@@ -782,7 +782,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
   product_is_free I1,
   products_discount_type I1,
   products_discount_type_from I1
-  CONSTRAINTS ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
+  CONSTRAINT ', CONSTRAINT `orders_prod_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
   			  , CONSTRAINT `ord_prod_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
   			  , CONSTRAINT `ord_prod_com_ref` FOREIGN KEY ( `commissions_payments_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_commissions_payments` ( `commissions_payments_id` )'
 ",
@@ -813,7 +813,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   attributes_price_letters_free I2,
   products_options_id INT( 11 ) NOTNULL,
   products_options_values_id INT( 11 ) NOTNULL
-  CONSTRAINTS ', CONSTRAINT `ord_prod_att_prod_ref` FOREIGN KEY ( `orders_products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products`( `orders_products_id` )
+  CONSTRAINT ', CONSTRAINT `ord_prod_att_prod_ref` FOREIGN KEY ( `orders_products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products`( `orders_products_id` )
   			  , CONSTRAINT `ord_prod_att_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
@@ -824,7 +824,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld' => "
   orders_products_filename C(255),
   download_maxdays I2,
   download_count I2
-  CONSTRAINTS ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
+  CONSTRAINT ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
@@ -833,7 +833,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
     expires_date T,
     expires_last_notification T,
     expires_notices I4 NOTNULL DEFAULT 3
-    CONSTRAINTS ', CONSTRAINT `expires_customer_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BIT_DB_PREFIX."users_users` (`user_id`)
+    CONSTRAINT ', CONSTRAINT `expires_customer_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BIT_DB_PREFIX."users_users` (`user_id`)
 				, CONSTRAINT `expires_orders_products_ref` FOREIGN KEY (`orders_products_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products` (`orders_products_id`)'
 ",
 
@@ -852,7 +852,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history' => "
   date_added T,
   customer_notified I1 default '0',
   comments X
-  CONSTRAINTS ', CONSTRAINT `ord_stat_hist_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
+  CONSTRAINT ', CONSTRAINT `ord_stat_hist_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
 			  , CONSTRAINT `ord_stat_hist_stat_ref` FOREIGN KEY ( `orders_status_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_status`( `orders_status_id` )
 			  , CONSTRAINT `ord_stat_hist_user_ref` FOREIGN KEY ( `user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
 ",
@@ -865,7 +865,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
   orders_value N(15,4),
   class C(32),
   sort_order I4
-  CONSTRAINTS ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
+  CONSTRAINT ', CONSTRAINT `ord_total_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
@@ -878,7 +878,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
   last_modified T,
   reviews_read I2,
   status I1 NOTNULL default '1'
-  CONSTRAINTS ', CONSTRAINT `reviews_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+  CONSTRAINT ', CONSTRAINT `reviews_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
               , CONSTRAINT `reviews_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
@@ -886,7 +886,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_reviews_description' => "
   reviews_id I4,
   languages_id I4,
   reviews_text X
-  CONSTRAINTS ', CONSTRAINT `reviews_desc_reviews_ref` FOREIGN KEY ( `reviews_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_reviews`( `reviews_id` )'
+  CONSTRAINT ', CONSTRAINT `reviews_desc_reviews_ref` FOREIGN KEY ( `reviews_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_reviews`( `reviews_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_salemaker_sales' => "
@@ -923,7 +923,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_specials' => "
   date_status_change T,
   status I1 NOTNULL default '1',
   specials_date_available date NOTNULL default '0001-01-01'
-  CONSTRAINTS ', CONSTRAINT `specials_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
+  CONSTRAINT ', CONSTRAINT `specials_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
 
@@ -944,7 +944,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_tax_rates' => "
   tax_description C(255),
   last_modified T,
   date_added T
-  CONSTRAINTS ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( `tax_class_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_tax_class`( `tax_class_id` )'
+  CONSTRAINT ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( `tax_class_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_tax_class`( `tax_class_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_template_select' => "
@@ -963,7 +963,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_whos_online' => "
   last_page_url C(254),
   host_address X2 NOTNULL,
   user_agent C(255)
-  CONSTRAINTS ', CONSTRAINT `whos_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `whos_cust_ref` FOREIGN KEY ( `customer_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_zones_to_geo_zones' => "
@@ -973,7 +973,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_zones_to_geo_zones' => "
   geo_zone_id I4,
   last_modified T,
   date_added T
-  CONSTRAINTS ', CONSTRAINT `zone2geo_zone_ref` FOREIGN KEY ( `zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_zones`( `zone_id` )
+  CONSTRAINT ', CONSTRAINT `zone2geo_zone_ref` FOREIGN KEY ( `zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_zones`( `zone_id` )
   			  , CONSTRAINT `zone2geo_geo_zone_ref` FOREIGN KEY ( `geo_zone_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_geo_zones`( `geo_zone_id` )'
 ",
 
@@ -986,7 +986,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_wishlist' => "
   final_price N(8,2),
   products_quantity I2,
   wishlist_name C(64)
-  CONSTRAINTS ', CONSTRAINT `cust_wish_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+  CONSTRAINT ', CONSTRAINT `cust_wish_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
               , CONSTRAINT `cust_wish_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
@@ -1002,7 +1002,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout' => "
   date_added T,
   use_function X,
   set_function X
-  CONSTRAINTS ', CONSTRAINT `prod_layout_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )'
+  CONSTRAINT ', CONSTRAINT `prod_layout_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_query_builder' => "
@@ -1051,7 +1051,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_authorizenet' => "
   received X NOTNULL,
   az_time C(50),
   session_id C(254)
-  CONSTRAINTS ', CONSTRAINT `authorizenet_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
+  CONSTRAINT ', CONSTRAINT `authorizenet_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_paypal_session' => "
@@ -1118,7 +1118,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_paypal_pment_stat_his' => "
   payment_status C(17),
   pending_reason C(14),
   date_added T
-  CONSTRAINTS ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_paypal`( `paypal_ipn_id` )'
+  CONSTRAINT ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_paypal`( `paypal_ipn_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
@@ -1130,7 +1130,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
-  CONSTRAINTS ', CONSTRAINT `pubs_cc_log_order_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
+  CONSTRAINT ', CONSTRAINT `pubs_cc_log_order_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
   			  , CONSTRAINT `pubs_cc_log_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
