@@ -20,7 +20,7 @@
 // $Id$
 //
 
-  define('MODULE_PAYMENT_FREECHARGER_TEXT_TITLE', 'The Zen Cart FREE CHARGE CARD');
-  define('MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION', 'Used for purchase of FREE CHARGE ONLY');
-  define('MODULE_PAYMENT_FREECHARGER_TEXT_EMAIL_FOOTER', 'Used with purchases via Free Charge');
+  define('MODULE_PAYMENT_FREECHARGER_TEXT_TITLE', tra( 'The Zen Cart FREE CHARGE CARD' ) );
+  define('MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION', tra( 'Used for purchase of FREE CHARGE ONLY' ) );
+  define('MODULE_PAYMENT_FREECHARGER_TEXT_EMAIL_FOOTER', tra( 'Used with purchases via Free Charge' ) );
 ?>

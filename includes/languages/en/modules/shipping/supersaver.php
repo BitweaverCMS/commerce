@@ -20,7 +20,7 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_SUPERSAVER_TEXT_TITLE', 'SuperSaver Shipping!');
-define('MODULE_SHIPPING_SUPERSAVER_TEXT_DESCRIPTION', 'SuperSaver Shipping');
-define('MODULE_SHIPPING_SUPERSAVER_TEXT_WAY', 'SuperSaver Shipping');
+define('MODULE_SHIPPING_SUPERSAVER_TEXT_TITLE', tra( 'SuperSaver Shipping!' ) );
+define('MODULE_SHIPPING_SUPERSAVER_TEXT_DESCRIPTION', tra( 'SuperSaver Shipping' ) );
+define('MODULE_SHIPPING_SUPERSAVER_TEXT_WAY', tra( 'SuperSaver Shipping' ) );
 ?>
