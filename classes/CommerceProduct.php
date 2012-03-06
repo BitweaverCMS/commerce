@@ -1414,6 +1414,12 @@ If a special exist * 10+9
 
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
+
+		// 'title' trumphs all
+		if( !empty( $pParamHash['title'] ) ) {
+			$pParamHash['products_name'][1] = trim( $pParamHash['title'] ); // TODO Need to lookup DEFAULT_LANGUAGE id
+		}
+
 		if( !empty( $pParamHash['products_name'] ) ) {
 			if( is_array( $pParamHash['products_name'] ) ) {
 				$pParamHash['title'] = current( $pParamHash['products_name'] );
