@@ -20,8 +20,8 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Shipping &amp; Returns');
-define('HEADING_TITLE', 'Shipping &amp; Returns');
+define('NAVBAR_TITLE', tra( 'Shipping &amp; Returns' ) );
+define('HEADING_TITLE', tra( 'Shipping &amp; Returns' ) );
 
-define('TEXT_INFORMATION', 'Your Shipping &amp; Returns policy should be added here.');
+define('TEXT_INFORMATION', tra( 'Your Shipping &amp; Returns policy should be added here.' ) );
 ?>

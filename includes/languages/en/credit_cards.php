@@ -37,16 +37,16 @@ echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
 
 */
 
-define('TEXT_ACCEPTED_CREDIT_CARDS', '<strong>We accept:</strong> ');
+define('TEXT_ACCEPTED_CREDIT_CARDS', tra( '<strong>We accept:</strong> ' ) );
 
 // cc enabled text
-define('TEXT_CC_ENABLED_VISA','Visa');
-define('TEXT_CC_ENABLED_MC','MC');
-define('TEXT_CC_ENABLED_AMEX','AmEx');
-define('TEXT_CC_ENABLED_DINERS_CLUB','Diners Club');
-define('TEXT_CC_ENABLED_DISCOVER','Discover');
-define('TEXT_CC_ENABLED_JCB','JCB');
-define('TEXT_CC_ENABLED_AUSTRALIAN_BANKCARD','Australian Bankcard');
+define('TEXT_CC_ENABLED_VISA', tra( 'Visa' ) );
+define('TEXT_CC_ENABLED_MC', tra( 'MC' ) );
+define('TEXT_CC_ENABLED_AMEX', tra( 'AmEx' ) );
+define('TEXT_CC_ENABLED_DINERS_CLUB', tra( 'Diners Club' ) );
+define('TEXT_CC_ENABLED_DISCOVER', tra( 'Discover' ) );
+define('TEXT_CC_ENABLED_JCB', tra( 'JCB' ) );
+define('TEXT_CC_ENABLED_AUSTRALIAN_BANKCARD', tra( 'Australian Bankcard' ) );
 
 // for images define these as:
 // define('IMAGE_CC_ENABLED_VISA',zen_image(DIR_WS_IMAGES . 'filename.jpg');

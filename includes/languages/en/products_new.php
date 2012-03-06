@@ -20,15 +20,15 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'New Products');
-define('HEADING_TITLE', 'New Products');
+define('NAVBAR_TITLE', tra( 'New Products' ) );
+define('HEADING_TITLE', tra( 'New Products' ) );
 
-define('TEXT_DATE_ADDED', 'Date Added:');
-define('TEXT_MANUFACTURER', 'Manufacturer:');
-define('TEXT_PRICE', 'Price:');
+define('TEXT_DATE_ADDED', tra( 'Date Added:' ) );
+define('TEXT_MANUFACTURER', tra( 'Manufacturer:' ) );
+define('TEXT_PRICE', tra( 'Price:' ) );
 
-define('TEXT_PRODUCTS_MODEL','Model: ');
-define('TEXT_PRODUCTS_WEIGHT','Weight: ');
-define('TEXT_PRODUCTS_QUANTITY','In Stock: ');
-define('TEXT_OUT_OF_STOCK','Out of Stock');
+define('TEXT_PRODUCTS_MODEL', tra( 'Model: ' ) );
+define('TEXT_PRODUCTS_WEIGHT', tra( 'Weight: ' ) );
+define('TEXT_PRODUCTS_QUANTITY', tra( 'In Stock: ' ) );
+define('TEXT_OUT_OF_STOCK', tra( 'Out of Stock' ) );
 ?>

@@ -54,12 +54,12 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	// Override LibertyBase method
-	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
+	public function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'products_id' => $pPrimaryId ) );
 	}
 
 	// Override LibertyBase method
-	public static function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 

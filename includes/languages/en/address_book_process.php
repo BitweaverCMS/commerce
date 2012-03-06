@@ -20,23 +20,23 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE_1', 'My Account');
-define('NAVBAR_TITLE_2', 'Address Book');
+define('NAVBAR_TITLE_1', tra( 'My Account' ) );
+define('NAVBAR_TITLE_2', tra( 'Address Book' ) );
 
-define('NAVBAR_TITLE_ADD_ENTRY', 'New Entry');
-define('NAVBAR_TITLE_MODIFY_ENTRY', 'Update Entry');
-define('NAVBAR_TITLE_DELETE_ENTRY', 'Delete Entry');
+define('NAVBAR_TITLE_ADD_ENTRY', tra( 'New Entry' ) );
+define('NAVBAR_TITLE_MODIFY_ENTRY', tra( 'Update Entry' ) );
+define('NAVBAR_TITLE_DELETE_ENTRY', tra( 'Delete Entry' ) );
 
-define('DELETE_ADDRESS_TITLE', 'Delete Address');
-define('DELETE_ADDRESS_DESCRIPTION', 'Are you sure you would like to delete the selected address from your address book?');
+define('DELETE_ADDRESS_TITLE', tra( 'Delete Address' ) );
+define('DELETE_ADDRESS_DESCRIPTION', tra( 'Are you sure you would like to delete the selected address from your address book?' ) );
 
-define('SELECTED_ADDRESS', 'Selected Address');
+define('SELECTED_ADDRESS', tra( 'Selected Address' ) );
 
-define('SUCCESS_ADDRESS_BOOK_ENTRY_DELETED', 'The selected address has been successfully removed from your address book.');
-define('SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED', 'Your address book has been successfully updated.');
+define('SUCCESS_ADDRESS_BOOK_ENTRY_DELETED', tra( 'The selected address has been successfully removed from your address book.' ) );
+define('SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED', tra( 'Your address book has been successfully updated.' ) );
 
-define('WARNING_PRIMARY_ADDRESS_DELETION', 'The primary address cannot be deleted. Please set another address as the primary address and try again.');
+define('WARNING_PRIMARY_ADDRESS_DELETION', tra( 'The primary address cannot be deleted. Please set another address as the primary address and try again.' ) );
 
-define('ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY', 'The address book entry does not exist.');
-define('ERROR_ADDRESS_BOOK_FULL', 'Your address book is full. Please delete an unneeded address to save a new one.');
+define('ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY', tra( 'The address book entry does not exist.' ) );
+define('ERROR_ADDRESS_BOOK_FULL', tra( 'Your address book is full. Please delete an unneeded address to save a new one.' ) );
 ?>

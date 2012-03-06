@@ -20,22 +20,22 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Reviews');
+define('NAVBAR_TITLE', tra( 'Reviews' ) );
 
-define('SUB_TITLE_FROM', 'From:');
-define('SUB_TITLE_REVIEW', 'Your Review:');
-define('SUB_TITLE_RATING', 'Rating:');
+define('SUB_TITLE_FROM', tra( 'From:' ) );
+define('SUB_TITLE_REVIEW', tra( 'Your Review:' ) );
+define('SUB_TITLE_RATING', tra( 'Rating:' ) );
 
-define('TEXT_NO_HTML', '<span class="coming"><strong>NOTE:</strong></span>&nbsp;HTML tags are not allowed.');
-define('TEXT_BAD', '<span class="coming"><strong>BAD</strong></span>');
-define('TEXT_GOOD', '<span class="coming"><strong>GOOD</strong></span>');
+define('TEXT_NO_HTML', tra( '<span class="coming"><strong>NOTE:</strong></span>&nbsp;HTML tags are not allowed.' ) );
+define('TEXT_BAD', tra( '<span class="coming"><strong>BAD</strong></span>' ) );
+define('TEXT_GOOD', tra( '<span class="coming"><strong>GOOD</strong></span>' ) );
 
-define('TEXT_PRODUCT_INFO', '<strong>Product Information</strong>');
+define('TEXT_PRODUCT_INFO', tra( '<strong>Product Information</strong>' ) );
 
-define('TEXT_APPROVAL_REQUIRED', '<span class="coming"><strong>NOTE:</strong></span>&nbsp;Reviews require prior approval before they will be displayed');
+define('TEXT_APPROVAL_REQUIRED', tra( '<span class="coming"><strong>NOTE:</strong></span>&nbsp;Reviews require prior approval before they will be displayed' ) );
 
-define('EMAIL_REVIEW_PENDING_SUBJECT','Product Review Pending Approval: %s');
+define('EMAIL_REVIEW_PENDING_SUBJECT', tra( 'Product Review Pending Approval: %s' ) );
 define('EMAIL_PRODUCT_REVIEW_CONTENT_INTRO','A Product Review for %s has been submitted and requires your approval.'."\n\n");
-define('EMAIL_PRODUCT_REVIEW_CONTENT_DETAILS','Review Details: %s');
+define('EMAIL_PRODUCT_REVIEW_CONTENT_DETAILS', tra( 'Review Details: %s' ) );
 
 ?>

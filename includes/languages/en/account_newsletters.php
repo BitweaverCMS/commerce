@@ -20,14 +20,14 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE_1', 'My Account');
-define('NAVBAR_TITLE_2', 'Newsletter Subscriptions');
+define('NAVBAR_TITLE_1', tra( 'My Account' ) );
+define('NAVBAR_TITLE_2', tra( 'Newsletter Subscriptions' ) );
 
-define('HEADING_TITLE', 'Newsletter Subscriptions');
+define('HEADING_TITLE', tra( 'Newsletter Subscriptions' ) );
 
-define('MY_NEWSLETTERS_TITLE', 'My Newsletter Subscriptions');
-define('MY_NEWSLETTERS_GENERAL_NEWSLETTER', 'General Newsletter');
-define('MY_NEWSLETTERS_GENERAL_NEWSLETTER_DESCRIPTION', 'Including store news, new products, special offers, and other promotional announcements.');
+define('MY_NEWSLETTERS_TITLE', tra( 'My Newsletter Subscriptions' ) );
+define('MY_NEWSLETTERS_GENERAL_NEWSLETTER', tra( 'General Newsletter' ) );
+define('MY_NEWSLETTERS_GENERAL_NEWSLETTER_DESCRIPTION', tra( 'Including store news, new products, special offers, and other promotional announcements.' ) );
 
-define('SUCCESS_NEWSLETTER_UPDATED', 'Your newsletter subscriptions have been successfully updated.');
+define('SUCCESS_NEWSLETTER_UPDATED', tra( 'Your newsletter subscriptions have been successfully updated.' ) );
 ?>

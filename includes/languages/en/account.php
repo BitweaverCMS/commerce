@@ -20,22 +20,22 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'My Shopping Information');
-define('HEADING_TITLE', 'My Shopping Information');
+define('NAVBAR_TITLE', tra( 'My Shopping Information' ) );
+define('HEADING_TITLE', tra( 'My Shopping Information' ) );
 
-define('OVERVIEW_TITLE', 'Overview');
-define('OVERVIEW_SHOW_ALL_ORDERS', '(show all orders)');
-define('OVERVIEW_PREVIOUS_ORDERS', 'Previous Orders');
+define('OVERVIEW_TITLE', tra( 'Overview' ) );
+define('OVERVIEW_SHOW_ALL_ORDERS', tra( '(show all orders)' ) );
+define('OVERVIEW_PREVIOUS_ORDERS', tra( 'Previous Orders' ) );
 
-define('MY_ACCOUNT_TITLE', 'Shopping Preferences');
-define('MY_ACCOUNT_INFORMATION', 'View or change my shopping information.');
-define('MY_ACCOUNT_ADDRESS_BOOK', 'View or change entries in my address book.');
-define('MY_ACCOUNT_PASSWORD', 'Change my account password.');
+define('MY_ACCOUNT_TITLE', tra( 'Shopping Preferences' ) );
+define('MY_ACCOUNT_INFORMATION', tra( 'View or change my shopping information.' ) );
+define('MY_ACCOUNT_ADDRESS_BOOK', tra( 'View or change entries in my address book.' ) );
+define('MY_ACCOUNT_PASSWORD', tra( 'Change my account password.' ) );
 
-define('MY_ORDERS_TITLE', 'My Orders');
-define('MY_ORDERS_VIEW', 'View the orders I have made.');
+define('MY_ORDERS_TITLE', tra( 'My Orders' ) );
+define('MY_ORDERS_VIEW', tra( 'View the orders I have made.' ) );
 
-define('EMAIL_NOTIFICATIONS_TITLE', 'E-Mail Notifications');
-define('EMAIL_NOTIFICATIONS_NEWSLETTERS', 'Subscribe or unsubscribe from newsletters.');
-define('EMAIL_NOTIFICATIONS_PRODUCTS', 'View or change my product notification list.');
+define('EMAIL_NOTIFICATIONS_TITLE', tra( 'E-Mail Notifications' ) );
+define('EMAIL_NOTIFICATIONS_NEWSLETTERS', tra( 'Subscribe or unsubscribe from newsletters.' ) );
+define('EMAIL_NOTIFICATIONS_PRODUCTS', tra( 'View or change my product notification list.' ) );
 ?>

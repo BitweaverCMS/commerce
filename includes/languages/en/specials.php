@@ -20,5 +20,5 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Specials');
+define('NAVBAR_TITLE', tra( 'Specials' ) );
 ?>

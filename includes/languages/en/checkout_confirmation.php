@@ -20,21 +20,21 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE_1', 'Checkout');
-define('NAVBAR_TITLE_2', 'Confirmation');
+define('NAVBAR_TITLE_1', tra( 'Checkout' ) );
+define('NAVBAR_TITLE_2', tra( 'Confirmation' ) );
 
-define('HEADING_TITLE', 'Step 3 of 3 - Order Confirmation');
+define('HEADING_TITLE', tra( 'Step 3 of 3 - Order Confirmation' ) );
 
-define('HEADING_BILLING_ADDRESS', 'Billing Address');
-define('HEADING_DELIVERY_ADDRESS', 'Delivery Address');
-define('HEADING_SHIPPING_METHOD', 'Shipping Method:');
-define('HEADING_PAYMENT_METHOD', 'Payment Method:');
-define('HEADING_PRODUCTS', 'Shopping Cart Contents');
-define('HEADING_TAX', 'Tax');
-define('HEADING_TOTAL', 'Total');
-define('HEADING_ORDER_COMMENTS', 'Special Instructions or Order Comments');
+define('HEADING_BILLING_ADDRESS', tra( 'Billing Address' ) );
+define('HEADING_DELIVERY_ADDRESS', tra( 'Delivery Address' ) );
+define('HEADING_SHIPPING_METHOD', tra( 'Shipping Method:' ) );
+define('HEADING_PAYMENT_METHOD', tra( 'Payment Method:' ) );
+define('HEADING_PRODUCTS', tra( 'Shopping Cart Contents' ) );
+define('HEADING_TAX', tra( 'Tax' ) );
+define('HEADING_TOTAL', tra( 'Total' ) );
+define('HEADING_ORDER_COMMENTS', tra( 'Special Instructions or Order Comments' ) );
 // no comments entered
-define('NO_COMMENTS_TEXT', 'None');
-define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Final Step</strong>');
-define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- continue to confirm your order. Thank you!');
+define('NO_COMMENTS_TEXT', tra( 'None' ) );
+define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', tra( '<strong>Final Step</strong>' ) );
+define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', tra( '- continue to confirm your order. Thank you!' ) );
 ?>
