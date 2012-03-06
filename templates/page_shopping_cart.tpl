@@ -58,9 +58,9 @@
 <tr class="subtotal">
 	<td colspan="2">
 			<select name="currency" onchange="this.form.submit()">
-				<option value="">Change Currency...</option>
+				<option value="">{tr}Change Currency{/tr}...</option>
 				{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
-					<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|escape:html}</option>
+					<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
 				{/foreach}
 			</select>
 	</td>
