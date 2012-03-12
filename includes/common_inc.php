@@ -458,30 +458,10 @@
 
 // -=-=-=-=-=-=-=-=-= LANGUAGES FUNCTIONS
 
-
-
-
-
-  function zen_get_languages() {
-    global $gBitDb;
-    $languages = $gBitDb->query("SELECT `languages_id`, `name`, `code`, `image`, `directory`
-                               FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`");
-
-    while (!$languages->EOF) {
-      $languages_array[] = array('id' => $languages->fields['languages_id'],
-                                 'name' => $languages->fields['name'],
-                                 'code' => $languages->fields['code'],
-                                 'image' => $languages->fields['image'],
-                                 'directory' => $languages->fields['directory']);
-      $languages->MoveNext();
-    }
-
-    return $languages_array;
-  }
-
-
-
-
+function zen_get_languages() {
+	global $gBitDb;
+	return $gBitDb->getAll( "SELECT `languages_id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", array(), 3600 );
+}
 
 
 
