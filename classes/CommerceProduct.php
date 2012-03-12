@@ -2235,16 +2235,7 @@ Skip deleting of images for now
 			$this->mDb->query("DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 			// remove downloads if they exist
-			$remove_downloads= $this->mDb->query(	
-				"SELECT pa.`products_attributes_id`
-				 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	
-				 WHERE pom.`products_id` = ?", array( $this->mProductsId ) );
-			while (!$remove_downloads->EOF) {
-				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` =?", array( $remove_downloads->fields['products_attributes_id'] ) );
-				$remove_downloads->MoveNext();
-			}
-
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` IN (SELECT pa.`products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	WHERE pom.`products_id` = ?)", array( $this->mProductsId ) );
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?)", array( $this->mProductsId ));
 			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));
