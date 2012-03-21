@@ -97,7 +97,6 @@
 // The HTML href link wrapper function
   function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
-
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER;
     } elseif ($connection == 'SSL') {

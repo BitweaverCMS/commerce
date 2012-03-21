@@ -38,9 +38,9 @@ define('TABLE_HEADING_COMMENTS', tra( 'Special Instructions or Order Comments' )
 define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', tra( '<strong>Continue to Step 3</strong>' ) );
 define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', tra( '- to confirm your order.' ) );
 
-define('TABLE_HEADING_CONDITIONS', tra( '<span class="termsconditions">Terms and Conditions</span>' ) );
-define('TEXT_CONDITIONS_DESCRIPTION', '<span class="termsdescription">Please acknowledge the terms and conditions bound to this order by ticking the following box. The terms and conditions can be read <a href="' . zen_href_link(FILENAME_CONDITIONS, '', tra( 'SSL') . '"><u>here</u></a>.' ) );
-define('TEXT_CONDITIONS_CONFIRM', tra( '<span class="termsiagree">I have read and agreed to the terms and conditions bound to this order.</span>' ) );
+define('TABLE_HEADING_CONDITIONS', tra( 'Terms and Conditions' ) );
+define('TEXT_CONDITIONS_DESCRIPTION', 'Please acknowledge the terms and conditions bound to this order by ticking the following box. The terms and conditions can be read <a href="' . zen_href_link(FILENAME_CONDITIONS, '', 'SSL') . '"><u>here</u></a>.' );
+define('TEXT_CONDITIONS_CONFIRM', tra( 'I have read and agreed to the terms and conditions bound to this order.' ) );
 
 define('TEXT_CHECKOUT_AMOUNT_DUE', tra( 'Total Amount Due: ' ) );
 ?>
