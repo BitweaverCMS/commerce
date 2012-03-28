@@ -106,7 +106,7 @@
         $link = HTTP_SERVER;
       }
     } else {
-      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine connection method on a link!<br /><br />Known methods: NONSSL SSL</strong><br /><br />');
+		$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
     }
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
