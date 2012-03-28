@@ -24,7 +24,7 @@ define('NAVBAR_TITLE_1', tra( 'Checkout' ) );
 define('NAVBAR_TITLE_2', tra( 'Success - Thank You' ) );
 
 define('TEXT_SUCCESS', tra( 'A few words about the approximate shipping time or your processing policy would be put here. You can change this text in: <strong>includes/ languages/ YOUR_LANGUAGE/ checkout_success.php</strong>' ) );
-define('TEXT_SEE_ORDERS', 'You can view your order history by going to the <a href="' . zen_href_link(FILENAME_ACCOUNT, '', tra( 'SSL') . '">My Account</a> page and by clicking on view all orders.' ) );
+define('TEXT_SEE_ORDERS', 'You can view your order history by going to the <a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">My Account</a> page and by clicking on view all orders.' );
 define('TEXT_CONTACT_STORE_OWNER', tra( 'Please direct any questions you have to <a href="' . zen_href_link(FILENAME_CONTACT_US) . '">customer service</a>.' ) );
 
 define('TABLE_HEADING_COMMENTS', tra( '' ) );
