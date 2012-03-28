@@ -21,7 +21,7 @@
 // $Id$
 
 //
-	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
+	if (!empty( $_SESSION['customer_id'] ) && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
 		$_SESSION['navigation']->set_snapshot();
 		zen_redirect(FILENAME_LOGIN);
 	}
