@@ -54,6 +54,6 @@ define('EMAIL_GV_CLOSURE','Sincerely,' . "\n\n" . STORE_OWNER . "\nStore Owner\n
 define('EMAIL_DISCLAIMER_NEW_CUSTOMER', tra( 'This email address was given to us by you or by one of our customers. If you did not signup for an account, or feel that you have received this email in error, please send an email to %s ' ) );
 
 define('TABLE_HEADING_PRIVACY_CONDITIONS', tra( 'Privacy Statement' ) );
-define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', 'Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read <a href="' . zen_href_link(FILENAME_PRIVACY, '', tra( 'SSL') . '"><u>here</u></a>.' ) );
+define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', 'Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read <a href="' . zen_href_link(FILENAME_PRIVACY, '', 'SSL') . '"><u>here</u></a>.' );
 define('TEXT_PRIVACY_CONDITIONS_CONFIRM', tra( 'I have read and agreed to your privacy statement.' ) );
 ?>

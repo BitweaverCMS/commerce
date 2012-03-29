@@ -34,6 +34,6 @@ define('TEXT_LOGIN_ERROR', tra( 'Error: Sorry, there is no match for that e-mail
 define('TEXT_VISITORS_CART', tra( '<strong>Note:</strong> Your &quot;Visitors Cart&quot; contents will be merged with your &quot;Members Cart&quot; contents once you have logged on. <a href="javascript:session_win();">[More Info]</a>' ) );
 
 define('TABLE_HEADING_PRIVACY_CONDITIONS', tra( '<span class="privacyconditions">Privacy Statement</span>' ) );
-define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', '<span class="privacydescription">Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read</span> <a href="' . zen_href_link(FILENAME_PRIVACY, '', tra( 'SSL') . '"><u>here</u></a>.' ) );
+define('TEXT_PRIVACY_CONDITIONS_DESCRIPTION', '<span class="privacydescription">Please acknowledge you agree with our privacy statement by ticking the following box. The privacy statement can be read</span> <a href="' . zen_href_link(FILENAME_PRIVACY, '', 'SSL') . '"><u>here</u></a>.' );
 define('TEXT_PRIVACY_CONDITIONS_CONFIRM', tra( '<span class="privacyagree">I have read and agreed to your privacy statement.</span>' ) );
 ?>
