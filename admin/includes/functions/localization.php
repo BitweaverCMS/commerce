@@ -20,6 +20,13 @@
 //  $Id$
 //
 
+// Define how do we update currency exchange rates
+// Possible values are 'oanda' 'xe' or ''
+  define('CURRENCY_SERVER_PRIMARY', 'oanda');
+  define('CURRENCY_SERVER_BACKUP', 'xe');
+
+  require_once( './includes/languages/en/currencies.php' );
+
 
   function quote_oanda_currency($code, $base = DEFAULT_CURRENCY) {
     $page = file('http://www.oanda.com/convert/fxdaily?value=1&redirected=1&exch=' . $code .  '&format=CSV&dest=Get+Table&sel_list=' . $base);
