@@ -18,6 +18,7 @@ require_once(DIR_WS_FUNCTIONS . 'localization.php');
 if( $currencies = $gBitDb->getAssoc("SELECT `currencies_id`, `code`, `title` FROM " . TABLE_CURRENCIES) ) {
 	$output = array();
 	foreach( $currencies as $curId => $curHash ) {
+		$server_used = CURRENCY_SERVER_PRIMARY;
 		$quote_function = 'quote_' . CURRENCY_SERVER_PRIMARY . '_currency';
 		$rate = $quote_function( $curHash['code'] );
 
