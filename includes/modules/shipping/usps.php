@@ -237,35 +237,33 @@ class usps extends BitBase {
 		$this->_setWeight($shipping_pounds, $shipping_ounces);
 		$uspsQuote = $this->_getQuote();
 
+		$options = explode(', ', MODULE_SHIPPING_USPS_OPTIONS);
 		if (is_array($uspsQuote)) {
 			if (isset($uspsQuote['error'])) {
 				$this->quotes = array('module' => $this->title,
 															'error' => $uspsQuote['error']);
 			} else {
-
-				// BOF: UPS USPS
-				if (in_array('Display weight', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) {
+				if (in_array('Display weight', $options)) {
 					switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
 						case (0):
 						$show_box_weight = '';
 						break;
 						case (1):
-						$show_box_weight = ' (' . $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES . ')';
+						$show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
 						break;
 						case (2):
-						$show_box_weight = ' (' . number_format($usps_shipping_weight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT . ')';
+						$show_box_weight = number_format($usps_shipping_weight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
 						break;
 						default:
-						$show_box_weight = ' (' . $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . TEXT_SHIPPING_WEIGHT . ')';
+						$show_box_weight = $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . TEXT_SHIPPING_WEIGHT;
 						break;
 					}
 				}
-				// EOF: UPS USPS
-
-				// BOF: UPS USPS
-				$this->quotes = array('id' => $this->code,
-				'module' => $this->title . $show_box_weight);
-				// EOF: UPS USPS
+				$this->quotes = array(
+					'id' => $this->code,
+					'module' => $this->title,
+					'weight' => $show_box_weight, 
+				);
 
 				// set handling fee
 				if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY	|| (SHIPPING_ORIGIN_COUNTRY == '223' && $this->usps_countries == 'US')) {
@@ -284,7 +282,7 @@ class usps extends BitBase {
 					// BOF: UPS USPS
 					$title = ((isset($this->types[$type])) ? $this->types[$type] : $type);
 					$code = ((isset($this->codes[$type])) ? $this->codes[$type] : '');
-					if( in_array( 'Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS) ) ) {
+					if( in_array( 'Display transit time', $options ) ) {
 						$title .= $transittime[$type];
 					}
 					// strip the ** from the titles
