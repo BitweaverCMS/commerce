@@ -62,23 +62,20 @@ class purolator {
 		$this->description = tra( 'Purolator Parcel Service<p><strong>eShip Profile Information </strong>can be obtained at http://eship.purolator.com' );
 		$this->icon = 'shipping_purolator';
 		$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
-		$this->enabled = ((MODULE_SHIPPING_PUROLATOR_STATUS == 'True') ? true : false);
-		$this->uri = MODULE_SHIPPING_PUROLATOR_SERVERURI;
-		$this->location = MODULE_SHIPPING_PUROLATOR_SERVERLOC;
-		$this->key = MODULE_SHIPPING_PUROLATOR_KEY;
-		$this->pass = MODULE_SHIPPING_PUROLATOR_PASS;
-		$this->acct_num = MODULE_SHIPPING_PUROLATOR_ACCTNUM;
-		$this->packaging = MODULE_SHIPPING_PUROLATOR_PACKAGING;
-		$this->sort_order = MODULE_SHIPPING_PUROLATOR_SORT_ORDER;
-		$this->handling_fee = MODULE_SHIPPING_PUROLATOR_HANDLING;
-		$this->items_qty = 0;
-		$this->items_price = 0;
-		$this->tax_class = MODULE_SHIPPING_PUROLATOR_TAX_CLASS;
-		$this->tax_basis = MODULE_SHIPPING_PUROLATOR_TAX_BASIS;
-		// disable when entire cart is free shipping
-		if (zen_get_shipping_enabled($this->code))
-			$this->enabled = ((MODULE_SHIPPING_PUROLATOR_STATUS == 'True') ? true : false);
+		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_PUROLATOR_STATUS' );
 		if (($this->enabled == true) && ((int) MODULE_SHIPPING_PUROLATOR_ZONE > 0)) {
+			$this->uri = MODULE_SHIPPING_PUROLATOR_SERVERURI;
+			$this->location = MODULE_SHIPPING_PUROLATOR_SERVERLOC;
+			$this->key = MODULE_SHIPPING_PUROLATOR_KEY;
+			$this->pass = MODULE_SHIPPING_PUROLATOR_PASS;
+			$this->acct_num = MODULE_SHIPPING_PUROLATOR_ACCTNUM;
+			$this->packaging = MODULE_SHIPPING_PUROLATOR_PACKAGING;
+			$this->sort_order = MODULE_SHIPPING_PUROLATOR_SORT_ORDER;
+			$this->handling_fee = MODULE_SHIPPING_PUROLATOR_HANDLING;
+			$this->items_qty = 0;
+			$this->items_price = 0;
+			$this->tax_class = MODULE_SHIPPING_PUROLATOR_TAX_CLASS;
+			$this->tax_basis = MODULE_SHIPPING_PUROLATOR_TAX_BASIS;
 			$check_flag = false;
 			$check = $gBitDb->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_PUROLATOR_ZONE . "' and zone_country_id = '" . $order->delivery['country']['id'] . "' order by zone_id");
 			while (!$check->EOF) {

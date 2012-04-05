@@ -73,28 +73,23 @@ class canadapost
 		$this->title = tra( 'Canada Post' );
 		$this->description = tra( 'Canada Post Parcel Service<p><strong>CPC Profile Information </strong>can be obtained at http://sellonline.canadapost.ca<br /><a href=http://sellonline.canadapost.ca/servlet/LogonServlet?Language=0 target="_blank">Modify my profile</a>' );
 		$this->icon = 'shipping_canadapost';
-		$this->enabled = ((MODULE_SHIPPING_CANADAPOST_STATUS == 'True') ? true : false);
-		$this->server = MODULE_SHIPPING_CANADAPOST_SERVERIP;
-		$this->port = MODULE_SHIPPING_CANADAPOST_SERVERPOST;
-		$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
-		$this->CPCID = MODULE_SHIPPING_CANADAPOST_CPCID;
-		$this->turnaround_time = MODULE_SHIPPING_CANADAPOST_TIME;
-		$this->sort_order = MODULE_SHIPPING_CANADAPOST_SORT_ORDER;
-		$this->items_qty = 0;
-		$this->items_price = 0;
-		$this->tax_class = MODULE_SHIPPING_CANADAPOST_TAX_CLASS;
-		$this->tax_basis = MODULE_SHIPPING_CANADAPOST_TAX_BASIS;
-		$this->cp_online_handling = ((MODULE_SHIPPING_CANADAPOST_CP_HANDLING == 'True') ? true : false);
-		$this->lettermail = ((MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS == 'True') ? true : false);
-		$this->lettermail_max_weight = MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX;
-		$this->lettermail_available = false;
-		// disable when entire cart is free shipping
-		if (zen_get_shipping_enabled($this->code))
-		{
-			$this->enabled = ((MODULE_SHIPPING_CANADAPOST_STATUS == 'True') ? true : false);
-		}
+		$this->enabled = zen_get_shipping_enabled($this->code) && CommerceSystem::isConfigActive( 'MODULE_SHIPPING_CANADAPOST_STATUS' );
 		if (($this->enabled == true) && ((int)MODULE_SHIPPING_CANADAPOST_ZONE > 0))
 		{
+			$this->server = MODULE_SHIPPING_CANADAPOST_SERVERIP;
+			$this->port = MODULE_SHIPPING_CANADAPOST_SERVERPOST;
+			$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
+			$this->CPCID = MODULE_SHIPPING_CANADAPOST_CPCID;
+			$this->turnaround_time = MODULE_SHIPPING_CANADAPOST_TIME;
+			$this->sort_order = MODULE_SHIPPING_CANADAPOST_SORT_ORDER;
+			$this->items_qty = 0;
+			$this->items_price = 0;
+			$this->tax_class = MODULE_SHIPPING_CANADAPOST_TAX_CLASS;
+			$this->tax_basis = MODULE_SHIPPING_CANADAPOST_TAX_BASIS;
+			$this->cp_online_handling = ((MODULE_SHIPPING_CANADAPOST_CP_HANDLING == 'True') ? true : false);
+			$this->lettermail = ((MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS == 'True') ? true : false);
+			$this->lettermail_max_weight = MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX;
+			$this->lettermail_available = false;
 			$check_flag = false;
 			$check = $gBitDb->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_CANADAPOST_ZONE . "' and zone_country_id = '" . $order->delivery['country']['id'] . "' order by zone_id");
 			while (! $check->EOF)
