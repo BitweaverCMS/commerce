@@ -21,8 +21,8 @@
 //
 
 define('TEXT_MAIN',$gBitSystem->getConfig( 'commerce_main_text', '') );
-define('TEXT_GREETING_GUEST', 'Welcome <span class="greetUser">Guest!</span> Would you like to <a href="%s">log yourself in</a>?');
-define('TEXT_GREETING_PERSONAL', 'Hello <span class="greetUser">%s</span>! Would you like to see our <a href="%s">newest additions</a>?');
+define('TEXT_GREETING_GUEST', tra( 'Welcome <span class="greetUser">Guest!</span> Would you like to <a href="%s">log yourself in</a>?' ) );
+define('TEXT_GREETING_PERSONAL', tra( 'Hello <span class="greetUser">%s</span>! Would you like to see our <a href="%s">newest additions</a>?' ) );
 
 define('TEXT_INFORMATION', '
 <h2>To begin customizing the look of your Zen Cart&trade; CSS Template, please follow the instructions
@@ -71,36 +71,36 @@ define('TEXT_INFORMATION', '
 
 
 if( !defined( 'TABLE_HEADING_NEW_PRODUCTS' ) ) {
-	define('TABLE_HEADING_NEW_PRODUCTS', 'New Products For %s');
+	define('TABLE_HEADING_NEW_PRODUCTS', tra( 'New Products For %s' ) );
 }
 if( !defined( 'TABLE_HEADING_UPCOMING_PRODUCTS' ) ) {
-	define('TABLE_HEADING_UPCOMING_PRODUCTS', 'Upcoming Products');
+	define('TABLE_HEADING_UPCOMING_PRODUCTS', tra( 'Upcoming Products' ) );
 }
 if( !defined( 'TABLE_HEADING_DATE_EXPECTED' ) ) {
-	define('TABLE_HEADING_DATE_EXPECTED', 'Date Expected');
+	define('TABLE_HEADING_DATE_EXPECTED', tra( 'Date Expected' ) );
 }
 
 if ( ($category_depth == 'products') || (isset($_GET['manufacturers_id'])) ) {
-  define('HEADING_TITLE', 'Available Products');
-  define('TABLE_HEADING_IMAGE', 'Product Image');
-  define('TABLE_HEADING_MODEL', 'Model');
-  define('TABLE_HEADING_PRODUCTS', 'Product Name');
-  define('TABLE_HEADING_MANUFACTURER', 'Manufacturer');
-  define('TABLE_HEADING_QUANTITY', 'Quantity');
-  define('TABLE_HEADING_PRICE', 'Price');
-  define('TABLE_HEADING_WEIGHT', 'Weight');
-  define('TABLE_HEADING_BUY_NOW', 'Buy Now');
-  define('TEXT_NO_PRODUCTS', 'There are no products to list in this category.');
-  define('TEXT_NO_PRODUCTS2', 'There is no product available from this manufacturer.');
-  define('TEXT_NUMBER_OF_PRODUCTS', 'Number of Products: ');
-  define('TEXT_SHOW', '<b>Sort by:</b> ');
-  define('TEXT_BUY', 'Buy 1 \'');
-  define('TEXT_NOW', '\' now');
-  define('TEXT_ALL_CATEGORIES', 'All Categories');
-  define('TEXT_ALL_MANUFACTURERS', 'All Manufacturers');
+  define('HEADING_TITLE', tra( 'Available Products' ) );
+  define('TABLE_HEADING_IMAGE', tra( 'Product Image' ) );
+  define('TABLE_HEADING_MODEL', tra( 'Model' ) );
+  define('TABLE_HEADING_PRODUCTS', tra( 'Product Name' ) );
+  define('TABLE_HEADING_MANUFACTURER', tra( 'Manufacturer' ) );
+  define('TABLE_HEADING_QUANTITY', tra( 'Quantity' ) );
+  define('TABLE_HEADING_PRICE', tra( 'Price' ) );
+  define('TABLE_HEADING_WEIGHT', tra( 'Weight' ) );
+  define('TABLE_HEADING_BUY_NOW', tra( 'Buy Now' ) );
+  define('TEXT_NO_PRODUCTS', tra( 'There are no products to list in this category.' ) );
+  define('TEXT_NO_PRODUCTS2', tra( 'There is no product available from this manufacturer.' ) );
+  define('TEXT_NUMBER_OF_PRODUCTS', tra( 'Number of Products: ' ) );
+  define('TEXT_SHOW', tra( '<b>Sort by:</b> ' ) );
+  define('TEXT_BUY', tra( 'Buy 1 \'' ) );
+  define('TEXT_NOW', tra( '\' now' ) );
+  define('TEXT_ALL_CATEGORIES', tra( 'All Categories' ) );
+  define('TEXT_ALL_MANUFACTURERS', tra( 'All Manufacturers' ) );
 } elseif ($category_depth == 'top') {
   define('HEADING_TITLE', $gBitSystem->getConfig( 'siteTitle' ).' Shopping'); /*Replace this line with the headline you would like for your shop. For example: Welcome to My SHOP!*/
 } elseif ($category_depth == 'nested') {
-  define('HEADING_TITLE', 'Categories');
+  define('HEADING_TITLE', tra( 'Categories' ) );
 }
 ?>

@@ -20,18 +20,18 @@
 // $Id$
 //
 
-define('HEADING_CVV', 'What is CVV?');
-define('TEXT_CVV_HELP1', 'Visa, Mastercard, Discover 3 Digit Card Verification Number<br /><br />
-                    For your safety and security, we require that you enter your card\'s verification number.<br /><br />
+define('HEADING_CVV', tra( 'What is CVV?' ) );
+define('TEXT_CVV_HELP1', 'Visa, Mastercard, Discover 3 Digit Card Verification Number
+                    For your safety and security, we require that you enter your card\'s verification number.
                     The verification number is a 3-digit number printed on the back of your card.
-                    It appears after and to the right of your card number.<br />' .
+                    It appears after and to the right of your card number.' .
                     zen_image(DIR_WS_TEMPLATE_ICONS . 'cvv2visa.gif'));
 
-define('TEXT_CVV_HELP2', 'American Express 4 Digit Card Verification Number<br /><br />
-                    For your safety and security, we require that you enter your card\'s verification number.<br /><br />
+define('TEXT_CVV_HELP2', 'American Express 4 Digit Card Verification Number
+                    For your safety and security, we require that you enter your card\'s verification number.
                     The American Express verification number is a 4-digit number printed on the front of your card.
-                    It appears after and to the right of your card number.<br />' .
+                    It appears after and to the right of your card number.' .
                     zen_image(DIR_WS_TEMPLATE_ICONS . 'cvv2amex.gif'));
 
-define('TEXT_CLOSE_CVV_WINDOW', 'Close Window [x]');
+define('TEXT_CLOSE_CVV_WINDOW', tra( 'Close Window [x]' ) );
 ?>

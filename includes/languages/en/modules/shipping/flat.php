@@ -20,7 +20,7 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_FLAT_TEXT_TITLE', 'Flat Rate');
-define('MODULE_SHIPPING_FLAT_TEXT_DESCRIPTION', 'Flat Rate');
-define('MODULE_SHIPPING_FLAT_TEXT_WAY', 'Best Way');
+define('MODULE_SHIPPING_FLAT_TEXT_TITLE', tra( 'Flat Rate' ) );
+define('MODULE_SHIPPING_FLAT_TEXT_DESCRIPTION', tra( 'Flat Rate' ) );
+define('MODULE_SHIPPING_FLAT_TEXT_WAY', tra( 'Best Way' ) );
 ?>

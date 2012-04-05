@@ -30,8 +30,8 @@ define('TITLE', $gBitSystem->getConfig( 'siteTitle' ) );
 define('SITE_TAGLINE', $gBitSystem->getConfig( 'site_slogan' ) );
 
 // Custom Keywords
-define('CUSTOM_KEYWORDS', 'ecommerce, open source, shop, online shopping');
+define('CUSTOM_KEYWORDS', tra( 'ecommerce, open source, shop, online shopping' ) );
 
 // Review Page can have a lead in:
-define('META_TAGS_REVIEW', 'Reviews: ');
+define('META_TAGS_REVIEW', tra( 'Reviews: ' ) );
 ?>

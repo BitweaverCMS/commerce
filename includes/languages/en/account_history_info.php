@@ -19,33 +19,33 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-define('NAVBAR_TITLE', 'My Account');
-define('NAVBAR_TITLE_1', 'My Account');
-define('NAVBAR_TITLE_2', 'History');
-define('NAVBAR_TITLE_3', 'Order #%s');
+define('NAVBAR_TITLE', tra( 'My Account' ) );
+define('NAVBAR_TITLE_1', tra( 'My Account' ) );
+define('NAVBAR_TITLE_2', tra( 'History' ) );
+define('NAVBAR_TITLE_3', tra( 'Order #%s' ) );
 
-define('HEADING_TITLE', 'Order Information');
+define('HEADING_TITLE', tra( 'Order Information' ) );
 
-define('HEADING_ORDER_NUMBER', 'Order #%s');
-define('HEADING_ORDER_DATE', 'Order Date:');
-define('HEADING_ORDER_TOTAL', 'Order Total:');
+define('HEADING_ORDER_NUMBER', tra( 'Order #%s' ) );
+define('HEADING_ORDER_DATE', tra( 'Order Date:' ) );
+define('HEADING_ORDER_TOTAL', tra( 'Order Total:' ) );
 
-define('HEADING_DELIVERY_ADDRESS', 'Delivery Address');
-define('HEADING_SHIPPING_METHOD', 'Shipping Method');
+define('HEADING_DELIVERY_ADDRESS', tra( 'Delivery Address' ) );
+define('HEADING_SHIPPING_METHOD', tra( 'Shipping Method' ) );
 
-define('HEADING_PRODUCTS', 'Products');
-define('HEADING_TAX', 'Tax');
-define('HEADING_TOTAL', 'Total');
+define('HEADING_PRODUCTS', tra( 'Products' ) );
+define('HEADING_TAX', tra( 'Tax' ) );
+define('HEADING_TOTAL', tra( 'Total' ) );
 
-define('HEADING_BILLING_ADDRESS', 'Billing Address');
-define('HEADING_PAYMENT_METHOD', 'Payment Method');
+define('HEADING_BILLING_ADDRESS', tra( 'Billing Address' ) );
+define('HEADING_PAYMENT_METHOD', tra( 'Payment Method' ) );
 
-define('HEADING_ORDER_HISTORY', 'Status History &amp; Comments');
-define('TEXT_NO_COMMENTS_AVAILABLE', 'No comments available.');
+define('HEADING_ORDER_HISTORY', tra( 'Status History &amp; Comments' ) );
+define('TEXT_NO_COMMENTS_AVAILABLE', tra( 'No comments available.' ) );
 
-define('TABLE_HEADING_DOWNLOAD_DATE', 'Link Expires:');
-define('TABLE_HEADING_DOWNLOAD_COUNT', 'Remaining:');
-define('HEADING_DOWNLOAD', 'Links to Downloads');
+define('TABLE_HEADING_DOWNLOAD_DATE', tra( 'Link Expires:' ) );
+define('TABLE_HEADING_DOWNLOAD_COUNT', tra( 'Remaining:' ) );
+define('HEADING_DOWNLOAD', tra( 'Links to Downloads' ) );
 
-define('TABLE_HEADING_DOWNLOAD_FILENAME','Filename:');
+define('TABLE_HEADING_DOWNLOAD_FILENAME', tra( 'Filename:' ) );
 ?>

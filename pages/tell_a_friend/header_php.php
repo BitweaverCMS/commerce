@@ -21,7 +21,7 @@
 // $Id$
 
 //
-	if (!$_SESSION['customer_id'] && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false')) {
+	if (!empty( $_SESSION['customer_id'] ) && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
 		$_SESSION['navigation']->set_snapshot();
 		zen_redirect(FILENAME_LOGIN);
 	}
@@ -116,7 +116,7 @@
 
       zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
     }
-  } elseif ($_SESSION['customer_id']) {
+  } elseif( !empty( $_SESSION['customer_id'] ) ) {
     $account_query = "select `customers_firstname`, `customers_lastname`, `customers_email_address`
                       from " . TABLE_CUSTOMERS . "
                       where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'";

@@ -20,16 +20,16 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_UPS_TEXT_TITLE', 'United Parcel Service');
-define('MODULE_SHIPPING_UPS_TEXT_DESCRIPTION', 'United Parcel Service');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_GND', 'UPS Ground');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_1DM', 'Next Day Air Early AM');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_1DA', 'Next Day Air');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_1DP', 'Next Day Air Saver');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_2DM', '2nd Day Air Early AM');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_3DS', '3 Day Select');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_STD', 'Canada Standard');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_XPR', 'Worldwide Express');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_XDM', 'Worldwide Express Plus');
-define('MODULE_SHIPPING_UPS_TEXT_OPT_XPD', 'Worldwide Expedited');
+define('MODULE_SHIPPING_UPS_TEXT_TITLE', tra( 'United Parcel Service' ) );
+define('MODULE_SHIPPING_UPS_TEXT_DESCRIPTION', tra( 'United Parcel Service' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_GND', tra( 'UPS Ground' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_1DM', tra( 'Next Day Air Early AM' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_1DA', tra( 'Next Day Air' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_1DP', tra( 'Next Day Air Saver' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_2DM', tra( '2nd Day Air Early AM' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_3DS', tra( '3 Day Select' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_STD', tra( 'Canada Standard' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_XPR', tra( 'Worldwide Express' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_XDM', tra( 'Worldwide Express Plus' ) );
+define('MODULE_SHIPPING_UPS_TEXT_OPT_XPD', tra( 'Worldwide Expedited' ) );
 ?>

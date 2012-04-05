@@ -20,8 +20,8 @@
 // $Id$
 //
 
-  define('MODULE_PAYMENT_MONEYORDER_TEXT_TITLE', 'Check/Money Order');
-  define('MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION', 'Please make your check or money order payable to ...');
+  define('MODULE_PAYMENT_MONEYORDER_TEXT_TITLE', tra( 'Check/Money Order' ) );
+  define('MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION', tra( 'Please make your check or money order payable to ...' ) );
 	if( defined( 'MODULE_PAYMENT_MONEYORDER_PAYTO' ) ) {
   define('MODULE_PAYMENT_MONEYORDER_TEXT_EMAIL_FOOTER', "Please make your check or money order payable to:" . "\n\n" . MODULE_PAYMENT_MONEYORDER_PAYTO . "\n\nMail your payment to:\n" . STORE_NAME_ADDRESS . "\n\n" . 'Your order will not ship until we receive payment.');
 	}

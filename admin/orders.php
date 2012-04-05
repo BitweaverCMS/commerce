@@ -24,7 +24,8 @@ define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST[
 
 require('includes/application_top.php');
 
-$gBitThemes->loadAjax( 'jquery', array( 'ui/ui.core.js', 'ui/ui.draggable.js', 'ui/ui.droppable.js', 'ui/ui.accordion.js', 'ui/ui.sortable.js', 'ui/ui.dialog.js', 'ui/effects.core.js', 'ui/effects.slide.js', UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/fancybox/jquery.fancybox.js' ) );
+$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
+$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/libs/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
 $currencies = new currencies();
 

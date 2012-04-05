@@ -20,7 +20,7 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE', 'Store Pickup');
-define('MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION', 'Customer In Store Pick-up');
-define('MODULE_SHIPPING_STOREPICKUP_TEXT_WAY', 'Walk In');
+define('MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE', tra( 'Store Pickup' ) );
+define('MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION', tra( 'Customer In Store Pick-up' ) );
+define('MODULE_SHIPPING_STOREPICKUP_TEXT_WAY', tra( 'Walk In' ) );
 ?>

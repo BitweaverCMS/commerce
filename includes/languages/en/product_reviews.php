@@ -20,8 +20,8 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Reviews');
-define('TEXT_OF_5_STARS', '%s of 5 Stars');
-define('TEXT_PRODUCT_INFO', '<strong>Product Information</strong>');
-define('TEXT_READ_REVIEW', '<strong>Read Review</strong>');
+define('NAVBAR_TITLE', tra( 'Reviews' ) );
+define('TEXT_OF_5_STARS', tra( '%s of 5 Stars' ) );
+define('TEXT_PRODUCT_INFO', tra( '<strong>Product Information</strong>' ) );
+define('TEXT_READ_REVIEW', tra( '<strong>Read Review</strong>' ) );
 ?>

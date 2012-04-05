@@ -20,13 +20,13 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Reviews');
-define('SUB_TITLE_PRODUCT', 'Product:');
-define('SUB_TITLE_FROM', 'From:');
-define('SUB_TITLE_DATE', 'Date:');
-define('SUB_TITLE_REVIEW', 'Review:');
-define('SUB_TITLE_RATING', 'Rating:');
-define('TEXT_OF_5_STARS', '%s of 5 Stars');
-define('TEXT_PRODUCT_INFO', '<strong>Product Information</strong>');
-define('TEXT_REVIEW_ADDITIONAL', '<strong>Additional Reviews</strong>');
+define('NAVBAR_TITLE', tra( 'Reviews' ) );
+define('SUB_TITLE_PRODUCT', tra( 'Product:' ) );
+define('SUB_TITLE_FROM', tra( 'From:' ) );
+define('SUB_TITLE_DATE', tra( 'Date:' ) );
+define('SUB_TITLE_REVIEW', tra( 'Review:' ) );
+define('SUB_TITLE_RATING', tra( 'Rating:' ) );
+define('TEXT_OF_5_STARS', tra( '%s of 5 Stars' ) );
+define('TEXT_PRODUCT_INFO', tra( '<strong>Product Information</strong>' ) );
+define('TEXT_REVIEW_ADDITIONAL', tra( '<strong>Additional Reviews</strong>' ) );
 ?>

@@ -20,13 +20,13 @@
 // $Id$
 //
 
-define('MODULE_SHIPPING_USPS_TEXT_TITLE', 'United States Postal Service');
-define('MODULE_SHIPPING_USPS_TEXT_DESCRIPTION', 'United States Postal Service<br /><br />You will need to have registered an account with USPS at http://www.uspsprioritymail.com/et_regcert.html to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.');
-define('MODULE_SHIPPING_USPS_TEXT_OPT_PP', 'Parcel Post');
-define('MODULE_SHIPPING_USPS_TEXT_OPT_PM', 'Priority Mail');
-define('MODULE_SHIPPING_USPS_TEXT_OPT_EX', 'Express Mail');
-define('MODULE_SHIPPING_USPS_TEXT_ERROR', 'An error occurred with the USPS shipping calculations.<br />If you prefer to use USPS as your shipping method, please contact the store owner.');
-define('MODULE_SHIPPING_USPS_TEXT_DAY', 'day');
-define('MODULE_SHIPPING_USPS_TEXT_DAYS', 'days');
-define('MODULE_SHIPPING_USPS_TEXT_WEEKS', 'weeks');
+define('MODULE_SHIPPING_USPS_TEXT_TITLE', tra( 'United States Postal Service' ) );
+define('MODULE_SHIPPING_USPS_TEXT_DESCRIPTION', tra( 'United States Postal Service<br /><br />You will need to have registered an account with USPS at http://www.uspsprioritymail.com/et_regcert.html to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.' ) );
+define('MODULE_SHIPPING_USPS_TEXT_OPT_PP', tra( 'Parcel Post' ) );
+define('MODULE_SHIPPING_USPS_TEXT_OPT_PM', tra( 'Priority Mail' ) );
+define('MODULE_SHIPPING_USPS_TEXT_OPT_EX', tra( 'Express Mail' ) );
+define('MODULE_SHIPPING_USPS_TEXT_ERROR', tra( 'An error occurred with the USPS shipping calculations.<br />If you prefer to use USPS as your shipping method, please contact the store owner.' ) );
+define('MODULE_SHIPPING_USPS_TEXT_DAY', tra( 'day' ) );
+define('MODULE_SHIPPING_USPS_TEXT_DAYS', tra( 'days' ) );
+define('MODULE_SHIPPING_USPS_TEXT_WEEKS', tra( 'weeks' ) );
 ?>

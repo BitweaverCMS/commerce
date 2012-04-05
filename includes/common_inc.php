@@ -97,7 +97,6 @@
 // The HTML href link wrapper function
   function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
-
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER;
     } elseif ($connection == 'SSL') {
@@ -107,7 +106,7 @@
         $link = HTTP_SERVER;
       }
     } else {
-      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine connection method on a link!<br /><br />Known methods: NONSSL SSL</strong><br /><br />');
+		$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
     }
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
@@ -459,29 +458,10 @@
 // -=-=-=-=-=-=-=-=-= LANGUAGES FUNCTIONS
 
 
-
-
-
-  function zen_get_languages() {
-    global $gBitDb;
-    $languages = $gBitDb->query("SELECT `languages_id`, `name`, `code`, `image`, `directory`
-                               FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`");
-
-    while (!$languages->EOF) {
-      $languages_array[] = array('id' => $languages->fields['languages_id'],
-                                 'name' => $languages->fields['name'],
-                                 'code' => $languages->fields['code'],
-                                 'image' => $languages->fields['image'],
-                                 'directory' => $languages->fields['directory']);
-      $languages->MoveNext();
-    }
-
-    return $languages_array;
-  }
-
-
-
-
+function zen_get_languages() {
+	global $gBitDb;
+	return $gBitDb->getAll( "SELECT `languages_id` AS `id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", array(), 3600 );
+}
 
 
 

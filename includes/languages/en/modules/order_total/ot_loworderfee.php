@@ -20,6 +20,6 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_LOWORDERFEE_TITLE', 'Low Order Fee');
-  define('MODULE_ORDER_TOTAL_LOWORDERFEE_DESCRIPTION', 'Low Order Fee');
+  define('MODULE_ORDER_TOTAL_LOWORDERFEE_TITLE', tra( 'Low Order Fee' ) );
+  define('MODULE_ORDER_TOTAL_LOWORDERFEE_DESCRIPTION', tra( 'Low Order Fee' ) );
 ?>
