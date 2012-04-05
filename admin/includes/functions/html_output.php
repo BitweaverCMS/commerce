@@ -147,7 +147,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
   function zen_draw_form_admin($name, $action, $parameters = '', $method = 'post', $params = '', $usessl = 'false') {
 	global $gBitUser;
     $form = '<form name="' . zen_output_string($name) . '" action="';
-	$sslType = ( isset($_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' ) ? 'SSL' : 'NONSSL';
+	$sslType = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
     $form .= zen_href_link_admin( $action, $parameters, $sslType );
     $form .= '" method="' . zen_output_string($method) . '"';
     if (zen_not_null($params)) {
