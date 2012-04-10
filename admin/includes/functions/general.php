@@ -531,27 +531,12 @@
 
 
 	function zen_prepare_country_zones_pull_down($country_id = '') {
-// preset the width of the drop-down for Netscape
-		$pre = '';
-		if ( (!zen_browser_detect('MSIE')) && (zen_browser_detect('Mozilla/4')) ) {
-			for ($i=0; $i<45; $i++) $pre .= '&nbsp;';
-		}
-
-		$zones = zen_get_country_zones($country_id);
-
-		if (sizeof($zones) > 0) {
-			$zones_SELECT = array(array('id' => '', 'text' => PLEASE_SELECT));
-			$zones = array_merge($zones_select, $zones);
-		} else {
-			$zones = array(array('id' => '', 'text' => TYPE_BELOW));
-// create dummy options for Netscape to preset the height of the drop-down
-			if ( (!zen_browser_detect('MSIE')) && (zen_browser_detect('Mozilla/4')) ) {
-				for ($i=0; $i<9; $i++) {
-					$zones[] = array('id' => '', 'text' => $pre);
-				}
+		if( $zones = zen_get_country_zones($country_id) ) {
+			foreach( array_keys( $zones ) AS $key ) {
+				$zones[$key]['id'] = $key;
+				$zones[$key]['text'] = $zones[$key]['zone_name'];
 			}
 		}
-
 		return $zones;
 	}
 
