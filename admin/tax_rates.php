@@ -50,16 +50,8 @@
         $tax_rate = zen_db_prepare_input($_POST['tax_rate']);
         $tax_description = zen_db_prepare_input($_POST['tax_description']);
         $tax_priority = zen_db_prepare_input($_POST['tax_priority']);
-
-        $gBitDb->Execute("UPDATE " . TABLE_TAX_RATES . "
-                      SET `tax_rates_id` = '" . (int)$tax_rates_id . "',
-                          `tax_zone_id` = '" . (int)$tax_zone_id . "',
-                          `tax_class_id` = '" . (int)$tax_class_id . "',
-                          `tax_rate`= '" . zen_db_input($tax_rate) . "',
-                          `tax_description` = '" . zen_db_input($tax_description) . "',
-                          `tax_priority` = '" . (int)zen_db_input($tax_priority) . "',
-                          `last_modified` = ". $gBitDb->mDb->sysTimeStamp ." WHERE `tax_rates_id` = '" . (int)$tax_rates_id . "'");
-
+        $gBitDb->query("UPDATE " . TABLE_TAX_RATES . " SET `tax_zone_id` = ?, `tax_class_id` = ?, `tax_rate`= ?, `tax_description` = ?, `tax_priority` = ?,
+                          `last_modified` = ".$gBitDb->mDb->sysTimeStamp."  WHERE `tax_rates_id` = ?", array( $tax_zone_id, $tax_class_id, $tax_rate, $tax_description, $tax_priority, $tax_rates_id ) );
         zen_redirect(zen_href_link_admin(FILENAME_TAX_RATES, 'page=' . $_GET['page'] . '&tID=' . $tax_rates_id));
         break;
       case 'deleteconfirm':

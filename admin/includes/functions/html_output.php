@@ -33,11 +33,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER . DIR_WS_ADMIN;
     } elseif ($connection == 'SSL') {
-      if (ENABLE_SSL_ADMIN == 'true') {
-        $link = HTTPS_SERVER . DIR_WS_HTTPS_ADMIN;
-      } else {
-        $link = HTTP_SERVER . DIR_WS_ADMIN;
-      }
+      $link = HTTPS_SERVER . DIR_WS_HTTPS_ADMIN;
     } else {
       die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
