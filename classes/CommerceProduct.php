@@ -1012,7 +1012,10 @@ If a special exist * 10+9
 		}
 	}
 
-	function getDisplayUrl( $pProductsId=NULL, $pCatPath=NULL ) {
+	function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
+	}
+
+	function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
 		global $gBitSystem;
 		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
 			$pProductsId = $this->mProductsId;
@@ -1243,7 +1246,7 @@ If a special exist * 10+9
 				if( empty( $ret[$productId]['type_class'] ) ) {
 					$ret[$productId]['type_class'] = 'CommerceProduct';
 				}
-				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrl( $ret[$productId]['products_id'] );
+				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
 				}

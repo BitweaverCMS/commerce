@@ -54,7 +54,7 @@ if( $gBitUser->isRegistered() ) {
 		while (!$products_history->EOF) {
 			$rows++;
 			$customer_orders[$rows] = $products_history->fields;
-			$customer_orders[$rows]['display_url'] = CommerceProduct::getDisplayUrl( $products_history->fields['products_id'] );
+			$customer_orders[$rows]['display_url'] = CommerceProduct::getDisplayUrlFromHash( $products_history->fields['products_id'] );
 			$products_history->MoveNext();
 		}
 

@@ -75,7 +75,7 @@ function getShippingQuotes( pOrderId ) {
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrl($ordersProduct.products_id)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
 <td class="dataTableContent" valign="top">{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}</td>
 <td class="dataTableContent" align="right" valign="top">{if $ordersProduct.tax}{$ordersProduct.tax|zen_display_tax_value}%{/if}</td>
 <td class="dataTableContent" align="right" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}

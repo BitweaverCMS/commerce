@@ -17,7 +17,7 @@
 				<a class="" href="{$smarty.server.PHP_SELF}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{biticon iname="edit-delete" iexplain="Remove"}</a>
 			</div>
 			{if $r.category_id}<strong>{tr}Category{/tr}:</strong> {$r.categories_name}<br/>{/if}
-			{if $r.product_id}<strong>{tr}Product{/tr}:</strong> <a href="{$gBitProduct->getDisplayUrl($r.product_id)}">{$r.products_name|escape} #{$r.product_id}</a><br/>{/if}
+			{if $r.product_id}<strong>{tr}Product{/tr}:</strong> <a href="{$gBitProduct->getDisplayUrlFromHash($r)}">{$r.products_name|escape} #{$r.product_id}</a><br/>{/if}
 			{if $r.product_type_id}<strong>{tr}Product Type{/tr}:</strong> {$r.type_name}<br/>{/if}
 			{if $r.products_options_values_id}<strong>{tr}Option{/tr}:</strong> {$r.products_options_values_name}<br/>{/if}
 		</li>
