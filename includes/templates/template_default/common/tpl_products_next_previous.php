@@ -145,10 +145,10 @@
 			$gBitSmarty->assign( 'navPosition', $position );
 			$gBitSmarty->assign( 'navCounter', $counter );
 			if( !empty( $previous ) ) {
-				$gBitSmarty->assign( 'navPreviousUrl', CommerceProduct::getDisplayUrlFromHash( $previous ) );
+				$gBitSmarty->assign( 'navPreviousUrl', CommerceProduct::getDisplayUrlFromHash( array( 'products_id' => $previous ) ) );
 			}
 			if( !empty( $next_item ) ) {
-				$gBitSmarty->assign( 'navNextUrl', CommerceProduct::getDisplayUrlFromHash( $next_item ) );
+				$gBitSmarty->assign( 'navNextUrl', CommerceProduct::getDisplayUrlFromHash( array( 'products_id' => $next_item ) ) );
 			}
 
 /*

@@ -94,7 +94,7 @@
 			$rows = '0' . $rows;
 		}
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php print CommerceProduct::getDisplayUrlFromHash( $products->fields['products_id'] ); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php print CommerceProduct::getDisplayUrlFromHash( $products->fields ); ?>'">
 				<td class="dataTableContent"><?php echo $rows;?></td>
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_id']; ?>&nbsp;&nbsp;</td>
                 <td class="dataTableContent"><?php echo '<a href="' . CommerceProduct::getDisplayUrlFromHash( $products->fields['products_id'] ) . '">' . $products->fields['products_name'] . '</a>'; ?></td>

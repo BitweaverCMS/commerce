@@ -1012,22 +1012,19 @@ If a special exist * 10+9
 		}
 	}
 
-	public static function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
+	public static function getDisplayUrlFromHash( $pParamHash ) {
 		global $gBitSystem;
-		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
-			$pProductsId = $this->mProductsId;
-		}
 		$ret = BITCOMMERCE_PKG_URL;
-		if( is_numeric( $pProductsId ) ) {
+		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
-				$ret .= $pProductsId;
+				$ret .= $pParamHash['products_id'];
 				if( !empty( $pCatPath ) ) {
-					$ret .= '/' . $pCatPath;
+					$ret .= '/' . $pParamHash['cat_path'];
 				}
 			} else {
-				$ret .= 'index.php?products_id='.$pProductsId;
+				$ret .= 'index.php?products_id='.$pParamHash['products_id'];
 				if( !empty( $pCatPath ) ) {
-					$ret .= '&cPath=' . $pCatPath;
+					$ret .= '&cPath=' . $pParamHash['cat_path'];
 				}
 			}
 		}
