@@ -1012,10 +1012,7 @@ If a special exist * 10+9
 		}
 	}
 
-	function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
-	}
-
-	function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
+	public static function getDisplayUrlFromHash( $pProductsId=NULL, $pCatPath=NULL ) {
 		global $gBitSystem;
 		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
 			$pProductsId = $this->mProductsId;
