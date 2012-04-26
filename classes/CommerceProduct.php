@@ -137,6 +137,12 @@ class CommerceProduct extends LibertyMime {
 		return $this->getField( 'products_model', 'Product' );
 	}
 
+	function exportHash() {
+		$ret = parent::exportHash();
+		$ret['product_id'] = $this->mProductsId;
+		$ret['product_type'] = $this->getField( 'type_class' );
+		return $ret;
+	}
 	// {{{ =================== Product Pricing Methods ==================== 
 
 	// User specific commission discount, used for  backing out commissions of an aggregate price, such as that returned by getBasePrice
@@ -2472,15 +2478,6 @@ Skip deleting of images for now
 		return false;
 	}
 
-	/**
-	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
-	 *
-	 * @access public
-	 * @return the preview string
-	 **/
-	function getViewableFields() {
-		return array_merge( parent::getViewableFields(), array( 'products_id' ) );
-	}
 }
 
 
@@ -2503,9 +2500,9 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	}
 
 	if( !empty( $lookupValue ) ) {
-
 		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
-				FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+				FROM " . TABLE_PRODUCT_TYPES . " cpt 
+					LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 				WHERE `$lookupKey`=?";
 		$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
 
