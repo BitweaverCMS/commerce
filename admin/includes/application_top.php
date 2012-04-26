@@ -129,11 +129,6 @@ ob_start();
 // customization for the design layout
   define('BOX_WIDTH', 125); // how wide the boxes should be in pixels (default: 125)
 
-// Define how do we update currency exchange rates
-// Possible values are 'oanda' 'xe' or ''
-  define('CURRENCY_SERVER_PRIMARY', 'oanda');
-  define('CURRENCY_SERVER_BACKUP', 'xe');
-
 // include the list of extra database tables and filenames
 //  include(DIR_WS_MODULES . 'extra_datafiles.php');
   if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_datafiles')) {
@@ -235,9 +230,6 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 // load the product class
   require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'products.php');
   $zc_products = new products;
-
-// define our localization functions
-  require_once(DIR_WS_FUNCTIONS . 'localization.php');
 
 // Include validation functions (right now only email address)
   require_once(DIR_WS_FUNCTIONS . 'validations.php');

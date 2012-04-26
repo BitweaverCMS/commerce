@@ -24,7 +24,7 @@ class fedex {
 		$this->sort_order = MODULE_SHIPPING_FEDEX_SORT_ORDER;
 		$this->icon = 'shipping_fedex';
 		$this->tax_class = MODULE_SHIPPING_FEDEX_TAX_CLASS;
-		$this->enabled = ((MODULE_SHIPPING_FEDEX_STATUS == 'True') ? true : false);
+		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_FEDEX_STATUS' );
 		$this->meter = MODULE_SHIPPING_FEDEX_METER;
 
 // You can comment out any methods you do not wish to quote by placing a // at the beginning of that line
@@ -154,7 +154,7 @@ class fedex {
 									break;
 							}
 							$methodCode = $this->domestic_codes[$quoteCode];
-						} elseif( in_array( $this->international_codes[$quoteCode], $quotedTypes ) ) {
+						} elseif( $this->intl == TRUE && in_array( $this->international_codes[$quoteCode], $quotedTypes ) ) {
 							$service_descr = $this->international_types[$quoteCode];
 							$methodCode = $this->international_codes[$quoteCode];
 						}

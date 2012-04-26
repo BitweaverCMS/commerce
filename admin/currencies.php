@@ -22,6 +22,7 @@
 
   require('includes/application_top.php');
 
+  require_once(DIR_WS_FUNCTIONS . 'localization.php');
 
   $currencies = new currencies();
 

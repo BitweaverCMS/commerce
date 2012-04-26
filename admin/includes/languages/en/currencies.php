@@ -43,7 +43,7 @@ define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete this currency?
 define('TEXT_INFO_HEADING_NEW_CURRENCY', 'New Currency');
 define('TEXT_INFO_HEADING_EDIT_CURRENCY', 'Edit Currency');
 define('TEXT_INFO_HEADING_DELETE_CURRENCY', 'Delete Currency');
-define('TEXT_INFO_SET_AS_DEFAULT', TEXT_SET_DEFAULT . ' (requires a manual update of currency values)');
+define('TEXT_INFO_SET_AS_DEFAULT', tra( 'Set as default' ) . ' (requires a manual update of currency values)');
 define('TEXT_INFO_CURRENCY_UPDATED', 'The exchange rate for %s (%s) was updated successfully via %s.');
 
 define('ERROR_REMOVE_DEFAULT_CURRENCY', 'Error: The default currency can not be removed. Please set another currency as default, and try again.');

@@ -38,6 +38,10 @@ class CommerceSystem extends BitBase {
 		return $ret;
 	}
 
+	static function isConfigActive( $pConfigName ) {
+		return ((defined( $pConfigName ) && constant( $pConfigName ) == 'True') ? true : false);
+	}
+
 	function setHeadingTitle( $pTitle ) {
 		if( !defined( 'HEADING_TITLE' ) ) {
 			define( 'HEADING_TITLE', $pTitle );

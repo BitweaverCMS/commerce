@@ -33,11 +33,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER . DIR_WS_ADMIN;
     } elseif ($connection == 'SSL') {
-      if (ENABLE_SSL_ADMIN == 'true') {
-        $link = HTTPS_SERVER . DIR_WS_HTTPS_ADMIN;
-      } else {
-        $link = HTTP_SERVER . DIR_WS_ADMIN;
-      }
+      $link = HTTPS_SERVER . DIR_WS_HTTPS_ADMIN;
     } else {
       die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
     }
@@ -147,19 +143,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
   function zen_draw_form_admin($name, $action, $parameters = '', $method = 'post', $params = '', $usessl = 'false') {
 	global $gBitUser;
     $form = '<form name="' . zen_output_string($name) . '" action="';
-    if (zen_not_null($parameters)) {
-      if ($usessl) {
-        $form .= zen_href_link_admin($action, $parameters, 'NONSSL');
-      } else {
-        $form .= zen_href_link_admin($action, $parameters, 'NONSSL');
-      }
-    } else {
-      if ($usessl) {
-        $form .= zen_href_link_admin($action, '', 'NONSSL');
-      } else {
-        $form .= zen_href_link_admin($action, '', 'NONSSL');
-      }
-    }
+	$sslType = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
+    $form .= zen_href_link_admin( $action, $parameters, $sslType );
     $form .= '" method="' . zen_output_string($method) . '"';
     if (zen_not_null($params)) {
       $form .= ' ' . $params;
