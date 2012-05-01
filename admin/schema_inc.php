@@ -487,6 +487,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   coupon_minimum_order N(8,4),
   coupon_start_date T,
   coupon_expire_date T,
+  quantity_max I4,
   quantity_limit I4,
   uses_per_coupon I2 default '1',
   uses_per_user I2,
