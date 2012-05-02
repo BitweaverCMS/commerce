@@ -276,7 +276,7 @@ class fedex {
 		} else {
 			$this->server = 'gatewaybeta.fedex.com/GatewayDC';
 		}
-		if (MODULE_SHIPPING_FEDEX_CURL == "NONE") {
+		if( !MODULE_SHIPPING_FEDEX_CURL || MODULE_SHIPPING_FEDEX_CURL == "NONE") {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_URL, 'https://' . $this->server);
