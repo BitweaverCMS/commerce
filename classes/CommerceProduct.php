@@ -470,6 +470,30 @@ If a special exist * 10+9
 		return $ret;
 	}
 
+	function getCostPrice( $pQuantity=1, $pAttributes=array() ) {
+		$cost = $this->getField( 'products_cogs' );
+		if( !empty( $pAttributes ) ) {
+			foreach( $pAttributes as &$attr ) {
+				if( !empty( $attr['options_values_cogs'] ) ) {
+					$cost += $pAttributes['options_values_cogs'];
+				}
+			}
+		}
+		return $pQuantity * $cost;
+	}
+
+	function getWholesalePrice( $pQuantity=1, $pAttributes=array() ) {
+		$wholesale = $this->getField( 'products_wholesale' );
+		if( !empty( $pAttributes ) ) {
+			foreach( $pAttributes as &$attr ) {
+				if( !empty( $attr['options_values_wholesale'] ) ) {
+					$wholesale += $pAttributes['options_values_wholesale'];
+				}
+			}
+		}
+		return $pQuantity * $wholesale;
+	}
+
 	// check a given price for a quantity discount. it is the responsibility of the calling function to determine if this method is appropirate, ie. it should check attributes_discounted,  etc...
 	function getQuantityPrice( $pQuantity, $pCheckAmount = NULL ) {
 		global $gBitDb, $gBitCustomer;
