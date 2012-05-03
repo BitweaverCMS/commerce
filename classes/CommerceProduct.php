@@ -1038,7 +1038,7 @@ If a special exist * 10+9
 	}
 
 	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		$ret = BIT_ROOT_PATH.self::getImageUrl( $pProductsId, $pSize );
+		$ret = BIT_ROOT_PATH.static::getImageUrl( $pProductsId, $pSize );
 		if( !file_exists( dirname( $ret ) ) ) {
 			mkdir_p( dirname( $ret ) );
 		}
@@ -1046,7 +1046,7 @@ If a special exist * 10+9
 	}
 
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL, $pDefault=TRUE ) {
-		return( self::getImageUrl( $pProductsId, $pSize ) );
+		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
