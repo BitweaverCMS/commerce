@@ -799,6 +799,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   products_options C(32),
   products_options_values C(128),
   options_values_price N(15,4),
+  options_values_wholesale N(15,4),
+  options_values_cogs N(15,4),
   price_prefix C(1),
   product_attribute_is_free I1,
   products_attributes_wt F,
