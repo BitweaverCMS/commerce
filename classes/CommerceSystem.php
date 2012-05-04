@@ -7,7 +7,7 @@ class CommerceSystem extends BitBase {
 	var $mProductTypeLayout;
 
 	function CommerceSystem() {
-		BitBase::BitBase();
+		parent::__construct();
 		$this->loadConfig();
 	}
 

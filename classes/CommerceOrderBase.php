@@ -26,7 +26,7 @@ class CommerceOrderBase extends BitBase {
 	var $contents;
 
 	function CommerceOrderBase() {
-		parent::BitBase();
+		parent::__construct();
 		$this->mProductObjects = array();
 	}
 

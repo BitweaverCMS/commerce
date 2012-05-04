@@ -17,7 +17,7 @@ class CommerceCustomer extends BitBase {
 	var $mCart;
 
 	function CommerceCustomer( $pCustomerId ) {
-		BitBase::BitBase();
+		parent::__construct();
 		$this->mCart = new CommerceShoppingCart();
 		$this->mCart->load();
 		if( is_numeric( $pCustomerId ) ) {

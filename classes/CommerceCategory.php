@@ -19,7 +19,7 @@ class CommerceCategory extends BitBase {
 	var $pCategoryId;
 
 	function CommerceCategory( $pCategoryId=NULL, $pContentId=NULL ) {
-		BitBase::BitBase();
+		parent::__construct();
 		if( is_numeric( $pCategoryId ) ) {
 			$this->mCategoryId = $pCategoryId;
 		}

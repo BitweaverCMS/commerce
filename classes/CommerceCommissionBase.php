@@ -20,7 +20,7 @@ class CommerceCommissionBase extends BitBase {
 	var $mCommissionType = NULL;
 
 	function __construct() {
-		parent::BitBase();
+		parent::__construct();
 	}
 
 	function verifyPayment( &$pParamHash ) {

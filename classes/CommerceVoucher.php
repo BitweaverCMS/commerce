@@ -17,7 +17,7 @@ class CommerceVoucher extends BitBase {
 
 	function CommerceVoucher( $pCouponId=NULL ) {
 		$this->mCouponId = $pCouponId;
-		BitBase::BitBase();
+		parent::__construct();
 	}
 
 	function load( $pCode=NULL, $pOnlyIfActive=NULL ) {
