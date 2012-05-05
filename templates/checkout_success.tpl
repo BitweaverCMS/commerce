@@ -34,5 +34,38 @@
 	<input class="button" name="Continue" value="{tr}Continue{/tr}" type="submit">
 
 	</form>
+
+	{if $smarty.const.IS_LIVE && $gBitSystem->getConfig('google_analytics_ua')}
+		{php}
+		global $newOrdersId, $gBitUser, $gBitSystem, $newOrder;
+		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+		$newOrder = new order( $newOrdersId );
+		{/php}
+
+		<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			_uacct = "{$gBitSystem->getConfig('google_analytics_ua')}";
+			urchinTracker();
+		</script>
+
+		<form style="display:none;" name="utmform">
+			<textarea style="display:none;" id="utmtrans">{php}
+			global $newOrder, $newOrdersId;
+
+			// UTM:T|[orders-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
+			// UTM:I|[orders-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
+
+			print "UTM:T|$newOrdersId|".$gBitUser->getPreference('affiliate_code',$gBitSystem->getConfig('site_title'))."|".$newOrder->getField('total')."|".$newOrder->getField('tax')."|".$newOrder->getField('shipping_total')."|".$newOrder->delivery['city']."|".$newOrder->delivery['state']."|".$newOrder->delivery['country']['countries_name'];
+			foreach( $newOrder->contents AS $product ) {
+				print "\nUTM:I|$newOrdersId|".$product['id']."|".str_replace( '|', ' ', $product['name'])."|".$product['model']."|".$product['price']."|".$product['products_quantity'];
+			}
+			{/php}</textarea>
+		</form>
+
+		<script type="text/javascript"> 
+		__utmSetTrans(); 
+		</script>
+	{/if}
+
 </div>
 {/strip}
