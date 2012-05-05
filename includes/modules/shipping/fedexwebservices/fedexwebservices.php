@@ -9,10 +9,10 @@ class fedexwebservices extends BitBase {
 		parent::__construct();
 
 		@define('MODULE_SHIPPING_FEDEX_WEB_SERVICES_INSURE', 0); 
-		$this->code						 = "fedexwebservices";
-		$this->title						= 'FedEx';
-		$this->description			= 'You will need to have registered an account with FedEx and proper approval from FedEx identity to use this module. Please see the README.TXT file for other requirements.';
-		$this->icon = 'shipping_fedex';
+		$this->code				= "fedexwebservices";
+		$this->title			= tra( 'FedEx' );
+		$this->description		= 'You will need to have registered an account with FedEx and proper approval from FedEx identity to use this module. Please see the README.TXT file for other requirements.';
+		$this->icon 			= 'shipping_fedex';
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_FREE_SHIPPING == 'true' || zen_get_shipping_enabled($this->code)) {
 			$this->enabled = ((MODULE_SHIPPING_FEDEX_WEB_SERVICES_STATUS == 'true') ? true : false);
 		}
@@ -53,7 +53,7 @@ class fedexwebservices extends BitBase {
 
 	function quote( $pShipHash = array() ) {
 		/* FedEx integration starts */
-		global $cart, $order;
+		global $gBitCustomer, $order;
 		
 		require_once( dirname( __FILE__ ) . '/fedex-common.php5' );
 		ini_set( "soap.wsdl_cache_enabled", "0" );
@@ -130,7 +130,7 @@ class fedexwebservices extends BitBase {
 			//$request['RequestedShipment']['ServiceType'] = $method; // valid values STANDARD_OVERNIGHT, PRIORITY_OVERNIGHT, FEDEX_GROUND, ...
 		//}
 		$request['RequestedShipment']['PackagingType'] = 'YOUR_PACKAGING'; // valid values FEDEX_BOX, FEDEX_PAK, FEDEX_TUBE, YOUR_PACKAGING, ...
-		$request['RequestedShipment']['TotalInsuredValue']=array('Ammount'=> $this->insurance, 'Currency' => $_SESSION['currency']);
+		$request['RequestedShipment']['TotalInsuredValue']=array('Amount'=> $this->insurance, 'Currency' => (!empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY) );
 		$request['WebAuthenticationDetail'] = array('UserCredential' => array('Key' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_KEY, 'Password' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_PWD));										 
 		$request['ClientDetail'] = array('AccountNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_ACT_NUM, 'MeterNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_METER_NUM );
 		$request['RequestedShipment']['Shipper'] = array(	'Address' => array(
@@ -140,12 +140,12 @@ class fedexwebservices extends BitBase {
 															'PostalCode' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_POSTAL,
 															'CountryCode' => $this->country));					
 		$request['RequestedShipment']['Recipient'] = array(	'Address' => array (
-															 'StreetLines' => array(utf8_encode($street_address), utf8_encode($street_address2)), // customer street address
-															 'City' => utf8_encode($city), //customer city
-															 //'StateOrProvinceCode' => $state, //customer state
-															 'PostalCode' => $postcode, //customer postcode
-															 'CountryCode' => $country_id,
-															 'Residential' => ($order->delivery['company'] != '' ? false : true))); //customer county code
+															'StreetLines' => array(utf8_encode($street_address), utf8_encode($street_address2)), // customer street address
+															'City' => utf8_encode($city), //customer city
+															//'StateOrProvinceCode' => $state, //customer state
+															'PostalCode' => $postcode, //customer postcode
+															'CountryCode' => $country_id,
+															'Residential' => ($order->delivery['company'] != '' ? false : true))); //customer county code
 		if (in_array($country_id, array('US', 'CA'))) {
 			$request['RequestedShipment']['Recipient']['StateOrProvinceCode'] = $state;
 		}
@@ -161,7 +161,7 @@ class fedexwebservices extends BitBase {
 		// check for ready to ship field
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_READY_TO_SHIP == 'true') {			
 			// Not fixed for bitcommerce
-			$products = $_SESSION['cart']->get_products();
+			$products = $gBitCustomer->mCart->get_products();
 			$packages = array('default' => 0);
 			$new_shipping_num_boxes = 0;
 			foreach ($products as $product) {
@@ -229,10 +229,10 @@ class fedexwebservices extends BitBase {
 			
 			// check if cart contains free shipping items (module would be disabled unless strictly enabled to still quote for always free shipping products)
 			/*
-			if ($_SESSION['cart']->in_cart_check('product_is_always_free_shipping','1')) {
+			if ($gBitCustomer->mCart->in_cart_check('product_is_always_free_shipping','1')) {
 				// cart contains free shipping, get products weights
 				$shippingWeight = 0;
-				$products = $_SESSION['cart']->get_products();
+				$products = $gBitCustomer->mCart->get_products();
 				foreach ($products as $product) {
 					$shippingWeight += $product['weight'] * $product['quantity'];
 				}
@@ -285,7 +285,7 @@ class fedexwebservices extends BitBase {
 									);
 			$methods = array();
 			foreach ($response->RateReplyDetails as $rateReply) {
-				if (array_key_exists($rateReply->ServiceType, $this->types) && ($method == '' || str_replace('_', '', $rateReply->ServiceType) == $method)) {
+				if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
 					$cost = NULL;
 					if(MODULE_SHIPPING_FEDEX_WEB_SERVICES_RATES=='LIST') {
 						foreach($rateReply->RatedShipmentDetails as $ShipmentRateDetail) {
@@ -335,7 +335,7 @@ class fedexwebservices extends BitBase {
 
 	// method added for expanded info in FEAC
 	function info() {
-		return MODULE_SHIPPING_FEDEX_WEB_SERVICES_INFO; // add a description here or leave blank to disable
+		return $this->title;
 	}
 		
 	function _setInsuranceValue($order_amount){
