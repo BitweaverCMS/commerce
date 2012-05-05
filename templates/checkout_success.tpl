@@ -35,7 +35,7 @@
 
 	</form>
 
-	{if $smarty.const.IS_LIVE && $gBitSystem->getConfig('google_analytics_ua')}
+	{if $gBitSystem->isLive() && $smarty.const.IS_LIVE && $gBitSystem->getConfig('google_analytics_ua')}
 		{php}
 		global $newOrdersId, $gBitUser, $gBitSystem, $newOrder;
 		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
