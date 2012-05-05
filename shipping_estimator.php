@@ -36,7 +36,7 @@ global $gBitDb, $gBitUser, $gBitCustomer, $currencies;
 require('includes/classes/http_client.php'); // shipping in basket
 
 // include the order class (uses the sendto !)
-require_once(DIR_FS_CLASSES . 'order.php');
+require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order;
 
 if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {

@@ -1,6 +1,6 @@
 <?php
 	
-require_once(DIR_FS_CLASSES . 'order.php');
+require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 
 global $gBitCustomer;
 
