@@ -553,15 +553,6 @@ If a special exist * 10+9
 	}
 
 
-	function getPrice( $pType = 'actual' ) {
-		$ret = 0;
-		if( $this->isValid() ) {
-			$ret = $this->getNotatedPrice( $this->getField( $pType.'_price' ), $this->getField( 'products_tax_class_id' ) );
-		}
-		return $ret;
-	}
-
-
 	function getNotatedPrice( $pPrice, $pTaxClassId ) {
 		global $currencies;
 		return $currencies->display_price( $pPrice, zen_get_tax_rate( $pTaxClassId ) );
