@@ -76,7 +76,7 @@
   }
 
 	// Load db classes
-	$gCommerceSystem = new CommerceSystem();
+	$gCommerceSystem = CommerceSystem::getSingleton();
 	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
 
   // set the language
