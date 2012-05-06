@@ -32,7 +32,7 @@ class CommerceProduct extends LibertyMime {
 	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
-		LibertyMime::LibertyMime();
+		parent::__construct();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
 						'content_name' => 'Product',
