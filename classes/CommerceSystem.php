@@ -11,7 +11,7 @@ class CommerceSystem extends BitSingleton {
 		return static::$singleton;
 	}
 
-	function CommerceSystem() {
+	function __construct() {
 		parent::__construct();
 		$this->loadConfig();
 	}

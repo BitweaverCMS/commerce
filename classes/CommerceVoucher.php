@@ -15,7 +15,7 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class CommerceVoucher extends BitBase {
 	var $pCategoryId;
 
-	function CommerceVoucher( $pCouponId=NULL ) {
+	function __construct( $pCouponId=NULL ) {
 		$this->mCouponId = $pCouponId;
 		parent::__construct();
 	}

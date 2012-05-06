@@ -77,10 +77,10 @@ class usps extends BitBase {
 // use USPS translations for US shops
 	 var $usps_countries;
 
-	function usps() {
+	function __construct() {
 		global $order, $template, $current_page_base;
 
-	parent::__construct();
+		parent::__construct();
 
 		$this->code = 'usps';
 		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;

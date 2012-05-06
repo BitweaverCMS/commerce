@@ -16,7 +16,7 @@ class amazonmws extends BitBase {
 	var $enabled; 
 
 	// class constructor
-	function amazonmws( $pAmazonOrdersId=NULL ) {
+	function __construct( $pAmazonOrdersId=NULL ) {
 		$this->mAmazonOrdersId = $pAmazonOrdersId;
 		$this->code = 'amazonmws';
 		parent::__construct();

@@ -27,7 +27,7 @@
     var $currencies;
 
 // class constructor
-    function currencies() {
+    function __construct() {
       global $gBitDb;
 	  parent::__construct();
       $this->currencies = array();

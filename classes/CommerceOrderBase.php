@@ -25,7 +25,7 @@ class CommerceOrderBase extends BitBase {
 	var $free_shipping_price;
 	var $contents;
 
-	function CommerceOrderBase() {
+	function __construct() {
 		parent::__construct();
 		$this->mProductObjects = array();
 	}

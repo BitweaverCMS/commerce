@@ -15,7 +15,7 @@
 
 class CommerceOrderManager extends BitBase {
 
-	function CommerceOrderManager() {
+	function __construct() {
 		parent::__construct();
 	}
 

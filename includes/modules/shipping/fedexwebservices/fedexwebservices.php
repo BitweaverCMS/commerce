@@ -3,7 +3,7 @@ class fedexwebservices extends BitBase {
  var $code, $title, $description, $icon, $sort_order, $enabled, $tax_class, $country;
 
 //Class Constructor
-	function fedexwebservices() {
+	function __construct() {
 		global $order, $customer_id;
 		
 		parent::__construct();

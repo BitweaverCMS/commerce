@@ -15,7 +15,7 @@ class demo extends BitBase {
    var $mPartsList;
 
 // class constructor
-   function demo() {
+   function __construct() {
 		$this->code = 'demo';
    		parent::__construct();
 		if ( !empty( $_GET['main_page'] ) ) {
