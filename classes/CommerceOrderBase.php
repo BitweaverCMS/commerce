@@ -17,18 +17,13 @@
 
 class CommerceOrderBase extends BitBase {
 
-	var $mProductObjects;
+	var $mProductObjects = array();
 	var $total;
 	var $weight;
 	var $free_shipping_item;
 	var $free_shipping_weight;
 	var $free_shipping_price;
 	var $contents;
-
-	function __construct() {
-		parent::__construct();
-		$this->mProductObjects = array();
-	}
 
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {

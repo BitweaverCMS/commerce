@@ -17,10 +17,6 @@ define( 'MAX_CART_QUANTITY', 9999999 );
 class CommerceShoppingCart extends CommerceOrderBase {
 	var $cartID, $content_type;
 
-	function CommerceShoppingCart() {
-		parent::CommerceOrderBase();
-	}
-
 	function load() {
 		global $gBitUser;
 

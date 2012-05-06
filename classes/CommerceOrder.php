@@ -28,7 +28,7 @@ class order extends CommerceOrderBase {
 			$products_ordered, $products_ordered_email;
 
 	function order($order_id = '') {
-		parent::CommerceOrderBase();
+		parent::__construct();
 		$this->mOrdersId = $order_id;
 		$this->initOrder();
 
