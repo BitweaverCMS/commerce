@@ -65,7 +65,7 @@ if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
         $content .= '<span class="infoboxcontents">';
       }
 
-      $content .= $gBitCustomer->mCart->contents[$productKey]['products_quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrlFromHash( zen_get_prid( $productId ) ) . '">';
+      $content .= $gBitCustomer->mCart->contents[$productKey]['products_quantity'] . '&nbsp;x&nbsp;</span></td><td valign="top" class="infoboxcontents"><a href="' . CommerceProduct::getDisplayUrlFromId( zen_get_prid( $productId ) ) . '">';
 
       if ( !empty( $_SESSION['new_products_id_in_cart'] ) && ($_SESSION['new_products_id_in_cart'] == $productId)) {
         $content .= '<span class="newItemInCart">';
