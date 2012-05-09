@@ -35,7 +35,7 @@
 	<td colspan="4">
 		<ol style="padding:0 0 15px 15px">
 		{foreach from=$order.products item=product key=ordersProductsId}
-			<li style="clear:both"><img src="{$gBitProduct->getImageUrl($product.products_id)}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrl($product.products_id)}">{$product.products_name}</a></li>
+			<li style="clear:both"><img src="{$gBitProduct->getImageUrl($product.products_id)}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a></li>
 		{/foreach}
 		</ol>
 	</td>

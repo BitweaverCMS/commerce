@@ -242,13 +242,14 @@ if( $order_exists ) {
 			if( file_exists( $langFile ) ) {
 				require( $langFile );
 			}
-			$module = new $order->info['payment_module_code'];
+			if( $module = new $order->info['payment_module_code'] ) {
+				if( method_exists( $module, 'admin_notification' ) ) {
+					$gBitSmarty->assign( 'notificationBlock', $module->admin_notification($oID) );
+				}
+			}
 		}
 	}
 
-	if( method_exists( $module, 'admin_notification' ) ) {
-		$gBitSmarty->assign( 'notificationBlock', $module->admin_notification($oID) );
-	}
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['id'] ) );

@@ -32,7 +32,7 @@
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
 
-  require(DIR_FS_CLASSES . 'order.php');
+  require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order;
 
 // if the order contains only virtual products, forward the customer to the billing page as

@@ -27,9 +27,9 @@
     var $currencies;
 
 // class constructor
-    function currencies() {
+    function __construct() {
       global $gBitDb;
-	  BitBase::BitBase();
+	  parent::__construct();
       $this->currencies = array();
       $currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`,
                                   `thousands_point`, `decimal_places`, `currency_value`

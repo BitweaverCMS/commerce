@@ -1,13 +1,18 @@
 <?php
 
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
+require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
 
-class CommerceSystem extends BitBase {
+class CommerceSystem extends BitSingleton {
 	var $mConfig;
 	var $mProductTypeLayout;
 
-	function CommerceSystem() {
-		BitBase::BitBase();
+    protected static $singleton = null;
+	protected static function getSingleInstance() {
+		return static::$singleton;
+	}
+
+	function __construct() {
+		parent::__construct();
 		$this->loadConfig();
 	}
 
@@ -49,4 +54,3 @@ class CommerceSystem extends BitBase {
 	}
 }
 
-?>

@@ -97,7 +97,7 @@
 ?>
 <div id="colone">
 <?php
-	require_once( DIR_FS_CLASSES.'order.php' );
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 	$listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
 	if( !empty( $_REQUEST['orders_status_comparison'] ) ) {

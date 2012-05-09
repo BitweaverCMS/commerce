@@ -55,7 +55,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
   }
 //echo $messageStack->size('checkout_payment');
 
-  require(DIR_FS_CLASSES . 'order.php');
+  require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order;
 
   require(DIR_FS_CLASSES . 'order_total.php');

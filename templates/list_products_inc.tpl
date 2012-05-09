@@ -81,7 +81,7 @@
 								{if $gBitProduct->hasAttributes($prod.products_id) or !$smarty.const.PRODUCT_LIST_PRICE_BUY_NOW}
 									<a href="{$prod.display_url}">...{tr}more info{/tr}</a>
 								{else}
-									<a href="{$gBitProduct->getDisplayUrl($prod.products_id)}">{tr}Buy Now!{/tr}</a>
+									<a href="{$gBitProduct->getDisplayUrlFromHash($prod)}">{tr}Buy Now!{/tr}</a>
 								{/if}
 
 {*

@@ -361,7 +361,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
     $_SESSION['html_editor_preference_status'] = HTML_EDITOR_PREFERENCE;
   }
 
-	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php' );
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 	if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) ) {
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
 		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {

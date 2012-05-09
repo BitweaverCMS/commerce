@@ -177,8 +177,8 @@ class fedex {
 				}
 			}
 		} else {
-			$this->quotes = array('module' => $this->title1,
-														'error' => 'An error occured with the fedex shipping calculations.<br />Fedex may not deliver to your country, or your postal code may be wrong.');
+			$this->quotes = array(	'module' => $this->title1,
+									'error' => 'An error occured with the fedex shipping calculations.<br />Fedex may not deliver to your country, or your postal code may be wrong.');
 		}
 
 		if (zen_not_null($this->icon)) {

@@ -94,7 +94,7 @@
   foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
          '          <td class="main" class="alignright" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['products_id'] ) . '">' . $order->contents[$opid]['name']. '</a>';
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrlFromHash( $order->contents[$opid] ) . '">' . $order->contents[$opid]['name']. '</a>';
 
     if ( !empty( $order->contents[$opid]['attributes'] ) && (sizeof($order->contents[$opid]['attributes']) > 0) ) {
       for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {
