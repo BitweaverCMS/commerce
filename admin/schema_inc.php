@@ -1137,8 +1137,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
-  CONSTRAINT ', CONSTRAINT `pubs_cc_log_order_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
-  			  , CONSTRAINT `pubs_cc_log_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 );
