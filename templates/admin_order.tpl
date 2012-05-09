@@ -66,25 +66,25 @@ function getShippingQuotes( pOrderId ) {
 		<td>
 		<table class="data" border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr class="dataTableHeadingRow">
-            <th colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}</th>
-            <th>{$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
-            <th align="right">{$smarty.const.TABLE_HEADING_TAX}</th>
-            <th colspan="2" class="alignright">{tr}Price{/tr} ({tr}+Tax{/tr})</th>
-            <th colspan="2" class="alignright">{tr}Total{/tr} ({tr}+Tax{/tr})</th>
-            <th colspan="2" class="alignright">{tr}Wholesale{/tr} {if $gBitUser->hasPermission('p_admin')}<br/>({tr}Cost{/tr}){/if}</th>
+            <th colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
+            <th colspan="2" class="alignright">{tr}Price{/tr} {tr}+Tax{/tr}</th>
+            <th class="alignright">({tr}Wholesale{/tr}) {if $gBitUser->hasPermission('p_admin')}<br/>({tr}Cost{/tr}){/if}</th>
+            <th colspan="2" class="alignright">{tr}Total{/tr} {tr}+Tax{/tr}</th>
+            <th class="alignright">[{tr}Profit{/tr}] {if $gBitUser->hasPermission('p_admin')}<br/>[{tr}Net{/tr}]{/if}</th>
           </tr>
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent alignright" valign="top">{$ordersProduct.products_quantity}&nbsp;x</td>
-<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a></td>
-<td class="dataTableContent" valign="top">{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}</td>
-<td class="dataTableContent alignright" valign="top">{if $ordersProduct.tax}{$ordersProduct.tax|zen_display_tax_value}%{/if}</td>
-<td class="dataTableContent alignright" valign="top">{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+<td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
+	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}</td>
+<td class="dataTableContent alignright" valign="top">
+	{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
 	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
 </td>
 <td class="dataTableContent alignright" valign="top">
 {if $ordersProduct.tax}
+	{$ordersProduct.tax|zen_display_tax_value}%
 	( {$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)} )
 	{if $ordersProduct.onetime_charges}
 		{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax}
@@ -93,6 +93,12 @@ function getShippingQuotes( pOrderId ) {
 		{/if}
 	{/if}
 {/if}
+</td>
+<td class="dataTableContent alignright">
+	({$currencies->format($ordersProduct.products_wholesale,true,$order->info.currency, $order->info.currency_value)})
+	{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
+		<br/>({$currencies->format($ordersProduct.products_cogs,true,$order->info.currency, $order->info.currency_value)})
+	{/if}
 </td>
 <td class="dataTableContent alignright" valign="top">
 	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
@@ -108,9 +114,11 @@ function getShippingQuotes( pOrderId ) {
 	{/if}
 </td>
 <td class="dataTableContent alignright">
-	{$currencies->format($ordersProduct.products_wholesale,true,$order->info.currency, $order->info.currency_value)}
+	{math equation="f - (w*q)" f=$finalQty w=$ordersProduct.products_wholesale q=$ordersProduct.products_quantity assign=wholesaleQty}
+	<strong class="{if $wholesaleQty>0}success{else}error{/if}">{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>
 	{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
-		<br/>({$currencies->format($ordersProduct.products_cogs,true,$order->info.currency, $order->info.currency_value)} )
+		{math equation="(w - c)*q" w=$ordersProduct.products_wholesale c=$ordersProduct.products_cogs q=$ordersProduct.products_quantity assign=cogsQty}
+		<br/><strong class="{if $cogsQty>0}success{else}error{/if}">{$currencies->format($cogsQty,true,$order->info.currency, $order->info.currency_value)}</strong>
 	{/if}
 </td>
 </tr>
