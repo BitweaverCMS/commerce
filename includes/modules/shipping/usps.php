@@ -9,6 +9,7 @@
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  * @version $Id: usps.php 18348F 2012-01-22 01:22:00Z ajeh $
  */
+require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
 // bof: functions contributed by Marco B
 	//Quote sorting functions
