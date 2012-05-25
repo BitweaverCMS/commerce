@@ -43,7 +43,7 @@ class CommerceProductCommission extends CommerceCommissionBase {
 
 			if( (int)$totalPayed != (int)$pParamHash['payment_amount'] ) {
 				$this->mErrors['commissions_payment'] = "Payment amount is not equal to products commissions ($totalPayed != $pParamHash[payment_amount] user " . $pParamHash['payment_store']['payee_user_id'] . ")";
-				bit_log_error( $this->mErrors['commissions_payment'] );
+				bit_error_log( $this->mErrors['commissions_payment'] );
 			}
 		}
 
