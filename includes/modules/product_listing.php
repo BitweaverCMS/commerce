@@ -103,7 +103,7 @@
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . $listing->fields['products_name'] . '</a>';
             } else {
-              $lc_text = '<a href="' . CommerceProduct::getDisplayUrlFromHash( $listing->fields['products_id'] ) . '">' . $listing->fields['products_name'] . '</a>';
+              $lc_text = '<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . $listing->fields['products_name'] . '</a>';
             }
 			// add description
 			if (PRODUCT_LIST_DESCRIPTION > 0) {
@@ -123,7 +123,7 @@
 // more info in place of buy now
             $lc_button = '';
             if( $listing->fields['products_priced_by_attribute'] || PRODUCT_LIST_PRICE_BUY_NOW == '0' || zen_has_product_attributes( $listing->fields['products_id'] ) ) {
-              $lc_button = '<a href="' . CommerceProduct::getDisplayUrlFromHash( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
+              $lc_button = '<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
             } else {
               if (PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0) {
                 $how_many++;
@@ -133,7 +133,7 @@
               }
             }
             $the_button = $lc_button;
-            $products_link = '<a href="' . CommerceProduct::getDisplayUrlFromHash( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
+            $products_link = '<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . MORE_INFO_TEXT . '</a>';
             $lc_text .= '<br />' . zen_get_buy_now_button($listing->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($listing->fields['products_id']);
 
             break;
@@ -150,7 +150,7 @@
             if (isset($_GET['manufacturers_id'])) {
               $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrlFromHash( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
             }
             break;
         }

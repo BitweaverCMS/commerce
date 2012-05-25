@@ -1033,18 +1033,28 @@ If a special exist * 10+9
 		}
 	}
 
+	public static function getDisplayUrlFromId( $pProductsId ) {
+		global $gBitSystem;
+		$ret = BITCOMMERCE_PKG_URL;
+		if( !empty( $pProductsId ) && is_numeric( $pProductsId ) ) {
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+				$ret .= $pProductsId;
+			} else {
+				$ret .= 'index.php?products_id='.$pParamHash['products_id'];
+			}
+		}
+		return $ret;
+	}
+
 	public static function getDisplayUrlFromHash( $pParamHash ) {
 		global $gBitSystem;
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
-			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
-				$ret .= $pParamHash['products_id'];
-				if( !empty( $pCatPath ) ) {
+			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
+			if( !empty( $pParamHash['cat_path'] ) ) {
+				if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 					$ret .= '/' . $pParamHash['cat_path'];
-				}
-			} else {
-				$ret .= 'index.php?products_id='.$pParamHash['products_id'];
-				if( !empty( $pCatPath ) ) {
+				} else {
 					$ret .= '&cPath=' . $pParamHash['cat_path'];
 				}
 			}

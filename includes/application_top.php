@@ -266,7 +266,7 @@ function clean_input( &$pArray ) {
 			case 'buy_now' :			
 				if (isset($_REQUEST['products_id'])) {
 					if (zen_has_product_attributes($_REQUEST['products_id'])) {
-						zen_redirect( CommerceProduct::getDisplayUrlFromHash( $_REQUEST['products_id']) );
+						zen_redirect( CommerceProduct::getDisplayUrlFromId( $_REQUEST['products_id']) );
 					} else {
 						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], ($gBitCustomer->mCart->get_quantity( $_REQUEST['products_id'] ) + zen_get_buy_now_qty( $_REQUEST['products_id'] )) );
 					}
