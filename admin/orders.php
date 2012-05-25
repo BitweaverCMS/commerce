@@ -91,7 +91,7 @@ if( !empty( $order ) ) {
 		$gBitDb->StartTrans();
 		$rs = $gBitDb->query( "DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=? ", array( $_REQUEST['del_ord_prod_att_id'], $_REQUEST['oID'] ) );
 		$gBitDb->CompleteTrans();
-		bit_redirect( $_SERVER['PHP_SELF'].'?oID='.$_REQUEST['oID'] );
+		bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 	}
 
 	if( !empty( $_REQUEST['action'] ) ) {
@@ -143,7 +143,7 @@ if( !empty( $order ) ) {
 			$gBitDb->StartTrans();
 			$gBitDb->associateUpdate( TABLE_ORDERS, $saveAddress, array( 'orders_id'=>$_REQUEST['oID'] ) ); 
 			$gBitDb->CompleteTrans();
-			bit_redirect( $_SERVER['PHP_SELF'].'?oID='.$_REQUEST['oID'] );
+			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 			exit;
 			break;
 		case 'update_order':
@@ -227,7 +227,7 @@ if( !empty( $order ) ) {
 	if( !empty( $_REQUEST['delete_status'] ) ) {
 		if( $gBitUser->isAdmin() ) {
 			$order->expungeStatus( $_REQUEST['delete_status'] );
-			bit_redirect( $_SERVER['PHP_SELF'].'?oID='.$_REQUEST['oID'] );
+			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 		}
 	}
 }

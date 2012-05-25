@@ -29,7 +29,7 @@ if( empty( $gCommerceSystem ) ) {
 // test if box should display
 $show_currencies= false;
 
-if( substr( basename( $_SERVER['PHP_SELF'] ), 0, 8 ) != 'checkout' ) {
+if( substr( basename( $_SERVER['SCRIPT_NAME'] ), 0, 8 ) != 'checkout' ) {
 	$show_currencies= true;
 }
 

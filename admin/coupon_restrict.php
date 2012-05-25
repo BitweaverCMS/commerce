@@ -38,17 +38,17 @@ if( !empty( $_REQUEST['action'] ) && $gCoupon->isValid() ) {
 			$status = $gBitDb->getOne( "SELECT coupon_restrict FROM " . TABLE_COUPON_RESTRICT . " WHERE restrict_id = ?", array( $_GET['info'] ) );
 			$new_status = ($status == 'N') ? 'Y' : 'N'; 
 			$gBitDb->query( "UPDATE " . TABLE_COUPON_RESTRICT . " SET coupon_restrict = ? WHERE restrict_id = ?", array( $new_status, $_GET['info'] ) );
-	bit_redirect( $_SERVER['PHP_SELF'].'?cid='.$gCoupon->mCouponId );
+	bit_redirect( $_SERVER['SCRIPT_NAME'].'?cid='.$gCoupon->mCouponId );
 			break;
 		case 'Add':
 			$gCoupon->storeRestriction( $_REQUEST );
-	bit_redirect( $_SERVER['PHP_SELF'].'?cid='.$gCoupon->mCouponId );
+	bit_redirect( $_SERVER['SCRIPT_NAME'].'?cid='.$gCoupon->mCouponId );
 			break;
 		case 'remove':
 			if( !empty( $_GET['info'] ) ) {
 				$gBitDb->query("delete from " . TABLE_COUPON_RESTRICT . " where restrict_id = ?", array( $_GET['info'] ) );
 			}
-	bit_redirect( $_SERVER['PHP_SELF'].'?cid='.$gCoupon->mCouponId );
+	bit_redirect( $_SERVER['SCRIPT_NAME'].'?cid='.$gCoupon->mCouponId );
 			break;
 	}
 }

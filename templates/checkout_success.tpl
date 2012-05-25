@@ -25,7 +25,7 @@
 		You have funds in your {$smarty.const.TEXT_GV_NAME} Account. If you want you can send those funds by <a class="pageResults" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send"><strong>{tr}email{/tr}</strong></a> {tr}to someone{/tr}.
 	{/if}
 	
-	<form name="order" action="{$smarty.server.PHP_SELF}?main_page=checkout_success&amp;action=update" method="post">
+	<form name="order" action="{$smarty.server.SCRIPT_NAME}?main_page=checkout_success&amp;action=update" method="post">
 
 	{if $gCommerceSystem->getConfig('DOWNLOAD_ENABLED') == 'true'}
 		{include_php file="`$smarty.const.DIR_WS_MODULES`downloads.php"}

@@ -26,7 +26,7 @@
 
 // Check for new functions in extra_functions directory
   $dir_check= $directory_array;
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
 
   if ($dir = @dir($extra_functions_directory)) {
     while ($file = $dir->read()) {

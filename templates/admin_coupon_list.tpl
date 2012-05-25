@@ -18,7 +18,7 @@
 				<option value="" {if empty($smarty.request.uses)}selected="selected"{/if}>All Coupons</option>
 			</select>							
 		</form>
-		<div class="floaticon"><a href="{$smarty.server.PHP_SELF}?action=new" class="button">{tr}Create Coupon{/tr}</a></div>
+		<div class="floaticon"><a href="{$smarty.server.SCRIPT_NAME}?action=new" class="button">{tr}Create Coupon{/tr}</a></div>
 	</div>
 	<div class="body">
 

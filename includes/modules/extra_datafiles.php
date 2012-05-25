@@ -26,7 +26,7 @@
 
 // Check for new databases and filename in extra_datafiles directory
   $dir_check= $directory_array;
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
 
   if ($dir = @dir($extra_datafiles_directory)) {
     while ($file = $dir->read()) {

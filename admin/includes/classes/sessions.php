@@ -183,7 +183,7 @@
       case 'private':
                       header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
                       header(sprintf('Cache-Control: private, max-age=%s', $session->cache_expire * 60));
-                      header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime(basename($GLOBALS['PHP_SELF']))) . ' GMT');
+                      header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime(basename($GLOBALS['SCRIPT_NAME']))) . ' GMT');
                       break;
       case 'public':
                       $now = time();
@@ -191,7 +191,7 @@
                       $now = gmdate('D, d M Y H:i:s', $now) . ' GMT';
                       header('Expires: ' . $now);
                       header(sprintf('Cache-Control: public, max-age=%s', $session->cache_expire * 60));
-                      header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime(basename($GLOBALS['PHP_SELF']))) . ' GMT');
+                      header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime(basename($GLOBALS['SCRIPT_NAME']))) . ' GMT');
                       break;
       default:
                       die('Caching method ' . $session->cache_limiter . ' not implemented.');

@@ -30,7 +30,7 @@
 	$heading = array();
 	$contents = array();
 	$heading[] = array('text'  => BOX_HEADING_CONFIGURATION,
-                     'link'  => zen_href_link_admin(basename($_SERVER['PHP_SELF']), zen_get_all_get_params(array('selected_box')) . 'selected_box=configuration'));
+                     'link'  => zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']), zen_get_all_get_params(array('selected_box')) . 'selected_box=configuration'));
 	$cfg_groups = '';
 	$rs = $gBitDb->Execute("SELECT `configuration_group_id` as `cg_id`,
 												`configuration_group_title` as `cg_title`

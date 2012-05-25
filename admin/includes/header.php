@@ -24,7 +24,7 @@
 if (isset($_GET['vcheck']) && $_GET['vcheck']!='') $version_check_requested=true;
 
 // Show Languages Dropdown for convenience only if main filename and directory exists
-if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PHP_SELF) != FILENAME_PRODUCTS_OPTIONS_NAME . '.php') and empty($action)) {
+if ((basename($_SERVER['SCRIPT_NAME']) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($_SERVER['SCRIPT_NAME']) != FILENAME_PRODUCTS_OPTIONS_NAME . '.php') and empty($action)) {
   $languages = zen_get_languages();
   if (sizeof($languages) > 1) {
     $languages_array = array();
@@ -135,7 +135,7 @@ SPIDERKILL for obvious reasons...
     <td class="headerBarContent" align="left">
       <?php
       if (!$hide_languages) {
-        echo zen_draw_form_admin('languages', basename($PHP_SELF), '', 'get');
+        echo zen_draw_form_admin('languages', basename($_SERVER['SCRIPT_NAME']), '', 'get');
         echo DEFINE_LANGUAGE . '&nbsp;&nbsp;' . (sizeof($languages) > 1 ? zen_draw_pull_down_menu('language', $languages_array, $languages_selected, 'onChange="this.form.submit();"') : '');
         echo '</form>';
       } else {

@@ -29,7 +29,7 @@ if( !empty( $_REQUEST['action'] ) ) {
 		$gBitUser->verifyTicket();
 		$coupon = new CommerceVoucher( $_REQUEST['gid'] );
 		$coupon->expunge();
-		bit_redirect( $_SERVER['PHP_SELF'] );
+		bit_redirect( $_SERVER['SCRIPT_NAME'] );
 	}
 }
 

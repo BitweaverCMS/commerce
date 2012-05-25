@@ -7,7 +7,7 @@
 <div class="pagination">
 		{tr}Displaying <strong>{$listInfo.offset+1}</strong> to <strong>{math equation="x + y" x=$listInfo.offset y=$listInfo.page_records}</strong> (of <strong>{$listInfo.total_records}</strong> {$listInfo.item_name|default:products}){/tr}
 		<br/>
-		{assign var=pageUrl value="`$smarty.server.PHP_SELF`?`$listInfo.query_string`"}
+		{assign var=pageUrl value="`$smarty.server.SCRIPT_NAME`?`$listInfo.query_string`"}
 		{if $listInfo.current_page > 1}
 			{assign var=blockStart value=1}
 			{tr}<a href="{$pageUrl}&amp;page={$listInfo.current_page-1}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">&laquo; {tr}Prev{/tr}</a>{/tr}&nbsp;

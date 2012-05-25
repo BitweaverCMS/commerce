@@ -51,10 +51,6 @@ ob_start();
   define('PAGE_PARSE_START_TIME', microtime());
 
 
-// set php_self in the local scope
-  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
-
-
 // Set the local configuration parameters - mainly for developers
   if (file_exists('includes/local/configure.php')) include('includes/local/configure.php');
 
@@ -82,7 +78,7 @@ ob_start();
 // turned off for now
   if ($check_cfg != 'off') {
     // if the admin/includes/configure.php file doesn't contain admin-related content, throw error
-    $zc_pagepath = str_replace(basename($PHP_SELF),'',__FILE__); //remove page name from full path of current page
+    $zc_pagepath = str_replace(basename($_SERVER['SCRIPT_NAME']),'',__FILE__); //remove page name from full path of current page
     $zc_pagepath = str_replace(array('\\','\\\\'),'/',$zc_pagepath); // convert '\' marks to '/'
     $zc_pagepath = str_replace('//','/',$zc_pagepath); //convert doubles to single
     $zc_pagepath = str_replace(strrchr($zc_pagepath,'/'),'',$zc_pagepath); // remove trailing '/'
@@ -213,7 +209,7 @@ ob_start();
 
 // include the language translations
   require_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '.php');
-  $current_page = basename($PHP_SELF);
+  $current_page = basename($_SERVER['SCRIPT_NAME']);
   if (file_exists(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page)) {
     include_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page);
   }
@@ -348,10 +344,10 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
   require_once(DIR_WS_FUNCTIONS.'audience.php');
 
   // log page visit into admin activity history
-  if (basename($PHP_SELF) != FILENAME_LOGIN . '.php' && basename($PHP_SELF) != FILENAME_DEFAULT . '.php' && isset($_SESSION['admin_id'])) {
+  if (basename($_SERVER['SCRIPT_NAME']) != FILENAME_LOGIN . '.php' && basename($_SERVER['SCRIPT_NAME']) != FILENAME_DEFAULT . '.php' && isset($_SESSION['admin_id'])) {
     $sql_data_array = array( 'access_date' => $gBitDb->NOW(),
                              'admin_id' => $gBitUser->mUserId,
-                             'page_accessed' =>  basename($PHP_SELF),
+                             'page_accessed' =>  basename($_SERVER['SCRIPT_NAME']),
                              'page_parameters' => zen_get_all_get_params(),
                              'ip_address' => $_SERVER['REMOTE_ADDR']
                              );
