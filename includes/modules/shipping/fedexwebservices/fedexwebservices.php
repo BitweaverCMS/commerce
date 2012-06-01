@@ -310,16 +310,13 @@ class fedexwebservices extends BitBase {
 				$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 			} 
 		} else {
-			
 			$message = 'Error in processing transaction.<br /><br />'; 
-			foreach ($response -> Notifications as $notification) {					 
-				if(is_array($response -> Notifications)) {							
-					$message .= $notification->Severity;
-					$message .= ': ';					 
-					$message .= $notification->Message . '<br />';
-				} else {
-					$message .= $notification->Message . '<br />';
+			if( is_array( $response->Notifications ) ) {
+				foreach ($response->Notifications as $notification) {					 
+					$message .= tra( $notification->Severity ).': '.tra( $notification->Message );
 				}
+			} elseif( is_object( $response->Notifications ) ) {
+				$message .= tra( $response->Notifications->Severity ).': '.tra( $response->Notifications->Message );
 			}
 			$this->quotes = array('module' => $this->title, 'error'	=> $message);
 		}
