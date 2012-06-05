@@ -149,11 +149,11 @@ function update_credit_account($pOpid) {
 	$selection = array();
 		$gv_query = $gBitDb->Execute("select coupon_id from " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
 		if ($gv_query->RecordCount() > 0 || $this->use_credit_amount()) {
-			$selection = array('id' => $this->code,
-										 'module' => $this->title,
-										 'checkbox' => $this->use_credit_amount(),
-										 'fields' => array(array('title' => tra( 'Gift Code' ),
-																						 'field' => zen_draw_input_field('gv_redeem_code'))));
+			$selection = array(	'id' => $this->code,
+								'module' => $this->title,
+								'checkbox' => $this->use_credit_amount(),
+								'fields' => array(array('title' => tra( 'Gift Code' ),
+								'field' => zen_draw_input_field('gv_redeem_code'))));
 
 		}
 		return $selection;
