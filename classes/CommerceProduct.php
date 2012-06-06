@@ -63,7 +63,7 @@ class CommerceProduct extends LibertyMime {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
-	function load( $pFullLoad = TRUE, $pPluginParams = NULL  ) {
+	function load( $pContentId=NULL, $pPluginParams = TRUE ) {
 		global $gBitUser;
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
@@ -78,7 +78,7 @@ class CommerceProduct extends LibertyMime {
 			} else {
 				$this->mContentId = $this->mInfo['content_id'];
 			}
-			if( $pFullLoad && !empty( $this->mInfo['related_content_id'] ) ) {
+			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
 					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
@@ -970,13 +970,13 @@ If a special exist * 10+9
 
 
 
-	function getTitle( $pAuxHash = NULL ) {
+	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
 		$ret = NULL;
-		if( !empty( $pAuxHash ) ) {
-			if( !empty( $pAuxHash['products_name'] ) ) {
-				$ret = $pAuxHash['products_name'];
-			} elseif( !empty( $pAuxHash['title'] ) ) {
-				$ret = $pAuxHash['title'];
+		if( !empty( $pHash ) ) {
+			if( !empty( $pHash['products_name'] ) ) {
+				$ret = $pHash['products_name'];
+			} elseif( !empty( $pHash['title'] ) ) {
+				$ret = $pHash['title'];
 			}
 		} elseif( $this->isValid() ) {
 			$ret = $this->mInfo['products_name'];
@@ -1046,7 +1046,7 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	public static function getDisplayUrlFromHash( $pParamHash ) {
+	public static function getDisplayUrlFromHash( &$pParamHash ) {
 		global $gBitSystem;
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
@@ -1310,7 +1310,7 @@ If a special exist * 10+9
 		return( !empty( $this->mProductsId ) );
 	}
 
-	function isViewable() {
+	function isViewable($pContentId = NULL) {
 		return( $this->hasUpdatePermission() || $this->isAvailable() );
 	}
 
@@ -1328,7 +1328,7 @@ If a special exist * 10+9
 		return( $ret );
 	}
 
-	function isOwner() {
+	function isOwner( $pParamHash = NULL ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->getField( 'user_id' ) ) {
