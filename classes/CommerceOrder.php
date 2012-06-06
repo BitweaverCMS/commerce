@@ -28,7 +28,7 @@ class order extends CommerceOrderBase {
 			$products_ordered, $products_ordered_email;
 
 	function order($order_id = '') {
-		parent::CommerceOrderBase();
+		parent::__construct();
 		$this->mOrdersId = $order_id;
 		$this->initOrder();
 
@@ -882,6 +882,8 @@ class order extends CommerceOrderBase {
 								'products_model' => $this->contents[$productsKey]['model'],
 								'products_name' => $this->contents[$productsKey]['name'],
 								'products_price' => $this->contents[$productsKey]['price'],
+								'products_cogs' => $this->contents[$productsKey]['products_cogs'],
+								'products_wholesale' => $this->contents[$productsKey]['products_wholesale'],
 								'products_commission' => $this->contents[$productsKey]['commission'],
 								'final_price' => $this->contents[$productsKey]['final_price'],
 								'onetime_charges' => $this->contents[$productsKey]['onetime_charges'],
@@ -920,6 +922,8 @@ class order extends CommerceOrderBase {
 												'products_options' => $optionValues['products_options_name'],
 												'products_options_values' => $this->contents[$productsKey]['attributes'][$j]['value'],
 												'options_values_price' => $optionValues['options_values_price'],
+												'options_values_cogs' => $optionValues['options_values_cogs'],
+												'options_values_wholesale' => $optionValues['options_values_wholesale'],
 												'price_prefix' => $optionValues['price_prefix'],
 												'product_attribute_is_free' => $optionValues['product_attribute_is_free'],
 												'products_attributes_wt' => $optionValues['products_attributes_wt'],
@@ -940,8 +944,6 @@ class order extends CommerceOrderBase {
 												'products_options_id' => $optionValues['products_options_id'],
 												'products_options_values_id' => $optionValues['products_options_values_id'],
 												);
-	
-	
 						$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 					}
 
@@ -1331,4 +1333,3 @@ class order extends CommerceOrderBase {
 
 
 }
-?>

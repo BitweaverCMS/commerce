@@ -26,7 +26,7 @@
 // Check all exisiting boxes are in the main /sideboxes
   $boxes_directory = DIR_FS_CATALOG_MODULES . 'sideboxes/';
 
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
   $directory_array = array();
   if ($dir = @dir($boxes_directory)) {
     while ($file = $dir->read()) {
@@ -48,7 +48,7 @@
   $dir_check= $directory_array;
   $boxes_directory = DIR_FS_CATALOG_MODULES . 'sideboxes/' . $template_dir . '/';
 
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
 
   if ($dir = @dir($boxes_directory)) {
     while ($file = $dir->read()) {

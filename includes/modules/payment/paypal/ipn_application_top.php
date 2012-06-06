@@ -25,7 +25,7 @@
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
   error_reporting(E_ALL & ~E_NOTICE);
-if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG MESSAGE', '0.0. in app top ' . $PHP_SELF);
+if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG MESSAGE', '0.0. in app top ' . $_SERVER['SCRIPT_NAME']);
 
   @ini_set("arg_separator.output","&");
 
@@ -51,9 +51,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
 
 // set the type of request (secure or not)
   $request_type = ($_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
-
-// set php_self in the local scope
-  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 
 // include the list of project filenames
   require(DIR_FS_INCLUDES . 'filenames.php');
@@ -91,7 +88,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG
   if (file_exists(DIR_WS_CLASSES . 'db/' . DB_TYPE . '/define_queries.php')) {
     include(DIR_WS_CLASSES . 'db/' . DB_TYPE . '/define_queries.php');
   }
-if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.1. Got past Configuration Load ' . $PHP_SELF);
+if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.1. Got past Configuration Load ' . $_SERVER['SCRIPT_NAME']);
 
 // define general functions used application-wide
   require(DIR_FS_FUNCTIONS . 'functions_general.php');
@@ -133,7 +130,7 @@ if (!$_SESSION['customer_id']) {
   $stored_session = $gBitDb->Execute($sql);
   $_SESSION = unserialize(base64_decode($stored_session->fields['saved_session']));
 }
-if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.2. Got past Session Start ' . $PHP_SELF);
+if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.2. Got past Session Start ' . $_SERVER['SCRIPT_NAME']);
 
 // create the shopping cart & fix the cart if necesary
   if (!$gBitCustomer->mCart) {
@@ -207,7 +204,7 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 
 
   include(DIR_WS_LANGUAGES . $template_dir_select . $gBitCustomer->getLanguage() . '.php');
-if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.3. Got past language loads ' . $PHP_SELF);
+if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '0.3. Got past language loads ' . $_SERVER['SCRIPT_NAME']);
 
 // include the extra language translations
   include(DIR_WS_MODULES . 'extra_definitions.php');

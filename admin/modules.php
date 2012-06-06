@@ -76,7 +76,7 @@
         break;
       case 'install':
       case 'remove':
-        $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+        $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
         $class = basename($_GET['module']);
         if( file_exists( $module_directory . $class . $file_extension ) ) {
 	        $moduleFile = $module_directory . $class . $file_extension;
@@ -162,7 +162,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
   $directory_array = array();
   if ($dir = @dir($module_directory)) {
     while ($file = $dir->read()) {

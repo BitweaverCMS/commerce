@@ -15,8 +15,8 @@
 
 class CommerceOrderManager extends BitBase {
 
-	function CommerceOrderManager() {
-		parent::BitBase();
+	function __construct() {
+		parent::__construct();
 	}
 
 	function getProductHistory( $pListHash ) {

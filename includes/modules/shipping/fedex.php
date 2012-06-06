@@ -177,8 +177,8 @@ class fedex {
 				}
 			}
 		} else {
-			$this->quotes = array('module' => $this->title1,
-														'error' => 'An error occured with the fedex shipping calculations.<br />Fedex may not deliver to your country, or your postal code may be wrong.');
+			$this->quotes = array(	'module' => $this->title1,
+									'error' => 'An error occured with the fedex shipping calculations.<br />Fedex may not deliver to your country, or your postal code may be wrong.');
 		}
 
 		if (zen_not_null($this->icon)) {
@@ -276,7 +276,7 @@ class fedex {
 		} else {
 			$this->server = 'gatewaybeta.fedex.com/GatewayDC';
 		}
-		if (MODULE_SHIPPING_FEDEX_CURL == "NONE") {
+		if( !MODULE_SHIPPING_FEDEX_CURL || MODULE_SHIPPING_FEDEX_CURL == "NONE") {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_URL, 'https://' . $this->server);

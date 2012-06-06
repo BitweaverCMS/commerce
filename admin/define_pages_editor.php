@@ -247,7 +247,7 @@ if (isset($_GET['filename'])) {
     $dir = dir(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage());
     $left = false;
     if ($dir) {
-      $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+      $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
       while ($file = $dir->read()) {
         if (substr($file, strrpos($file, '.')) == $file_extension) {
           echo '                <td class="smallText"><a href="' . zen_href_link_admin($_GET['filename'], 'lngdir=' . $gBitCustomer->getLanguage() . '&filename=' . $file) . '">' . $file . '</a></td>' . "\n";

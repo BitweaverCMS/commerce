@@ -8,7 +8,7 @@
 //  $Id$
 
 require('includes/application_top.php');
-require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 $currencies = new currencies();
 

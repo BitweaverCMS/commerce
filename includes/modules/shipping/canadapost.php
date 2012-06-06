@@ -74,8 +74,7 @@ class canadapost
 		$this->description = tra( 'Canada Post Parcel Service<p><strong>CPC Profile Information </strong>can be obtained at http://sellonline.canadapost.ca<br /><a href=http://sellonline.canadapost.ca/servlet/LogonServlet?Language=0 target="_blank">Modify my profile</a>' );
 		$this->icon = 'shipping_canadapost';
 		$this->enabled = zen_get_shipping_enabled($this->code) && CommerceSystem::isConfigActive( 'MODULE_SHIPPING_CANADAPOST_STATUS' );
-		if (($this->enabled == true) && ((int)MODULE_SHIPPING_CANADAPOST_ZONE > 0))
-		{
+		if( $this->enabled == true ) {
 			$this->server = MODULE_SHIPPING_CANADAPOST_SERVERIP;
 			$this->port = MODULE_SHIPPING_CANADAPOST_SERVERPOST;
 			$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
@@ -90,23 +89,8 @@ class canadapost
 			$this->lettermail = ((MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS == 'True') ? true : false);
 			$this->lettermail_max_weight = MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX;
 			$this->lettermail_available = false;
-			$check_flag = false;
-			$check = $gBitDb->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_CANADAPOST_ZONE . "' and zone_country_id = '" . $order->delivery['country']['id'] . "' order by zone_id");
-			while (! $check->EOF)
-			{
-				if ($check->fields['zone_id'] < 1)
-				{
-					$check_flag = true;
-					break;
-				} elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
-					$check_flag = true;
-					break;
-				}
-				$check->MoveNext();
-			}
-			if ($check_flag == false)
-			{
-				$this->enabled = false;
+			if( MODULE_SHIPPING_CANADAPOST_ZONE ) {
+				$this->enabled = $gBitDb->query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = ?, and zone_country_id = ?", array( MODULE_SHIPPING_CANADAPOST_ZONE, $order->delivery['country']['id'] ) );
 			}
 		}
 	}
@@ -117,8 +101,7 @@ class canadapost
 	 * @param string $method
 	 * @return array of quotation results
 	 */
-	function quote( $pShipHash = array() )
-	{
+	function quote( $pShipHash = array() ) {
 		global $order, $total_weight, $boxcount, $handling_cp;
 		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 0.1 ? $pShipHash['shipping_weight'] : 0.1);
 		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
@@ -187,69 +170,68 @@ class canadapost
 			'icon' => $this->icon,
 		);
 		//printf("\n\n<!--\n%s\n-->\n\n",$strXml); //debug xml
-		if( $resultXml = $this->_sendToHost( $this->server, $this->port, 'POST', '', $strXml ) ) {
-			if( $canadapostQuote = $this->_parserResult($resultXml) ) {
-				if ($this->lettermail_available && ($shippingWeight <= $this->lettermail_max_weight)) {
-					/* Select the correct rate table based on destination country */
-					switch ($order->delivery['country']['iso_code_2'])
+		$resultXml = $this->_sendToHost( $this->server, $this->port, 'POST', '', $strXml );
+		if( $resultXml && $canadapostQuote = $this->_parserResult($resultXml) ) {
+			if ($this->lettermail_available && ($shippingWeight <= $this->lettermail_max_weight)) {
+				/* Select the correct rate table based on destination country */
+				switch ($order->delivery['country']['iso_code_2'])
+				{
+					case 'CA':
+						$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN'));
+						$lettermailName = "Lettermail";
+						$lettermailDelivery = sprintf( "estimated %d-%d business days", round( $this->turnaround_time / 24 + 2 ), round( $this->turnaround_time / 24 + 4 ) ); 
+						//factor in turnaround time
+						break;
+					case 'US':
+						$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA'));
+						$lettermailName = "U.S.A Letter-post";
+						$lettermailDelivery = "up to 2 weeks";
+						break;
+					default:
+						$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL')); //Use overseas rate if not Canada or US
+						$lettermailName = "INTL Letter-post";
+						$lettermailDelivery = "up to 2 weeks";
+				}
+				for ($i = 0; $i < sizeof($table_cost); $i += 2) //Lookup the correct rate
+				{
+					if (round($shippingWeight, 3) <= $table_cost[$i])
 					{
-						case 'CA':
-							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN'));
-							$lettermailName = "Lettermail";
-							$lettermailDelivery = sprintf( "estimated %d-%d business days", round( $this->turnaround_time / 24 + 2 ), round( $this->turnaround_time / 24 + 4 ) ); 
-							//factor in turnaround time
-							break;
-						case 'US':
-							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA'));
-							$lettermailName = "U.S.A Letter-post";
-							$lettermailDelivery = "up to 2 weeks";
-							break;
-						default:
-							$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL')); //Use overseas rate if not Canada or US
-							$lettermailName = "INTL Letter-post";
-							$lettermailDelivery = "up to 2 weeks";
-					}
-					for ($i = 0; $i < sizeof($table_cost); $i += 2) //Lookup the correct rate
-					{
-						if (round($shippingWeight, 3) <= $table_cost[$i])
-						{
-							$lettermailCost = $table_cost[$i + 1];
-							break;
-						}
-					}
-					if( !empty( $lettermailCost ) ) {
-						$canadapostQuote[] = array( 'name' => $lettermailName, 'cost' => $lettermailCost, 'delivery' => $lettermailDelivery );
+						$lettermailCost = $table_cost[$i + 1];
+						break;
 					}
 				}
+				if( !empty( $lettermailCost ) ) {
+					$canadapostQuote[] = array( 'name' => $lettermailName, 'cost' => $lettermailCost, 'delivery' => $lettermailDelivery );
+				}
+			}
 
-				if( !empty( $canadapostQuote ) ) {
-					$methods = array();
-					foreach( $canadapostQuote as $quoteCode => $quote ) {
-						if( empty( $pShipHash['method'] ) || $quoteCode == $pShipHash['method'] ) {
-							$method = array( 'id' => $quote['code'], 'code' => $quote['code'], 'title' => $quote['name'], 'delivery' => $quote['delivery'], 'cost' => $quote['cost'] );
-							if( $this->cp_online_handling == true ) {
-								$method['cost'] += $this->handling_cp;
-							} else {
-								$method['cost'] += (float)MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING;
-							}
-							$methods[] = $method;
+			if( !empty( $canadapostQuote ) ) {
+				$methods = array();
+				foreach( $canadapostQuote as $quoteCode => $quote ) {
+					if( empty( $pShipHash['method'] ) || $quoteCode == $pShipHash['method'] ) {
+						$method = array( 'id' => $quote['code'], 'code' => $quote['code'], 'title' => $quote['name'], 'delivery' => $quote['delivery'], 'cost' => $quote['cost'] );
+						if( $this->cp_online_handling == true ) {
+							$method['cost'] += $this->handling_cp;
+						} else {
+							$method['cost'] += (float)MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING;
 						}
+						$methods[] = $method;
 					}
-					if ($this->tax_class > 0)
-					{
-						$ret['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
-					}
-					$ret['methods'] = $methods;
-				} else {
-					$errmsg = $canadapostQuote;
 				}
+				if ($this->tax_class > 0)
+				{
+					$ret['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+				}
+				$ret['methods'] = $methods;
 			} else {
-				$errmsg = tra( 'There was no response from the Canada Post shipping estimate server.' );
+				$errmsg = $canadapostQuote;
 			}
-			if( !empty( $errmsg ) ) {
-				$errmsg .= ' '.tra( 'If you prefer to use Canada Post as your shipping method, please <a href="mailto:'.STORE_OWNER_EMAIL_ADDRESS.'">send us an email</a>.' );
-				$ret['error'] = $errmsg;
-			}
+		} else {
+			$errmsg = tra( 'There was no response from the Canada Post shipping estimate server.' );
+		}
+		if( !empty( $errmsg ) ) {
+			$errmsg .= ' '.tra( 'If you prefer to use Canada Post as your shipping method, please <a href="mailto:'.STORE_OWNER_EMAIL_ADDRESS.'">send us an email</a>.' );
+			$ret['error'] = $errmsg;
 		}
 		return $ret;
 	}
@@ -300,8 +282,7 @@ class canadapost
 		// try to connect to Canada Post server, for 3 seconds
 		$fp = @fsockopen($host, $port, $errno, $errstr, 3);
 		//echo 'errno='.$errno.'<br>errstr='.$errstr . '<br>';
-		if ($fp)
-		{
+		if ($fp) {
 			fputs($fp, "$method $path HTTP/1.1\n");
 			fputs($fp, "Host: $host\n");
 			fputs($fp, "Content-type: application/x-www-form-urlencoded\n");
@@ -315,7 +296,7 @@ class canadapost
 			}
 			fclose($fp);
 		} else {
-			$buf = '<?xml version="1.0" ?><eparcel><error><statusMessage>' . tra( 'Cannot reach Canada Post Server. You may reload this page to try again.' ). ($errno != 0 ? '<br /><strong>' . $errno . ' ' . $errstr . '</strong>' : '') . '</statusMessage></error></eparcel>';
+//vd( "$this->code quote failed: fsockopen($host, $port, $errno, $errstr, 3)" );
 		}
 		return $buf;
 	}

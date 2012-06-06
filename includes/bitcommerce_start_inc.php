@@ -27,9 +27,6 @@
 // set the type of request (secure or not)
   $request_type = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
 
-// set php_self in the local scope
-  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
-
 // include the list of project filenames
   require_once(DIR_FS_INCLUDES . 'filenames.php');
 
@@ -56,7 +53,6 @@
   if ( defined( 'SEARCH_ENGINE_FRIENDLY_URLS' ) && SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
     if (strlen($_SERVER['REQUEST_URI']) > 1) {
       $GET_array = array();
-      $PHP_SELF = $_SERVER['SCRIPT_NAME'];
       $vars = explode('/', substr($_SERVER['REQUEST_URI'], 1));
       for ($i=0, $n=sizeof($vars); $i<$n; $i++) {
         if (strpos($vars[$i], '[]')) {
@@ -76,7 +72,7 @@
   }
 
 	// Load db classes
-	$gCommerceSystem = new CommerceSystem();
+	$gCommerceSystem = CommerceSystem::getSingleton();
 	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
 
   // set the language

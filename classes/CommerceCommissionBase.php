@@ -19,10 +19,6 @@ class CommerceCommissionBase extends BitBase {
 	// Must be set by all derivative classes
 	var $mCommissionType = NULL;
 
-	function __construct() {
-		parent::BitBase();
-	}
-
 	function verifyPayment( &$pParamHash ) {
 		global $gBitUser;
 		$pParamHash['payment_store']['payee_user_id'] = $pParamHash['user_id'];

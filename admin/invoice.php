@@ -27,7 +27,7 @@
 
   $oID = zen_db_prepare_input($_GET['oID']);
 
-  include(DIR_WS_CLASSES . 'order.php');
+  require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
   $order = new order($oID);
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">

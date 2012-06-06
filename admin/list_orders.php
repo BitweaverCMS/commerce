@@ -22,7 +22,7 @@
 $version_check_index=true;
 require('includes/application_top.php');
 
-require_once( DIR_FS_CLASSES.'order.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 define( 'HEADING_TITLE', 'List Orders' );
 

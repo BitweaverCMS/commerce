@@ -406,7 +406,7 @@
 ////
 // Return table heading with sorting capabilities
   function zen_create_sort_heading($sortby, $colnum, $heading) {
-    global $PHP_SELF;
+    
 
     $sort_prefix = '';
     $sort_suffix = '';

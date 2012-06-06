@@ -94,10 +94,10 @@
 			$rows = '0' . $rows;
 		}
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php print CommerceProduct::getDisplayUrl( $products->fields['products_id'] ); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php print CommerceProduct::getDisplayUrlFromId( $products->fields['products_id'] ); ?>'">
 				<td class="dataTableContent"><?php echo $rows;?></td>
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_id']; ?>&nbsp;&nbsp;</td>
-                <td class="dataTableContent"><?php echo '<a href="' . CommerceProduct::getDisplayUrl( $products->fields['products_id'] ) . '">' . $products->fields['products_name'] . '</a>'; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . CommerceProduct::getDisplayUrlFromId( $products->fields['products_id'] ) . '">' . $products->fields['products_name'] . '</a>'; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $products->fields['products_ordered']; ?>&nbsp;</td>
                 <td class="dataTableContent" align="center"><?php echo substr( $products->fields['first_purchased'], 0, strpos( $products->fields['first_purchased'], ' ' ) ); ?>&nbsp;</td>
                 <td class="dataTableContent" align="center"><?php if( $products->fields['first_purchased'] != $products->fields['last_purchased'] ) { echo substr( $products->fields['last_purchased'], 0, strpos( $products->fields['last_purchased'], ' ' ) ); } ?>&nbsp;</td>

@@ -32,7 +32,7 @@ class CommerceProduct extends LibertyMime {
 	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
-		LibertyMime::LibertyMime();
+		parent::__construct();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
 						'content_name' => 'Product',
@@ -63,7 +63,7 @@ class CommerceProduct extends LibertyMime {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
-	function load( $pFullLoad = TRUE, $pPluginParams = NULL  ) {
+	function load( $pContentId=NULL, $pPluginParams = TRUE ) {
 		global $gBitUser;
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
@@ -78,7 +78,7 @@ class CommerceProduct extends LibertyMime {
 			} else {
 				$this->mContentId = $this->mInfo['content_id'];
 			}
-			if( $pFullLoad && !empty( $this->mInfo['related_content_id'] ) ) {
+			if( !empty( $this->mInfo['related_content_id'] ) ) {
 				global $gLibertySystem;
 				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
 					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
@@ -137,6 +137,12 @@ class CommerceProduct extends LibertyMime {
 		return $this->getField( 'products_model', 'Product' );
 	}
 
+	function exportHash() {
+		$ret = parent::exportHash();
+		$ret['product_id'] = $this->mProductsId;
+		$ret['product_type'] = $this->getField( 'type_class' );
+		return $ret;
+	}
 	// {{{ =================== Product Pricing Methods ==================== 
 
 	// User specific commission discount, used for  backing out commissions of an aggregate price, such as that returned by getBasePrice
@@ -464,6 +470,30 @@ If a special exist * 10+9
 		return $ret;
 	}
 
+	function getCostPrice( $pQuantity=1, $pAttributes=array() ) {
+		$cost = $this->getField( 'products_cogs' );
+		if( !empty( $pAttributes ) ) {
+			foreach( $pAttributes as &$attr ) {
+				if( !empty( $attr['options_values_cogs'] ) ) {
+					$cost += $pAttributes['options_values_cogs'];
+				}
+			}
+		}
+		return $pQuantity * $cost;
+	}
+
+	function getWholesalePrice( $pQuantity=1, $pAttributes=array() ) {
+		$wholesale = $this->getField( 'products_wholesale' );
+		if( !empty( $pAttributes ) ) {
+			foreach( $pAttributes as &$attr ) {
+				if( !empty( $attr['options_values_wholesale'] ) ) {
+					$wholesale += $pAttributes['options_values_wholesale'];
+				}
+			}
+		}
+		return $pQuantity * $wholesale;
+	}
+
 	// check a given price for a quantity discount. it is the responsibility of the calling function to determine if this method is appropirate, ie. it should check attributes_discounted,  etc...
 	function getQuantityPrice( $pQuantity, $pCheckAmount = NULL ) {
 		global $gBitDb, $gBitCustomer;
@@ -520,15 +550,6 @@ If a special exist * 10+9
 				break;
 		}
 		return $discounted_price;
-	}
-
-
-	function getPrice( $pType = 'actual' ) {
-		$ret = 0;
-		if( $this->isValid() ) {
-			$ret = $this->getNotatedPrice( $this->getField( $pType.'_price' ), $this->getField( 'products_tax_class_id' ) );
-		}
-		return $ret;
 	}
 
 
@@ -949,13 +970,13 @@ If a special exist * 10+9
 
 
 
-	function getTitle( $pAuxHash = NULL ) {
+	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
 		$ret = NULL;
-		if( !empty( $pAuxHash ) ) {
-			if( !empty( $pAuxHash['products_name'] ) ) {
-				$ret = $pAuxHash['products_name'];
-			} elseif( !empty( $pAuxHash['title'] ) ) {
-				$ret = $pAuxHash['title'];
+		if( !empty( $pHash ) ) {
+			if( !empty( $pHash['products_name'] ) ) {
+				$ret = $pHash['products_name'];
+			} elseif( !empty( $pHash['title'] ) ) {
+				$ret = $pHash['title'];
 			}
 		} elseif( $this->isValid() ) {
 			$ret = $this->mInfo['products_name'];
@@ -1012,22 +1033,29 @@ If a special exist * 10+9
 		}
 	}
 
-	function getDisplayUrl( $pProductsId=NULL, $pCatPath=NULL ) {
+	public static function getDisplayUrlFromId( $pProductsId ) {
 		global $gBitSystem;
-		if( empty( $pProductsId ) && is_object( $this ) && $this->isValid() ) {
-			$pProductsId = $this->mProductsId;
-		}
 		$ret = BITCOMMERCE_PKG_URL;
-		if( is_numeric( $pProductsId ) ) {
+		if( !empty( $pProductsId ) && is_numeric( $pProductsId ) ) {
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 				$ret .= $pProductsId;
-				if( !empty( $pCatPath ) ) {
-					$ret .= '/' . $pCatPath;
-				}
 			} else {
-				$ret .= 'index.php?products_id='.$pProductsId;
-				if( !empty( $pCatPath ) ) {
-					$ret .= '&cPath=' . $pCatPath;
+				$ret .= 'index.php?products_id='.$pParamHash['products_id'];
+			}
+		}
+		return $ret;
+	}
+
+	public static function getDisplayUrlFromHash( &$pParamHash ) {
+		global $gBitSystem;
+		$ret = BITCOMMERCE_PKG_URL;
+		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
+			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
+			if( !empty( $pParamHash['cat_path'] ) ) {
+				if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+					$ret .= '/' . $pParamHash['cat_path'];
+				} else {
+					$ret .= '&cPath=' . $pParamHash['cat_path'];
 				}
 			}
 		}
@@ -1035,7 +1063,7 @@ If a special exist * 10+9
 	}
 
 	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		$ret = BIT_ROOT_PATH.self::getImageUrl( $pProductsId, $pSize );
+		$ret = BIT_ROOT_PATH.static::getImageUrl( $pProductsId, $pSize );
 		if( !file_exists( dirname( $ret ) ) ) {
 			mkdir_p( dirname( $ret ) );
 		}
@@ -1043,7 +1071,7 @@ If a special exist * 10+9
 	}
 
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL, $pDefault=TRUE ) {
-		return( self::getImageUrl( $pProductsId, $pSize ) );
+		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
@@ -1243,7 +1271,7 @@ If a special exist * 10+9
 				if( empty( $ret[$productId]['type_class'] ) ) {
 					$ret[$productId]['type_class'] = 'CommerceProduct';
 				}
-				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrl( $ret[$productId]['products_id'] );
+				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
 				}
@@ -1282,7 +1310,7 @@ If a special exist * 10+9
 		return( !empty( $this->mProductsId ) );
 	}
 
-	function isViewable() {
+	function isViewable($pContentId = NULL) {
 		return( $this->hasUpdatePermission() || $this->isAvailable() );
 	}
 
@@ -1300,7 +1328,7 @@ If a special exist * 10+9
 		return( $ret );
 	}
 
-	function isOwner() {
+	function isOwner( $pParamHash = NULL ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->getField( 'user_id' ) ) {
@@ -2472,15 +2500,6 @@ Skip deleting of images for now
 		return false;
 	}
 
-	/**
-	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
-	 *
-	 * @access public
-	 * @return the preview string
-	 **/
-	function getViewableFields() {
-		return array_merge( parent::getViewableFields(), array( 'products_id' ) );
-	}
 }
 
 
@@ -2503,9 +2522,9 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	}
 
 	if( !empty( $lookupValue ) ) {
-
 		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
-				FROM " . TABLE_PRODUCT_TYPES . " cpt INNER JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+				FROM " . TABLE_PRODUCT_TYPES . " cpt 
+					LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 				WHERE `$lookupKey`=?";
 		$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
 

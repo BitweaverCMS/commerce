@@ -257,7 +257,7 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
       $nInfo->objectInfo($_POST);
     }
 
-    $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+    $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
     $directory_array = array();
     if ($dir = dir(DIR_WS_MODULES . 'newsletters/')) {
       while ($file = $dir->read()) {
@@ -356,8 +356,8 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
-    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
+    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
 ?>
@@ -374,8 +374,8 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
-    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
+    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html);
 ?>
@@ -392,8 +392,8 @@ check_select('audience_selected','',"<?php echo ERROR_PLEASE_SELECT_AUDIENCE; ?>
 
     $nInfo = new objectInfo($newsletter->fields);
 
-    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
-    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($PHP_SELF, strrpos($PHP_SELF, '.')));
+    include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
+    include(DIR_WS_MODULES . 'newsletters/' . $nInfo->module . substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.')));
     $module_name = $nInfo->module;
     $module = new $module_name($nInfo->title, $nInfo->content, $nInfo->content_html, $_POST['audience_selected']);
 ?>

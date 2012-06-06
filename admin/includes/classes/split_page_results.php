@@ -55,7 +55,7 @@
     }
 
     function display_links($query_numrows, $max_rows_per_page, $max_page_links, $current_page_number, $parameters = '', $page_name = 'page') {
-      global $PHP_SELF;
+      
 
       if ( zen_not_null($parameters) && (substr($parameters, -1) != '&') ) $parameters .= '&';
 
@@ -68,10 +68,10 @@
       }
 
       if ($num_pages > 1) {
-        $display_links = zen_draw_form_admin('pages', basename($PHP_SELF), '', 'get');
+        $display_links = zen_draw_form_admin('pages', basename($_SERVER['SCRIPT_NAME']), '', 'get');
 
         if ($current_page_number > 1) {
-          $display_links .= '<a href="' . zen_href_link_admin(basename($PHP_SELF), $parameters . $page_name . '=' . ($current_page_number - 1), 'NONSSL') . '" class="splitPageLink">' . PREVNEXT_BUTTON_PREV . '</a>&nbsp;&nbsp;';
+          $display_links .= '<a href="' . zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']), $parameters . $page_name . '=' . ($current_page_number - 1), 'NONSSL') . '" class="splitPageLink">' . PREVNEXT_BUTTON_PREV . '</a>&nbsp;&nbsp;';
         } else {
           $display_links .= PREVNEXT_BUTTON_PREV . '&nbsp;&nbsp;';
         }
@@ -79,7 +79,7 @@
         $display_links .= sprintf(TEXT_RESULT_PAGE, zen_draw_pull_down_menu($page_name, $pages_array, $current_page_number, 'onChange="this.form.submit();"'), $num_pages);
 
         if (($current_page_number < $num_pages) && ($num_pages != 1)) {
-          $display_links .= '&nbsp;&nbsp;<a href="' . zen_href_link_admin(basename($PHP_SELF), $parameters . $page_name . '=' . ($current_page_number + 1), 'NONSSL') . '" class="splitPageLink">' . PREVNEXT_BUTTON_NEXT . '</a>';
+          $display_links .= '&nbsp;&nbsp;<a href="' . zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']), $parameters . $page_name . '=' . ($current_page_number + 1), 'NONSSL') . '" class="splitPageLink">' . PREVNEXT_BUTTON_NEXT . '</a>';
         } else {
           $display_links .= '&nbsp;&nbsp;' . PREVNEXT_BUTTON_NEXT;
         }

@@ -6,7 +6,7 @@
 
 	{formfeedback hash=$gCoupon->mFeedback}
 
-	{form name="coupon" method="post" action="`$smarty.server.PHP_SELF`"}
+	{form name="coupon" method="post" action="`$smarty.server.SCRIPT_NAME`"}
 		<input type="hidden" name="cid" value="{$smarty.get.cid}">
 		<input type="hidden" name="action" value="store">
 		<div class="row">
@@ -135,7 +135,7 @@
 
 		<div class="row submit">
 			<input type="submit" class="button" name="Save" value="Save"/>
-			<a href="{$smarty.server.PHP_SELF}?cid={$smarty.request.cid}" class="button">{tr}Cancel{/tr}</a>
+			<a href="{$smarty.server.SCRIPT_NAME}?cid={$smarty.request.cid}" class="button">{tr}Cancel{/tr}</a>
 		</div>
 	{/form}
 		

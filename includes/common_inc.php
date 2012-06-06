@@ -913,12 +913,12 @@ function zen_update_lowest_purchase_price($product_id) {
 ////
 // enable shipping
   function zen_get_shipping_enabled($shipping_module) {
-    global $PHP_SELF, $order;
+    global $order;
 
 	$ret = true;
 
     // for admin always true if installed
-    if (strstr($PHP_SELF, FILENAME_MODULES)) {
+    if (strstr($_SERVER['SCRIPT_NAME'], FILENAME_MODULES)) {
       return true;
     }
 

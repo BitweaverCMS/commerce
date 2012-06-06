@@ -9,6 +9,7 @@
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  * @version $Id: usps.php 18348F 2012-01-22 01:22:00Z ajeh $
  */
+require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
 
 // bof: functions contributed by Marco B
 	//Quote sorting functions
@@ -77,10 +78,10 @@ class usps extends BitBase {
 // use USPS translations for US shops
 	 var $usps_countries;
 
-	function usps() {
+	function __construct() {
 		global $order, $template, $current_page_base;
 
-	parent::__construct();
+		parent::__construct();
 
 		$this->code = 'usps';
 		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;
@@ -570,6 +571,7 @@ class usps extends BitBase {
 
 // translate for US Territories
 //			if ($transit && is_array($transreq) && ($order->delivery['country']['countries_id'] == STORE_COUNTRY)) {
+			$transresp = array();
 			if( $transit && $queryTransit && is_array($transreq) && ( ($order->delivery['country']['countries_id'] == STORE_COUNTRY || (SHIPPING_ORIGIN_COUNTRY == '223' && $this->usps_countries == 'US') )) ) {
 				while (list($key, $value) = each($transreq)) {
 					if ($http->Get('/' . $api_dll . '?' . $value)) {
@@ -668,20 +670,25 @@ $body = str_replace('&amp;lt;sup&amp;gt;&amp;amp;trade;&amp;lt;/sup&amp;gt;', ''
 					$rates[] = array($service => $postage);
 					// BOF: UPS USPS
 					if ($transit) {
+						$time = NULL;
 						switch ($service) {
 							case 'EXPRESS':
-								$time = preg_match('/<MonFriCommitment>(.*)<\/MonFriCommitment>/msi', $transresp[$service], $tregs);
-								$time = $tregs[1];
-								if ($time == '' || $time == 'No Data') {
+								if( !empty( $transresp[$service] ) ) {
+									$time = preg_match('/<MonFriCommitment>(.*)<\/MonFriCommitment>/msi', $transresp[$service], $tregs);
+									$time = $tregs[1];
+								}
+								if( empty( $time ) || $time == 'No Data') {
 									$time = '1 - 2 ' . tra( 'Days' );
 								} else {
 									$time = 'Tomorrow by ' . $time;
 								}
 								break;
 							case 'PRIORITY':
-								$time = preg_match('/<Days>(.*)<\/Days>/msi', $transresp[$service], $tregs);
-								$time = $tregs[1];
-								if ($time == '' || $time == 'No Data') {
+								if( !empty( $transresp[$service] ) ) {
+									$time = preg_match('/<Days>(.*)<\/Days>/msi', $transresp[$service], $tregs);
+									$time = $tregs[1];
+								}
+								if( empty( $time ) || $time == 'No Data') {
 									$time = '2 - 3 ' . tra( 'Days' );
 								} elseif ($time == '1') {
 									$time .= ' ' . tra( 'Day' );
@@ -691,9 +698,11 @@ $body = str_replace('&amp;lt;sup&amp;gt;&amp;amp;trade;&amp;lt;/sup&amp;gt;', ''
 								break;
 							case 'MEDIA':			
 							case 'PARCEL':			
-								$time = preg_match('/<Days>(.*)<\/Days>/msi', $transresp[$service], $tregs);
-								$time = $tregs[1];
-								if ($time == '' || $time == 'No Data') {
+								if( !empty( $transresp[$service] ) ) {
+									$time = preg_match('/<Days>(.*)<\/Days>/msi', $transresp[$service], $tregs);
+									$time = $tregs[1];
+								}
+								if( empty( $time ) || $time == 'No Data') {
 									$time = '5 - 7 ' . tra( 'Days' );
 								} elseif ($time == '1') {
 									$time .= ' ' . tra( 'Day' );

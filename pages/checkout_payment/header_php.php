@@ -58,7 +58,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
     }
   }
 
-  require(DIR_FS_CLASSES . 'order.php');
+  require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order;
   require(DIR_FS_CLASSES . 'order_total.php');
   $order_total_modules = new order_total;

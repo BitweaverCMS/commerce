@@ -32,7 +32,7 @@
 
 // Check for new definitions in template directory
 
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
   $directory_array = array();
   if ($dir = @dir($languages_extra_definitions_directory_template)) {
     while ($file = $dir->read()) {
@@ -50,7 +50,7 @@
 
 // Check for new definitions in extra_definitions directory
   $dir_check= $directory_array;
-  $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
+  $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
 
   if ($dir = @dir($languages_extra_definitions_directory)) {
     while ($file = $dir->read()) {

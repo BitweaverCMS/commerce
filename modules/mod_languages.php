@@ -24,7 +24,7 @@ global $gBitDb, $gCommerceSystem, $gBitProduct, $lng;
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 $show_languages= false;
-if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
+if (substr(basename($_SERVER['SCRIPT_NAME']), 0, 8) != 'checkout') {
 	$show_languages= true;
 }
 

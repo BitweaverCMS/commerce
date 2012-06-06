@@ -90,7 +90,7 @@
 				<div id="optval{$optionsValueId}display">
 					<div class="floaticon">
 						<a href="#" onclick="editOptionsValue('{$optionsValueId}')">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="edit" iforce="icon"}</a>
-						<a href="{$smarty.server.PHP_SELF}?action=delete&amp;option_id={$optionId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete" iforce="icon"}</a>
+						<a href="{$smarty.server.SCRIPT_NAME}?action=delete&amp;option_id={$optionId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete" iforce="icon"}</a>
 					</div>
 					<span id="optval{$optionsValueId}title">{$optionsValue.products_options_values_name}</span>
 				</div>

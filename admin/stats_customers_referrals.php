@@ -28,7 +28,7 @@
   $_GET['end_date'] = (!isset($_GET['end_date']) ? date("m-d-Y",(time())) : $_GET['end_date']);
   $_GET['referral_code'] = (!isset($_GET['referral_code']) ? '0' : $_GET['referral_code']);
 
-  include(DIR_WS_CLASSES . 'order.php');
+  require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>

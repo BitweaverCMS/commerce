@@ -52,8 +52,7 @@
 
       $listBoxContents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                             'text' => '<a href="' .  CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . zen_image( $product['products_image_url'], $product['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrl( $product['products_id'] ) . '">' . $product['products_name'] . '</a><br />' . $products_price);
-
+                                             'text' => '<a href="' .  CommerceProduct::getDisplayUrlFromHash( $product ) . '">' . zen_image( $product['products_image_url'], $product['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrlFromHash( $product ) . '">' . $product['products_name'] . '</a><br />' . $products_price);
       $col ++;
       if ($col > (SHOW_PRODUCT_INFO_COLUMNS_NEW_PRODUCTS - 1)) {
         $col = 0;

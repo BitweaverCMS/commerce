@@ -60,7 +60,7 @@ if( empty( $_SESSION['sendto'] ) ) {
 		$_SESSION['shipping'] = '';
 }
 
-  require_once(DIR_FS_CLASSES . 'order.php');
+  require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order;
 $gBitSmarty->assign_by_ref( 'order', $order );
 

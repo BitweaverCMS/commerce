@@ -43,7 +43,7 @@
   $breadcrumb->add(NAVBAR_TITLE_2, zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL'));
   $breadcrumb->add(sprintf(NAVBAR_TITLE_3, $_GET['order_id']));
 
-  require(DIR_FS_CLASSES . 'order.php');
+  require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order($_GET['order_id']);
 
 ?>

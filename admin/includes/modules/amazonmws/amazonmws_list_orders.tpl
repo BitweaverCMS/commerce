@@ -53,7 +53,7 @@
 				{foreach from=$azOrderItem item=azi}
 					<li class="item">
 						{if $azi->getQuantityOrdered()}{$azi->getQuantityOrdered()} x {/if}
-						<a href="{$gBitProduct->getDisplayUrl($azi->getSellerSKU())}">{$azi->getSellerSKU()} {$azi->getTitle()|escape}</a>
+						<a href="{$gBitProduct->getDisplayUrlFromHash($azi->getSellerSKU())}">{$azi->getSellerSKU()} {$azi->getTitle()|escape}</a>
 						{assign var=lineTotal value=0}
 						<div class="floatright">
 							{if $azi->getItemPrice()}{assign var=itemPrice value=$azi->getItemPrice()}{$itemPrice->getAmount()}{assign var=lineTotal value=$lineTotal+$itemPrice->getAmount()}{/if} 

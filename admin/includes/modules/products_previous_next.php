@@ -116,7 +116,7 @@
     $category_name_row = $gBitDb->Execute($sql);
   } // if is_array
 
-  if (strstr($PHP_SELF, FILENAME_PRODUCTS_PRICE_MANAGER)) {
+  if (strstr($_SERVER['SCRIPT_NAME'], FILENAME_PRODUCTS_PRICE_MANAGER)) {
     $curr_page = FILENAME_PRODUCTS_PRICE_MANAGER;
   } else {
     $curr_page = FILENAME_ATTRIBUTES_CONTROLLER;

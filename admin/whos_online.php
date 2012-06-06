@@ -193,18 +193,18 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
 
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='ip_address-desc' or $listing=='ip_address') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_IP_ADDRESS . '</span>' : TABLE_HEADING_IP_ADDRESS); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=ip_address"; ?>"><?php echo ($listing=='ip_address' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=ip_address-desc"; ?>"><?php echo ($listing=='ip_address-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=ip_address"; ?>"><?php echo ($listing=='ip_address' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=ip_address-desc"; ?>"><?php echo ($listing=='ip_address-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='time_entry-desc' or $listing=='time_entry') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_ENTRY_TIME . '</span>' : TABLE_HEADING_ENTRY_TIME); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=time_entry"; ?>"><?php echo ($listing=='time_entry' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=time_entry-desc"; ?>"><?php echo ($listing=='time_entry-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_entry"; ?>"><?php echo ($listing=='time_entry' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_entry-desc"; ?>"><?php echo ($listing=='time_entry-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='time_last_click-desc' or $listing=='time_last_click') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_LAST_CLICK . '</span>' : TABLE_HEADING_LAST_CLICK); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=time_last_click"; ?>"><?php echo ($listing=='time_last_click' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=time_last_click-desc"; ?>"><?php echo ($listing=='time_last_click-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_last_click"; ?>"><?php echo ($listing=='time_last_click' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_last_click-desc"; ?>"><?php echo ($listing=='time_last_click-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
 
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_LAST_PAGE_URL; ?>&nbsp;</td>
