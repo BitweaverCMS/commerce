@@ -114,11 +114,13 @@ function getShippingQuotes( pOrderId ) {
 	{/if}
 </td>
 <td class="dataTableContent alignright">
-	{math equation="f - (w*q)" f=$finalQty w=$ordersProduct.products_wholesale q=$ordersProduct.products_quantity assign=wholesaleQty}
-	<strong class="{if $wholesaleQty>0}success{else}error{/if}">{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>
-	{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
-		{math equation="(w - c)*q" w=$ordersProduct.products_wholesale c=$ordersProduct.products_cogs q=$ordersProduct.products_quantity assign=cogsQty}
-		<br/><strong class="{if $cogsQty>0}success{else}error{/if}">{$currencies->format($cogsQty,true,$order->info.currency, $order->info.currency_value)}</strong>
+	{if $ordersProduct.products_wholesale}
+		{math equation="f - (w*q)" f=$finalQty w=$ordersProduct.products_wholesale q=$ordersProduct.products_quantity assign=wholesaleQty}
+		<strong class="{if $wholesaleQty>0}success{else}error{/if}">{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>
+		{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
+			{math equation="(w - c)*q" w=$ordersProduct.products_wholesale c=$ordersProduct.products_cogs q=$ordersProduct.products_quantity assign=cogsQty}
+			<br/><strong class="{if $cogsQty>0}success{else}error{/if}">{$currencies->format($cogsQty,true,$order->info.currency, $order->info.currency_value)}</strong>
+		{/if}
 	{/if}
 </td>
 </tr>
