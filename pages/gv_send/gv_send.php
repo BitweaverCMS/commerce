@@ -23,12 +23,7 @@
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
 // if the customer is not logged on, redirect them to the login page
-	if( !$gBitUser->isRegistered() ) {
-		$_SESSION['navigation']->set_snapshot();
-		zen_redirect(FILENAME_LOGIN);
-	}
-
-
+	$gBitUser->verifyRegistered();
 
 	$feedback = array();
 

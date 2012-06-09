@@ -23,7 +23,7 @@
 define('HEADING_TITLE', 'Send ' . TEXT_GV_NAME);
 define('NAVBAR_TITLE', 'Send ' . TEXT_GV_NAME);
 define('EMAIL_SUBJECT', 'Message from ' . STORE_NAME);
-define('HEADING_TEXT','Please enter below the details of the ' . TEXT_GV_NAME . ' you wish to send. For more information, please see our <a href="' . zen_href_link(FILENAME_GV_FAQ, '', 'NONSSL').'">' . GV_FAQ . '.</a>' ) );
+define('HEADING_TEXT','Please enter below the details of the ' . TEXT_GV_NAME . ' you wish to send. For more information, please see our <a href="' . zen_href_link(FILENAME_GV_FAQ, '', 'NONSSL').'">' . GV_FAQ . '.</a>' );
 define('ENTRY_NAME', tra( 'Recipients Name:' ) );
 define('ENTRY_EMAIL', tra( 'Recipients E-Mail Address:' ) );
 define('ENTRY_MESSAGE', tra( 'Message to Recipients:' ) );
