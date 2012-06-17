@@ -104,9 +104,9 @@ class fedexwebservices extends BitBase {
 		}											
 												 
 		// customer details			
-		$street_address = $order->delivery['street_address'];
-		$street_address2 = $order->delivery['suburb'];
-		$city = $order->delivery['city'];
+		$street_address = (!empty( $order->delivery['street_address'] ) ? $order->delivery['street_address']: '');
+		$street_address2 = (!empty( $order->delivery['suburb'] ) ? $order->delivery['suburb']: '');
+		$city = (!empty( $order->delivery['city'] ) ? $order->delivery['city'] : '');
 		$state = zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], '');
 		if ($state == "QC") $state = "PQ";
 		$postcode = str_replace(array(' ', '-'), '', $order->delivery['postcode']);
@@ -145,7 +145,7 @@ class fedexwebservices extends BitBase {
 															//'StateOrProvinceCode' => $state, //customer state
 															'PostalCode' => $postcode, //customer postcode
 															'CountryCode' => $country_id,
-															'Residential' => ($order->delivery['company'] != '' ? false : true))); //customer county code
+															'Residential' => empty( $order->delivery['company'] ) ) ); //customer county code
 		if (in_array($country_id, array('US', 'CA'))) {
 			$request['RequestedShipment']['Recipient']['StateOrProvinceCode'] = $state;
 		}
@@ -255,9 +255,14 @@ class fedexwebservices extends BitBase {
 			$request['RequestedShipment']['SpecialServicesRequested'] = 'SIGNATURE_OPTION'; 
 		}
 
-		$response = $client->getRates($request);
+		$message = '';
+		try {
+			$response = $client->getRates($request);
+		} catch( Exception $e ) {
+			$message .= $e->getMessage();
+		}
 		//bt(); vd( $pListHash ); vd($request); vd($response); 
-		if ($response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR' && is_array($response->RateReplyDetails) || is_object($response->RateReplyDetails)) {
+		if( $response && $response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR' && is_array($response->RateReplyDetails) || is_object($response->RateReplyDetails)) {
 			if (is_object($response->RateReplyDetails)) {
 				$response->RateReplyDetails = get_object_vars($response->RateReplyDetails);
 			}
@@ -310,7 +315,9 @@ class fedexwebservices extends BitBase {
 				$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
 			} 
 		} else {
-			$message = 'Error in processing transaction.<br /><br />'; 
+			if( empty( $message ) ) {
+				$message .= tra( 'Error in getting rates.' ).'<br /><br />'; 
+			}
 			if( is_array( $response->Notifications ) ) {
 				foreach ($response->Notifications as $notification) {					 
 					$message .= tra( $notification->Severity ).': '.tra( $notification->Message );
