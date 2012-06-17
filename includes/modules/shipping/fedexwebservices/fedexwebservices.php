@@ -64,43 +64,43 @@ class fedexwebservices extends BitBase {
 		$client = new SoapClient( dirname( __FILE__ ) . "/RateService_v9.wsdl", array('trace' => 1) );
 		$this->types = array();
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_INTERNATIONAL_PRIORITY == 'true') {
-			$this->types['FEDEX_INTERNATIONAL_PRIORITY'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_EUROPE_FIRST_INTERNATIONAL_PRIORITY'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
+			$this->types['INTERNATIONAL_PRIORITY'] = array( 'code' => 'FEDEX_INTERNATIONAL_PRIORITY', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
+			$this->types['EUROPE_FIRST_INTERNATIONAL_PRIORITY'] = array( 'code' => 'FEDEX_EUROPE_FIRST_INTERNATIONAL_PRIORITY', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_INTERNATIONAL_ECONOMY == 'true') {
-			$this->types['FEDEX_INTERNATIONAL_ECONOMY'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
+			$this->types['INTERNATIONAL_ECONOMY'] = array( 'code' => 'FEDEX_INTERNATIONAL_ECONOMY', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
 		}	
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_STANDARD_OVERNIGHT == 'true') {
-			$this->types['FEDEX_STANDARD_OVERNIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['STANDARD_OVERNIGHT'] = array( 'code' => 'FEDEX_STANDARD_OVERNIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_FIRST_OVERNIGHT == 'true') {
-			$this->types['FEDEX_FIRST_OVERNIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FIRST_OVERNIGHT'] = array( 'code' => 'FEDEX_FIRST_OVERNIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_PRIORITY_OVERNIGHT == 'true') {
-			$this->types['FEDEX_PRIORITY_OVERNIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['PRIORITY_OVERNIGHT'] = array( 'code' => 'FEDEX_PRIORITY_OVERNIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_2DAY == 'true') {
-			$this->types['FEDEX_2_DAY'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_2_DAY'] = array( 'code' => 'FEDEX_2_DAY', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
 		}
 		// because FEDEX_GROUND also is returned for Canadian Addresses, we need to check if the country matches the store country and whether international ground is enabled
 		if ((MODULE_SHIPPING_FEDEX_WEB_SERVICES_GROUND == 'true' && $order->delivery['country']['countries_id'] == STORE_COUNTRY) || (MODULE_SHIPPING_FEDEX_WEB_SERVICES_GROUND == 'true' && ($order->delivery['country']['countries_id'] != STORE_COUNTRY) && MODULE_SHIPPING_FEDEX_WEB_SERVICES_INTERNATIONAL_GROUND == 'true')) {
-			$this->types['FEDEX_GROUND'] = array('icon' => '', 'handling_fee' => ($order->delivery['country']['countries_id'] == STORE_COUNTRY ? MODULE_SHIPPING_FEDEX_WEB_SERVICES_HANDLING_FEE : MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE));
-			$this->types['FEDEX_GROUND_HOME_DELIVERY'] = array('icon' => '', 'handling_fee' => ($order->delivery['country']['countries_id'] == STORE_COUNTRY ? MODULE_SHIPPING_FEDEX_WEB_SERVICES_HANDLING_FEE : MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE));
+			$this->types['FEDEX_GROUND'] = array( 'code' => 'FEDEX_GROUND', 'icon' => '', 'handling_fee' => ($order->delivery['country']['countries_id'] == STORE_COUNTRY ? MODULE_SHIPPING_FEDEX_WEB_SERVICES_HANDLING_FEE : MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE));
+			$this->types['GROUND_HOME_DELIVERY'] = array( 'code' => 'FEDEX_GROUND_HOME_DELIVERY', 'icon' => '', 'handling_fee' => ($order->delivery['country']['countries_id'] == STORE_COUNTRY ? MODULE_SHIPPING_FEDEX_WEB_SERVICES_HANDLING_FEE : MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE));
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_INTERNATIONAL_GROUND == 'true') {
-			$this->types['FEDEX_INTERNATIONAL_GROUND'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE);
+			$this->types['INTERNATIONAL_GROUND'] = array( 'code' => 'FEDEX_INTERNATIONAL_GROUND', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_SAVER == 'true') {
-			$this->types['FEDEX_EXPRESS_SAVER'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_EXPRESS_SAVER'] = array( 'code' => 'FEDEX_EXPRESS_SAVER', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
 		}
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_FREIGHT == 'true') {
-			$this->types['FEDEX_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_NATIONAL_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_1_DAY_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_2_DAY_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_3_DAY_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_INTERNATIONAL_ECONOMY_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
-			$this->types['FEDEX_INTERNATIONAL_PRIORITY_FREIGHT'] = array('icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_FREIGHT'] = array( 'code' => 'FEDEX_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_NATIONAL_FREIGHT'] = array( 'code' => 'FEDEX_NATIONAL_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_1_DAY_FREIGHT'] = array( 'code' => 'FEDEX_1_DAY_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_2_DAY_FREIGHT'] = array( 'code' => 'FEDEX_2_DAY_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['FEDEX_3_DAY_FREIGHT'] = array( 'code' => 'FEDEX_3_DAY_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_EXPRESS_HANDLING_FEE);
+			$this->types['INTERNATIONAL_ECONOMY_FREIGHT'] = array( 'code' => 'FEDEX_INTERNATIONAL_ECONOMY_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
+			$this->types['INTERNATIONAL_PRIORITY_FREIGHT'] = array( 'code' => 'FEDEX_INTERNATIONAL_PRIORITY_FREIGHT', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
 		}											
 												 
 		// customer details			
@@ -301,7 +301,7 @@ class fedexwebservices extends BitBase {
 					$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
 										'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
 										'cost' => $cost + (strpos($this->types[$rateReply->ServiceType]['handling_fee'], '%') ? ($cost * (float)$this->types[$rateReply->ServiceType]['handling_fee'] / 100) : (float)$this->types[$rateReply->ServiceType]['handling_fee']),
-										'code' => $rateReply->ServiceType,
+										'code' => $this->types[$rateReply->ServiceType]['code'],
 									  );
 				}
 			}
