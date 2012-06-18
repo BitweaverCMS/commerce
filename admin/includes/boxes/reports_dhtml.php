@@ -23,6 +23,7 @@
   $za_contents = array();
   $za_heading = array();
   $za_heading = array('text' => BOX_HEADING_REPORTS, 'link' => zen_href_link_admin(FILENAME_ALT_NAV, '', 'NONSSL'));
+  $za_contents[] = array('text' => tra( 'Sales and Income' ), 'link' => zen_href_link_admin('sales_and_income.php', '', 'NONSSL'));
   $za_contents[] = array('text' => BOX_REPORTS_PRODUCTS_VIEWED, 'link' => zen_href_link_admin(FILENAME_STATS_PRODUCTS_VIEWED, '', 'NONSSL'));
   $za_contents[] = array('text' => tra( 'Products Sales By Type' ), 'link' => zen_href_link_admin( 'stats_products_types', '', 'NONSSL' ) );
   $za_contents[] = array('text' => BOX_REPORTS_PRODUCTS_PURCHASED, 'link' => zen_href_link_admin(FILENAME_STATS_PRODUCTS_PURCHASED, '', 'NONSSL'));
