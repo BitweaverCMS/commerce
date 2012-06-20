@@ -36,8 +36,8 @@
 		</tr>
 		{/if}
 		<tr>
-			<td class="item">{$order.date_purchased}</a></td>
 			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$ordersId}">{$ordersId}</a></td>
+			<td class="item">{$order.date_purchased|bit_short_datetime}</a></td>
 			<td class="item alignright">{$currencies->format($order.wholesale_gross)}</td>
 			<td class="item alignright">{$currencies->format($order.coupon_discount)}</td>
 			<td class="item alignright">{$currencies->format($order.gift_certificate)}</td>
