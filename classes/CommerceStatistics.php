@@ -9,9 +9,11 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id$
-//
-class CommerceStatistics extends BitBase {
+/* vim: :set fdm=marker : */
+
+require_once( KERNEL_PKG_PATH . 'BitSingleton.php' );
+
+class CommerceStatistics extends BitSingleton {
 
 // {{{ =================== Customers ====================
 
@@ -517,6 +519,50 @@ $this->debug(0);
 
 		return $ret;
 	}
+
+
+	function getSalesAndIncome( $pParamHash ) {
+		$ret = array();
+
+		$bindVars = array();
+
+		if( empty( $pParamHash['period'] ) ) {
+			$pParamHash['period'] = 'Y-m';
+		}
+
+		$period = ', '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' as `period` ';
+
+		// coupon value is stored as positive, gift_certificate is stored as negative
+		$sql = "SELECT co.`orders_id`, co.`date_purchased`, co.`order_total`, cotgc.`orders_value` AS `gift_certificate`, (cotcp.`orders_value` * -1) AS `coupon_discount` $period
+				FROM `".BIT_DB_PREFIX."com_orders` co 
+					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotcp ON (co.`orders_id`=cotcp.`orders_id` AND cotcp.`class`='ot_coupon')
+					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotgc ON (co.`orders_id`=cotgc.`orders_id` AND cotgc.`class`='ot_gv')
+				WHERE co.`orders_status` > 0
+				ORDER BY co.`orders_id` DESC";
+
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$sql = "SELECT SUM(cop.`products_cogs`) AS `cogs`, SUM((cop.`products_price` - cop.`products_wholesale`) * cop.`products_quantity`) AS wholesale_gross, SUM((cop.`products_wholesale` - cop.`products_cogs`) * cop.`products_quantity`) AS `supply_gross`
+						FROM `".BIT_DB_PREFIX."com_orders_products` cop
+						WHERE cop.`orders_id`=?";
+				$ret['orders'][$row['orders_id']] = array_merge( $row, $this->mDb->getRow( $sql, array( $row['orders_id'] ) ) );
+				$ret['orders'][$row['orders_id']]['wholesale_net'] = $ret['orders'][$row['orders_id']]['wholesale_gross'] + $ret['orders'][$row['orders_id']]['gift_certificate'] + $ret['orders'][$row['orders_id']]['coupon_discount'] ;
+
+				@$ret['totals'][$row['period']]['gift_certificate'] += $ret['orders'][$row['orders_id']]['gift_certificate'];
+				@$ret['totals'][$row['period']]['coupon_discount'] += $ret['orders'][$row['orders_id']]['coupon_discount'];
+				@$ret['totals'][$row['period']]['wholesale_gross'] += $ret['orders'][$row['orders_id']]['wholesale_gross'];
+				@$ret['totals'][$row['period']]['wholesale_net'] += $ret['orders'][$row['orders_id']]['wholesale_net'];
+
+
+				@$ret['totals']['sum']['gift_certificate'] += $ret['orders'][$row['orders_id']]['gift_certificate'];
+				@$ret['totals']['sum']['coupon_discount'] += $ret['orders'][$row['orders_id']]['coupon_discount'];
+				@$ret['totals']['sum']['wholesale_gross'] += $ret['orders'][$row['orders_id']]['wholesale_gross'];
+				@$ret['totals']['sum']['wholesale_net'] += $ret['orders'][$row['orders_id']]['wholesale_net'];
+				
+			}
+		}
+		return ( $ret );	
+	}
 }
 
 function commerce_statistics_referer_sort_revenue_desc($a, $b) { return commerce_statistics_referer_sort( $a, $b, 'revenue' ); }
@@ -537,4 +583,5 @@ function commerce_statistics_referer_sort( $a, $b, $pSort='revenue', $pDirection
 
 // }}} 
 
-/* vim: :set fdm=marker : */
+CommerceStatistics::loadSingleton();
+

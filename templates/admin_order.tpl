@@ -162,7 +162,7 @@ function getShippingQuotes( pOrderId ) {
 		{/if}
 		{$order->totals[t].title}
 	</td>
-	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Amount">{$order->totals[t].text}
+	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Amount">{$currencies->format($order->totals[t].orders_value)}
 		{if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	</td>
 </tr>

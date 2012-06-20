@@ -11,8 +11,8 @@ $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
 a{ text-decoration:none; }
 body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
 
-.admin.bitcommerce .data td.item, 
-.admin.bitcommerce .data th {text-align:left}
+.admin.bitcommerce .data th.total { border-bottom: 1px solid #AEA696 }
+.admin.bitcommerce .data th.subtotal {border:none; }
 
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
 

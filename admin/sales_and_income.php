@@ -14,7 +14,6 @@
  * @author	 spider <spider@steelsun.com>
  */
 
-
 define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 require('includes/application_top.php');
@@ -25,8 +24,13 @@ $gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/ca
 $gBitThemes->loadCss( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-win2k-cold-1.css' );
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+global $gCommerceStatistics;
 
-$stats = new CommerceStatistics();
+$currencies = new currencies();
+$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
+
+$listHash = array();
+$gBitSmarty->assign_by_ref( 'salesAndIncome', $gCommerceStatistics->getSalesAndIncome( $listHash ) );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_sales_and_income.tpl' );
 

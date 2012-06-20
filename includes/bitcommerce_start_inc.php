@@ -72,8 +72,7 @@
   }
 
 	// Load db classes
-	$gCommerceSystem = CommerceSystem::getSingleton();
-	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
+	CommerceSystem::loadSingleton();
 
   // set the language
   if( empty( $_SESSION['languages_id'] ) || isset($_GET['language'])) {
