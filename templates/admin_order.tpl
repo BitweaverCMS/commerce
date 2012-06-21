@@ -67,22 +67,25 @@ function getShippingQuotes( pOrderId ) {
 		<table class="data" border="0" width="100%" cellspacing="0" cellpadding="2">
           <tr class="dataTableHeadingRow">
             <th colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
-            <th colspan="2" class="alignright">{tr}Price{/tr} {tr}+Tax{/tr}</th>
-            <th class="alignright">({tr}Wholesale{/tr}) {if $gBitUser->hasPermission('p_admin')}<br/>({tr}Cost{/tr}){/if}</th>
-            <th colspan="2" class="alignright">{tr}Total{/tr} {tr}+Tax{/tr}</th>
-            <th class="alignright">[{tr}Profit{/tr}] {if $gBitUser->hasPermission('p_admin')}<br/>[{tr}Net{/tr}]{/if}</th>
+            <th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}<br/>[{tr}Wholesale{/tr}]</th>
+            <th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
+            <th class="alignright">({tr}Cost{/tr})</th>
+            <th class="alignright">({tr}Total{/tr})</th>
           </tr>
+{assign var=wholesaleIncome value=0}
+{assign var=wholesaleCost value=0}
+{assign var=couponAmount value=0}
+{assign var=giftAmount value=0}
+
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
 <td class="dataTableContent alignright" valign="top">{$ordersProduct.products_quantity}&nbsp;x</td>
 <td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
-	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}</td>
+	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}{if $ordersProduct.products_commission}, {$currencies->format($ordersProduct.products_commission)} {tr}Commission{/tr}{/if}</td>
 <td class="dataTableContent alignright" valign="top">
 	{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
 	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
-</td>
-<td class="dataTableContent alignright" valign="top">
 {if $ordersProduct.tax}
 	{$ordersProduct.tax|zen_display_tax_value}%
 	( {$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)} )
@@ -93,40 +96,62 @@ function getShippingQuotes( pOrderId ) {
 		{/if}
 	{/if}
 {/if}
-</td>
-<td class="dataTableContent alignright">
-	({$currencies->format($ordersProduct.products_wholesale,true,$order->info.currency, $order->info.currency_value)})
+{if $ordersProduct.products_wholesale}
+	{math equation="fp-pc-pw" fp=$ordersProduct.final_price pc=$ordersProduct.products_commission pw=$ordersProduct.products_wholesale assign=productWholesaleGross}
 	{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
-		<br/>({$currencies->format($ordersProduct.products_cogs,true,$order->info.currency, $order->info.currency_value)})
+		{math equation="pw-pc" fp=$ordersProduct.final_price pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_cogs assign=productSupplierGross}
+		<br/>^{$currencies->format($productSupplierGross,true,$order->info.currency, $order->info.currency_value)}
 	{/if}
+	<br/>[{$currencies->format($productWholesaleGross,true,$order->info.currency, $order->info.currency_value)}]
+{/if}
 </td>
 <td class="dataTableContent alignright" valign="top">
 	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
 	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($finalQty,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
 	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
-</td>
-<td class="dataTableContent alignright" valign="top">
 	{if $ordersProduct.tax}
 		{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
 		{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
 		{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
 	{/if}
+	{if $ordersProduct.products_wholesale}
+		{math equation="f - ((pw+pc)*q)" f=$finalQty pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_commission q=$ordersProduct.products_quantity assign=wholesaleQty}
+		{assign var=wholesaleIncome value=$wholesaleIncome+$wholesaleQty}
+		{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
+			{math equation="(w - c)*q" w=$ordersProduct.products_wholesale c=$ordersProduct.products_cogs q=$ordersProduct.products_quantity assign=cogsQty}
+			<br/>^<strong>{$currencies->format($cogsQty,true,$order->info.currency, $order->info.currency_value)}</strong>
+		{/if}
+		<br/>[<strong>{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>]
+	{/if}
 </td>
 <td class="dataTableContent alignright">
 	{if $ordersProduct.products_wholesale}
-		{math equation="f - (w*q)" f=$finalQty w=$ordersProduct.products_wholesale q=$ordersProduct.products_quantity assign=wholesaleQty}
-		<strong class="{if $wholesaleQty>0}success{else}error{/if}">{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>
 		{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
-			{math equation="(w - c)*q" w=$ordersProduct.products_wholesale c=$ordersProduct.products_cogs q=$ordersProduct.products_quantity assign=cogsQty}
-			<br/><strong class="{if $cogsQty>0}success{else}error{/if}">{$currencies->format($cogsQty,true,$order->info.currency, $order->info.currency_value)}</strong>
+			^({$currencies->format($ordersProduct.products_cogs,true,$order->info.currency, $order->info.currency_value)})
+			{math equation="(pw-pc)" pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_cogs assign=supplierCost}
+			<br/>^({$currencies->format($supplierCost,true,$order->info.currency, $order->info.currency_value)})
 		{/if}
+		{assign var=wholesaleUnitCost value=$wholesaleCost+$ordersProduct.products_wholesale}
+		<br/>({$currencies->format($ordersProduct.products_wholesale,true,$order->info.currency, $order->info.currency_value)})
+	{/if}
+</td>
+<td class="dataTableContent alignright">
+	{if $ordersProduct.products_wholesale}
+		{assign var=wholesaleCost value=$wholesaleCost+$ordersProduct.products_wholesale*$ordersProduct.products_quantity}
+		{if $gBitUser->hasPermission('p_admin') && $ordersProduct.products_cogs!=$ordersProduct.products_wholesale}
+			{assign var=baseCost value=$ordersProduct.products_cogs*$ordersProduct.products_quantity}
+			^({$currencies->format($baseCost,true,$order->info.currency, $order->info.currency_value)})
+			{math equation="(pw-pc)*pq" pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_cogs pq=$ordersProduct.products_quantity assign=supplierCost}
+			<br/>^({$currencies->format($supplierCost,true,$order->info.currency, $order->info.currency_value)})
+		{/if}
+		<br/>({$currencies->format($wholesaleCost,true,$order->info.currency, $order->info.currency_value)})
 	{/if}
 </td>
 </tr>
 <tr class="dataTableRow">
 	<td><a href="product_history.php?products_id={$ordersProduct.products_id}">{biticon iname="appointment-new" iexplain="Products History"}</a></td>
-	<td class="dataTableContent" colspan="9">
+	<td class="dataTableContent" colspan="7">
 {if !empty( $ordersProduct.attributes )}
 {section loop=$ordersProduct.attributes name=a}
 		<div class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
@@ -152,18 +177,35 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 
 {/foreach}
-          <tr>
-            <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
 {section loop=$order->totals name=t}
 <tr>
-	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Text">
+	<td colspan="3" class="alignright {'ot_'|str_replace:'':$order->totals[t].class} text">
 		{if $order->totals[t].class=='ot_shipping'}
 			<a onclick="getShippingQuotes({$smarty.request.oID});return false;">Change</a>
 		{/if}
 		{$order->totals[t].title}
 	</td>
-	<td align="right" class="{'_'|str_replace:'-':$order->totals[t].class}-Amount">{$currencies->format($order->totals[t].orders_value)}
-		{if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
+		{$currencies->format($order->totals[t].orders_value)} {if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	</td>
+	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
+		{if $order->totals[t].class=='ot_subtotal'}
+			({$currencies->format($wholesaleCost)})
+		{/if}
+	</td>
+	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
+		{if $order->totals[t].class=='ot_subtotal'}
+			 {$currencies->format($wholesaleIncome)}
+		{elseif $order->totals[t].class=='ot_total'}
+			{math equation="i - c + g" i=$wholesaleIncome c=$couponAmount g=$giftAmount assign=wholesaleNet}
+			<span class="{if $wholesaleNet>0}success{else}error{/if}">{$currencies->format($wholesaleNet)} {if $isForeignCurrency}({$currencies->format($wholesaleNet,true,$smarty.const.DEFAULT_CURRENCY)}{/if}</span>
+		{elseif $order->totals[t].class=='ot_gv'}
+			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}){/if}
+			{assign var=giftAmount value=$giftAmount-$order->totals[t].orders_value}
+		{elseif $order->totals[t].class=='ot_coupon'}
+			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}){/if}
+			{assign var=couponAmount value=$couponAmount+$order->totals[t].orders_value}
+		{/if}
 	</td>
 </tr>
 {if $order->totals[t].class=='ot_shipping'}
@@ -174,9 +216,6 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 {/if}
 {/section}
-
-            </table></td>
-          </tr>
         </table></td>
       </tr>
 

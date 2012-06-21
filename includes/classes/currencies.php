@@ -71,7 +71,7 @@
 			$format_string= '';
 		}
 
-		return ' '.$format_string;
+		return $format_string;
     }
 
     function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
