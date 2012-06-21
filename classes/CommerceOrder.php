@@ -329,18 +329,6 @@ class order extends CommerceOrderBase {
 			$attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
 			if ($attributes->RecordCount()) {
 				while (!$attributes->EOF) {
-/*
-					$this->contents[$productsKey]['attributes'] = $attributes->fields;
-					// old school legacy naming conventions
-					$this->contents[$productsKey]['attributes'][]['options_id'] = $attributes->fields['products_options_id'];
-					$this->contents[$productsKey]['attributes'][]['options_values_id'] = $attributes->fields['products_options_values_id'];
-					$this->contents[$productsKey]['attributes'][]['option'] = $attributes->fields['products_options'];
-					$this->contents[$productsKey]['attributes'][]['value'] = $attributes->fields['products_options_values'];
-					$this->contents[$productsKey]['attributes'][]['prefix'] = $attributes->fields['price_prefix'];
-					$this->contents[$productsKey]['attributes'][]['final_price'] = $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] );
-					$this->contents[$productsKey]['attributes'][]['price'] = $attributes->fields['options_values_price'];
-					$this->contents[$productsKey]['attributes'][]['orders_products_attributes_id'] = $attributes->fields['orders_products_attributes_id'];
-*/
 					$this->contents[$productsKey]['attributes'][] = array( 'options_id' => $attributes->fields['products_options_id'],
 																			'options_values_id' => $attributes->fields['products_options_values_id'],
 																			'option' => $attributes->fields['products_options'],
