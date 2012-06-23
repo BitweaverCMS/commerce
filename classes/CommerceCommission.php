@@ -89,7 +89,7 @@ class CommerceProductCommission extends CommerceCommissionBase {
 		$bindVars = array();
 
 		if( !empty( $pListHash['commissions_due'] ) ) {
-			$whereSql .= " AND (co.`date_purchased` > (SELECT COALESCE( MAX(ccp.`Period_end_date`), '1970-01-01 00:00:00-0' ) FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE ccp.payee_user_id=lc.`user_id` AND ccp.commission_type='".$this->mCommissionType."') )";
+			$whereSql .= " AND (co.`date_purchased` > (SELECT COALESCE( MAX(ccp.`period_end_date`), '1970-01-01 00:00:00-0' ) FROM " . TABLE_COMMISSIONS_PAYMENTS . " ccp WHERE ccp.payee_user_id=lc.`user_id` AND ccp.commission_type='".$this->mCommissionType."') )";
 			$throughDate = $this->mDb->sqlIntToTimestamp( $pListHash['commissions_due'] );
 		} else {
 			$throughDate = $this->mDb->NOW();
