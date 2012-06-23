@@ -6,11 +6,6 @@ class CommerceSystem extends BitSingleton {
 	var $mConfig;
 	var $mProductTypeLayout;
 
-    protected static $singleton = null;
-	protected static function getSingleInstance() {
-		return static::$singleton;
-	}
-
 	function __construct() {
 		parent::__construct();
 		$this->loadConfig();
