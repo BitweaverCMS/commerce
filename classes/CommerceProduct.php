@@ -141,6 +141,7 @@ class CommerceProduct extends LibertyMime {
 		$ret = parent::exportHash();
 		$ret['product_id'] = $this->mProductsId;
 		$ret['product_type'] = $this->getField( 'type_class' );
+		$ret['title'] = $this->getTitle();
 		return $ret;
 	}
 	// {{{ =================== Product Pricing Methods ==================== 
@@ -1272,6 +1273,7 @@ If a special exist * 10+9
 					$ret[$productId]['type_class'] = 'CommerceProduct';
 				}
 				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
+				$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
 					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
 				}
@@ -1284,6 +1286,7 @@ If a special exist * 10+9
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
 				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPrice( $ret[$productId] );
+				$ret[$productId]['title'] = $ret[$productId]['products_name'];
 			}
 		}
 
