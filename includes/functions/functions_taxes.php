@@ -27,7 +27,9 @@
     global $gBitDb, $gBitUser;
     global $customer_zone_id, $customer_country_id;
 
-    if ( ($country_id == -1) && ($zone_id == -1) ) {
+	if( $gBitUser->hasPermission( 'p_bitcommerce_tax_exempt' ) ) {
+		return 0;
+	} elseif ( ($country_id == -1) && ($zone_id == -1) ) {
       if( !$gBitUser->isRegistered() ) {
         $country_id = STORE_COUNTRY;
         $zone_id = STORE_ZONE;
