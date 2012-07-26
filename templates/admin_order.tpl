@@ -197,7 +197,7 @@ function getShippingQuotes( pOrderId ) {
 		{if $order->totals[t].class=='ot_subtotal'}
 			 {$currencies->format($wholesaleIncome)}
 		{elseif $order->totals[t].class=='ot_total'}
-			{math equation="i - c + g" i=$wholesaleIncome c=$couponAmount g=$giftAmount assign=wholesaleNet}
+			{math equation="i - c - g" i=$wholesaleIncome c=$couponAmount g=$giftAmount assign=wholesaleNet}
 			<span class="{if $wholesaleNet>0}success{else}error{/if}">{$currencies->format($wholesaleNet)} {if $isForeignCurrency}({$currencies->format($wholesaleNet,true,$smarty.const.DEFAULT_CURRENCY)}{/if}</span>
 		{elseif $order->totals[t].class=='ot_gv'}
 			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}){/if}
