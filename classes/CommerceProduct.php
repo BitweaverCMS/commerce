@@ -137,11 +137,19 @@ class CommerceProduct extends LibertyMime {
 		return $this->getField( 'products_model', 'Product' );
 	}
 
+	function exportList( $pList ) {
+		$ret = parent::exportList( $pList );
+		foreach( $pList as $key=>$hash ) {
+			$ret[$key]['product_id'] = $hash['products_id'];
+			$ret[$key]['product_type'] = $hash['type_class'];
+		}
+		return $ret;
+	}
+
 	function exportHash() {
 		$ret = parent::exportHash();
 		$ret['product_id'] = $this->mProductsId;
 		$ret['product_type'] = $this->getField( 'type_class' );
-		$ret['title'] = $this->getTitle();
 		return $ret;
 	}
 	// {{{ =================== Product Pricing Methods ==================== 
@@ -1233,14 +1241,12 @@ If a special exist * 10+9
 		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
 		$whereSql .= ' AND pd.`language_id`=?';
 
-		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			$this->getGatekeeperSql( $selectSql, $joinSql, $whereSql, $bindVars );
-		}
+		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pListHash );
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 		$pListHash['total_records'] = 0;
-		$query = "select p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
-					from " . TABLE_PRODUCTS . " p
+		$query = "SELECT p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
+					FROM " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
 				 	INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id` )
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
