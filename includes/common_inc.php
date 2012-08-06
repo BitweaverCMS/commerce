@@ -585,7 +585,7 @@ function zen_get_languages() {
 			$product = bc_get_commerce_product( $pProductsId );
 			$sBasePriceCache[$pProductsId] = $product->getBasePrice();
 		}
-bt(); die;
+
 		return $sBasePriceCache[$pProductsId];
 	}
 
