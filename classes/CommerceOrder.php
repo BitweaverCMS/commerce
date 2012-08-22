@@ -125,6 +125,12 @@ class order extends CommerceOrderBase {
 			$bindVars[] = $pListHash['products_options_values_id'];
 		}
 
+		if( !empty( $pListHash['products_type'] ) ) {
+			$joinSql .= " INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cop.`orders_id`=co.`orders_id`) INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`) ";
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pListHash['products_type'];
+		}
+
 		if( !empty( $pListHash['interests_id'] ) ) {
 			$joinSql .= " INNER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(cim.`customers_id`=co.`customers_id`)
 						INNER JOIN " . TABLE_CUSTOMERS_INTERESTS . " ci ON(ci.`interests_id`=cim.`interests_id`) ";
