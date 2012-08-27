@@ -6,7 +6,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 // | Portions Copyright (c) 2003 The zen-cart developers				|
-// | Portions Copyright (c) 2003 osCommerce								|	
+// | Portions Copyright (c) 2003 osCommerce								|
 // +--------------------------------------------------------------------+
 //
 /**
@@ -152,7 +152,7 @@ class CommerceProduct extends LibertyMime {
 		$ret['product_type'] = $this->getField( 'type_class' );
 		return $ret;
 	}
-	// {{{ =================== Product Pricing Methods ==================== 
+	// {{{ =================== Product Pricing Methods ====================
 
 	// User specific commission discount, used for  backing out commissions of an aggregate price, such as that returned by getBasePrice
 	function getCommissionUserDiscount() {
@@ -244,7 +244,7 @@ class CommerceProduct extends LibertyMime {
 
 	function getSpecialPrice() {
 		$ret = FALSE;
-		
+
 		if( $this->isValid() ) {
 			$ret = $this->getSalePrice( TRUE );
 		}
@@ -254,7 +254,7 @@ class CommerceProduct extends LibertyMime {
 	// get specials price or sale price
 	function getSalePrice( $pSpecialsOnly=false ) {
 		$ret = FALSE;
-		
+
 		if( $this->isValid() ) {
 			if( !isset( $this->mInfo['special_price'] ) ) {
 				$this->mInfo['special_price'] = $this->mDb->GetOne("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id`=? and `status` ='1'", array( $this->mProductsId ) );
@@ -268,13 +268,13 @@ class CommerceProduct extends LibertyMime {
 			} else {
 				$lowestPrice = $this->getBasePrice();
 				// get sale price
-				$query ="select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type` 
-						from " . TABLE_SALEMAKER_SALES . " 
-						where `sale_categories_all` like '%,".$this->getField( 'master_categories_id' ).",%' 
-							and `sale_status` = '1' 
-							and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01') 
-							and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01') 
-							and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0') 
+				$query ="select `sale_specials_condition`, `sale_deduction_value`, `sale_deduction_type`
+						from " . TABLE_SALEMAKER_SALES . "
+						where `sale_categories_all` like '%,".$this->getField( 'master_categories_id' ).",%'
+							and `sale_status` = '1'
+							and (`sale_date_start` <= 'NOW' or `sale_date_start` = '0001-01-01')
+							and (`sale_date_end` >= 'NOW' or `sale_date_end` = '0001-01-01')
+							and (`sale_pricerange_from` <= ? or `sale_pricerange_from` = '0')
 							and (`sale_pricerange_to` >= ? or `sale_pricerange_to` = '0')";
 				if( $sale = $this->mDb->getAssoc( $query, array( $lowestPrice, $lowestPrice ) ) ) {
 					$tmp_special_price = !empty( $this->mInfo['special_price'] ) ? $this->mInfo['special_price'] : $lowestPrice;
@@ -439,7 +439,7 @@ If a special exist * 10+9
 	}
 
 
-	// 
+	//
 	function getPurchasePrice( $pQuantity=1, $pAttributes=array() ) {
 		$ret = NULL;
 		if( $this->isValid() ) {
@@ -461,7 +461,7 @@ If a special exist * 10+9
 
 			if( $pAttributes ) {
 				// loop through passed in attributes and add addition cost to the price
-				foreach( $pAttributes as $optionId => $att ) { 
+				foreach( $pAttributes as $optionId => $att ) {
 					if( is_numeric( $att ) ) {
 						// cart has a simple list of $optionId=$valueId
 						$valueId = $att;
@@ -1004,7 +1004,7 @@ If a special exist * 10+9
 			if( $this->getField( 'metatags_description' ) ) {
 				$ret = $this->getField( 'metatags_description' );
 			} elseif( $this->getField( 'products_description' ) ) {
-				$ret = $this->getField( 'products_description' ); 
+				$ret = $this->getField( 'products_description' );
 			} else {
 				$ret = parent::generateDescription();
 			}
@@ -1035,7 +1035,7 @@ If a special exist * 10+9
 		}
 		return $ret;
 	}
-	
+
 	function getTypeName() {
 		if( $this->isValid() ) {
 			return( $this->mInfo['type_name'] );
@@ -1049,7 +1049,7 @@ If a special exist * 10+9
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 				$ret .= $pProductsId;
 			} else {
-				$ret .= 'index.php?products_id='.$pParamHash['products_id'];
+				$ret .= 'index.php?products_id='.$pProductsId;
 			}
 		}
 		return $ret;
@@ -1094,7 +1094,7 @@ If a special exist * 10+9
 				$path .= 'thumbs/';
 			}
 			$path .= $pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
+			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) or !empty( $this->mProductsId ) ) {
 				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
 			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
 				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
@@ -1129,8 +1129,8 @@ If a special exist * 10+9
 			if(!in_array($key,$dynamicParams)){
 				$pListHash['query_string'].= "&$key=$value";
 			}
-		}	
-		
+		}
+
 	}
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
@@ -1204,7 +1204,7 @@ If a special exist * 10+9
 			$whereSql .= " AND p.`content_id` IN ( ".implode( ',',array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
 			$bindVars = array_merge( $bindVars, $pListHash['content_id_list'] );
 		}
-	
+
 		if( !empty( $pListHash['freshness'] ) ) {
 			if ( $pListHash['freshness'] == '1' ) {
 				$whereSql .= " and ".$this->mDb->SQLDate( 'Ym', 'p.`products_date_added`' )." >= ".$this->mDb->SQLDate( 'Ym' );
@@ -1376,12 +1376,12 @@ If a special exist * 10+9
 		);
 
 		// hashed by php type so values can be safely cast when sent into the DB. This is particularly important for real databases
-		$checkFields = array( 
+		$checkFields = array(
 			// VARCHAR string columns
 			'string' => array(
 				'products_model',
 				'products_manufacturers_model',
-			), 'id' => array( 
+			), 'id' => array(
 				// id's used as foreign keys
 				'products_tax_class_id',
 				'manufacturers_id',
@@ -1639,8 +1639,8 @@ If a special exist * 10+9
 			if( PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED == '1' and $not_readonly == 'true' ) {
 				// don't include READONLY attributes to determin if attributes must be selected to add to cart
 				$query = "select pa.`products_options_values_id`
-							from	" . TABLE_PRODUCTS_OPTIONS_MAP . " pom 
-								INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
+							from	" . TABLE_PRODUCTS_OPTIONS_MAP . " pom
+								INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
 								LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " po ON(pa.`products_options_id`=po.`products_options_id`)
 							where pom.`products_id` = ? and po.`products_options_type` != '" . PRODUCTS_OPTIONS_TYPE_READONLY . "'";
 			} else {
@@ -1813,8 +1813,8 @@ If a special exist * 10+9
 							}
 						}
 						// ignore products_options_images_style as this should be fully controllable via CSS
-						$tmp_radio .= '<div class="productoptions">' . 
-										zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) . 
+						$tmp_radio .= '<div class="productoptions">' .
+										zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .
 										"<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
 						if( !empty( $vals['attributes_image'] ) ) {
 							$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
@@ -2107,7 +2107,7 @@ If a special exist * 10+9
 		return $productOptions;
 	}
 
-	
+
 	function storeAttributeMap( $pOptionsValuesId, $pOverridePrice=NULL ) {
 		if( BitBase::verifyId( $pOptionsValuesId ) && $this->isValid() ) {
 			if( !$this->hasOptionValue( $pOptionsValuesId ) ) {
@@ -2122,7 +2122,7 @@ If a special exist * 10+9
 			// The products_id is redundant for safety purposes
 			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_options_values_id` = ? AND `products_id`=?", array( $pOptionsValuesId, $this->mProductsId ) );
 		}
-		return( count( $this->mErrors ) == 0 );		
+		return( count( $this->mErrors ) == 0 );
 	}
 
 
@@ -2131,7 +2131,7 @@ If a special exist * 10+9
 			// The products_id is redundant for safety purposes
 			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=?", array( $this->mProductsId ));
 		}
-		return( count( $this->mErrors ) == 0 );		
+		return( count( $this->mErrors ) == 0 );
 	}
 
 	function expungeOptionValue( $pOptionValueId ) {
@@ -2139,7 +2139,7 @@ If a special exist * 10+9
 			// The products_id is redundant for safety purposes
 			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id`=? AND `products_options_values_id`=?", array( $this->mProductsId, $pOptionValueId ));
 		}
-		return( count( $this->mErrors ) == 0 );		
+		return( count( $this->mErrors ) == 0 );
 	}
 
 	function loadDiscounts() {
@@ -2435,7 +2435,7 @@ Skip deleting of images for now
 			$sql = "SELECT distinct popt.`products_options_id` AS hash_key, popt.*
 					FROM " . TABLE_PRODUCTS_OPTIONS . " popt
 						INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
-						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	
+						INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 					WHERE pom.`products_id`= ? AND popt.`language_id` = ? " .
 					$options_order_by;
 
@@ -2449,7 +2449,7 @@ Skip deleting of images for now
 				foreach( array_keys( $this->mOptions ) as $optionsId ) {
 					$sql = "SELECT pa.`products_options_values_id`, pa.`products_options_values_name`, pa.*
 							FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	
+								INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 							WHERE pom.`products_id`=? AND pa.`products_options_id`=? " .
 							$order_by;
 					if( $rs = $this->mDb->query( $sql, array( $this->mProductsId, $optionsId ) ) ) {
@@ -2504,7 +2504,7 @@ Skip deleting of images for now
 	function isFree() {
 		return( !empty( $this->mInfo['product_is_free'] ) );
 	}
-		
+
 	function needsCheckoutReview($pItem){
 		return false;
 	}
@@ -2531,8 +2531,8 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	}
 
 	if( !empty( $lookupValue ) ) {
-		$sql = "SELECT `type_id` AS `hash_key`, cpt.* 
-				FROM " . TABLE_PRODUCT_TYPES . " cpt 
+		$sql = "SELECT `type_id` AS `hash_key`, cpt.*
+				FROM " . TABLE_PRODUCT_TYPES . " cpt
 					LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 				WHERE `$lookupKey`=?";
 		$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
@@ -2540,7 +2540,7 @@ function bc_get_commerce_product( $pLookupMixed ) {
 		if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
 			require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
 			if( class_exists(	$productTypes['type_class'] ) ) {
-				$productClass = $productTypes['type_class']; 
+				$productClass = $productTypes['type_class'];
 			}
 		}
 	}
@@ -2554,7 +2554,7 @@ function bc_get_commerce_product( $pLookupMixed ) {
 
 	$product = new $productClass( $productsId, $contentId );
 
-	if( !$product->load() ) {	
+	if( !$product->load() ) {
 		unset( $product->mProductsId );
 	}
 
@@ -2563,7 +2563,7 @@ function bc_get_commerce_product( $pLookupMixed ) {
 
 if( !defined( 'TABLE_PRODUCTS' ) ) {
 	// we might be coming in from LibertyBase::getLibertyObject
-	// keep bitcommerce_start_inc at the bottom of the file, *after* the class has been declared 
+	// keep bitcommerce_start_inc at the bottom of the file, *after* the class has been declared
 	// because bitcommerce_start_inc creates a default gBitProduct of type CommerceProduct
 	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 }
