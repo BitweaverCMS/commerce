@@ -403,7 +403,6 @@ define('TEXT_PRODUCTS_IMAGE_DIR', 'Upload to directory:');
 define('TEXT_PRODUCTS', 'Products:');
 define('TEXT_LAST_MODIFIED', 'Last Modified:');
 define('TEXT_DATE_ADDED', 'Date Added:');
-define('TEXT_IMAGE_NONEXISTENT', 'IMAGE DOES NOT EXIST');
 
 define('TEXT_CACHE_CATEGORIES', 'Categories Box');
 define('TEXT_CACHE_MANUFACTURERS', 'Manufacturers Box');
