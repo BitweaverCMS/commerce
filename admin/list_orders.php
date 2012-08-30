@@ -40,6 +40,9 @@ if( @BitBase::verifyId( $_REQUEST['products_options_values_id'] ) ) {
 	$listHash['products_options_values_id'] = $_REQUEST['products_options_values_id'];
 }
 
+if( !empty( $_REQUEST['products_type'] ) ) {
+	$listHash['products_type'] = $_REQUEST['products_type'];
+}
 if( !empty( $_REQUEST['period'] ) ) {
 	$listHash['period'] = $_REQUEST['period'];
 }

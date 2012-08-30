@@ -181,7 +181,7 @@
       while (!$lns->EOF) {
         $language_array[] = array('text' => $lns->fields['name'], 'id' => $lns->fields['languages_id']);
         $lns->MoveNext();
-      } 
+      }
       $contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_NAME . '<br>' . zen_draw_pull_down_menu('ln', $template_array));
       $contents[] = array('text' => '<br>' . TEXT_INFO_LANGUAGE_NAME . '<br>' . zen_draw_pull_down_menu('lang', $language_array, $_POST['lang']));
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
@@ -191,10 +191,12 @@
 
       $contents = array('form' => zen_draw_form_admin('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=save'));
       $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
-      reset($template_info);
-      while (list ($key, $value) = each($template_info) ) {
-        $template_array[] = array('id' => $key, 'text' => $value['name']);
-      }
+      if ( !empty($template_info) ) {
+		reset($template_info);
+        while (list ($key, $value) = each($template_info) ) {
+          $template_array[] = array('id' => $key, 'text' => $value['name']);
+        }
+	  }
       $contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_NAME . '<br>' . zen_draw_pull_down_menu('ln', $template_array));
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -218,9 +220,11 @@
         $contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_VERSION  . $template_info[$tInfo->template_dir]['version']);
         $contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_DESCRIPTION  . '<br />' . $template_info[$tInfo->template_dir]['description']);
         $contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_INSTALLED  . '<br />');
-        while (list ($key, $value) = each($template_info) ) {
-          $contents[] = array('text' => '<a href="' . DIR_WS_CATALOG_TEMPLATE . $key . '/images/' . $value['screenshot'] . '" target = "_blank">' . zen_image_button('button_preview.gif', IMAGE_PREVIEW) . '</a>&nbsp;&nbsp;' . $value['name']);
-        }
+		if ( is_array($template_info) ) {
+			while (list ($key, $value) = each($template_info) ) {
+				$contents[] = array('text' => '<a href="' . DIR_WS_CATALOG_TEMPLATE . $key . '/images/' . $value['screenshot'] . '" target = "_blank">' . zen_image_button('button_preview.gif', IMAGE_PREVIEW) . '</a>&nbsp;&nbsp;' . $value['name']);
+			}
+		}
       }
       break;
   }

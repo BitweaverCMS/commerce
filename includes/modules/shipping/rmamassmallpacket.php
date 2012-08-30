@@ -1,4 +1,4 @@
-<?
+<?php
 /*
   $Id$
   based upon
@@ -64,7 +64,7 @@
       for ($i=1; $i<=$this->num_zones; $i++) {
         $countries_table = constant('MODULE_SHIPPING_RMAMASSMALLPACKET_ZONES_COUNTRIES_' . $i);
 
-        $country_zones = split("[,]", preg_replace('/\s*/','',$countries_table) );
+        $country_zones = preg_split("#[,]#", preg_replace('/\s*/','',$countries_table) );
 
         if (in_array($dest_country, $country_zones)) {
           $dest_zone = $i;
@@ -96,10 +96,10 @@
            . ',' . constant('MODULE_SHIPPING_RMAMASSMALLPACKET_ZONES_COST4_' . $dest_zone)
            . ',' . constant('MODULE_SHIPPING_RMAMASSMALLPACKET_ZONES_COST5_' . $dest_zone);
 
-        $zones_table = split("[:,]" , preg_replace('/\s*/','',$zones_cost) );
+        $zones_table = preg_split("#[:,]#" , preg_replace('/\s*/','',$zones_cost) );
         $size = sizeof($zones_table);
         for ($i=0; $i<$size; $i+=2) {
-          if ($shippingWeight <= $zones_table[$i]) { 
+          if ($shippingWeight <= $zones_table[$i]) {
             $shipping = $zones_table[$i+1];
 			//12 Feb 04 MBeedell - correctly format the total weight... if the weight exceeds the max
 			//  weight, then it is divided down over a number of separate packages - so the weight could end

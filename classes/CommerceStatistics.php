@@ -137,6 +137,11 @@ class CommerceStatistics extends BitSingleton {
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
+		}
+
 		if( !empty( $pParamHash['delivery_country'] ) ) {
 			$whereSql .= ' AND co.`delivery_country`=? ';
 			$bindVars[] = $pParamHash['delivery_country'];
@@ -146,6 +151,7 @@ class CommerceStatistics extends BitSingleton {
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
+					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 				WHERE co.`orders_status` > 0 $whereSql
 				GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, copa.`products_options_id`
 				ORDER BY copa.`products_options`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values`";
@@ -311,6 +317,12 @@ class CommerceStatistics extends BitSingleton {
 			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).', ';
 			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 		}
+
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
+		}
+
 		$sql = "SELECT $selectSql COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_all_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_purchased_new_products`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
@@ -392,6 +404,11 @@ $this->debug(0);
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
+		}
+
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
 		}
 
 		if( !empty( $pParamHash['delivery_country'] ) ) {
