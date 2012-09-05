@@ -2072,7 +2072,7 @@ If a special exist * 10+9
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
 					// dropdownmenu auto switch to selected radio button display
-					case ( count( $this->mOptions[$optionsId] ) == 1):
+					case ( count( $this->mOptions[$optionsId]['values'] ) == 1):
 						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
 							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
 						} else {
