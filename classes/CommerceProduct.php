@@ -1707,6 +1707,7 @@ If a special exist * 10+9
 				$tmp_attributes_image = '';
 				$tmp_attributes_image_row = 0;
 				$productSettings['show_attributes_qty_prices_icon'] = 'false';
+				$productOptions[$optionsId]['option_values'] = array();
 				foreach ( array_keys( $this->mOptions[$optionsId]['values'] ) as $valId ) {
 					$vals = &$this->mOptions[$optionsId]['values'][$valId];
 					if( empty( $vals['attributes_html_attrib'] ) ) {
