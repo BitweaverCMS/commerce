@@ -221,12 +221,12 @@
     function after_order_create($zf_order_id) {
 		global $gBitProduct, $order;
 		$ret = NULL;
+		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		if (is_array($this->modules)) {
 			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
-			return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
+				return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
 			}
 		}
-		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		return $ret;
     }
 
