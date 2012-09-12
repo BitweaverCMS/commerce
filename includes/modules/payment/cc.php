@@ -193,42 +193,20 @@
     function before_process() {
       global $_POST, $order;
 
-        if (MODULES_PAYMENT_CC_STORE_NUMBER == 'True') {
-           $order->info['cc_number'] = $_POST['cc_number'];
-        }
         $order->info['cc_expires'] = $_POST['cc_expires'];
         $order->info['cc_type'] = $_POST['cc_type'];
         $order->info['cc_owner'] = $_POST['cc_owner'];
         $order->info['cc_cvv'] = $_POST['cc_cvv'];
 
         if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
-           $order->info['cc_number'] = $_POST['cc_number'];
-        }
-        $order->info['cc_expires'] = $_POST['cc_expires'];
-        $order->info['cc_type'] = $_POST['cc_type'];
-        $order->info['cc_owner'] = $_POST['cc_owner'];
-        $order->info['cc_cvv'] = $_POST['cc_cvv'];
+        	$order->info['cc_number'] = $_POST['cc_number'];
+        } else {
+			$order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
+		}
 
-      if ( (defined('MODULE_PAYMENT_CC_EMAIL')) && (zen_validate_email(MODULE_PAYMENT_CC_EMAIL)) ) {
-        $len = strlen($_POST['cc_number']);
-
-        $this->cc_middle = substr($_POST['cc_number'], 4, ($len-8));
-        $order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
-        $order->info['cc_expires'] = $_POST['cc_expires'];
-        $order->info['cc_type'] = $_POST['cc_type'];
-        $order->info['cc_owner'] = $_POST['cc_owner'];
-        $order->info['cc_cvv'] = $_POST['cc_cvv'];
-      }
     }
 
     function after_process() {
-      global $insert_id;
-
-      if ( (defined('MODULE_PAYMENT_CC_EMAIL')) && (zen_validate_email(MODULE_PAYMENT_CC_EMAIL)) ) {
-        $message = 'Order #' . $insert_id . "\n\n" . 'Middle: ' . $this->cc_middle . "\n\n";
-		$html_msg['EMAIL_MESSAGE_HTML'] = str_replace("\n\n",'<br />',$message);
-        zen_mail(MODULE_PAYMENT_CC_EMAIL, MODULE_PAYMENT_CC_EMAIL, SEND_EXTRA_CC_EMAILS_TO_SUBJECT . $insert_id, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'cc_middle_digs');
-      }
     }
 
     function after_order_create($zf_order_id) {
@@ -275,7 +253,7 @@
     }
 
     function keys() {
-      return array('MODULE_PAYMENT_CC_STATUS', 'MODULE_PAYMENT_CC_COLLECT_CVV', 'MODULE_PAYMENT_CC_STORE_NUMBER', 'MODULE_PAYMENT_CC_EMAIL', 'MODULE_PAYMENT_CC_ZONE', 'MODULE_PAYMENT_CC_ORDER_STATUS_ID', 'MODULE_PAYMENT_CC_SORT_ORDER');
+      return array('MODULE_PAYMENT_CC_STATUS', 'MODULE_PAYMENT_CC_COLLECT_CVV', 'MODULE_PAYMENT_CC_STORE_NUMBER', 'MODULE_PAYMENT_CC_ZONE', 'MODULE_PAYMENT_CC_ORDER_STATUS_ID', 'MODULE_PAYMENT_CC_SORT_ORDER');
     }
   }
 ?>
