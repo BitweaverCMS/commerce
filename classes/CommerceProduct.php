@@ -1119,7 +1119,8 @@ If a special exist * 10+9
 			}
 		}
 	}
-	function prepGetList(&$pListHash){
+
+	public static function prepGetList(&$pListHash){
 		parent::prepGetList($pListHash);
 		if(empty($pListHash['query_string'])){
 			$pListHash['query_string'] = '';
