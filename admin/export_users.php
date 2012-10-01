@@ -9,10 +9,16 @@ if( !empty( $_REQUEST['export'] ) ) {
 	$selectSql = '';
 	$joinSql = '';
 	$groupSql = '';
+	if( $gBitSystem->isPackageActive( 'stats' ) ) {
+		$selectSql .= " , sru.referer_url ";
+		$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id` = uu.`user_id`) LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (srum.`referer_url_id`=sru.`referer_url_id`)";
+		$groupSql .= " , sru.referer_url ";
+	}
+
 	if( $gBitSystem->isPackageActive( 'newsletters' ) ) {
-		$selectSql = ", ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`";
-		$joinSql = " LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.`user_id` = uu.`user_id`) ";
-		$groupSql = " ,ms.unsubscribe_date ";
+		$selectSql .= ", ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`";
+		$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.`user_id` = uu.`user_id`) ";
+		$groupSql .= " ,ms.unsubscribe_date ";
 	}
 
 	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `total_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_date` $selectSql
@@ -25,7 +31,7 @@ if( !empty( $_REQUEST['export'] ) ) {
 				 $joinSql
 	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0
 			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ccou.countries_name $groupSql
-			ORDER BY uu.`user_id`";
+			ORDER BY uu.`user_id` DESC";
 
 	$max = (!empty( $_REQUEST['num_records'] ) ? $_REQUEST['num_records'] : NULL );
 
@@ -126,6 +132,13 @@ if( !empty( $_REQUEST['export'] ) ) {
 				} else {
 					$csvOutput[] = "";
 				}
+			}
+			if( !empty( $_REQUEST['referer_url'] ) ) {
+				if( !$headerSet ) { $header[] = 'referer_url'; }
+				$csvOutput[] = $row['referer_url'];
+				if( !$headerSet ) { $header[] = 'referer_domain'; }
+				$urlHash = parse_url( $row['referer_url'] );
+				$csvOutput[] = $urlHash['host'];
 			}
 			if( !$headerSet ) {
 				fputcsv( $tempFH, $header );
