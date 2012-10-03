@@ -173,6 +173,7 @@ if( !empty( $_REQUEST['export'] ) ) {
 		header("Content-type: text/csv");
 		header("Content-disposition: filename=users_export" . date("Y-m-d") . ".csv.gz");
 		readfile( $tempFile );
+		unlink( $tempFile );
 	}
 	exit;  
 }
