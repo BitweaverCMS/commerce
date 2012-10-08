@@ -28,7 +28,7 @@
       $banner = $gBitDb->Execute($banner_query);
 
       if ($banner->RecordCount() > 0) {
-
+		require_once( BITCOMMERCE_PKG_PATH.'includes/functions/banner.php' );
         zen_update_banner_click_count($_GET['goto']);
 
         zen_redirect($banner->fields['banners_url']);
