@@ -39,6 +39,10 @@ if( !empty( $_REQUEST['export'] ) ) {
 		$tempFile = tempnam( TEMP_PKG_PATH, BITCOMMERCE_PKG_NAME.'_export_' );
 
 		if( $tempFH = gzopen($tempFile, 'w') ) {
+
+			header("Content-type: application/x-gzip");
+			header("Content-disposition: filename=users_export" . date("Y-m-d") . ".csv.gz");
+
 			$headerSet = FALSE;
 			while( $row = $rs->fetchRow() ) {
 				$csvOutput = array();
@@ -154,6 +158,9 @@ if( !empty( $_REQUEST['export'] ) ) {
 				//fwrite( $tempFH, implode( "\t", $csvOutput )."\n" );
 				fputcsv( $tempFH, $csvOutput );
 			}
+
+			gzclose($tempFH);
+			readfile( $tempFile );
 		}
 
 		//Benchmark email format
@@ -168,11 +175,6 @@ if( !empty( $_REQUEST['export'] ) ) {
 	//		$csvOutput[] = "$user[email],$user[entry_firstname],$user[entry_lastname],$user[entry_street_address],$user[entry_city],$user[entry_state],$user[entry_postcode],$user[user_id],$user[last_purchase],".(!empty($user['unsubscribe_date'])?'1':'')."\n";
 	//	}
 
-		gzclose($tempFH);
-
-		header("Content-type: text/csv");
-		header("Content-disposition: filename=users_export" . date("Y-m-d") . ".csv.gz");
-		readfile( $tempFile );
 		unlink( $tempFile );
 	}
 	exit;  
