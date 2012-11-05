@@ -253,10 +253,10 @@ class usps extends BitBase {
 						$show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
 						break;
 						case (2):
-						$show_box_weight = number_format($usps_shipping_weight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
+						$show_box_weight = number_format($usps_shipping_weight * $shippingNumBoxes,2) . tra( 'lbs' );
 						break;
 						default:
-						$show_box_weight = $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . TEXT_SHIPPING_WEIGHT;
+						$show_box_weight = $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . tra( 'lbs' );
 						break;
 					}
 				}

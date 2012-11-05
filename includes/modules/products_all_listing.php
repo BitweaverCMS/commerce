@@ -50,7 +50,7 @@
       }
 
       if (PRODUCT_ALL_LIST_WEIGHT != '0' and zen_get_show_product_switch($products_all->fields['products_id'], 'weight')) {
-        $display_products_weight = TEXT_PRODUCTS_WEIGHT . $products_all->fields['products_weight'] . TEXT_SHIPPING_WEIGHT . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_WEIGHT, 3, 1));
+        $display_products_weight = TEXT_PRODUCTS_WEIGHT . $products_all->fields['products_weight'] . tra( 'lbs' ) . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_WEIGHT, 3, 1));
       } else {
         $display_products_weight = '';
       }
