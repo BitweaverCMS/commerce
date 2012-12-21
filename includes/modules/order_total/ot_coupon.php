@@ -196,12 +196,23 @@ class ot_coupon {
 							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
 						}
 						$runningDiscount = 0;
+						$runningDiscountQuantity = 0;
 						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
 							$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
-							if( $productHash && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
+							if( $coupon->getField( 'quantity_max' ) ) {
+								if( $discountQuantity = $coupon->getField( 'quantity_max' ) - $runningDiscountQuantity ) {
+									if( $discountQuantity > $productHash['products_quantity'] ) {
+										$discountQuantity = $productHash['products_quantity'];
+									}
+								}
+							} else {
+								$discountQuantity = $productHash['products_quantity'];
+							}
+
+							if( $productHash && $discountQuantity && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
 								// _P_ercentage discount
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
-									$discountQuantity = ($coupon->getField( 'quantity_max' ) < $productHash['products_quantity'] ? $coupon->getField( 'quantity_max' ) : $productHash['products_quantity']);
+									$runningDiscountQuantity += $discountQuantity;
 									$itemDiscount = round( ($productHash['final_price'] * $discountQuantity) * ($coupon->getField( 'coupon_amount' )/100), 2 );
 									$totalDiscount += $itemDiscount;
 									if( $runningDiscount < $totalDiscount ) {
