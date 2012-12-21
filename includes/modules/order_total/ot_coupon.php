@@ -201,7 +201,8 @@ class ot_coupon {
 							if( $productHash && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
 								// _P_ercentage discount
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
-									$itemDiscount = round( ($productHash['final_price'] * $productHash['products_quantity']) * ($coupon->getField( 'coupon_amount' )/100), 2 );
+									$discountQuantity = ($coupon->getField( 'quantity_max' ) < $productHash['products_quantity'] ? $coupon->getField( 'quantity_max' ) : $productHash['products_quantity']);
+									$itemDiscount = round( ($productHash['final_price'] * $discountQuantity) * ($coupon->getField( 'coupon_amount' )/100), 2 );
 									$totalDiscount += $itemDiscount;
 									if( $runningDiscount < $totalDiscount ) {
 										$runningDiscount += $itemDiscount;
@@ -223,7 +224,7 @@ class ot_coupon {
 											$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 											if ($tax_rate > 0) {
 												if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-												$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+												$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
 												$od_amount['tax'] += $od_amount[$tax_desc];
 											}
 											break;
@@ -244,7 +245,7 @@ class ot_coupon {
 
 											if ($this->is_product_valid( $productHash, $_SESSION['cc_id'])) {
 												if( $runningDiscount < $totalDiscount ) {
-													$runningDiscount += ($productHash['final_price'] * $productHash['products_quantity']);
+													$runningDiscount += ($productHash['final_price'] * $discountQuantity);
 												}
 												if( $runningDiscount > $totalDiscount ) {
 													$runningDiscount = $totalDiscount;
@@ -253,7 +254,7 @@ class ot_coupon {
 												$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 												if ($tax_rate > 0) {
 													if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-													$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+													$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
 													$od_amount['tax'] += $od_amount[$tax_desc];
 												}
 											}
