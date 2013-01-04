@@ -43,7 +43,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 
 // if no billing destination address was selected, use the customers own address as default
   if( empty( $_SESSION['billto'] ) ) {
-    $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
+    $_SESSION['billto'] = !empty( $_SESSION['customer_default_address_id'] ) ? $_SESSION['customer_default_address_id'] : $gBitCustomer->getDefaultAddress();;
   } else {
 // verify the selected billing address
     $check_address_query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . "
