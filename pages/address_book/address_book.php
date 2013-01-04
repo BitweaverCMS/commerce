@@ -40,13 +40,11 @@
     <td class="plainBox" colspan="2">
       <table  width="100%" border="0" cellspacing="5" cellpadding="5">
         <tr>
-          <td width="40%" valign="top"><?php echo PRIMARY_ADDRESS_DESCRIPTION; ?></td>
           <td class="main" align="center" valign="top">
-            <strong><?php echo PRIMARY_ADDRESS_TITLE; ?></strong><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?>
-          </td>
-          <td class="main">
+            <div class="floatleft"><strong><?php echo tra( 'Primary' ); ?></strong><br /><?php echo zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_ARROW_SOUTH_EAST); ?></div>
             <?php echo zen_address_label($_SESSION['customer_id'], $defaultAddressId, true, ' ', '<br />'); ?>
           </td>
+          <td width="40%" valign="top"><?php echo PRIMARY_ADDRESS_DESCRIPTION; ?></td>
         </tr>
       </table>
     </td>
@@ -59,7 +57,6 @@
   </tr>
     <?php require(DIR_FS_BLOCKS . 'blk_address_book.php'); ?>
   <tr>
-   <td class="smallText"><?php echo '<a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>
 <?php
   if (zen_count_customer_address_book_entries() < MAX_ADDRESS_BOOK_ENTRIES) {
 ?>
