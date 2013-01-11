@@ -18,7 +18,9 @@
 	</td>
 </tr>
 {/if}
+{assign var=orderTotalSum value=0}
 {foreach from=$listOrders key=orderId item=order}
+{assign var=orderTotalSum value=$orderTotalSum+$order.order_total}
 <tr>
 	<td style="width:10em;text-align:left">{$order.purchase_time}</td>
 	<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
@@ -31,17 +33,24 @@
 </tr>
 {/if}
 {if $order.products}
+{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
 <tr>
-	<td colspan="4">
-		<ol style="padding:0 0 15px 15px">
-		{foreach from=$order.products item=product key=ordersProductsId}
-			<li style="clear:both"><img src="{$gBitProduct->getImageUrl($product.products_id)}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a></li>
-		{/foreach}
-		</ol>
+	<td>{$smarty.foreach.orderproducts.iteration}</td>
+	<td colspan="2">
+		<img src="{$gBitProduct->getImageUrl($product.products_id)}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
+	</td>
+	<td class="alignright">
+		{$product.products_quantity} x ${$product.final_price}<br/>
+		[{$product.products_wholesale}]<br/>
+		({$product.products_cogs})
 	</td>
 </tr>
+		{/foreach}
 {/if}
 {/foreach}
+<tr>
+	<th class="item alignright" colspan="4">{tr}Total{/tr}: ${$orderTotalSum}</th>
+</tr>
 
 </table>
 
