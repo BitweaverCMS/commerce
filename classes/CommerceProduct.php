@@ -2513,6 +2513,10 @@ Skip deleting of images for now
 		return false;
 	}
 
+	static function getTypes() {
+		global $gBitDb;
+		return $gBitDb->getAssoc( "SELECT `type_id`, * FROM " . TABLE_PRODUCT_TYPES . " ORDER BY `type_name`" );
+	}
 }
 
 
