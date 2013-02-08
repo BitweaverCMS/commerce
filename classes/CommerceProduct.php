@@ -1223,7 +1223,7 @@ If a special exist * 10+9
 
 		if ( !empty( $pListHash['category_id'] ) ) {
 			if( !is_numeric( $pListHash['category_id'] ) && strpos( $pListHash['category_id'], '_' ) ) {
-				$path = split( '_', $pListHash['category_id'] );
+				$path = explode( '_', $pListHash['category_id'] );
 				end( $path );
 				$pListHash['category_id'] = current( $path );
 			}
