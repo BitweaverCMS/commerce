@@ -109,6 +109,15 @@
 		{formhelp note=""}
 	{/forminput}
 </div>
+{if $gBitSystem->isPackageActive('stats')}
+<div class="row">
+	{formlabel label="Referrer URL"}
+	{forminput}
+		<input type="checkbox" name="referer_url" value="y" checked="checked" />
+		{formhelp note=""}
+	{/forminput}
+</div>
+{/if}
 <div class="row">
 	{formlabel label="Registration Interests"}
 	{forminput}

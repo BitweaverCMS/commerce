@@ -66,11 +66,21 @@ $listHash['orders_products'] = TRUE;
 
 $orders = order::getList( $listHash );
 $gBitSmarty->assign_by_ref( 'listOrders', $orders );
-$statuses = commerce_get_statuses( TRUE );
 $statuses['all'] = 'All';
+
+foreach( commerce_get_statuses( TRUE ) as $statusId=>$statusName ) {
+	$statuses[$statusId] = $statusName;
+}
 $gBitSmarty->assign( 'commerceStatuses', $statuses );
 
-$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+$types[''] = 'All';
+$productTypes = CommerceProduct::getTypes();
+foreach( $productTypes as $typeId=>$typeHash ) {
+	$types[$typeId] = $typeHash['type_name'];
+}
+$gBitSmarty->assign_by_ref( 'commerceProductTypes', $types );
+
+$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders.tpl' );
 
 require('includes/application_bottom.php');
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 

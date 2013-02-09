@@ -1,6 +1,7 @@
 <div class="commercebar">
-
+	{if empty($moduleParams.module_params.breadcrumbs)}
 		{include file="bitpackage:bitcommerce/commerce_nav.tpl"}
+	{/if}
 
 	<span class="floaticon">
 	<strong>{tr}Your Cart{/tr}:</strong>

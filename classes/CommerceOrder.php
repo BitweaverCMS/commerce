@@ -48,8 +48,8 @@ class order extends CommerceOrderBase {
 		$this->delivery = array();
 	}
 
-	function getField( $pField ) {
-		$ret = (isset( $this->info[$pField] ) ? $this->info[$pField] : NULL );
+	function getField( $pFieldName, $pDefault = NULL ) {
+		$ret = (isset( $this->info[$pFieldName] ) ? $this->info[$pFieldName] : NULL );
 		return $ret;
 	}
 
@@ -63,7 +63,7 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
-	function getList( $pListHash ) {
+	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
 		$ret = array();
@@ -164,8 +164,8 @@ class order extends CommerceOrderBase {
 					$ret[$row['orders_id']]['comments'] = $gBitDb->getOne( "SELECT `comments` FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) );
 				}
 				if( !empty( $pListHash['orders_products'] ) ) {
-					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cop.*, cp.*
-							FROM " . TABLE_ORDERS_PRODUCTS . " cop 
+					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cp.*, cop.*
+							FROM " . TABLE_ORDERS_PRODUCTS . " cop
 								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 							WHERE cop.`orders_id`=?";
 					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
@@ -191,10 +191,10 @@ class order extends CommerceOrderBase {
 		}
 
 		$order_query = "SELECT co.*, uu.*, cpccl.* $selectSql
-						FROM " . TABLE_ORDERS . " co 
-							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`) 
+						FROM " . TABLE_ORDERS . " co
+							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 							$joinSql
-							LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`) 
+							LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`)
 						WHERE co.`orders_id` = ?";
 		$order = $gBitDb->query( $order_query, array( $order_id ) );
 
@@ -375,7 +375,7 @@ class order extends CommerceOrderBase {
 			foreach( array_keys( $this->contents ) as $productsKey ) {
 				$qty = $this->contents[$productsKey]['products_quantity'];
 				// $productsKey will be orders_products_id for an order
-				$prid = $this->contents[$productsKey]['products_id']; 
+				$prid = $this->contents[$productsKey]['products_id'];
 
 				// products price
 				$product = $this->getProductObject( $prid );
@@ -602,9 +602,9 @@ class order extends CommerceOrderBase {
 									'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
 									'zone_id' => $defaultAddress['entry_zone_id'],
 									'country' => array(
-										'countries_name' => $defaultAddress['countries_name'], 
-										'countries_id' => $defaultAddress['countries_id'], 
-										'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'], 
+										'countries_name' => $defaultAddress['countries_name'],
+										'countries_id' => $defaultAddress['countries_id'],
+										'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
 										'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
 									),
 									'format_id' => $defaultAddress['address_format_id'],
@@ -1275,11 +1275,11 @@ class order extends CommerceOrderBase {
 					$total = $sourceTotal['orders_value'] + $destTotal['orders_value'];
 					$text = $currencies->format( $total, true, $destHash['currency'], $destHash['currency_value'] );
 					$this->mDb->query( "UPDATE ". TABLE_ORDERS_TOTAL . " SET `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $total, $text, $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
-							
+
 				}
 			}
 
-			// Move statuses over to 
+			// Move statuses over to
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_STATUS_HISTORY . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->updateStatus( array( 'notify' => !empty( $pParamHash['combine_notify'] ) , "comments" => "Order $pParamHash[source_orders_id] was combined with this order" ) );
 			$delOrder	= new order( $pParamHash['source_orders_id'] );

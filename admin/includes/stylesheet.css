@@ -220,12 +220,18 @@ color:#616060;
 }
 .messageStackCaution{
 background-color:#ffff00;
+padding:5px;
+margin: 10px 0;
 }
 .messageStackError,.messageStackWarning{
 background-color:#ffb3b5;
+padding:5px;
+margin: 10px 0;
 }
 .messageStackSuccess{
 background-color:#d4ffbd;
+padding:5px;
+margin: 10px 0;
 }
 .oldPrice{
 text-decoration:line-through;
@@ -256,8 +262,8 @@ font-size:9px;
 color:#ff6600;
 }
 form.status textarea {width:100%;height:9em;}
-.orderhistory.data { padding:0;margin:0;}
-.orderhistory.data li.item { clear:both; margin-bottom:6px;}
-.orderhistory.data li.item.notified { background-color:#ffffee; }
+.orderhistory.data { padding:0;margin:20px 0 20px 0;}
+.orderhistory.data li.item { clear:both; margin-bottom:6px; padding:5px; }
+.orderhistory.data li.item.notified { background-color:#ffffee; color:black; }
 .orderhistory.data .item .date { float:right;}
 .orderhistory.data .item p { padding:6px ; color:#666; margin: 0 0 0 3px; clear:both; }

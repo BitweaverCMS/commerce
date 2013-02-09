@@ -155,6 +155,7 @@ TR.leftboxheading, TR.rightboxheading, TR.centerboxheading, TR.singleboxheading 
   font-family: Verdana, Arial, sans-serif;
   font-size: 11px;
   background: #ffffff;
+  color: #000000;
   padding: 5px;
 }
 .plainBoxHeading, TD.tableHeading {

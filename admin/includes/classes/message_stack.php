@@ -46,13 +46,13 @@
 
     function add($message, $type = 'error') {
       if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => zen_image(DIR_WS_ICONS . 'error.gif', ICON_ERROR) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => zen_image(DIR_WS_ICONS . 'error.gif', ICON_ERROR) . ' ' . $message);
       } elseif ($type == 'warning') {
-        $this->errors[] = array('params' => 'class="messageStackWarning"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="messageStackWarning"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . ' ' . $message);
       } elseif ($type == 'success') {
-        $this->errors[] = array('params' => 'class="messageStackSuccess"', 'text' => zen_image(DIR_WS_ICONS . 'success.gif', ICON_SUCCESS) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="messageStackSuccess"', 'text' => zen_image(DIR_WS_ICONS . 'success.gif', ICON_SUCCESS) . ' ' . $message);
       } elseif ($type == 'caution') {
-        $this->errors[] = array('params' => 'class="messageStackCaution"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="messageStackCaution"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . ' ' . $message);
       } else {
         $this->errors[] = array('params' => 'class="messageStackError"', 'text' => $message);
       }
@@ -76,8 +76,12 @@
     }
 
     function output() {
-      $this->table_data_parameters = 'class="messageBox"';
-      return $this->tableBlock($this->errors);
+		$ret = '<div>';
+		foreach( $this->errors as $error ) {
+			$ret .= '<div '.$error['params'].'>'.$error['text'].'</div>';
+		}
+		$ret .= '</div>';
+		return $ret;
     }
   }
 ?>

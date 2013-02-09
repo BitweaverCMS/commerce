@@ -52,7 +52,7 @@
 				{formhelp note=$smarty.const.COUPON_MIN_ORDER_HELP}
 			{/forminput}
 		</div>
-{*
+
 		<div class="row">
 			{formlabel label="Quantity Limit"}
 			{forminput}
@@ -60,7 +60,7 @@
 				{formhelp note="The maximum cart quantity that will be deducted. Additional quantity over the max will be priced at full price."}
 			{/forminput}
 		</div>
-*}
+
 		<div class="row">
 			{formlabel label=$smarty.const.COUPON_FREE_SHIP}
 			{forminput}

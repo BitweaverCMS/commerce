@@ -6,7 +6,7 @@
 		<div class="smallText">
 		{tr}Total Items:{/tr} {$gBitCustomer->mCart->count_contents()} 
 		{if $gBitCustomer->mCart->show_weight()}
-			{tr}Weight:{/tr} {$gBitCustomer->mCart->show_weight()|round:2}  {$smarty.const.TEXT_SHIPPING_WEIGHT} ( {$gBitCustomer->mCart->show_weight('kg')|round:2} {tr}Kg{/tr} ) {tr}Amount:{/tr} {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
+			{tr}Weight:{/tr} {$gBitCustomer->mCart->show_weight()|round:2}  {tr}lbs{/tr} ( {$gBitCustomer->mCart->show_weight('kg')|round:2} {tr}Kg{/tr} ) {tr}Amount:{/tr} {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
 		{/if}
 		</div>
 	{/if}
