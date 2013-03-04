@@ -1060,6 +1060,14 @@ If a special exist * 10+9
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
 			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+				if( $pParamHash['products_name'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_name'] );
+				}
+				if( $pParamHash['products_model'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_model'] );
+				}
+			}
 			if( !empty( $pParamHash['cat_path'] ) ) {
 				if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 					$ret .= '/' . $pParamHash['cat_path'];
@@ -1137,7 +1145,7 @@ If a special exist * 10+9
 		global $gBitSystem, $gBitUser;
 
 		if( empty( $pListHash['sort_mode'] ) ) {
-			$pListHash['sort_mode'] = 'products_date_added_desc';
+			$pListHash['sort_mode'] = 'created_desc';
 		}
 		$this->prepGetList( $pListHash );
 		$bindVars = array();
@@ -1165,7 +1173,7 @@ If a special exist * 10+9
 		}
 
 		if( empty( $pListHash['thumbnail_size'] ) ) {
-			$pListHash['thumbnail_size'] = 'icon';
+			$pListHash['thumbnail_size'] = 'small';
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
@@ -1246,6 +1254,7 @@ If a special exist * 10+9
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 		$pListHash['total_records'] = 0;
+
 		$query = "SELECT p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					FROM " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
