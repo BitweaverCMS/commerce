@@ -1309,7 +1309,7 @@ If a special exist * 10+9
 		$pListHash['current_page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_records'] / $pListHash['max_records'] );
 		$pListHash['page_records'] = count( $ret );
-		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
+//		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'];
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['offset'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
