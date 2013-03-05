@@ -315,7 +315,7 @@ class usps extends BitBase {
 														'error' => MODULE_SHIPPING_USPS_TEXT_SERVER_ERROR . (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
 		} else {
 			$this->quotes = array('module' => $this->title,
-														'error' => MODULE_SHIPPING_USPS_TEXT_ERROR . (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
+														'error' => (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_ERROR . MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
 		}
 
 		$this->quotes['icon'] = $this->icon;
