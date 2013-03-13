@@ -417,8 +417,12 @@ TABLE.products-attributes-images {
 .price {
     color: #000;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.4em;
+	text-decoration: none;
 }
+.price a { color: #000; }
+.model,
+.creator { padding: 0 0 5px 0; }
 .normalprice.discounted {
     color: #666;
     font-weight: normal;
@@ -434,3 +438,7 @@ TABLE.products-attributes-images {
 	padding: 5px;
 }
 
+ul.products { margin:0; }
+ul.data.products li.item { padding: 10px 0 10px 0; }
+ul.products li .image { width:180px; }
+ul.products li .thumb { padding-right:20px; }

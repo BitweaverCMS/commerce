@@ -156,7 +156,6 @@
   define('FILENAME_EMAIL_EXTRAS','email_extras.php');
   define('FILENAME_ALSO_PURCHASED_PRODUCTS', 'also_purchased_products.php');
   define('FILENAME_NEW_PRODUCTS', 'new_products.php');
-  define('FILENAME_PRODUCT_LISTING', 'product_listing.php');
   define('FILENAME_PRODUCTS_NEW_LISTING', 'products_new_listing.php');
   define('FILENAME_UPCOMING_PRODUCTS', 'upcoming_products.php');
   define('FILENAME_PREV_NEXT', 'products_previous_next.php');
