@@ -197,4 +197,3 @@ following copyright announcement. //-->
 <?php require('includes/application_bottom.php'); ?>
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
-<!-- footer_eof //-->
