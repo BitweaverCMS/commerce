@@ -1060,7 +1060,7 @@ If a special exist * 10+9
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
 			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
-			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) && empty( $pParamHash['short_form'] ) ) {
 				if( $pParamHash['products_name'] ) {
 					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_name'] );
 				}
