@@ -1,6 +1,8 @@
-<h1 class="header">
-	{tr}Export Customers{/tr}
-</h1>
+<div class="page-header">
+	<h1>
+		{tr}Export Customers{/tr}
+	</h1>
+</div>
 
 <div class="body customerexport">
 {literal}

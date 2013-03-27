@@ -1,6 +1,8 @@
-<h1 class="header">
-	{tr}Uninterested Customers{/tr}
-</h1>
+<div class="page-header">
+	<h1>
+		{tr}Uninterested Customers{/tr}
+	</h1>
+</div>
 
 <div class="body">
 
