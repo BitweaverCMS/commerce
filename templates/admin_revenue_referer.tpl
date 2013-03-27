@@ -3,7 +3,7 @@
 
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{tr}Referer Revenue{/tr} : {$smarty.request.timeframe|escape} :  {$referer|escape}</h1>
+		<h1>{tr}Referer Revenue{/tr} : {$smarty.request.timeframe|escape} :  {$referer|escape}</h1>
 	</div>
 
 	<div class="body">

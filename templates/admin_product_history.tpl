@@ -3,7 +3,7 @@
 
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{tr}Product History{/tr}</h1>
+		<h1>{tr}Product History{/tr}</h1>
 	</div>
 	<div class="body">
 

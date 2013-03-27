@@ -1,6 +1,6 @@
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{if $gCoupon->isValid()}{tr}Edit Coupon:{/tr} {$gCoupon->getField('coupon_code')|escape}{else}{tr}Create New Coupon{/tr}{/if}</h1>
+		<h1>{if $gCoupon->isValid()}{tr}Edit Coupon:{/tr} {$gCoupon->getField('coupon_code')|escape}{else}{tr}Create New Coupon{/tr}{/if}</h1>
 	</div>
 	<div class="body">
 

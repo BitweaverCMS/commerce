@@ -9,7 +9,7 @@
 
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{tr}Customer Statistics{/tr}</h1>
+		<h1>{tr}Customer Statistics{/tr}</h1>
 
 		<table class="width20p">
 		<tr>

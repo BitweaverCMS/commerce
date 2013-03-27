@@ -3,7 +3,7 @@
 
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{tr}Send Gift Certificate To Customers{/tr}</h1>
+		<h1>{tr}Send Gift Certificate To Customers{/tr}</h1>
 	</div>
 	<div class="body">
 

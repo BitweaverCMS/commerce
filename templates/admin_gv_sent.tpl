@@ -5,7 +5,7 @@
 
 <div class="admin bitcommerce">
 	<div class="page-header">
-		<h1 class="header">{tr}Gift Vouchers Sent{/tr}</h1>
+		<h1>{tr}Gift Vouchers Sent{/tr}</h1>
 	</div>
 	<div class="body">
 		<table class="table data">
