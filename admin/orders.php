@@ -46,9 +46,9 @@ if( $gBitThemes->isAjaxRequest() ) {
 			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 														'name'			=> 'newOrderOptionValue',
 														'print_result'	=> FALSE ), $gBitSmarty );
-			print '<input type="submit" value="save" name="save_new_option">';
+			print '<input class="btn btn-small btn-primary" type="submit" value="save" name="save_new_option">';
 		} else {
-			print "<span class='error'>Unkown Option</span>";
+			print "<span class='alert alert-error'>Unkown Option</span>";
 		}
 	} elseif( !empty( $_REQUEST['address_type'] ) ) {
 		$addressType = $_REQUEST['address_type'];
@@ -69,7 +69,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 		$gBitSmarty->assign_by_ref( 'address', $entry );
 		$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 	} else {
-			print "<span class='error'>Empty Option</span>";
+			print "<span class='alert alert-error'>Empty Option</span>";
 	}
 
 	exit;
@@ -230,6 +230,19 @@ if( !empty( $order ) ) {
 			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 		}
 	}
+
+	// scan fulfillment modules
+	$fulfillmentFiles = array();
+	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
+	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+		while( $ffFile = readdir( $fulfillHandle ) ) {
+			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
+				$fulfillmentFiles[] = $fulfillDir.$ffFile.'/admin_order_inc.php';
+			}
+		}
+	}
+	$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
+
 }
 
 $gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
@@ -254,8 +267,10 @@ if( $order_exists ) {
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['id'] ) );
 
-	print '<div class="span-16">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
-	print '<div class="span-8 last">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '<div class="row">';
+	print '<div class="span8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
+	print '<div class="span4">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '</div>';
 
 	// check if order has open gv
 	$gv_check = $gBitDb->query("select `order_id`, `unique_id`

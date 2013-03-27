@@ -79,14 +79,14 @@
 	</td>
 	<td colspan="2" style="text-align:right">
 	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}
-			<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="button">{tr}Shipping Estimator{/tr}</a>
+			<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn">{tr}Shipping Estimator{/tr}</a>
 	{/if}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}" class="button">{tr}Continue Shopping{/tr}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}" class="btn">{tr}Continue Shopping{/tr}</a>
 		<input type="submit" name="update_cart" value="{tr}Update Cart{/tr}" />
 	</td>
 	<td>
-		{*<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_shipping" class="button">{tr}Checkout{/tr}</a>*}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="button">{tr}Checkout{/tr}</a>
+		{*<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_shipping" class="btn">{tr}Checkout{/tr}</a>*}
+		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn">{tr}Checkout{/tr}</a>
 	</td>
 <tr>
 </table>

@@ -18,7 +18,7 @@
 				<option value="" {if empty($smarty.request.uses)}selected="selected"{/if}>All Coupons</option>
 			</select>							
 		</form>
-		<div class="floaticon"><a href="{$smarty.server.SCRIPT_NAME}?action=new" class="button">{tr}Create Coupon{/tr}</a></div>
+		<div class="floaticon"><a href="{$smarty.server.SCRIPT_NAME}?action=new" class="btn">{tr}Create Coupon{/tr}</a></div>
 	</div>
 	<div class="body">
 
@@ -36,7 +36,7 @@
 		</tr>
 
 		{foreach from=$couponList item=coupon key=couponId name=couponList}
-		<tr class="{if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
+		<tr class="coupon {if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
 			<td class="item">{$smarty.foreach.couponList.iteration+$listInfo.offset}</td>
 			<td class="item">
 				<div class="floaticon">

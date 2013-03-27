@@ -14,7 +14,7 @@ function editAddress( pAddress ) {
 {/literal}
 
 
-<table>
+<table class="width100p">
 <tr>
 	<td valign="top">
 		{$order->info.date_purchased|bit_long_datetime}<br/>

@@ -13,11 +13,11 @@ body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
 
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
 
-.active{}
-.inactive	{ background-color:#ddd; }
-.pending	{ background-color:#ffe; }
-.active		{ background-color:#efe; }
-.expired	{ background-color:#fee; }
+coupon.active{}
+coupon.inactive	{ background-color:#ddd; }
+coupon.pending	{ background-color:#ffe; }
+coupon.active		{ background-color:#efe; }
+coupon.expired	{ background-color:#fee; }
 
 a:hover{ text-decoration:underline; }
 a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }

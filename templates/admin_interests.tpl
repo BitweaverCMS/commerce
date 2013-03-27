@@ -48,5 +48,5 @@
 	<a href="{$smarty.server.php_self}?new=1">New Interest</a>
 {/if}
 
-<a href="{$smarty.server.SCRIPT_NAME}?uninterested=1" class="button">{tr}Uninterested Customers{/tr}</a>
+<a href="{$smarty.server.SCRIPT_NAME}?uninterested=1" class="btn">{tr}Uninterested Customers{/tr}</a>
 </div>

@@ -52,12 +52,11 @@ if ($za_dir = @dir(DIR_WS_BOXES . 'extra_boxes')) {
 echo zen_draw_admin_box($za_heading, $za_contents);
 ?>
 
-<li><form method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php"><div style="display:inline">
-	<select name="top_search_scope">
-		<option value="order_num">Lookup Order #</option>
-	</select>
-	<input name="orders_search" value="" size="6"/>
-	<input type="submit" name="top_search" class="minibutton" value="Go"/>
-</div></form></li>
+<li>
+	<form class="form-inline" method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php">
+	<input name="orders_search" class="input-small" placeholder="Enter Order #"/>
+	<input type="submit" name="top_search" class="btn btn-mini" value="Go"/>
+	</form>
+</li>
 <!-- tools_eof //-->
 

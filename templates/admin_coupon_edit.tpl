@@ -134,8 +134,8 @@
 		</div>
 
 		<div class="row submit">
-			<input type="submit" class="button" name="Save" value="Save"/>
-			<a href="{$smarty.server.SCRIPT_NAME}?cid={$smarty.request.cid}" class="button">{tr}Cancel{/tr}</a>
+			<input type="submit" class="btn" name="Save" value="Save"/>
+			<a href="{$smarty.server.SCRIPT_NAME}?cid={$smarty.request.cid}" class="btn">{tr}Cancel{/tr}</a>
 		</div>
 	{/form}
 		
