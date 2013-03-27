@@ -48,26 +48,26 @@ function getShippingQuotes( pOrderId ) {
 
 
 <div class="page-header">
-<div class="floaticon">
-	<div class="btn-group floatright">
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+	<div class="floaticon">
+		<div class="btn-group floatright">
+			<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
+			<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+		</div>
 	</div>
-</div>
-<h1>
-	{$smarty.const.HEADING_TITLE} 
-</h1>
+	<h1>
+		{$smarty.const.HEADING_TITLE} 
+	</h1>
 </div>
 
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
 
-	<table class="table data">
-	  <tr class="dataTableHeadingRow">
+<table class="table data">
+	<tr class="dataTableHeadingRow">
 		<th class="alignleft" colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
 		<th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}</th>
 		<th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
 		<th class="aligncenter">{tr}Income{/tr}</th>
-	  </tr>
+	</tr>
 {assign var=wholesaleIncome value=0}
 {assign var=wholesaleCost value=0}
 {assign var=couponAmount value=0}
@@ -202,10 +202,10 @@ function getShippingQuotes( pOrderId ) {
 {/section}
 
 {php}
-  // show downloads
-  require(DIR_WS_MODULES . 'orders_download.php');
+	// show downloads
+	require(DIR_WS_MODULES . 'orders_download.php');
 {/php}
-        </table>
+</table>
 
 {jstabs}
 {foreach from=$fulfillmentFiles item=fulfillmentFile}
@@ -229,7 +229,7 @@ function getShippingQuotes( pOrderId ) {
 			<input type="checkbox" name="combine_notify" value="on" checked="checked"/>{tr}Notify Customer{/tr}
 		</label>
 		<input class="btn btn-small" type="submit" name="combine" value="{tr}Combine{/tr}"/>
-		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small><div>
+		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
 	{/form}
 </div>
 
