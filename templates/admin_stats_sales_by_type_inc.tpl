@@ -1,5 +1,5 @@
 
-<table class="data stats span-12">
+<table class="table data stats">
 	<caption>{tr}Product Sales By Type{/tr}</caption>
 	<thead>
 	<tr>

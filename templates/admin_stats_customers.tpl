@@ -8,7 +8,7 @@
 <div id="caldiv" style="width:200px;position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Customer Statistics{/tr}</h1>
 
 		<table class="width20p">

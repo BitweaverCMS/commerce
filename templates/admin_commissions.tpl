@@ -7,7 +7,7 @@
 <script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/dynarch/jscalendar/calendar-setup.js"></script>
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Commissions{/tr}</h1>
 	</div>
 	<div class="body">

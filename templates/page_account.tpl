@@ -1,4 +1,4 @@
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}My Shopping Information{/tr}</h1>
 	</div>
 	{formfeedback warning=$accountMessage}

@@ -6,7 +6,7 @@
 
 	<p>{tr}The following customers have placed orders but have not indicated an interest.{/tr}</p>
 
-	<table class="data">
+	<table class="table data">
 	<tr>
 		<th></th>
 		<th>{tr}Customer{/tr}</th>

@@ -1,4 +1,4 @@
-<div class="header">
+<div class="page-header">
 	<div class="floaticon">
 		<a href="{$smarty.server.REQUEST_URI}">{biticon iname='view-refresh'}</a>
 	</div>
@@ -7,7 +7,7 @@
 
 <div class="body">
 
-	<table class="data">
+	<table class="table data">
 	<tr>
 		<th colspan="2">{tr}Order{/tr}</th>
 		<th class="alignright">{tr}Wholesale Income{/tr}</th>

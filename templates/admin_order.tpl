@@ -59,23 +59,15 @@ function getShippingQuotes( pOrderId ) {
 </h1>
 </div>
 
-
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
 
-<table>
-<tr>
-<td style="width:65%;" valign="top">
-
-	<table>
-      <tr>
-		<td>
-		<table class="data" border="0" width="100%" cellspacing="0" cellpadding="2">
-          <tr class="dataTableHeadingRow">
-            <th colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
-            <th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}</th>
-            <th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
-            <th class="aligncenter">{tr}Income{/tr}</th>
-          </tr>
+	<table class="table data">
+	  <tr class="dataTableHeadingRow">
+		<th class="alignleft" colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
+		<th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}</th>
+		<th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
+		<th class="aligncenter">{tr}Income{/tr}</th>
+	  </tr>
 {assign var=wholesaleIncome value=0}
 {assign var=wholesaleCost value=0}
 {assign var=couponAmount value=0}
@@ -208,15 +200,12 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 {/if}
 {/section}
-        </table></td>
-      </tr>
 
 {php}
   // show downloads
   require(DIR_WS_MODULES . 'orders_download.php');
 {/php}
-
-	</table>
+        </table>
 
 {jstabs}
 {foreach from=$fulfillmentFiles item=fulfillmentFile}
@@ -225,22 +214,22 @@ function getShippingQuotes( pOrderId ) {
 {/jstabs}
 
 
-<div style="margin-top:15px;">
-	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}" class="btn">{tr}Invoice{/tr}</a>
-	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}" class="btn">{tr}Packing Slip{/tr}</a>
-	<form method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php"><div style="display:inline">
+<div style="margin:15px 0;">
+	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a>
+	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a>
+	<form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
 		<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
-		<input type="submit" name="Send" class="btn" value="Send Gift Certificate" />
-	</div></form>
-	<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete" class="btn">{tr}Delete{/tr}</a>
+		<input class="btn" type="submit" name="Send" value="Send Gift Certificate" />
+	</form>
+	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
 	{form class="form-inline" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
-		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="input-small" />
+		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="input-small"/>
 		<label class="checkbox">
 			<input type="checkbox" name="combine_notify" value="on" checked="checked"/>{tr}Notify Customer{/tr}
 		</label>
-		<input type="submit" name="combine" value="{tr}Combine{/tr}" class="btn btn-small" />
-		<br/><em class="small">Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</em>
+		<input class="btn btn-small" type="submit" name="combine" value="{tr}Combine{/tr}"/>
+		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small><div>
 	{/form}
 </div>
 

@@ -878,7 +878,7 @@ if ($processed == true) {
 							$disp_order = "c.`customers_id` DESC";
 					}
 ?>
-<a class="button" href="export_users.php">Export as CSV</a>
+<a class="btn btn-small" href="export_users.php">Export as CSV</a>
 						 <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
 							<tr class="dataTableHeadingRow">
 								<td class="dataTableHeadingContent" align="center" valign="top">

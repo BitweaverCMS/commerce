@@ -23,6 +23,6 @@
 <tr class="plainBox">
 	<td>
           <?php echo zen_address_format($format_id, $addresses->fields, true, ' ', '<br />'); ?>
-          <div><?php echo '<a href="' . zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'edit=' . $addresses->fields['address_book_id'], 'SSL') . '" class="minibutton">'.tra('Edit').'</a> <a href="' . zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'delete=' . $addresses->fields['address_book_id'], 'SSL') . '" class="minibutton">' . tra( 'Delete' ) . '</a>'; ?></div>
+          <div><?php echo '<a href="' . zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'edit=' . $addresses->fields['address_book_id'], 'SSL') . '" class="btn btn-mini">'.tra('Edit').'</a> <a href="' . zen_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'delete=' . $addresses->fields['address_book_id'], 'SSL') . '" class="btn btn-mini">' . tra( 'Delete' ) . '</a>'; ?></div>
 	</td>
 </tr>

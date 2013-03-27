@@ -53,7 +53,7 @@ echo zen_draw_admin_box($za_heading, $za_contents);
 ?>
 
 <li>
-	<form class="form-inline" method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php">
+	<form class="form-inline inline" method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php">
 	<input name="orders_search" class="input-small" placeholder="Enter Order #"/>
 	<input type="submit" name="top_search" class="btn btn-mini" value="Go"/>
 	</form>

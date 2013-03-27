@@ -1,6 +1,6 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Your Shopping Cart Contains:{/tr}</h1>
 	{if $smarty.const.SHOW_TOTALS_IN_CART}
 		<div class="smallText">

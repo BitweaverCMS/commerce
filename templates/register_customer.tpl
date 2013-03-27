@@ -1,6 +1,6 @@
 {strip}
 
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Enter your user information{/tr}</h1>
 		{if $showmsg eq 'y'}<h2>{$msg}</h2>{/if}
 	</div>

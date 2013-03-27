@@ -1,13 +1,8 @@
-<table class="data">
-<tr>
-	<th colspan="8">{tr}Order List{/tr}</th>
-</tr>
 {if $searchScopes}
-<tr><td colspan="8">
-{form}
+{form class="form-inline" }
 {html_options name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
-: <input type="text" style="width:auto" size="15" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
-<select name="orders_status_comparison">
+: <input type="text" class="input-small" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
+<select name="orders_status_comparison" class="input-small" >
 	<option value="">{tr}Exactly{/tr}</option>
 	<option value=">=" {if $smarty.session.orders_status_comparison == '>='}selected="selected"{/if}>{tr}At Least{/tr}</option>
 	<option value="<=" {if $smarty.session.orders_status_comparison == '<='}selected="selected"{/if}>{tr}At Most{/tr}</option>
@@ -15,11 +10,11 @@
 
 {html_options name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
 
-<input type="submit" value="Go" name="list_filter"/>
+<input class="btn btn-small" type="submit" value="Go" name="list_filter"/>
 {/form}
-	</td>
-</tr>
 {/if}
+
+<table class="table data">
 {assign var=grossTotal value=0}
 {assign var=wholesaleProfitTotal value=0}
 {assign var=distributorIncomeTotal value=0}

@@ -2,7 +2,7 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Send Gift Certificate To Customers{/tr}</h1>
 	</div>
 	<div class="body">
@@ -74,8 +74,8 @@
 
 <div class="row submit">
 	{forminput}
-		<input class="button" name="Back" value="Back" type="submit" />
-		<input class="button" name="send_gv" value="Send Email" type="submit" />
+		<input class="btn btn-small" name="Back" value="Back" type="submit" />
+		<input class="btn btn-small" name="send_gv" value="Send Email" type="submit" />
 	{/forminput}
 </div>
 
@@ -260,7 +260,7 @@ function check_form(form_name) {
 
 <div class="row submit">
 	{forminput}
-		<input class="button" name="Send Email" value="Send Email" type="submit">
+		<input class="btn btn-small" name="Send Email" value="Send Email" type="submit">
 	{/forminput}
 </div>
 

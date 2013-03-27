@@ -1,7 +1,7 @@
 {strip}
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
-		<div class="header">
+		<div class="page-header">
 			<h1>{tr}Send Gift Certificate{/tr}</h1>
 		</div>
 		<div class="body">

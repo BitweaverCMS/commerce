@@ -8,12 +8,12 @@
 <div id="caldiv" style="width:200px;position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Revenue{/tr}</h1>
 	</div>
 	<div class="body">
 
-	<table class="data span-24 last">
+	<table class="table data span-24 last">
 	<tr>
 		<th colspan="5" style="border:none"></th>
 		<th colspan="2" style="border:none">New Customer Products</th>

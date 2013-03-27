@@ -40,34 +40,6 @@
 			$languages_selected = $languages[$i]['code'];
 		}
 	}
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-<script language="JavaScript" src="includes/menu.js" type="text/JavaScript"></script>
-<link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS" />
-<script type="text/javascript">
-	<!--
-	function init()
-	{
-		cssjsmenu('navbar');
-		if (document.getElementById)
-		{
-			var kill = document.getElementById('hoverJS');
-			kill.disabled = true;
-		}
-	}
-	// -->
-</script>
-</head>
-<body onload="init()">
-<!-- header //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
- <?php
 
 	$customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
 
@@ -95,7 +67,11 @@
 
 
 ?>
-<div id="colone">
+<div class="page-header">
+	<h1>Order List</h1>
+</div>
+<div class="row">
+	<div class="span8" id="colone">
 <?php
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
@@ -135,10 +111,10 @@
 	$gBitSmarty->assign( 'commerceStatuses', $statuses );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 ?>
-</div>
+	</div>
 
-<div id="coltwo">
-<table class="data">
+	<div class="span4" id="coltwo">
+<table class="table data">
 	 <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
@@ -156,7 +132,7 @@
 <?php
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
-<table class="data">
+<table class="table data">
 <tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
 <?php
 	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
@@ -179,6 +155,7 @@
 
 ?>
 </table>
+	</div>
 </div>
 
 <!-- The following copyright announcement is in compliance

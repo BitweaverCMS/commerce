@@ -1,6 +1,6 @@
 
 {if $commissionList}
-	<table class="data commissions">
+	<table class="table data commissions">
 	<tr>
 		<th style="text-align:left">{tr}Date Purchased{/tr}</th>
 		<th style="text-align:left">{tr}Product Sold{/tr}</th>

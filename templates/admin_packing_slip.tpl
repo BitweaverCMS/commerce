@@ -55,7 +55,7 @@
 <div class="row">
 	{formlabel label="Products"}
 	{forminput}
-<table class="data" style="border:0">
+<table class="table data" style="border:0">
 {foreach from=$gBitOrder->contents key=opid item=ordersProduct}
 {assign var=product value=$gBitOrder->getProductObject($ordersProduct.products_id)}
 <tr>

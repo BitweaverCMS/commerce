@@ -4,11 +4,11 @@
 {formfeedback hash=$feedback}
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Gift Vouchers Sent{/tr}</h1>
 	</div>
 	<div class="body">
-		<table class="data">
+		<table class="table data">
 			<tr class="dataTableHeadingRow">
 				<th>{tr}Code{/tr}</th>
 				<th>{tr}Emailed To{/tr}</th>

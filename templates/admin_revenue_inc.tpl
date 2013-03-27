@@ -1,4 +1,4 @@
-<table class="data">
+<table class="table data">
 <tr>
 	<th colspan="2">{tr}Revenue{/tr}: {$revenueTitle}</th>
 	<th>{tr}Orders{/tr}</th>

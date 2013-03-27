@@ -1,5 +1,5 @@
 {if $listProducts}
-	<div class="header">
+	<div class="page-header">
 	{form action=$smarty.server.REQUEST_URI}
 		<div class="floaticon">
 		{tr}Sort by:{/tr}

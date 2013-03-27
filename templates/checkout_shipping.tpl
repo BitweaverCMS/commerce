@@ -3,7 +3,7 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
-		<div class="header">
+		<div class="page-header">
 		</div>
 
 		<div class="body">
@@ -36,7 +36,7 @@
 			{/form}
 		</div><!-- end .body -->
 	{else}
-		<div class="header">
+		<div class="page-header">
 			<h1>{tr}Step 1 of 3 - Delivery Information{/tr}</h1>
 		</div>
 

@@ -5,7 +5,7 @@
 {formfeedback hash=$feedback}
 {strip}
 <div class="admin bitcommerce coupons">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Discount Coupons{/tr}: {tr}Restrictions for {/tr} {$gCoupon->getField('coupon_name')} ({$gCoupon->getField('coupon_code')})</h1>
 	</div>
 	<div class="body">

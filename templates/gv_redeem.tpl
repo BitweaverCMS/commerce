@@ -1,7 +1,7 @@
 {strip}
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
-		<div class="header">
+		<div class="page-header">
 			<h1>{tr}Redeem {$smarty.const.TEXT_GV_NAME}{/tr}</h1>
 		</div>
 

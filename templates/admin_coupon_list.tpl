@@ -4,7 +4,7 @@
 {formfeedback hash=$feedback}
 {strip}
 <div class="admin bitcommerce coupons">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Discount Coupons{/tr}</h1>
 		<form name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php" method="get">
 			<select name="status" onchange="this.form.submit();">
@@ -22,7 +22,7 @@
 	</div>
 	<div class="body">
 
-		<table class="data">
+		<table class="table data">
 		<tr >
 			<th>&nbsp;</th>
 			<th>{smartlink ititle="Coupon Code" isort="coupon_code" icontrol=$listInfo }</th>

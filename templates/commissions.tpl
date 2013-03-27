@@ -1,6 +1,6 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce {$smarty.request.main_page}">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Sales and Commissions{/tr}</h1>
 	</div>
 

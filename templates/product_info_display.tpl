@@ -44,7 +44,7 @@ function popupWindowPrice(url) {
 
 {form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype="multipart/form-data"'}
 
-<div class="header">
+<div class="page-header">
 		<h1>{$gBitProduct->getTitle()}</h1>
 		{if $gBitProduct->getField('user_id')!=$smarty.const.ROOT_USER_ID}{tr}By{/tr} {displayname hash=$gBitProduct->mInfo}{/if}
 </div>
@@ -107,7 +107,7 @@ function popupWindowPrice(url) {
             {/if}
 	</div>
 	<div class="row">
-			<input type="submit" class="button" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
+			<input type="submit" class="btn btn-small" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
 	</div>
 {/if}
 

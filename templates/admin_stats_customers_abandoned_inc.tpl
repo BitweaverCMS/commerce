@@ -1,4 +1,4 @@
-<table class="data stats">
+<table class="table data stats">
 	<caption>{tr}{$title}{/tr}</caption>
 	<thead>
 	<tr>

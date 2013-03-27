@@ -3,7 +3,7 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Product Options{/tr}</h1>
 	</div>
 	<div class="body">
@@ -19,7 +19,7 @@
 {else}
 <div id="attrlist" {$listStyle} >
 
-<a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="minibutton">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="minibutton">{tr}New Option Value{/tr}</a>
+<a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="btn btn-mini">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="btn btn-mini">{tr}New Option Value{/tr}</a>
 
 
 	<ul class="data">

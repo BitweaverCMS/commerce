@@ -2,7 +2,7 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Referer Revenue{/tr} : {$smarty.request.timeframe|escape} :  {$referer|escape}</h1>
 	</div>
 
@@ -41,7 +41,7 @@
 		{/legend}
 		{/form}
 
-		<table class="data stats">
+		<table class="table data stats">
 			<caption>{tr}Revenue By Referer{/tr}</caption>
 			<thead>
 			<tr>

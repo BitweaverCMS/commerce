@@ -15,7 +15,7 @@
 			{if $listBoxContents[ix][jx].products_model}<span class="model">{$listBoxContents[ix][jx].products_model}</span><br/>{/if}
 			{tr}Starting at:{/tr}<span class="price">{$listBoxContents[ix][jx].lowest_purchase_price|default:$gBitProduct->getDisplayPrice($listBoxContents[ix][jx].products_id)}</span>
 		</div>
-		<div class="buynow"><a class="button" href="{$gBitProduct->getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
+		<div class="buynow"><a class="btn btn-small" href="{$gBitProduct->getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
 		</div>
     </td>
 	{/section}

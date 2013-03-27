@@ -2,12 +2,12 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1 class="header">{tr}Product History{/tr}</h1>
 	</div>
 	<div class="body">
 
-<table class="data">
+<table class="table data">
 	{foreach from=$productHistory item=hist}	
 	<tr valign="top">
 		<td class="item" style="text-align:right">
