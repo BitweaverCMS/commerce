@@ -27,7 +27,7 @@
 					{/legend}
 				</div>
 
-				<div class="row clear">
+				<div class="control-group clear">
 					{forminput}
 						<input type="submit" name="" value="Cancel" />
 						<input type="submit" name="submit_address" value="Continue" />
@@ -44,7 +44,7 @@
 			{form name='checkout_address' }
 				<input type="hidden" name="action" value="process" />
 				<input type="hidden" name="main_page" value="checkout_shipping" />
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Shipping Address"}
 					{forminput}
 						{assign var=address value=$order->delivery}
@@ -55,7 +55,7 @@
 					{/forminput}
 				</div>
 
-				<div class="row submit">
+				<div class="control-group submit">
 					<input type="submit" name="change_address" value="{tr}Change address{/tr}" />
 				</div>
 
@@ -92,7 +92,7 @@
 </fieldset>
 
 <fieldset>
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Special Instructions or Comments About Your Order" for=""}
 					{forminput}
 						<textarea name="comments" wrap="soft" cols="60" rows="5">{$smarty.session.comments}</textarea>
@@ -104,7 +104,7 @@
 
 				<h3>{tr}Continue to Step 2{/tr}</h3>
 				<p>{tr}- choose your payment method.{/tr} </p>
-				<div class="row submit">
+				<div class="control-group submit">
 					<input type="submit" value="Continue" />
 				</div>
 			{/form}

@@ -63,7 +63,8 @@ function getShippingQuotes( pOrderId ) {
 
 <table class="table data">
 	<tr class="dataTableHeadingRow">
-		<th class="alignleft" colspan="2">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
+		<th></th>
+		<th class="alignleft">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
 		<th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}</th>
 		<th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
 		<th class="aligncenter">{tr}Income{/tr}</th>
@@ -75,7 +76,9 @@ function getShippingQuotes( pOrderId ) {
 
 {foreach from=$order->contents item=ordersProduct}
 <tr class="dataTableRow">
-<td class="dataTableContent alignright" valign="top">{$ordersProduct.products_quantity}&nbsp;x</td>
+<td class="dataTableContent alignright" valign="top">{$ordersProduct.products_quantity}&nbsp;x
+	<div>{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="icon-time" iexplain="Products History"}</div>
+</td>
 <td class="dataTableContent" valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
 	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}{if $ordersProduct.products_commission}, {$currencies->format($ordersProduct.products_commission)} {tr}Commission{/tr}{/if}</td>
 <td class="dataTableContent alignright" valign="top">
@@ -140,22 +143,22 @@ function getShippingQuotes( pOrderId ) {
 </td>
 </tr>
 <tr class="dataTableRow">
-	<td><a href="product_history.php?products_id={$ordersProduct.products_id}">{biticon iname="appointment-new" iexplain="Products History"}</a></td>
+	<td></td>
 	<td class="dataTableContent" colspan="3">
 {if !empty( $ordersProduct.attributes )}
-<ul>
+<ul class="unstyled">
 {section loop=$ordersProduct.attributes name=a}
 		<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
-			<em>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
+			<small>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
 				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
-			</em> <a class="small" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');">{tr}Delete{/tr}</a>
+			</small> <a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>
 		</li>
 {/section}
 </ul>
 {/if}
-		<form class="form-inline" method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
+		<form class="form-inline condensed" method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
 			<input type="hidden" name="orders_products_id" value="{$ordersProduct.orders_products_id}"/>
@@ -169,10 +172,11 @@ function getShippingQuotes( pOrderId ) {
 {section loop=$order->totals name=t}
 <tr>
 	<td colspan="3" class="alignright {'ot_'|str_replace:'':$order->totals[t].class} text">
-		{if $order->totals[t].class=='ot_shipping'}
-			<a onclick="getShippingQuotes({$smarty.request.oID});return false;">Change</a>
-		{/if}
 		{$order->totals[t].title}
+		{if $order->totals[t].class=='ot_shipping'}
+			<a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="icon-edit"></i></a>
+				<span id="shippingquote"></span>
+		{/if}
 	</td>
 	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
 		{$currencies->format($order->totals[t].orders_value)} {if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
@@ -191,14 +195,6 @@ function getShippingQuotes( pOrderId ) {
 			{assign var=couponAmount value=$couponAmount+$order->totals[t].orders_value}
 		{/if}
 	</td>
-</tr>
-{if $order->totals[t].class=='ot_shipping'}
-<tr>
-	<td colspan="2">
-		<span id="shippingquote"></span>
-	</td>
-</tr>
-{/if}
 {/section}
 
 {php}

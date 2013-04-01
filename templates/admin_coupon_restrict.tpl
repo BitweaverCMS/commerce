@@ -28,13 +28,13 @@
 
 {form name="restrict_category" method="post" action="`$smarty.server.SCRIPT_NAME`?cid=`$gCoupon->mCouponId`"}
 {legend legend="Add Restriction"}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Category"}
 	{forminput}
 		{$categorySelect}
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Options"}
 	{forminput}
 		<select name="products_options_values_id">
@@ -49,7 +49,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Product Type"}
 	{forminput}
 		<select name="product_type_id">
@@ -60,7 +60,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Specific Product"}
 	{forminput}
 		{$productCategorySelect}
@@ -72,7 +72,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Restriction"}
 	{forminput}
 		<select name="restrict_status">
@@ -82,7 +82,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row submit">
+<div class="control-group submit">
 	{forminput}
 		<input type="submit" name="action" value="Add">
 	{/forminput}

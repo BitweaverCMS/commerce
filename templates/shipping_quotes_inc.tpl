@@ -1,10 +1,14 @@
 <div id="shippingquotes">
-<dl>
 {section name=ix loop=$quotes}
 	{if $quotes[ix].methods || $quotes[ix].error}
 		{counter assign=radioButtons start=0}
-		<div class="row">
-			<dt class="formlabel">{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{else}{$quotes[ix].module for=""}{/if}</dt>
+		<div class="control-group width100p">
+			<div class="floatleft alignright" style="width:100px">
+				{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{/if}
+			</div>
+			<div class="width70p floatleft alignleft">
+
+			{if !$quotes[ix].icon}}<h4>{$quotes[ix].module for=""}</h4>{/if}
 			{forminput}
 				{formfeedback error=$quotes[ix].error}
 				{if $quotes[ix].methods}
@@ -38,7 +42,7 @@
 				{/if}
 			{/forminput}
 		</div>
+		</div>
 	{/if}
 {/section}
-</dl>
 </div>

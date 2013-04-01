@@ -21,7 +21,7 @@
 
 	{if $gvBalance} 
 	<h2>{tr}Gift Certificate Account{/tr}</h2>
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Gift Certificate Balance"}
 		{forminput}
           {$gvBalance}

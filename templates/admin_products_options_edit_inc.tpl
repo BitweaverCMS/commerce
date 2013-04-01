@@ -1,7 +1,7 @@
 
 <input type="hidden" name="option_id" value="{$smarty.request.products_option_id}" />
 
-<div class="row">
+<div class="control-group">
 	<div class="formlabel">{tr}Option Id{/tr}</div>
 	{forminput}
 {if $editOption.products_options_id}
@@ -12,21 +12,21 @@
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Title"}
 	{forminput}
 		<input type="text" name="products_options_name" value="{$editOption.products_options_name|escape:html}" />
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Type"}
 	{forminput}
 		{html_options name="products_options_type" options=$optionsTypes selected=$editOption.products_options_type}
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="HTML Attributes"}
 	{forminput}
 		<input type="text" name="products_options_html_attrib" value="{$editOption.products_options_html_attrib|escape:html}" />
@@ -34,37 +34,37 @@
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Comment"}
 	{forminput}
 		<input type="text" name="products_options_comment" value="{$editOption.products_options_comment|escape:html}" />
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Sort Order"}
 	{forminput}
 		<input type="text" name="products_options_sort_order" value="{$editOption.products_options_sort_order}" />
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Display Size"}
 	{forminput}
 		<input type="text" name="products_options_size" value="{$editOption.products_options_size}" />
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Maximum Length"}
 	{forminput}
 		<input type="text" name="products_options_length" value="{$editOption.products_options_length}" />
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Attribute Images per Row"}
 	{forminput}
 		<input type="text" name="products_options_images_per_row" value="{$editOption.products_options_images_per_row}" />
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Attribute Style for Radio Buttons/Checkbox"}
 	{forminput}
 		<select name="products_options_images_style">
@@ -81,7 +81,7 @@
 
 <p>&nbsp;</p>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Option Values"}
 	{forminput}
 		<ul class="data" id="optval_sortable">
@@ -121,7 +121,7 @@ function saveOptionsValue( pOptValId ) {
 	{/forminput}
 </div>
 
-<div class="row submit">
+<div class="control-group submit">
 	<input type="submit" name="save_option" value="{tr}Save{/tr}" />
 	<input type="submit" name="cancel" value="{tr}Cancel{/tr}">
 </div>

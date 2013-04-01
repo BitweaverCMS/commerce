@@ -13,27 +13,27 @@
 		<input type="hidden" name="timeframe" value="{$smarty.request.timeframe}"/>
 		<input type="hidden" name="sort_mode" value="{$smarty.request.sort_mode}"/>
 		{legend legend="Search Referer URL"}
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Include"}
 			{forminput}
 				<input type="text" name="include" value="{$smarty.request.include|escape}"/>
 			{/forminput}
 		</div>
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Exclude"}
 			{forminput}
 				<input type="text" name="exclude" value="{$smarty.request.exclude|escape}"/>
 				{formhelp note="Separate multiple terms with a comma. Search is not case-sensitive"}
 			{/forminput}
 		</div>
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="New Registrations"}
 			{forminput}
 				<input type="checkbox" name="new_reg" value="y" {if $smarty.request.new_reg}checked="checked"{/if}/>
 				{formhelp note="Only include new registrations that occurred during this timeframe."}
 			{/forminput}
 		</div>
-		<div class="row submit">
+		<div class="control-group submit">
 			{forminput}
 				<input type="submit" name="Search" value="Search"/>
 			{/forminput}

@@ -12,7 +12,7 @@
 				<input type="hidden" name="password" value="{$reg.password}"/>
 				<input type="hidden" name="novalidation" value="yes"/>
 
-				<div class="row">
+				<div class="control-group">
 					{formfeedback error=$userErrors.validate}
 					{formlabel label="Username" for="email"}
 					{forminput}
@@ -20,12 +20,12 @@
 					{/forminput}
 				</div>
 
-				<div class="row submit">
+				<div class="control-group submit">
 					<input type="submit" name="register" value="{tr}register{/tr}" />
 				</div>
 			{elseif $showmsg ne 'y'}
 
-				<div class="row">
+				<div class="control-group">
 					{formfeedback error=$userErrors.email}
 					{formlabel label="Email" for="email"}
 					{forminput}
@@ -34,7 +34,7 @@
 				</div>
 
 				{if $gBitSystem->isFeatureActive('users_register_passcode')}
-					<div class="row">
+					<div class="control-group">
 						{formfeedback error=$userErrors.passcode}
 						{formlabel label="Passcode to register<br />(not your user password)" for="passcode"}
 						{forminput}
@@ -44,11 +44,11 @@
 				{/if}
 
 				{if $gBitSystem->isFeatureActive( 'validateUsers' )}
-					<div class="row">
+					<div class="control-group">
 						{formfeedback warning="A confirmation email will be sent to you with instructions how to login"}
 					</div>
 				{else}
-					<div class="row">
+					<div class="control-group">
 						{formfeedback error=$userErrors.password}
 						{formlabel label="Password" for="pass"}
 						{forminput}
@@ -57,7 +57,7 @@
 						{/forminput}
 					</div>
 
-					<div class="row">
+					<div class="control-group">
 						{formlabel label="Repeat password" for="password2"}
 						{forminput}
 							<input id="password2" type="password" name="password2" value="{$smarty.request.password2}" /> <acronym title="{tr}Required{/tr}">*</acronym>
@@ -65,7 +65,7 @@
 					</div>
 
 					{if $gBitSystem->isFeatureActive( 'user_password_generator' )}
-						<div class="row">
+						<div class="control-group">
 							{formlabel label="<a href=\"javascript:BitBase.genPass('genepass','pass1','pass2');\">{tr}Generate a password{/tr}</a>" for="email"}
 							{forminput}
 								<input id="genepass" type="text" />
@@ -76,7 +76,7 @@
 				{/if}
 
 				{section name=f loop=$customFields}
-					<div class="row">
+					<div class="control-group">
 						{formlabel label="$customFields[f]}
 						{forminput}
 							<input type="text" name="CUSTOM[{$customFields[f]|escape}]" />

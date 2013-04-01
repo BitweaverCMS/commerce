@@ -7,14 +7,14 @@
 <div class="body">
 
 {form}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Registration Interests"}
 	{forminput}
 		<input type="checkbox" name="commerce_register_interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />
 		{formhelp note="Ask new users to choose their interests during registration."}
 	{/forminput}
 </div>
-<div class="row submit">
+<div class="control-group submit">
 	{forminput}
 		<input type="submit" value="{tr}Save{/tr}" name="save_options"/>
 	{/forminput}

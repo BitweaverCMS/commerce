@@ -1,5 +1,5 @@
 {if $comInterests}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Interests"}
 	{forminput}
 		<ul class="data">

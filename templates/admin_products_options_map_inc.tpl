@@ -44,7 +44,7 @@
 			{/if}
 			</ul>
 	
-	<div class="row submit">
+	<div class="control-group submit">
 			<input type="hidden" name="products_id" value="{$gBitProduct->getField('products_id')}">
 			<input type="submit" name="save_attribute_map" value="{tr}Save{/tr}">
 			<input type="submit" name="cancel" value="{tr}Cancel{/tr}">

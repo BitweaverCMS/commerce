@@ -14,7 +14,7 @@
 <div class="edit bitcommerce {$smarty.request.main_page}">
 	<div class="body">
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Commission History"}
 
 	{forminput}
