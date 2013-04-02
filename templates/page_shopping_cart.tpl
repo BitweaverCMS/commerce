@@ -48,7 +48,7 @@
 	<td>
 		<input type="text" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}" size="4">
 		{* remove multiple checkbox - can't find good home for now, but still should work <input type="checkbox" name="cart_delete[]" value="{$productsKey}"> *}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{biticon package="icons" iname="edit-delete" iexplain="Remove from cart"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="icon-trash"  package="icons"  iexplain="Remove from cart"}</a>
 	</td>
 	<td class="currency">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
 </td>
