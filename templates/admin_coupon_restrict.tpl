@@ -14,7 +14,7 @@
 		<li class="item {if $r.coupon_restrict=='Y'}restricted{else}permitted{/if}">
 			<div class="floaticon">
 				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=switch_status">{if $r.coupon_restrict=='Y'}{biticon ipackage="bitcommerce" iname="icon_status_red" iexplain="Restricted"}{elseif $r.coupon_restrict=='O'}{biticon ipackage="bitcommerce" iname="icon_status_yellow" iexplain="Restricted"}{else}{biticon ipackage="bitcommerce" iname="icon_status_green" iexplain="Permitted"}{/if}</a>
-				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{biticon iname="edit-delete" iexplain="Remove"}</a>
+				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{booticon iname="icon-trash" iexplain="Remove"}</a>
 			</div>
 			{if $r.category_id}<strong>{tr}Category{/tr}:</strong> {$r.categories_name}<br/>{/if}
 			{if $r.product_id}<strong>{tr}Product{/tr}:</strong> <a href="{$gBitProduct->getDisplayUrlFromHash($r)}">{$r.products_name|escape} #{$r.product_id}</a><br/>{/if}

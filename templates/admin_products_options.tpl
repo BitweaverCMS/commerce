@@ -27,8 +27,8 @@
 		<li class="item">
 			
 			<div class="floaticon">
-				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option" iforce="icon"}</a>
-				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option" iforce="icon"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 			</div>
 			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name}) 
 			<ul class="data">
@@ -36,8 +36,8 @@
 					{foreach from=$option.values key=optionValueId item=optionValue}
 					<li class="item {cycle values="odd,even"}">
 						<div class="floaticon">
-							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option Value" iforce="icon"}</a>
-							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option Value" iforce="icon"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 						</div>
 					<em><strong>{$optionValue.products_options_sort_order|default:'-'}</strong></em>			
 						{$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
