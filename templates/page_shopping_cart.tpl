@@ -82,7 +82,7 @@
 			<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn">{tr}Shipping Estimator{/tr}</a>
 	{/if}
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}" class="btn">{tr}Continue Shopping{/tr}</a>
-		<input type="submit" name="update_cart" value="{tr}Update Cart{/tr}" />
+		<input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" />
 	</td>
 	<td>
 		{*<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_shipping" class="btn">{tr}Checkout{/tr}</a>*}

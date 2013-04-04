@@ -35,7 +35,7 @@
 
 
 	<div class="control-group submit">
-		<input type="submit" name="save_commission_settings" value="Save" />
+		<input type="submit" class="btn" name="save_commission_settings" value="Save" />
 	</div>
 {/form}
 

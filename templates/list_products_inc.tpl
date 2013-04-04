@@ -23,7 +23,7 @@
 			{if $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART and $runNormal == 'true'}
 				{formhelp}To purchase multiple products at once, enter the quantity for each product you would like to purchase, and click "{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}"
 
-				<input type="submit" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
+				<input type="submit" class="btn" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
 			{/if}
 
 {*
@@ -135,7 +135,7 @@
 *}
 
 		{if $runNormal == 'true' && $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART and $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART >= 2 }
-			<input type="submit" align="absmiddle" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
+			<input type="submit" class="btn" align="absmiddle" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
 		{/if}
 	</form>
 {else}

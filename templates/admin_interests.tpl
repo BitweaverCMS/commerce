@@ -16,7 +16,7 @@
 </div>
 <div class="control-group submit">
 	{forminput}
-		<input type="submit" value="{tr}Save{/tr}" name="save_options"/>
+		<input type="submit" class="btn" value="{tr}Save{/tr}" name="save_options"/>
 	{/forminput}
 </div>
 {/form}
@@ -43,7 +43,7 @@
 			<input type="hidden" name="interests_id" value="{$editInterest.interests_id}"/>
 			<input type="text" name="interests_name" value="{$editInterest.interests_name}"/>
 			<input type="hidden" name="action" value="save" />
-			<input type="submit" name="save" value="{tr}Save{/tr}" />
+			<input type="submit" class="btn" name="save" value="{tr}Save{/tr}" />
 		{/forminput}
 	{/form}
 {else}

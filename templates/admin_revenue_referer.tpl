@@ -35,7 +35,7 @@
 		</div>
 		<div class="control-group submit">
 			{forminput}
-				<input type="submit" name="Search" value="Search"/>
+				<input type="submit" class="btn" name="Search" value="Search"/>
 			{/forminput}
 		</div>
 		{/legend}

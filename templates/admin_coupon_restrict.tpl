@@ -84,7 +84,7 @@
 </div>
 <div class="control-group submit">
 	{forminput}
-		<input type="submit" name="action" value="Add">
+		<input type="submit" class="btn" name="action" value="Add">
 	{/forminput}
 </div>
 {/legend}

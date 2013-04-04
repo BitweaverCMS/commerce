@@ -8,5 +8,5 @@
 <div class="clear warning"> Click NEXT when you are ready to continue. Note that this is the final warning you will receive prior to ordering your product. </div>
 
 <form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping" method="POST">
-	<input type="submit" name="checkout_proof" value="{tr}Next{/tr} &raquo;" />
+	<input type="submit" class="btn" name="checkout_proof" value="{tr}Next{/tr} &raquo;" />
 </form>				

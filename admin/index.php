@@ -114,8 +114,8 @@
 	</div>
 
 	<div class="span4" id="coltwo">
+		<h3>Order Summary</h3>
 <table class="table data">
-	 <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co

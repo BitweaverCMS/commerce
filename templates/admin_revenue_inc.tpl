@@ -1,3 +1,4 @@
+{if $stats}
 <table class="table data">
 <tr>
 	<th colspan="2">{tr}Revenue{/tr}: {$revenueTitle}</th>
@@ -18,3 +19,4 @@
 	<td colspan="4" style=""><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$statPeriod|escape}">{tr}More...{/tr}</a></td>
 </tr>
 </table>
+{/if}

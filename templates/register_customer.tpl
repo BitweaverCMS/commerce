@@ -21,7 +21,7 @@
 				</div>
 
 				<div class="control-group submit">
-					<input type="submit" name="register" value="{tr}register{/tr}" />
+					<input type="submit" class="btn" name="register" value="{tr}register{/tr}" />
 				</div>
 			{elseif $showmsg ne 'y'}
 

@@ -29,8 +29,8 @@
 
 				<div class="control-group clear">
 					{forminput}
-						<input type="submit" name="" value="Cancel" />
-						<input type="submit" name="submit_address" value="Continue" />
+						<input type="submit" class="btn" name="" value="Cancel" />
+						<input type="submit" class="btn" name="submit_address" value="Continue" />
 					{/forminput}
 				</div>
 			{/form}
@@ -56,7 +56,7 @@
 				</div>
 
 				<div class="control-group submit">
-					<input type="submit" name="change_address" value="{tr}Change address{/tr}" />
+					<input type="submit" class="btn" name="change_address" value="{tr}Change address{/tr}" />
 				</div>
 
 				<div class="clear"></div>
@@ -105,7 +105,7 @@
 				<h3>{tr}Continue to Step 2{/tr}</h3>
 				<p>{tr}- choose your payment method.{/tr} </p>
 				<div class="control-group submit">
-					<input type="submit" value="Continue" />
+					<input type="submit" class="btn" value="Continue" />
 				</div>
 			{/form}
 		</div><!-- end .body -->
