@@ -8,7 +8,7 @@
 			</div>
 			<div class="width70p floatleft alignleft">
 
-			{if !$quotes[ix].icon}}<h4>{$quotes[ix].module for=""}</h4>{/if}
+			{if !$quotes[ix].icon}}<h4>{$quotes[ix].module}</h4>{/if}
 			{forminput}
 				{formfeedback error=$quotes[ix].error}
 				{if $quotes[ix].methods}

@@ -42,7 +42,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 			} else {
 				$optionValuesList[$optionValues[$_REQUEST['new_option_id']]['products_options_values_id']] = $optionValues[$_REQUEST['new_option_id']]['products_options_values_name'];
 			}
-			require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
+			$gBitSmarty->loadPlugin( 'smarty_modifier_html_options' );
 			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 														'name'			=> 'newOrderOptionValue',
 														'print_result'	=> FALSE ), $gBitSmarty );

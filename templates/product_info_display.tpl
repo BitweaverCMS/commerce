@@ -42,7 +42,7 @@ function popupWindowPrice(url) {
     </td>
     <td>
 
-{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype="multipart/form-data"'}
+{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
 <div class="page-header">
 		<h1>{$gBitProduct->getTitle()}</h1>
@@ -129,8 +129,7 @@ function popupWindowPrice(url) {
 
 {if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
 <div class="control-group">
-	{assign var="templateDir" value=$commerceTemplate->get_template_dir('/tpl_products_next_previous.php',$smarty.const.DIR_WS_TEMPLATE, $current_page_base,'templates')}
-	{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH``$templateDir`/tpl_products_next_previous.php"}
+	{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`includes/templates/template_default/common/tpl_products_next_previous.php"}
 </div>
 {/if}
 
