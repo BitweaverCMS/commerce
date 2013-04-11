@@ -34,6 +34,6 @@
 	if( $productList = $gBitProduct->getList( $listHash ) ) {
 		$newProduct = current( $productList );
 		$whats_new_price = CommerceProduct::getDisplayPrice( $newProduct['products_id'] );
-		$gBitSmarty->assign_by_ref( 'newProduct', $newProduct );
+		$_template->tpl_vars['newProduct'] = new Smarty_variable( $newProduct );
 	}
 ?>
