@@ -31,9 +31,9 @@ if( $specialsList = $gBitProduct->getList( $listHash ) ) {
 	$sideboxSpecial = current( $specialsList );
 	$sideboxSpecial['display_special_price'] = CommerceProduct::getDisplayPrice( $sideboxSpecial['products_id'] );
 
-	$gBitSmarty->assign( 'sideboxSpecial', $sideboxSpecial );
+	$_template->tpl_vars['sideboxSpecial'] = new Smarty_variable( $sideboxSpecial );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Specials' ) );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Specials' );
 }
 ?>

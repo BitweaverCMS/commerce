@@ -26,9 +26,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 $show_tell_a_friend= false;
 
 if( $gBitProduct->isValid() && !($_GET['main_page']==FILENAME_TELL_A_FRIEND) ) {
-	$gBitSmarty->assign( 'sideboxTellFriend', TRUE );
+	$_template->tpl_vars['sideboxTellFriend'] = new Smarty_variable( TRUE );
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Tell a friend' ) );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Tell a friend' );
 	}
 }
 ?>

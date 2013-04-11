@@ -37,9 +37,9 @@ if ($show_languages == true) {
 	$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
 	$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
 	$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
-	$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
+	$_template->tpl_vars['sideboxLanguagesBaseUrl'] = new Smarty_variable( $baseUrl );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle',  'Languages' ) ;
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Languages' );
 }
 ?>

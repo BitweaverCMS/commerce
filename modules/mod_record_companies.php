@@ -47,9 +47,9 @@ while (!$record_company->EOF) {
 	$record_company->MoveNext();
 }
 
-$gBitSmarty->assign( 'record_company', $record_company_array );
+$_template->tpl_vars['record_company'] = new Smarty_variable( $record_company_array );
 
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Record Companies' ) );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Record Companies' );
 }
 ?>

@@ -79,9 +79,9 @@
 
 	// only show if either the tutorials are active or additional links are active
 	if( $user_total ) {
-		$gBitSmarty->assign( 'sideboxWhosOnline', $textstring );
+		$_template->tpl_vars['sideboxWhosOnline'] = new Smarty_variable( $textstring );
 	}
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Who\'s Online' ) );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Who\'s Online' );
 	}
 ?>
