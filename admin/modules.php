@@ -127,7 +127,7 @@
 
 <div class="row">
 	<div class="span8">
-		<table class="table">
+		<table class="table table-hover">
               <tr class="dataTableHeadingRow">
                 <th colspan="2"><?php echo TABLE_HEADING_MODULES; ?></th>
                 <th align="right"><?php echo TABLE_HEADING_SORT_ORDER; ?></th>
@@ -214,7 +214,7 @@
 <?php
 	}
 ?>
-                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo '<i class="icon-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '"><i class="icon-info-sign"></i></a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     }
@@ -236,12 +236,12 @@
   }
 ?>
               <tr>
-                <td colspan="3" class="smallText"><?php echo TEXT_MODULE_DIRECTORY . ' ' . $module_directory; ?></td>
               </tr>
             </table>
+            <p><?php echo TEXT_MODULE_DIRECTORY . ' ' . $module_directory; ?></p>
 	</div>
 	<div class="span4">
-		<div class="alert alert-info">
+		<div class="well">
 <?php
   $heading = array();
   $contents = array();
