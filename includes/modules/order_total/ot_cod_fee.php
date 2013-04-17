@@ -27,10 +27,12 @@
 
     function ot_cod_fee() {
       $this->code = 'ot_cod_fee';
-      $this->title = MODULE_ORDER_TOTAL_COD_TITLE;
-      $this->description = MODULE_ORDER_TOTAL_COD_DESCRIPTION;
-      $this->enabled = ((MODULE_ORDER_TOTAL_COD_STATUS == 'true') ? true : false);
-      $this->sort_order = MODULE_ORDER_TOTAL_COD_SORT_ORDER;
+      if( defined( 'MODULE_ORDER_TOTAL_COD_STATUS' ) ) {
+		  $this->title = MODULE_ORDER_TOTAL_COD_TITLE;
+		  $this->description = MODULE_ORDER_TOTAL_COD_DESCRIPTION;
+		  $this->enabled = ((MODULE_ORDER_TOTAL_COD_STATUS == 'true') ? true : false);
+		  $this->sort_order = MODULE_ORDER_TOTAL_COD_SORT_ORDER;
+      }
 
       $this->output = array();
     }

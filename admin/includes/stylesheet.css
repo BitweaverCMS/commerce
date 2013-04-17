@@ -1,4 +1,10 @@
-@import url("menu.css");/* including stylesheet for dhtml menu * /
+@import url("menu.css");
+
+.admin .table td[colspan=8] {
+	border: none;
+}
+
+/* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions
 http://www.oscommerce.com

@@ -14,7 +14,7 @@
 {/form}
 {/if}
 
-<table class="table data">
+<table class="table data" style="table-layout:fixed">
 {assign var=grossTotal value=0}
 {assign var=wholesaleProfitTotal value=0}
 {assign var=distributorIncomeTotal value=0}
@@ -23,7 +23,7 @@
 	{assign var=grossTotal value=$grossTotal+$order.order_total}
 	<tr>
 		<td style="width:10em;text-align:left">{$order.purchase_time}</td>
-		<td colspan="4"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
+		<td colspan="5"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
 		<td class="alignright">{$order.orders_status_name}</td>
 		<td class="alignright">{$order.order_total|round:2}</td>
 	</tr>
