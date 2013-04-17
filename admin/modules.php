@@ -121,9 +121,9 @@
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<div class="page-header">
-<h1><?php echo HEADING_TITLE; ?></h1>
-</div>
+<header>
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</header>
 
 <div class="row">
 	<div class="span8">
