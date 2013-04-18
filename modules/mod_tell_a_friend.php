@@ -28,7 +28,7 @@ $show_tell_a_friend= false;
 if( $gBitProduct->isValid() && !($_GET['main_page']==FILENAME_TELL_A_FRIEND) ) {
 	$_template->tpl_vars['sideboxTellFriend'] = new Smarty_variable( TRUE );
 	if( empty( $moduleTitle ) ) {
-		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Tell a friend' );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Tell a friend' ) );
 	}
 }
 ?>

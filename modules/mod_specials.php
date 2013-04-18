@@ -34,6 +34,6 @@ if( $specialsList = $gBitProduct->getList( $listHash ) ) {
 	$_template->tpl_vars['sideboxSpecial'] = new Smarty_variable( $sideboxSpecial );
 }
 if( empty( $moduleTitle ) ) {
-	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Specials' );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Specials' ) );
 }
 ?>

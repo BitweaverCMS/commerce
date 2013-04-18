@@ -28,7 +28,7 @@
 	$listHash['sort_mode'] = 'products_date_added_desc';
 
 	if( empty( $moduleTitle ) ) {
-		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'New Products' );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'New Products' ) );
 	}
 
 	if( $productList = $gBitProduct->getList( $listHash ) ) {

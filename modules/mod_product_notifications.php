@@ -23,7 +23,7 @@ global $gBitDb, $gBitProduct;
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 if( $gBitProduct->isValid() && $gBitUser->isRegistered() ) {
-	$_template->tpl_vars['notificationExists'] = new Smarty_variable( $gBitProduct->hasNotification( $gBitUser->mUserId );
+	$_template->tpl_vars['notificationExists'] = new Smarty_variable( $gBitProduct->hasNotification( $gBitUser->mUserId ) );
 
 	if( empty( $moduleTitle ) ) {
 		$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Notifications' );

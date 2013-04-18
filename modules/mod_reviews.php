@@ -28,12 +28,12 @@ if( $gBitProduct->isValid() ) {
 }
 $listHash['max_records'] = MAX_RANDOM_SELECT_REVIEWS;
 if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
-	$_template->tpl_vars['sideboxReview'] = new Smarty_variable( current( $sideboxReview );
+	$_template->tpl_vars['sideboxReview'] = new Smarty_variable( current( $sideboxReview ) );
 } elseif ( $gBitProduct->isValid() ) {
-	$_template->tpl_vars['reviewProductsId'] = new Smarty_variable( $gBitProduct->getField( 'products_id' );
+	$_template->tpl_vars['reviewProductsId'] = new Smarty_variable( $gBitProduct->getField( 'products_id' ) );
 	$_template->tpl_vars['writeReview'] = new Smarty_variable( TRUE );
 }
 if( empty( $moduleTitle ) ) {
-	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' ) );
 }
 ?>

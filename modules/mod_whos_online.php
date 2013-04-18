@@ -82,6 +82,6 @@
 		$_template->tpl_vars['sideboxWhosOnline'] = new Smarty_variable( $textstring );
 	}
 	if( empty( $moduleTitle ) ) {
-		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Who\'s Online' );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Who\'s Online' ) );
 	}
 ?>
