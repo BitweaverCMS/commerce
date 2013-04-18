@@ -64,7 +64,7 @@ function editAddress( pAddress ) {
 
 <div class="row">
 	<div class="span4">
-		<h4>{tr}Shipping Address{/tr}<a class="icon" onclick="editAddress('delivery');return false;"><i class="icon-edit"></i></a></h4>
+		<h4>{tr}Shipping Address{/tr} <a class="icon" onclick="editAddress('delivery');return false;"><i class="icon-edit"></i></a></h4>
 		<div id="deliveryaddress">
 		{php}
 		global $order;

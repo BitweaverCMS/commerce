@@ -67,9 +67,10 @@
 
 
 ?>
-<div class="page-header">
+<header>
 	<h1>Order List</h1>
-</div>
+</header>
+
 <div class="row">
 	<div class="span8" id="colone">
 <?php
@@ -114,7 +115,9 @@
 	</div>
 
 	<div class="span4" id="coltwo">
-		<h3>Order Summary</h3>
+
+<div class="well">
+<h3><?php echo tra( 'Order Summary' ); ?></h3>
 <table class="table data">
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
@@ -129,11 +132,15 @@
 	}
 ?>
 </table>
+</div>
+
 <?php
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
+
+<div class="well">
+<h3><?php echo tra( 'Statistics' ); ?></h3>
 <table class="table data">
-<tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
 <?php
 	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_COUNTER . '</td><td> ' . $counter->fields['counter'] . '</td></tr>';
@@ -155,6 +162,8 @@
 
 ?>
 </table>
+</div>
+
 	</div>
 </div>
 

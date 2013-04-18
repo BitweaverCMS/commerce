@@ -143,8 +143,7 @@ function getShippingQuotes( pOrderId ) {
 </td>
 </tr>
 <tr class="dataTableRow">
-	<td></td>
-	<td class="dataTableContent" colspan="3">
+	<td class="dataTableContent" colspan="4">
 {if !empty( $ordersProduct.attributes )}
 <ul class="unstyled">
 {section loop=$ordersProduct.attributes name=a}
@@ -204,21 +203,22 @@ function getShippingQuotes( pOrderId ) {
 </table>
 
 {jstabs}
-{foreach from=$fulfillmentFiles item=fulfillmentFile}
-	{include_php file=$fulfillmentFile}
-{/foreach}
+{php}
+	global $fulfillmentFiles;
+
+	foreach( $fulfillmentFiles as $fulfillmentFile )  {
+		include $fulfillmentFile;
+	}
+{/php}
 {/jstabs}
 
 
 <div style="margin:15px 0;">
-	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a>
-	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a>
-	<form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
+	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
 		<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
 		<input class="btn" type="submit" name="Send" value="Send Gift Certificate" />
-	</form>
-	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
+	</form> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
 	{form class="form-inline" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
 		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="input-small"/>
 		<label class="checkbox">
