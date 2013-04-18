@@ -28,7 +28,7 @@ $box_categories_array = array();
 
 // don't build a tree when no categories
 if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
-	$_template->tpl_vars['box_categories_array'] = new Smarty_variable( $main_category_tree->zen_category_tree();
+	$_template->tpl_vars['box_categories_array'] = new Smarty_variable( $main_category_tree->zen_category_tree() );
 }
 if( empty( $moduleTitle ) ) {
 	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( 'Categories' );

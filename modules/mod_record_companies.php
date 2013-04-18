@@ -50,6 +50,6 @@ while (!$record_company->EOF) {
 $_template->tpl_vars['record_company'] = new Smarty_variable( $record_company_array );
 
 if( empty( $moduleTitle ) ) {
-	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Record Companies' );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Record Companies' ) );
 }
 ?>

@@ -28,7 +28,7 @@ require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
 $banner_box_group= SHOW_BANNERS_GROUP_SET7;
 
 if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
-	$_template->tpl_vars['bannerContent'] = new Smarty_variable( zen_display_banner('static', $bannerRs );
+	$_template->tpl_vars['bannerContent'] = new Smarty_variable( zen_display_banner('static', $bannerRs ) );
 }
 if( empty( $moduleTitle ) ) {
 	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Sponsors' );

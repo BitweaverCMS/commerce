@@ -106,7 +106,7 @@ if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
   }
   $_template->tpl_vars['sideboxShoppingCartContent'] = new Smarty_variable( $content );
 	if( empty( $moduleTitle ) ) {
-		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Shopping Cart' );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Shopping Cart' ) );
 	}
   }
 }
