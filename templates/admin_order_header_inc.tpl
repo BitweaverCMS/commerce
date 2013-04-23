@@ -20,7 +20,7 @@ function editAddress( pAddress ) {
 		{$order->info.date_purchased|bit_long_datetime}<br/>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
 		<a href="product_history.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
-		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" ibiticon="users/assume_user" iforce=icon} 
+		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="icon-user-md" iforce=icon} 
 		<br/>
 {if $order->customer.telephone}
 	{$order->customer.telephone}<br/>

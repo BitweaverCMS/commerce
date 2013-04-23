@@ -4,6 +4,10 @@
 	border: none;
 }
 
+#bitcommerce.adminmode .navbar-inner {
+padding-left: 0px;
+}
+
 /* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions

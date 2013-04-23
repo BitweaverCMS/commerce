@@ -13,7 +13,7 @@
 	if( $rs = $gBitDb->query( "SELECT `configuration_group_id` as `cg_id`, `configuration_group_title` as `cg_title` from " . TABLE_CONFIGURATION_GROUP . " where `visible` = '1' order by `sort_order`" ) ) {
 ?>
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Configuration');?> <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Config');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 <?php
 		while( $configuration_groups = $rs->fetchRow() ) {
@@ -105,7 +105,7 @@
 			</li>
 
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Repots');?> <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Reports');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>sales_and_income.php">Sales and Income</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>stats_products_viewed.php">Products Viewed</a></li>
