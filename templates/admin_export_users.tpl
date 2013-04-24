@@ -56,68 +56,59 @@
 	{/forminput}
 </div>
 <div class="control-group">
-	{formlabel label="Country"}
-	{forminput}
-		<input type="checkbox" name="country" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="country" value="y" checked="checked" />Country
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Customer Id"}
-	{forminput}
-		<input type="checkbox" name="customers_id" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="customers_id" value="y" checked="checked" />Customer Id
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Registration Date"}
-	{forminput}
-		<input type="checkbox" name="registration_date" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="registration_date" value="y" checked="checked" />Registration Date
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="First Purchase Date"}
-	{forminput}
-		<input type="checkbox" name="first_purchase_date" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="first_purchase_date" value="y" checked="checked" />First Purchase Date
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Last Purchase Date"}
-	{forminput}
-		<input type="checkbox" name="last_purchase_date" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="last_purchase_date" value="y" checked="checked" />Last Purchase Date
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Number of Purchases"}
-	{forminput}
-		<input type="checkbox" name="num_purchases" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="num_purchases" value="y" checked="checked" />Number of Purchases
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Total Revenue"}
-	{forminput}
-		<input type="checkbox" name="total_revenue" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="total_revenue" value="y" checked="checked" />Total Revenue
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Content Created Count"}
-	{forminput}
-		<input type="checkbox" name="content_count" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="content_count" value="y" checked="checked" />Content Created Count
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 {if $gBitSystem->isPackageActive('stats')}
 <div class="control-group">
-	{formlabel label="Referrer URL"}
-	{forminput}
-		<input type="checkbox" name="referer_url" value="y" checked="checked" />
+	<label class="checkbox">
+		<input type="checkbox" name="referer_url" value="y" checked="checked" />Referrer URL
 		{formhelp note=""}
-	{/forminput}
+	</label>
 </div>
 {/if}
 <div class="control-group">
