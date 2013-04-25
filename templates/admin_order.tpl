@@ -65,8 +65,8 @@ function getShippingQuotes( pOrderId ) {
 	<tr class="dataTableHeadingRow">
 		<th></th>
 		<th class="alignleft">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
-		<th class="alignright">{tr}Price{/tr} + {tr}Tax{/tr}</th>
-		<th class="alignright">{tr}Total{/tr} + {tr}Tax{/tr}</th>
+		<th class="alignright">{tr}Price{/tr}</th>
+		<th class="alignright">{tr}Total{/tr}</th>
 		<th class="aligncenter">{tr}Income{/tr}</th>
 	</tr>
 {assign var=wholesaleIncome value=0}
