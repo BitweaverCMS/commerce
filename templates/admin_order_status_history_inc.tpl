@@ -5,7 +5,7 @@
 	<textarea name="comments" wrap="soft"></textarea>
 	<label class="checkbox">
 		<input name="notify" type="checkbox">
-		{biticon iname="internet-mail" iexplain="Notified"} {tr}Notify Customer{/tr} 
+		{booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	</label>
 	<input type="submit" class="btn" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
 {/legend}
@@ -16,7 +16,7 @@
 	<li class="item {if $gBitOrder->mHistory[ix].customer_notified == '1'}alert{/if}" style="clear:both"> 
 		<small class="floatright">
 			{if $gBitOrder->mHistory[ix].customer_notified == '1'}
-				{biticon iname="internet-mail" iexplain="Notified"}
+				{booticon iname="icon-envelope" iexplain="Notified"}
 			{/if}
 			{if $gBitUser->isAdmin()}
 				<a href="{$smarty.server.REQUEST_URI}&delete_status={$gBitOrder->mHistory[ix].orders_status_history_id}">{booticon iname="icon-trash"}</a>
