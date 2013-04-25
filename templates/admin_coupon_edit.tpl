@@ -134,7 +134,7 @@
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" class="btn" name="Save" value="Save"/>
+			<input type="submit" class="btn btn-primary" name="Save" value="Save"/>
 			<a href="{$smarty.server.SCRIPT_NAME}?cid={$smarty.request.cid}" class="btn">{tr}Cancel{/tr}</a>
 		</div>
 	{/form}
