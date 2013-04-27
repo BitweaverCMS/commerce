@@ -11,8 +11,8 @@
 	{foreach from=$commissionList key=orderId item=commission}
 		{if $commission.orders_products_id}
 	<tr class="sale">
-		{assign var=totalUnits value=`$totalUnits+$commission.products_quantity`}
-		{assign var=totalSales value=`$totalSales+$commission.products_quantity*$commission.unit_commission_earned`}
+		{assign var=totalUnits value=$totalUnits+$commission.products_quantity}
+		{assign var=totalSales value=$totalSales+$commission.products_quantity*$commission.unit_commission_earned}
 		<td style="text-align:left" class="item">{$commission.purchased_epoch|date_format:"%Y-%m-%d %H:%I:%S"}</td>
 		<td style="text-align:left" class="item"><a href="{$commission.products_link}">{$commission.products_name}</a></td>
 		<td style="text-align:right" class="item">{$commission.products_quantity} @ ${$commission.unit_commission_earned}</td>
@@ -22,7 +22,7 @@
 	</tr>
 		{elseif $commission.commissions_payments_id}
 	<tr class="payment">
-		{assign var=totalCommissions value=`$totalCommissions+$commission.payment_amount`}
+		{assign var=totalCommissions value=$totalCommissions+$commission.payment_amount}
 		<td>{$commission.period_end_date}</td>
 		<td colspan="3" style="text-align:left" class="item">{tr}Payment for sales ending on this date. Payment was made on{/tr} {$commission.payment_date|strtotime|date_format:"%Y-%m-%d"}
 		</td>
