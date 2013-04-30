@@ -46,17 +46,13 @@ function getShippingQuotes( pOrderId ) {
 {/literal}
 {strip}
 
-
-<div class="page-header">
-	<div class="floaticon">
+<div class="clear">
 		<div class="btn-group floatright">
 			<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
 			<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
 		</div>
-	</div>
-	<h1>
-		{$smarty.const.HEADING_TITLE} 
-	</h1>
+		{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
+
 </div>
 
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
