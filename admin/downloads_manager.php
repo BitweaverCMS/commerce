@@ -75,17 +75,7 @@ function go_option() {
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-         <tr><?php echo zen_draw_form_admin('search', FILENAME_DOWNLOADS_MANAGER, '', 'get'); ?>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
-            <td class="smallText" align="right">
+<?php echo zen_draw_form_admin('search', FILENAME_DOWNLOADS_MANAGER, '', 'get'); ?>
 <?php
 // show reset search
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -97,26 +87,15 @@ function go_option() {
     echo '<br/ >' . TEXT_INFO_SEARCH_DETAIL_FILTER . $keywords;
   }
 ?>
-            </td>
-          </form></tr>
-        </table></td>
-      </tr>
+          </form>
 
-      <tr>
-        <td width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="smallText" align="center">
-              <?php echo zen_image(DIR_WS_IMAGES . 'icon_status_red.gif') . TEXT_INFO_FILENAME_MISSING; ?> &nbsp;&nbsp;&nbsp;<?php echo zen_image(DIR_WS_IMAGES . 'icon_status_green.gif') . TEXT_INFO_FILENAME_GOOD; ?>
-            </td>
-          </tr>
-        </table></td>
-      </tr>
-
+<div><?php echo zen_image(DIR_WS_IMAGES . 'icon_status_red.gif') . TEXT_INFO_FILENAME_MISSING; ?> &nbsp;&nbsp;&nbsp;<?php echo zen_image(DIR_WS_IMAGES . 'icon_status_green.gif') . TEXT_INFO_FILENAME_GOOD; ?></div>
+<table>
 <!-- downloads by product_name//-->
       <tr>
         <td width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
 
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_ATTRIBUTES_ID; ?></td>
@@ -165,7 +144,7 @@ function go_option() {
 ?>
 <?php
       if (isset($padInfo) && is_object($padInfo) && ($products_downloads_query->fields['products_attributes_id'] == $padInfo->products_attributes_id)) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=edit' . '&page=' . $_GET['page']) . '\'">' . "\n";
+        echo '              <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID', 'action')) . 'padID=' . $padInfo->products_attributes_id . '&action=edit' . '&page=' . $_GET['page']) . '\'">' . "\n";
       } else {
         echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_DOWNLOADS_MANAGER, zen_get_all_get_params(array('padID')) . 'padID=' . $products_downloads_query->fields['products_attributes_id'] . '&page=' . $_GET['page']) . '\'">' . "\n";
       }
@@ -190,7 +169,7 @@ function go_option() {
 // bof: split page control and search filter
 ?>
               <tr>
-                <td colspan="10"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+                <td colspan="10"><table>
                   <tr>
                     <td class="smallText" valign="top"><?php echo $products_downloads_split->display_count($products_downloads_query_numrows, MAX_DISPLAY_SEARCH_RESULTS_DOWNLOADS_MANAGER, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PRODUCTS_DOWNLOADS_MANAGER); ?></td>
 <!--
@@ -270,12 +249,6 @@ function go_option() {
 ?>
           </tr>
         </td></table>
-      </tr>
-
-    </table></td>
-<!-- downloads by product_name_eof //-->
-  </tr>
-</table>
 <!-- body_text_eof //-->
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>

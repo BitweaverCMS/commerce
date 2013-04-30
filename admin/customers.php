@@ -402,7 +402,7 @@ function check_form() {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
 	<tr>
 <!-- body_text //-->
-		<td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+		<td width="100%" valign="top"><table>
 <?php
 	if ($action == 'edit' || $action == 'update') {
 		$newsletter_array = array(array('id' => '1', 'text' => ENTRY_NEWSLETTER_YES),
@@ -879,7 +879,7 @@ if ($processed == true) {
 					}
 ?>
 <a class="btn btn-small" href="export_users.php">Export as CSV</a>
-						 <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+						 <td valign="top"><table>
 							<tr class="dataTableHeadingRow">
 								<td class="dataTableHeadingContent" align="center" valign="top">
 									<?php echo TABLE_HEADING_ID; ?>
@@ -995,7 +995,7 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		} else $group_name_entry = TEXT_NONE;
 
 			if (isset($cInfo) && is_object($cInfo) && ($customers->fields['customers_id'] == $cInfo->customers_id)) {
-				echo '					<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '\'">' . "\n";
+				echo '					<tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '\'">' . "\n";
 			} else {
 				echo '					<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID')) . 'cID=' . $customers->fields['customers_id'], 'NONSSL') . '\'">' . "\n";
 			}
@@ -1015,7 +1015,7 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		}
 ?>
 							<tr>
-								<td colspan="5"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+								<td colspan="5"><table>
 									<tr>
 										<td class="smallText" valign="top"><?php echo $customers_split->display_count($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_CUSTOMERS); ?></td>
 										<td class="smallText" align="right"><?php echo $customers_split->display_links($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], zen_get_all_get_params(array('page', 'info', 'x', 'y', 'cID'))); ?></td>

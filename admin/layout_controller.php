@@ -169,7 +169,7 @@
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
 <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
 
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -197,7 +197,7 @@ if ($warning_new_box) {
                 <td class="main" align="left"><strong>Boxes Path: </strong><?php echo DIR_FS_CATALOG_MODULES . ' ... ' . '<br />&nbsp;'; ?></td>
               </tr>
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent" align="left" width="200"><?php echo TABLE_HEADING_LAYOUT_BOX_NAME; ?></td>
                 <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_LAYOUT_BOX_STATUS; ?></td>
@@ -221,7 +221,7 @@ if ($warning_new_box) {
 
 //  if ( (is_object($bInfo)) && ($column_controller->fields['layout_id'] == $bInfo->layout_id) ) {
     if (isset($bInfo) && is_object($bInfo) && ($column_controller->fields['layout_id'] == $bInfo->layout_id)) {
-      echo '              <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=edit') . '\'">' . "\n";
+      echo '              <tr class="info" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=edit') . '\'">' . "\n";
     } else {
       echo '              <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $column_controller->fields['layout_id']) . '\'">' . "\n";
     }

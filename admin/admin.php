@@ -144,28 +144,7 @@ kill.disabled = true;
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-	<tr>
-<!-- body_text //-->
-		<td width="100%" valign="top">
-
-
-<?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?>
-
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-	<tr>
-		<td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-	</tr>
-</table>
-
-<?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?>
-
-<table border="0" width="100%" cellspacing="0" cellpadding="0">
-	<tr>
-		<td valign="top">
-
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
+<table>
 	<tr class="dataTableHeadingRow">
 		<td width="10%" class="dataTableHeadingContent"><?php echo TABLE_HEADING_ADMINS_ID; ?></td>
 		<td width="35%" class="dataTableHeadingContent"><?php echo TABLE_HEADING_ADMINS_NAME; ?></td>
@@ -187,7 +166,7 @@ if ((!isset($_GET['adminID']) || (isset($_GET['adminID']) && ($_GET['adminID'] =
 }
 
 if (isset($adminInfo) && is_object($adminInfo) && ($admins->fields['admin_id'] == $adminInfo->admin_id)) {
-	echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '\'">' . "\n";
+	echo '<tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '&action=edit') . '\'">' . "\n";
 } else {
 	echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ADMIN, 'page=' . $_GET['page'] . '&adminID=' . $admins->fields['admin_id'] . '') . '\'">' . "\n";
 }
@@ -443,12 +422,6 @@ echo '</td>' . "\n";
 	</tr>
 </table>
 
-
-		</td>
-<!-- body_text_eof //-->
-	</tr>
-</table>
-<!-- body_eof //-->
 
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>

@@ -706,7 +706,7 @@ $linebreak = '
   if ( $action == 'execute'  && $_POST['query_string'] !='' ) {
 ?>
   <tr>
-    <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td><table>
        <tr>
           <td class="smallText"><b><?php echo TEXT_QUERY_RESULTS; ?></td>
        </tr>

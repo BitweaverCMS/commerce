@@ -143,14 +143,9 @@
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
-
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+<table>
       <tr>
-        <td class="pageHeading"><?php echo HEADING_TITLE . '&nbsp;' . $gBitCustomer->getLanguage(); ?> &nbsp;&nbsp;
+        <td class="pageHeading"><?php echo $gBitCustomer->getLanguage(); ?>
           <?php
             $check_directory = array();
             $check_directory[] = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/';
@@ -181,7 +176,7 @@
 if (isset($_GET['filename'])) {
 ?>
       <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <td><table>
 <?php
   if ( ($gBitCustomer->getLanguage()) && ($_GET['filename']) ) {
     if (file_exists($file)) {

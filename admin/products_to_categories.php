@@ -481,7 +481,7 @@ function go_option() {
       <tr>
         <td width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
           <tr>
             <td colspan="<?php echo MAX_DISPLAY_PRODUCTS_TO_CATEGORIES_COLUMNS*2; ?>"><?php echo zen_draw_separator('pixel_black.gif', '100%', '3'); ?></td>
           </tr>

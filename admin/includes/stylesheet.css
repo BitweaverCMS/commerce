@@ -4,6 +4,8 @@
 	border: none;
 }
 
+table.order-items	{ background-color:#f3f3f3; }
+
 #bitcommerce.adminmode .navbar-inner {
 padding-left: 0px;
 }
@@ -165,13 +167,13 @@ background-color:#ffffff;
 .dataTableRowOverWhois{
 background-color:#ffffff;
 }
-.dataTableRowSelected{
+.info{
 background-color:#e7e6e0;
 }
-.dataTableRowSelectedBot{
+.infoBot{
 background-color:#ff93ff;
 }
-.dataTableRowSelectedWhois{
+.infoWhois{
 background-color:#dee4e8;
 }
 .dataTableRowSpacer,td.dataTableRowSpacer,TR.dataTableRowSpacer{
