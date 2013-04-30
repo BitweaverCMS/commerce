@@ -17,7 +17,6 @@ function editAddress( pAddress ) {
 <div class="row">
 	<div class="span4">
 		<h4>{tr}Customer{/tr}</h4>
-		{$order->info.date_purchased|bit_long_datetime}<br/>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
 		<a href="product_history.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
 		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="icon-user-md" iforce=icon} 
