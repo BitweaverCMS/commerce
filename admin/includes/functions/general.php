@@ -1267,27 +1267,27 @@
 		$day = $usedate['mday'];
 		$month = $usedate['mon'];
 		$year = $usedate['year'];
-		$date_selector = '<SELECT name="'. $prefix .'_day">';
+		$date_selector = '<div class="controls controls-row"><SELECT class="span1" name="'. $prefix .'_day">';
 		for ($i=1;$i<32;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$day) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
 		}
 		$date_selector .= '</select>';
-		$date_selector .= '<SELECT name="'. $prefix .'_month">';
+		$date_selector .= '<SELECT class="span2" name="'. $prefix .'_month">';
 		for ($i=1;$i<13;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$month) $date_selector .= 'selected';
 			$date_selector .= '>' . $month_array[$i] . '</option>';
 		}
 		$date_selector .= '</select>';
-		$date_selector .= '<SELECT name="'. $prefix .'_year">';
+		$date_selector .= '<SELECT class="span2" name="'. $prefix .'_year">';
 		for ($i=2001;$i<2019;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$year) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
 		}
-		$date_selector .= '</select>';
+		$date_selector .= '</select></div>';
 		return $date_selector;
 	}
 
