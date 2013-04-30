@@ -57,7 +57,7 @@ function getShippingQuotes( pOrderId ) {
 
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
 
-<table class="table data">
+<table class="table data order-items">
 	<tr class="dataTableHeadingRow">
 		<th></th>
 		<th class="alignleft">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
