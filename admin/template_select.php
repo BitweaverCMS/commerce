@@ -93,7 +93,7 @@
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
     <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
         <tr>
           <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
               <tr>
@@ -105,7 +105,7 @@
         <tr>
           <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
               <tr>
-                <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+                <td valign="top"><table>
                     <tr class="dataTableHeadingRow">
                       <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_LANGUAGE; ?></td>
                       <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_NAME; ?></td>
@@ -122,7 +122,7 @@
     }
 
     if (isset($tInfo) && is_object($tInfo) && ($templates->fields['template_id'] == $tInfo->template_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=edit') . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $tInfo->template_id . '&action=edit') . '\'">' . "\n";
     } else {
       echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&tID=' . $templates->fields['template_id']) . '\'">' . "\n";
     }
@@ -147,7 +147,7 @@
   }
 ?>
                     <tr>
-                      <td colspan="4"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+                      <td colspan="4"><table>
                           <tr>
                             <td class="smallText" valign="top"><?php echo $template_split->display_count($template_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_TEMPLATES); ?></td>
                             <td class="smallText" align="right"><?php echo $template_split->display_links($template_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>

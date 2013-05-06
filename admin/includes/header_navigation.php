@@ -12,7 +12,7 @@
 	$contents = array();
 	if( $rs = $gBitDb->query( "SELECT `configuration_group_id` as `cg_id`, `configuration_group_title` as `cg_title` from " . TABLE_CONFIGURATION_GROUP . " where `visible` = '1' order by `sort_order`" ) ) {
 ?>
-            <li class="dropdown">
+            <li class="<?php if( $_SERVER['SCRIPT_URL'] == DIR_WS_HTTPS_ADMIN.'configuration.php') { echo 'active '; } ?>dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Config');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 <?php
@@ -27,7 +27,7 @@
 
 	// ### FIXED Menus
 ?>
-            <li class="dropdown">
+            <li class="<?php if( $_SERVER['SCRIPT_URL'] == DIR_WS_HTTPS_ADMIN.'modules.php') { echo 'active '; } ?>dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Modules');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 <?php

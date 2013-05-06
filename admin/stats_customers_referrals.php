@@ -60,15 +60,10 @@
 ?>
 <!-- header_eof //-->
 <!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td>
-
-      <tr>
-        <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-      </tr>
-
+<header>
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</header>
+<table>
       <tr>
         <td><table border="0" cellspacing="0" cellpadding="0">
 <?php

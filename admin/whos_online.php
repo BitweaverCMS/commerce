@@ -128,7 +128,7 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
 <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
@@ -185,7 +185,7 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRowWhois">
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_ONLINE; ?></td>
                 <td class="dataTableHeadingContentWhois" align="center"><?php echo TABLE_HEADING_CUSTOMER_ID; ?></td>
@@ -227,9 +227,9 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
     $is_a_bot=zen_check_bot($whos_online->fields['session_id']);
   if ($whos_online->fields['session_id'] == $info) {
       if ($is_a_bot==true) {
-        echo '              <tr class="dataTableRowSelectedBot">' . "\n";
+        echo '              <tr class="infoBot">' . "\n";
       } else {
-        echo '              <tr class="dataTableRowSelectedWhois">' . "\n";
+        echo '              <tr class="infoWhois">' . "\n";
       }
   } else {
     if ($is_a_bot==true) {
@@ -268,9 +268,9 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
   if (WHOIS_SHOW_HOST=='1') {
     if ($whos_online->fields['session_id'] == $info) {
     if ($is_a_bot==true) {
-        echo '              <tr class="dataTableRowSelectedBot">' . "\n";
+        echo '              <tr class="infoBot">' . "\n";
       } else {
-        echo '              <tr class="dataTableRowSelectedWhois">' . "\n";
+        echo '              <tr class="infoWhois">' . "\n";
       }
     } else {
       if ($is_a_bot==true) {

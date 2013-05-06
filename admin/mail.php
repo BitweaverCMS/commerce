@@ -216,17 +216,6 @@ function check_form(form_name) {
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-            <td class="main">
 <?php
 // toggle switch for editor
         $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
@@ -235,12 +224,7 @@ function check_form(form_name) {
         zen_draw_hidden_field('action', 'set_editor') .
         '</form>';
 ?>
-          </td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+<table>
 <?php
   if ( ($action == 'preview') && isset($_POST['customers_email_address']) ) {
 	$audience_select = get_audience_sql_query($_POST['customers_email_address']);
@@ -424,23 +408,14 @@ function check_form(form_name) {
                 <td colspan="2" align="right"><?php echo zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;' .
                 '<a href="' . zen_href_link_admin($origin, 'cID=' . zen_db_prepare_input($_GET['cID']), $mode) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
               </tr>
-            </table></td>
-          </form></tr>
+            </table>
+          </form>
 <?php
   }
 ?>
-<!-- body_text_eof //-->
-        </table></td>
-      </tr>
-    </table></td>
-  </tr>
-</table>
-<!-- body_eof //-->
-
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<br />
 </body>
 </html>
 <?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

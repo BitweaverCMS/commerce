@@ -328,21 +328,10 @@
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-        <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-      </tr>
-
 <?php
 if ($show_configuration_info == 'true') {
   $show_configuration_info = 'false';
 ?>
-      <tr><td colspan="2">
         <table border="3" cellspacing="4" cellpadding="4">
           <tr class="infoBoxContent">
             <td colspan="2" class="pageHeading" align="center"><?php echo TABLE_CONFIGURATION_TABLE; ?></td>
@@ -418,82 +407,67 @@ if ($show_configuration_info == 'true') {
             <td class="main" align="center" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
         </table>
-      </td></tr>
 <?php
 } else {
 ?>
 
 <!-- bof: update all option values sort orders -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+        <table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_ATTRIBUTES_FEATURES_UPDATES; ?></td>
             <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_attributes_sort_order') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
           </tr>
-        </table></td>
-      </tr>
+        </table>
 <!-- eof: update all option values sort orders -->
 
 <!-- bof: update all products price sorter -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_PRICE_SORTER_UPDATE; ?></td>
             <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_lowest_purchase_price') . '">' . zen_image_button('button_update.gif', IMAGE_UPDATE) . '</a>'; ?></td>
-          </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: update all products price sorter -->
 
 <!-- bof: reset all counter to 0 -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
-          <tr><form name = "update_counter" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_counter', 'NONSSL'); ?>"' method="post">
+<table border="0" cellspacing="0" cellpadding="2">
+          <tr><form name = "update_counter" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_counter', 'NONSSL'); ?>" method="post">
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_COUNTER_UPDATE; ?></td>
             <td class="main" align="left" valign="bottom"><?php echo zen_draw_input_field('new_counter'); ?></td>
             <td class="main" align="right" valign="middle"><?php echo zen_image_submit('button_reset.gif', IMAGE_RESET); ?></td>
           </form></tr>
-        </table></td>
-      </tr>
+        </table>
 <!-- eof: reset all counter to 0 -->
 
 <!-- bof: reset all products_viewed to 0 -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_VIEWED_UPDATE; ?></td>
             <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_viewed') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: reset all products_viewed to 0 -->
 
 <!-- bof: reset all products_ordered to 0 -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_PRODUCTS_ORDERED_UPDATE; ?></td>
             <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_products_ordered') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: reset all products_ordered to 0 -->
 
 <!-- bof: reset all master_categories_id -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td class="main" align="left" valign="top"><?php echo TEXT_INFO_MASTER_CATEGORIES_ID_UPDATE; ?></td>
             <td class="main" align="right" valign="middle"><?php echo '<a href="' . zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_all_master_categories_id') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>'; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: reset all master_categories_id -->
 
 <!-- bof: resrt test order to new order number -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
-          <tr><form name = "update_orders" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_orders_id', 'NONSSL'); ?>"' method="post">
+<table border="0" cellspacing="0" cellpadding="2">
+          <tr><form name = "update_orders" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=update_orders_id', 'NONSSL'); ?>" method="post">
             <td class="main" align="left" valign="top"><?php echo TEXT_ORDERS_ID_UPDATE; ?></td>
             <td class="main" align="left" valign="bottom">
               <?php echo TEXT_OLD_ORDERS_ID . '&nbsp;&nbsp;&nbsp;' . zen_draw_input_field('old_orders_id'); ?>
@@ -504,18 +478,16 @@ if ($show_configuration_info == 'true') {
           <tr>
             <td colspan="4" class="main" align="left" valign="top"><?php echo TEXT_INFO_ORDERS_ID_UPDATE; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: reset test order to new order number -->
 
 <!-- bof: Locate a configuration constant KEY -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td colspan="3" class="main" align="left" valign="middle"><?php echo TEXT_CONFIGURATION_CONSTANT; ?></td>
           </tr>
 
-          <tr><form name = "locate_configure_key" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration_key', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "locate_configure_key" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration_key', 'NONSSL'); ?>" method="post">
             <td class="main" align="left" valign="bottom"><?php echo '<strong>' . TEXT_CONFIGURATION_KEY . '</strong>' . '<br />' . zen_draw_input_field('configuration_key'); ?></td>
             <td class="main" align="center" valign="bottom"><?php echo zen_image_submit('button_search.gif', IMAGE_SEARCH); ?></td>
             <td class="main" width="60%">&nbsp;</td>
@@ -523,18 +495,16 @@ if ($show_configuration_info == 'true') {
           <tr>
             <td colspan="3" class="main" align="left" valign="top"><?php echo TEXT_INFO_CONFIGURATION_UPDATE; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: Locate a configuration constant KEY -->
 
 <!-- bof: Locate a configuration constant -->
-      <tr>
-        <td colspan="2"><br /><table border="0" cellspacing="0" cellpadding="2">
+<table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td colspan="3" class="main" align="left" valign="middle"><?php echo TEXT_CONFIGURATION_CONSTANT_FILES; ?></td>
           </tr>
 
-          <tr><form name = "locate_configure" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration', 'NONSSL'); ?>"' method="post">
+          <tr><form name = "locate_configure" action="<?php echo zen_href_link_admin(FILENAME_STORE_MANAGER, 'action=locate_configuration', 'NONSSL'); ?>" method="post">
             <td class="main" align="left" valign="bottom"><?php echo '<strong>' . TEXT_CONFIGURATION_KEY_FILES . '</strong>' . '<br />' . zen_draw_input_field('configuration_key'); ?></td>
             <td class="main" align="left" valign="middle">
               <?php
@@ -555,23 +525,12 @@ if ($show_configuration_info == 'true') {
           <tr>
             <td colspan="4" class="main" align="left" valign="top"><?php echo TEXT_INFO_CONFIGURATION_UPDATE_FILES; ?></td>
           </tr>
-        </table></td>
-      </tr>
+</table>
 <!-- eof: Locate a configuration constant -->
 
 <?php
 } // eof configure
 ?>
-      <tr>
-        <td colspan="2"><?php echo '<br />' . zen_draw_separator('pixel_black.gif', '100%', '2'); ?></td>
-      </tr>
-
-
-    </table></td>
-<!-- body_text_eof //-->
-  </tr>
-</table>
-<!-- body_eof //-->
 
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
