@@ -121,10 +121,6 @@
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
-
 <div class="row">
 	<div class="span8">
 		<table class="table table-hover">

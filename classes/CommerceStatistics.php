@@ -103,7 +103,7 @@ class CommerceStatistics extends BitSingleton {
 				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` $whereSql
 				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
-			if( !empty( $rs->RowCount ) ) {
+			if( $rs->RowCount() ) {
 				$ret['stats']['gross_revenue_max'] = 0;
 				$ret['stats']['order_count_max'] = 0;
 				while( $row = $rs->fetchRow() ) {
@@ -117,6 +117,7 @@ class CommerceStatistics extends BitSingleton {
 				}
 			}
 		}
+
 		return( $ret );
 	}
 
