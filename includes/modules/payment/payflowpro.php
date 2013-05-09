@@ -275,9 +275,9 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		$values['NAME'] = $order->billing['firstname'] . ' ' . $order->billing['lastname'];
 
 		if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
-			$url='https://pilot-payflowpro.verisign.com/transaction';
+			$url='https://pilot-payflowpro.paypal.com';
 		} else {
-			$url='https://payflowpro.verisign.com/transaction';
+			$url='https://payflowpro.paypal.com';
 		}
 
 		$values['REQUEST_ID'] = time();
