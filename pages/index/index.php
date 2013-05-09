@@ -42,7 +42,7 @@ if ($category_depth == 'nested') {
 		$category_links = array_reverse($cPath_array);
 		for($i=0, $n=sizeof($category_links); $i<$n; $i++)
 		{
-			$subcatCount = $gBitDb->getOn( "select count(*) as `total` from   " . TABLE_CATEGORIES . " c INNER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON ( c.`categories_id` = cd.`categories_id` )
+			$subcatCount = $gBitDb->getOne( "select count(*) as `total` from   " . TABLE_CATEGORIES . " c INNER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON ( c.`categories_id` = cd.`categories_id` )
 					where      c.`parent_id` =? AND cd.`language_id` = ? AND c.`categories_status`= '1'", array( (int)$category_links[$i], (int)$_SESSION['languages_id']) );
 
 			if( $subcatCount ) {
