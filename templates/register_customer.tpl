@@ -77,7 +77,7 @@
 
 				{section name=f loop=$customFields}
 					<div class="control-group">
-						{formlabel label="$customFields[f]}
+						{formlabel label=$customFields[f]}
 						{forminput}
 							<input type="text" name="CUSTOM[{$customFields[f]|escape}]" />
 						{/forminput}
