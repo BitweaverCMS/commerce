@@ -28,7 +28,7 @@
 		<td class="alignright">{$order.order_total|round:2}</td>
 	</tr>
 	{if $order.comments && $order.comments!='Credit Card processed'}
-	<tr>
+	<tr class="comments">
 		<td colspan="8">{$order.comments}</td>
 	</tr>
 	{/if}
