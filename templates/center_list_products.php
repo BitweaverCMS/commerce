@@ -33,7 +33,7 @@ if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listH
 	} else {
 		$col_width = 100/$columnCount;
 	}
-	$gBitSmarty->assign( 'listColWidth', $col_width );
+	$_template->tpl_vars['listColWidth'] = new Smarty_variable( $col_width );
 	foreach( array_keys( $listedProducts ) as $productsId ) {
 		$products_price = CommerceProduct::getDisplayPrice( $productsId );
 		$listBoxContents[$row][$col] = $listedProducts[$productsId];
@@ -48,9 +48,8 @@ if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listH
 		$category_title = zen_get_categories_name((int)$new_products_category_id);
 		$title =  $title . ($category_title != '' ? ' - ' . $category_title : '');
 	}
-	$gBitSmarty->assign( 'productListTitle', $title );
+	$_template->tpl_vars['productListTitle'] = new Smarty_variable( $title );
 }
-$gBitSmarty->assign_by_ref( 'listedProducts', $listedProducts );
-$gBitSmarty->assign( 'listBoxContents', $listBoxContents );
+$_template->tpl_vars['listedProducts'] = new Smarty_variable( $listedProducts );
+$_template->tpl_vars['listBoxContents'] = new Smarty_variable( $listBoxContents );
 
-?>
