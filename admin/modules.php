@@ -102,7 +102,6 @@
     }
   }
 ?>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
 <script type="text/javascript">
   <!--

@@ -22,12 +22,8 @@
 	$version_check_index=true;
 	require('includes/application_top.php');
 
-	if( !empty( $_REQUEST['top_search'] ) ) {
-		switch( $_REQUEST['top_search_scope'] ) {
-			case 'order_num':
-				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['orders_search'] );
-				break;
-		}	
+	if( !empty( $_REQUEST['lookup_order_id'] ) && BitBase::verifyId( $_REQUEST['lookup_order_id'] ) ) {
+		bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['lookup_order_id'] );
 	}
 
 	global $language;

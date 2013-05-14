@@ -141,7 +141,7 @@
 
 
 		<form class="navbar-search pull-right" method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php">
-			<input type="text" name="orders_search" class="search-query span1" placeholder="Order #"/>
+			<input type="text" name="lookup_order_id" class="search-query span1" placeholder="Order #"/>
 		</form>
 	</div><!-- /.nav-collapse -->
 </div>
