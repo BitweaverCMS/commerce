@@ -20,6 +20,7 @@
 // $Id: stylesheet.css,v 1.13 2009/08/28 06:39:10 spiderr Exp $
 */
 
+.table td.currency,
 td.currency,
 th.currency	{ text-align:right; }
 .clickable { cursor:pointer; text-decoration:underline; }
@@ -28,6 +29,7 @@ th.currency	{ text-align:right; }
 .shoppingcart td	{ padding:15px; }
 .shoppingcart .subtotal 		{ font-size:16px; font-weight:900; }
 .shoppingcart .subtotal td	{ vertical-align: middle; text-align:right; }
+.shoppingcart .subtotal td.currency	{ text-align:right; }
 
 .centershop {
 	padding: 0px;

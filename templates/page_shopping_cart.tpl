@@ -22,13 +22,12 @@
 		{formfeedback error=$gBitCustomer->mCart->mErrors.checkout}
 	{/if}
 
-<table class="shoppingcart">
+<table class="shoppingcart table">
 <tr>
 	<th>{tr}&nbsp;{/tr}</th>
 	<th>{tr}Product(s){/tr}</th>
 	<th>{tr}Qty.{/tr}</th>
-	<th class="currency">{tr}Total{/tr}
-	</th>
+	<th class="currency">{tr}Total{/tr}</th>
 </tr>
 {foreach from=$gBitCustomer->mCart->contents key=productsKey item=basket}
 <tr class="{cycle values="odd,even"}">
@@ -37,7 +36,7 @@
 	<td class="productListing-data">{if $gCommerceSystem->getConfig('IMAGE_SHOPPING_CART_STATUS')}<a href="{$product->getDisplayUrl()}"><img src="{$product->getThumbnailUrl('avatar')}" alt="{$product->getTitle()|escape}"/></a>{/if}</td>
 	<td class="productListing-data" valign="top"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()|escape}</span></a>
 		{if $basket.attributes}
-			<ul>
+			<ul class="unstyled">
 			{foreach from=$basket.attributes key=optionKey item=valueId}
 				{assign var=option value=$product->getOptionValue('',$valueId)}
 				<li>{$option.products_options_values_name|escape}</li>
@@ -46,30 +45,29 @@
 		{/if}
 	</td>
 	<td>
-		<input type="text" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}" size="4">
+		<input type="text" class="input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
 		{* remove multiple checkbox - can't find good home for now, but still should work <input type="checkbox" name="cart_delete[]" value="{$productsKey}"> *}
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="icon-trash"  package="icons"  iexplain="Remove from cart"}</a>
 	</td>
-	<td class="currency">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
+	<td class="currency text-right">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
 </td>
 </tr>
 {/foreach}
 	{if $gCommerceSystem->getConfig('SHOW_SHOPPING_CART_UPDATE')}
 <tr class="subtotal">
 	<td colspan="2">
-			<select name="currency" onchange="this.form.submit()">
-				<option value="">{tr}Change Currency{/tr}...</option>
-				{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
-					<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
-				{/foreach}
-			</select>
+		<select name="currency" onchange="this.form.submit()">
+			<option value="">{tr}Change Currency{/tr}...</option>
+			{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
+				<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
+			{/foreach}
+		</select>
 	</td>
 	<td>
 		{tr}Sub-Total:{/tr}
 	</td>
 	<td class="currency">
 		 {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
-	<td>
 	</td>
 </tr>
 	{/if}
