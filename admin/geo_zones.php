@@ -171,7 +171,7 @@ function update_zone(theForm) {
   }
 ?>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->

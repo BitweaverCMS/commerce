@@ -104,7 +104,7 @@
   }
 ?>
 </head>
-<body onload="init()">
+<body>
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>

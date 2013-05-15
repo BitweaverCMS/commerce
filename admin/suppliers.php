@@ -137,7 +137,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
 <script type="text/javascript" src="includes/general.js"></script>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->

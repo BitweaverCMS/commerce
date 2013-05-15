@@ -195,7 +195,7 @@ function check_form(form_name) {
 }
 //--></script>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->

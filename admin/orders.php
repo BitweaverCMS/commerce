@@ -75,7 +75,6 @@ if( $gBitThemes->isAjaxRequest() ) {
 	exit;
 }
 
-$gBitSystem->setOnloadScript( 'init()' );
 require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
 if( !empty( $order ) ) {

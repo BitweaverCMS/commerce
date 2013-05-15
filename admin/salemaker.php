@@ -167,13 +167,6 @@ function popupWindow(url) {
 function session_win1() {
   window.open("<?php echo zen_href_link_admin(FILENAME_SALEMAKER_POPUP, 'cid='.$category['categories_id']); ?>","salemaker_info","height=460,width=600,scrollbars=yes,resizable=yes").focus();
 }
-function init() {
-  cssjsmenu('navbar');
-  if (document.getElementById) {
-    var kill = document.getElementById('hoverJS');
-    kill.disabled = true;
-  }
-}
 function RowClick(RowValue) {
   for (i=0; i<document.sale_form.length; i++) {
     if(document.sale_form.elements[i].type == 'checkbox') {
@@ -239,13 +232,13 @@ function SetCategories() {
 
 </script>
 </head>
-<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="SetCategories();SetFocus();init()">
+<body onload="SetCategories();SetFocus();">
 <div id="spiffycalendar" class="text"></div>
 <?php
   } else {
 ?>
 </head>
-<body onload="init();" marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
+<body>
 <?php
   }
 ?>

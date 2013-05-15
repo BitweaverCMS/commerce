@@ -30,7 +30,7 @@
 <link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="includes/nde-basic.css" type="text/css" media="screen, projection">
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
