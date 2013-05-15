@@ -138,7 +138,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
 <script type="text/javascript" src="includes/general.js"></script>
 <?php
   if (isset($_GET['zID']) && (($saction == 'edit') || ($saction == 'new'))) {
@@ -171,19 +170,6 @@ function update_zone(theForm) {
 <?php
   }
 ?>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
-</script>
 </head>
 <body onload="init()">
 <!-- header //-->
