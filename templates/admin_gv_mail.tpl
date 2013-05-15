@@ -85,21 +85,6 @@
 {else}
 
 
-<script type="text/javascript">
-{literal}
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  if (typeof _editor_url == "string") HTMLArea.replace('message_html');
-  }
-  // -->
-</script>
 <script language="javascript" type="text/javascript"><!--
 var form = "";
 var submitted = false;
