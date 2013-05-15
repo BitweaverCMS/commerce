@@ -116,7 +116,7 @@
 	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
-	$gBitSmarty->assign_by_ref( 'gBitCustomer', $gBitCustomer );
+	$gBitSmarty->assign( 'gBitCustomer', $gBitCustomer );
 
 	// lookup information
 	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
@@ -129,7 +129,7 @@
 	require_once(DIR_FS_CLASSES . 'currencies.php');
 	global $currencies;
 	$currencies = new currencies();
-	$gBitSmarty->assign_by_ref( 'gCommerceCurrencies', $currencies );
+	$gBitSmarty->assign( 'gCommerceCurrencies', $currencies );
 
 	require_once(DIR_FS_CLASSES . 'category_tree.php');
 
@@ -169,7 +169,7 @@
 // include the breadcrumb class and start the breadcrumb trail
   require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
   $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'gCommerceBreadcrumbs', $breadcrumb );
+  $gBitSmarty->assign( 'gCommerceBreadcrumbs', $breadcrumb );
 
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
@@ -229,7 +229,7 @@ if($gBitProduct->isValid() ) {
 	$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
 }
 if( !empty( $gBitProduct ) ) {
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	$gBitSmarty->assign( 'gBitProduct', $gBitProduct );
 }
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );
