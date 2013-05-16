@@ -160,23 +160,9 @@
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table>
+<div class="row">
+	<div class="span8">
+		<table class="table table-hover width100p">
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CURRENCY_NAME; ?></td>
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CURRENCY_CODES; ?></td>
@@ -190,13 +176,9 @@
   while (!$currency->EOF) {
     if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $currency->fields['currencies_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
       $cInfo = new objectInfo($currency->fields);
-    }
+	}
 
-    if (isset($cInfo) && is_object($cInfo) && ($currency->fields['currencies_id'] == $cInfo->currencies_id) ) {
-      echo '              <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=edit') . '\'">' . "\n";
-    } else {
-      echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency->fields['currencies_id']) . '\'">' . "\n";
-    }
+    echo '<tr '.((!empty( $cInfo ) && is_object($cInfo) && ($currency->fields['currencies_id'] == $cInfo->currencies_id) )  ? ' class="info" ' : '').' onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency->fields['currencies_id'] . '&action=edit') . '\'">' . "\n";
 
     if (DEFAULT_CURRENCY == $currency->fields['code']) {
       echo '                <td class="dataTableContent"><b>' . $currency->fields['title'] . ' (' . TEXT_DEFAULT . ')</b></td>' . "\n";
@@ -212,31 +194,26 @@
     $currency->MoveNext();
   }
 ?>
-              <tr>
-                <td colspan="4"><table>
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $currency_split->display_count($currency_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_CURRENCIES); ?></td>
-                    <td class="smallText" align="right"><?php echo $currency_split->display_links($currency_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                  </tr>
+				</td>
+              </tr>
+            </table>
+
+            <div><?php echo $currency_split->display_count($currency_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_CURRENCIES); ?>, <?php echo $currency_split->display_links($currency_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></div>
 <?php
   if (empty($action)) {
 ?>
-                  <tr>
-                    <td><?php if (CURRENCY_SERVER_PRIMARY) { echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=update') . '">' . zen_image_button('button_update_currencies.gif', IMAGE_UPDATE_CURRENCIES) . '</a>'; } ?></td>
-                    <td align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=new') . '">' . zen_image_button('button_new_currency.gif', IMAGE_NEW_CURRENCY) . '</a>'; ?></td>
-                  </tr>
+			<div>
+                 <?php if (CURRENCY_SERVER_PRIMARY) { echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=update') . '">' . zen_image_button('button_update_currencies.gif', IMAGE_UPDATE_CURRENCIES) . '</a>'; } ?> <?php echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=new') . '">' . zen_image_button('button_new_currency.gif', IMAGE_NEW_CURRENCY) . '</a>'; ?>
+			</div>
 <?php
   }
 ?>
-                </table>
 
 <?=zen_draw_form_admin('currencies', FILENAME_CURRENCIES, 'page=' . $_GET['page'] . (isset($cInfo) ? '&cID=' . $cInfo->currencies_id : '') . '&action=bulk')?>
-				<h1 class="pageHeading">Bulk Import Currencies</h1>
-				Here you can paste in currencies values. All values should be relative to the US Dollar, and have the following example format:
 <fieldset>
-[three letter abbreviatinon] [Name separated by at most one space] [dollar/currency] [currency/dollar]
-</fieldset>
-<textarea cols="80" rows="10" name="bulk_currencies">
+	<legend>Bulk Import Currencies</legend>
+				Here you can paste in currencies values. All values should be relative to the US Dollar, and have the following example format:
+<textarea class="width95p" rows="10" name="bulk_currencies">
 USD United States Dollars                 1.0000000000          1.0000000000
 EUR Euro                                  1.2186191347          0.8206009339
 GBP United Kingdom Pounds                 1.7684362222          0.5654713399
@@ -244,13 +221,16 @@ CAD Canada Dollars                        0.8253906445          1.2115475341
 AUD Australia Dollars                     0.7620792397          1.3121995036
 JPY Japan Yen                             0.0089098765        112.2350011215
 </textarea>
+<span class="help-block">[three letter abbreviatinon] [Name separated by at most one space] [dollar/currency] [currency/dollar]</span>
 
 <br/><input type="submit" name="bulk_submit" value="Bulk Update" />
-
+</fieldset>
 </form>
-				</td>
-              </tr>
-            </table></td>
+
+	</div>
+	<div class="span4">
+		<div class="well">
+
 <?php
   $heading = array();
   $contents = array();
@@ -263,8 +243,8 @@ JPY Japan Yen                             0.0089098765        112.2350011215
       $contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_TITLE . '<br>' . zen_draw_input_field('title'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_CODE . '<br>' . zen_draw_input_field('code'));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_SYMBOL_LEFT . '<br>' . zen_draw_input_field('symbol_left'));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_SYMBOL_RIGHT . '<br>' . zen_draw_input_field('symbol_right'));
+      $contents[] = array('text' => '<br>' . tra( 'Symbol Left:' ) . '<br>' . zen_draw_input_field('symbol_left'));
+      $contents[] = array('text' => '<br>' . tra( 'Symbol Right:' ) . '<br>' . zen_draw_input_field('symbol_right'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_POINT . '<br>' . zen_draw_input_field('decimal_point'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_THOUSANDS_POINT . '<br>' . zen_draw_input_field('thousands_point'));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_PLACES . '<br>' . zen_draw_input_field('decimal_places'));
@@ -279,8 +259,8 @@ JPY Japan Yen                             0.0089098765        112.2350011215
       $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_TITLE . '<br>' . zen_draw_input_field('title', $cInfo->title,'','text',$reinsert_value=false));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_CODE . '<br>' . zen_draw_input_field('code', $cInfo->code));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_SYMBOL_LEFT . '<br>' . zen_draw_input_field('symbol_left', htmlspecialchars($cInfo->symbol_left)));
-      $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_SYMBOL_RIGHT . '<br>' . zen_draw_input_field('symbol_right', htmlspecialchars($cInfo->symbol_right)));
+      $contents[] = array('text' => '<br>' . tra( 'Symbol Left:' ) . '<br>' . zen_draw_input_field('symbol_left', htmlspecialchars($cInfo->symbol_left)));
+      $contents[] = array('text' => '<br>' . tra( 'Symbol Right:' ) . '<br>' . zen_draw_input_field('symbol_right', htmlspecialchars($cInfo->symbol_right)));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_POINT . '<br>' . zen_draw_input_field('decimal_point', $cInfo->decimal_point));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_THOUSANDS_POINT . '<br>' . zen_draw_input_field('thousands_point', $cInfo->thousands_point));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_PLACES . '<br>' . zen_draw_input_field('decimal_places', $cInfo->decimal_places));
@@ -302,8 +282,8 @@ JPY Japan Yen                             0.0089098765        112.2350011215
         $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
         $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_TITLE . ' ' . $cInfo->title);
         $contents[] = array('text' => TEXT_INFO_CURRENCY_CODE . ' ' . $cInfo->code);
-        $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_SYMBOL_LEFT . ' ' . $cInfo->symbol_left);
-        $contents[] = array('text' => TEXT_INFO_CURRENCY_SYMBOL_RIGHT . ' ' . $cInfo->symbol_right);
+        $contents[] = array('text' => '<br>' . tra( 'Symbol Left:' ) . ' ' . $cInfo->symbol_left);
+        $contents[] = array('text' => tra( 'Symbol Right:' ) . ' ' . $cInfo->symbol_right);
         $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_POINT . ' ' . $cInfo->decimal_point);
         $contents[] = array('text' => TEXT_INFO_CURRENCY_THOUSANDS_POINT . ' ' . $cInfo->thousands_point);
         $contents[] = array('text' => TEXT_INFO_CURRENCY_DECIMAL_PLACES . ' ' . $cInfo->decimal_places);
@@ -323,19 +303,14 @@ JPY Japan Yen                             0.0089098765        112.2350011215
     echo '            </td>' . "\n";
   }
 ?>
-          </tr>
-        </table></td>
-      </tr>
-    </table></td>
-<!-- body_text_eof //-->
-  </tr>
-</table>
-<!-- body_eof //-->
+
+		</div>
+	</div>
+</div>
 
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<br>
 </body>
 </html>
 <?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
