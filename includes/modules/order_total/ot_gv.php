@@ -29,7 +29,7 @@ class ot_gv {
 			$this->title = MODULE_ORDER_TOTAL_GV_TITLE;
 			$this->header = MODULE_ORDER_TOTAL_GV_HEADER;
 			$this->description = MODULE_ORDER_TOTAL_GV_DESCRIPTION;
-			$this->user_prompt = MODULE_ORDER_TOTAL_GV_USER_PROMPT;
+			$this->user_prompt = tra( 'Apply Balance' );
 			$this->sort_order = MODULE_ORDER_TOTAL_GV_SORT_ORDER;
 			$this->include_shipping = MODULE_ORDER_TOTAL_GV_INC_SHIPPING;
 			$this->include_tax = MODULE_ORDER_TOTAL_GV_INC_TAX;
@@ -44,7 +44,17 @@ class ot_gv {
 					$_SESSION['cot_gv'] = ($order->info['total'] > $gvNum ? $gvNum : $order->info['total']);
 				}
 			}
-			$this->checkbox = $this->user_prompt . '<input type="textfield" size="6" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '">' . ($this->user_has_gv_account( $gBitUser->mUserId ) > 0 ? '<br />' . MODULE_ORDER_TOTAL_GV_USER_BALANCE . $gvAmount : '');
+			$this->checkbox = '';
+			if( $this->user_has_gv_account( $gBitUser->mUserId ) ) {
+				$this->checkbox = '
+						<div class="control-group">
+							<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
+							<div class="controls">
+								<input type="text" class="input-mini" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '"> ' . tra( 'of' ) . ' ' . $gvAmount . '
+							</div>
+						</div>';
+			}
+
 			$this->output = array();
 		}
 	}

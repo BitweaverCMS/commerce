@@ -84,7 +84,7 @@ class usps extends BitBase {
 		parent::__construct();
 
 		$this->code = 'usps';
-		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;
+		$this->title = 'USPS';
 		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_USPS_STATUS' );
 
 		if ( $this->enabled && MODULE_SHIPPING_USPS_DEBUG_MODE != 'Off') {
@@ -93,7 +93,7 @@ class usps extends BitBase {
 		if ( $this->enabled && MODULE_SHIPPING_USPS_SERVER != 'production') {
 			$this->title .=	'<span class="alert"> (USPS Server set to: ' . MODULE_SHIPPING_USPS_SERVER . ')</span>';
 		}
-		$this->description = MODULE_SHIPPING_USPS_TEXT_DESCRIPTION;
+		$this->description = 'United States Postal Service';
 		$this->icon = 'shipping_usps';
 
 		if ($this->enabled) {
