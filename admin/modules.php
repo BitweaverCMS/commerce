@@ -179,7 +179,7 @@
         $module_info['keys'] = $keys_extra;
         $mInfo = new objectInfo($module_info);
       }
-      echo '<tr '.(isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ? 'class="info"' : ''). ' onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
+      echo '<tr '.(isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ? 'class="info"' : ''). ' onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
 ?>
                 <td class="dataTableContent"><?php echo $module->title; ?></td>
                 <td class="dataTableContent"><?php echo $module->code; ?></td>
