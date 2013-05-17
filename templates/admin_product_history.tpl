@@ -16,7 +16,7 @@
 		</td>
 		<td class="item" style="text-align:right">{$hist.products_quantity} x</td>
 		<td class="item">
-			(<a href="{$gBitProduct->getDisplayUrlFromHash($hist)}">{$hist.products_id}</a>) {$hist.products_name} <br/>
+			<span class="pull-right">(<a href="{$gBitProduct->getDisplayUrlFromHash($hist)}">{$hist.products_id}</a>)</span> {$hist.products_name} <br/>
 			v{$hist.products_version}
 		</td>
 		<td>

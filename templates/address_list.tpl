@@ -8,9 +8,10 @@
 			{assign var=class value="row"}
 		{/if}
 		<div class="{$class}">
-			{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked}
-					{assign var=address value=$addresses[ix]}
-					{include file="bitpackage:bitcommerce/address_display.tpl"}
+			<label class="radio">
+				{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked}
+				{include file="bitpackage:bitcommerce/address_display.tpl" address=$addresses[ix]}
+			</label>
 		</div>
 	{/section}
 {/if}

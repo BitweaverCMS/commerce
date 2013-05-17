@@ -5,8 +5,12 @@
 		{formfeedback error=$errors.gender}
 		{formlabel label="Salutation" for=""}
 		{forminput}
-			{html_radios values="m" output="{tr}Mr.{/tr}" name="gender" checked=$address.entry_gender}
-			{html_radios values="f" output="{tr}Ms.{/tr}" name="gender" checked=$address.entry_gender}<acronym title="{tr}Required{/tr}">*</acronym>
+			<label class="radio">
+				{html_radios values="m" output="{tr}Mr.{/tr}" name="gender" checked=$address.entry_gender}
+			</label>
+			<label class="radio">
+				{html_radios values="f" output="{tr}Ms.{/tr}" name="gender" checked=$address.entry_gender}
+			</label>
 		{/forminput}
 	</div>
 {/if}
@@ -87,9 +91,10 @@
 </div>
 {if $primaryCheck}
 <div class="control-group">
-	{formlabel label="Set as Primary Address" for="" }
 	{forminput}
-		{html_checkboxes name="primary" values="on" checked=$address.entry_primary labels=false id="primary"}
+		<label class="checkbox">
+			{html_checkboxes name="primary" values="on" checked=$address.entry_primary labels=false id="primary"} {tr}Set as Primary Address{/tr}
+		<label>
 	{/forminput}
 </div>
 {/if}

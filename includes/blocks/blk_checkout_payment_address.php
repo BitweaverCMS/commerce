@@ -1,26 +1,5 @@
+<table class="table table-hover">
 <?php
-//
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id$
-//
-      $radio_buttons = 0;
-
       $addresses_query = "select address_book_id, entry_firstname as firstname, entry_lastname as lastname,
                                  entry_company as company, entry_street_address as street_address,
                                  entry_suburb as suburb, entry_city as city, entry_postcode as postcode,
@@ -33,8 +12,19 @@
 
       while (!$addresses->EOF) {
         $format_id = zen_get_address_format_id($addresses->fields['country_id']);
-        require( DIR_FS_BLOCKS . 'tpl_block_checkout_payment_address.php');
-        $radio_buttons++;
+?>
+    <tr <?=($addresses->fields['address_book_id'] == $_SESSION['sendto'])?'class="success"':''?>>
+        <td >
+			<label class="radio">
+        		<input type="radio" name="address" value="<?=$addresses->fields['address_book_id']?>" <?=($addresses->fields['address_book_id'] == $_SESSION['sendto'])?'checked="checked"':''?> />
+				<a href="<?=BITCOMMERCE_PKG_URL?>?main_page=address_book_process&edit=<?=$addresses->fields['address_book_id']?>"><i class="icon-pencil"></i></a>
+        <?php echo zen_address_format($format_id, $addresses->fields, true, ' ', ', '); ?>
+			</label>
+		</td>
+	</tr>
+
+<?
         $addresses->MoveNext();
       }
 ?>
+</table>

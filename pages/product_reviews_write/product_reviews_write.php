@@ -72,13 +72,7 @@
     <td class="smallText" colspan="2"><?php echo TEXT_NO_HTML . (REVIEWS_APPROVAL == '1' ? '<br />' . TEXT_APPROVAL_REQUIRED: ''); ?></td>
   </tr>
   <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-   </tr>
-  <tr>
     <td class="main" colspan="2" align="center" valign="top"><?php echo SUB_TITLE_RATING . '<br />' . TEXT_BAD . ' ' . zen_draw_radio_field('rating', '1') . ' ' . zen_draw_radio_field('rating', '2') . ' ' . zen_draw_radio_field('rating', '3') . ' ' . zen_draw_radio_field('rating', '4') . ' ' . zen_draw_radio_field('rating', '5') . ' ' . TEXT_GOOD; ?></td>
-  </tr>
-  <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
   <tr>
     <td class="main"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params(array('reviews_id', 'action'))) . '">' . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>

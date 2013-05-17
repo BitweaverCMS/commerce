@@ -30,8 +30,6 @@ define('TABLE_HEADING_CURRENCY_VALUE', 'Value');
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_CURRENCY_TITLE', 'Title:');
 define('TEXT_INFO_CURRENCY_CODE', 'Code:');
-define('TEXT_INFO_CURRENCY_SYMBOL_LEFT', 'Symbol Left:');
-define('TEXT_INFO_CURRENCY_SYMBOL_RIGHT', 'Symbol Right:');
 define('TEXT_INFO_CURRENCY_DECIMAL_POINT', 'Decimal Point:');
 define('TEXT_INFO_CURRENCY_THOUSANDS_POINT', 'Thousands Point:');
 define('TEXT_INFO_CURRENCY_DECIMAL_PLACES', 'Decimal Places:');

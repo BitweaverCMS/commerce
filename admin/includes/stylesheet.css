@@ -1,11 +1,8 @@
-@import url("menu.css");
-
-.admin .table td[colspan=8] {
-	border: none;
-}
 
 table.order-items	{ background-color:#f3f3f3; }
 table.table tr.comments	td { border-top:none; }
+
+.table td.supplemental	{ border: none; }
 
 #bitcommerce.adminmode .navbar-inner {
 padding-left: 0px;

@@ -341,18 +341,6 @@ TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pri
   border-top: 1px solid #9a9a9a;
 }
 
-/* General alert span class */
-TD.alert, SPAN.alert {
-  color: #FF0000;
-  font-weight: bold;
-}
-
-/* General alert span class */
-TD.alertBlack, SPAN.alertBlack {
-  color: #000000;
-  font-weight: bold;
-}
-
 /* popup tables */
 TABLE.popupattributeqty, TABLE.popupcouponhelp, TABLE.popupcvvhelp, TABLE.popupimage, TABLE.popupimageadditional, TABLE.popupsearchhelp, TABLE.popupshippingestimator, TABLE.popupinfoshoppingcart {
   background-color: #ffffff;
