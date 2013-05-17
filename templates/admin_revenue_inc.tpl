@@ -2,7 +2,7 @@
 <table class="table data">
 <tr>
 	<th colspan="2">{tr}Revenue{/tr}: {$revenueTitle}</th>
-	<th>{tr}Orders{/tr}</th>
+	<th>{tr}#{/tr}</th>
 	<th>{tr}Avg Size{/tr}</th>
 </tr>
 {foreach from=$stats item=statRow key=statKey}

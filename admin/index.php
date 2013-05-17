@@ -112,9 +112,9 @@
 
 	<div class="span4" id="coltwo">
 
-<div class="well">
-<h3><?php echo tra( 'Order Summary' ); ?></h3>
+<div class="well nopadding">
 <table class="table data">
+<tr><th><?php echo tra( 'Order Summary' ); ?></th><th>#</th></tr>
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co
@@ -123,7 +123,7 @@
 				ORDER BY `orders_status_id` DESC";
 	if( $rs = $gBitDb->query( $query ) ) {
 		while( $orders_status = $rs->fetchRow() ) {
-		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
+		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td> ' . $orders_status['orders_count'] . '</td></tr>';
 		}
 	}
 ?>
@@ -134,12 +134,10 @@
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
 
-<div class="well">
-<h3><?php echo tra( 'Statistics' ); ?></h3>
+<div class="well nopadding">
 <table class="table data">
+<tr><th><?php echo tra( 'Statistics' ); ?></th><th></th></tr>
 <?php
-	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_COUNTER . '</td><td> ' . $counter->fields['counter'] . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_CUSTOMERS . '</td><td> ' . $customers . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off . '</td></tr>';
