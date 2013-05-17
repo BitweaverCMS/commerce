@@ -37,7 +37,4 @@
       </tr>
     </table></td>
   </tr>
-  <tr>
-    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
  
