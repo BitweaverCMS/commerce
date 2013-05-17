@@ -2,26 +2,32 @@
 
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
+
+<header class="page-header">
+	<h1>{tr}Step 1 of 3 - Delivery Information{/tr}</h1>
+</header>
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
 		<div class="body">
-			{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
+			{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				{if !$gBitUser->isRegistered()}
 					{include file="bitpackage:bitcommerce/register_customer.tpl"}
 				{/if}
 
-				{if count( $addresses )}
-				<div class="width50p floatleft">
-					<h1>{tr}Choose From Your Address Book or...{/tr}</h1>
-					{tr}Please select the preferred shipping address if this order is to be delivered elsewhere.{/tr}
-					{include file="bitpackage:bitcommerce/address_list.tpl"}
-				</div>
-				{/if}
-				
-				<div class="width50p floatleft">
-					{legend legend="Enter a New Shipping Address"}
-						{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
-					{/legend}
+				<div class="row-fluid">
+					{if count( $addresses )}
+					<div class="span6">
+						{legend legend="Choose Shipping Address"}
+							{include file="bitpackage:bitcommerce/address_list.tpl"}
+						{/legend}
+					</div>
+					{/if}
+					
+					<div class="span6">
+						{legend legend="Enter a New Shipping Address"}
+							{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`pages/address_new/address_new.php"}
+						{/legend}
+					</div>
 				</div>
 
 				<div class="control-group clear">
@@ -32,9 +38,6 @@
 			{/form}
 		</div><!-- end .body -->
 	{else}
-		<header class="page-header">
-			<h1>{tr}Step 1 of 3 - Delivery Information{/tr}</h1>
-		</header>
 
 		<section class="body">
 			{form name='checkout_address' }

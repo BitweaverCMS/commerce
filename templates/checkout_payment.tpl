@@ -3,6 +3,10 @@
 </header>
 
 {form class="form-horizontal" name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
+
+{if $messageStack->size('checkout_payment')}
+	{$messageStack->output('checkout_payment')}
+{/if}
 		
 {if $smarty.const.DISPLAY_CONDITIONS_ON_CHECKOUT == 'true'}
 	<tr>

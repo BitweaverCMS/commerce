@@ -168,6 +168,7 @@ function clean_input( &$pArray ) {
 // initialize the message stack for output messages
 	require_once(DIR_FS_CLASSES . 'message_stack.php');
 	$messageStack = new messageStack;
+	$gBitSmarty->assign( 'messageStack', $messageStack );
 
 
 

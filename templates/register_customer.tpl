@@ -1,10 +1,11 @@
 {strip}
 
-	<div class="page-header">
+	<header class="page-header">
 		<h1>{tr}Enter your user information{/tr}</h1>
 		{if $showmsg eq 'y'}<h2>{$msg}</h2>{/if}
-	</div>
+	</header>
 
+	<section>
 		<p>{tr}Please enter your email and password below. If this is your first time here, an account will be created for you. If you have registered previously, you will automatically be logged in.{/tr}</a></p>
 		<fieldset>
 			{if $notrecognized eq 'y'}
@@ -84,13 +85,9 @@
 					</div>
 				{/section}
 
-				{if $gBitSystem->isFeatureActive('users_random_number_reg')}
-					<hr />
-					{formfeedback error=$errors.captcha}
-					{captcha force=true variant=row}
-				{/if}
+				{captcha}
 
 			{/if}
 		</fieldset>
-
+	</section>
 {/strip}
