@@ -46,9 +46,6 @@
     </td>
   </tr>
   <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
-  <tr>
     <td colspan="2" align="left" class="smallText">
 <?php // later make link only show when more than 1 ?>
       <?php echo '<a href="' . zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params()) . '">' . TEXT_PRODUCT_INFO . '</a>'; ?><?php echo ($reviews_counter > 1 ? '&nbsp;|&nbsp;' . '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS, zen_get_all_get_params()) . '">' . TEXT_REVIEW_ADDITIONAL . '</a>' : ''); ?>
@@ -60,9 +57,6 @@
   </tr>
   <tr>
     <td valign="top" class="main" colspan="2"><?php echo zen_break_string(nl2br(zen_output_string_protected(stripslashes($review_info->fields['reviews_text']))), 60, '-<br />') . '<br /><br /><i>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $review_info->fields['reviews_rating'] . '.png', sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $review_info->fields['reviews_rating'])) . '</i>'; ?></td>
-  </tr>
-  <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
   <tr>
     <td class="main"><?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?></td>

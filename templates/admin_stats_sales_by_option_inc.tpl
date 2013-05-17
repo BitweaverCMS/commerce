@@ -1,5 +1,5 @@
 
-<table class="data stats">
+<table class="table data stats">
 	<caption>{tr}Product Options Sales{/tr}</caption>
 	<thead>
 	<tr>

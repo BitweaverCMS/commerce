@@ -13,6 +13,6 @@
 //
 
 global $gBitSmarty, $gBitCustomer;
-$gBitSmarty->assign_by_ref( 'ordersHistory', $gBitCustomer->getOrdersHistory() );
+$history = $gBitCustomer->getOrdersHistory(); 
+$_template->tpl_vars['ordersHistory'] = new Smarty_variable( $history );
 
-?>

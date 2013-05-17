@@ -138,10 +138,10 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 										'field' => zen_draw_input_field('payflowpro_cc_number')
 								),
 								array(	'title' => tra( 'Expiration Date:' ),
-										'field' => zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month) . '&nbsp;' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year)
+										'field' => zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '&nbsp;' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ')
 								),
-								array(	'title' => tra( 'CVV Number' ) . ' ' . '<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . tra( ' (<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . 'More Info' . '</a>)' ) . '</a>',
-										'field' => zen_draw_input_field('payflowpro_cc_csc','','SIZE=4, MAXLENGTH=4')
+								array(	'title' => tra( 'CVV Number' ) . ' <i onclick="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')" style="font-size:18pt" class="icon-credit-card"></i>',
+										'field' => zen_draw_input_field('payflowpro_cc_csc','','class="input-mini"')
 								)
 							)
 						);
@@ -275,9 +275,9 @@ if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 		$values['NAME'] = $order->billing['firstname'] . ' ' . $order->billing['lastname'];
 
 		if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
-			$url='https://pilot-payflowpro.verisign.com/transaction';
+			$url='https://pilot-payflowpro.paypal.com';
 		} else {
-			$url='https://payflowpro.verisign.com/transaction';
+			$url='https://payflowpro.paypal.com';
 		}
 
 		$values['REQUEST_ID'] = time();

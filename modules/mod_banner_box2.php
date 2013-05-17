@@ -26,9 +26,9 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 $banner_box_group= SHOW_BANNERS_GROUP_SET8;
 
 if( $bannerRs = zen_banner_exists('dynamic', $banner_box_group) ) {
-	$gBitSmarty->assign( 'sideboxBannerBox2', zen_display_banner('static', $bannerRs ) );
+	$_template->tpl_vars['sideboxBannerBox2'] = new Smarty_variable( zen_display_banner('static', $bannerRs ) );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle',  'Sponsors' ) ;
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Sponsors' );
 }
 ?>

@@ -26,9 +26,6 @@
     <td class="tableHeading"><?php echo TABLE_HEADING_UPCOMING_PRODUCTS; ?></td>
     <td align="right" nowrap="nowrap" class="tableHeading"><?php echo TABLE_HEADING_DATE_EXPECTED; ?></td>
   </tr>
-  <tr>
-    <td colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></td>
-  </tr>
 <?php
     $row = 0;
     while (!$expected->EOF) {
@@ -45,8 +42,5 @@
       $expected->MoveNext();
     }
 ?>
-  <tr>
-    <td colspan="2"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR); ?></td>
-  </tr>
 </table>
 <!-- eof: upcoming_products -->

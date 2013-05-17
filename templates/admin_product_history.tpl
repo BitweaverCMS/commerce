@@ -2,12 +2,12 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
-		<h1 class="header">{tr}Product History{/tr}</h1>
+	<div class="page-header">
+		<h1>{tr}Product History{/tr}</h1>
 	</div>
 	<div class="body">
 
-<table class="data">
+<table class="table data">
 	{foreach from=$productHistory item=hist}	
 	<tr valign="top">
 		<td class="item" style="text-align:right">
@@ -16,7 +16,7 @@
 		</td>
 		<td class="item" style="text-align:right">{$hist.products_quantity} x</td>
 		<td class="item">
-			(<a href="{$gBitProduct->getDisplayUrlFromHash($hist)}">{$hist.products_id}</a>) {$hist.products_name} <br/>
+			<span class="pull-right">(<a href="{$gBitProduct->getDisplayUrlFromHash($hist)}">{$hist.products_id}</a>)</span> {$hist.products_name} <br/>
 			v{$hist.products_version}
 		</td>
 		<td>

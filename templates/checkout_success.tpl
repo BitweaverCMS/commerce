@@ -31,7 +31,7 @@
 		{include_php file="`$smarty.const.DIR_WS_MODULES`downloads.php"}
 	{/if}
 
-	<input class="button" name="Continue" value="{tr}Continue{/tr}" type="submit">
+	<input class="btn btn-small" name="Continue" value="{tr}Continue{/tr}" type="submit">
 
 	</form>
 

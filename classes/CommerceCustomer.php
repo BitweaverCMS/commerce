@@ -170,7 +170,7 @@ class CommerceCustomer extends BitBase {
 			if( $this->isValid() ) {
 				$pParamHash['address_store']['customers_id'] = $this->mCustomerId;
 			} else {
-				$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
+				$errorHash['customers_id'] = tra( 'You must be registered to save addresses' );
 			}
 		} else {
 			$pParamHash['address_store']['customers_id'] = $pParamHash['customers_id'];

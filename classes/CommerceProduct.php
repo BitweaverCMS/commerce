@@ -1061,6 +1061,14 @@ If a special exist * 10+9
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
 			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) && empty( $pParamHash['short_form'] ) ) {
+				if( $pParamHash['products_name'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_name'] );
+				}
+				if( $pParamHash['products_model'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_model'] );
+				}
+			}
 			if( !empty( $pParamHash['cat_path'] ) ) {
 				if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 					$ret .= '/' . $pParamHash['cat_path'];
@@ -1138,7 +1146,7 @@ If a special exist * 10+9
 		global $gBitSystem, $gBitUser;
 
 		if( empty( $pListHash['sort_mode'] ) ) {
-			$pListHash['sort_mode'] = 'products_date_added_desc';
+			$pListHash['sort_mode'] = 'created_desc';
 		}
 		$this->prepGetList( $pListHash );
 		$bindVars = array();
@@ -1166,7 +1174,7 @@ If a special exist * 10+9
 		}
 
 		if( empty( $pListHash['thumbnail_size'] ) ) {
-			$pListHash['thumbnail_size'] = 'icon';
+			$pListHash['thumbnail_size'] = 'small';
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
@@ -1247,6 +1255,7 @@ If a special exist * 10+9
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 		$pListHash['total_records'] = 0;
+
 		$query = "SELECT p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					FROM " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
@@ -1301,7 +1310,7 @@ If a special exist * 10+9
 		$pListHash['current_page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_records'] / $pListHash['max_records'] );
 		$pListHash['page_records'] = count( $ret );
-		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
+//		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'];
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['offset'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
@@ -1866,7 +1875,7 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
+								$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>';
 								break;
 								case '2':
 								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
@@ -1921,7 +1930,7 @@ If a special exist * 10+9
 								break;
 								case '0':
 								default:
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
+								$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'</label>';
 								break;
 							}
 						}
@@ -2077,7 +2086,7 @@ If a special exist * 10+9
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
 					// dropdownmenu auto switch to selected radio button display
-					case ( count( $this->mOptions[$optionsId]['values'] ) == 1):
+					case (!empty( $this->mOptions[$optionsId]['values'] ) && count( $this->mOptions[$optionsId]['values'] ) == 1):
 						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
 							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
 						} else {

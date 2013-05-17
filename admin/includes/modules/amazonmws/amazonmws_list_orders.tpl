@@ -10,7 +10,7 @@
 
 	<div class="body">
 
-		<table class="data">
+		<table class="table data">
 		<tr >
 			<th>Amazon Order ID</th>
 			<th>Customer</th>
@@ -29,7 +29,7 @@
 				{else}
 					{form}
 						<input type="hidden" name="amazon_order_id" value="{$azOrder->getAmazonOrderId()}"/>
-						<input type="submit" class="minibutton" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
+						<input type="submit" class="btn btn-mini" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
 					{/form}
 				{/if}
 				</div>

@@ -24,9 +24,6 @@
   <tr>
     <td class="pageHeading" colspan="3"><h1><?php echo HEADING_TITLE; ?></h1></td>
   </tr>
-  <tr>
-    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
   <tr valign="top">
     <td class="main">
 	    <h4><?php echo HEADING_BILLING_ADDRESS; ?></h4>
@@ -47,9 +44,6 @@
 	</td>
     <td></td>
   </tr>
-  <tr>
-    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
 <?php
 // always show comments
 //  if ($order->info['comments']) {
@@ -60,9 +54,6 @@
 		<?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br(zen_output_string_protected($order->info['comments'])) . zen_draw_hidden_field('comments', $order->info['comments'])); ?>
 	</td>
      <td class="main" class="alignright"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-  </tr>
-  <tr>
-    <td class="main" colspan="3" ><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
 <?php
 //  }
@@ -134,18 +125,12 @@
       </table>
     </td>
   </tr>
-  <tr>
-    <td class="main" colspan="3"><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
 <?php
     if( $order->content_type != 'virtual' && $order->info['shipping_method']) {
 ?>
   <tr>
     <td class="main" colspan="2"><?php echo HEADING_SHIPPING_METHOD; ?>  <?php echo $order->info['shipping_method']; ?></td>
     <td class="main" class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-  </tr>
-  <tr>
-    <td class="main" colspan="3"><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
 <?php
     }
@@ -183,9 +168,6 @@ $class =& $_SESSION['payment'];
   }
 ?>
     </td>
-  </tr>
-  <tr>
-    <td class="main" colspan="3"><?php echo zen_draw_separator(OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
   </tr>
   <tr>
     <td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>

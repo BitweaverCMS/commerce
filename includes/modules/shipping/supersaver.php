@@ -71,7 +71,7 @@
 			unset( $this->quotes );
 		} else {
 			$this->quotes['note'] = tra( MODULE_SHIPPING_SUPERSAVER_DESC );
-			if( SHOW_CREATE_ACCOUNT_DEFAULT_COUNTRY == $order->delivery['country_id'] && MODULE_SHIPPING_SUPERSAVER_DOMESTIC == 'True' ) {
+			if( SHIPPING_ORIGIN_COUNTRY == $order->delivery['country']['countries_id'] && MODULE_SHIPPING_SUPERSAVER_DOMESTIC == 'True' ) {
 				$desc = tra( MODULE_SHIPPING_SUPERSAVER_DESC ).' '.tra( MODULE_SHIPPING_SUPERSAVER_DOMESTIC_DESC );
 				$this->quotes['methods'] = array(array('id' => $this->code,
 											'title' => trim( $desc ),

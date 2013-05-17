@@ -8,8 +8,8 @@
 <div id="caldiv" style="width:200px;position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
 
 <div class="admin bitcommerce">
-	<div class="header">
-		<h1 class="header">{tr}Revenue Breakdown{/tr} {$smarty.request.timeframe}</h1>
+	<div class="page-header">
+		<h1>{tr}Revenue Breakdown{/tr} {$smarty.request.timeframe}</h1>
 	</div>
 	<div class="body">
 
@@ -19,7 +19,7 @@
 {include file="bitpackage:bitcommerce/admin_stats_sales_by_option_inc.tpl"}
 </div>
 <div class="span-12 last">
-<table class="data stats">
+<table class="table data stats">
 	<caption>{tr}Customer Created Products Stats{/tr}</caption>
 	<thead>
 	<tr>
@@ -87,7 +87,7 @@
 </div>
 
 <div class="span-12 last">
-<table class="data stats">
+<table class="table data stats">
 	<caption>{tr}Revenue By Interest{/tr}</caption>
 	<thead>
 	<tr>
@@ -112,7 +112,7 @@
 
 
 <div class="span-12 last">
-<table class="data stats">
+<table class="table data stats">
 	<caption>{tr}Most Valuable Customers{/tr}</caption>
 	<thead>
 	<tr>

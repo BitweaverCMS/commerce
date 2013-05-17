@@ -41,10 +41,10 @@ if ($show_currencies == true) {
 			$currenciesHash[$key] = $value['title'];
 		}
 
-		$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
-		$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
+		$_template->tpl_vars['modCurrencies'] = new Smarty_variable( $currenciesHash );
+		$_template->tpl_vars['modSelectedCurrency'] = new Smarty_variable( !empty( $_SESSION['currency'] ) );
 		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle',  'Currencies' ) ;
+			$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Currencies' );
 		}
 	}
 }

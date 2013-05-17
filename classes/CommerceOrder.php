@@ -283,8 +283,8 @@ class order extends CommerceOrderBase {
 													 'suburb' => $order->fields['billing_suburb'],
 													 'city' => $order->fields['billing_city'],
 													 'postcode' => $order->fields['billing_postcode'],
+													 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
 													 'state' => $order->fields['billing_state'],
-													 'country' => $order->fields['billing_country'],
 													 'telephone' => $order->fields['billing_telephone'],
 													 'format_id' => $order->fields['billing_address_format_id']);
 

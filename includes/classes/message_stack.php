@@ -63,11 +63,11 @@
       $this->table_data_parameters = 'class="messageBox"';
 
       $this->table_data_parameters = 'class="messageBox"';
-	  $ret = '<div class="clear formfeedback"><ul>';
+	  $ret = '<ul class="unstyled">';
       for ($i=0, $n=sizeof($this->messages); $i<$n; $i++) {
-	  	$ret .= '<li class="'.$this->messages[$i]['type'].'">'.$this->messages[$i]['text'].'</li>';
+	  	$ret .= '<li class="alert alert-'.$this->messages[$i]['type'].'">'.$this->messages[$i]['text'].'</li>';
       }
-	  $ret .= '</ul></div>';
+	  $ret .= '</ul>';
 
 		return $ret;
     }
