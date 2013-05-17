@@ -62,7 +62,7 @@ if( empty( $_SESSION['sendto'] ) ) {
 
   require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
   $order = new order;
-$gBitSmarty->assign_by_ref( 'order', $order );
+$gBitSmarty->assign( 'order', $order );
 
 // register a random ID in the session to check throughout the checkout procedure
 // against alterations in the shopping cart contents
@@ -125,7 +125,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 			} else {
 				unset( $order->delivery );
 				$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
-				$gBitSmarty->assign_by_ref( 'errors', $gBitCustomer->mErrors );
+				$gBitSmarty->assign( 'errors', $gBitCustomer->mErrors );
 			}
 		} elseif( !empty( $_REQUEST['address'] ) ) {
 			$_SESSION['shipping'] = $_REQUEST['address'];
@@ -194,6 +194,8 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 				} else {
 					$_SESSION['shipping'] = false;
 				}
+			} elseif( empty( $free_shipping ) ) {
+				$gBitSmarty->assign( 'errors', "Please select a shipping method" );
 			}
 		} else {
 			// not virtual product, but no shipping cost.
@@ -218,7 +220,7 @@ $gBitSmarty->assign_by_ref( 'order', $order );
 		$breadcrumb->add(NAVBAR_TITLE_2);
 
 		$gBitSmarty->assign( 'shippingModules', TRUE );
-		$gBitSmarty->assign_by_ref( 'quotes', $quotes );
+		$gBitSmarty->assign( 'quotes', $quotes );
 		$gBitSmarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
 		$gBitSmarty->assign( 'freeShipping', $free_shipping );
 		$gBitSmarty->assign( 'sessionShippingId', $_SESSION['shipping'] );

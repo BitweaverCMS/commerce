@@ -3,9 +3,6 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
-		<div class="page-header">
-		</div>
-
 		<div class="body">
 			{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 				<input type="hidden" name="main_page" value="checkout_shipping" />
@@ -29,46 +26,60 @@
 
 				<div class="control-group clear">
 					{forminput}
-						<input type="submit" class="btn" name="" value="Cancel" />
-						<input type="submit" class="btn" name="submit_address" value="Continue" />
+						 <input type="submit" class="btn btn-primary" name="submit_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
 					{/forminput}
 				</div>
 			{/form}
 		</div><!-- end .body -->
 	{else}
-		<div class="page-header">
+		<header class="page-header">
 			<h1>{tr}Step 1 of 3 - Delivery Information{/tr}</h1>
-		</div>
+		</header>
 
-		<div class="body">
+		<section class="body">
 			{form name='checkout_address' }
-				<input type="hidden" name="action" value="process" />
-				<input type="hidden" name="main_page" value="checkout_shipping" />
-				<div class="control-group">
-					{formlabel label="Shipping Address"}
-					{forminput}
-						{assign var=address value=$order->delivery}
-<fieldset>
-						{include file="bitpackage:bitcommerce/address_display.tpl"}
-</fieldset>
-						{formhelp note="Your order will be shipped to the following address or you may change the shipping address by clicking the Change Address button."}
-					{/forminput}
-				</div>
+			{formfeedback error=$errors}
+			<div class="row-fluid">
+				<div class="span6">
+					<fieldset>
+						<legend>{tr}Shipping Address{/tr}</legend>
+						<input type="hidden" name="action" value="process" />
+						<input type="hidden" name="main_page" value="checkout_shipping" />
+						<div class="control-group">
+							{forminput}
+								{assign var=address value=$order->delivery}
+		<fieldset>
+								{include file="bitpackage:bitcommerce/address_display.tpl"}
+		</fieldset>
+								{formhelp note="Your order will be shipped to the following address or you may change the shipping address by clicking the Change Address button."}
+							{/forminput}
+						</div>
 
-				<div class="control-group submit">
-					<input type="submit" class="btn" name="change_address" value="{tr}Change address{/tr}" />
-				</div>
+						<div class="control-group submit">
+							<input type="submit" class="btn" name="change_address" value="{tr}Change address{/tr}" />
+						</div>
+					</fieldset>
 
-				<div class="clear"></div>
+					<fieldset>
+						<div class="control-group">
+							{formlabel label="Special Instructions or Comments About Your Order" for=""}
+							{forminput}
+								<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>
+							{/forminput}
+						</div>
+					</fieldset>
+
+				</div>
 
 				{if $shippingModules}
-					<h3>{tr}Shipping Method{/tr}</h3>
+				<div class="span6">
+					<fieldset>
+					<legend>{tr}Shipping Method{/tr}</legend>
 					{if count( $quotes ) > 1}
 						<p>{tr}Please select the preferred shipping method to use on this order.{/tr}</p>
 					{elseif !$freeShipping}
 						<p>{tr}This is currently the only shipping method available to use on this order.{/tr}</p>
 					{/if}
-<fieldset>
 					{if $freeShipping}
 						<table border="1" width="100%" cellspacing="2" cellpadding="2">
 							<tr>
@@ -88,27 +99,19 @@
 						{include file="bitpackage:bitcommerce/checkout_javascript.tpl"}
 						{include file="bitpackage:bitcommerce/shipping_quotes_inc.tpl"}
 					{/if}
-				{/if}
-</fieldset>
-
-<fieldset>
-				<div class="control-group">
-					{formlabel label="Special Instructions or Comments About Your Order" for=""}
-					{forminput}
-						<textarea name="comments" wrap="soft" cols="60" rows="5">{$smarty.session.comments}</textarea>
-					{/forminput}
+					</fieldset>
 				</div>
-</fieldset>
+				{/if}
 
 				<div class="clear"></div>
 
 				<h3>{tr}Continue to Step 2{/tr}</h3>
 				<p>{tr}- choose your payment method.{/tr} </p>
 				<div class="control-group submit">
-					<input type="submit" class="btn" value="Continue" />
+					<input type="submit" class="btn btn-primary" value="{tr}Continue{/tr}" />
 				</div>
 			{/form}
-		</div><!-- end .body -->
+		</section><!-- end .body -->
 	{/if}
 </div>
 {/strip}
