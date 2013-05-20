@@ -50,7 +50,7 @@ function editAddress( pAddress ) {
 			<div class="floatright">{$order->info.cc_expires} CVV: {$order->getField('cc_cvv')}</div>
 		</div>
 		<div class="clear">
-			<div class="floatleft">{tr}Trans ID{/tr}: </div>
+			<div class="floatleft">{tr}Transaction ID{/tr}: </div>
 			<div class="floatright">{$order->info.cc_ref_id}</div>
 		</div>
 		{/if}

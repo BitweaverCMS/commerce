@@ -63,6 +63,24 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	function getPaymentModule() {
+		global $gBitCustomer;
+		$ret = NULL;
+		if( $this->isValid() ) {
+			if ($this->info['payment_module_code']) {
+				if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php')) {
+					require_once( DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php' );
+					$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $this->info['payment_module_code'] . '.php';
+					if( file_exists( $langFile ) ) {
+						require( $langFile );
+					}
+					$ret = new $this->info['payment_module_code']();
+				}
+			}
+		}
+		return $ret;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();

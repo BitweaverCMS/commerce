@@ -2,7 +2,7 @@
 {legend legend="Order History"}
 	<label>{tr}Change Status{/tr}</label> {html_options name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>
-	<textarea name="comments" wrap="soft"></textarea>
+	<textarea name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
 	<label class="checkbox">
 		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	</label>
