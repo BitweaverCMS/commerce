@@ -364,7 +364,7 @@ ZIP
 				case '13': // Referral
 				*/
 				if( isset( $responseHash['RESULT'] ) ) {
-					$this->result = $responseHash['RESULT'];
+					$this->result = (int)$responseHash['RESULT'];
 					if( $this->result ) {
 						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
 					}
@@ -377,7 +377,7 @@ ZIP
 			}
 		}
 
-		return ( count( $this->mErrors ) == 0 && $this->result == 0 );
+		return ( count( $this->mErrors ) == 0 && $this->result === 0 );
 	}
 
 	public function getTransactionReference() {
@@ -394,31 +394,28 @@ ZIP
 		// Calculate the next expected order id
 		$nextOrderId = $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
 
-		$this->processPayment( array( 
+		if( $ret = $this->processPayment( array( 
 			'ACCT' => $order->info['cc_number'], 
 			'EXPDATE' => $order->info['cc_expires'], 
 			'STREET' => $order->billing['street_address'],
 			'ZIP' => $order->customer['postcode'],
 			'COMMENT1' => 'OrderID: ' . $nextOrderId . ' ' . $order->customer['email_address'] . ' (' . $gBitUser->mUserId . ')',
-			'AMT' => number_format($order->info['total'], 2,'.',''),
+			'charge_amount' => number_format($order->info['total'], 2,'.',''),
 			'CVV2' => $order->getField( 'cc_cvv' ),
 			'NAME' => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
-		) );
-
-		if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
-			//replace middle CC num with XXXX
-			$order->info['cc_number'] = substr($_POST['cc_number'], 0, 6) . str_repeat('X', (strlen($_POST['cc_number']) - 6)) . substr($_POST['cc_number'], -4);
+		) ) ) {
+			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
+				//replace middle CC num with XXXX
+				$order->info['cc_number'] = substr($_POST['cc_number'], 0, 6) . str_repeat('X', (strlen($_POST['cc_number']) - 6)) . substr($_POST['cc_number'], -4);
+			}
 		}
-
-		
-		$postFields['TENDER'] = 'C';
-
-		if ($this->result != "0") {
+		if ( $this->result !== 0 ) {
 			$this->mDb->RollbackTrans();
-			$this->mDb->query( "insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( NULL, ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, $this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
+			$this->mDb->query( "insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
 		}
+		return $ret;
 	}
 
 	/**
