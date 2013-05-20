@@ -12,7 +12,7 @@ function popupWindowPrice(url) {
 <div class="floaticon">
 {include file="bitpackage:liberty/services_inc.tpl" serviceLocation='icon'}
 {if $smarty.const.SHOW_PRODUCT_INFO_TELL_A_FRIEND == '1'}
-	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page={$smarty.const.FILENAME_TELL_A_FRIEND}&amp;products_id={$gBitProduct->mProductsId}">{biticon ipackage="icons" iexplain="Tell a Friend" iname="mail-reply-all"}</a>
+	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page={$smarty.const.FILENAME_TELL_A_FRIEND}&amp;products_id={$gBitProduct->mProductsId}">{booticon ipackage="icons" iexplain="Tell a Friend" iname="icon-share-sign"}</a>
 {/if}
 
 {if $gBitProduct->hasUpdatePermission()}
