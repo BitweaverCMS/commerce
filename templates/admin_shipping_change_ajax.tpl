@@ -13,9 +13,6 @@
 		<label class="checkbox">
 			<input type="checkbox" name="update_totals" value="y" checked="checked"/> {tr}Update Order Totals{/tr}<br/>
 		</label>
-		<label class="checkbox">
-			<input type="checkbox" name="update_totals" value="y"/><i class="icon-money"></i> {tr}Charge Original Payment{/tr}<br/>
-		</label>
 	{/forminput}
 </div>
 <div class="control-group submit">
