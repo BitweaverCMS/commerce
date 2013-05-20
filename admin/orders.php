@@ -20,8 +20,6 @@
 //	$Id: orders.php,v 1.61 2010/07/14 15:19:58 spiderr Exp $
 //
 
-define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
-
 require('includes/application_top.php');
 
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
@@ -76,6 +74,9 @@ if( $gBitThemes->isAjaxRequest() ) {
 }
 
 require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+
+// Put this after header.php because we have a custom <header> when viewing an order
+define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 if( !empty( $order ) ) {
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );

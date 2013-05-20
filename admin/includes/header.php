@@ -127,28 +127,12 @@ SPIDERKILL for obvious reasons...
       $goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
     }
   }
-/*
-?>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-  <tr class="headerBar" height="20" width="100%">
 
-    <td class="headerBarContent" align="left">
-      <?php
-      if (!$hide_languages) {
-        echo zen_draw_form_admin('languages', basename($_SERVER['SCRIPT_NAME']), '', 'get');
-        echo DEFINE_LANGUAGE . '&nbsp;&nbsp;' . (sizeof($languages) > 1 ? zen_draw_pull_down_menu('language', $languages_array, $languages_selected, 'onChange="this.form.submit();"') : '');
-        echo '</form>';
-      } else {
-        echo '&nbsp;';
-      }
-    ?>
-    </td>
-    <td class="headerBarContent" align="center"><b><?php echo date("r", time()) . 'GMT'  . '&nbsp;[' .  $_SERVER['REMOTE_ADDR'] . ' ]&nbsp;'; ?></b></td>
-    <td class="headerBarContent" align="right"><?php echo '<a href="' . zen_href_link_admin(FILENAME_DEFAULT, '', 'NONSSL') . '" class="headerLink">' . HEADER_TITLE_TOP . '</a>&nbsp;|&nbsp;<a href="' . BITCOMMERCE_PKG_URL . '" class="headerLink" target="_blank">' . HEADER_TITLE_ONLINE_CATALOG . '</a>&nbsp;|&nbsp;<a href="http://www.bitcommerce.org/" class="headerLink" target="_blank">' . HEADER_TITLE_SUPPORT_SITE . '</a>'; ?></td>
-  </tr>
-</table>
-*/
+if( defined( 'HEADING_TITLE' ) ) {
 ?>
 <header>
 	<h1><?php echo HEADING_TITLE; ?></h1>
 </header>
+<?php
+}
+?>
