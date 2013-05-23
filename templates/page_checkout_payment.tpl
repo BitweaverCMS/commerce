@@ -1,3 +1,18 @@
+{literal}
+<script language="javascript" type="text/javascript"><!--
+var selected;
+var submitter = null;
+function popupWindow(url) {
+	window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=280,screenX=150,screenY=150,top=150,left=150')
+}
+function submitFunction($gv,$total) {
+	if ($gv >=$total) {
+		submitter = 1;	
+	}
+}
+//--></script>
+{/literal}
+
 <div class="edit bitcommerce">
 
 	<header class="page-header">
@@ -28,10 +43,10 @@
 				
 				<div class="span6">
 					{legend legend="Enter a New Address"}
-						{include file="bitpackage:bitcommerce/mod_address_edit.tpl"}
+						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
-						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
 					</div>
 				</div>
 			</div>

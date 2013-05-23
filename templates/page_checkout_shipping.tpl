@@ -27,7 +27,7 @@
 				
 				<div class="span6">
 					{legend legend="Enter a New Address"}
-						{include file="bitpackage:bitcommerce/mod_address_edit.tpl"}
+						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
 						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />

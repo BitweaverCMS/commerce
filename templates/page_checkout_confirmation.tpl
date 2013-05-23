@@ -11,7 +11,7 @@
 	<div class="span6">
 		{legend legend="Shipping Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
-			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping_address"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
+			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
 	<div class="span6">
@@ -84,20 +84,20 @@
 </div>
 <div class="span4">
 	{legend legend="Payment Method"}
-{if $paymentConfirmation}
-<h4>{$paymentConfirmation.title|escape}</h4>
-{foreach from=$paymentConfirmation.fields item=payFields}
-<div class="clear">
-	<label class="control-label">{$payFields.title}</label>
-	<div class="controls">{$payFields.field}</div>
-</div>
-{/foreach}
-{elseif $smarty.session.payment}
-	{$smarty.session.payment->title}
-{/if}
-	<div class="clear">
-		<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a>
-	</div>
+		{if $paymentConfirmation}
+			<h4>{$paymentConfirmation.title|escape}</h4>
+			{foreach from=$paymentConfirmation.fields item=payFields}
+			<div class="clear">
+				<label class="control-label">{$payFields.title}</label>
+				<div class="controls">{$payFields.field}</div>
+			</div>
+			{/foreach}
+		{elseif $smarty.session.payment}
+			{$smarty.session.payment->title}
+		{/if}
+		<div class="clear">
+			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a>
+		</div>
 	{/legend}
 
 	{legend legend="Order Comments" class="width100p"}

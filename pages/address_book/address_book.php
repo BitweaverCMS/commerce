@@ -36,12 +36,10 @@ $redirectPage = BitBase::getParameter( $_REQUEST, 'return_page', FILENAME_ADDRES
 // error checking when updating or adding an entry
 if( isset($_POST['action']) && (($_POST['action'] == 'process') || ($_POST['action'] == 'update')) || isset( $_POST['save_address'] ) ) {
 	if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
-		$messageStack->add_session('addressbook', SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED, 'success');
+		$messageStack->add_session('addressbook', 'Your address book has been successfully updated.', 'success');
 		zen_redirect(zen_href_link( $redirectPage, '', 'SSL'));
 	} else {
-		foreach( $gBitCustomer->mErrors as $errString ) {
-			$messageStack->add_session( 'addressbook', $errString );
-		}
+		$gBitSmarty->assign( 'addressErrors', $gBitCustomer->mErrors );
 	}
 } elseif (isset($_REQUEST['delete']) && is_numeric( $_REQUEST['delete'] ) ) {
 	if( isset( $_REQUEST["confirm"] ) ) {

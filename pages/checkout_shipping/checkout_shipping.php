@@ -52,8 +52,8 @@ if( !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] )
 				$_SESSION['sendto'] = $_REQUEST['address'];
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 			} else {
-				$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
-				$errors = array_merge( $errors, $gBitCustomer->mErrors );
+				$gBitSmarty->assign( 'addressErrors', $gBitCustomer->mErrors );
+				$_REQUEST['change_address'] = TRUE;
 			}
 		} elseif( !empty( $_REQUEST['choose_address'] ) && !empty( $_REQUEST['address'] ) ) {
 			if( empty( $_SESSION['sendto'] ) || $_SESSION['sendto'] != $_REQUEST['address'] ) {
@@ -75,9 +75,6 @@ if( empty( $_SESSION['sendto'] ) || !$gBitCustomer->isValidAddress( $order->deli
 	if( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
 		$order->delivery = $gBitCustomer->getAddress( $defaultAddress );
 		$_SESSION['sendto'] =	$defaultAddressId;
-	} else {
-		$_SESSION['navigation']->set_snapshot();
-		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'));
 	}
 }
 

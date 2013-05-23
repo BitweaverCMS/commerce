@@ -396,6 +396,35 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
+	function getStateInputHtml( $pAddressHash ) {
+		global $gCommerceSystem;
+
+		$stateInput = '';
+
+		if( empty( $pAddressHash['country_id'] ) ) {
+			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		}
+
+		if( $gCommerceSystem->isConfigActive( 'ACCOUNT_STATE' ) ) {
+			if ( !empty( $pAddressHash['country_id'] ) ) {
+				if( !($stateInput = zen_get_country_zone_list('state', $pAddressHash['country_id'], (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : '') )) ) { 
+					$stateInput = zen_draw_input_field('state', zen_get_zone_name($pAddressHash['country_id'], $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
+				}
+			} else {
+				$stateInput = zen_draw_input_field('state');
+			}
+		}
+		return $stateInput;
+	}
+
+	function getCountryInputHtml( $pAddressHash ) {
+		if( empty( $pAddressHash['country_id'] ) ) {
+			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		}
+
+		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
+	}
+
 	function getCountryZones( $pCountryId ) {
 		global $gBitDb;
 		$ret = array();
