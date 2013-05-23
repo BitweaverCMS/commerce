@@ -160,9 +160,7 @@ class CommerceCustomer extends BitBase {
 
 
 
-//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
-
-
+	//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
 
 	function verifyAddress( &$pParamHash, &$errorHash ) {
 		global $gBitUser;
@@ -224,6 +222,8 @@ class CommerceCustomer extends BitBase {
 
 		if( ACCOUNT_SUBURB == 'true' && !empty( $pParamHash['suburb'] ) ) {
 			$pParamHash['address_store']['entry_suburb'] = $pParamHash['suburb'];
+		} else {
+			$pParamHash['address_store']['entry_suburb'] = NULL;
 		}
 
 		if( empty( $pParamHash['country_id'] ) || !is_numeric( $pParamHash['country_id'] ) || ($pParamHash['country_id'] < 1) ) {
@@ -252,7 +252,7 @@ class CommerceCustomer extends BitBase {
 		return( count( $errorHash ) == 0 );
 	}
 
-	// process a new shipping address
+	// store an address
 	function storeAddress( &$pParamHash ) {
 		global $current_page_base, $language_page_directory, $template;
 
@@ -263,18 +263,34 @@ class CommerceCustomer extends BitBase {
 
 		if( $this->verifyAddress( $pParamHash, $this->mErrors ) ) {
 			$process = true;
-			if( empty( $pParamHash['address'] ) ) {
+			if( isset( $pParamHash['address_book_id'] ) && self::verifyId( $pParamHash['address_book_id'] ) ) {
+				$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address_book_id'] ) );
+			} else {
 				$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 				$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
-			} else {
-				$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address'] ) );
 			}
 			if( !$this->getDefaultAddress() || !empty( $pParamHash['primary'] ) ) {
 				$this->setDefaultAddress( $pParamHash['address'] );
 			}
-		// process the selected shipping destination
 		}
 		return( count( $this->mErrors ) == 0 );
+	}
+
+	function expungeAddress( $pAddressId, $pSecure = TRUE ) {
+		$ret = NULL;
+		if( is_numeric( $pAddressId ) && (!$pSecure || ($pSecure && $this->isValid())) ) {
+			$bindVars = array( $pAddressId );
+			$whereSql = '';
+			if( $pSecure ) {
+				$whereSql = " AND `customers_id`=?";
+				array_push( $bindVars, $this->mCustomerId );
+			}
+			$query = "DELETE FROM " . TABLE_ADDRESS_BOOK . " cab WHERE `address_book_id`=? $whereSql";
+			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
+				$ret = $this->mDb->Affected_Rows;
+			}
+		}
+		return( $ret );
 	}
 
 	function getAddress( $pAddressId, $pSecure = TRUE ) {
@@ -352,8 +368,7 @@ class CommerceCustomer extends BitBase {
 	function isAddressOwner( $pAddressId ) {
 		$ret = FALSE;
 		if( is_numeric( $pAddressId ) ) {
-			$query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . "
-					  where `customers_id` = ? and `address_book_id` = ?";
+			$query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = ? and `address_book_id` = ?";
 			$ret = $this->mDb->getOne( $query, array( $this->mCustomerId, $pAddressId ) );
 		}
 		return $ret;

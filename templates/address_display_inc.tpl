@@ -1,9 +1,8 @@
 {if empty($addressLinebreak)}
 	{assign var=addressLinebreak value='<br/>'}
 {/if}
-
-<span>
-<strong>{$address.firstname} {$address.lastname} {if $address.company}, {$address.company}{/if}</strong><br/>
+<div>
+	<h4>{$address.firstname} {$address.lastname} {if $address.company}, {$address.company}{/if}</h4>
 	{$address.street_address}
 	{if $address.suburb}
 		{$addressLinebreak} {$address.suburb}
@@ -21,6 +20,4 @@
 		{$address.city}, {$address.state}    {$address.postcode}{$addressLinebreak}
 	{/if}
 	{$address.countries_name|default:$address.country.countries_name} {$address.telephone}
-
-</span>
-
+</div>

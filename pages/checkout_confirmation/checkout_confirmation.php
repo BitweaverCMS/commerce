@@ -1,192 +1,122 @@
 <?php
-//
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
+// | bitcommerce,	http://www.bitcommerce.org                            |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
+// | Copyright (c) 2013 bitcommerce.org                                   |
+// | This source file is subject to version 3.0 of the GPL license        |
+// | Portions Copyrigth (c) 2005 http://www.zen-cart.com                  |
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id$
-//
-?>
-<table  width="100%" border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td class="pageHeading" colspan="3"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
-  <tr valign="top">
-    <td class="main">
-	    <h4><?php echo HEADING_BILLING_ADDRESS; ?></h4>
-		<?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?>
-		<p><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></p>
-	</td>
-    <td class="main">
-<?php
-  if ($_SESSION['sendto'] != false) {
-?>
-		<h4><?php echo HEADING_DELIVERY_ADDRESS; ?></h4>
-    	<?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?>
-		<p><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_CHANGE_ADDRESS, BUTTON_CHANGE_ADDRESS_ALT) . '</a>'; ?></p>
-<?php
-  }
-?>
 
-	</td>
-    <td></td>
-  </tr>
-<?php
-// always show comments
-//  if ($order->info['comments']) {
-?>
-  <tr>
-    <td colspan="2">
-		<h4><?php echo HEADING_ORDER_COMMENTS; ?></h4>
-		<?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br(zen_output_string_protected($order->info['comments'])) . zen_draw_hidden_field('comments', $order->info['comments'])); ?>
-	</td>
-     <td class="main" class="alignright"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-  </tr>
-<?php
-//  }
-?>
-<?php
-  if (sizeof($order->info['tax_groups']) > 1) {
-?>
-        <tr>
-          <td class="plainBoxHeading"><?php echo HEADING_PRODUCTS; ?>
-          &nbsp;&nbsp;&nbsp;<?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-          <td class="smallText" class="alignright"><?php echo HEADING_TAX; ?></td>
-          <td class="smallText" class="alignright"><?php echo HEADING_TOTAL; ?></td>
-        </tr>
-<?php
-  } else {
-?>
-        <tr>
-          <td colspan="2" ><h4><?php echo HEADING_PRODUCTS; ?></h4></td>
-          <td class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-        </tr>
-<?php
-  }
-?>
-  <tr>
-    <td class="main" colspan="2">
-      <table border="0"  width="100%" cellspacing="0" cellpadding="2">
+// if there is nothing in the customers cart, redirect them to the shopping cart page
+if ($gBitCustomer->mCart->count_contents() <= 0) {
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
-<?php
-  foreach( array_keys( $order->contents ) as $opid ) {
-    echo '        <tr>' . "\n" .
-         '          <td class="main" class="alignright" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrlFromHash( $order->contents[$opid] ) . '">' . $order->contents[$opid]['name']. '</a>';
+// if the customer is not logged on, redirect them to the login page
+if (!$_SESSION['customer_id']) {
+	$_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
+	zen_redirect(FILENAME_LOGIN);
+}
 
-    if ( !empty( $order->contents[$opid]['attributes'] ) && (sizeof($order->contents[$opid]['attributes']) > 0) ) {
-      for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {
-        echo '<div style="white-space:nowrap;">&nbsp;<em> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'] . '</em></div>';
-      }
-    }
+// Stock Check and more....
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
 
-    echo '        </td>' . "\n";
+// if no shipping method has been selected, redirect the customer to the shipping method selection page
+if (!$_SESSION['shipping']) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+}
 
-    if ( !empty( $order->info['tax_groups'] ) && sizeof($order->info['tax_groups']) > 1) {
-		echo '            <td class="main" valign="top" class="alignright">';
-		if( !empty( $order->contents[$opid]['tax'] ) ) {
-			echo zen_display_tax_value($order->contents[$opid]['tax']) . '%';
-		}
-		echo '</td>' . "\n";
+if (isset($_POST['payment'])) {
+	$_SESSION['payment'] = $_POST['payment'];
+}
+if( !empty( $_POST['comments'] ) ) {
+	$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
+}
+
+if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
+	if (!isset($_POST['conditions']) || ($_POST['conditions'] != '1')) {
+		$messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
 	}
+}
 
-    echo '        <td class="main" class="alignright" valign="top">' .
-                    $currencies->display_price($order->contents[$opid]['final_price'], $order->contents[$opid]['tax'], $order->contents[$opid]['products_quantity']) .
-                    ($order->contents[$opid]['onetime_charges'] != 0 ? '<br /> ' . $currencies->display_price($order->contents[$opid]['onetime_charges'], $order->contents[$opid]['tax'], 1) : '') .
-                  '</td>' . "\n" .
-         '      </tr>' . "\n";
-  }
-?>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td class="main" class="alignright" colspan="2">
-      <table border="0"  cellspacing="0" cellpadding="2">
-<?php
-  if (MODULE_ORDER_TOTAL_INSTALLED) {
-    $order_totals = $order_total_modules->process();
-    echo $order_total_modules->output();
-  }
-?>
-      </table>
-    </td>
-  </tr>
-<?php
-    if( $order->content_type != 'virtual' && $order->info['shipping_method']) {
-?>
-  <tr>
-    <td class="main" colspan="2"><?php echo HEADING_SHIPPING_METHOD; ?>  <?php echo $order->info['shipping_method']; ?></td>
-    <td class="main" class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-  </tr>
-<?php
-    }
-$class =& $_SESSION['payment'];
-?>
-  <tr>
-    <td colspan="2"><h4><?php echo HEADING_PAYMENT_METHOD; ?></h4> </td>
-    <td class="main" class="alignleft"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
-  </tr>
-  <tr>
-    <td colspan="3">
-<?php
-  if (is_array($payment_modules->modules)) {
-    if ($confirmation = $payment_modules->confirmation()) {
-?>
-      <table border="0"  cellspacing="0" cellpadding="2">
-        <tr>
-          <td class="main" colspan="3"><?php echo $confirmation['title']; ?></td>
-        </tr>
-<?php
-      for ($i=0, $n=sizeof($confirmation['fields']); $i<$n; $i++) {
-?>
-        <tr>
-          <td class="smallText"><?php echo $confirmation['fields'][$i]['title']; ?></td>
-          <td class="smallText"><?php echo $confirmation['fields'][$i]['field']; ?></td>
-        </tr>
-<?php
-      }
-?>
-      </table>
-<?php
-    }
-  } else {
-  	print $GLOBALS[$class]->title;
-  }
-?>
-    </td>
-  </tr>
-  <tr>
-    <td class="main" colspan="2"><?php echo TITLE_CONTINUE_CHECKOUT_PROCEDURE . '<br />' . TEXT_CONTINUE_CHECKOUT_PROCEDURE; ?></td>
-    <td class="alignleft" class="main">
-<?php
-  if (isset($$_SESSION['payment']->form_action_url)) {
-    $form_action_url = $$_SESSION['payment']->form_action_url;
-  } else {
-    $form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL');
-  }
+require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+$order = new order;
 
-  echo zen_draw_form('checkout_confirmation', $form_action_url, 'post');
+require(DIR_FS_CLASSES . 'order_total.php');
+$order_total_modules = new order_total;
+$order_total_modules->collect_posts();
+$order_total_modules->pre_confirmation_check();
 
-  if (is_array($payment_modules->modules)) {
-    echo $payment_modules->process_button();
-  }
+// load the selected payment module
+require(DIR_FS_CLASSES . 'payment.php');
 
-  echo zen_image_submit(BUTTON_IMAGE_CONFIRM_ORDER, BUTTON_CONFIRM_ORDER_ALT) . '</form>' . "\n";
-?>
-    </td>
-  </tr>
-</table>
+if ($credit_covers) {
+	unset($_SESSION['payment']);
+	$_SESSION['payment'] = '';
+}
+
+$payment_modules = new payment($_SESSION['payment']);
+$payment_modules->update_status();
+if ( (is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
+	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
+}
+
+if ($messageStack->size('checkout_payment') > 0) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+}
+//echo $messageStack->size('checkout_payment');
+//die('here');
+
+if (is_array($payment_modules->modules)) {
+	$payment_modules->pre_confirmation_check();
+}
+
+// load the selected shipping module
+require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+$shipping_modules = new CommerceShipping($_SESSION['shipping']);
+
+
+// update customers_referral with $_SESSION['gv_id']
+if ($_SESSION['cc_id']) {
+	$discount_coupon_query = "select `coupon_code`
+							 from " . TABLE_COUPONS . "
+							 where `coupon_id` = '" . $_SESSION['cc_id'] . "'";
+
+	$discount_coupon = $gBitDb->Execute($discount_coupon_query);
+
+	$customers_referral_query = "select `customers_referral` from " . TABLE_CUSTOMERS . " where `customers_id`='" . $_SESSION['customer_id'] . "'";
+	$customers_referral = $gBitDb->Execute($customers_referral_query);
+
+// only use discount coupon if set by coupon
+	if ($customers_referral->fields['customers_referral'] == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
+		$gBitDb->Execute("update " . TABLE_CUSTOMERS . " set `customers_referral` ='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id` ='" . $_SESSION['customer_id'] . "'");
+	} else {
+		// do not update referral was added before
+	}
+}
+
+require_once(DIR_FS_MODULES . 'require_languages.php');
+$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+$breadcrumb->add(NAVBAR_TITLE_2);
+
+$gBitSmarty->assign( 'order', $order );
+
+if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
+	$order_totals = $order_total_modules->process();
+	$gBitSmarty->assign( 'orderTotalsModules', $order_total_modules );
+}
+
+if (is_array($payment_modules->modules)) {
+	$gBitSmarty->assign( 'paymentModules', $payment_modules );
+	$gBitSmarty->assign( 'paymentConfirmation', $payment_modules->confirmation() );
+}
+	
+$gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );
+
+$gBitSmarty->assign('GLOBALS',$GLOBALS);
+
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_confirmation.tpl' );

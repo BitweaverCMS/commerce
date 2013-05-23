@@ -1,7 +1,43 @@
-<header class="page-header">
-	<h1>{tr}Step 2 of 3 - Payment Information{/tr}</h1>
-</header>
+<div class="edit bitcommerce">
 
+	<header class="page-header">
+		<h1>{tr}Step 2 of 3 - Payment Information{/tr}</h1>
+	</header>
+
+	<section class="body">
+
+	{if !$gBitUser->isRegistered() || !$order->billing || $changeAddress}
+		{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
+			<input type="hidden" name="main_page" value="checkout_payment" />
+			{if !$gBitUser->isRegistered()}
+				{include file="bitpackage:bitcommerce/register_customer.tpl"}
+			{/if}
+
+			<div class="row-fluid">
+				{if count( $addresses )}
+				<div class="span6">
+					{legend legend="Choose Shipping Address"}
+						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
+					{/legend}
+					<div class="control-group clear">
+						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+						<a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
+					</div>
+				</div>
+				{/if}
+				
+				<div class="span6">
+					{legend legend="Enter a New Address"}
+						{include file="bitpackage:bitcommerce/mod_address_edit.tpl"}
+					{/legend}
+					<div class="control-group clear">
+						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+					</div>
+				</div>
+			</div>
+
+		{/form}
+	{else}
 {form class="form-horizontal" name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
 
 {if $messageStack->size('checkout_payment')}
@@ -85,7 +121,8 @@
 			<h3>{tr}Continue to Step 3{/tr}</h3>
 			<p>{tr}- to confirm your order.{/tr} </p>
 			<div class="control-group submit">
-				<input type="submit" class="btn btn-primary" name="Continue" value="{tr}Continue{/tr}" onclick="submitFunction('<?=$gBitCustomer->getGiftBalance()?>','<?=$order->info['total']?>')"/>
+				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
+				<button class="btn btn-primary" value="Continue" onclick="submitFunction('<?=$gBitCustomer->getGiftBalance()?>','<?=$order->info['total']?>')"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
 		</div>
 	</div>
@@ -93,7 +130,7 @@
 		{legend legend="Billing Address"}
 					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 					{formhelp note="The billing address should match the address on your credit card statement."}
-					<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment_address">{tr}Change Address{/tr}</a>
+					<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
 		{/legend}
 	
 		<fieldset>
@@ -112,3 +149,7 @@
 </div>
 
 {/form}
+	{/if}
+
+	</section><!-- end .body -->
+</div>

@@ -385,8 +385,9 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['name'] = $product->getField('products_name');
 			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
 			$productHash['model'] = $product->getField('products_model');
+			$productHash['display_url'] = $product->getDisplayUrl();
 			$productHash['image'] = $product->getField('products_image');
-			$productHash['image_url'] = $product->getField('products_image_url');
+			$productHash['image_url'] = $product->getImageUrl();
 			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
@@ -402,6 +403,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['attributes'] = $attr;
 			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
+
 		return $productHash;
 	}
 
