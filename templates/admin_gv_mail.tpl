@@ -86,6 +86,7 @@
 
 
 <script language="javascript" type="text/javascript"><!--
+{literal}
 var form = "";
 var submitted = false;
 var error = false;
