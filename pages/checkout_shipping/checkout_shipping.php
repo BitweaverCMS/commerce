@@ -12,38 +12,7 @@ require(DIR_FS_CLASSES . 'http_client.php');
 
 define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
 
-if( !$gBitCustomer->mCart->count_contents() ) {
-	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-// if the order contains only virtual products, forward the customer to the delivery page as
-// a shipping address is not needed
-if( $gBitCustomer->mCart->get_content_type() == 'virtual') {
-	$_SESSION['shipping'] = false;
-	$_SESSION['sendto'] = false;
-	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-}
-
-// Maybe customer registered with an inline form
-if( !$gBitUser->isRegistered() ) {
-	if( !empty( $_REQUEST['email'] ) ) {
-		$gBitUser->register( $_REQUEST ); 
-		if( !$gBitUser->isRegistered() ) {
-			$gBitSmarty->assign( 'reg', $gBitUser->mErrors );
-		}
-	} else {
-		$gBitSystem->fatalPermission( 'p_bitcommerce_product_purchase' );
-	}
-}
-
-// Validate Cart for checkout
-$_SESSION['valid_to_checkout'] = true;
-if( !$gBitCustomer->mCart->verifyCheckout() ) {
-	$messageStack->add('header', 'Please update your order ...', 'error');
-	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-if( !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
+if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
 	if( $gBitUser->isRegistered() ) {
 		if( !empty( $_REQUEST['save_address'] ) ) {
 			// process a new address
@@ -64,6 +33,31 @@ if( !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] )
 			}
 		}
 	}
+	if( !empty( $_REQUEST['save_address'] ) ) {
+		// an inline registration failed. Verify the fields and reassign so customer doesn't lose info
+		$addressErrors = array();
+		$gBitCustomer->verifyAddress( $_REQUEST, $addressErrors );
+		$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
+		$gBitSmarty->assign( 'addressErrors', $addressErrors );
+	}
+}
+
+if( !$gBitCustomer->mCart->count_contents() ) {
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
+
+// if the order contains only virtual products, forward the customer to the delivery page as a shipping address is not needed
+if( $gBitCustomer->mCart->get_content_type() == 'virtual') {
+	$_SESSION['shipping'] = false;
+	$_SESSION['sendto'] = false;
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+}
+
+// Validate Cart for checkout
+$_SESSION['valid_to_checkout'] = true;
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');

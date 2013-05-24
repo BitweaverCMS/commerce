@@ -143,14 +143,12 @@ class CommerceCustomer extends BitBase {
 			}
 		} else {
 			$newUser = new BitPermUser();
-			if( $newUser->register( $_REQUEST ) ) {
-				$newUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
-				$newUser->load();
+			if( $newUser->preRegisterVerify( $_REQUEST ) && $newUser->register( $_REQUEST ) ) {
+				$gBitUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
 				$_REQUEST['customers_id'] = $gBitUser->mUserId;
 				$this->mCustomerId = $gBitUser->mUserId;
+				$this->syncBitUser( $gBitUser->mInfo );
 				$this->load();
-				$this->syncBitUser( $newUser->mInfo );
-				$gBitUser = $newUser;
 			} else {
 				$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
 			}
@@ -163,7 +161,6 @@ class CommerceCustomer extends BitBase {
 	//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
 
 	function verifyAddress( &$pParamHash, &$errorHash ) {
-		global $gBitUser;
 		if( empty( $pParamHash['customers_id'] ) || !is_numeric( $pParamHash['customers_id'] ) ) {
 			if( $this->isValid() ) {
 				$pParamHash['address_store']['customers_id'] = $this->mCustomerId;

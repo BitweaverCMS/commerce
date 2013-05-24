@@ -8,35 +8,7 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-if( !$gBitCustomer->mCart->count_contents() ) {
-	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-// Maybe customer registered with an inline form
-if( !$gBitUser->isRegistered() ) {
-	if( !empty( $_REQUEST['email'] ) ) {
-		$gBitUser->register( $_REQUEST ); 
-		if( !$gBitUser->isRegistered() ) {
-			$gBitSmarty->assign( 'reg', $gBitUser->mErrors );
-		}
-	} else {
-		$gBitSystem->fatalPermission( 'p_bitcommerce_product_purchase' );
-	}
-}
-
-
-// if no shipping method has been selected, redirect the customer to the shipping method selection page
-if( !isset( $_SESSION['shipping'] ) ) {
-	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-}
-
-// Stock Check and more....
-if( !$gBitCustomer->mCart->verifyCheckout() ) {
-	$messageStack->add('header', 'Please update your order ...', 'error');
-	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-if( !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
+if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
 	if( $gBitUser->isRegistered() ) {
 		if( !empty( $_REQUEST['save_address'] ) ) {
 			// process a new address
@@ -57,6 +29,28 @@ if( !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] )
 			}
 		}
 	}
+	if( !empty( $_REQUEST['save_address'] ) ) {
+		// an inline registration failed. Verify the fields and reassign so customer doesn't lose info
+		$addressErrors = array();
+		$gBitCustomer->verifyAddress( $_REQUEST, $addressErrors );
+		$gBitSmarty->assign( 'address', $_REQUEST['address_store'] );
+		$gBitSmarty->assign( 'addressErrors', $addressErrors );
+	}
+}
+
+if( !$gBitCustomer->mCart->count_contents() ) {
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
+}
+
+// if no shipping method has been selected, redirect the customer to the shipping method selection page
+if( !isset( $_SESSION['shipping'] ) ) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+}
+
+// Stock Check and more....
+if( !$gBitCustomer->mCart->verifyCheckout() ) {
+	$messageStack->add('header', 'Please update your order ...', 'error');
+	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');

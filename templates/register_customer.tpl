@@ -1,23 +1,17 @@
 {strip}
 
-	<header class="page-header">
-		<h1>{tr}Enter your user information{/tr}</h1>
-		{if $showmsg eq 'y'}<h2>{$msg}</h2>{/if}
-	</header>
-
-	<section>
-		<p>{tr}Please enter your email and password below. If this is your first time here, an account will be created for you. If you have registered previously, you will automatically be logged in.{/tr}</a></p>
-		<fieldset>
+		<input type="hidden" name="inline_registration" value="1"/>
+		{legend legend="Enter your user information"}
 			{if $notrecognized eq 'y'}
 				<input type="hidden" name="login" value="{$reg.login}"/>
 				<input type="hidden" name="password" value="{$reg.password}"/>
 				<input type="hidden" name="novalidation" value="yes"/>
 
-				<div class="control-group">
-					{formfeedback error=$userErrors.validate}
+				<div class="control-group {if $userErrors.validate}error{/if}">
 					{formlabel label="Username" for="email"}
 					{forminput}
 						<input type="text" name="email" id="email" value="{$reg.email|default:$smarty.request.email}"/>
+						{formhelp note=$userErrors.validate}
 					{/forminput}
 				</div>
 
@@ -26,20 +20,21 @@
 				</div>
 			{elseif $showmsg ne 'y'}
 
-				<div class="control-group">
-					{formfeedback error=$userErrors.email}
+		<p>{tr}Please enter your email and password below. If this is your first time here, an account will be created for you. If you have registered previously, you will automatically be logged in.{/tr}</a></p>
+				<div class="control-group {if $userErrors.email}error{/if}">
 					{formlabel label="Email" for="email"}
 					{forminput}
 						<input type="text" name="email" id="email" value="{$reg.email|default:$smarty.request.email}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+						{formhelp note=$userErrors.email}
 					{/forminput}
 				</div>
 
 				{if $gBitSystem->isFeatureActive('users_register_passcode')}
-					<div class="control-group">
-						{formfeedback error=$userErrors.passcode}
+					<div class="control-group {if $userErrors.passcode}error{/if}">
 						{formlabel label="Passcode to register<br />(not your user password)" for="passcode"}
 						{forminput}
 							<input type="password" name="passcode" id="passcode" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							{formhelp note=$userErrors.passcode}
 						{/forminput}
 					</div>
 				{/if}
@@ -49,19 +44,20 @@
 						{formfeedback warning="A confirmation email will be sent to you with instructions how to login"}
 					</div>
 				{else}
-					<div class="control-group">
-						{formfeedback error=$userErrors.password}
+					<div class="control-group {if $userErrors.password}error{/if}">
 						{formlabel label="Password" for="pass"}
 						{forminput}
 							<input id="pass1" type="password" name="password" value="{$reg.password|default:$smarty.request.password}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							{formhelp note=$userErrors.password}
 							{formhelp note="If this is your first time registering, confirm your password below."}
 						{/forminput}
 					</div>
 
-					<div class="control-group">
+					<div class="control-group {if $userErrors.password2}error{/if}">
 						{formlabel label="Repeat password" for="password2"}
 						{forminput}
 							<input id="password2" type="password" name="password2" value="{$smarty.request.password2}" /> <acronym title="{tr}Required{/tr}">*</acronym>
+							{formhelp note=$userErrors.password2}
 						{/forminput}
 					</div>
 
@@ -85,9 +81,8 @@
 					</div>
 				{/section}
 
-				{captcha}
+				{captcha errors=$userErrors}
 
 			{/if}
-		</fieldset>
-	</section>
+		{/legend}
 {/strip}

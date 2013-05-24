@@ -9,10 +9,6 @@
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
 		{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 			<input type="hidden" name="main_page" value="checkout_shipping" />
-			{if !$gBitUser->isRegistered()}
-				{include file="bitpackage:bitcommerce/register_customer.tpl"}
-			{/if}
-
 			<div class="row-fluid">
 				{if count( $addresses )}
 				<div class="span6">
@@ -26,6 +22,10 @@
 				{/if}
 				
 				<div class="span6">
+			{if !$gBitUser->isRegistered()}
+				{include file="bitpackage:bitcommerce/register_customer.tpl"}
+			{/if}
+
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
