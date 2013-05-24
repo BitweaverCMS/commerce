@@ -111,8 +111,8 @@
 <h3>{tr}Final Step{/tr}</h3>
 <p>{tr}- continue to confirm your order. Thank you!{/tr}</p>
 
-{if $payment_modules->modules}
-	{$payment_modules->process_button()}
+{if $paymentModules->modules}
+	{$paymentModules->process_button()}
 {/if}
 
 <div class="control-group submit">
