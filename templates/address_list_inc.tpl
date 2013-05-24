@@ -10,7 +10,7 @@
 		<div class="{$class}">
 			<label class="radio">
 				{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked}
-				{include file="bitpackage:bitcommerce/address_display.tpl" address=$addresses[ix]}
+				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$addresses[ix]}
 			</label>
 		</div>
 	{/section}

@@ -64,12 +64,6 @@
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_1);
     break;
 
-  case 'address_book_process':
-    define('META_TAG_TITLE', NAVBAR_TITLE_ADD_ENTRY );
-    define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_ADD_ENTRY . SECONDARY_SECTION . KEYWORDS);
-    define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_ADD_ENTRY);
-    break;
-
   case 'advanced_search_result':
   case 'password_forgotten':
     define('META_TAG_TITLE', NAVBAR_TITLE_2 );

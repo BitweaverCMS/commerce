@@ -35,7 +35,10 @@
 //          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/' . $value);
           $class = substr($value, 0, strrpos($value, '.'));
 			if( !class_exists( $class ) ) {
-				include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $value, 'false'));
+				$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $value, 'false');
+				if( file_exists( $langFile ) ) {
+					include( $langFile );
+				}
 				include(DIR_WS_MODULES . 'order_total/' . $value);
 			}
 			$GLOBALS[$class] = new $class;

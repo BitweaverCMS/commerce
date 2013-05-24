@@ -30,7 +30,6 @@
   define('FILENAME_ACCOUNT_NOTIFICATIONS', 'account_notifications');
   define('FILENAME_ACCOUNT_PASSWORD', 'account_password');
   define('FILENAME_ADDRESS_BOOK', 'address_book');
-  define('FILENAME_ADDRESS_BOOK_PROCESS', 'address_book_process');
   define('FILENAME_ATTRIBUTES_CONTROLLER', 'attributes_controller');
   define('FILENAME_ADMIN', 'admin');
   define('FILENAME_ADVANCED_SEARCH', 'advanced_search');
@@ -48,10 +47,8 @@
   define('FILENAME_CUSTOMERS', 'customers');
   define('FILENAME_CHECKOUT_CONFIRMATION', 'checkout_confirmation');
   define('FILENAME_CHECKOUT_PAYMENT', 'checkout_payment');
-  define('FILENAME_CHECKOUT_PAYMENT_ADDRESS', 'checkout_payment_address');
   define('FILENAME_CHECKOUT_PROCESS', 'checkout_process');
   define('FILENAME_CHECKOUT_SHIPPING', 'checkout_shipping');
-  define('FILENAME_CHECKOUT_SHIPPING_ADDRESS', 'checkout_shipping_address');
   define('FILENAME_CHECKOUT_SUCCESS', 'checkout_success');
   define('FILENAME_CONTACT_US', 'contact_us');
   define('FILENAME_CONDITIONS', 'conditions');

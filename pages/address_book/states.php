@@ -12,7 +12,7 @@ if( empty( $entry['country_id'] ) ) {
 
 if ( !empty( $entry['country_id'] ) ) {
 	if( !($stateInput = zen_get_country_zone_list('state', $entry['country_id'], (!empty( $entry['entry_zone_id'] ) ? $entry['entry_zone_id'] : '') )) ) { 
-		$stateInput = zen_draw_input_field('state', zen_get_zone_name($entry['country_id'], $entry['entry_zone_id'], $entry['entry_state']));
+		$stateInput = zen_draw_input_field('state', zen_get_zone_name( $entry['country_id'], BitBase::getParameter( $entry, 'entry_zone_id' ), BitBase::getParameter( $entry, 'entry_state' ) ) );
 	}
 } else {
 	$stateInput = zen_draw_input_field('state');
