@@ -412,8 +412,8 @@ ZIP
 		if ( $this->result !== 0 ) {
 			$this->mDb->RollbackTrans();
 			$this->mDb->query( "insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
-			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing you credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing you credit card, please try again.' ) ), 'SSL', true, false));
+			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing your credit card, please try again.' ) ), 'SSL', true, false));
 		}
 		return $ret;
 	}
@@ -530,7 +530,7 @@ function after_process() {
 	function get_error() {
 		global $_GET;
 
-		$error = array('title' => tra( 'There has been an error processing you credit card, please try again.' ),
+		$error = array('title' => tra( 'There has been an error processing your credit card, please try again.' ),
 									 'error' => stripslashes(urldecode($_GET['error'])));
 
 		return $error;
