@@ -943,10 +943,7 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		$customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $customers_query_raw, $customers_query_numrows);
 		$customers = $gBitDb->Execute($customers_query_raw);
 		while (!$customers->EOF) {
-			$info = $gBitDb->Execute("select `date_account_created`,
-																	 `date_account_last_modified`,
-																	 `date_of_last_logon` as `date_last_logon`,
-																	 `number_of_logons`
+			$info = $gBitDb->Execute("select `date_account_created`, `date_account_last_modified`, `date_of_last_logon` as `date_last_logon`, `number_of_logons`
 														from " . TABLE_CUSTOMERS_INFO . "
 														where `customers_info_id` = '" . $customers->fields['customers_id'] . "'");
 
