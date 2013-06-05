@@ -5,8 +5,10 @@ table.table tr.comments	td { border-top:none; }
 .table td.supplemental	{ border: none; }
 
 #bitcommerce.adminmode .navbar-inner {
-padding-left: 0px;
+	padding-left: 0px;
 }
+
+.admin.bitcommerce h1.page-header	{ font-size:16pt; }
 
 /* including stylesheet for dhtml menu * /
 /*

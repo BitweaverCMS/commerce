@@ -131,7 +131,7 @@ SPIDERKILL for obvious reasons...
 if( defined( 'HEADING_TITLE' ) ) {
 ?>
 <header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
+	<h1 class="page-header"><?php echo HEADING_TITLE; ?></h1>
 </header>
 <?php
 }
