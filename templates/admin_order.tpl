@@ -105,7 +105,7 @@ function getShippingQuotes( pOrderId ) {
 </td>
 <td class="text-right" rowspan="2">
 	{if $ordersProduct.products_wholesale}
-		{math equation="f - ((pw+pc)*q)" f=$finalQty pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_commission q=$ordersProduct.products_quantity assign=wholesaleQty}
+		{math equation="f - ((pw+pc)*q)" f=$finalQty pw=$ordersProduct.products_wholesale pc=$ordersProduct.products_commission|default:0 q=$ordersProduct.products_quantity assign=wholesaleQty}
 		{assign var=wholesaleIncome value=$wholesaleIncome+$wholesaleQty}
 		{assign var=wholesaleCost value=$wholesaleCost+$ordersProduct.products_wholesale*$ordersProduct.products_quantity}
 		<strong>{$currencies->format($wholesaleQty,true,$order->info.currency, $order->info.currency_value)}</strong>&nbsp;
