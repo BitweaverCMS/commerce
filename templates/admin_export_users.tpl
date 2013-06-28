@@ -14,46 +14,39 @@
 
 {form}
 <div class="control-group">
-	{formlabel label="First Name"}
-	{forminput}
-		<input type="checkbox" name="firstname" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="firstname" value="y" checked="checked" /> {tr}First Name{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Last Name"}
-	{forminput}
-		<input type="checkbox" name="lastname" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="lastname" value="y" checked="checked" /> {tr}Last Name{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Company"}
-	{forminput}
-		<input type="checkbox" name="company" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="company" value="y" checked="checked" /> {tr}Company{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Street Address"}
-	{forminput}
-		<input type="checkbox" name="street_address" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="street_address" value="y" checked="checked" /> {tr}Street Address{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="City"}
-	{forminput}
-		<input type="checkbox" name="city" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="city" value="y" checked="checked" /> {tr}City{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="State"}
-	{forminput}
-		<input type="checkbox" name="state" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="state" value="y" checked="checked" /> {tr}State{/tr}
+	</label>
 </div>
 <div class="control-group">
-	{formlabel label="Postal Code"}
-	{forminput}
-		<input type="checkbox" name="zip" value="y" checked="checked" />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="zip" value="y" checked="checked" /> {tr}Postal Code{/tr}
+	</label>
 </div>
 <div class="control-group">
 	<label class="checkbox">
@@ -112,10 +105,9 @@
 </div>
 {/if}
 <div class="control-group">
-	{formlabel label="Registration Interests"}
-	{forminput}
-		<input type="checkbox" name="interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />
-	{/forminput}
+	<label class="checkbox">
+		<input type="checkbox" name="interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} /> {tr}Registration Interests{/tr}
+	</label>
 </div>
 <div class="control-group">
 	{formlabel label="Number of Records"}
