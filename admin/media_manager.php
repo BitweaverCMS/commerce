@@ -148,9 +148,6 @@
 <!-- header_eof //-->
 
 <!-- body //-->
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
 <table class="width100p"><tr><td><table class="width100p">
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">

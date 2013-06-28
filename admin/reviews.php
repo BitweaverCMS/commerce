@@ -84,9 +84,6 @@
 <!-- header_eof //-->
 
 <!-- body //-->
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
 <table class="width100p"><tr><td><table class="width100p">
   if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
     echo '<a href="' . zen_href_link_admin(FILENAME_REVIEWS) . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a>&nbsp;&nbsp;';

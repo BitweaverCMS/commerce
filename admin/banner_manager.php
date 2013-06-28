@@ -265,9 +265,6 @@ function popupImageWindow(url) {
 <!-- header_eof //-->
 
 <!-- body //-->
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
 <table class="width100p"><tr><td><table class="width100p">
 <?php if ($action=='') { ?>
       <tr>

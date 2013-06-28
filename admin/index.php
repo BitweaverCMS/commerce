@@ -64,7 +64,7 @@
 
 ?>
 <header>
-	<h1>Order List</h1>
+	<h1 class="page-header">Order List</h1>
 </header>
 
 <div class="row">

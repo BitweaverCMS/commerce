@@ -167,9 +167,6 @@ if ( $action == 'layout' || $action == 'layout_edit') {
 
 
 ?>
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
 <table class="width100p"><tr><td><table class="width100p">
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -282,9 +279,6 @@ if ( $action == 'layout' || $action == 'layout_edit') {
 <?php
 } else {
 ?>
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
 <table class="width100p"><tr><td><table class="width100p">
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">

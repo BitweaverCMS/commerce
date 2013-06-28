@@ -79,11 +79,7 @@
 <body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
-<!-- body //-->
-<header>
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</header>
+
 <table class="width100p"><tr><td><table class="width100p">
         <tr>
           <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
