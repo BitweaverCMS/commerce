@@ -35,36 +35,53 @@
 
 	</form>
 
-	{if $gBitSystem->isLive() && $smarty.const.IS_LIVE && $gBitSystem->getConfig('google_analytics_ua')}
-		{php}
-		global $newOrdersId, $gBitUser, $gBitSystem, $newOrder;
-		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
-		$newOrder = new order( $newOrdersId );
-		{/php}
+	{if $gBitSystem->isLive() && $smarty.const.IS_LIVE}
+		{if $gBitSystem->getConfig('google_analytics_ua')}
+			{php}
+			global $newOrdersId, $gBitUser, $gBitSystem, $newOrder;
+			require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+			$newOrder = new order( $newOrdersId );
+			{/php}
 
-		<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
-		<script type="text/javascript">
-			_uacct = "{$gBitSystem->getConfig('google_analytics_ua')}";
-			urchinTracker();
-		</script>
+			<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
+			<script type="text/javascript">
+				_uacct = "{$gBitSystem->getConfig('google_analytics_ua')}";
+				urchinTracker();
+			</script>
 
-		<form style="display:none;" name="utmform">
-			<textarea style="display:none;" id="utmtrans">{php}
-			global $newOrder, $newOrdersId;
+			<form style="display:none;" name="utmform">
+				<textarea style="display:none;" id="utmtrans">{php}
+				global $newOrder, $newOrdersId;
 
-			// UTM:T|[orders-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
-			// UTM:I|[orders-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
+				// UTM:T|[orders-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
+				// UTM:I|[orders-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
 
-			print "UTM:T|$newOrdersId|".$gBitUser->getPreference('affiliate_code',$gBitSystem->getConfig('site_title'))."|".$newOrder->getField('total')."|".$newOrder->getField('tax')."|".$newOrder->getField('shipping_total')."|".$newOrder->delivery['city']."|".$newOrder->delivery['state']."|".$newOrder->delivery['country']['countries_name'];
-			foreach( $newOrder->contents AS $product ) {
-				print "\nUTM:I|$newOrdersId|".$product['id']."|".str_replace( '|', ' ', $product['name'])."|".$product['model']."|".$product['price']."|".$product['products_quantity'];
-			}
-			{/php}</textarea>
-		</form>
+				print "UTM:T|$newOrdersId|".$gBitUser->getPreference('affiliate_code',$gBitSystem->getConfig('site_title'))."|".$newOrder->getField('total')."|".$newOrder->getField('tax')."|".$newOrder->getField('shipping_total')."|".$newOrder->delivery['city']."|".$newOrder->delivery['state']."|".$newOrder->delivery['country']['countries_name'];
+				foreach( $newOrder->contents AS $product ) {
+					print "\nUTM:I|$newOrdersId|".$product['id']."|".str_replace( '|', ' ', $product['name'])."|".$product['model']."|".$product['price']."|".$product['products_quantity'];
+				}
+				{/php}</textarea>
+			</form>
 
-		<script type="text/javascript"> 
-		__utmSetTrans(); 
-		</script>
+			<script type="text/javascript"> 
+			__utmSetTrans(); 
+			</script>
+		{/if}
+		{if $gBitSystem->getConfig('boostsuite_site_id')}
+			{literal}
+			<script type="text/javascript">
+			var _bsc = _bsc || {"suffix":"pageId={/literal}{$gBitSystem->getConfig('boostsuite_tracking_checkout_id')}{literal}&siteId={/literal}{$gBitSystem->getConfig('boostsuite_site_id')}{literal}"}; 
+			(function() {
+				var bs = document.createElement('script');
+				bs.type = 'text/javascript';
+				bs.async = true;
+				bs.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://d2so4705rl485y.cloudfront.net/widgets/tracker/tracker.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(bs, s); 
+			})();
+			</script>
+			{/literal}
+		{/if}
 	{/if}
 
 </div>
