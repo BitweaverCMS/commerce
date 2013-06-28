@@ -21,7 +21,7 @@
 		<td style="text-align:left" class="item"></td>
 	</tr>
 		{elseif $commission.commissions_payments_id}
-	<tr class="payment">
+	<tr class="payment success">
 		{assign var=totalCommissions value=$totalCommissions+$commission.payment_amount}
 		<td>{$commission.period_end_date}</td>
 		<td colspan="3" style="text-align:left" class="item">{tr}Payment for sales ending on this date. Payment was made on{/tr} {$commission.payment_date|strtotime|date_format:"%Y-%m-%d"}
