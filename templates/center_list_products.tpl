@@ -7,15 +7,15 @@
 <tr>
     {section name=jx loop=$listBoxContents[ix]}
     <td style="width:{$listColWidth}%">
-		<span class="productimage"><a href="{$gBitProduct->getDisplayUrlFromHash($listBoxContents[ix][jx])}" /><img class="thumb" src="{$listBoxContents[ix][jx].products_image_url}"/></a></span>
+		<span class="productimage"><a href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}" /><img class="thumb" src="{$listBoxContents[ix][jx].products_image_url}"/></a></span>
 		<div class="productinfo">
-		<h3><a href="{$gBitProduct->getDisplayUrlFromHash($listBoxContents[ix][jx])}" />{$listBoxContents[ix][jx].products_name}</a></h3>
+		<h3><a href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}" />{$listBoxContents[ix][jx].products_name}</a></h3>
 		{if $listBoxContents[ix][jx].user_id!=$smarty.const.ROOT_USER_ID}{tr}by{/tr} {displayname hash=$listBoxContents[ix][jx]}{/if}
 		<div class="details">
 			{if $listBoxContents[ix][jx].products_model}<span class="model">{$listBoxContents[ix][jx].products_model}</span><br/>{/if}
-			{tr}Starting at:{/tr}<span class="price">{$listBoxContents[ix][jx].lowest_purchase_price|default:$gBitProduct->getDisplayPrice($listBoxContents[ix][jx].products_id)}</span>
+			{tr}Starting at:{/tr}<span class="price">{$listBoxContents[ix][jx].lowest_purchase_price}</span>
 		</div>
-		<div class="buynow"><a class="button" href="{$gBitProduct->getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
+		<div class="buynow"><a class="btn btn-small" href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
 		</div>
     </td>
 	{/section}

@@ -54,12 +54,31 @@
 		$this->format( zen_add_tax( $pPrice, $pTax  ) );
 	}
 
+	function getRightSymbol( $pCurrency = NULL ) {
+		$pCurrency = $this->verifyCurrency( $pCurrency );
+		return $this->currencies[$pCurrency]['symbol_right'];
+	}
+
+	function getLeftSymbol( $pCurrency = NULL ) {
+		$pCurrency = $this->verifyCurrency( $pCurrency );
+		return $this->currencies[$pCurrency]['symbol_left'];
+	}
+
+	function verifyCurrency( $pCurrency ) {
+		if( empty( $pCurrency ) ) {
+			$pCurrency = !empty( $_SESSION['currency'] ) && !empty( $this->currencies[ $_SESSION['currency']] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+		}
+		if( empty( $this->currencies[$pCurrency] ) ) {
+			$pCurrency = DEFAULT_CURRENCY;
+		}
+
+		return $pCurrency;
+	}
+
 // class methods
     function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
 
-		if (empty($currency_type)) {
-			$currency_type = !empty( $_SESSION['currency'] ) && !empty( $this->currencies[ $_SESSION['currency']] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
-		}
+		$currency_type = $this->verifyCurrency( $currency_type );
 		if ($calculate_currency_value == true) {
 			$rate = (float)(zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
 			$format_string = $this->currencies[$currency_type]['symbol_left'] . number_format(zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']) . $this->currencies[$currency_type]['symbol_right'];

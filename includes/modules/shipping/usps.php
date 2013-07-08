@@ -84,7 +84,7 @@ class usps extends BitBase {
 		parent::__construct();
 
 		$this->code = 'usps';
-		$this->title = MODULE_SHIPPING_USPS_TEXT_TITLE;
+		$this->title = 'USPS';
 		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_USPS_STATUS' );
 
 		if ( $this->enabled && MODULE_SHIPPING_USPS_DEBUG_MODE != 'Off') {
@@ -93,7 +93,7 @@ class usps extends BitBase {
 		if ( $this->enabled && MODULE_SHIPPING_USPS_SERVER != 'production') {
 			$this->title .=	'<span class="alert"> (USPS Server set to: ' . MODULE_SHIPPING_USPS_SERVER . ')</span>';
 		}
-		$this->description = MODULE_SHIPPING_USPS_TEXT_DESCRIPTION;
+		$this->description = 'United States Postal Service';
 		$this->icon = 'shipping_usps';
 
 		if ($this->enabled) {
@@ -253,10 +253,10 @@ class usps extends BitBase {
 						$show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
 						break;
 						case (2):
-						$show_box_weight = number_format($usps_shipping_weight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
+						$show_box_weight = number_format($usps_shipping_weight * $shippingNumBoxes,2) . tra( 'lbs' );
 						break;
 						default:
-						$show_box_weight = $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . TEXT_SHIPPING_WEIGHT;
+						$show_box_weight = $shippingNumBoxes . ' x ' . number_format($usps_shipping_weight,2) . tra( 'lbs' );
 						break;
 					}
 				}
@@ -315,7 +315,7 @@ class usps extends BitBase {
 														'error' => MODULE_SHIPPING_USPS_TEXT_SERVER_ERROR . (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
 		} else {
 			$this->quotes = array('module' => $this->title,
-														'error' => MODULE_SHIPPING_USPS_TEXT_ERROR . (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
+														'error' => (MODULE_SHIPPING_USPS_SERVER=='test' ? MODULE_SHIPPING_USPS_TEXT_ERROR . MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
 		}
 
 		$this->quotes['icon'] = $this->icon;

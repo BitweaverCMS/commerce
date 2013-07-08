@@ -30,7 +30,7 @@ $gBitSystem->mConfig["bitcommerce_hide_left_col"] = 'y';
 
 // Set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-  	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+  	error_reporting(E_ALL & ~E_NOTICE);
 } else {
 	error_reporting(E_ALL);
 }
@@ -362,7 +362,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
 		$oID = zen_db_prepare_input($_REQUEST['oID']);
 		if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {
 		    $order = new order($oID);
-			$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
+			$gBitSmarty->assign( 'gBitOrder', $order, TRUE );
 		} else {
 			$messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
 		}

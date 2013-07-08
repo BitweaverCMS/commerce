@@ -61,7 +61,7 @@ class fedexwebservices extends BitBase {
 		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 1 ? $pShipHash['shipping_weight'] : 1);
 		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
-		$client = new SoapClient( dirname( __FILE__ ) . "/RateService_v9.wsdl", array('trace' => 1) );
+		$client = new SoapClient( dirname( __FILE__ ) . "/RateService_v10.wsdl", array('trace' => 1) );
 		$this->types = array();
 		if (MODULE_SHIPPING_FEDEX_WEB_SERVICES_INTERNATIONAL_PRIORITY == 'true') {
 			$this->types['INTERNATIONAL_PRIORITY'] = array( 'code' => 'FEDEX_INTERNATIONAL_PRIORITY', 'icon' => '', 'handling_fee' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_INT_EXPRESS_HANDLING_FEE);
@@ -121,8 +121,8 @@ class fedexwebservices extends BitBase {
 		
 		$request['WebAuthenticationDetail'] = array('UserCredential' => array('Key' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_KEY, 'Password' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_PWD));
 		$request['ClientDetail'] = array('AccountNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_ACT_NUM, 'MeterNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_METER_NUM );
-		$request['TransactionDetail'] = array('CustomerTransactionId' => ' *** Rate Request v9 using PHP ***');
-		$request['Version'] = array('ServiceId' => 'crs', 'Major' => '9', 'Intermediate' => '0', 'Minor' => '0');
+		$request['TransactionDetail'] = array('CustomerTransactionId' => ' *** Rate Request v10 using PHP ***');
+		$request['Version'] = array('ServiceId' => 'crs', 'Major' => '10', 'Intermediate' => '0', 'Minor' => '0');
 		$request['ReturnTransitAndCommit'] = true;
 		$request['RequestedShipment']['DropoffType'] = $this->_setDropOff(); // valid values REGULAR_PICKUP, REQUEST_COURIER, ...
 		$request['RequestedShipment']['ShipTimestamp'] = date('c');
@@ -206,7 +206,7 @@ class fedexwebservices extends BitBase {
 						}
 						if ($shippingWeight <= 0) $shippingWeight = 0.1; 
 						$new_shipping_weight += $shippingWeight;					 
-						$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_WEIGHT));
+						$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_WEIGHT), 'GroupPackageCount' => 1 );
 					}
 				} else {
 					// note $values is an array
@@ -218,31 +218,18 @@ class fedexwebservices extends BitBase {
 																												'Width' => $values['width'],
 																												'Height' => $values['height'],
 																												'Units' => $values['units'] 
-																												)
+																												),
+																						  'GroupPackageCount' => 1,
 																						 );
 				}
 			}
 			$shippingNumBoxes = $new_shipping_num_boxes;
 			$shippingWeight = round($new_shipping_weight / $shippingNumBoxes, 2);
 		} else {
-			// Zen Cart default method for calculating number of packages
-			
-			// check if cart contains free shipping items (module would be disabled unless strictly enabled to still quote for always free shipping products)
-			/*
-			if ($gBitCustomer->mCart->in_cart_check('product_is_always_free_shipping','1')) {
-				// cart contains free shipping, get products weights
-				$shippingWeight = 0;
-				$products = $gBitCustomer->mCart->get_products();
-				foreach ($products as $product) {
-					$shippingWeight += $product['weight'] * $product['quantity'];
-				}
-				$shippingWeight = $shippingWeight / $shippingNumBoxes;
-			}
-			*/
 			if ($shippingWeight == 0) $shippingWeight = 0.1;
 			
 			for ($i=0; $i<$shippingNumBoxes; $i++) {
-				$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_WEIGHT));
+				$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_WEIGHT), 'GroupPackageCount' => 1 );
 			}
 		}
 		$request['RequestedShipment']['PackageCount'] = $shippingNumBoxes;
@@ -255,79 +242,79 @@ class fedexwebservices extends BitBase {
 			$request['RequestedShipment']['SpecialServicesRequested'] = 'SIGNATURE_OPTION'; 
 		}
 
-		$message = '';
 		try {
 			$response = $client->getRates($request);
-		} catch( Exception $e ) {
-			$message .= $e->getMessage();
-		}
-		//bt(); vd( $pListHash ); vd($request); vd($response); 
-		if( $response && $response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR' && is_array($response->RateReplyDetails) || is_object($response->RateReplyDetails)) {
-			if (is_object($response->RateReplyDetails)) {
-				$response->RateReplyDetails = get_object_vars($response->RateReplyDetails);
-			}
-			//echo '<pre>';
-			//print_r($response->RateReplyDetails);
-			//echo '</pre>';
-			switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
-				case (0):
-				$show_box_weight = '';
-				break;
-				case (1):
-				$show_box_weight = ' (' . $shippingNumBoxes. ' ' . TEXT_SHIPPING_BOXES . ')';
-				break;
-				case (2):
-				$show_box_weight = ' (' . number_format($shippingWeight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT . ')';
-				break;
-				default:
-				$show_box_weight = ' (' . $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . TEXT_SHIPPING_WEIGHT . ')';
-				break;
-			}			
-			$this->quotes = array( 'id' => $this->code,
-									'module' => $this->title,
-									'info' => $this->info(),
-									'weight' => $show_box_weight, 
-									);
-			$methods = array();
-			foreach ($response->RateReplyDetails as $rateReply) {
-				if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
-					$cost = NULL;
-					if(MODULE_SHIPPING_FEDEX_WEB_SERVICES_RATES=='LIST') {
-						foreach($rateReply->RatedShipmentDetails as $ShipmentRateDetail) {
-							if($ShipmentRateDetail->ShipmentRateDetail->RateType=='PAYOR_LIST_PACKAGE') {
-								$cost = $ShipmentRateDetail->ShipmentRateDetail->TotalNetCharge->Amount;
-								$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
+			if( !empty( $response ) && ($response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR' && !empty( $response->RateReplyDetails )) ) {
+				if (is_object($response->RateReplyDetails)) {
+					$response->RateReplyDetails = get_object_vars($response->RateReplyDetails);
+				}
+				//echo '<pre>';
+				//print_r($response->RateReplyDetails);
+				//echo '</pre>';
+				switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
+					case (0):
+					$show_box_weight = '';
+					break;
+					case (1):
+					$show_box_weight = ' (' . $shippingNumBoxes. ' ' . TEXT_SHIPPING_BOXES . ')';
+					break;
+					case (2):
+					$show_box_weight = ' (' . number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' ) . ')';
+					break;
+					default:
+					$show_box_weight = ' (' . $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' ) . ')';
+					break;
+				}			
+				$this->quotes = array( 'id' => $this->code,
+										'module' => $this->title,
+										'info' => $this->info(),
+										'weight' => $show_box_weight, 
+										);
+				$methods = array();
+				foreach ($response->RateReplyDetails as $rateReply) {
+					if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
+						$cost = NULL;
+						if(MODULE_SHIPPING_FEDEX_WEB_SERVICES_RATES=='LIST') {
+							foreach($rateReply->RatedShipmentDetails as $ShipmentRateDetail) {
+								if($ShipmentRateDetail->ShipmentRateDetail->RateType=='PAYOR_LIST_PACKAGE') {
+									$cost = $ShipmentRateDetail->ShipmentRateDetail->TotalNetCharge->Amount;
+									$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
+								}
 							}
+						} else {
+							$cost = $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount;
+							$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
 						}
-					} else {
-						$cost = $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount;
-						$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
+						$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
+											'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
+											'cost' => $cost + (strpos($this->types[$rateReply->ServiceType]['handling_fee'], '%') ? ($cost * (float)$this->types[$rateReply->ServiceType]['handling_fee'] / 100) : (float)$this->types[$rateReply->ServiceType]['handling_fee']),
+											'code' => $this->types[$rateReply->ServiceType]['code'],
+										  );
 					}
-					$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
-										'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
-										'cost' => $cost + (strpos($this->types[$rateReply->ServiceType]['handling_fee'], '%') ? ($cost * (float)$this->types[$rateReply->ServiceType]['handling_fee'] / 100) : (float)$this->types[$rateReply->ServiceType]['handling_fee']),
-										'code' => $this->types[$rateReply->ServiceType]['code'],
-									  );
+				}
+				$this->quotes['methods'] = $methods;
+				if ($this->tax_class > 0) {
+					$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
+				} 
+			} else {
+				$message = ''; 
+				if( is_array( $response->Notifications ) ) {
+					foreach ($response->Notifications as $notification) {					 
+						$message .= tra( $notification->Severity ).': '.tra( $notification->Message );
+					}
+				} elseif( is_object( $response->Notifications ) ) {
+					$message .= tra( $response->Notifications->Severity ).': '.tra( $response->Notifications->Message );
 				}
 			}
-			$this->quotes['methods'] = $methods;
-			if ($this->tax_class > 0) {
-				$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['countries_id'], $order->delivery['zone_id']);
-			} 
-		} else {
-			if( empty( $message ) ) {
-				$message .= tra( 'Error in getting rates.' ).'<br /><br />'; 
-			}
-			if( is_array( $response->Notifications ) ) {
-				foreach ($response->Notifications as $notification) {					 
-					$message .= tra( $notification->Severity ).': '.tra( $notification->Message );
-				}
-			} elseif( is_object( $response->Notifications ) ) {
-				$message .= tra( $response->Notifications->Severity ).': '.tra( $response->Notifications->Message );
-			}
+		} catch( Exception $e ) {
+			$message = $e->getMessage();
+		}
+
+		if( !empty( $message ) ) {
 			$this->quotes = array('module' => $this->title, 'error'	=> $message);
 		}
-		if (zen_not_null($this->icon)) {
+
+		if ( !empty( $this->icon ) ) {
 			$this->quotes['icon'] = $this->icon;
 		}
 		//echo '<!-- Quotes: ';

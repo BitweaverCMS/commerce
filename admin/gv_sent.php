@@ -26,7 +26,7 @@ $feedback = array();
 
 if( !empty( $_REQUEST['action'] ) ) {
 	if( $_REQUEST['action'] == 'delete' ) {
-		$gBitUser->verifyTicket();
+//		$gBitUser->verifyTicket();
 		$coupon = new CommerceVoucher( $_REQUEST['gid'] );
 		$coupon->expunge();
 		bit_redirect( $_SERVER['SCRIPT_NAME'] );

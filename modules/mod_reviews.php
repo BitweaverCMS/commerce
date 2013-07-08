@@ -28,12 +28,12 @@ if( $gBitProduct->isValid() ) {
 }
 $listHash['max_records'] = MAX_RANDOM_SELECT_REVIEWS;
 if( $sideboxReview = $gBitProduct->getList( $listHash ) ) {
-	$gBitSmarty->assign( 'sideboxReview', current( $sideboxReview ) );
+	$_template->tpl_vars['sideboxReview'] = new Smarty_variable( current( $sideboxReview ) );
 } elseif ( $gBitProduct->isValid() ) {
-	$gBitSmarty->assign( 'reviewProductsId', $gBitProduct->getField( 'products_id' ) );
-	$gBitSmarty->assign( 'writeReview', TRUE );
+	$_template->tpl_vars['reviewProductsId'] = new Smarty_variable( $gBitProduct->getField( 'products_id' ) );
+	$_template->tpl_vars['writeReview'] = new Smarty_variable( TRUE );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' ) );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( '<img src="'.BITCOMMERCE_PKG_URL.'icons/star.png" alt="*" />'.tra( 'Reviews' ) );
 }
 ?>

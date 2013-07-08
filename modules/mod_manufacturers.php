@@ -59,10 +59,10 @@ while( $manufacturer_sidebox = $manufacturers->fetchRow() ) {
   $manufacturer_sidebox_name = ((strlen($manufacturer_sidebox['manufacturers_name']) > MAX_DISPLAY_MANUFACTURER_NAME_LEN) ? substr($manufacturer_sidebox['manufacturers_name'], 0, MAX_DISPLAY_MANUFACTURER_NAME_LEN) . '..' : $manufacturer_sidebox['manufacturers_name']);
   $manufacturer_sidebox_array[$manufacturer_sidebox['manufacturers_id']] = $manufacturer_sidebox_name;
 }
-//$gBitSmarty->assign( 'manufacturersPulldown', zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, (isset($_GET['manufacturers_id']) ? $_GET['manufacturers_id'] : ''), 'onchange="this.form.submit();" size="' . MAX_MANUFACTURERS_LIST . '" style="width: 100%"') . zen_hide_session_id() );
-$gBitSmarty->assign( 'manufacturers', $manufacturer_sidebox_array );
+//$_template->tpl_vars['manufacturersPulldown'] = new Smarty_variable( zen_draw_pull_down_menu('manufacturers_id', $manufacturers_array, (isset($_GET['manufacturers_id']) ) );
+$_template->tpl_vars['manufacturers'] = new Smarty_variable( $manufacturer_sidebox_array );
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle',  'Manufacturers' ) ;
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Manufacturers' );
 }
 
 }

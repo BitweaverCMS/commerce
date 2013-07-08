@@ -151,22 +151,7 @@ define('AUTOCHECK', 'False');
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
-</script>
 <?php
   if ( ($action == 'new') || ($action == 'edit') ) {
 ?>
@@ -181,13 +166,6 @@ function popupWindow(url) {
 }
 function session_win1() {
   window.open("<?php echo zen_href_link_admin(FILENAME_SALEMAKER_POPUP, 'cid='.$category['categories_id']); ?>","salemaker_info","height=460,width=600,scrollbars=yes,resizable=yes").focus();
-}
-function init() {
-  cssjsmenu('navbar');
-  if (document.getElementById) {
-    var kill = document.getElementById('hoverJS');
-    kill.disabled = true;
-  }
 }
 function RowClick(RowValue) {
   for (i=0; i<document.sale_form.length; i++) {
@@ -254,13 +232,13 @@ function SetCategories() {
 
 </script>
 </head>
-<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="SetCategories();SetFocus();init()">
+<body onload="SetCategories();">
 <div id="spiffycalendar" class="text"></div>
 <?php
   } else {
 ?>
 </head>
-<body onload="init();" marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
+<body>
 <?php
   }
 ?>
@@ -272,7 +250,7 @@ function SetCategories() {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
 <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
       <tr>
         <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
@@ -299,7 +277,7 @@ var StartDate = new ctlSpiffyCalendarBox("StartDate", "sale_form", "start", "btn
 var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2","<?php echo (($sInfo->sale_date_end == '0001-01-01') ? '' : zen_date_short($sInfo->sale_date_end)); ?>",scBTNMODE_CUSTOMBLUE);
 </script>
       <tr><form name="sale_form" <?php echo 'action="' . zen_href_link_admin(FILENAME_SALEMAKER, zen_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action, 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('sID', $_GET['sID']); ?>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <td><table>
           <tr>
             <td class="main"><?php echo TEXT_SALEMAKER_POPUP; ?></td>
             <td class="main" align="right" valign="top"><br><?php echo (($form_action == 'insert') ? zen_image_submit('button_insert.gif', IMAGE_INSERT) : zen_image_submit('button_update.gif', IMAGE_UPDATE)). '&nbsp;&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $_GET['sID']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL); ?></td>
@@ -444,7 +422,7 @@ echo '</table></tr>';
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent" align="left"><?php echo TABLE_HEADING_SALE_NAME; ?></td>
                 <td class="dataTableHeadingContent" align="center" colspan="2"><?php echo TABLE_HEADING_SALE_DEDUCTION; ?></td>
@@ -464,7 +442,7 @@ echo '</table></tr>';
       }
 
       if (isset($sInfo) && is_object($sInfo) && ($salemaker_sales->fields['sale_id'] == $sInfo->sale_id)) {
-        echo '                  <tr class="dataTableRowSelected" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=edit') . '\'">' . "\n";
+        echo '                  <tr class="info" onmouseover="this.style.cursor=\'hand\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $sInfo->sale_id . '&action=edit') . '\'">' . "\n";
       } else {
         echo '                  <tr class="dataTableRow" onmouseover="this.className=\'dataTableRowOver\';this.style.cursor=\'hand\'" onmouseout="this.className=\'dataTableRow\'" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SALEMAKER, 'page=' . $_GET['page'] . '&sID=' . $salemaker_sales->fields['sale_id']) . '\'">' . "\n";
       }
@@ -539,7 +517,7 @@ echo '</table></tr>';
 
         $contents[] = array('text' => '<br>' . TEXT_INFO_DEDUCTION . ' ' . $sInfo->sale_deduction_value . ' ' . $deduction_type_array[$sInfo->sale_deduction_type]['text']);
         $contents[] = array('text' => '' . TEXT_INFO_PRICERANGE_FROM . ' ' . $currencies->format($sInfo->sale_pricerange_from) . TEXT_INFO_PRICERANGE_TO . $currencies->format($sInfo->sale_pricerange_to));
-        $contents[] = array('text' => '<table class="dataTableContent" border="0" width="100%" cellspacing="0" cellpadding="0"><tr><td valign="top">' . TEXT_INFO_SPECIALS_CONDITION . '&nbsp;</td><td>' . $specials_condition_array[$sInfo->sale_specials_condition]['text'] . '</td></tr></table>');
+        $contents[] = array('text' => '<table class="table dataTableContent" border="0" width="100%" cellspacing="0" cellpadding="0"><tr><td valign="top">' . TEXT_INFO_SPECIALS_CONDITION . '&nbsp;</td><td>' . $specials_condition_array[$sInfo->sale_specials_condition]['text'] . '</td></tr></table>');
 
         $contents[] = array('text' => '<br>' . TEXT_INFO_DATE_START . ' ' . (($sInfo->sale_date_start == '0001-01-01') ? TEXT_SALEMAKER_IMMEDIATELY : zen_date_short($sInfo->sale_date_start)));
         $contents[] = array('text' => '' . TEXT_INFO_DATE_END . ' ' . (($sInfo->sale_date_end == '0001-01-01') ? TEXT_SALEMAKER_NEVER : zen_date_short($sInfo->sale_date_end)));

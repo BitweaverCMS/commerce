@@ -104,9 +104,9 @@ if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
       $content = '';
 
   }
-  $gBitSmarty->assign( 'sideboxShoppingCartContent', $content );
+  $_template->tpl_vars['sideboxShoppingCartContent'] = new Smarty_variable( $content );
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Shopping Cart' ) );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'Shopping Cart' ) );
 	}
   }
 }

@@ -135,24 +135,9 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
-</script>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -161,7 +146,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
 <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
       <tr>
         <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
@@ -173,7 +158,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_SUPPLIERS; ?></td>
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
@@ -193,7 +178,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
     }
 
     if (isset($mInfo) && is_object($mInfo) && ($suppliers->fields['suppliers_id'] == $mInfo->suppliers_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $suppliers->fields['suppliers_id'] . '&action=edit') . '\'">' . "\n";
+      echo '              <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $suppliers->fields['suppliers_id'] . '&action=edit') . '\'">' . "\n";
     } else {
       echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_SUPPLIERS, 'page=' . $_GET['page'] . '&mID=' . $suppliers->fields['suppliers_id'] . '&action=edit') . '\'">' . "\n";
     }
@@ -210,7 +195,7 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'suppliers')) mkdir(DIR_FS_CATALOG_IMAGES . 
   }
 ?>
               <tr>
-                <td colspan="2"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+                <td colspan="2"><table>
                   <tr>
                     <td class="smallText" valign="top"><?php echo $suppliers_split->display_count($suppliers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_SUPPLIERS); ?></td>
                     <td class="smallText" align="right"><?php echo $suppliers_split->display_links($suppliers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>

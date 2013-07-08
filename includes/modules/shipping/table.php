@@ -89,10 +89,10 @@
             $show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
             break;
           case (2):
-            $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
+            $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' );
             break;
           default:
-            $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . TEXT_SHIPPING_WEIGHT;
+            $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' );
             break;
         }
       }

@@ -1,5 +1,5 @@
 <div class="listing bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Products by{/tr} {$gQueryUser->getDisplayName(1)}</h1>
 	</div>
 

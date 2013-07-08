@@ -20,11 +20,11 @@
 //  $Id$
 //
 ?>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <table>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?>&nbsp;-&nbsp;<?php echo zen_output_generated_category_path($current_category_id); ?></td>
+            <td class="pageHeading"><?php echo zen_output_generated_category_path($current_category_id); ?></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
             <td align="right"><table border="0" width="100%" cellspacing="0" cellpadding="0">
               <tr>
@@ -60,7 +60,7 @@
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRow">
 <?php if ($action == '') { ?>
                 <td class="dataTableHeadingContent" width="20" align="right"><?php echo TABLE_HEADING_ID; ?></td>
@@ -325,7 +325,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
 <?php if ($action == '') { ?>
 
               <tr>
-                <td colspan="3"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+                <td colspan="3"><table>
                   <tr>
                     <td class="smallText"><?php echo TEXT_CATEGORIES . '&nbsp;' . $categories_count . '<br />' . TEXT_PRODUCTS . '&nbsp;' . $products_count; ?></td>
                     <td align="right" class="smallText"><?php if( !empty( $cPath_array ) ) echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, $cPath_back . 'cID=' . $current_category_id) . '">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>&nbsp;'; if (!isset($_GET['search'])) echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&action=new_category') . '">' . zen_image_button('button_new_category.gif', IMAGE_NEW_CATEGORY) . '</a>&nbsp;'; ?>

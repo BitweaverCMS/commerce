@@ -1,4 +1,4 @@
-	<table class="data">
+	<table class="table data">
 	<tr>
 		<th class="item" colspan="2">{tr}Payee{/tr}</th>
 		<th class="item">{tr}Commission Due{/tr}</th>

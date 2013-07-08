@@ -12,7 +12,7 @@ function popupWindowPrice(url) {
 <div class="floaticon">
 {include file="bitpackage:liberty/services_inc.tpl" serviceLocation='icon'}
 {if $smarty.const.SHOW_PRODUCT_INFO_TELL_A_FRIEND == '1'}
-	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page={$smarty.const.FILENAME_TELL_A_FRIEND}&amp;products_id={$gBitProduct->mProductsId}">{biticon ipackage="icons" iexplain="Tell a Friend" iname="mail-reply-all"}</a>
+	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page={$smarty.const.FILENAME_TELL_A_FRIEND}&amp;products_id={$gBitProduct->mProductsId}">{booticon ipackage="icons" iexplain="Tell a Friend" iname="icon-share-sign"}</a>
 {/if}
 
 {if $gBitProduct->hasUpdatePermission()}
@@ -34,7 +34,7 @@ function popupWindowPrice(url) {
 		<img class="thumb" src="{$gBitProduct->getImageUrl(0,'medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
 		
 {if $smarty.const.SHOW_PRODUCT_INFO_REVIEWS == '1' AND $gBitSystem->isFeatureActive( 'wiki_comments' )}
-	<div class="row">
+	<div class="control-group">
 		{include file="bitpackage:liberty/comments.tpl"}
 	</div>
 {/if}
@@ -42,15 +42,15 @@ function popupWindowPrice(url) {
     </td>
     <td>
 
-{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype="multipart/form-data"'}
+{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
-<div class="header">
+<div class="page-header">
 		<h1>{$gBitProduct->getTitle()}</h1>
 		{if $gBitProduct->getField('user_id')!=$smarty.const.ROOT_USER_ID}{tr}By{/tr} {displayname hash=$gBitProduct->mInfo}{/if}
 </div>
 
 <div class="cartBox">
-	<div class="row">
+	<div class="control-group">
 		<h2>
 			{if $gBitProduct->getField('show_onetime_charges_description') && $gBitProduct->getField('show_onetime_charges_description') == 'true'}
 				<div class="smallText">{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}</div>
@@ -65,13 +65,13 @@ function popupWindowPrice(url) {
 
 	</div>
 {if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
-	<div class="row">
+	<div class="control-group">
 		{$gBitProduct->getField('products_model')}
 	</div>
 {/if}
 
 {if $smarty.const.SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField('products_weight')} 
-	<div class="row">
+	<div class="control-group">
 	    {$smarty.const.TEXT_PRODUCT_WEIGHT}{$gBitProduct->getField('products_weight')}{$smarty.const.TEXT_PRODUCT_WEIGHT_UNIT}
 	</div>
 {/if}
@@ -79,13 +79,13 @@ function popupWindowPrice(url) {
 {include file='bitpackage:bitcommerce/product_options_inc.tpl'}
 
 {if $smarty.const.SHOW_PRODUCT_INFO_QUANTITY == '1' && !$gBitProduct->getField( 'products_virtual' )}
-	<div class="row">
+	<div class="control-group">
     	{$gBitProduct->getField('products_quantity')} {$smarty.const.TEXT_PRODUCT_QUANTITY}
 	</div>
 {/if}
 
 {if $smarty.const.SHOW_PRODUCT_INFO_MANUFACTURER == '1' and $gBitProduct->getField('manufacturers_name')}
-	<div class="row">
+	<div class="control-group">
     	{$gBitProduct->getField('manufacturers_name')}
 	</div>
 {/if}
@@ -93,7 +93,7 @@ function popupWindowPrice(url) {
 {if $smarty.const.CUSTOMERS_APPROVAL == '3' and $smarty.const.TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == ''}
 	&nbsp;
 {else}
-	<div class="row">
+	<div class="control-group">
 			{assign var="qtyInCart" value=$gBitProduct->quantityInCart()}
             {if $smarty.const.SHOW_PRODUCT_INFO_IN_CART_QTY == '1' && $qtyInCart}
 				{tr}Quantity in Cart{/tr}: {$qtyInCart}<br/>
@@ -106,13 +106,13 @@ function popupWindowPrice(url) {
             	{$smarty.const.PRODUCTS_ORDER_QTY_TEXT} <input type="text" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}" maxlength="6" size="4" /> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
             {/if}
 	</div>
-	<div class="row">
-			<input type="submit" class="button" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
+	<div class="control-group">
+			<input type="submit" class="btn btn-small" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
 	</div>
 {/if}
 
 {if $gBitProduct->getField('products_discount_type')}
-<div class="row">
+<div class="control-group">
 	{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
     {include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
 </div>
@@ -128,24 +128,23 @@ function popupWindowPrice(url) {
 {include_php file="`$smarty.const.DIR_FS_PAGES``$current_page_base`/main_template_vars_images_additional.php"}
 
 {if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
-<div class="row">
-	{assign var="templateDir" value=$commerceTemplate->get_template_dir('/tpl_products_next_previous.php',$smarty.const.DIR_WS_TEMPLATE, $current_page_base,'templates')}
-	{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH``$templateDir`/tpl_products_next_previous.php"}
+<div class="control-group">
+	{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`includes/templates/template_default/common/tpl_products_next_previous.php"}
 </div>
 {/if}
 
 {if $smarty.const.SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1' && $gBitProduct->getField('products_date_available') > date('Y-m-d H:i:s')}
-<div class="row">
+<div class="control-group">
 	<span class="warning">{tr}This product will be in stock on{/tr} {$gBitProduct->getField('products_date_available')|zen_date_long}</span>
 </div>
 {elseif $smarty.const.SHOW_PRODUCT_INFO_DATE_ADDED == '1'}
-<div class="row">
+<div class="control-group">
 	{tr}This product was added to our catalog on{/tr} {$gBitProduct->getField('products_date_added')|zen_date_long}
 </div>
 {/if}
 
 {if $gBitProduct->getField('products_url') && $smarty.const.SHOW_PRODUCT_INFO_URL == '1'}
-<div class="row">
+<div class="control-group">
 {*  <?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?> *}
 </div>
 {/if}

@@ -22,12 +22,8 @@
 	$version_check_index=true;
 	require('includes/application_top.php');
 
-	if( !empty( $_REQUEST['top_search'] ) ) {
-		switch( $_REQUEST['top_search_scope'] ) {
-			case 'order_num':
-				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['orders_search'] );
-				break;
-		}	
+	if( !empty( $_REQUEST['lookup_order_id'] ) && BitBase::verifyId( $_REQUEST['lookup_order_id'] ) ) {
+		bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['lookup_order_id'] );
 	}
 
 	global $language;
@@ -40,34 +36,6 @@
 			$languages_selected = $languages[$i]['code'];
 		}
 	}
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-<script language="JavaScript" src="includes/menu.js" type="text/JavaScript"></script>
-<link href="includes/stylesheet.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS" />
-<script type="text/javascript">
-	<!--
-	function init()
-	{
-		cssjsmenu('navbar');
-		if (document.getElementById)
-		{
-			var kill = document.getElementById('hoverJS');
-			kill.disabled = true;
-		}
-	}
-	// -->
-</script>
-</head>
-<body onload="init()">
-<!-- header //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
- <?php
 
 	$customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
 
@@ -95,7 +63,12 @@
 
 
 ?>
-<div id="colone">
+<header>
+	<h1 class="page-header">Order List</h1>
+</header>
+
+<div class="row">
+	<div class="span8" id="colone">
 <?php
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
@@ -135,11 +108,13 @@
 	$gBitSmarty->assign( 'commerceStatuses', $statuses );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 ?>
-</div>
+	</div>
 
-<div id="coltwo">
-<table class="data">
-	 <tr><th colspan="2"><?php echo BOX_TITLE_ORDERS; ?> </th></tr>
+	<div class="span4" id="coltwo">
+
+<div class="well nopadding">
+<table class="table data">
+<tr><th><?php echo tra( 'Order Summary' ); ?></th><th>#</th></tr>
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co
@@ -148,19 +123,21 @@
 				ORDER BY `orders_status_id` DESC";
 	if( $rs = $gBitDb->query( $query ) ) {
 		while( $orders_status = $rs->fetchRow() ) {
-		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . $orders_status['orders_status_name'] . '</a>:</td><td> ' . $orders_status['orders_count'] . '</td></tr>';
+		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td> ' . $orders_status['orders_count'] . '</td></tr>';
 		}
 	}
 ?>
 </table>
+</div>
+
 <?php
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
-<table class="data">
-<tr><th colspan="2"><?php echo BOX_TITLE_STATISTICS; ?> </th></tr>
+
+<div class="well nopadding">
+<table class="table data">
+<tr><th><?php echo tra( 'Statistics' ); ?></th><th></th></tr>
 <?php
-	echo '<tr><td>' . BOX_ENTRY_COUNTER_DATE . '</td><td> ' . $counter_startdate_formatted . '</td></tr>';
-	echo '<tr><td>' . BOX_ENTRY_COUNTER . '</td><td> ' . $counter->fields['counter'] . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_CUSTOMERS . '</td><td> ' . $customers . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS . ' </td><td>' . $products . '</td></tr>';
 	echo '<tr><td>' . BOX_ENTRY_PRODUCTS_OFF . ' </td><td>' . $products_off . '</td></tr>';
@@ -181,6 +158,9 @@
 </table>
 </div>
 
+	</div>
+</div>
+
 <!-- The following copyright announcement is in compliance
 to section 2c of the GNU General Public License, and
 thus can not be removed, or can only be modified
@@ -197,4 +177,3 @@ following copyright announcement. //-->
 <?php require('includes/application_bottom.php'); ?>
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
-<!-- footer_eof //-->

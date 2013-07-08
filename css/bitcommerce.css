@@ -20,6 +20,7 @@
 // $Id: stylesheet.css,v 1.13 2009/08/28 06:39:10 spiderr Exp $
 */
 
+.table td.currency,
 td.currency,
 th.currency	{ text-align:right; }
 .clickable { cursor:pointer; text-decoration:underline; }
@@ -28,6 +29,7 @@ th.currency	{ text-align:right; }
 .shoppingcart td	{ padding:15px; }
 .shoppingcart .subtotal 		{ font-size:16px; font-weight:900; }
 .shoppingcart .subtotal td	{ vertical-align: middle; text-align:right; }
+.shoppingcart .subtotal td.currency	{ text-align:right; }
 
 .centershop {
 	padding: 0px;
@@ -155,6 +157,7 @@ TR.leftboxheading, TR.rightboxheading, TR.centerboxheading, TR.singleboxheading 
   font-family: Verdana, Arial, sans-serif;
   font-size: 11px;
   background: #ffffff;
+  color: #000000;
   padding: 5px;
 }
 .plainBoxHeading, TD.tableHeading {
@@ -338,18 +341,6 @@ TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pri
   border-top: 1px solid #9a9a9a;
 }
 
-/* General alert span class */
-TD.alert, SPAN.alert {
-  color: #FF0000;
-  font-weight: bold;
-}
-
-/* General alert span class */
-TD.alertBlack, SPAN.alertBlack {
-  color: #000000;
-  font-weight: bold;
-}
-
 /* popup tables */
 TABLE.popupattributeqty, TABLE.popupcouponhelp, TABLE.popupcvvhelp, TABLE.popupimage, TABLE.popupimageadditional, TABLE.popupsearchhelp, TABLE.popupshippingestimator, TABLE.popupinfoshoppingcart {
   background-color: #ffffff;
@@ -416,8 +407,12 @@ TABLE.products-attributes-images {
 .price {
     color: #000;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.4em;
+	text-decoration: none;
 }
+.price a { color: #000; }
+.model,
+.creator { padding: 0 0 5px 0; }
 .normalprice.discounted {
     color: #666;
     font-weight: normal;
@@ -433,3 +428,7 @@ TABLE.products-attributes-images {
 	padding: 5px;
 }
 
+ul.products { margin:0; }
+ul.data.products li.item { padding: 10px 0 10px 0; }
+ul.products li .image { width:180px; }
+ul.products li .thumb { padding-right:20px; }

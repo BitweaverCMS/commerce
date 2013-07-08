@@ -20,8 +20,6 @@
 //	$Id: orders.php,v 1.61 2010/07/14 15:19:58 spiderr Exp $
 //
 
-define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
-
 require('includes/application_top.php');
 
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
@@ -42,13 +40,13 @@ if( $gBitThemes->isAjaxRequest() ) {
 			} else {
 				$optionValuesList[$optionValues[$_REQUEST['new_option_id']]['products_options_values_id']] = $optionValues[$_REQUEST['new_option_id']]['products_options_values_name'];
 			}
-			require_once $gBitSmarty->_get_plugin_filepath('function','html_options');
+			$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
 			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 														'name'			=> 'newOrderOptionValue',
 														'print_result'	=> FALSE ), $gBitSmarty );
-			print '<input type="submit" value="save" name="save_new_option">';
+			print '<input class="btn btn-small btn-primary" type="submit" value="save" name="save_new_option">';
 		} else {
-			print "<span class='error'>Unkown Option</span>";
+			print "<span class='alert alert-error'>Unkown Option</span>";
 		}
 	} elseif( !empty( $_REQUEST['address_type'] ) ) {
 		$addressType = $_REQUEST['address_type'];
@@ -69,14 +67,16 @@ if( $gBitThemes->isAjaxRequest() ) {
 		$gBitSmarty->assign_by_ref( 'address', $entry );
 		$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 	} else {
-			print "<span class='error'>Empty Option</span>";
+			print "<span class='alert alert-error'>Empty Option</span>";
 	}
 
 	exit;
 }
 
-$gBitSystem->setOnloadScript( 'init()' );
 require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+
+// Put this after header.php because we have a custom <header> when viewing an order
+define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
 
 if( !empty( $order ) ) {
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
@@ -147,82 +147,87 @@ if( !empty( $order ) ) {
 			exit;
 			break;
 		case 'update_order':
-			// demo active test
-			if (zen_admin_demo()) {
-				$_GET['action']= '';
-				$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
+			if( !empty( $_REQUEST['additional_charge'] ) ) {
+				$formatCharge = $currencies->format( $_REQUEST['additional_charge'] );
+				$postFields = array( 'cc_ref_id' => $order->info['cc_ref_id'], 'charge_amount' => $_REQUEST['additional_charge'] );
+				if( $paymentModule = $order->getPaymentModule() ) {
+					if( $paymentModule->processPayment( $postFields ) ) {
+						$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge.' '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
+						$_REQUEST['comments'] = (!empty( $_REQUEST['comments'] ) ? $_REQUEST['comments']."\n\n" : '').$statusMsg;
+						
+					} else {
+						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( $paymentModule->mErrors, '<br/>' );
+						$hasError = TRUE;
+						$messageStack->add_session( $statusMsg, 'error');
+						$order->updateStatus( array( 'comments' => $statusMsg ) );
+					}
+				}
+			}
+
+			if( empty( $hasError ) ) {
+				if( $order->updateStatus( $_REQUEST ) ) {
+					$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
+				} else {
+					$messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
+				}
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
 			}
-
-			if( $order->updateStatus( $_REQUEST ) ) {
-				$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
-			} else {
-				$messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
-			}
-
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
 			break;
 		case 'combine':
-		if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
-			$combineOrder = new order( $_REQUEST['combine_order_id'] );
-			$combineHash['source_orders_id'] =	$_REQUEST['oID'];
-			$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
-			$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
-			if( $combineOrder->combineOrders( $combineHash ) ) {
-				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['combine_order_id'] );
-			} else {
-				print "<span class='error'>".$combineOrder->mErrors['combine']."</span>";
+			if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
+				$combineOrder = new order( $_REQUEST['combine_order_id'] );
+				$combineHash['source_orders_id'] =	$_REQUEST['oID'];
+				$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
+				$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
+				if( $combineOrder->combineOrders( $combineHash ) ) {
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['combine_order_id'] );
+				} else {
+					print "<span class='error'>".$combineOrder->mErrors['combine']."</span>";
+				}
 			}
-		}
-		break;
+			break;
 		case 'delete':
-		$formHash['action'] = 'deleteconfirm';
-		$formHash['oID'] = $oID;
-		$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete order #'.$oID.'?', 'error' => 'This cannot be undone!' ) );
-		break;
+			$formHash['action'] = 'deleteconfirm';
+			$formHash['oID'] = $oID;
+			$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete order #'.$oID.'?', 'error' => 'This cannot be undone!' ) );
+			break;
 		case 'deleteconfirm':
-		// demo active test
-		if (zen_admin_demo()) {
-			$_GET['action']= '';
-			$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')), 'NONSSL'));
-		}
-		$gBitUser->verifyTicket();
-		if( $order->expunge( $_POST['restock'] ) ) {
-			bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
-		}
-		break;
+			$gBitUser->verifyTicket();
+			if( $order->expunge( $_POST['restock'] ) ) {
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
+			}
+			break;
 		default:
-		// reset single download to on
-		if( !empty( $_REQUEST['ord_prod_att_id'] ) ) {
-			
-		}
-		if( !empty( $_GET['download_reset_on'] ) ) {
-			// adjust download_maxdays based on current date
-			$check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status,
-										date_purchased from " . TABLE_ORDERS . "
-										where `orders_id` = '" . $_REQUEST['oID'] . "'");
-			$zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
+			// reset single download to on
+			if( !empty( $_REQUEST['ord_prod_att_id'] ) ) {
+				
+			}
+			if( !empty( $_GET['download_reset_on'] ) ) {
+				// adjust download_maxdays based on current date
+				$check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status,
+											date_purchased from " . TABLE_ORDERS . "
+											where `orders_id` = '" . $_REQUEST['oID'] . "'");
+				$zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;
 
-			$update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
-			$gBitDb->Execute($update_downloads_query);
-			unset($_GET['download_reset_on']);
+				$update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . DOWNLOAD_MAX_COUNT . "' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
+				$gBitDb->Execute($update_downloads_query);
+				unset($_GET['download_reset_on']);
 
-			$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_ON, 'success');
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
-		}
-		// reset single download to off
-		if( !empty( $_GET['download_reset_off'] ) ) {
-			// adjust download_maxdays based on current date
-			$update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
-			unset($_GET['download_reset_off']);
-			$gBitDb->Execute($update_downloads_query);
+				$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_ON, 'success');
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+			}
+			// reset single download to off
+			if( !empty( $_GET['download_reset_off'] ) ) {
+				// adjust download_maxdays based on current date
+				$update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='0', download_count='0' where `orders_id`='" . $_REQUEST['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
+				unset($_GET['download_reset_off']);
+				$gBitDb->Execute($update_downloads_query);
 
-			$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF, 'success');
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+				$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF, 'success');
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+			}
+			break;
 		}
-		break;
-	}
 	}
 	if( !empty( $_REQUEST['delete_status'] ) ) {
 		if( $gBitUser->isAdmin() ) {
@@ -230,23 +235,27 @@ if( !empty( $order ) ) {
 			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 		}
 	}
+
+	// scan fulfillment modules
+	$fulfillmentFiles = array();
+	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
+	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+		while( $ffFile = readdir( $fulfillHandle ) ) {
+			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
+				$fulfillmentFiles[] = $fulfillDir.$ffFile.'/admin_order_inc.php';
+			}
+		}
+	}
+	$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
+
 }
 
 $gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
 
 if( $order_exists ) {
-	if ($order->info['payment_module_code']) {
-		if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php')) {
-			require(DIR_FS_CATALOG_MODULES . 'payment/' . $order->info['payment_module_code'] . '.php');
-			$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $order->info['payment_module_code'] . '.php';
-			if( file_exists( $langFile ) ) {
-				require( $langFile );
-			}
-			if( $module = new $order->info['payment_module_code'] ) {
-				if( method_exists( $module, 'admin_notification' ) ) {
-					$gBitSmarty->assign( 'notificationBlock', $module->admin_notification($oID) );
-				}
-			}
+	if( $paymentModule = $order->getPaymentModule() ) {
+		if( method_exists( $paymentModule, 'admin_notification' ) ) {
+			$gBitSmarty->assign( 'notificationBlock', $paymentModule->admin_notification($oID) );
 		}
 	}
 
@@ -254,8 +263,10 @@ if( $order_exists ) {
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['id'] ) );
 
-	print '<div class="span-16">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
-	print '<div class="span-8 last">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '<div class="row">';
+	print '<div class="span8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
+	print '<div class="span4">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '</div>';
 
 	// check if order has open gv
 	$gv_check = $gBitDb->query("select `order_id`, `unique_id`

@@ -57,7 +57,7 @@
         $pInfo->metatags_description = zen_db_prepare_input($metatags_description[$languages[$i]['id']]);
       }
 ?>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <table>
       <tr>
         <td><table border="3" cellspacing="4" cellpadding="6">
             <td class="main" valign="top">

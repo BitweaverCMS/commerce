@@ -33,9 +33,9 @@ $box_categories_array = array();
 // don't build a tree when no categories
 $check_categories = $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCT_TYPES . " pt, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc where pt.`type_master_type` = '3' and ptc.`product_type_id` = pt.`type_id` and c.`categories_id` = ptc.`category_id` and c.`categories_status`=1");
 if ($check_categories) {
-	$gBitSmarty->assign( 'sideboxDocumentCategories', $main_category_tree->zen_category_tree('3') );
+	$_template->tpl_vars['sideboxDocumentCategories'] = new Smarty_variable( $main_category_tree->zen_category_tree('3') );
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle',  'Documents' ) ;
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Documents' );
 	}
 }
 

@@ -1,12 +1,12 @@
 {if $comInterests}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Interests"}
 	{forminput}
-		<ul class="data">
 		{foreach from=$comInterests key=interestId item=interestName}
-			<li class="item"><input type="checkbox" name="com_interests[]" value="{$interestId}"/>{$interestName}</li>
+		<label class="checkbox">
+			<input type="checkbox" name="com_interests[]" value="{$interestId}"/>{$interestName}<br/>
+		</label>
 		{/foreach}
-		</ul>
 		{formhelp note="Let us know your interests so we can best serve you."}
 	{/forminput}
 </div>

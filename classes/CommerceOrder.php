@@ -63,6 +63,24 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	function getPaymentModule() {
+		global $gBitCustomer;
+		$ret = NULL;
+		if( $this->isValid() ) {
+			if ($this->info['payment_module_code']) {
+				if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php')) {
+					require_once( DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php' );
+					$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $this->info['payment_module_code'] . '.php';
+					if( file_exists( $langFile ) ) {
+						require( $langFile );
+					}
+					$ret = new $this->info['payment_module_code']();
+				}
+			}
+		}
+		return $ret;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -164,7 +182,7 @@ class order extends CommerceOrderBase {
 					$ret[$row['orders_id']]['comments'] = $gBitDb->getOne( "SELECT `comments` FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) );
 				}
 				if( !empty( $pListHash['orders_products'] ) ) {
-					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cop.*, cp.*
+					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cp.*, cop.*
 							FROM " . TABLE_ORDERS_PRODUCTS . " cop
 								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 							WHERE cop.`orders_id`=?";
@@ -283,8 +301,8 @@ class order extends CommerceOrderBase {
 													 'suburb' => $order->fields['billing_suburb'],
 													 'city' => $order->fields['billing_city'],
 													 'postcode' => $order->fields['billing_postcode'],
+													 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
 													 'state' => $order->fields['billing_state'],
-													 'country' => $order->fields['billing_country'],
 													 'telephone' => $order->fields['billing_telephone'],
 													 'format_id' => $order->fields['billing_address_format_id']);
 

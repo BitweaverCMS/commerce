@@ -46,10 +46,10 @@ if ($music_genres->RecordCount()>0) {
 
 	$music_genres->MoveNext();
 	}
-	$gBitSmarty->assign( 'box_genres_array', $music_genres_array );
+	$_template->tpl_vars['box_genres_array'] = new Smarty_variable( $music_genres_array );
 
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle',  'Music Genres' ) ;
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Music Genres' );
 }
 ?>

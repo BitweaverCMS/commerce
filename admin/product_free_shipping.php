@@ -106,27 +106,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-if (typeof _editor_url == "string") HTMLArea.replaceAll();
- }
- // -->
-</script>
 <?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR" and $action != 'new_product_meta_tags') include (DIR_WS_INCLUDES.'fckeditor.php'); ?>
 <?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA" and $action != 'new_product_meta_tags')  include (DIR_WS_INCLUDES.'htmlarea.php'); ?>
 </head>
-<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF" onload="init()">
+<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
 <div id="spiffycalendar" class="text"></div>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>

@@ -276,8 +276,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
 <?php
 	if ($action == 'edit' || $action == 'update') {
@@ -379,21 +377,8 @@ function check_form() {
 <?php
 	}
 ?>
-<script type="text/javascript">
-	<!--
-	function init()
-	{
-		cssjsmenu('navbar');
-		if (document.getElementById)
-		{
-			var kill = document.getElementById('hoverJS');
-			kill.disabled = true;
-		}
-	}
-	// -->
-</script>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -402,7 +387,7 @@ function check_form() {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
 	<tr>
 <!-- body_text //-->
-		<td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+		<td width="100%" valign="top"><table>
 <?php
 	if ($action == 'edit' || $action == 'update') {
 		$newsletter_array = array(array('id' => '1', 'text' => ENTRY_NEWSLETTER_YES),
@@ -423,7 +408,10 @@ function check_form() {
 				<td class="formAreaTitle"><?php echo CATEGORY_PERSONAL; ?></td>
 			</tr>
 			<tr>
-				<td class="formArea"><table border="0" cellspacing="2" cellpadding="2">
+				<td class="formArea">
+
+
+			<table class="table">
 <?php
 		if (ACCOUNT_GENDER == 'true') {
 ?>
@@ -878,49 +866,52 @@ if ($processed == true) {
 							$disp_order = "c.`customers_id` DESC";
 					}
 ?>
-<a class="button" href="export_users.php">Export as CSV</a>
-						 <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+<a class="btn btn-small" href="export_users.php">Export as CSV</a>
+
+						 <td valign="top">
+
+					<table class="table">
 							<tr class="dataTableHeadingRow">
 								<td class="dataTableHeadingContent" align="center" valign="top">
 									<?php echo TABLE_HEADING_ID; ?>
 								</td>
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='lastname' or $_GET['list_order']=='lastname-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_LASTNAME . '</span>' : TABLE_HEADING_LASTNAME); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=lastname', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='lastname' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=lastname-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='lastname-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=lastname', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='lastname' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=lastname-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='lastname-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='firstname' or $_GET['list_order']=='firstname-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_FIRSTNAME . '</span>' : TABLE_HEADING_FIRSTNAME); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=firstname', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='firstname' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=firstname-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='firstname-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</span>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=firstname', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='firstname' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=firstname-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='firstname-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='company' or $_GET['list_order']=='company-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_COMPANY . '</span>' : TABLE_HEADING_COMPANY); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=company', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='company' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=company-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='company-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=company', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='company' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=company-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='company-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='id-asc' or $_GET['list_order']=='id-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_ACCOUNT_CREATED . '</span>' : TABLE_HEADING_ACCOUNT_CREATED); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=id-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='id-asc' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=id-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='id-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=id-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='id-asc' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=id-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='id-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='login-asc' or $_GET['list_order']=='login-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_LOGIN . '</span>' : TABLE_HEADING_LOGIN); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=login-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='login-asc' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=login-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='login-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=login-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='login-asc' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=login-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='login-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 
 								<td class="dataTableHeadingContent" align="left">
 									<?php echo (($_GET['list_order']=='group-asc' or $_GET['list_order']=='group-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_PRICING_GROUP . '</span>' : TABLE_HEADING_PRICING_GROUP); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=group-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='group-asc' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=group-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='group-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=group-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='group-asc' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=group-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='group-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 
 								<td class="dataTableHeadingContent" align="center">
 									<?php echo (($_GET['list_order']=='approval-asc' or $_GET['list_order']=='approval-desc') ? '<span class="SortOrderHeader">' . TABLE_HEADING_AUTHORIZATION_APPROVAL . '</span>' : TABLE_HEADING_AUTHORIZATION_APPROVAL); ?><br>
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=approval-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='approval-asc' ? '<span class="SortOrderHeader">Asc</span>' : '<span class="SortOrderHeaderLink">Asc</b>'); ?></a>&nbsp;
-									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=approval-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='approval-desc' ? '<span class="SortOrderHeader">Desc</span>' : '<span class="SortOrderHeaderLink">Desc</b>'); ?></a>
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=approval-asc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='approval-asc' ? '<i class="icon-sort-by-order"></i>' : '<i class="icon-sort-by-order bold"></i>'); ?></a>&nbsp;
+									<a href="<?php echo zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']) . '?list_order=approval-desc', '', 'NONSSL'); ?>"><?php echo ($_GET['list_order']=='approval-desc' ? '<i class="icon-sort-by-order-alt"></i>' : '<i class="icon-sort-by-order-alt bold"></i>'); ?></a>
 								</td>
 
 								<td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
@@ -958,20 +949,13 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		$customers_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $customers_query_raw, $customers_query_numrows);
 		$customers = $gBitDb->Execute($customers_query_raw);
 		while (!$customers->EOF) {
-			$info = $gBitDb->Execute("select `date_account_created`,
-																	 `date_account_last_modified`,
-																	 `date_of_last_logon` as `date_last_logon`,
-																	 `number_of_logons`
+			$info = $gBitDb->Execute("select `date_account_created`, `date_account_last_modified`, `date_of_last_logon` as `date_last_logon`, `number_of_logons`
 														from " . TABLE_CUSTOMERS_INFO . "
 														where `customers_info_id` = '" . $customers->fields['customers_id'] . "'");
 
 			if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $customers->fields['customers_id']))) && !isset($cInfo)) {
-				$country = $gBitDb->Execute("select `countries_name`
-																 from " . TABLE_COUNTRIES . "
-																 where `countries_id` = '" . (int)$customers->fields['entry_country_id'] . "'");
-
-				$reviews = $gBitDb->Execute("select count(*) as `number_of_reviews`
-																 from " . TABLE_REVIEWS . " where `customers_id` = '" . (int)$customers->fields['customers_id'] . "'");
+				$country = $gBitDb->Execute("select `countries_name` from " . TABLE_COUNTRIES . " where `countries_id` = '" . (int)$customers->fields['entry_country_id'] . "'");
+				$reviews = $gBitDb->Execute("select count(*) as `number_of_reviews` from " . TABLE_REVIEWS . " where `customers_id` = '" . (int)$customers->fields['customers_id'] . "'");
 
 				$cInfo_array = $customers->fields;
 				if ( !empty( $country->fields ) )
@@ -995,7 +979,7 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		} else $group_name_entry = TEXT_NONE;
 
 			if (isset($cInfo) && is_object($cInfo) && ($customers->fields['customers_id'] == $cInfo->customers_id)) {
-				echo '					<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '\'">' . "\n";
+				echo '					<tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit', 'NONSSL') . '\'">' . "\n";
 			} else {
 				echo '					<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID')) . 'cID=' . $customers->fields['customers_id'], 'NONSSL') . '\'">' . "\n";
 			}
@@ -1015,7 +999,7 @@ if ( empty( $_GET['page'] ) && !empty( $_GET['cID'] ) ) {
 		}
 ?>
 							<tr>
-								<td colspan="5"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+								<td colspan="5"><table>
 									<tr>
 										<td class="smallText" valign="top"><?php echo $customers_split->display_count($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_CUSTOMERS); ?></td>
 										<td class="smallText" align="right"><?php echo $customers_split->display_links($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS_CUSTOMER, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], zen_get_all_get_params(array('page', 'info', 'x', 'y', 'cID'))); ?></td>
