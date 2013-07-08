@@ -59,7 +59,7 @@ $gBitSmarty->assign( 'order', $order );
 
 // if the no billing address, try to get one by default
 if( empty( $_SESSION['billto'] ) || empty( $order->billing ) || !$gBitCustomer->isValidAddress( $order->billing ) ) {
-	if( $gBitCustomer->isValidAddress( $order->delivery ) ) {
+	if( !empty( $_SESSION['sendto'] ) && $gBitCustomer->isValidAddress( $order->delivery ) ) {
 		$order->billing = $order->delivery;
 		$_SESSION['billto'] = $_SESSION['sendto'];
 	} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
