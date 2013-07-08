@@ -232,7 +232,7 @@ function SetCategories() {
 
 </script>
 </head>
-<body onload="SetCategories();SetFocus();">
+<body onload="SetCategories();">
 <div id="spiffycalendar" class="text"></div>
 <?php
   } else {

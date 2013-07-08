@@ -92,7 +92,7 @@
 			</li>
 
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Locations / Taxes');?> <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Locations');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>countries.php">Countries</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>currencies.php">Currencies</a></li>
