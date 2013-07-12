@@ -67,7 +67,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . $awsModulePath.'src');
 * (provided library is installed in the PHP include path), and so classes may just 
 * be loaded even when this function is removed
 ***********************************************************************/   
- function __autoload($className){
+
+function amazon_mws_autoload($className){
 	$filePath = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 	$includePaths = explode(PATH_SEPARATOR, get_include_path());
 	foreach($includePaths as $includePath){
@@ -77,6 +78,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . $awsModulePath.'src');
 		}
 	}
 }
+spl_autoload_register( 'amazon_mws_autoload' );
+
 
 function amazon_mws_get_order_items( $pAmazonOrderId ) {
 	global $gAmazonMWS;
