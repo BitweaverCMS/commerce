@@ -59,7 +59,7 @@
         $gBitDb->Execute("update " . TABLE_CUSTOMERS . " set `customers_password` = '" . zen_encrypt_password($password_new) . "' where `customers_id` = '" . (int)$_SESSION['customer_id'] . "'");
 
         $sql = "update " . TABLE_CUSTOMERS_INFO . "
-                set    `date_account_last_modified` = " . $gBitDb-mDb->sysTimeStamp . "
+                set    `date_account_last_modified` = " . $gBitDb->mDb->sysTimeStamp . "
                 where   `customers_info_id` = '" . (int)$_SESSION['customer_id'] . "'";
 
         $gBitDb->Execute($sql);
