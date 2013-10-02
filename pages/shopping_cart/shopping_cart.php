@@ -13,9 +13,10 @@ if( !empty( $_REQUEST['update_cart'] ) ) {
 	foreach( array_keys( $_REQUEST['cart_quantity'] ) as $productsKey ) {
 		$gBitCustomer->mCart->updateQuantity( $productsKey, $_REQUEST['cart_quantity'][$productsKey] );
 	}
+
 	// check box multi-delete
 	if( isset( $_REQUEST['cart_delete'] ) ) {
-		foreach( array_keys( $_REQUEST['cart_delete'] ) as $productsKey ) {
+		foreach( $_REQUEST['cart_delete'] as $productsKey ) {
 			$gBitCustomer->mCart->updateQuantity( $productsKey, 0 );
 		}
 	}
