@@ -1,19 +1,19 @@
-<div class="floaticon">{bithelp}</div>
+{strip}
 <div class="edit bitcommerce">
-	<div class="page-header">
-		<h1>{tr}Your Shopping Cart Contains:{/tr}</h1>
+	<header class="page-header">
 	{if $smarty.const.SHOW_TOTALS_IN_CART}
-		<div class="smallText">
-		{tr}Total Items:{/tr} {$gBitCustomer->mCart->count_contents()} 
+		<div class="smallText pull-right">
+		{$gBitCustomer->mCart->count_contents()} {tr}Items{/tr}
 		{if $gBitCustomer->mCart->show_weight()}
-			{tr}Weight:{/tr} {$gBitCustomer->mCart->show_weight()|round:2}  {tr}lbs{/tr} ( {$gBitCustomer->mCart->show_weight('kg')|round:2} {tr}Kg{/tr} ) {tr}Amount:{/tr} {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
+			, {$gBitCustomer->mCart->show_weight()|round:2} {tr}lbs{/tr} ( {$gBitCustomer->mCart->show_weight('kg')|round:2} {tr}Kg{/tr} )
 		{/if}
+		, {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
 		</div>
 	{/if}
+		<h1>{tr}Your Shopping Cart Contains:{/tr}</h1>
+	</header>
 
-	</div>
-
-	<div class="body">
+	<div class="body clear">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=shopping_cart"}
 
 {if $gBitCustomer->mCart->count_contents()}
@@ -28,6 +28,7 @@
 	<th>{tr}Product(s){/tr}</th>
 	<th>{tr}Qty.{/tr}</th>
 	<th class="currency">{tr}Total{/tr}</th>
+	<th></th>
 </tr>
 {foreach from=$gBitCustomer->mCart->contents key=productsKey item=basket}
 <tr class="{cycle values="odd,even"}">
@@ -46,10 +47,14 @@
 	</td>
 	<td>
 		<input type="text" class="input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
-		{* remove multiple checkbox - can't find good home for now, but still should work <input type="checkbox" name="cart_delete[]" value="{$productsKey}"> *}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="icon-trash"  package="icons"  iexplain="Remove from cart"}</a>
 	</td>
 	<td class="currency text-right">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
+	<td>
+		<label class="checkbox">
+			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="icon-trash icon-large"  package="icons"  iexplain="Remove from cart"}</a>
+			<input type="checkbox" name="cart_delete[]" value="{$productsKey}">
+		</label>
+	</td>
 </td>
 </tr>
 {/foreach}
@@ -69,16 +74,13 @@
 	<td class="currency">
 		 {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
 	</td>
+	<td>
+	</td>
 </tr>
 	{/if}
 </table>
 <div class="text-right">
-	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}
-			<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn">{tr}Shipping Estimator{/tr}</a>
-	{/if}
-		<input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" />
-		{*<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_shipping" class="btn">{tr}Checkout{/tr}</a>*}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
+	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn">{tr}Shipping Estimator{/tr}</a> {/if} <input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
 </div>
 
 {else}
@@ -91,3 +93,4 @@
 	{/form}
 	</div><!-- end .body -->
 </div>
+{/strip}
