@@ -325,9 +325,9 @@ SPAN.productPriceDiscount, .inputRequirement {
 
 /* checkout totals */
 TD.ot-subtotal-Text, TD.ot-cod-fee-Text, TD.ot-total-Text, TD.ot-group-pricing-Text, TD.ot-gv-Text, TD.ot-loworderfee-Text, TD.ot-shipping-Text, TD.ot-subtotal-Text, TD.ot-tax-Text, TD.ot-coupon-Text {
-  font-weight: bold;
+  font-weight: bold; padding:5px;
 }
-TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pricing-Amount, TD.ot-gv-Amount, TD.ot-loworderfee-Amount, TD.ot-shipping-Amount, TD.ot-subtotal-Amount, TD.ot-tax-Amount, TD.ot-coupon-Amount {}
+TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pricing-Amount, TD.ot-gv-Amount, TD.ot-loworderfee-Amount, TD.ot-shipping-Amount, TD.ot-subtotal-Amount, TD.ot-tax-Amount, TD.ot-coupon-Amount { padding:5px; }
 
 /* product_info attribute comments */
 
