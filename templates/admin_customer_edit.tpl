@@ -64,7 +64,7 @@
 
 		<div class="control-group submit">
 			<input type="submit" class="btn btn-primary" name="Save" value="Save"/>
-			<a href="{$smarty.server.SCRIPT_NAME}?cid={$smarty.request.cid}" class="btn">{tr}Cancel{/tr}</a>
+			<a href="{$smarty.server.HTTP_REFERER}" class="btn">{tr}Cancel{/tr}</a>
 		</div>
 		{/form}
 	</div>

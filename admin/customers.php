@@ -29,25 +29,23 @@ if( empty( $_GET['list_order'] ) ) {
 
 $currencies = new currencies();
 
-$action = (isset($_GET['action']) ? $_GET['action'] : '');
-
 $error = false;
 $processed = false;
 
-if (zen_not_null($action)) {
+if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 	switch ($action) {
 		case 'status':
 			if ($_GET['current'] == CUSTOMERS_APPROVAL_AUTHORIZATION) {
-				$sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`=0 where `customers_id`='" . $_GET['cID'] . "'";
+				$sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`=0 where `customers_id`='" . $_GET['user_id'] . "'";
 			} else {
-				$sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`='" . CUSTOMERS_APPROVAL_AUTHORIZATION . "' where `customers_id`='" . $_GET['cID'] . "'";
+				$sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`='" . CUSTOMERS_APPROVAL_AUTHORIZATION . "' where `customers_id`='" . $_GET['user_id'] . "'";
 			}
 			$gBitDb->Execute($sql);
 			$action = '';
-			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, 'cID=' . $_GET['cID'] . '&page=' . $_GET['page'], 'NONSSL'));
+			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, 'user_id=' . $_GET['user_id'] . '&page=' . $_GET['page'], 'NONSSL'));
 			break;
 		case 'update':
-			$customers_id = zen_db_prepare_input($_GET['cID']);
+			$customers_id = zen_db_prepare_input($_GET['user_id']);
 			$customers_firstname = zen_db_prepare_input($_POST['customers_firstname']);
 			$customers_lastname = zen_db_prepare_input($_POST['customers_lastname']);
 			$customers_email_address = zen_db_prepare_input($_POST['customers_email_address']);
@@ -245,7 +243,7 @@ if (zen_not_null($action)) {
 
 			$gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$default_address_id . "'");
 
-			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('cID', 'action')) . 'cID=' . $customers_id, 'NONSSL'));
+			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('user_id', 'action')) . 'user_id=' . $customers_id, 'NONSSL'));
 
 			} else if ($error == true) {
 				$cInfo = new objectInfo($_POST);
@@ -265,17 +263,20 @@ if (zen_not_null($action)) {
 																from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a
 																on c.`customers_default_address_id` = a.`address_book_id`
 																and a.`customers_id` = c.`customers_id`
-																WHERE c.`customers_id` = '" . (int)$_GET['cID'] . "'");
+																WHERE c.`customers_id` = '" . (int)$_GET['user_id'] . "'");
 							$cust = $customers->FetchRow();
 	$cInfo = new objectInfo($cust);
 		$gBitSmarty->assign( 'cInfo', $cInfo );
 	}
 } else {
 	$stats = new CommerceStatistics();
+	if( empty( $_REQUEST['interval'] ) ) {
+		$_REQUEST['interval'] = '3 years';
+	}
 	$gBitSmarty->assign( 'customers', $stats->getCustomerActivity( $_REQUEST ) );
 }
 	
-if ($action == 'edit' || $action == 'update') {
+if( !empty( $cInfo ) ) {
 	$mid = 'bitpackage:bitcommerce/admin_customer_edit.tpl';
 	$title = tra('Edit Customer');
 	if ($processed == true) {

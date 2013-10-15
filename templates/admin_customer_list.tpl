@@ -18,27 +18,36 @@
 	</header>
 
 	<div class="body">
-		<table class="table">
+		<table class="table table-hover">
 			<tr>
 				<th>{smartlink ititle="ID" isort="user_id" icontrol=$listInfo }</th>
 				<th>{smartlink ititle="Customer" isort="email" icontrol=$listInfo }</th>
-				<th>{smartlink ititle="# of Orders" isort="orders" icontrol=$listInfo }</th>
-				<th>{smartlink ititle="Revenue" isort="revenue" icontrol=$listInfo }</th>
-				<th colspan="2" class="aligncenter">{smartlink ititle="Last Purchase" isort="last_purchase" icontrol=$listInfo }</th>
-				<th colspan="2" class="aligncenter">{smartlink ititle="First Purchase" isort="first_purchase" icontrol=$listInfo }</th>
+				<th class="text-right">{smartlink ititle="# of Orders" isort="orders" icontrol=$listInfo }</th>
+				<th class="text-right">{smartlink ititle="Revenue" isort="revenue" icontrol=$listInfo }</th>
+				<th colspan="2" class="text-center">{smartlink ititle="Last Purchase" isort="last_purchase" icontrol=$listInfo }</th>
+				<th colspan="2" class="text-center">{smartlink ititle="First Purchase" isort="first_purchase" icontrol=$listInfo }</th>
 				<th>{smartlink ititle="Age" isort="age" icontrol=$listInfo }</th>
+				<th></th>
+			</tr>
+			<tr class="info">
+				<td></td>
+				<td>{$customers.totals.customers} {tr}Customers{/tr}</td>
+				<td class="text-right">{$customers.totals.orders}</td>
+				<td class="text-right">{$gCommerceCurrencies->format($customers.totals.revenue)}</td>
+				<td colspan="6"></td>
 			</tr>
 			{foreach from=$customers.customers key=customerId item=customerHash}
 			<tr>
 				<td>{$customerHash.user_id}</td>
 				<td>{BitUser::getDisplayLink(1,$customerHash)}</td>
-				<td>{$customerHash.orders}</td>
-				<td class="alignright">{$gCommerceCurrencies->format($customerHash.revenue)}</td>
-				<td>{$customerHash.last_purchase|zen_date_short}</td>
-				<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$customerHash.last_orders_id}">#{$customerHash.first_orders_id}</td>
-				<td>{$customerHash.first_purchase|zen_date_short}</td>
-				<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$customerHash.first_orders_id}">#{$customerHash.first_orders_id}</td>
-				<td>{$customerHash.age|regex_replace:"/ [0-9].*/":""}</td>
+				<td class="text-right">{$customerHash.orders}</td>
+				<td class="text-right">{$gCommerceCurrencies->format($customerHash.revenue)}</td>
+				<td class="text-right">{$customerHash.last_purchase|zen_date_short}</td>
+				<td class="text-right"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$customerHash.last_orders_id}">#{$customerHash.last_orders_id}</td>
+				<td class="text-right">{$customerHash.first_purchase|zen_date_short}</td>
+				<td class="text-right"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$customerHash.first_orders_id}">#{$customerHash.first_orders_id}</td>
+				<td class="text-right">{$customerHash.age|regex_replace:"/ [0-9].*/":""}</td>
+				<td><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/customers.php?user_id={$customerHash.user_id}"><i class="icon-edit"></i></a></td>
 			</tr>
 			{/foreach}
 		</table>

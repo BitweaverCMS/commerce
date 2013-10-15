@@ -60,6 +60,13 @@ class CommerceStatistics extends BitSingleton {
 			$pParamHash['sort_mode'] = 'revenue_desc';
 		}
 
+
+		$interval = BitBase::getParameter( $pParamHash, 'interval', '2 years' );
+
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+
 		$comparison = $pRetained ? '<' : '>';
 
 		$sortMode .= 'SUM(co.`order_total`) DESC';
@@ -69,10 +76,10 @@ class CommerceStatistics extends BitSingleton {
 		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`, MAX(date_purchased) - MIN(date_purchased) AS `age`
 				FROM com_orders co 
 					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
-				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > interval '2 years' 
+				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > ? 
 				GROUP BY  uu.`user_id`,uu.`real_name`, uu.`login`
-				HAVING NOW() - MIN(co.date_purchased) > interval '2 years' AND NOW() - MAX(co.date_purchased) ".$comparison." interval '2 years' ORDER BY $sortMode";
-		if( $rs = $this->mDb->query( $sql ) ) {
+				HAVING NOW() - MIN(co.date_purchased) > ? AND NOW() - MAX(co.date_purchased) ".$comparison." ? ORDER BY $sortMode";
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret['customers'][$row['user_id']] = $row;
 				@$ret['totals']['orders'] += $row['orders'];
