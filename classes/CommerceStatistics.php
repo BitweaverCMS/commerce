@@ -40,6 +40,12 @@ class CommerceStatistics extends BitSingleton {
 				case 'first_purchase_desc':
 					$sortMode = 'MIN(co.`date_purchased`) DESC, ';
 					break;
+				case 'age_asc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) ASC, ';
+					break;
+				case 'age_desc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) DESC, ';
+					break;
 				case 'last_purchase_asc':
 					$sortMode = 'MAX(co.`date_purchased`) ASC, ';
 					break;
@@ -60,7 +66,7 @@ class CommerceStatistics extends BitSingleton {
 
 		BitBase::prepGetList( $pParamHash );
 
-		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`
+		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`, MAX(date_purchased) - MIN(date_purchased) AS `age`
 				FROM com_orders co 
 					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
 				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > interval '2 years' 
