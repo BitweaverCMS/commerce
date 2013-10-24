@@ -102,24 +102,9 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 <script type="text/javascript" src="includes/general.js"></script>
-<script type="text/javascript">
-  <!--
-  function init()
-  {
-    cssjsmenu('navbar');
-    if (document.getElementById)
-    {
-      var kill = document.getElementById('hoverJS');
-      kill.disabled = true;
-    }
-  }
-  // -->
-</script>
 </head>
-<body onload="init()">
+<body>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -128,7 +113,7 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
   <tr>
 <!-- body_text //-->
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td width="100%" valign="top"><table>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
@@ -185,7 +170,7 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
+            <td valign="top"><table>
               <tr class="dataTableHeadingRowWhois">
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_ONLINE; ?></td>
                 <td class="dataTableHeadingContentWhois" align="center"><?php echo TABLE_HEADING_CUSTOMER_ID; ?></td>
@@ -193,18 +178,18 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
 
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='ip_address-desc' or $listing=='ip_address') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_IP_ADDRESS . '</span>' : TABLE_HEADING_IP_ADDRESS); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=ip_address"; ?>"><?php echo ($listing=='ip_address' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=ip_address-desc"; ?>"><?php echo ($listing=='ip_address-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=ip_address"; ?>"><?php echo ($listing=='ip_address' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=ip_address-desc"; ?>"><?php echo ($listing=='ip_address-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='time_entry-desc' or $listing=='time_entry') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_ENTRY_TIME . '</span>' : TABLE_HEADING_ENTRY_TIME); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=time_entry"; ?>"><?php echo ($listing=='time_entry' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=time_entry-desc"; ?>"><?php echo ($listing=='time_entry-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_entry"; ?>"><?php echo ($listing=='time_entry' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_entry-desc"; ?>"><?php echo ($listing=='time_entry-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
                 <td class="dataTableHeadingContentWhois" align="center">
                   <?php echo (($listing=='time_last_click-desc' or $listing=='time_last_click') ? '<span class="dataTableHeadingContentWhois">' . TABLE_HEADING_LAST_CLICK . '</span>' : TABLE_HEADING_LAST_CLICK); ?>&nbsp;
-                  <br><a href="<?php echo "$PHP_SELF?listing=time_last_click"; ?>"><?php echo ($listing=='time_last_click' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
-                  &nbsp;<a href="<?php echo "$PHP_SELF?listing=time_last_click-desc"; ?>"><?php echo ($listing=='time_last_click-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
+                  <br><a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_last_click"; ?>"><?php echo ($listing=='time_last_click' ? '<span class="dataTableHeadingContentWhois">' . 'Asc' . '</span>' : '<b>' . 'Asc' . '</b>'); ?></a>&nbsp;
+                  &nbsp;<a href="<?php echo "$_SERVER[SCRIPT_NAME]?listing=time_last_click-desc"; ?>"><?php echo ($listing=='time_last_click-desc' ? '<span class="dataTableHeadingContentWhois">' . 'Desc' . '</span>' : '<b>' . 'Desc' . '</b>'); ?></a>&nbsp;
                 </td>
 
                 <td class="dataTableHeadingContentWhois"><?php echo TABLE_HEADING_LAST_PAGE_URL; ?>&nbsp;</td>
@@ -227,9 +212,9 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
     $is_a_bot=zen_check_bot($whos_online->fields['session_id']);
   if ($whos_online->fields['session_id'] == $info) {
       if ($is_a_bot==true) {
-        echo '              <tr class="dataTableRowSelectedBot">' . "\n";
+        echo '              <tr class="infoBot">' . "\n";
       } else {
-        echo '              <tr class="dataTableRowSelectedWhois">' . "\n";
+        echo '              <tr class="infoWhois">' . "\n";
       }
   } else {
     if ($is_a_bot==true) {
@@ -268,9 +253,9 @@ if( file_exists( UTIL_PKG_PATH.'pear/Net/GeoIP.php' ) ) {
   if (WHOIS_SHOW_HOST=='1') {
     if ($whos_online->fields['session_id'] == $info) {
     if ($is_a_bot==true) {
-        echo '              <tr class="dataTableRowSelectedBot">' . "\n";
+        echo '              <tr class="infoBot">' . "\n";
       } else {
-        echo '              <tr class="dataTableRowSelectedWhois">' . "\n";
+        echo '              <tr class="infoWhois">' . "\n";
       }
     } else {
       if ($is_a_bot==true) {

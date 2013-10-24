@@ -20,14 +20,14 @@
 // $Id$
 //
 
-define('HEADING_TITLE', 'Contact Us');
-define('NAVBAR_TITLE', 'Contact Us');
-define('TEXT_SUCCESS', 'Your message has been successfully sent.');
+define('HEADING_TITLE', tra( 'Contact Us' ) );
+define('NAVBAR_TITLE', tra( 'Contact Us' ) );
+define('TEXT_SUCCESS', tra( 'Your message has been successfully sent.' ) );
 define('EMAIL_SUBJECT', 'Message from ' . STORE_NAME);
 
-define('ENTRY_NAME', 'Full Name:');
-define('ENTRY_EMAIL', 'E-Mail Address:');
-define('ENTRY_ENQUIRY', 'Message:');
+define('ENTRY_NAME', tra( 'Full Name:' ) );
+define('ENTRY_EMAIL', tra( 'E-Mail Address:' ) );
+define('ENTRY_ENQUIRY', tra( 'Message:' ) );
 
-define('SEND_TO_TEXT','Send Email To:');
+define('SEND_TO_TEXT', tra( 'Send Email To:' ) );
 ?>

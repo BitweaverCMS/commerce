@@ -71,7 +71,7 @@
       }
 
 ?>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <table>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>

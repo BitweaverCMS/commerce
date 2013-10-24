@@ -45,6 +45,26 @@
 
 
 ////
+  function zen_html_entity_decode($given_html, $quote_style = ENT_QUOTES) {
+    $trans_table = array_flip(get_html_translation_table( HTML_SPECIALCHARS, $quote_style ));
+    $trans_table['&#39;'] = "'";
+    return ( strtr( $given_html, $trans_table ) );
+  }
+
+////
+//CLR 030228 Add function zen_decode_specialchars
+// Decode string encoded with htmlspecialchars()
+  function zen_decode_specialchars($string){
+    $string=str_replace('&gt;', '>', $string);
+    $string=str_replace('&lt;', '<', $string);
+    $string=str_replace('&#039;', "'", $string);
+    $string=str_replace('&quot;', "\"", $string);
+    $string=str_replace('&amp;', '&', $string);
+
+    return $string;
+  }
+
+////
 // remove common HTML from text for display as paragraph
   function zen_clean_html($clean_it) {
 
@@ -77,7 +97,6 @@
 // The HTML href link wrapper function
   function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
-
     if ($connection == 'NONSSL') {
       $link = HTTP_SERVER;
     } elseif ($connection == 'SSL') {
@@ -87,7 +106,7 @@
         $link = HTTP_SERVER;
       }
     } else {
-      die('</td></tr></table></td></tr></table><br /><br /><strong class="note">Error!<br /><br />Unable to determine connection method on a link!<br /><br />Known methods: NONSSL SSL</strong><br /><br />');
+		$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
     }
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
@@ -234,7 +253,7 @@
 		$default = stripslashes( $GLOBALS[$name] );
 	}
 
-    for ($i=0, $n=sizeof($values); $i<$n; $i++) {
+    foreach( array_keys( $values ) as $i ) {
       $field .= '<option value="' . zen_output_string($values[$i]['id']) . '"';
       if ($default == $values[$i]['id']) {
         $field .= ' selected="selected"';
@@ -293,9 +312,9 @@
 // Output a function button in the selected language
 	function zen_image_button($image, $alt = '', $parameters = '') {
 		global $template, $current_page_base, $gBitCustomer;
-		// return '<span class="button">'.$alt.'</span>';
+		// return '<span class="btn btn-small">'.$alt.'</span>';
 		if( is_string( $alt ) ) {
-			$ret = '<span class="button">'.$alt.'</span>';
+			$ret = '<span class="btn btn-small">'.$alt.'</span>';
 		} elseif( $template ) {
 			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 		} else {
@@ -312,7 +331,7 @@
     global $template, $current_page_base, $gBitCustomer;
 
 	if( is_string( $alt ) ) {
-		$ret = '<input type="submit" class="button" name="'.$alt.'" value="'.$alt.'" />';
+		$ret = '<input type="submit" class="btn btn-small" name="'.$alt.'" value="'.$alt.'" />';
 	} else {
 		if( $template ) {
 			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
@@ -379,7 +398,7 @@
     if ($year != 1969 && @date('Y', mktime($hour, $minute, $second, $month, $day, $year)) == $year) {
       return date(DATE_FORMAT, mktime($hour, $minute, $second, $month, $day, $year));
     } else {
-      return ereg_replace('2037' . '$', $year, date(DATE_FORMAT, mktime($hour, $minute, $second, $month, $day, 2037)));
+      return preg_replace( '/2037$/', $year, date(DATE_FORMAT, mktime($hour, $minute, $second, $month, $day, 2037)));
     }
   }
 
@@ -439,29 +458,10 @@
 // -=-=-=-=-=-=-=-=-= LANGUAGES FUNCTIONS
 
 
-
-
-
-  function zen_get_languages() {
-    global $gBitDb;
-    $languages = $gBitDb->query("SELECT `languages_id`, `name`, `code`, `image`, `directory`
-                               FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`");
-
-    while (!$languages->EOF) {
-      $languages_array[] = array('id' => $languages->fields['languages_id'],
-                                 'name' => $languages->fields['name'],
-                                 'code' => $languages->fields['code'],
-                                 'image' => $languages->fields['image'],
-                                 'directory' => $languages->fields['directory']);
-      $languages->MoveNext();
-    }
-
-    return $languages_array;
-  }
-
-
-
-
+function zen_get_languages() {
+	global $gBitDb;
+	return $gBitDb->getAll( "SELECT `languages_id` AS `id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", array(), 3600 );
+}
 
 
 
@@ -585,7 +585,7 @@
 			$product = bc_get_commerce_product( $pProductsId );
 			$sBasePriceCache[$pProductsId] = $product->getBasePrice();
 		}
-bt(); die;
+
 		return $sBasePriceCache[$pProductsId];
 	}
 
@@ -913,12 +913,12 @@ function zen_update_lowest_purchase_price($product_id) {
 ////
 // enable shipping
   function zen_get_shipping_enabled($shipping_module) {
-    global $PHP_SELF, $order;
+    global $order;
 
 	$ret = true;
 
     // for admin always true if installed
-    if (strstr($PHP_SELF, FILENAME_MODULES)) {
+    if (strstr($_SERVER['SCRIPT_NAME'], FILENAME_MODULES)) {
       return true;
     }
 
@@ -928,7 +928,7 @@ function zen_update_lowest_purchase_price($product_id) {
 		$checkCart = &$gBitCustomer->mCart;
 	}
 
-	if( is_object( $checkCart ) ) {
+	if( !empty( $checkCart ) && is_object( $checkCart ) ) {
 		$check_cart_free = $checkCart->in_cart_check('product_is_always_free_ship','1');
 		$check_cart_cnt = $checkCart->count_contents();
 		$check_cart_weight = $checkCart->show_weight();
@@ -1033,7 +1033,6 @@ function reset_bitcommerce_layout() {
     $domain_array = explode('.', $url);
     $domain_size = sizeof($domain_array);
     if ($domain_size > 1) {
-      if (SESSION_USE_FQDN == 'True') return $url;
       if (is_numeric($domain_array[$domain_size-2]) && is_numeric($domain_array[$domain_size-1])) {
         return false;
       } else {
@@ -1051,23 +1050,7 @@ function reset_bitcommerce_layout() {
 ////
 // Wrapper function for round()
   function zen_round($number, $precision) {
-    if (strpos($number, '.') && (strlen(substr($number, strpos($number, '.')+1)) > $precision)) {
-      $number = substr($number, 0, strpos($number, '.') + 1 + $precision + 1);
-
-      if (substr($number, -1) >= 5) {
-        if ($precision > 1) {
-          $number = substr($number, 0, -1) + ('0.' . str_repeat(0, $precision-1) . '1');
-        } elseif ($precision == 1) {
-          $number = substr($number, 0, -1) + 0.1;
-        } else {
-          $number = substr($number, 0, -1) + 1;
-        }
-      } else {
-        $number = substr($number, 0, -1);
-      }
-    }
-
-    return $number;
+	return round( $number, $precision );
   }
 
 

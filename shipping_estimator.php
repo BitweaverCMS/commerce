@@ -36,7 +36,7 @@ global $gBitDb, $gBitUser, $gBitCustomer, $currencies;
 require('includes/classes/http_client.php'); // shipping in basket
 
 // include the order class (uses the sendto !)
-require_once(DIR_FS_CLASSES . 'order.php');
+require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order;
 
 if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
@@ -44,7 +44,7 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 		$_SESSION['cart_address_id'] = $_REQUEST['address_id'];
 	} elseif( empty( $_SESSION['cart_address_id'] ) ) {
 		// no selected address yet, snag the first one
-		$first = current( $addresses );
+		$first = current( reset( $addresses ) );
 		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_id'] );
 	}
 

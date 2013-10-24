@@ -29,7 +29,7 @@ if( empty( $gCommerceSystem ) ) {
 // test if box should display
 $show_currencies= false;
 
-if( substr( basename( $_SERVER['PHP_SELF'] ), 0, 8 ) != 'checkout' ) {
+if( substr( basename( $_SERVER['SCRIPT_NAME'] ), 0, 8 ) != 'checkout' ) {
 	$show_currencies= true;
 }
 
@@ -41,10 +41,10 @@ if ($show_currencies == true) {
 			$currenciesHash[$key] = $value['title'];
 		}
 
-		$gBitSmarty->assign( 'modCurrencies', $currenciesHash );
-		$gBitSmarty->assign( 'modSelectedCurrency', !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY );
+		$_template->tpl_vars['modCurrencies'] = new Smarty_variable( $currenciesHash );
+		$_template->tpl_vars['modSelectedCurrency'] = new Smarty_variable( !empty( $_SESSION['currency'] ) );
 		if( empty( $moduleTitle ) ) {
-			$gBitSmarty->assign( 'moduleTitle', tra( 'Currencies' ) );
+			$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Currencies' );
 		}
 	}
 }

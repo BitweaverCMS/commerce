@@ -35,10 +35,10 @@ if( $gBitProduct->isValid() ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_values_id'] ) && $editOptionsValue = current( $productManager->getOptionsList( array( 'products_options_values_id' => $_REQUEST['products_options_values_id'] ) ) ) ) {
 		$gBitSmarty->assign_by_ref( 'editValue', $editOptionsValue );
 	}
-	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_values_edit_inc.tpl';
 } else {
-	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 }
 
 if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
@@ -65,8 +65,8 @@ if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 	if( $productManager->storeOption( $_REQUEST ) ) {
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	} else {
-bit_log_error( 'option store failed' );
-bit_log_error( $_REQUEST );
+bit_error_log( 'option store failed' );
+bit_error_log( $_REQUEST );
 	}
 } 
 

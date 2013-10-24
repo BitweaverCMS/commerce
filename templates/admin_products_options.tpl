@@ -3,8 +3,8 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
-		<h1 class="header">{tr}Product Options{/tr}</h1>
+	<div class="page-header">
+		<h1>{tr}Product Options{/tr}</h1>
 	</div>
 	<div class="body">
 
@@ -19,7 +19,7 @@
 {else}
 <div id="attrlist" {$listStyle} >
 
-<a href="{$smarty.server.PHP_SELF}?products_options_id=new">{tr}New Option{/tr}</a> &bull; <a href="{$smarty.server.PHP_SELF}?products_options_values_id=new">{tr}New Option Value{/tr}</a>
+<a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="btn btn-mini">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="btn btn-mini">{tr}New Option Value{/tr}</a>
 
 
 	<ul class="data">
@@ -27,8 +27,8 @@
 		<li class="item">
 			
 			<div class="floaticon">
-				<a href="{$smarty.server.PHP_SELF}?products_options_id={$optionId}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option" iforce="icon"}</a>
-				<a href="{$smarty.server.PHP_SELF}?products_options_id={$optionId}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option" iforce="icon"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 			</div>
 			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name}) 
 			<ul class="data">
@@ -36,8 +36,8 @@
 					{foreach from=$option.values key=optionValueId item=optionValue}
 					<li class="item {cycle values="odd,even"}">
 						<div class="floaticon">
-							<a href="{$smarty.server.PHP_SELF}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit Option Value" iforce="icon"}</a>
-							<a href="{$smarty.server.PHP_SELF}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete Option Attribute" iforce="icon"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option Value" iforce="icon"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 						</div>
 					<em><strong>{$optionValue.products_options_sort_order|default:'-'}</strong></em>			
 						{$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}

@@ -27,7 +27,7 @@
 
     function get_template_part($page_directory, $template_part, $file_extension = '.php') {
       $directory_array = array();
-      if ($dir = @dir($page_directory)) {
+      if( is_dir( $page_directory ) && $dir = dir($page_directory)) {
         while ($file = $dir->read()) {
           if (!is_dir($page_directory . $file)) {
             if (substr($file, strrpos($file, '.')) == $file_extension && preg_match($template_part, $file)) {
@@ -59,7 +59,7 @@
     }
     function file_exists($file_dir, $file_pattern, $debug=false) {
       $file_found = false;
-      if ($mydir = @dir($file_dir)) {
+      if( is_dir( $file_dir ) && $mydir = dir( $file_dir ) ) {
         while ($file = $mydir->read()) {
           if ( strstr($file, $file_pattern) ) {
             $file_found = true;

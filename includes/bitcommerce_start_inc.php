@@ -27,9 +27,6 @@
 // set the type of request (secure or not)
   $request_type = (isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on') ? 'SSL' : 'NONSSL';
 
-// set php_self in the local scope
-  if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
-
 // include the list of project filenames
   require_once(DIR_FS_INCLUDES . 'filenames.php');
 
@@ -56,7 +53,6 @@
   if ( defined( 'SEARCH_ENGINE_FRIENDLY_URLS' ) && SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
     if (strlen($_SERVER['REQUEST_URI']) > 1) {
       $GET_array = array();
-      $PHP_SELF = $_SERVER['SCRIPT_NAME'];
       $vars = explode('/', substr($_SERVER['REQUEST_URI'], 1));
       for ($i=0, $n=sizeof($vars); $i<$n; $i++) {
         if (strpos($vars[$i], '[]')) {
@@ -76,8 +72,7 @@
   }
 
 	// Load db classes
-	$gCommerceSystem = new CommerceSystem();
-	$gBitSmarty->assign_by_ref( 'gCommerceSystem', $gCommerceSystem );
+	CommerceSystem::loadSingleton();
 
   // set the language
   if( empty( $_SESSION['languages_id'] ) || isset($_GET['language'])) {
@@ -121,7 +116,7 @@
 	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
-	$gBitSmarty->assign_by_ref( 'gBitCustomer', $gBitCustomer );
+	$gBitSmarty->assign( 'gBitCustomer', $gBitCustomer );
 
 	// lookup information
 	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
@@ -134,7 +129,7 @@
 	require_once(DIR_FS_CLASSES . 'currencies.php');
 	global $currencies;
 	$currencies = new currencies();
-	$gBitSmarty->assign_by_ref( 'gCommerceCurrencies', $currencies );
+	$gBitSmarty->assign( 'gCommerceCurrencies', $currencies );
 
 	require_once(DIR_FS_CLASSES . 'category_tree.php');
 
@@ -149,8 +144,6 @@
 // set the top level domains
   $http_domain = zen_get_top_level_domain(HTTP_SERVER);
   $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-  $current_domain = (($request_type == 'NONSSL') ? $http_domain : $https_domain);
-  if (SESSION_USE_FQDN == 'False') $current_domain = '.' . $current_domain;
 
 // include cache functions if enabled
   if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') require_once(DIR_WS_FUNCTIONS . 'cache.php');
@@ -166,9 +159,6 @@
   zen_session_name('zenid');
   zen_session_save_path(SESSION_WRITE_DIRECTORY);
 
-// set the session cookie parameters
-    session_set_cookie_params(0, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
 // set the session ID if it exists
    if (isset($_REQUEST[zen_session_name()])) {
      zen_session_id($_REQUEST[zen_session_name()]);
@@ -176,24 +166,10 @@
      zen_session_id($_REQUEST[zen_session_name()]);
    }
 
-// start the session
-  $session_started = false;
-  if (SESSION_FORCE_COOKIE_USE == 'True') {
-    zen_setcookie('cookie_test', 'please_accept_for_session', time()+60*60*24*30, '/', (zen_not_null($current_domain) ? $current_domain : ''));
-
-    if (isset($_COOKIE['cookie_test'])) {
-      zen_session_start();
-      $session_started = true;
-    }
-  } else {
-    zen_session_start();
-    $session_started = true;
-  }
-
 // include the breadcrumb class and start the breadcrumb trail
   require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
   $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'gCommerceBreadcrumbs', $breadcrumb );
+  $gBitSmarty->assign( 'gCommerceBreadcrumbs', $breadcrumb );
 
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
@@ -253,7 +229,7 @@ if($gBitProduct->isValid() ) {
 	$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
 }
 if( !empty( $gBitProduct ) ) {
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	$gBitSmarty->assign( 'gBitProduct', $gBitProduct );
 }
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );

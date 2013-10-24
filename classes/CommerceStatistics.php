@@ -9,9 +9,11 @@
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
-//  $Id$
-//
-class CommerceStatistics extends BitBase {
+/* vim: :set fdm=marker : */
+
+require_once( KERNEL_PKG_PATH . 'BitSingleton.php' );
+
+class CommerceStatistics extends BitSingleton {
 
 // {{{ =================== Customers ====================
 
@@ -38,6 +40,12 @@ class CommerceStatistics extends BitBase {
 				case 'first_purchase_desc':
 					$sortMode = 'MIN(co.`date_purchased`) DESC, ';
 					break;
+				case 'age_asc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) ASC, ';
+					break;
+				case 'age_desc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) DESC, ';
+					break;
 				case 'last_purchase_asc':
 					$sortMode = 'MAX(co.`date_purchased`) ASC, ';
 					break;
@@ -52,19 +60,26 @@ class CommerceStatistics extends BitBase {
 			$pParamHash['sort_mode'] = 'revenue_desc';
 		}
 
+
+		$interval = BitBase::getParameter( $pParamHash, 'interval', '2 years' );
+
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+
 		$comparison = $pRetained ? '<' : '>';
 
 		$sortMode .= 'SUM(co.`order_total`) DESC';
 
 		BitBase::prepGetList( $pParamHash );
 
-		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`
+		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`, MAX(date_purchased) - MIN(date_purchased) AS `age`
 				FROM com_orders co 
 					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
-				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > interval '2 years' 
+				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > ? 
 				GROUP BY  uu.`user_id`,uu.`real_name`, uu.`login`
-				HAVING NOW() - MIN(co.date_purchased) > interval '2 years' AND NOW() - MAX(co.date_purchased) ".$comparison." interval '2 years' ORDER BY $sortMode";
-		if( $rs = $this->mDb->query( $sql ) ) {
+				HAVING NOW() - MIN(co.date_purchased) > ? AND NOW() - MAX(co.date_purchased) ".$comparison." ? ORDER BY $sortMode";
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret['customers'][$row['user_id']] = $row;
 				@$ret['totals']['orders'] += $row['orders'];
@@ -79,31 +94,43 @@ class CommerceStatistics extends BitBase {
 
 // {{{ =================== Revenue ====================
 	function getAggregateRevenue( $pParamHash ) {
+
+		$bindVars = array();
+		$whereSql = '';
+
 		if( empty( $pParamHash['period'] ) ) {
 			$pParamHash['period'] = 'Y-m';
 		}
 		if( empty( $pParamHash['max_records'] ) ) {
 			$pParamHash['max_records'] = 12;
 		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
 		
 		$ret = array();
-		$ret['stats']['gross_revenue_max'] = 0;
-		$ret['stats']['order_count_max'] = 0;
 
 		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
-				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` ORDER BY `hash_key` DESC";
-		$bindVars = array();
+				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` $whereSql
+				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
-			while( $row = $rs->fetchRow() ) {
-				$ret[$row['hash_key']] = $row;
-				if( $ret['stats']['order_count_max'] < $row['order_count'] ) {
-					$ret['stats']['order_count_max'] = $row['order_count'];
-				}
-				if( $ret['stats']['gross_revenue_max'] < $row['gross_revenue'] ) {
-					$ret['stats']['gross_revenue_max'] = $row['gross_revenue'];
+			if( $rs->RowCount() ) {
+				$ret['stats']['gross_revenue_max'] = 0;
+				$ret['stats']['order_count_max'] = 0;
+				while( $row = $rs->fetchRow() ) {
+					$ret[$row['hash_key']] = $row;
+					if( $ret['stats']['order_count_max'] < $row['order_count'] ) {
+						$ret['stats']['order_count_max'] = $row['order_count'];
+					}
+					if( $ret['stats']['gross_revenue_max'] < $row['gross_revenue'] ) {
+						$ret['stats']['gross_revenue_max'] = $row['gross_revenue'];
+					}
 				}
 			}
 		}
+
 		return( $ret );
 	}
 
@@ -126,13 +153,23 @@ class CommerceStatistics extends BitBase {
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
-		$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_values_id`, copa.`products_options_id`, copa.`products_options`, COALESCE( cpa.`products_options_values_name`, copa.`products_options_values`) AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
+		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
+		$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_values_id`, copa.`products_options_id`, copa.`products_options`, copa.`products_options_values` AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
-					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.`products_options_values_id`=copa.`products_options_values_id`)
+					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 				WHERE co.`orders_status` > 0 $whereSql
-				GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, cpa.`products_options_values_name`, copa.`products_options_id`
+				GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, copa.`products_options_id`
 				ORDER BY copa.`products_options`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values`";
 
 		$ret = $this->mDb->getAll( $sql, $bindVars );
@@ -153,6 +190,12 @@ class CommerceStatistics extends BitBase {
 			$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
 			$sqlFunc = 'getAssoc';
 		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		$sql = "SELECT $selectSql ci.`interests_id`, ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 				FROM " . TABLE_CUSTOMERS_INTERESTS . " ci , " . TABLE_ORDERS . " co, " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim 
 				WHERE co.`orders_status`>0 
@@ -184,6 +227,11 @@ class CommerceStatistics extends BitBase {
 			$sqlFunc = 'getAssoc';
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		if( $gBitSystem->isPackageActive( 'stats' ) ) {
 			$selectSql .= " , sru.`referer_url` ";
 			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
@@ -285,6 +333,12 @@ class CommerceStatistics extends BitBase {
 			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).', ';
 			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 		}
+
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
+		}
+
 		$sql = "SELECT $selectSql COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_all_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_purchased_new_products`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id`=uu.`user_id`)
@@ -368,6 +422,16 @@ $this->debug(0);
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['products_type'] ) ) {
+			$whereSql .= ' AND cp.`products_type` = ?';
+			$bindVars[] = $pParamHash['products_type'];
+		}
+
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		$sql = "SELECT cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, SUM(cop.`products_quantity` * cop.`products_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
@@ -402,19 +466,37 @@ $this->debug(0);
 			}
 		}
 
+		if( !empty( $pParamHash['delivery_country'] ) ) {
+			$whereSql .= ' AND co.`delivery_country`=? ';
+			$bindVars[] = $pParamHash['delivery_country'];
+		}
+		
 		if( !empty( $pParamHash['include'] ) ) {
 			$includes = explode( ',', $pParamHash['include'] );
 			foreach( $includes  as $in ) {
 				$whereSql .= " AND LOWER( `referer_url` ) LIKE ? ";
-				$bindVars[] = '%'.strtolower( trim( $in ) ).'%';
+				$bindVars[] = '%'.strtolower( trim( urlencode( $in ) ) ).'%';
 			}
+/*
+			// OR the terms
+
+			$max = count( $includes );
+			for( $i = 0; $i < $max; $i++ ) {
+				$whereSql .= " LOWER( `referer_url` ) LIKE ? ";
+				$bindVars[] = '%'.strtolower( trim( urlencode( $includes[$i] ) ) ).'%';
+				if( $i <  $max - 1 ) {
+					$whereSql .= ' OR ';
+				}
+			}
+			$whereSql .= ' ) ';
+*/
 		}
 
 		if( !empty( $pParamHash['exclude'] ) ) {
 			$excludes = explode( ',', $pParamHash['exclude'] );
 			foreach( $excludes  as $ex ) {
 				$whereSql .= " AND LOWER( `referer_url` ) NOT LIKE ? ";
-				$bindVars[] = '%'.strtolower( trim( $ex ) ).'%';
+				$bindVars[] = '%'.strtolower( trim( urlencode( $ex ) ) ).'%';
 			}
 		}
 
@@ -437,8 +519,7 @@ $this->debug(0);
 				@$ret['hosts'][$urlHash['host']]['units'] += $row['total_units'];
 				@$ret['hosts'][$urlHash['host']]['orders'] += $row['total_orders'];
 				@$ret['hosts'][$urlHash['host']]['customers']++;
-				$searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE));
-				if( $searchTerm ) {
+				if( !empty( $urlHash['query'] ) && $searchTerm = (strpos( $urlHash['query'], 'q=' ) !== FALSE ? 'q' : (strpos( $urlHash['query'], 'p=' ) !== FALSE ? 'p' : FALSE)) ) {
 					parse_str( $urlHash['query'] );
 					if( !empty( $$searchTerm ) ) {	
 						$urlKey = $$searchTerm;
@@ -471,6 +552,50 @@ $this->debug(0);
 
 		return $ret;
 	}
+
+
+	function getSalesAndIncome( $pParamHash ) {
+		$ret = array();
+
+		$bindVars = array();
+
+		if( empty( $pParamHash['period'] ) ) {
+			$pParamHash['period'] = 'Y-m';
+		}
+
+		$period = ', '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' as `period` ';
+
+		// coupon value is stored as positive, gift_certificate is stored as negative
+		$sql = "SELECT co.`orders_id`, co.`date_purchased`, co.`order_total`, cotgc.`orders_value` AS `gift_certificate`, (cotcp.`orders_value` * -1) AS `coupon_discount` $period
+				FROM `".BIT_DB_PREFIX."com_orders` co 
+					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotcp ON (co.`orders_id`=cotcp.`orders_id` AND cotcp.`class`='ot_coupon')
+					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotgc ON (co.`orders_id`=cotgc.`orders_id` AND cotgc.`class`='ot_gv')
+				WHERE co.`orders_status` > 0
+				ORDER BY co.`orders_id` DESC";
+
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$sql = "SELECT SUM(cop.`products_cogs`) AS `cogs`, SUM((cop.`products_price` - cop.`products_wholesale`) * cop.`products_quantity`) AS wholesale_gross, SUM((cop.`products_wholesale` - cop.`products_cogs`) * cop.`products_quantity`) AS `supply_gross`
+						FROM `".BIT_DB_PREFIX."com_orders_products` cop
+						WHERE cop.`orders_id`=?";
+				$ret['orders'][$row['orders_id']] = array_merge( $row, $this->mDb->getRow( $sql, array( $row['orders_id'] ) ) );
+				$ret['orders'][$row['orders_id']]['wholesale_net'] = $ret['orders'][$row['orders_id']]['wholesale_gross'] + $ret['orders'][$row['orders_id']]['gift_certificate'] + $ret['orders'][$row['orders_id']]['coupon_discount'] ;
+
+				@$ret['totals'][$row['period']]['gift_certificate'] += $ret['orders'][$row['orders_id']]['gift_certificate'];
+				@$ret['totals'][$row['period']]['coupon_discount'] += $ret['orders'][$row['orders_id']]['coupon_discount'];
+				@$ret['totals'][$row['period']]['wholesale_gross'] += $ret['orders'][$row['orders_id']]['wholesale_gross'];
+				@$ret['totals'][$row['period']]['wholesale_net'] += $ret['orders'][$row['orders_id']]['wholesale_net'];
+
+
+				@$ret['totals']['sum']['gift_certificate'] += $ret['orders'][$row['orders_id']]['gift_certificate'];
+				@$ret['totals']['sum']['coupon_discount'] += $ret['orders'][$row['orders_id']]['coupon_discount'];
+				@$ret['totals']['sum']['wholesale_gross'] += $ret['orders'][$row['orders_id']]['wholesale_gross'];
+				@$ret['totals']['sum']['wholesale_net'] += $ret['orders'][$row['orders_id']]['wholesale_net'];
+				
+			}
+		}
+		return ( $ret );	
+	}
 }
 
 function commerce_statistics_referer_sort_revenue_desc($a, $b) { return commerce_statistics_referer_sort( $a, $b, 'revenue' ); }
@@ -491,4 +616,5 @@ function commerce_statistics_referer_sort( $a, $b, $pSort='revenue', $pDirection
 
 // }}} 
 
-/* vim: :set fdm=marker : */
+CommerceStatistics::loadSingleton();
+

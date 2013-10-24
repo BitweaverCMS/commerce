@@ -78,7 +78,7 @@ echo '<br /><b>TESTING INFO:</b> Time page: <strong>' . $_GET['main_page'] . '</
 echo 'Session ID: ' . zen_session_id() . '<br / >';
 echo 'REGISTERED GLOBALS is: <b>' . (ini_get('register_globals')=='1' ? 'ON' : 'OFF') . '</b>' . ' Session Timeout: <b>' . ini_get('session.gc_maxlifetime') . 's</b><br><br>';
 echo "GLOBALS[$main_page] and HTTP_GET_VARS['main_page'] and _GET['main_page'] = " . $GLOBALS['main_page'] . ' - ' . $_GET['main_page'] . ' - ' . $_GET['main_page']  . '<br><br>';
-echo "_SERVER['PHP_SELF'] and _GET['PHP_SELF'] and PHP_SELF and _SESSION['PHP_SELF'] = " . $_SERVER['PHP_SELF'] . ' - ' . $_GET['PHP_SELF'] . ' - ' . $PHP_SELF  . ' - ' . $_SESSION['PHP_SELF'] . '<br><br>';
+echo "_SERVER['SCRIPT_NAME'] and _GET['SCRIPT_NAME'] and _SESSION['SCRIPT_NAME'] = " . $_SERVER['SCRIPT_NAME'] . ' - ' . $_GET['SCRIPT_NAME'] . ' - ' . $_SESSION['SCRIPT_NAME'] . '<br><br>';
 echo "getenv('REQUEST_URI') = " . getenv('REQUEST_URI') . '<br><br>';
 echo 'SERVER_NAME = ' . $_SERVER['SERVER_NAME'] . '<br><br>';
 echo 'SCRIPT_FILENAME = ' . $_SERVER['SCRIPT_FILENAME'] . '<br><br>';

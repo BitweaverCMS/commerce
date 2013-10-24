@@ -43,7 +43,7 @@ class CommerceProductCommission extends CommerceCommissionBase {
 
 			if( (int)$totalPayed != (int)$pParamHash['payment_amount'] ) {
 				$this->mErrors['commissions_payment'] = "Payment amount is not equal to products commissions ($totalPayed != $pParamHash[payment_amount] user " . $pParamHash['payment_store']['payee_user_id'] . ")";
-				bit_log_error( $this->mErrors['commissions_payment'] );
+				bit_error_log( $this->mErrors['commissions_payment'] );
 			}
 		}
 
@@ -101,7 +101,7 @@ class CommerceProductCommission extends CommerceCommissionBase {
 		}
 
 		if( !empty( $pListHash['commissions_delay'] ) ) {
-			$whereSql .= ' AND co.`date_purchased` < '.$throughDate;
+			$whereSql .= ' AND co.`date_purchased` <= '.$throughDate;
 		}
 
 		$sql = "SELECT lc.`user_id` AS `hash_key`, lc.`user_id`, uu.`content_id`, uu.`real_name`, uu.`login`, uu.`email`, lcp.`pref_value` AS `payment_method`, SUM(cop.`products_commission` * cop.`products_quantity`) AS `commission_sum`

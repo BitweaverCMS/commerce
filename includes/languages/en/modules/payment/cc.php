@@ -20,15 +20,15 @@
 // $Id$
 //
 
-  define('MODULE_PAYMENT_CC_TEXT_TITLE', 'Credit Card');
-  define('MODULE_PAYMENT_CC_TEXT_DESCRIPTION', 'Credit Card Test Info:<br /><br />CC#: 4111111111111111<br />Expiration: Any');
-  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_TYPE', 'Credit Card Type:');
-  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER', 'Card Owner\'s Name:');
-  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER', 'Card Number:');
-  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV', 'CVV Number (<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . 'More Info' . '</a>)');
-  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES', 'Expiration Date:');
-  define('MODULE_PAYMENT_CC_TEXT_JS_CC_OWNER', '* The owner\'s name of the credit card must be at least ' . CC_OWNER_MIN_LENGTH . ' characters.\n');
-  define('MODULE_PAYMENT_CC_TEXT_JS_CC_NUMBER', '* The credit card number must be at least ' . CC_NUMBER_MIN_LENGTH . ' characters.\n');
-  define('MODULE_PAYMENT_CC_TEXT_ERROR', 'Credit Card Error:');
-  define('MODULE_PAYMENT_CC_TEXT_JS_CC_CVV', '* The CVV number must be at least ' . CC_CVV_MIN_LENGTH . ' characters.\n');
+  define('MODULE_PAYMENT_CC_TEXT_TITLE', tra( 'Credit Card' ) );
+  define('MODULE_PAYMENT_CC_TEXT_DESCRIPTION', tra( 'Credit Card Test Info:<br /><br />CC#: 4111111111111111<br />Expiration: Any' ) );
+  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_TYPE', tra( 'Credit Card Type:' ) );
+  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER', tra( 'Card Owner\'s Name:' ) );
+  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER', tra( 'Card Number:' ) );
+  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV', tra( 'CVV Number (<a href="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . 'More Info' . '</a>)' ) );
+  define('MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES', tra( 'Expiration Date:' ) );
+  define('MODULE_PAYMENT_CC_TEXT_JS_CC_OWNER', tra( '* The owner\'s name of the credit card must be at least ' . CC_OWNER_MIN_LENGTH . ' characters.\n' ) );
+  define('MODULE_PAYMENT_CC_TEXT_JS_CC_NUMBER', tra( '* The credit card number must be at least ' . CC_NUMBER_MIN_LENGTH . ' characters.\n' ) );
+  define('MODULE_PAYMENT_CC_TEXT_ERROR', tra( 'Credit Card Error:' ) );
+  define('MODULE_PAYMENT_CC_TEXT_JS_CC_CVV', tra( '* The CVV number must be at least ' . CC_CVV_MIN_LENGTH . ' characters.\n' ) );
 ?>

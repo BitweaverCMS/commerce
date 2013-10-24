@@ -237,6 +237,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products' => "
   products_image C(250),
   products_price N(15,4),
   products_commission N(15,4),
+  products_wholesale N(15,4),
   products_cogs N(15,4),
   products_virtual I1,
   products_date_added T,
@@ -301,29 +302,14 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
   products_options_html_attrib X
 ",
 
-/*
-BITCOMMERCE_INSTALL_PREFIX.'com_products_options_values' => "
-  products_options_values_id I4 PRIMARY,
-  language_id I4 NOTNULL default '1',
-  products_options_values_name C(64),
-  products_ov_sort_order I4
-",
-
-BITCOMMERCE_INSTALL_PREFIX.'com_prd_opt_val_to_prd_opt' => "
-  prd_opt_val_to_prd_opt_id I4 PRIMARY AUTO,
-  products_options_id I4,
-  products_options_values_id I4
-  CONSTRAINT ', CONSTRAINT `prd_opt_val_to_prd_opt_ref` FOREIGN KEY ( `products_options_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options`( `products_options_id` )'
-",
-//  				CONSTRAINT `prd_opt_val_to_prd_val_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
-*/
-
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
-  products_attributes_id I4 PRIMARY AUTO,
+  products_options_values_id I4 PRIMARY,
+  products_attributes_id I4 NOTNULL,
   products_options_values_name C(128),
   products_options_id I4 NOTNULL,
-  products_options_values_id I4 NOTNULL,
   options_values_price N(15,4),
+  options_values_wholesale N(15,4),
+  options_values_cogs N(15,4),
   price_prefix C(1),
   products_options_sort_order I4,
   product_attribute_is_free I1,
@@ -354,7 +340,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
 			  , CONSTRAINT `prod_attr_group_id_ref` FOREIGN KEY ( `purchase_group_id` ) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )
   			'
 ",
-//  				CONSTRAINT `prod_attr_options_val_id_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_options_values`( `products_options_values_id` )'
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
  products_id I4 PRIMARY,
@@ -362,7 +347,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
  override_price N(15,4)
  CONSTRAINT ', CONSTRAINT `prod_optmap_products_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
-//  				CONSTRAINT `prod_optmap_optval_ref` FOREIGN KEY ( `products_options_values_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products_attributes`( `products_options_values_id` )'
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
   products_attributes_id I4,
@@ -506,8 +490,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   coupon_minimum_order N(8,4),
   coupon_start_date T,
   coupon_expire_date T,
+  quantity_max I4,
   quantity_limit I4,
-  uses_per_coupon I2 NOTNULL default '1',
+  uses_per_coupon I2 default '1',
   uses_per_user I2,
   restrict_to_products C(255),
   restrict_to_categories C(255),
@@ -738,16 +723,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   customers_telephone C(32),
   customers_email_address C(128),
   customers_address_format_id I4,
-  delivery_name C(128),
-  delivery_company C(128),
-  delivery_street_address C(250),
-  delivery_suburb C(64),
-  delivery_city C(64),
-  delivery_postcode C(10),
-  delivery_state C(64),
-  delivery_country C(64),
-  delivery_telephone C(32),
-  delivery_address_format_id I4,
   billing_name C(128),
   billing_company C(128),
   billing_street_address C(250),
@@ -758,12 +733,22 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   billing_country C(64),
   billing_telephone C(32),
   billing_address_format_id I2,
-  payment_method C(128),
-  payment_module_code C(32),
+  delivery_name C(128),
+  delivery_company C(128),
+  delivery_street_address C(250),
+  delivery_suburb C(64),
+  delivery_city C(64),
+  delivery_postcode C(10),
+  delivery_state C(64),
+  delivery_country C(64),
+  delivery_telephone C(32),
+  delivery_address_format_id I4,
   shipping_method C(128),
   shipping_method_code C(255),
   shipping_module_code C(32),
   shipping_tracking_number C(255),
+  payment_method C(128),
+  payment_module_code C(32),
   coupon_code C(32),
   cc_type C(20),
   cc_owner C(64),
@@ -772,8 +757,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   cc_cvv B,
   last_modified T,
   date_purchased T,
-  orders_status I2,
   orders_date_finished T,
+  orders_status I2,
   currency C(3),
   currency_value N(14,6),
   order_total N(14,2),
@@ -790,9 +775,10 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
   products_model C(32),
   products_name C(64),
   products_price N(15,4),
+  products_wholesale N(15,4),
+  products_cogs N(15,4),
   products_commission N(15,4),
   commissions_payments_id I4,
-  products_cogs N(15,4),
   final_price N(15,4),
   products_tax N(7,4),
   products_quantity FLOAT DEFAULT '0' NOTNULL,
@@ -813,6 +799,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   products_options C(32),
   products_options_values C(128),
   options_values_price N(15,4),
+  options_values_wholesale N(15,4),
+  options_values_cogs N(15,4),
   price_prefix C(1),
   product_attribute_is_free I1,
   products_attributes_wt F,
@@ -844,6 +832,16 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld' => "
   download_maxdays I2,
   download_count I2
   CONSTRAINT ', CONSTRAINT `ord_prod_dld_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
+",
+
+BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
+    orders_products_id I4 NOTNULL PRIMARY,
+    customers_id I4 NOTNULL,
+    expires_date T,
+    expires_last_notification T,
+    expires_notices I4 NOTNULL DEFAULT 3
+    CONSTRAINT ', CONSTRAINT `expires_customer_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BIT_DB_PREFIX."users_users` (`user_id`)
+				, CONSTRAINT `expires_orders_products_ref` FOREIGN KEY (`orders_products_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products` (`orders_products_id`)'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
@@ -1139,8 +1137,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
   trans_message X NOTNULL,
   trans_amount N(11,2) NOTNULL,
   trans_date T NOTNULL
-  CONSTRAINT ', CONSTRAINT `pubs_cc_log_order_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
-  			  , CONSTRAINT `pubs_cc_log_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
 );
@@ -1283,8 +1279,9 @@ $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_bitcommerce_product_view', 'Can create and modify storefront products', 'basic', 'bitcommerce'),
 	array('p_bitcommerce_product_create', 'Can create storefront products', 'editors', 'bitcommerce'),
 	array('p_bitcommerce_product_update', 'Can update all storefront products', 'editors', 'bitcommerce'),
-	array('p_bitcommerce_product_purchase', 'Can purchase webstore products', 'basic', 'bitcommerce'),
+	array('p_bitcommerce_product_purchase', 'Can purchase webstore products', 'registered', 'bitcommerce'),
 	array('p_bitcommerce_retailer', 'Can sell products for a profit', 'editors', 'bitcommerce'),
+	array('p_bitcommerce_tax_exempt', 'Can purchase products without paying tax', 'admin', 'bitcommerce'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
@@ -1294,14 +1291,14 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_address_format` VALUES (3, '\$firstname \$lastname\$cr\$streets\$cr\$city\$cr\$postcode - \$statecomma\$country','\$state / \$country')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_address_format` VALUES (4, '\$firstname \$lastname\$cr\$streets\$cr\$city (\$postcode)\$cr\$country', '\$postcode / \$country')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_address_format` VALUES (5, '\$firstname \$lastname\$cr\$streets\$cr\$postcode \$city\$cr\$country','\$city / \$country')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (1, 'Zen Cart', 'http://www.zen-cart.com', 'banners/zencart_468_60_02.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (2, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/125bitcommerce_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (3, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/125x125_bitcommerce_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (4, 'if you have to think ... you haven''t been Zenned!', 'http://www.zen-cart.com', 'banners/think_anim.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-12 20:53:18', NULL, 1, 1, 1, 0)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (5, 'Chain Reaction Web', 'http://www.chainreactionweb.com', 'banners/crw-zen-banner.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-12 20:56:01', NULL, 1, 1, 1, 0)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (6, 'Sashbox.net - the ultimate e-commerce hosting solution', 'http://www.sashbox.net', 'banners/sashbox_125x50.jpg', 'BannersAll', '', 0, NULL, NULL, '2005-05-13 10:53:50', NULL, 1, 1, 1, 20)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (7, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/bw_zen_88wide.gif', 'BannersAll', '', 0, NULL, NULL, '2005-05-13 10:54:38', NULL, 1, 1, 1, 10)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (8, 'Sashbox.net - the ultimate e-commerce hosting solution', 'http://www.sashbox.net', 'banners/sashbox_468x60.jpg', 'Wide-Banners', '', 0, NULL, NULL, '2005-05-13 10:55:11', NULL, 1, 1, 1, 0)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (1, 'bitcommerce', 'http://www.bitcommerce.org', 'banners/bitcommerce_468_60_02.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (2, 'bitcommerce', 'http://www.bitcommerce.org', 'banners/125bitcommerce_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (3, 'bitcommerce', 'http://www.bitcommerce.org', 'banners/125x125_bitcommerce_logo.gif', 'SideBox-Banners', '', 0, NULL, NULL, '2004-01-11 20:59:12', NULL, 1, 1, 1, 0)",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (4, 'if you have to think ... you haven''t been Zenned!', 'http://www.zen-cart.com', 'banners/think_anim.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-12 20:53:18', NULL, 1, 1, 1, 0)",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (5, 'Chain Reaction Web', 'http://www.chainreactionweb.com', 'banners/crw-zen-banner.gif', 'Wide-Banners', '', 0, NULL, NULL, '2004-01-12 20:56:01', NULL, 1, 1, 1, 0)",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (6, 'Sashbox.net - the ultimate e-commerce hosting solution', 'http://www.sashbox.net', 'banners/sashbox_125x50.jpg', 'BannersAll', '', 0, NULL, NULL, '2005-05-13 10:53:50', NULL, 1, 1, 1, 20)",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (7, 'Zen Cart the art of e-commerce', 'http://www.zen-cart.com', 'banners/bw_zen_88wide.gif', 'BannersAll', '', 0, NULL, NULL, '2005-05-13 10:54:38', NULL, 1, 1, 1, 10)",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_banners` (`banners_id`, `banners_title`, `banners_url`, `banners_image`, `banners_group`, `banners_html_text`, `expires_impressions`, `expires_date`, `date_scheduled`, `date_added`, `date_status_change`, `status`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`) VALUES (8, 'Sashbox.net - the ultimate e-commerce hosting solution', 'http://www.sashbox.net', 'banners/sashbox_468x60.jpg', 'Wide-Banners', '', 0, NULL, NULL, '2005-05-13 10:55:11', NULL, 1, 1, 1, 0)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Store Name', 'STORE_NAME', 'Zen Cart', 'The name of my store', '1', '1', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Store Owner', 'STORE_OWNER', 'Team Zen Cart', 'The name of my store owner', '1', '2', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) VALUES ('Country', 'STORE_COUNTRY', '223', 'The country my store is located in <br /><br /><strong>Note: Please remember to update the store zone.</strong>', '1', '6', 'zen_get_country_name', 'zen_cfg_pull_down_country_list(', 'NOW')",
@@ -1321,7 +1318,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Basis of Shipping Tax', 'STORE_SHIPPING_TAX_BASIS', 'Shipping', 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone - Can be overriden by correctly written Shipping Module', '1', '21', 'zen_cfg_select_option(array(''Shipping'', ''Billing'', ''Store''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Sales Tax Display Status', 'STORE_TAX_DISPLAY_STATUS', '0', 'Always show Sales Tax even when amount is \$0.00?<br />0= Off<br />1= On', '1', '21', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Admin Session Time Out in Seconds', 'SESSION_TIMEOUT_ADMIN', '3600', 'Enter the time in seconds. Default=3600<br />Example: 3600= 1 hour<br /><br />Note: Too few seconds can result in timeout issues when adding/editing products', 1, 40, NULL, 'NOW', NULL, NULL)",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Admin Set max_execution_time for processes', 'GLOBAL_SET_TIME_LIMIT', '60', 'Enter the time in seconds for how long the max_execution_time of processes should be. Default=60<br />Example: 60= 1 minute<br /><br />Note: Changing the time limit is only needed if you are having problems with the execution time of a process', 1, 42, NULL, 'NOW', NULL, NULL)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Admin Set max_execution_time for processes', 'GLOBAL_SET_TIME_LIMIT', '300', 'Enter the time in seconds for how long the max_execution_time of processes should be. Default=60<br />Example: 60= 1 minute<br /><br />Note: Changing the time limit is only needed if you are having problems with the execution time of a process', 1, 42, NULL, 'NOW', NULL, NULL)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show if version update available', 'SHOW_VERSION_UPDATE_IN_HEADER', 'true', 'Automatically check to see if a new version of Zen-Cart is available. Enabling this can sometimes slow down the loading of Admin pages. (Displayed on main Index page after login, and Server Info page.)', 1, 44, 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Store Status', 'STORE_STATUS', '0', 'What is your Store Status<br />0= Normal Store<br />1= Showcase no prices<br />2= Showcase with prices', '1', '25', 'zen_cfg_select_option(array(''0'', ''1'', ''2''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Server Uptime', 'DISPLAY_SERVER_UPTIME', 'true', 'Displaying Server uptime can cause entries in error logs on some servers. (true = Display, false = don''t display)', 1, 46, '2003-11-08 20:24:47', '0001-01-01 00:00:00', '', 'zen_cfg_select_option(array(''true'', ''false''),')",
@@ -1437,13 +1434,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`, `use_function`) VALUES ('Customer Authorization: Hide Footer', 'CUSTOMERS_AUTHORIZATION_FOOTER_OFF', 'false', 'Customer Authorization: Hide Footer <br />(true=hide false=show)', '5', '70', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW', NULL)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`, `use_function`) VALUES ('Customer Authorization: Hide Prices', 'CUSTOMERS_AUTHORIZATION_PRICES_OFF', 'false', 'Customer Authorization: Hide Prices <br />(true=hide false=show)', '5', '71', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW', NULL)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Customers Referral Status', 'CUSTOMERS_REFERRAL_STATUS', '0', 'Customers Referral Code is created from<br />0= Off<br />1= 1st Discount Coupon Code used<br />2= Customer can add during create account or edit if blank<br /><br />NOTE: Once the Customers Referral Code has been set it can only be changed in the Admin Customer', '5', '80', 'zen_cfg_select_option(array(''0'', ''1'', ''2''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Installed Modules', 'MODULE_PAYMENT_INSTALLED', 'cc.php;cod.php', 'List of payment module filenames separated by a semi-colon. This is automatically updated. No need to edit. (Example: cc.php;cod.php;paypal.php)', '6', '0', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Installed Modules', 'MODULE_PAYMENT_INSTALLED', 'cc.php', 'List of payment module filenames separated by a semi-colon. This is automatically updated. No need to edit. (Example: cc.php;paypal.php)', '6', '0', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Installed Modules', 'MODULE_ORDER_TOTAL_INSTALLED', 'ot_subtotal.php;ot_coupon.php;ot_tax.php;ot_shipping.php;ot_gv.php;ot_total.php', 'List of order_total module filenames separated by a semi-colon. This is automatically updated. No need to edit. (Example: ot_subtotal.php;ot_tax.php;ot_shipping.php;ot_total.php)', '6', '0', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Installed Modules', 'MODULE_SHIPPING_INSTALLED', 'flat.php', 'List of shipping module filenames separated by a semi-colon. This is automatically updated. No need to edit. (Example: ups.php;flat.php;item.php)', '6', '0', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Enable Cash On Delivery Module', 'MODULE_PAYMENT_COD_STATUS', 'True', 'Do you want to accept Cash On Delevery payments?', '6', '1', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) VALUES ('Payment Zone', 'MODULE_PAYMENT_COD_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Sort order of display.', 'MODULE_PAYMENT_COD_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '0', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) VALUES ('Set Order Status', 'MODULE_PAYMENT_COD_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Enable Credit Card Module', 'MODULE_PAYMENT_CC_STATUS', 'True', 'Do you want to accept credit card payments?', '6', '0', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Split Credit Card E-Mail Address', 'MODULE_PAYMENT_CC_EMAIL', '', 'If an e-mail address is entered, the middle digits of the credit card number will be sent to the e-mail address (the outside digits are stored in the database with the middle digits censored)', '6', '0', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Collect & store the CVV number', 'MODULE_PAYMENT_CC_COLLECT_CVV', 'True', 'Do you want to collect the CVV number. Note: If you do the CVV number will be stored in the database in an encoded format.', 6, 0, NULL, '2004-01-11 22:55:51', NULL, 'zen_cfg_select_option(array(''true'', ''false''),')",
@@ -1467,7 +1460,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Package Tare Small to Medium - added percentage:weight', 'SHIPPING_BOX_WEIGHT', '0:3', 'What is the weight of typical packaging of small to medium packages?<br />Example: 10% + 1lb 10:1<br />10% + 0lbs 10:0<br />0% + 5lbs 0:5<br />0% + 0lbs 0:0', '7', '4', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Larger packages - added packaging percentage:weight', 'SHIPPING_BOX_PADDING', '10:0', 'What is the weight of typical packaging for Large packages?<br />Example: 10% + 1lb 10:1<br />10% + 0lbs 10:0<br />0% + 5lbs 0:5<br />0% + 0lbs 0:0', '7', '5', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Display Number of Boxes and Weight Status', 'SHIPPING_BOX_WEIGHT_DISPLAY', '3', 'Display Shipping Weight and Number of Boxes?<br /><br />0= off<br />1= Boxes Only<br />2= Weight Only<br />3= Both Boxes and Weight', '7', '15', 'zen_cfg_select_option(array(''0'', ''1'', ''2'', ''3''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Shipping Estimator Display Settings for Shopping Cart', 'SHOW_SHIPPING_ESTIMATOR_BUTTON', '1', '<br />0= Off<br />1= Display as Button on Shopping Cart', '7', '20', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Shipping Estimator Display Settings for Shopping Cart', 'SHOW_SHIPPING_ESTIMATOR_BUTTON', '0', '<br />0= Off<br />1= Display as Button on Shopping Cart', '7', '20', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Order Free Shipping 0 Weight Status', 'ORDER_WEIGHT_ZERO_STATUS', '0', 'If there is no weight to the order, does the order have Free Shipping?<br />0= no<br />1= yes<br /><br />Note: When using Free Shipping, Enable the Free Shipping Module this will only show when shipping is free.', '7', '15', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Display Product Image', 'PRODUCT_LIST_IMAGE', '1', 'Do you want to display the Product Image?', '8', '1', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Display Product Manufacturer Name','PRODUCT_LIST_MANUFACTURER', '0', 'Do you want to display the Product Manufacturer Name?', '8', '2', 'NOW')",
@@ -1549,8 +1542,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Read Only option type - Ignore for Add to Cart', 'PRODUCTS_OPTIONS_TYPE_READONLY_IGNORED', '1', 'When a Product only uses READONLY attributes, should the Add to Cart button be On or Off?<br />0= OFF<br />1= ON', '13', '37', 'zen_cfg_select_option(array(''0'', ''1''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Enable GZip Compression', 'GZIP_LEVEL', '0', '0= off 1= on', '14', '1', 'zen_cfg_select_option(array(''0'', ''1''),', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Session Directory', 'SESSION_WRITE_DIRECTORY', '/tmp', 'If sessions are file based, store them in this directory.', '15', '1', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Cookie Domain', 'SESSION_USE_FQDN', 'True', 'If True the full domain name will be used to store the cookie, e.g. www.mydomain.com. If False only a partial domain name will be used, e.g. mydomain.com. If you are unsure about this, always leave set to true.', '15', '2', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Force Cookie Use', 'SESSION_FORCE_COOKIE_USE', 'False', 'Force the use of sessions when cookies are only enabled.', '15', '2', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check SSL Session ID', 'SESSION_CHECK_SSL_SESSION_ID', 'False', 'Validate the SSL_SESSION_ID on every secure HTTPS page request.', '15', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check User Agent', 'SESSION_CHECK_USER_AGENT', 'False', 'Validate the clients browser user agent on every page request.', '15', '4', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check IP Address', 'SESSION_CHECK_IP_ADDRESS', 'False', 'Validate the clients IP address on every page request.', '15', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
@@ -2208,7 +2199,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'JI','Jijel')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'KH','Khenchela')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'LA','Laghouat')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'MS','M\'Sila')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'MS','M''Sila')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'MA','Mascara')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'ME','Medea')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (3,'MI','Mila')",
@@ -2233,7 +2224,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 
 //American Samoa
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'EA','Eastern')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'MA','Manu\'a')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'MA','Manu''a')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'RI','Rose Island')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'SI','Swains Island')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (4,'WE','Western')",
@@ -2308,13 +2299,13 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'AR','Aragatsotn')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'AA','Ararat')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'AM','Armavir')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'GE','Geghark\'unik\'')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'KO','Kotayk\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'GE','Geghark''unik''')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'KO','Kotayk''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'LO','Lorri')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'SH','Shirak')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'SY','Syunik\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'SY','Syunik''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'TA','Tavush')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'VA','Vayots\' Dzor')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'VA','Vayots'' Dzor')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (11,'YE','Yerevan')",
 
 //Australia
@@ -2418,7 +2409,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'EX','Exuma')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'FR','Freeport')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'FC','Fresh Creek')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'GH','Governor\'s Harbour')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'GH','Governor''s Harbour')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'GT','Green Turtle Cay')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'HI','Harbour Island')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (16,'HR','High Rock')",
@@ -2441,10 +2432,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'AW','Al Mintaqah al Wusta')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'AS','Al Mintaqah ash Shamaliyah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'AU','Al Muharraq')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'AR','Ar Rifa\' wa al Mintaqah al Janubiyah')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'AR','Ar Rifa'' wa al Mintaqah al Janubiyah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'JH','Jidd Hafs')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'JU','Juzur Hawar')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'MI','Madinat \'Isa')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'MI','Madinat ''Isa')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'MH','Madinat Hamad')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (17,'SI','Sitrah')",
 
@@ -2470,7 +2461,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 
 //Belarus
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'BR','Brestskaya (Brest)')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'HO','Homyel\'skaya (Homyel\')')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'HO','Homyel''skaya (Homyel'')')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'HM','Horad Minsk')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'HR','Hrodzyenskaya (Hrodna)')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (20,'MA','Mahilyowskaya (Mahilyow)')",
@@ -2697,7 +2688,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'AT','Atacama')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'BB','Bio-Bio')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'CO','Coquimbo')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'LI','Libertador General Bernardo O\'Higgins')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'LI','Libertador General Bernardo O''Higgins')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'LL','Los Lagos')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'MA','Magallanes y de la Antartica Chilena')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (43,'MU','Maule')",
@@ -3151,8 +3142,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (103,'WI','Wicklow')",
 
 //Israel
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'BS','Be\'er Sheva')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'BH','Bika\'at Hayarden')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'BS','Be''er Sheva')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'BH','Bika''at Hayarden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'EA','Eilat and Arava')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'GA','Galil')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (104,'HA','Haifa')",
@@ -3182,7 +3173,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'TU','Toscana (Tuscany)')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'TR','Trentino Alto Adige')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'UM','Umbria')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'VA','Val d\'Aosta')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'VA','Val d''Aosta')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (105,'VE','Veneto')",
 
 //Japan
@@ -3235,17 +3226,17 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (107,'YN','Yamanashi')",
 
 //Jordan
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AM','\'Amman')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AM','''Amman')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AJ','Ajlun')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AA','Al \'Aqabah')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AB','Al Balqa\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AA','Al ''Aqabah')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AB','Al Balqa''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AK','Al Karak')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AL','Al Mafraq')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AT','At Tafilah')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AZ','Az Zarqa\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'AZ','Az Zarqa''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'IR','Irbid')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'JA','Jarash')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'MA','Ma\'an')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'MA','Ma''an')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (108,'MD','Madaba')",
 
 //Kazakhstan
@@ -3278,27 +3269,27 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (110,'WE','Western')",
 
 //Korea, Republic of
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CO','Ch\'ungch\'ong-bukto')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CH','Ch\'ungch\'ong-namdo')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CO','Ch''ungch''ong-bukto')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CH','Ch''ungch''ong-namdo')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CD','Cheju-do')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CB','Cholla-bukto')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'CN','Cholla-namdo')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'IG','Inch\'on-gwangyoksi')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'IG','Inch''on-gwangyoksi')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'KA','Kangwon-do')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'KG','Kwangju-gwangyoksi')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'KD','Kyonggi-do')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'KB','Kyongsang-bukto')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'KN','Kyongsang-namdo')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'PG','Pusan-gwangyoksi')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'SO','Soul-t\'ukpyolsi')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'SO','Soul-t''ukpyolsi')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'TA','Taegu-gwangyoksi')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (113,'TG','Taejon-gwangyoksi')",
 
 //Kuwait
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AL','Al \'Asimah')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AL','Al ''Asimah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AA','Al Ahmadi')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AF','Al Farwaniyah')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AJ','Al Jahra\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'AJ','Al Jahra''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (114,'HA','Hawalli')",
 
 //Luxembourg
@@ -3375,7 +3366,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'BP','Bay of Plenty')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'CA','Canterbury')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'GI','Gisborne')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'HB','Hawke\'s Bay')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'HB','Hawke''s Bay')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'MA','Marlborough')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'NE','Nelson')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (153,'NO','Northland')",
@@ -3779,9 +3770,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'TV','Tver')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'TY','Tyumen')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'UF','Ufa')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'UL','Ul\'yanovsk')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'UL','Ul''yanovsk')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'UU','Ulan-Ude')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'US','Ust\'-Ordynskiy')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'US','Ust''-Ordynskiy')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'VL','Vladikavkaz')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'VA','Vladimir')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (176,'VV','Vladivostok')",
@@ -3986,7 +3977,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'AR','Aryanah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'BJ','Bajah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'BN','Banzart')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'BA','Bin \'Arus')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'BA','Bin ''Arus')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'JU','Jundubah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'MA','Madanin')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (214,'NA','Nabul')",
@@ -4086,32 +4077,32 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 
 //Ukraine
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KR','Avtonomna Respublika Krym')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CH','Cherkas\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CE','Chernihivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CR','Chernivets\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'DN','Dnipropetrovs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'DO','Donets\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'IV','Ivano-Frankivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KA','Kharkivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KE','Khersons\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KL','Khmel\'nyts\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KI','Kirovohrads\'ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CH','Cherkas''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CE','Chernihivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'CR','Chernivets''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'DN','Dnipropetrovs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'DO','Donets''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'IV','Ivano-Frankivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KA','Kharkivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KE','Khersons''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KL','Khmel''nyts''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KI','Kirovohrads''ka')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KY','Kyyiv')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KV','Kyyivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'LV','L\'vivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'LU','Luhans\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'MY','Mykolayivs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'OD','Odes\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'PO','Poltavs\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'RI','Rivnens\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'SE','Sevastopol\'')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'SU','Sums\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'TE','Ternopil\'s\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'VI','Vinnyts\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'VO','Volyns\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZK','Zakarpats\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZP','Zaporiz\'ka')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZH','Zhytomyrs\'ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'KV','Kyyivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'LV','L''vivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'LU','Luhans''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'MY','Mykolayivs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'OD','Odes''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'PO','Poltavs''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'RI','Rivnens''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'SE','Sevastopol''')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'SU','Sums''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'TE','Ternopil''s''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'VI','Vinnyts''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'VO','Volyns''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZK','Zakarpats''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZP','Zaporiz''ka')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (220,'ZH','Zhytomyrs''ka')",
 
 //United Kingdom
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'ABN', 'Aberdeen')",
@@ -4330,10 +4321,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (229,'ZU','Zulia')",
 
 //Yemen
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AD','\'Adan')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AT','\'Ataq')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AD','''Adan')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AT','''Ataq')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AB','Abyan')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AL','Al Bayda\'')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AL','Al Bayda''')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AH','Al Hudaydah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AJ','Al Jawf')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'AM','Al Mahrah')",
@@ -4343,10 +4334,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'HJ','Hajjah')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'IB','Ibb')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'LA','Lahij')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'MA','Ma\'rib')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'SA','Sa\'dah')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'SN','San\'a\'')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'TA','Ta\'izz')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'MA','Ma''rib')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'SA','Sa''dah')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'SN','San''a''')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'TA','Ta''izz')",
 
 //Yugoslavia
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'KO','Kosovo')",

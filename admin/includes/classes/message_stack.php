@@ -46,15 +46,15 @@
 
     function add($message, $type = 'error') {
       if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => zen_image(DIR_WS_ICONS . 'error.gif', ICON_ERROR) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-error"', 'text' => '<i class=" icon-minus-sign"></i> ' . $message);
       } elseif ($type == 'warning') {
-        $this->errors[] = array('params' => 'class="messageStackWarning"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-warning"', 'text' => '<i class=" icon-exclamation-sign"></i> ' . $message);
       } elseif ($type == 'success') {
-        $this->errors[] = array('params' => 'class="messageStackSuccess"', 'text' => zen_image(DIR_WS_ICONS . 'success.gif', ICON_SUCCESS) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-success"', 'text' => '<i class="icon-ok-sign"></i> ' . $message);
       } elseif ($type == 'caution') {
-        $this->errors[] = array('params' => 'class="messageStackCaution"', 'text' => zen_image(DIR_WS_ICONS . 'warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-info"', 'text' => '<i class="icon-info-sign"></i> ' . $message);
       } else {
-        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => $message);
+        $this->errors[] = array('params' => 'class="alert alert-error"', 'text' => $message);
       }
 
 
@@ -63,7 +63,7 @@
 
     function add_session($message, $type = 'error') {
 
-      if (!$_SESSION['messageToStack']) {
+      if( empty( $_SESSION['messageToStack'] ) ) {
         $_SESSION['messageToStack'] = array();
       }
 
@@ -76,8 +76,11 @@
     }
 
     function output() {
-      $this->table_data_parameters = 'class="messageBox"';
-      return $this->tableBlock($this->errors);
+		$ret = '';
+		foreach( $this->errors as $error ) {
+			$ret .= '<div '.$error['params'].'>'.$error['text'].'</div>';
+		}
+		return $ret;
     }
   }
 ?>

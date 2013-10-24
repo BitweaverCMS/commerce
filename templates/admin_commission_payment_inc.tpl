@@ -1,5 +1,5 @@
 {if !$commission.payment_method}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Payment Method"}
 		{forminput}
 			{$commission.payment_method|default:"Not Set"}
@@ -8,7 +8,7 @@
 	</div>
 {else}
 	{if $commission.payment_method == 'paypal'}
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Make Payment"}
 			{forminput}
 				{if $commission.commissions_paypal_address}
@@ -35,20 +35,20 @@
 			{/forminput}
 		</div>
 	{elseif $commission.payment_method == 'check'}
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Check Number"}
 			{forminput}
 				<input type="text" name="payment_reference_number" value="" />
 			{/forminput}
 		</div>
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Check Address"}
 			{forminput}
 			{$commission.user_id|@zen_address_label:$commission.commissions_check_address:true}
 			{/forminput}
 		</div>
 	{else}
-		<div class="row">
+		<div class="control-group">
 			{forminput}
 				{$commission.payment_method}
 			{/forminput}
@@ -59,14 +59,14 @@
 	<input type="hidden" name="user_id" value="{$userId}" />
 
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Commission Amount"}
 			{forminput}
 				<input type="text" name="payment_amount" value="{$commission.commission_sum|string_format:"%.2f"}" />
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Payment Dates"}
 			{forminput}
 				{tr}From{/tr} <input type="text" name="period_start_date"  id="periodstart{$userId}" value="{$commission.last_period_end_date}" style="width:80px"/> 
@@ -98,7 +98,7 @@ button      : "anchorperiodend{$userId}"       // ID of the button
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Note"}
 			{forminput}
 				<input type="text" name="payment_note" value="" />
@@ -106,8 +106,8 @@ button      : "anchorperiodend{$userId}"       // ID of the button
 			{/forminput}
 		</div>
 
-		<div class="row submit">
-			<input type="submit" name="save_payment" value="Save Payment" />
+		<div class="control-group submit">
+			<input type="submit" class="btn" name="save_payment" value="Save Payment" />
 		</div>
 	{/form}
 {/if}

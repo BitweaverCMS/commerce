@@ -39,7 +39,7 @@ if ($manufacturer_info_sidebox->RecordCount() > 0) {
 	if (zen_not_null($manufacturer->fields['manufacturers_image'])) {
 		$sideboxManufacturerInfo['manufacturers_image_url'] .= DIR_WS_IMAGES . $manufacturer->fields['manufacturers_image'];
 	}
-	$gBitSmarty->assign( 'sideboxManufacturerInfo', $sideboxManufacturerInfo );
+	$_template->tpl_vars['sideboxManufacturerInfo'] = new Smarty_variable( $sideboxManufacturerInfo );
 
 //	require($template->get_template_dir('tpl_manufacturer_info.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturer_info.php');
 	$title =  BOX_HEADING_MANUFACTURER_INFO;

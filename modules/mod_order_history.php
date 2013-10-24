@@ -54,15 +54,15 @@ if( $gBitUser->isRegistered() ) {
 		while (!$products_history->EOF) {
 			$rows++;
 			$customer_orders[$rows] = $products_history->fields;
-			$customer_orders[$rows]['display_url'] = CommerceProduct::getDisplayUrl( $products_history->fields['products_id'] );
+			$customer_orders[$rows]['display_url'] = CommerceProduct::getDisplayUrlFromId( $products_history->fields['products_id'] );
 			$products_history->MoveNext();
 		}
 
-		$gBitSmarty->assign( 'sideboxCustomerOrders', $customer_orders );
+		$_template->tpl_vars['sideboxCustomerOrders'] = new Smarty_variable( $customer_orders );
 
 	}
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'Order History' ) );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Order History' );
 	}
 }
 ?>

@@ -20,10 +20,10 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE_1', 'My Account');
-define('NAVBAR_TITLE_2', 'Edit Account');
+define('NAVBAR_TITLE_1', tra( 'My Account' ) );
+define('NAVBAR_TITLE_2', tra( 'Edit Account' ) );
 
-define('HEADING_TITLE', 'My Account Information');
+define('HEADING_TITLE', tra( 'My Account Information' ) );
 
-define('SUCCESS_ACCOUNT_UPDATED', 'Your account has been successfully updated.');
+define('SUCCESS_ACCOUNT_UPDATED', tra( 'Your account has been successfully updated.' ) );
 ?>

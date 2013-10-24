@@ -17,10 +17,6 @@ define( 'MAX_CART_QUANTITY', 9999999 );
 class CommerceShoppingCart extends CommerceOrderBase {
 	var $cartID, $content_type;
 
-	function CommerceShoppingCart() {
-		parent::CommerceOrderBase();
-	}
-
 	function load() {
 		global $gBitUser;
 
@@ -98,7 +94,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->mDb->StartTrans();
 		if ($this->in_cart($productsKey)) {
 			$this->updateQuantity( $productsKey, $pQty );
-		} else {
+		} elseif( $exists = $this->mDb->GetOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( (int)zen_get_prid( $productsKey ) ) ) ) {
 			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 
@@ -352,17 +348,17 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				if( $product && $product->isValid() ) {
 					$productAttributes = !empty( $this->contents[$productsKey]['attributes'] ) ? $this->contents[$productsKey]['attributes'] : array();
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
-					$products_price = $product->getPurchasePrice( $qty, $productAttributes );
+					$purchasePrice = $product->getPurchasePrice( $qty, $productAttributes );
 					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
 
 					// shipping adjustments
 					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
-						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
+						$this->free_shipping_price += zen_add_tax($purchasePrice, $products_tax) * $qty;
 						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
 					}
 
-					$productsTotal = zen_add_tax( (($products_price * $qty) + $onetimeCharges), $products_tax);
+					$productsTotal = zen_add_tax( (($purchasePrice * $qty) + $onetimeCharges), $products_tax);
 					$this->total += $productsTotal;
 					$this->subtotal += $productsTotal;
 					$this->weight += $product->getWeight( $qty, $productAttributes );
@@ -371,21 +367,10 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		}
 	}
 
-	// can take a productsKey or a straight productsId
-	function getProductObject( $pProductsMixed ) {
-		$productsId = zen_get_prid( $pProductsMixed );
-		if( BitBase::verifyId( $productsId ) ) {
-			if( !isset( $this->mProductObjects[$productsId] ) ) {
-				if( $this->mProductObjects[$productsId] = bc_get_commerce_product( zen_get_prid( $productsId ) ) ) {
-					$ret = &$this->mProductObjects[$productsId];
-				}
-			}
-		}
-		return $this->mProductObjects[$productsId];
-	}
-
 	function getProductHash( $pProductsKey = false ) {
 		 global $gBitProduct, $currencies;
+
+		$productHash = array();
 
 		$product = $this->getProductObject( $pProductsKey );
 		if( $product && $product->isValid() ) {
@@ -400,9 +385,10 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['name'] = $product->getField('products_name');
 			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
 			$productHash['model'] = $product->getField('products_model');
+			$productHash['display_url'] = $product->getDisplayUrl();
 			$productHash['image'] = $product->getField('products_image');
-			$productHash['image_url'] = $product->getField('products_image_url');
-			$productHash['products_quantity'] = $this->contents[$pProductsKey]['products_quantity'];
+			$productHash['image_url'] = $product->getImageUrl();
+			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $attr );
@@ -417,6 +403,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['attributes'] = $attr;
 			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
+
 		return $productHash;
 	}
 

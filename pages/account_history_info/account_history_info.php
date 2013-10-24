@@ -44,7 +44,23 @@
           <td class="main"><strong><?php echo HEADING_PAYMENT_METHOD; ?></strong></td>
         </tr>
         <tr>
-          <td class="main"><?php echo $order->info['payment_method']; ?></td>
+          <td class="main">
+<?php 
+				echo $order->info['payment_method']; 
+				foreach( array( 'cc_owner', 'cc_number', 'cc_ref_id' ) as $key ) {
+					$value = trim( $order->getField( $key ) );
+					if( $key == 'cc_number' ) {
+						$value = substr($value, 0, 6) . str_repeat('X', (strlen($value) - 6)) . substr($value, -4);
+					}
+					if( !empty( $value ) ) {
+						echo '<div>';
+						echo '<em>'.tra( ucwords( str_replace( '_', ' ', $key ) ) ).'</em> ';
+						echo $value;
+						echo '</div>';
+					}
+				}
+?>
+		</td>
         </tr>
       </table>
     </td>
@@ -103,7 +119,7 @@
   foreach( array_keys( $order->contents ) as $opid ) {
     echo '        <tr>' . "\n" .
          '          <td class="main" align="right" valign="top" width="30">' . $order->contents[$opid]['products_quantity'] . '&nbsp;x</td>' . "\n" .
-         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrl( $order->contents[$opid]['id'] ) .'">'. $order->contents[$opid]['name'] . '</a>';
+         '          <td class="main" valign="top"><a href="' . CommerceProduct::getDisplayUrlFromHash( $order->contents[$opid] ) .'">'. $order->contents[$opid]['name'] . '</a>';
 
     if ( !empty( $order->contents[$opid]['attributes'] ) ) {
       for ($j=0, $n2=sizeof($order->contents[$opid]['attributes']); $j<$n2; $j++) {

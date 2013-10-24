@@ -2,8 +2,8 @@
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
-	<div class="header">
-		<h1 class="header">{tr}Referer Revenue{/tr} : {$smarty.request.timeframe|escape} :  {$referer|escape}</h1>
+	<div class="page-header">
+		<h1>{tr}Referer Revenue{/tr} : {$smarty.request.timeframe|escape} :  {$referer|escape}</h1>
 	</div>
 
 	<div class="body">
@@ -13,35 +13,34 @@
 		<input type="hidden" name="timeframe" value="{$smarty.request.timeframe}"/>
 		<input type="hidden" name="sort_mode" value="{$smarty.request.sort_mode}"/>
 		{legend legend="Search Referer URL"}
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Include"}
 			{forminput}
 				<input type="text" name="include" value="{$smarty.request.include|escape}"/>
 			{/forminput}
 		</div>
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Exclude"}
 			{forminput}
 				<input type="text" name="exclude" value="{$smarty.request.exclude|escape}"/>
 				{formhelp note="Separate multiple terms with a comma. Search is not case-sensitive"}
 			{/forminput}
 		</div>
-		<div class="row">
-			{formlabel label="New Registrations"}
-			{forminput}
-				<input type="checkbox" name="new_reg" value="y" {if $smarty.request.new_reg}checked="checked"{/if}/>
+		<div class="control-group">
+			<label class="checkbox">
+				<input type="checkbox" name="new_reg" value="y" {if $smarty.request.new_reg}checked="checked"{/if}/>New Registrations
 				{formhelp note="Only include new registrations that occurred during this timeframe."}
-			{/forminput}
+			</label>
 		</div>
-		<div class="row submit">
+		<div class="control-group submit">
 			{forminput}
-				<input type="submit" name="Search" value="Search"/>
+				<input type="submit" class="btn" name="Search" value="Search"/>
 			{/forminput}
 		</div>
 		{/legend}
 		{/form}
 
-		<table class="data stats">
+		<table class="table data stats">
 			<caption>{tr}Revenue By Referer{/tr}</caption>
 			<thead>
 			<tr>

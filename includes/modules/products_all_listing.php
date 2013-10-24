@@ -22,9 +22,6 @@
 
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-          <tr>
-            <td colspan="3"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-          </tr>
 <?php
   $group_id = zen_get_configuration_key_value('PRODUCT_ALL_LIST_GROUP_ID');
 
@@ -50,7 +47,7 @@
       }
 
       if (PRODUCT_ALL_LIST_WEIGHT != '0' and zen_get_show_product_switch($products_all->fields['products_id'], 'weight')) {
-        $display_products_weight = TEXT_PRODUCTS_WEIGHT . $products_all->fields['products_weight'] . TEXT_SHIPPING_WEIGHT . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_WEIGHT, 3, 1));
+        $display_products_weight = TEXT_PRODUCTS_WEIGHT . $products_all->fields['products_weight'] . tra( 'lbs' ) . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_WEIGHT, 3, 1));
       } else {
         $display_products_weight = '';
       }
@@ -201,9 +198,6 @@
             </td>
           </tr>
 <?php } ?>
-          <tr>
-            <td colspan="3"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-          </tr>
 <?php
       $products_all->MoveNext();
     }

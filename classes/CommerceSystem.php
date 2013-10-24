@@ -1,13 +1,13 @@
 <?php
 
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
+require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
 
-class CommerceSystem extends BitBase {
+class CommerceSystem extends BitSingleton {
 	var $mConfig;
 	var $mProductTypeLayout;
 
-	function CommerceSystem() {
-		BitBase::BitBase();
+	function __construct() {
+		parent::__construct();
 		$this->loadConfig();
 	}
 
@@ -38,6 +38,10 @@ class CommerceSystem extends BitBase {
 		return $ret;
 	}
 
+	static function isConfigActive( $pConfigName ) {
+		return ((defined( $pConfigName ) && strtolower( constant( $pConfigName ) ) == 'true') ? true : false);
+	}
+
 	function setHeadingTitle( $pTitle ) {
 		if( !defined( 'HEADING_TITLE' ) ) {
 			define( 'HEADING_TITLE', $pTitle );
@@ -45,4 +49,3 @@ class CommerceSystem extends BitBase {
 	}
 }
 
-?>

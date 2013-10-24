@@ -1,6 +1,6 @@
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce {$smarty.request.main_page}">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Sales and Commissions{/tr}</h1>
 	</div>
 
@@ -14,7 +14,7 @@
 <div class="edit bitcommerce {$smarty.request.main_page}">
 	<div class="body">
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Commission History"}
 
 	{forminput}

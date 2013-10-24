@@ -1,5 +1,5 @@
 <div class="listing bitcommerce">
-	<div class="header">
+	<div class="page-header">
 		<h1>{$listTitle|default:"{tr}Products{/tr}"}</h1>
 	</div>
 

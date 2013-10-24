@@ -32,7 +32,7 @@
       $this->server = Array();
       $this->database = Array();
       $this->phpBB = Array();
-      $this->get_phpBB_info();
+//      $this->get_phpBB_info();
     }
 
     function get_phpBB_info() {
@@ -129,7 +129,7 @@
        //good so far. now let's check for relative path access so we can successfully "include" the config.php file when needed.
         if ($debug1==true) echo "ok, now let's check relative paths<br>";
         if ($debug1==true) echo 'docroot='.$_SERVER['DOCUMENT_ROOT'].'<br>';
-        $this->phpBB['phpbb_url'] = str_replace(array($_SERVER['DOCUMENT_ROOT'],substr($script_filename,0,strpos($script_filename,$_SERVER['PHP_SELF']))),'',$dir_phpbb);
+        $this->phpBB['phpbb_url'] = str_replace(array($_SERVER['DOCUMENT_ROOT'],substr($script_filename,0,strpos($script_filename,$_SERVER['SCRIPT_NAME']))),'',$dir_phpbb);
         $this->phpBB['installed'] = true;
         if ($debug1==true) echo 'URL='.$this->phpBB['phpbb_url'].'<br>';
         //if neither of the relative paths validate, the function still returns false for 'installed'.

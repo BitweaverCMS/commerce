@@ -21,22 +21,22 @@
 //
 
 // header text in includes/header.php
-define('HEADER_TITLE_CREATE_ACCOUNT', 'Create Account');
-define('HEADER_TITLE_MY_ACCOUNT', 'My Account');
-define('HEADER_TITLE_CART_CONTENTS', 'Shopping Cart');
-define('HEADER_TITLE_CHECKOUT', 'Checkout');
-define('HEADER_TITLE_TOP', 'Top');
-define('HEADER_TITLE_CATALOG', 'Shopping');
-define('HEADER_TITLE_LOGOFF', 'Log Out');
-define('HEADER_TITLE_LOGIN', 'Log In');
+define('HEADER_TITLE_CREATE_ACCOUNT', tra( 'Create Account' ) );
+define('HEADER_TITLE_MY_ACCOUNT', tra( 'My Account' ) );
+define('HEADER_TITLE_CART_CONTENTS', tra( 'Shopping Cart' ) );
+define('HEADER_TITLE_CHECKOUT', tra( 'Checkout' ) );
+define('HEADER_TITLE_TOP', tra( 'Top' ) );
+define('HEADER_TITLE_CATALOG', tra( 'Shopping' ) );
+define('HEADER_TITLE_LOGOFF', tra( 'Log Out' ) );
+define('HEADER_TITLE_LOGIN', tra( 'Log In' ) );
 
 // added defines for header alt and text
-define('HEADER_ALT_TEXT', 'Powered by Zen Cart :: The Art of E-Commerce');
-define('HEADER_SALES_TEXT', '');
-define('HEADER_LOGO_WIDTH', '200px');
-define('HEADER_LOGO_HEIGHT', '23px');
-define('HEADER_LOGO_IMAGE', 'logo.gif');
+define('HEADER_ALT_TEXT', tra( 'Powered by Zen Cart :: The Art of E-Commerce' ) );
+define('HEADER_SALES_TEXT', tra( '' ) );
+define('HEADER_LOGO_WIDTH', tra( '200px' ) );
+define('HEADER_LOGO_HEIGHT', tra( '23px' ) );
+define('HEADER_LOGO_IMAGE', tra( 'logo.gif' ) );
 
 // header Search Button/Box Search Button
-define('HEADER_SEARCH_BUTTON','Search');
+define('HEADER_SEARCH_BUTTON', tra( 'Search' ) );
 ?>

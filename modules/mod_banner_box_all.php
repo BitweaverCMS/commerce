@@ -51,6 +51,6 @@ if( $rs = $gBitDb->Execute($sql) ) {
 }
 
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Sponsors' ) );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Sponsors' );
 }
 ?>

@@ -27,7 +27,7 @@
 
   $oID = zen_db_prepare_input($_GET['oID']);
 
-  include(DIR_WS_CLASSES . 'order.php');
+  require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
   $order = new order($oID);
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -36,12 +36,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<script type="text/javascript" src="includes/menu.js"></script>
 </head>
 <body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
 
 <!-- body_text //-->
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
+<table>
   <tr>
     <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
       <tr>
@@ -137,7 +136,7 @@
     <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
   </tr>
   <tr>
-    <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <td><table>
       <tr class="dataTableHeadingRow">
         <td class="dataTableHeadingContent" colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
         <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></td>

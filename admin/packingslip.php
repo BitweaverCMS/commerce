@@ -8,14 +8,14 @@
 //  $Id$
 
 require('includes/application_top.php');
-require_once( BITCOMMERCE_PKG_PATH.'includes/classes/order.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 $currencies = new currencies();
 
 $gBitOrder = new order( $_REQUEST['oID'] );
 $gBitSmarty->assign_by_ref( 'gBitOrder', $gBitOrder );
 
-$gBitSystem->setBrowserTitle( tra( 'Order #{$gBitOrder->mOrdersId} Packing Slip Order #' ).$gBitOrder->getField( 'orders_id' ) );
+$gBitSystem->setBrowserTitle( tra( 'Order #' ).' '.$gBitOrder->mOrdersId.' '.tra( 'Packing Slip' ) );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_packing_slip.tpl' );
 

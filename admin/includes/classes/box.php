@@ -25,7 +25,7 @@
   $heading = array();
   $heading[] = array('params' => 'class="menuBoxHeading"',
                      'text'  => BOX_HEADING_TOOLS,
-                     'link'  => zen_href_link_admin(basename($PHP_SELF), zen_get_all_get_params(array('selected_box')) . 'selected_box=tools'));
+                     'link'  => zen_href_link_admin(basename($_SERVER['SCRIPT_NAME']), zen_get_all_get_params(array('selected_box')) . 'selected_box=tools'));
 
   $contents = array();
   $contents[] = array('text'  => SOME_TEXT);

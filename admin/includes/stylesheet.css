@@ -1,3 +1,24 @@
+
+table.order-items	{ background-color:#f3f3f3; }
+table.table tr.comments	td { border-top:none; }
+
+.table td.supplemental	{ border: none; }
+
+#bitcommerce.adminmode .navbar-inner {
+	padding-left: 0px;
+}
+
+.admin.bitcommerce h1.page-header	{ font-size:16pt; }
+
+.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
+
+.coupon.active{}
+.coupon.inactive	{ background-color:#ddd; }
+.coupon.pending	{ background-color:#ffe; }
+.coupon.active		{ background-color:#efe; }
+.coupon.expired	{ background-color:#fee; }
+
+/* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions
 http://www.oscommerce.com
@@ -5,22 +26,10 @@ Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
 $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
-*/
-@import url("menu.css");/* including stylesheet for dhtml menu */
-@import url("index.css");/* including stylesheet for index.php */
+* /
+@import url("index.css");/* including stylesheet for index.php * /
 a{ text-decoration:none; }
 body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
-
-.admin.bitcommerce .data td.item, 
-.admin.bitcommerce .data th {text-align:left}
-
-.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
-
-.active{}
-.inactive	{ background-color:#ddd; }
-.pending	{ background-color:#ffe; }
-.active		{ background-color:#efe; }
-.expired	{ background-color:#fee; }
 
 a:hover{ text-decoration:underline; }
 a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }
@@ -82,15 +91,13 @@ td.attributeBoxContent{
 background-color:#dcdbd1;
 color:#333333;
 }
-td.ot-subtotal-Amount,td.ot-cod-fee-Amount,td.ot-group-pricing-Amount,td.ot-gv-Amount,td.ot-loworderfee-Amount,td.ot-shipping-Amount,td.ot-subtotal-Amount,td.ot-tax-Amount,td.ot-coupon-Amount{
-}
-td.ot-subtotal-Text,td.ot-cod-fee-Text,td.ot-total-Text,td.ot-group-pricing-Text,td.ot-gv-Text,td.ot-loworderfee-Text,td.ot-shipping-Text,td.ot-subtotal-Text,td.ot-tax-Text,td.ot-coupon-Text{
-font-weight:bold;
-}
-td.ot-total-Amount{
-border-top:1px solid #9a9a9a;
-font-weight:bold;
-}
+
+.admin.bitcommerce .data .subtotal,
+.admin.bitcommerce .data .total { font-weight: bold; border-bottom: none; border-top: 1px solid #AEA696; }
+
+.admin.bitcommerce .data .value { white-space:nowrap; }
+
+
 tr.attributeBoxContent{
 background-color:#dcdbd1;
 color:#333333;
@@ -160,13 +167,13 @@ background-color:#ffffff;
 .dataTableRowOverWhois{
 background-color:#ffffff;
 }
-.dataTableRowSelected{
+.info{
 background-color:#e7e6e0;
 }
-.dataTableRowSelectedBot{
+.infoBot{
 background-color:#ff93ff;
 }
-.dataTableRowSelectedWhois{
+.infoWhois{
 background-color:#dee4e8;
 }
 .dataTableRowSpacer,td.dataTableRowSpacer,TR.dataTableRowSpacer{
@@ -225,18 +232,24 @@ color:#616060;
 }
 .messageStackCaution{
 background-color:#ffff00;
+padding:5px;
+margin: 10px 0;
 }
 .messageStackError,.messageStackWarning{
 background-color:#ffb3b5;
+padding:5px;
+margin: 10px 0;
 }
 .messageStackSuccess{
 background-color:#d4ffbd;
+padding:5px;
+margin: 10px 0;
 }
 .oldPrice{
 text-decoration:line-through;
 }
 .pageHeading{
-color:#c96e29; /*727272*/
+color:#c96e29;
 font-size:16px;
 font-variant:small-caps;
 font-weight:bold;
@@ -261,8 +274,9 @@ font-size:9px;
 color:#ff6600;
 }
 form.status textarea {width:100%;height:9em;}
-.orderhistory.data { padding:0;margin:0;}
-.orderhistory.data li.item { clear:both; margin-bottom:6px;}
-.orderhistory.data li.item.notified { background-color:#ffffee; }
+.orderhistory.data { padding:0;margin:20px 0 20px 0;}
+.orderhistory.data li.item { clear:both; margin-bottom:6px; padding:5px; }
+.orderhistory.data li.item.notified { background-color:#ffffee; color:black; }
 .orderhistory.data .item .date { float:right;}
 .orderhistory.data .item p { padding:6px ; color:#666; margin: 0 0 0 3px; clear:both; }
+*/

@@ -84,6 +84,45 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 			}
 		}
 	}
+
+	function sphinx_bitcommerce_results( $pResults ) {
+		global $gSphinxSystem, $gBitUser, $gBitProduct;
+		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		if( !empty( $pResults['matches'] ) ) {
+			$contentIds = array_keys( $pResults['matches'] );
+
+			$listHash = array( 'content_id_list' => $contentIds );
+			$listHash['hash_key'] = 'products.page_id';
+			$listHash['include_data'] = TRUE;
+			if( $productsList = $gBitProduct->getList( $listHash ) ) {
+				reset( $contentIds );
+				foreach( $productsList as $product ) {
+					$contentId = $product['content_id'];
+					$product['data'] = $product['products_description'];
+					$product['format_guid'] = 'bithtml';
+					$product['stripped_data'] = (!empty( $product['data'] ) ? strip_tags( $gBitProduct->parseData( $product['data'], $product['format_guid'] ) ) : '' );
+					$pResults['matches'][$contentId] = array_merge( $pResults['matches'][$contentId], $product );
+					$excerptSources[array_search($contentId,$contentIds)] = $product['stripped_data'];
+				}
+				ksort( $excerptSources );
+				$gSphinxSystem->populateExcerpts( $pResults, $excerptSources );
+			}
+		}
+
+		return $pResults;
+	}
+
+    //  Get a key position in array
+    function array_kpos(&$array,$key) {
+        $x=0;
+        foreach($array as $i=>$v) {
+            if($key===$i) return $x;
+            $x++;
+        }
+        return false;
+    }
+
+
 }
 
 

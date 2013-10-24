@@ -19,10 +19,6 @@ class CommerceCommissionBase extends BitBase {
 	// Must be set by all derivative classes
 	var $mCommissionType = NULL;
 
-	function __construct() {
-		parent::BitBase();
-	}
-
 	function verifyPayment( &$pParamHash ) {
 		global $gBitUser;
 		$pParamHash['payment_store']['payee_user_id'] = $pParamHash['user_id'];
@@ -33,8 +29,8 @@ class CommerceCommissionBase extends BitBase {
 		if( empty( $pParamHash['period_end_date'] ) ) {
 			$pParamHash['period_end_date'] = date( 'Y-m-d' );
 		}
-		$pParamHash['payment_store']['period_start_date'] =  $this->mDb->mDb->DBTimeStamp( $pParamHash['period_start_date'].' 00:00:00-0' );
-		$pParamHash['payment_store']['period_end_date'] = $this->mDb->mDb->DBTimeStamp( $pParamHash['period_end_date'].' 23:59:59-0' );
+		$pParamHash['payment_store']['period_start_date'] =  $this->mDb->mDb->DBTimeStamp( $pParamHash['period_start_date'].' 00:00:00' );
+		$pParamHash['payment_store']['period_end_date'] = date( 'c', strtotime( $pParamHash['period_end_date'].' +1 day ' ) - 1 ); // $this->mDb->mDb->DBTimeStamp( $pParamHash['period_end_date'].' 23:59:59 '.date('O') );
 		$pParamHash['payment_store']['payment_date'] = $this->mDb->NOW();
 		$pParamHash['payment_store']['payment_amount'] = preg_replace( '/[^\d\.]/', '', $pParamHash['payment_amount'] );
 		$pParamHash['payment_store']['payment_method'] = $pParamHash['payment_method'];

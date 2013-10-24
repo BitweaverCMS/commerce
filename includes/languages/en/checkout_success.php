@@ -20,19 +20,19 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE_1', 'Checkout');
-define('NAVBAR_TITLE_2', 'Success - Thank You');
+define('NAVBAR_TITLE_1', tra( 'Checkout' ) );
+define('NAVBAR_TITLE_2', tra( 'Success - Thank You' ) );
 
-define('TEXT_SUCCESS', 'A few words about the approximate shipping time or your processing policy would be put here. You can change this text in: <strong>includes/ languages/ YOUR_LANGUAGE/ checkout_success.php</strong>');
-define('TEXT_SEE_ORDERS', 'You can view your order history by going to the <a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">My Account</a> page and by clicking on view all orders.');
-define('TEXT_CONTACT_STORE_OWNER', 'Please direct any questions you have to <a href="' . zen_href_link(FILENAME_CONTACT_US) . '">customer service</a>.');
+define('TEXT_SUCCESS', tra( 'A few words about the approximate shipping time or your processing policy would be put here. You can change this text in: <strong>includes/ languages/ YOUR_LANGUAGE/ checkout_success.php</strong>' ) );
+define('TEXT_SEE_ORDERS', 'You can view your order history by going to the <a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">My Account</a> page and by clicking on view all orders.' );
+define('TEXT_CONTACT_STORE_OWNER', tra( 'Please direct any questions you have to <a href="' . zen_href_link(FILENAME_CONTACT_US) . '">customer service</a>.' ) );
 
-define('TABLE_HEADING_COMMENTS', '');
+define('TABLE_HEADING_COMMENTS', tra( '' ) );
 
-define('TABLE_HEADING_DOWNLOAD_DATE', 'Link expires:');
-define('TABLE_HEADING_DOWNLOAD_COUNT', 'Downloads remaining:');
-define('HEADING_DOWNLOAD', 'Download your products here:');
-define('FOOTER_DOWNLOAD', 'You can also download your products at a later time at \'%s\'');
+define('TABLE_HEADING_DOWNLOAD_DATE', tra( 'Link expires:' ) );
+define('TABLE_HEADING_DOWNLOAD_COUNT', tra( 'Downloads remaining:' ) );
+define('HEADING_DOWNLOAD', tra( 'Download your products here:' ) );
+define('FOOTER_DOWNLOAD', tra( 'You can also download your products at a later time at \'%s\'' ) );
 
-define('TABLE_HEADING_DOWNLOAD_FILENAME','Product Download:');
+define('TABLE_HEADING_DOWNLOAD_FILENAME', tra( 'Product Download:' ) );
 ?>

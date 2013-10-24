@@ -168,6 +168,7 @@ function clean_input( &$pArray ) {
 // initialize the message stack for output messages
 	require_once(DIR_FS_CLASSES . 'message_stack.php');
 	$messageStack = new messageStack;
+	$gBitSmarty->assign( 'messageStack', $messageStack );
 
 
 
@@ -183,10 +184,6 @@ function clean_input( &$pArray ) {
 
 // Shopping cart actions
 	if (isset($_REQUEST['action'])) {
-// redirect the customer to a friendly cookie-must-be-enabled page if cookies are disabled
-		if ($session_started == false) {
-			zen_redirect(zen_href_link(FILENAME_COOKIE_USAGE));
-		}
 
 		if (DISPLAY_CART == 'true') {
 			$goto =	FILENAME_SHOPPING_CART;
@@ -270,7 +267,7 @@ function clean_input( &$pArray ) {
 			case 'buy_now' :			
 				if (isset($_REQUEST['products_id'])) {
 					if (zen_has_product_attributes($_REQUEST['products_id'])) {
-						zen_redirect( CommerceProduct::getDisplayUrl( $_REQUEST['products_id']) );
+						zen_redirect( CommerceProduct::getDisplayUrlFromId( $_REQUEST['products_id']) );
 					} else {
 						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], ($gBitCustomer->mCart->get_quantity( $_REQUEST['products_id'] ) + zen_get_buy_now_qty( $_REQUEST['products_id'] )) );
 					}

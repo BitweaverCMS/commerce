@@ -24,13 +24,13 @@
   define('MODULE_ORDER_TOTAL_GV_HEADER', TEXT_GV_NAMES . '/Discount Coupons');
   define('MODULE_ORDER_TOTAL_GV_DESCRIPTION', TEXT_GV_NAMES);
 if( !defined( 'SHIPPING_NOT_INCLUDED' ) ) {
-  define('SHIPPING_NOT_INCLUDED', ' [Shipping not included]');
+  define('SHIPPING_NOT_INCLUDED', tra( ' [Shipping not included]' ) );
 }
 if( !defined( 'TAX_NOT_INCLUDED' ) ) {
-  define('TAX_NOT_INCLUDED', ' [Tax not included]');
+  define('TAX_NOT_INCLUDED', tra( ' [Tax not included]' ) );
 }
-  define('MODULE_ORDER_TOTAL_GV_USER_PROMPT', 'Apply balance ->&nbsp;');
+  define('MODULE_ORDER_TOTAL_GV_USER_PROMPT', tra( 'Apply balance ->&nbsp;' ) );
   define('MODULE_ORDER_TOTAL_GV_TEXT_ENTER_CODE', TEXT_GV_REDEEM);
-  define('TEXT_INVALID_REDEEM_AMOUNT', 'Incorrect amount of balance to use');
-  define('MODULE_ORDER_TOTAL_GV_USER_BALANCE', 'Available balance: ');
+  define('TEXT_INVALID_REDEEM_AMOUNT', tra( 'Incorrect amount of balance to use' ) );
+  define('MODULE_ORDER_TOTAL_GV_USER_BALANCE', tra( 'Available balance: ' ) );
 ?>

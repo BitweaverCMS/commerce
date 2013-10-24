@@ -129,20 +129,20 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
         $this->quotes = array('id' => $this->code, 'module' => $this->title, 'weight' => $show_box_weight);
 
         $methods = array();
-// BOF: UPS USPS
+// BOF: UPS UPS
         $allowed_methods = explode(", ", MODULE_SHIPPING_UPS_TYPES);
         $std_rcd = false;
-// EOF: UPS USPS
+// EOF: UPS UPS
         $qsize = sizeof($upsQuote);
         for ($i=0; $i<$qsize; $i++) {
           list($type, $cost) = each($upsQuote[$i]);
-// BOF: UPS USPS
+// BOF: UPS UPS
           if ($type=='STD') {
             if ($std_rcd) continue;
               else $std_rcd = true;
             };
           if (!in_array($type, $allowed_methods)) continue;
-// EOF: UPS USPS
+// EOF: UPS UPS
           $methods[] = array('id' => $type,
                              'title' => 'UPS '.$this->types[$type],
                              'cost' => ($cost + MODULE_SHIPPING_UPS_HANDLING) * $shippingNumBoxes,
@@ -160,10 +160,10 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
         $this->quotes = array('module' => $this->title,
                               'error' => 'An error occurred with the UPS shipping calculations.<br />' . $upsQuote . '<br />If you prefer to use UPS as your shipping method, please contact the store owner.');
 */
-// BOF: UPS USPS
+// BOF: UPS UPS
         $this->quotes = array('module' => $this->title,
                               'error' => tra( 'We are unable to obtain a rate quote for UPS shipping. Please contact support if no other alternative is shown.'  ).'<br /> ( '.$upsQuote.' )');
-// EOF: UPS USPS
+// EOF: UPS UPS
       }
 
 		if (zen_not_null($this->icon)) {
@@ -193,8 +193,8 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Tax Basis', 'MODULE_SHIPPING_UPS_TAX_BASIS', 'Shipping', 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone', '7', '0', 'zen_cfg_select_option(array(\'Shipping\', \'Billing\', \'Store\'), ', now())");
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Shipping Zone', 'MODULE_SHIPPING_UPS_ZONE', '0', 'If a zone is selected, only enable this shipping method for that zone.', '7', '0', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
       $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_SHIPPING_UPS_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '7', '0', now())");
-      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ( 'Shipping Methods: <br />Nxt AM, Nxt AM Ltr, Nxt, Nxt Ltr, Nxt PR, Nxt Save, Nxt Save Ltr, 2nd AM, 2nd AM Ltr, 2nd, 2nd Ltr, 3 Day Select, Ground, Canada,World Xp Save, World Xp, World Xp Ltr, World Xp Plus, World Xp Plus Ltr, World Expedite', 'MODULE_SHIPPING_UPS_TYPES', '1DM, 1DML, 1DA, 1DAL, 1DAPI, 1DP, 1DPL, 2DM, 2DML, 2DA, 2DAL, 3DS, GND, STD, WXS, XPR, XPRL, XDM, XDML, XPD', 'Select the USPS services to be offered.', '6', '13', 'zen_cfg_select_multioption(array(\'1DM\',\'1DML\', \'1DA\', \'1DAL\', \'1DAPI\', \'1DP\', \'1DPL\', \'2DM\', \'2DML\', \'2DA\', \'2DAL\', \'3DS\',\'GND\', \'STD\', \'WXS\', \'XPR\', \'XPRL\', \'XDM\', \'XDML\', \'XPD\'), ', now() )");
-// EOF: UPS USPS
+      $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ( 'Shipping Methods: <br />Nxt AM, Nxt AM Ltr, Nxt, Nxt Ltr, Nxt PR, Nxt Save, Nxt Save Ltr, 2nd AM, 2nd AM Ltr, 2nd, 2nd Ltr, 3 Day Select, Ground, Canada,World Xp Save, World Xp, World Xp Ltr, World Xp Plus, World Xp Plus Ltr, World Expedite', 'MODULE_SHIPPING_UPS_TYPES', '1DM, 1DML, 1DA, 1DAL, 1DAPI, 1DP, 1DPL, 2DM, 2DML, 2DA, 2DAL, 3DS, GND, STD, WXS, XPR, XPRL, XDM, XDML, XPD', 'Select the UPS services to be offered.', '6', '13', 'zen_cfg_select_multioption(array(\'1DM\',\'1DML\', \'1DA\', \'1DAL\', \'1DAPI\', \'1DP\', \'1DPL\', \'2DM\', \'2DML\', \'2DA\', \'2DAL\', \'3DS\',\'GND\', \'STD\', \'WXS\', \'XPR\', \'XPRL\', \'XDM\', \'XDML\', \'XPD\'), ', now() )");
+// EOF: UPS UPS
     }
 
     function remove() {
@@ -317,22 +317,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
       } else {
         return 'error';
       }
-
-// BOF: UPS USPS
-/*
-TEST by checking out in the catalog; try a variety of shipping destinations to be sure
-your customers will be properly served.  If you are not getting any quotes, try enabling
-more alternatives in admin. Make sure your store's postal code is set in Admin ->
-Configuration -> Shipping/Packaging, since you won't get any quotes unless there is
-a origin that UPS recognizes.
-
-If you STILL don't get any quotes, here is a way to find out exactly what UPS is sending
-back in response to rate quote request.  At line 278, you will find this statement in a
-comment block:
-
-    mail('you@yourdomain.com','UPS response',$body,'From: <you@yourdomain.com>');
-*/
-// EOF: UPS USPS
 
       $body_array = explode("\n", $body);
 

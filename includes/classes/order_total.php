@@ -33,11 +33,15 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
 //          include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/' . $value);
-          include(zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $value, 'false'));
-          include(DIR_WS_MODULES . 'order_total/' . $value);
-
           $class = substr($value, 0, strrpos($value, '.'));
-          $GLOBALS[$class] = new $class;
+			if( !class_exists( $class ) ) {
+				$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $value, 'false');
+				if( file_exists( $langFile ) ) {
+					include( $langFile );
+				}
+				include(DIR_WS_MODULES . 'order_total/' . $value);
+			}
+			$GLOBALS[$class] = new $class;
         }
       }
     }
@@ -74,8 +78,8 @@
           $size = sizeof($GLOBALS[$class]->output);
           for ($i=0; $i<$size; $i++) {
             $output_string .= '              <tr>' . "\n" .
-                              '                <td align="right" class="' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Text">' . $GLOBALS[$class]->output[$i]['title'] . '</td>' . "\n" .
-                              '                <td align="right" class="' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Amount">' . $GLOBALS[$class]->output[$i]['text'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Text">' . $GLOBALS[$class]->output[$i]['title'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Amount">' . $GLOBALS[$class]->output[$i]['text'] . '</td>' . "\n" .
                               '              </tr>';
           }
         }
@@ -166,12 +170,10 @@
           $order_total=$this->get_order_total_main($class,$order_total);
           if ( !empty( $GLOBALS[$class]->credit_class ) ) {
             $total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
-//echo $total_deductions . '#'.$order_total;
             $order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);
           }
         }
         $difference = $order->info['total'] - $total_deductions;
-//die('here');
         if ( $difference <= 0.009 ) {
           $credit_covers = true;
         }

@@ -15,8 +15,8 @@
 
 class CommerceProductManager extends BitBase {
 
-	function CommerceProductManager() {
-		parent::BitBase();
+	function __construct() {
+		parent::__construct();
 	}
 
 	function getOptionsList( $pListHash=NULL ) {

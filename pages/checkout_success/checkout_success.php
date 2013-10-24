@@ -24,6 +24,26 @@ global $newOrdersId;
 $newOrdersId = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
 $gBitSmarty->assign( 'newOrdersId', $newOrdersId );
 
+if (isset($_GET['action']) && ($_GET['action'] == 'update')) {
+	$notify_string = 'action=notify&';
+
+	if( !empty( $_POST['notify'] ) && is_array( $_POST['notify'] ) ) {
+		for ($i=0, $n=sizeof( $_POST['notify'] ); $i<$n; $i++) {
+			$notify_string .= 'notify[]=' . $_POST['notify'][$i] . '&';
+		}
+		if (strlen($notify_string) > 0) $notify_string = substr($notify_string, 0, -1);
+	}
+	if ($notify_string == 'action=notify&') {
+		zen_redirect(zen_href_link(FILENAME_DEFAULT, '', 'SSL'));
+	} else {
+		zen_redirect(zen_href_link(FILENAME_DEFAULT, $notify_string));
+	}
+}
+
+require_once(DIR_FS_MODULES . 'require_languages.php');
+$breadcrumb->add(NAVBAR_TITLE_1);
+$breadcrumb->add(NAVBAR_TITLE_2);
+
 if( $gBitCustomer->getGlobalNotifications() != '1' ) {
 	$products_array = array();
 	$products_query = "SELECT DISTINCT `products_id`, `products_name` from " . TABLE_ORDERS_PRODUCTS . "
@@ -40,6 +60,5 @@ $gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gBitUser->m
 $define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
 
 define( 'HEADING_TITLE', tra( 'Order Success!' )." #$newOrdersId" );
-print $gBitSmarty->fetch( 'bitpackage:bitcommerce/checkout_success.tpl' );
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_success.tpl' );
 
-?>

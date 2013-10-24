@@ -22,7 +22,7 @@
 $version_check_index=true;
 require('includes/application_top.php');
 
-require_once( DIR_FS_CLASSES.'order.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 define( 'HEADING_TITLE', 'List Orders' );
 
@@ -40,6 +40,9 @@ if( @BitBase::verifyId( $_REQUEST['products_options_values_id'] ) ) {
 	$listHash['products_options_values_id'] = $_REQUEST['products_options_values_id'];
 }
 
+if( !empty( $_REQUEST['products_type'] ) ) {
+	$listHash['products_type'] = $_REQUEST['products_type'];
+}
 if( !empty( $_REQUEST['period'] ) ) {
 	$listHash['period'] = $_REQUEST['period'];
 }
@@ -63,11 +66,21 @@ $listHash['orders_products'] = TRUE;
 
 $orders = order::getList( $listHash );
 $gBitSmarty->assign_by_ref( 'listOrders', $orders );
-$statuses = commerce_get_statuses( TRUE );
 $statuses['all'] = 'All';
+
+foreach( commerce_get_statuses( TRUE ) as $statusId=>$statusName ) {
+	$statuses[$statusId] = $statusName;
+}
 $gBitSmarty->assign( 'commerceStatuses', $statuses );
 
-$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+$types[''] = 'All';
+$productTypes = CommerceProduct::getTypes();
+foreach( $productTypes as $typeId=>$typeHash ) {
+	$types[$typeId] = $typeHash['type_name'];
+}
+$gBitSmarty->assign_by_ref( 'commerceProductTypes', $types );
+
+$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders.tpl' );
 
 require('includes/application_bottom.php');
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 

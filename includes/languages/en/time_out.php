@@ -20,15 +20,15 @@
 // $Id$
 //
 
-define('NAVBAR_TITLE', 'Login Time Out');
-define('HEADING_TITLE', 'Login Time Out');
+define('NAVBAR_TITLE', tra( 'Login Time Out' ) );
+define('HEADING_TITLE', tra( 'Login Time Out' ) );
 
 define('TEXT_INFORMATION', 'We\'re sorry but for your protection,
   due to the long delay while either checking out,
-  or on a secure page, the session has timed out.<br /><br />
+  or on a secure page, the session has timed out.
   If you were placing an order, please
   <a href="' . FILENAME_LOGIN . '">Login</a>
-  and your Shopping Cart will be restored. You may then go back to the Checkout and complete your final purchases.<br /><br />
+  and your Shopping Cart will be restored. You may then go back to the Checkout and complete your final purchases.
   If you had completed an order and wish to review it' .
   (DOWNLOAD_ENABLED == 'true' ? ', or had a download and wish to retrieve it' : '') . ',
   please go to your <a href="' . zen_href_link(FILENAME_ACCOUNT, '', 'SSL') . '">My Account</a> page to view your order.

@@ -19,14 +19,14 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-define('BOX_HEADING_WHOS_ONLINE', 'Who\'s Online');
-define('BOX_WHOS_ONLINE_THEREIS', 'There currently is');
-define('BOX_WHOS_ONLINE_THEREARE', 'There currently are');
-define('BOX_WHOS_ONLINE_GUEST', 'guest');
-define('BOX_WHOS_ONLINE_GUESTS', 'guests');
-define('BOX_WHOS_ONLINE_AND', 'and');
-define('BOX_WHOS_ONLINE_MEMBER', 'member');
-define('BOX_WHOS_ONLINE_MEMBERS', 'members');
+define('BOX_HEADING_WHOS_ONLINE', tra( 'Who\'s Online' ) );
+define('BOX_WHOS_ONLINE_THEREIS', tra( 'There currently is' ) );
+define('BOX_WHOS_ONLINE_THEREARE', tra( 'There currently are' ) );
+define('BOX_WHOS_ONLINE_GUEST', tra( 'guest' ) );
+define('BOX_WHOS_ONLINE_GUESTS', tra( 'guests' ) );
+define('BOX_WHOS_ONLINE_AND', tra( 'and' ) );
+define('BOX_WHOS_ONLINE_MEMBER', tra( 'member' ) );
+define('BOX_WHOS_ONLINE_MEMBERS', tra( 'members' ) );
 
-define('BOX_WHOS_ONLINE_ONLINE', 'online.');
+define('BOX_WHOS_ONLINE_ONLINE', tra( 'online.' ) );
 ?>

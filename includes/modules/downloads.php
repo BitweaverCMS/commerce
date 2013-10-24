@@ -105,7 +105,7 @@
   </table>
 <?php
 // old way
-//    if (!strstr($PHP_SELF, FILENAME_ACCOUNT_HISTORY_INFO)) {
+//    if (!strstr($_SERVER['SCRIPT_NAME'], FILENAME_ACCOUNT_HISTORY_INFO)) {
 // new way
    if (!($_GET['main_page']==FILENAME_ACCOUNT_HISTORY_INFO)) {
 ?>

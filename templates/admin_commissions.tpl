@@ -7,10 +7,12 @@
 <script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/dynarch/jscalendar/calendar-setup.js"></script>
 
 <div class="admin bitcommerce">
-	<div class="header">
-		<h1 class="header">{tr}Commissions{/tr}</h1>
+	<div class="page-header">
+		<h1>{tr}Commissions{/tr}</h1>
 	</div>
 	<div class="body">
+
+		{formfeedback error=$errors}
 
 		{include file="bitpackage:bitcommerce/admin_commissions_list_inc.tpl"}
 

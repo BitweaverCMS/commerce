@@ -7,14 +7,14 @@
 // +----------------------------------------------------------------------+
 //  $Id$
 require('includes/application_top.php');
-require_once( DIR_FS_CLASSES.'order.php');
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 
 require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 $shipping = new CommerceShipping();
 $order->calculate();
 // get all available shipping quotes
 
-if( !empty( $_REQUEST['change_shipping'] ) ) {
+if( !empty( $_REQUEST['change_shipping'] ) && !empty( $_REQUEST['shipping'] ) ) {
 	list($module, $method) = explode('_', $_REQUEST['shipping']);
 	if ( is_object($$module) ) {
 		$quote = $shipping->quote( $order->getWeight(), $method, $module);

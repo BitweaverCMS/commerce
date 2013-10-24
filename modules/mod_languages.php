@@ -24,7 +24,7 @@ global $gBitDb, $gCommerceSystem, $gBitProduct, $lng;
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 $show_languages= false;
-if (substr(basename($_SERVER['PHP_SELF']), 0, 8) != 'checkout') {
+if (substr(basename($_SERVER['SCRIPT_NAME']), 0, 8) != 'checkout') {
 	$show_languages= true;
 }
 
@@ -34,12 +34,12 @@ if ($show_languages == true) {
 		$lng = new language;
 	}
 	reset($lng->catalog_languages);
-	$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
+	$_template->tpl_vars['sideboxLanguages'] = new Smarty_variable( $lng->catalog_languages );
 	$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
 	$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
-	$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
+	$_template->tpl_vars['sideboxLanguagesBaseUrl'] = new Smarty_variable( $baseUrl );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', tra( 'Languages' ) );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Languages' );
 }
 ?>

@@ -385,7 +385,7 @@
 				if( strpos( $ret['customers_age'], ' ' ) ) {
 					$ret['customers_age'] = substr( $ret['customers_age'], 0, strrpos( $ret['customers_age'], ' ' ));
 				}
-				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=`cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
+				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
 			}
 		}
 		return $ret;
@@ -531,27 +531,12 @@
 
 
 	function zen_prepare_country_zones_pull_down($country_id = '') {
-// preset the width of the drop-down for Netscape
-		$pre = '';
-		if ( (!zen_browser_detect('MSIE')) && (zen_browser_detect('Mozilla/4')) ) {
-			for ($i=0; $i<45; $i++) $pre .= '&nbsp;';
-		}
-
-		$zones = zen_get_country_zones($country_id);
-
-		if (sizeof($zones) > 0) {
-			$zones_SELECT = array(array('id' => '', 'text' => PLEASE_SELECT));
-			$zones = array_merge($zones_select, $zones);
-		} else {
-			$zones = array(array('id' => '', 'text' => TYPE_BELOW));
-// create dummy options for Netscape to preset the height of the drop-down
-			if ( (!zen_browser_detect('MSIE')) && (zen_browser_detect('Mozilla/4')) ) {
-				for ($i=0; $i<9; $i++) {
-					$zones[] = array('id' => '', 'text' => $pre);
-				}
+		if( $zones = zen_get_country_zones($country_id) ) {
+			foreach( array_keys( $zones ) AS $key ) {
+				$zones[$key]['id'] = $key;
+				$zones[$key]['text'] = $zones[$key]['zone_name'];
 			}
 		}
-
 		return $zones;
 	}
 
@@ -610,7 +595,12 @@
 ////
 	function zen_cfg_pull_down_zone_list($zone_id, $key = '') {
 		$name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
-		return zen_draw_pull_down_menu($name, zen_get_country_zones(STORE_COUNTRY), $zone_id);
+		$zones = zen_get_country_zones(STORE_COUNTRY);
+		foreach( array_keys( $zones ) AS $key ) {
+			$zones[$key]['id'] = $key;
+			$zones[$key]['text'] = $zones[$key]['zone_name'];
+		}
+		return zen_draw_pull_down_menu($name, $zones, $zone_id);
 	}
 
 
@@ -1277,27 +1267,27 @@
 		$day = $usedate['mday'];
 		$month = $usedate['mon'];
 		$year = $usedate['year'];
-		$date_selector = '<SELECT name="'. $prefix .'_day">';
+		$date_selector = '<div class="controls controls-row"><SELECT class="span1" name="'. $prefix .'_day">';
 		for ($i=1;$i<32;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$day) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
 		}
 		$date_selector .= '</select>';
-		$date_selector .= '<SELECT name="'. $prefix .'_month">';
+		$date_selector .= '<SELECT class="span2" name="'. $prefix .'_month">';
 		for ($i=1;$i<13;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$month) $date_selector .= 'selected';
 			$date_selector .= '>' . $month_array[$i] . '</option>';
 		}
 		$date_selector .= '</select>';
-		$date_selector .= '<SELECT name="'. $prefix .'_year">';
+		$date_selector .= '<SELECT class="span2" name="'. $prefix .'_year">';
 		for ($i=2001;$i<2019;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$year) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
 		}
-		$date_selector .= '</select>';
+		$date_selector .= '</select></div>';
 		return $date_selector;
 	}
 

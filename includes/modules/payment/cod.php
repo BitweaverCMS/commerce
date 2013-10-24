@@ -20,7 +20,9 @@
 // $Id$
 //
 
-  class cod {
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+
+  class cod extends CommercePluginPaymentBase {
     var $code, $title, $description, $enabled;
 
 // class constructor

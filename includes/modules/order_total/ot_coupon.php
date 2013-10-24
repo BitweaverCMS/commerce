@@ -1,46 +1,46 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
+// |zen-cart Open Source E-commerce										|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
+// | Copyright (c) 2004 The zen-cart developers							|
+// |																	|
+// | http://www.zen-cart.com/index.php									|
+// |																	|
+// | Portions Copyright (c) 2003 osCommerce								|
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
+// | This source file is subject to version 2.0 of the GPL license,		|
+// | that is bundled with this package in the file LICENSE, and is		|
+// | available through the world-wide-web at the following url:			|
+// | http://www.zen-cart.com/license/2_0.txt.							|
 // | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
+// | to obtain it through the world-wide-web, please send a note to		|
+// | license@zen-cart.com so we can mail you a copy immediately.		|
 // +----------------------------------------------------------------------+
 // $Id: ot_coupon.php,v 1.20 2010/07/21 03:42:31 spiderr Exp $
 //
 
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
-	class ot_coupon {
-		var $title, $output;
+class ot_coupon {
+	var $title, $output;
 
-		function ot_coupon() {
+	function ot_coupon() {
 
-			$this->code = 'ot_coupon';
-			$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
-			$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
-			$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
-			$this->user_prompt = '';
-			$this->sort_order = MODULE_ORDER_TOTAL_COUPON_SORT_ORDER;
-			$this->include_shipping = MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING;
-			$this->include_tax = MODULE_ORDER_TOTAL_COUPON_INC_TAX;
-			$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
-			$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
-			$this->credit_class = true;
-			$this->output = array();
+		$this->code = 'ot_coupon';
+		$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
+		$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
+		$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
+		$this->user_prompt = '';
+		$this->sort_order = MODULE_ORDER_TOTAL_COUPON_SORT_ORDER;
+		$this->include_shipping = MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING;
+		$this->include_tax = MODULE_ORDER_TOTAL_COUPON_INC_TAX;
+		$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
+		$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
+		$this->credit_class = true;
+		$this->output = array();
 
-		}
+	}
 
 	function process() {
 		global $order, $currencies, $gBitDb;
@@ -59,9 +59,9 @@
 				$zq_coupon_code = $gBitDb->Execute($sql);
 				$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
 				$order->info['total'] = $order->info['total'] - $od_amount['total'];
-				$this->output[] = array('title' => $this->title . ': ' . $this->coupon_code . ' :',
-							 'text' => '-' . $currencies->format($od_amount['total']),
-							 'value' => $od_amount['total']);
+				$this->output[] = array( 'title' => $this->title . ': ' . $this->coupon_code . ' :',
+										 'text' => '-' . $currencies->format($od_amount['total']),
+										 'value' => $od_amount['total'] );
 			}
 		}
 	}
@@ -196,12 +196,24 @@
 							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
 						}
 						$runningDiscount = 0;
+						$runningDiscountQuantity = 0;
 						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
 							$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
-							if( $productHash && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
+							if( $coupon->getField( 'quantity_max' ) ) {
+								if( $discountQuantity = $coupon->getField( 'quantity_max' ) - $runningDiscountQuantity ) {
+									if( $discountQuantity > $productHash['products_quantity'] ) {
+										$discountQuantity = $productHash['products_quantity'];
+									}
+								}
+							} else {
+								$discountQuantity = $productHash['products_quantity'];
+							}
+
+							if( $productHash && $discountQuantity && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
 								// _P_ercentage discount
 								if ($coupon->getField( 'coupon_type' ) == 'P') {
-									$itemDiscount = round( ($productHash['final_price'] * $productHash['products_quantity']) * ($coupon->getField( 'coupon_amount' )/100), 2 );
+									$runningDiscountQuantity += $discountQuantity;
+									$itemDiscount = round( ($productHash['final_price'] * $discountQuantity) * ($coupon->getField( 'coupon_amount' )/100), 2 );
 									$totalDiscount += $itemDiscount;
 									if( $runningDiscount < $totalDiscount ) {
 										$runningDiscount += $itemDiscount;
@@ -223,7 +235,7 @@
 											$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 											if ($tax_rate > 0) {
 												if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-												$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+												$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
 												$od_amount['tax'] += $od_amount[$tax_desc];
 											}
 											break;
@@ -244,7 +256,7 @@
 
 											if ($this->is_product_valid( $productHash, $_SESSION['cc_id'])) {
 												if( $runningDiscount < $totalDiscount ) {
-													$runningDiscount += ($productHash['final_price'] * $productHash['products_quantity']);
+													$runningDiscount += ($productHash['final_price'] * $discountQuantity);
 												}
 												if( $runningDiscount > $totalDiscount ) {
 													$runningDiscount = $totalDiscount;
@@ -253,7 +265,7 @@
 												$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 												if ($tax_rate > 0) {
 													if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-													$od_amount[$tax_desc] += (($productHash['final_price'] * $productHash['products_quantity']) * $tax_rate)/100 * $ratio;
+													$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
 													$od_amount['tax'] += $od_amount[$tax_desc];
 												}
 											}
@@ -279,19 +291,19 @@
 		$ret = false;
 
 		if( is_numeric( $coupon_id ) ) {
+			$ret = TRUE;
 			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
 			if( $rs = $gBitDb->query( $query, array( $coupon_id ) ) ) {
 				// gifts are not valid, so only check non-gifts
 				if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
-					$ret = TRUE;
+					$ret = ($rs->RecordCount() == 0); // if there are restictions, assume false
 					while( $restriction = $rs->fetchRow() ) {
-
 						// specific product_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['product_id'] ) ) {
 							if( $restriction['product_id'] == $pProductHash['products_id'] ) {
-								$ret &= ($restriction['coupon_restrict'] == 'N'); // Exact match
-							} else {
-								$ret &= ($restriction['coupon_restrict'] != 'N');
+								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
+							} elseif( $restriction['coupon_restrict']!='O' ) {
+								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
 							}
 						}
 
@@ -299,9 +311,9 @@
 						if( !empty( $restriction['category_id'] ) ) {
 							// check master cat quickly, or go deep diving
 							if ( ($pProductHash['master_categories_id'] ==  $restriction['category_id']) || zen_product_in_category($pProductHash['products_id'], $restriction['category_id']) ) {
-								$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
-							} else {
-								$ret &= ($restriction['coupon_restrict']!='N');
+								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
+							} elseif( $restriction['coupon_restrict']!='O' ) {
+								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
 							}
 						}
 
@@ -309,9 +321,9 @@
 						if( !empty( $restriction['product_type_id'] ) ) {
 							// check master cat quickly, or go deep diving
 							if( $restriction['product_type_id'] == $pProductHash['products_type'] ) {
-								$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
-							} else {
-								$ret &= ($restriction['coupon_restrict']!='N');
+								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
+							} elseif( $restriction['coupon_restrict']!='O' ) {
+								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
 							}
 						}
 
@@ -319,9 +331,9 @@
 						if( !empty( $restriction['products_options_values_id'] ) ) {
 							if( !empty( $pProductHash['attributes'] ) ) {
 								if( in_array( $restriction['products_options_values_id'], $pProductHash['attributes'] ) ) {
-									$ret &= ($restriction['coupon_restrict']=='N'); // Exact match
-								} else {
-									$ret &= ($restriction['coupon_restrict']!='N');
+									$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
+								} elseif( $restriction['coupon_restrict']!='O' ) {
+									$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
 								}
 							} else {
 								$ret = FALSE;

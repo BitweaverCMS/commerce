@@ -1,6 +1,7 @@
 <div class="commercebar">
-
+	{if empty($moduleParams.module_params.breadcrumbs)}
 		{include file="bitpackage:bitcommerce/commerce_nav.tpl"}
+	{/if}
 
 	<span class="floaticon">
 	<strong>{tr}Your Cart{/tr}:</strong>
@@ -11,9 +12,9 @@
 	<a href="" onclick="BitBase.toggleElementDisplay('currencychooser');return false;">{$smarty.session.currency|default:$smarty.const.DEFAULT_CURRENCY} &raquo; &euro;,&yen;</a>
 	<form action="{$smarty.server.REQUEST_URI}" id="currencychooser" style="display:none">
 	<select name="currency" onchange="this.form.submit()">
-		<option value="">Change Currency...</option>
+		<option value="">{tr}Change Currency{/tr}...</option>
 		{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
-			<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|escape:html}</option>
+			<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
 		{/foreach}
 	</select>
 	</form>

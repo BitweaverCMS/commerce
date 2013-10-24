@@ -69,7 +69,7 @@
         $order_total = $shippingWeight;
       }
 
-      $table_cost = split("[:,]" , MODULE_SHIPPING_TABLE_COST);
+      $table_cost = preg_split("#[:,]#" , MODULE_SHIPPING_TABLE_COST);
       $size = sizeof($table_cost);
       for ($i=0, $n=$size; $i<$n; $i+=2) {
         if ($order_total <= $table_cost[$i]) {
@@ -89,10 +89,10 @@
             $show_box_weight = $shippingNumBoxes . ' ' . TEXT_SHIPPING_BOXES;
             break;
           case (2):
-            $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . TEXT_SHIPPING_WEIGHT;
+            $show_box_weight = number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' );
             break;
           default:
-            $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . TEXT_SHIPPING_WEIGHT;
+            $show_box_weight = $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' );
             break;
         }
       }

@@ -10,7 +10,7 @@
 
 <p>&nbsp;</p>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Return Address"}
 	{forminput}
 		<div style="font-size:larger;">{$smarty.const.STORE_NAME_ADDRESS|nl2br}</div>
@@ -21,14 +21,14 @@
   <tr>
 	<td valign="top" style="width:50%">
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Order #"}
 	{forminput}
 		<div style="font-size:large">{$gBitOrder->mOrdersId}</div>
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Date Ordered"}
 	{forminput}
 		{$gBitOrder->info.date_purchased|bit_long_date}
@@ -52,14 +52,15 @@
 
 <p>&nbsp;</p>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Products"}
 	{forminput}
-<table class="data" style="border:0">
+<table class="table data" style="border:0">
 {foreach from=$gBitOrder->contents key=opid item=ordersProduct}
+{assign var=product value=$gBitOrder->getProductObject($ordersProduct.products_id)}
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
-	<td class="item" valign="top" align="right" width="48"><img src="{$gBitProduct->getImageUrl($ordersProduct.products_id,'icon')}" />
+	<td class="item" valign="top" align="right" width="48"><img src="{$product->getThumbnailUrl('icon')}" />
 	<td class="item" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
 	<td class="item" valign="top" width="90%">
 		{$ordersProduct.name} [ {$ordersProduct.model} ]

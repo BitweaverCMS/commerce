@@ -28,12 +28,12 @@
 	$listHash['sort_mode'] = 'products_date_added_desc';
 
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle', tra( 'New Products' ) );
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( tra( 'New Products' ) );
 	}
 
 	if( $productList = $gBitProduct->getList( $listHash ) ) {
 		$newProduct = current( $productList );
 		$whats_new_price = CommerceProduct::getDisplayPrice( $newProduct['products_id'] );
-		$gBitSmarty->assign_by_ref( 'newProduct', $newProduct );
+		$_template->tpl_vars['newProduct'] = new Smarty_variable( $newProduct );
 	}
 ?>

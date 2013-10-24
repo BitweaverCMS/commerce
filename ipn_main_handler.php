@@ -88,7 +88,7 @@ require(DIR_FS_CLASSES . 'shipping.php');
 require(DIR_FS_CLASSES . 'payment.php');
 $payment_modules = new payment($_SESSION['payment']);
 $shipping_modules = new shipping($_SESSION['shipping']);
-require(DIR_FS_CLASSES . 'order.php');
+require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order();
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '7.1 Started Order ' . $_SESSION['payment'] );
 require(DIR_FS_CLASSES . 'order_total.php');

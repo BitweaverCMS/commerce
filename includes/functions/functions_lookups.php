@@ -127,9 +127,18 @@ function zen_get_countries( $pCountryMixed = '', $with_iso_codes = false) {
 
 	function zen_get_country_id( $pCountryName ) {
 		global $gBitDb;
+		$length = strlen( $pCountryName );
+		if( $length > 3 ) {
+			$column = 'countries_name';
+		} elseif( $length == 3 ) {
+			$column = 'countries_iso_code_3';
+		} else {
+			$column = 'countries_iso_code_2';
+		}
+
 		$sql = "SELECT countries_id
 				FROM " . TABLE_COUNTRIES . "
-				WHERE LOWER(`countries_name`) LIKE ?";
+				WHERE LOWER(`$column`) LIKE ?";
 		return( $gBitDb->getOne( $sql, array( '%'.strtolower($pCountryName).'%' ) ) );
 	}
 
@@ -162,16 +171,24 @@ function zen_get_zone_by_name( $pCountryId, $pName ) {
 
 
 ////
+// Returns the zone (State/Province) name given the code
+// TABLES: zones
+function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
+	global $gBitDb;
+	$ret = $pZoneCode;
+	if( $zoneName = $gBitDb->getOne( "select `zone_name` from " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_code` = ?", array( $pCountryId, $pZoneCode ) ) ) {
+		$ret = $zoneName;
+	}
+	return $ret;
+}
+
+////
 // Returns the zone (State/Province) name
 // TABLES: zones
   function zen_get_zone_name($country_id, $zone_id, $default_zone) {
     global $gBitDb;
-    $zone_query = "select `zone_name`
-                   from " . TABLE_ZONES . "
-                   where `zone_country_id` = '" . (int)$country_id . "'
-                   and `zone_id` = '" . (int)$zone_id . "'";
-
-    $zone = $gBitDb->Execute($zone_query);
+    $zone_query = "select `zone_name` from " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_id` = ?";
+    $zone = $gBitDb->query( $zone_query, array( $country_id, $zone_id ) );
 
     if ($zone->RecordCount()) {
       return $zone->fields['zone_name'];
@@ -218,7 +235,7 @@ function zen_get_zone_by_name( $pCountryId, $pName ) {
   function zen_get_zone_id( $pCountryId, $pZoneName ) {
 	global $gBitDb;
 
-	return $gBitDb->getOne( "SELECT `zone_code` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND `zone_name`=?", array( (int)$pCountryId, $pZoneName ) );
+	return $gBitDb->getOne( "SELECT `zone_id` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND `zone_name`=?", array( (int)$pCountryId, $pZoneName ) );
   }
 
 
@@ -655,45 +672,35 @@ function zen_get_info_page($zf_product_id) {
 
 ////
 // stop regular behavior based on customer/store settings
-  function zen_run_normal() {
-    $zc_run = 'false';
-    switch (true) {
-      case (DOWN_FOR_MAINTENANCE == 'true'):
-      // down for maintenance
-        $zc_run = 'false';
-        break;
-      case (STORE_STATUS >= 1):
-      // showcase no prices
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '1' and $_SESSION['customer_id'] == ''):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == ''):
-      // show room only
-      // customer may browse but no prices
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL == '3'):
-      // show room only
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customer_id'] == ''):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      case (CUSTOMERS_APPROVAL_AUTHORIZATION != '0' and $_SESSION['customers_authorization'] > '0'):
-      // customer must be logged in to browse
-        $zc_run = 'false';
-        break;
-      default:
-      // proceed normally
-        $zc_run = 'true';
-        break;
-    }
-    return $zc_run;
-  }
+function zen_run_normal() {
+	$ret = 'false';
+
+	if( defined( 'DOWN_FOR_MAINTENANCE' ) && DOWN_FOR_MAINTENANCE == 'true') {
+		// down for maintenance
+		$ret = 'false';
+	} elseif( defined( 'STORE_STATUS' ) && STORE_STATUS >= 1 ) {
+		// showcase no prices
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '1' && empty( $_SESSION['customer_id'] ) ) {
+		// customer must be logged in to browse
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '2' && empty( $_SESSION['customer_id'] ) ) {
+		// show room only: customer may browse but no prices
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL' ) && CUSTOMERS_APPROVAL == '3' ) {
+		// show room only
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL_AUTHORIZATION' ) && CUSTOMERS_APPROVAL_AUTHORIZATION != '0' && empty( $_SESSION['customer_id'] ) ) {
+		$ret = 'false';
+	} elseif( defined( 'CUSTOMERS_APPROVAL_AUTHORIZATION' ) && CUSTOMERS_APPROVAL_AUTHORIZATION != '0' && !empty( $_SESSION['customers_authorization'] ) ) {
+		// customer must be logged in to browse
+		$ret = 'false';
+	} else {
+		// proceed normally
+		$ret = 'true';
+	}
+	return $ret;
+}
 
 ///
 // no price check

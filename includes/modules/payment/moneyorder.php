@@ -20,7 +20,9 @@
 // $Id$
 //
 
-  class moneyorder {
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+
+  class moneyorder extends CommercePluginPaymentBase {
     var $code, $title, $description, $enabled;
 
 // class constructor

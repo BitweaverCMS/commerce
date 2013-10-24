@@ -25,14 +25,14 @@
 
 // class constructor
     function payment($module = '') {
-      global $PHP_SELF, $payment, $gBitCustomer, $credit_covers;
+      global $payment, $gBitCustomer, $credit_covers;
 
       if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
         $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
 
         $include_modules = array();
 
-        if ( (zen_not_null($module)) && (in_array($module . '.' . substr($PHP_SELF, (strrpos($PHP_SELF, '.')+1)), $this->modules)) ) {
+        if ( (zen_not_null($module)) && (in_array($module . '.' . substr($_SERVER['SCRIPT_NAME'], (strrpos($_SERVER['SCRIPT_NAME'], '.')+1)), $this->modules)) ) {
           $this->selected_module = $module;
 
           $include_modules[] = array('class' => $module, 'file' => $module . '.php');
@@ -221,12 +221,12 @@
     function after_order_create($zf_order_id) {
 		global $gBitProduct, $order;
 		$ret = NULL;
+		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		if (is_array($this->modules)) {
 			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
-			return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
+				return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
 			}
 		}
-		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		return $ret;
     }
 

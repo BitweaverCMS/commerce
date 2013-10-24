@@ -15,9 +15,9 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class CommerceVoucher extends BitBase {
 	var $pCategoryId;
 
-	function CommerceVoucher( $pCouponId=NULL ) {
+	function __construct( $pCouponId=NULL ) {
 		$this->mCouponId = $pCouponId;
-		BitBase::BitBase();
+		parent::__construct();
 	}
 
 	function load( $pCode=NULL, $pOnlyIfActive=NULL ) {
@@ -188,7 +188,13 @@ class CommerceVoucher extends BitBase {
 			}
 
 			if( !$this->mDb->getOne( "SELECT `restrict_id` FROM " . TABLE_COUPON_RESTRICT . " WHERE coupon_id = ? $whereSql", $bindVars ) ) {
-				$columns['coupon_restrict'] = ($pParamHash['restrict_status']=='Deny') ? 'Y' : 'N';
+				if( $pParamHash['restrict_status'] == 'Allow' ) {
+					$columns['coupon_restrict'] = 'N';
+				} elseif( $pParamHash['restrict_status'] == 'Maybe' ) {
+					$columns['coupon_restrict'] = 'O';
+				} else {
+					$columns['coupon_restrict'] = 'Y';
+				}
 				$this->mDb->AssociateInsert( TABLE_COUPON_RESTRICT, $columns );
 			}
 		}
@@ -252,9 +258,13 @@ class CommerceVoucher extends BitBase {
 			}
 
 			if ( $this->getField( 'uses_per_user' ) ) {
-				$query = "SELECT COUNT( `coupon_id` ) from " . TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id = ? AND customer_id = ?";
-				$redeemCountCustomer = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
-				if ( $redeemCountCustomer >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
+				// don't block cancelled/refunded orders
+				$query = "SELECT COUNT( `coupon_id` ) AS `redeem_count` 
+						  FROM " . TABLE_COUPON_REDEEM_TRACK . " ccrt
+							LEFT JOIN " . TABLE_ORDERS . " co ON (ccrt.`order_id`=co.`orders_id`)
+						  WHERE coupon_id = ? AND customer_id = ? AND `orders_status` > 0 ";
+				$redeemCount = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
+				if ( $redeemCount >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
 					$this->mErrors['redeem_error'] = 'You have used coupon code the maximum number of times allowed per customer.';
 				}
 			}
