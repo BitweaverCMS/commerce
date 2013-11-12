@@ -102,7 +102,6 @@
     }
   }
 ?>
-<script type="text/javascript" src="includes/general.js"></script>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->

@@ -499,7 +499,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<script type="text/javascript" src="includes/general.js"></script>
 <?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR") require(DIR_FS_ADMIN_INCLUDES.'fckeditor.php'); ?>
 <?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA")  require(DIR_FS_ADMIN_INCLUDES.'htmlarea.php'); ?>
 </head>
