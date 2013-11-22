@@ -2544,9 +2544,12 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
 		$lookupValue = current( $pLookupMixed );
+		if( is_numeric( $lookupValue) ) {
+			$lookupValue = (int)$lookupValue & 0xFFFFFFFF;
+		}
 	} elseif( is_numeric( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = (int)$pLookupMixed;
+		$lookupValue = (int)$pLookupMixed & 0xFFFFFFFF;
 	}
 
 	if( !empty( $lookupValue ) ) {
