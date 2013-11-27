@@ -13,19 +13,13 @@
 $gContent = &$gBitProduct;
 
 if ( $gBitProduct->isAvailable() ) {
-	require(DIR_FS_PAGES . $current_page_base . '/main_template_vars_attributes.php');
-	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
-	$mid = 'bitpackage:bitcommerce/product_info_display.tpl';
 
-	if (is_dir(DIR_WS_TEMPLATE . $current_page_base . '/extra_main_template_vars')) {
-		if ($za_dir = @dir(DIR_WS_TEMPLATE . $current_page_base. '/extra_main_template_vars')) {
-			while ($zv_file = $za_dir->read()) {
-				if (strstr($zv_file, '*.php') ) {
-					require(DIR_FS_TEMPLATE . $current_page_base . '/extra_main_template_vars/' . $zv_file);
-				}
-			}
-		}
+	if( $productOptions = $gBitProduct->getProductOptions() ) {
+		$gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
 	}
+
+	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
+	$mid = 'bitpackage:bitcommerce/page_product_info.tpl';
 
 	// Comments engine!
 	if( $gCommerceSystem->getConfig( 'SHOW_PRODUCT_INFO_REVIEWS' ) ) {
