@@ -638,7 +638,7 @@ If a special exist * 10+9
 						$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
 					}
 				}
-				$ret = $final_display_price . $free_tag . $call_tag;
+				$ret = $final_display_price  . $call_tag;
 			}
 		}
 		return $ret;
