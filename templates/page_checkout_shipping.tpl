@@ -74,19 +74,9 @@
 					<p>{tr}This is currently the only shipping method available to use on this order.{/tr}</p>
 				{/if}
 				{if $freeShipping}
-					<table border="1" width="100%" cellspacing="2" cellpadding="2">
-						<tr>
-							<td colspan="3" width="100%">
-								<table border="0" width="100%" cellspacing="0" cellpadding="2">
-									<tr>
-										<td colspan="3">{tr}Free Shipping{/tr}&nbsp;{$quotes.$i.icon}</td>
-									</tr>
-									<tr id="defaultSelected" class="moduleRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="selectRowEffect(this, 0)">
-										<td width="100%">sprintf(FREE_SHIPPING_DESCRIPTION, $currencies->format(MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) . zen_draw_hidden_field('shipping', 'free_free')</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
+					<div class="alert alert-success">
+						{tr}This order qualifies for free shipping.{/tr}
+						<input type="hidden" name="shipping" value="free_free"/>
 					</table>
 				{else}
 					{include file="bitpackage:bitcommerce/checkout_javascript.tpl"}
