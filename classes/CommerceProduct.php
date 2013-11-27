@@ -1093,15 +1093,16 @@ If a special exist * 10+9
 		}
 
 		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/';
-			if( is_dir( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'thumbs/' ) ) {
-				$path .= 'thumbs/';
+			$branch = static::getImageBranch( $pMixed );
+			$basePath = static::getImageBasePath( $pMixed );
+			if( is_dir( $basePath.'thumbs/' ) ) {
+				$basePath .= 'thumbs/';
+				$branch .= 'thumbs/';
 			}
-			$path .= $pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
-			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
+			if( file_exists( $basePath.$pSize.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.jpg';
+			} elseif( file_exists( $basePath.$pSize.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.png';
 			} else {
 //				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
@@ -1109,6 +1110,14 @@ If a special exist * 10+9
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
+	}
+
+	static function getImageBasePath( $pProductsId ) {
+		return STORAGE_PKG_PATH.static::getImageBranch( $pProductsId );
+	}
+
+	static function getImageBranch( $pProductsId ) {
+		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
 	}
 
 	function getGatekeeperSql( &$pSelectSql, &$pJoinSql, &$pWhereSql ) {
@@ -1600,7 +1609,7 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
+					$fileHash['dest_branch']	= static::getImageBranch( $this->mProductsId );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';

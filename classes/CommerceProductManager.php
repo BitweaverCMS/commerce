@@ -84,7 +84,7 @@ class CommerceProductManager extends BitBase {
 		return( count( $this->mErrors ) == 0 && !empty( $pParamHash['options_store'] ) && count( $pParamHash['options_store'] ) );
 	}
 
-	function storeOption( $pParamHash ) {
+	function storeOption( $pParamHash, $pFiles ) {
 		$ret = FALSE;
 		if( $this->verifyOption( $pParamHash ) ) {
 			if( !empty( $pParamHash['products_options_id'] ) ) {
@@ -166,7 +166,7 @@ class CommerceProductManager extends BitBase {
 		return( count( $this->mErrors ) == 0 && !empty( $pParamHash['options_values_store'] ) && count( $pParamHash['options_values_store'] ) );
 	}
 
-	function storeOptionsValue( $pParamHash ) {
+	function storeOptionsValue( $pParamHash, $pFiles = NULL ) {
 		$this->mDb->StartTrans();
 		$ret = FALSE;
 		if( $this->verifyOptionsValue( $pParamHash ) ) {
@@ -177,6 +177,10 @@ class CommerceProductManager extends BitBase {
 				$this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'] );
 			}
 			$ret = TRUE;
+			if( !empty( $pFiles['attributes_image'] ) ) {
+vd( $_FILES );
+die;
+			}
 		}
 		$this->mDb->CompleteTrans();
 		return $ret;

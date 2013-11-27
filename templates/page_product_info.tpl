@@ -11,98 +11,101 @@
 {/if}
 </div>
 
+		<header class="page-header">
+			<h1>{$gBitProduct->getTitle()}</h1>
+		</header>
+
 <div class="row-fluid">
 	{if $gBitProduct->getImageUrl(0,'medium')}	
-	<div class="span-4">
+	<div class="span4">
 		<a rel="nofollow" href="{$gBitProduct->getImageUrl(0,'large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
 		<img class="thumb" src="{$gBitProduct->getImageUrl(0,'medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
 	</div>
 	{/if}
 		
-	<div class="span-8">
+	<div class="span8">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
-		<div class="page-header">
-				<h1>{$gBitProduct->getTitle()}</h1>
-		</div>
-
-		<div class="cartBox">
-			<div class="control-group">
-				<h2>
-					{if $gBitProduct->getField('show_onetime_charges_description') && $gBitProduct->getField('show_onetime_charges_description') == 'true'}
-						<div class="smallText">{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}</div>
+		<div class="row-fluid">
+			{if $gBitProduct->getField('products_description')}
+			<div class="span7">
+				<div class="content">
+					{if $smarty.const.SHOW_PRODUCT_INFO_MANUFACTURER == '1' and $gBitProduct->getField('manufacturers_name')}
+						<div class="control-group">
+							{$gBitProduct->getField('manufacturers_name')}
+						</div>
 					{/if}
-					{if $gBitProduct->hasAttributes() and $smarty.const.SHOW_PRODUCT_INFO_STARTING_AT == '1'}{tr}Starting at{/tr}:{/if}
-					{$gBitProduct->getDisplayPrice()}
-					{if $gBitProduct->getCommissionUserDiscount() }
-						(<span class="success">{tr}Retail Price{/tr} {$gBitProduct->getPrice('products')}</span>)
-					{/if}
-				</h2>
 
-
+					{$gBitProduct->getField('products_description')}
+				</div>
 			</div>
-		{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
-			<div class="control-group">
-				{$gBitProduct->getField('products_model')}
-			</div>
-		{/if}
+			{/if}
+			<div class="span5">
+				<div class="box addtocart">
+					<div class="control-group">
+						<h2>
+							{if $gBitProduct->getField('show_onetime_charges_description') && $gBitProduct->getField('show_onetime_charges_description') == 'true'}
+								<div class="smallText">{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}</div>
+							{/if}
+							{if $gBitProduct->hasAttributes() and $smarty.const.SHOW_PRODUCT_INFO_STARTING_AT == '1'}{tr}Starting at{/tr}:{/if}
+							{$gBitProduct->getDisplayPrice()}
+							{if $gBitProduct->getCommissionUserDiscount() }
+								(<span class="success">{tr}Retail Price{/tr} {$gBitProduct->getPrice('products')}</span>)
+							{/if}
+						</h2>
+					</div>
+				{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
+					<div class="control-group">
+						{$gBitProduct->getField('products_model')}
+					</div>
+				{/if}
 
-		{if $smarty.const.SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField('products_weight')} 
-			<div class="control-group">
-				{$smarty.const.TEXT_PRODUCT_WEIGHT}{$gBitProduct->getField('products_weight')}{$smarty.const.TEXT_PRODUCT_WEIGHT_UNIT}
-			</div>
-		{/if}
+				{if $smarty.const.SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField('products_weight')} 
+					<div class="control-group">
+						{$smarty.const.TEXT_PRODUCT_WEIGHT}{$gBitProduct->getField('products_weight')}{$smarty.const.TEXT_PRODUCT_WEIGHT_UNIT}
+					</div>
+				{/if}
 
-		{include file='bitpackage:bitcommerce/product_options_inc.tpl'}
+				{include file='bitpackage:bitcommerce/product_options_inc.tpl'}
 
-		{if $smarty.const.SHOW_PRODUCT_INFO_QUANTITY == '1' && !$gBitProduct->getField( 'products_virtual' )}
-			<div class="control-group">
-				{$gBitProduct->getField('products_quantity')} {$smarty.const.TEXT_PRODUCT_QUANTITY}
-			</div>
-		{/if}
+				{if $smarty.const.SHOW_PRODUCT_INFO_QUANTITY == '1' && !$gBitProduct->getField( 'products_virtual' )}
+					<div class="control-group">
+						{$gBitProduct->getField('products_quantity')} {$smarty.const.TEXT_PRODUCT_QUANTITY}
+					</div>
+				{/if}
 
-		{if $smarty.const.SHOW_PRODUCT_INFO_MANUFACTURER == '1' and $gBitProduct->getField('manufacturers_name')}
-			<div class="control-group">
-				{$gBitProduct->getField('manufacturers_name')}
-			</div>
-		{/if}
+				{if $gBitProduct->getField('products_discount_type')}
+				<div class="control-group">
+					{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
+					{include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
+				</div>
+				{/if}
 
-		{if $smarty.const.CUSTOMERS_APPROVAL == '3' and $smarty.const.TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == ''}
-			&nbsp;
-		{else}
-			<div class="control-group">
-				{assign var="qtyInCart" value=$gBitProduct->quantityInCart()}
-				
-					<input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}" />
-				{if !$gBitProduct->getField('products_qty_box_status') or $gBitProduct->getField('products_quantity_order_max') == '1'}
-					<input type="hidden" name="cart_quantity" value="1" />
+				{if $smarty.const.CUSTOMERS_APPROVAL == '3' and $smarty.const.TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == ''}
+					&nbsp;
 				{else}
-					<label>{tr}Quantity:{/tr}
-					{if $smarty.const.SHOW_PRODUCT_INFO_IN_CART_QTY == '1' && $qtyInCart}
-						({$qtyInCart} {tr}In Cart{/tr})
-					{/if}
-					</label>
-					<input class="input-mini" type="text" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
+					<div class="control-group">
+						{assign var="qtyInCart" value=$gBitProduct->quantityInCart()}
+						
+							<input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}" />
+						{if !$gBitProduct->getField('products_qty_box_status') or $gBitProduct->getField('products_quantity_order_max') == '1'}
+							<input type="hidden" name="cart_quantity" value="1" />
+						{else}
+							<label>{tr}Quantity:{/tr}
+							{if $smarty.const.SHOW_PRODUCT_INFO_IN_CART_QTY == '1' && $qtyInCart}
+								({$qtyInCart} {tr}In Cart{/tr})
+							{/if}
+							</label>
+							<input class="input-mini" type="text" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
+						{/if}
+					</div>
+					<div class="control-group">
+						<input type="submit" class="btn btn-large btn-primary" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
+					</div>
 				{/if}
 			</div>
-			<div class="control-group">
-				<input type="submit" class="btn btn-large btn-primary" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
-			</div>
-		{/if}
-
-		{if $gBitProduct->getField('products_discount_type')}
-		<div class="control-group">
-			{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
-			{include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
-		</div>
-		{/if}
 		</div>
 
-
-
-			<div class="content">
-				{$gBitProduct->getField('products_description')}
-			</div>
 
 		{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
 		<div class="control-group">

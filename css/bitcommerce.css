@@ -211,8 +211,7 @@ TD.footertop, TD.footerbottom {
 
 /*miscellaneous areas
 -------------------------------------*/
-.cartBox, .addtocart {
-}
+.box.addtocart { padding:10px 20px; margin:0; }
 
 .cartBox .row { margin:0; }
 .cartBox .formlabel { padding:0; width:auto; text-align:left; display:block; float:none; clear:both }

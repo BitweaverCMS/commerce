@@ -1,4 +1,3 @@
-{form method="post" enctype="multipart/form-data"}
 
 	<div class="control-group">
 		<div class="formlabel">{tr}Option Value Id{/tr}</div>
@@ -135,15 +134,6 @@
 		</div>
 		
 		<div class="control-group">
-			{formlabel label="Option Image Directory"}
-			{forminput}
-				<select name="img_dir">
-					<option value="">Main Directory</option>
-				</select>
-			{/forminput}
-		</div>
-		
-		<div class="control-group">
 			{formlabel label="Overwrite Existing Image?"}
 			{forminput}
 				<input name="overwrite" value="0" type="radio">&nbsp;No <input name="overwrite" value="1" checked="checked" type="radio">&nbsp;Yes
@@ -189,4 +179,3 @@
 			<input type="submit" class="btn" name="cancel" value="{tr}Cancel{/tr}" />
 	</div>
 
-{/form}

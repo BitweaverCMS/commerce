@@ -11,7 +11,7 @@
 {if $editTpl}
 
 <div id="newattrform" {$formStyle}>
-{form name="option" method="post"}
+{form method="post" enctype="multipart/form-data"}
 	{include file=$editTpl}
 {/form}
 </div>
