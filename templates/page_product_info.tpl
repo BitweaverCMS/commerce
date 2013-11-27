@@ -30,6 +30,12 @@
 			{if $gBitProduct->getField('products_description')}
 			<div class="span7">
 				<div class="content">
+					{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
+						<div class="control-group">
+							{$gBitProduct->getField('products_model')}
+						</div>
+					{/if}
+
 					{if $smarty.const.SHOW_PRODUCT_INFO_MANUFACTURER == '1' and $gBitProduct->getField('manufacturers_name')}
 						<div class="control-group">
 							{$gBitProduct->getField('manufacturers_name')}
@@ -54,11 +60,6 @@
 							{/if}
 						</h2>
 					</div>
-				{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
-					<div class="control-group">
-						{$gBitProduct->getField('products_model')}
-					</div>
-				{/if}
 
 				{if $smarty.const.SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField('products_weight')} 
 					<div class="control-group">

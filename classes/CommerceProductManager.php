@@ -177,7 +177,7 @@ class CommerceProductManager extends BitBase {
 				$this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'] );
 			}
 			$ret = TRUE;
-			if( !empty( $pFiles['attributes_image'] ) ) {
+			if( !empty( $pFiles['attributes_image']['tmp_name'] ) ) {
 vd( $_FILES );
 die;
 			}
@@ -186,6 +186,18 @@ die;
 		return $ret;
 	}
 
+	function getOptionsValueImages( $pOptionsValuesId ) {
+		$ret = array();
+		$path = $this->getOptionsValueImagesPath( $pOptionsValuesId );
+		if( is_dir( $path ) ) {
+			
+		}
+		return $ret;
+	}
+
+	function getOptionsValueImagesPath( $pOptionsValuesId ) {
+		return STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/attr/'.$pOptionsValuesId;
+	}
 
 	function genOptionsValuesId() {
 		global $gBitDb;
