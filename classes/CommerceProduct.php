@@ -609,7 +609,10 @@ If a special exist * 10+9
 			if( $productHash ) {
 				$show_sale_discount = '';
 				$discountAmount = $productHash['products_price'] - $productHash['lowest_purchase_price'];
-				if( $discountAmount > 0 ) {
+				// If Free, Show it
+				if ($productHash['product_is_free'] == '1') {
+					$final_display_price = '<span class="free">'.tra( 'FREE' ).'</span>';
+				} elseif( $discountAmount > 0 ) {
 					$final_display_price = '<span class="normalprice discounted">' . CommerceProduct::getNotatedPrice( $productHash['products_price'], $productHash['products_tax_class_id'] ) . ' </span>';
 					$show_sale_price = '&nbsp;' . '<span class="productSpecialPrice">' . CommerceProduct::getNotatedPrice( $productHash['lowest_purchase_price'], $productHash['products_tax_class_id'] ) . '</span>';
 					if( SHOW_SALE_DISCOUNT_STATUS == '1' ) {
@@ -625,15 +628,6 @@ If a special exist * 10+9
 				}
 
 
-				// If Free, Show it
-				$free_tag = '';
-				if ($productHash['product_is_free'] == '1') {
-					if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
-						$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
-					} else {
-						$free_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_PRICE_IS_FREE, PRODUCTS_PRICE_IS_FREE_TEXT);
-					}
-				}
 
 				// If Call for Price, Show it
 				$call_tag = '';
@@ -1093,6 +1087,7 @@ If a special exist * 10+9
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+		$ret = NULL;
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
@@ -1108,7 +1103,7 @@ If a special exist * 10+9
 			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
 				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+//				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
