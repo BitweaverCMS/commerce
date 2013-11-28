@@ -20,7 +20,6 @@
 
 	if( !$gBitUser->isRegistered() && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
 		$_SESSION['navigation']->set_snapshot();
-bt(); die;
 		zen_redirect(FILENAME_LOGIN);
 	}
 
