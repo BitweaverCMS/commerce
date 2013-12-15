@@ -236,17 +236,22 @@ if( !empty( $order ) ) {
 		}
 	}
 
-	// scan fulfillment modules
-	$fulfillmentFiles = array();
-	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
-	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
-		while( $ffFile = readdir( $fulfillHandle ) ) {
-			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
-				$fulfillmentFiles[] = $fulfillDir.$ffFile.'/admin_order_inc.php';
+	
+	global $gBitUser;
+	// only super admin's can monkey with 
+	if( $gBitUser->hasPermission( 'p_admin' ) ) {
+		// scan fulfillment modules
+		$fulfillmentFiles = array();
+		$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
+		if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+			while( $ffFile = readdir( $fulfillHandle ) ) {
+				if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
+					$fulfillmentFiles[] = $fulfillDir.$ffFile.'/admin_order_inc.php';
+				}
 			}
 		}
+		$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
 	}
-	$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
 
 }
 
