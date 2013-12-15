@@ -60,6 +60,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		global $gBitUser;
 
 		$this->contents = array();
+		$this->quantity = NULL;
 		$this->total = NULL;
 		$this->weight = NULL;
 		$this->content_type = false;
@@ -326,6 +327,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$this->subtotal = 0;
 			$this->total = 0;
 			$this->weight = 0;
+			$this->quantity = 0;
 
 			// shipping adjustment
 			$this->free_shipping_item = 0;
@@ -362,6 +364,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					$this->total += $productsTotal;
 					$this->subtotal += $productsTotal;
 					$this->weight += $product->getWeight( $qty, $productAttributes );
+					$this->quantity += $qty;
 				}
 			}
 		}

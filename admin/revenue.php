@@ -60,7 +60,7 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$gBitSmarty->assign_by_ref( 'statsByType', $statsByType );
 	$statsByOption = $stats->getRevenueByOption( $_REQUEST );
 	foreach( $statsByOption as $stat ) {
-		$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];
+		@$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];
 	}
 	$gBitSmarty->assign_by_ref( 'statsByOption', $statsByOption );
 	$gBitSmarty->assign_by_ref( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );

@@ -44,7 +44,7 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 		$_SESSION['cart_address_id'] = $_REQUEST['address_id'];
 	} elseif( empty( $_SESSION['cart_address_id'] ) ) {
 		// no selected address yet, snag the first one
-		$first = current( $addresses );
+		$first = current( reset( $addresses ) );
 		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_id'] );
 	}
 

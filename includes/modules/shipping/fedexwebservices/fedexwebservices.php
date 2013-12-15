@@ -107,7 +107,7 @@ class fedexwebservices extends BitBase {
 		$street_address = (!empty( $order->delivery['street_address'] ) ? $order->delivery['street_address']: '');
 		$street_address2 = (!empty( $order->delivery['suburb'] ) ? $order->delivery['suburb']: '');
 		$city = (!empty( $order->delivery['city'] ) ? $order->delivery['city'] : '');
-		$state = zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], '');
+		$state = (!empty( $order->delivery['zone_id'] ) ? zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], '') : '');
 		if ($state == "QC") $state = "PQ";
 		$postcode = str_replace(array(' ', '-'), '', $order->delivery['postcode']);
 		$country_id = $order->delivery['country']['countries_iso_code_2'];

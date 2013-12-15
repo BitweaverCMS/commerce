@@ -83,6 +83,9 @@
 			</script>
 			{/literal}
 		{/if}
+		{if $gBitSystem->getConfig('shopperapproved_site_id')}
+			<script type="text/javascript"> var randomnumber = Math.floor(Math.random()*1000); sa_draw = window.document.createElement('script'); sa_draw.setAttribute('src', 'https://shopperapproved.com/thankyou/sv-draw_js.php?site={$gBitSystem->getConfig('shopperapproved_site_id')}&loadoptin=1&rnd'+randomnumber); sa_draw.setAttribute('type', 'text/javascript'); document.getElementsByTagName("head")[0].appendChild(sa_draw); </script>
+		{/if}
 	{/if}
 
 </div>

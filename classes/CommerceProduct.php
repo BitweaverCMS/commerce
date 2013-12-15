@@ -609,7 +609,10 @@ If a special exist * 10+9
 			if( $productHash ) {
 				$show_sale_discount = '';
 				$discountAmount = $productHash['products_price'] - $productHash['lowest_purchase_price'];
-				if( $discountAmount > 0 ) {
+				// If Free, Show it
+				if ($productHash['product_is_free'] == '1') {
+					$final_display_price = '<span class="free">'.tra( 'FREE' ).'</span>';
+				} elseif( $discountAmount > 0 ) {
 					$final_display_price = '<span class="normalprice discounted">' . CommerceProduct::getNotatedPrice( $productHash['products_price'], $productHash['products_tax_class_id'] ) . ' </span>';
 					$show_sale_price = '&nbsp;' . '<span class="productSpecialPrice">' . CommerceProduct::getNotatedPrice( $productHash['lowest_purchase_price'], $productHash['products_tax_class_id'] ) . '</span>';
 					if( SHOW_SALE_DISCOUNT_STATUS == '1' ) {
@@ -625,15 +628,6 @@ If a special exist * 10+9
 				}
 
 
-				// If Free, Show it
-				$free_tag = '';
-				if ($productHash['product_is_free'] == '1') {
-					if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
-						$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
-					} else {
-						$free_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_PRICE_IS_FREE, PRODUCTS_PRICE_IS_FREE_TEXT);
-					}
-				}
 
 				// If Call for Price, Show it
 				$call_tag = '';
@@ -644,7 +638,7 @@ If a special exist * 10+9
 						$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
 					}
 				}
-				$ret = $final_display_price . $free_tag . $call_tag;
+				$ret = $final_display_price  . $call_tag;
 			}
 		}
 		return $ret;
@@ -1093,27 +1087,37 @@ If a special exist * 10+9
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+		$ret = NULL;
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
 
 		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/';
-			if( is_dir( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'thumbs/' ) ) {
-				$path .= 'thumbs/';
+			$branch = static::getImageBranch( $pMixed );
+			$basePath = static::getImageBasePath( $pMixed );
+			if( is_dir( $basePath.'thumbs/' ) ) {
+				$basePath .= 'thumbs/';
+				$branch .= 'thumbs/';
 			}
-			$path .= $pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
-			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
+			if( file_exists( $basePath.$pSize.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.jpg';
+			} elseif( file_exists( $basePath.$pSize.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.png';
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+//				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
+	}
+
+	static function getImageBasePath( $pProductsId ) {
+		return STORAGE_PKG_PATH.static::getImageBranch( $pProductsId );
+	}
+
+	static function getImageBranch( $pProductsId ) {
+		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
 	}
 
 	function getGatekeeperSql( &$pSelectSql, &$pJoinSql, &$pWhereSql ) {
@@ -1605,7 +1609,7 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
+					$fileHash['dest_branch']	= static::getImageBranch( $this->mProductsId );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
@@ -1826,13 +1830,11 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$tmp_radio .= '<div class="productoptions">' .
-											zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .
-											"<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
+							$tmp_radio .= '<div class="productoptions"><label class="radio">' .  zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .  "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
 							if( !empty( $vals['attributes_image'] ) ) {
 								$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
 							}
-							$tmp_radio .= '</div>';
+							$tmp_radio .= '</label></div>';
 						}
 
 
@@ -1875,63 +1877,63 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-								$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>';
+									break;
 								case '2':
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>';
+									break;
 								case '3':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
+									}
+									break;
 
 								case '4':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
-																. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
-																. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
-																. (!empty( $products_options_details_noname )	? '<br />' . $products_options_details_noname : '')
-																. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
+																	. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
+																	. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
+																	. (!empty( $products_options_details_noname )	? '<br />' . $products_options_details_noname : '')
+																	. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
+									}
+									break;
 
 								case '5':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+									}
+									break;
 								case '0':
 								default:
-								$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'</label>';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'</label>';
+									break;
 							}
 						}
 
@@ -2544,9 +2546,12 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
 		$lookupValue = current( $pLookupMixed );
+		if( is_numeric( $lookupValue) ) {
+			$lookupValue = (int)$lookupValue & 0xFFFFFFFF;
+		}
 	} elseif( is_numeric( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = (int)$pLookupMixed;
+		$lookupValue = (int)$pLookupMixed & 0xFFFFFFFF;
 	}
 
 	if( !empty( $lookupValue ) ) {

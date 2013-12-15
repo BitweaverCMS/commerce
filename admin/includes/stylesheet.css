@@ -10,6 +10,14 @@ table.table tr.comments	td { border-top:none; }
 
 .admin.bitcommerce h1.page-header	{ font-size:16pt; }
 
+.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
+
+.coupon.active{}
+.coupon.inactive	{ background-color:#ddd; }
+.coupon.pending	{ background-color:#ffe; }
+.coupon.active		{ background-color:#efe; }
+.coupon.expired	{ background-color:#fee; }
+
 /* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions
@@ -22,14 +30,6 @@ $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
 @import url("index.css");/* including stylesheet for index.php * /
 a{ text-decoration:none; }
 body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
-
-.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
-
-coupon.active{}
-coupon.inactive	{ background-color:#ddd; }
-coupon.pending	{ background-color:#ffe; }
-coupon.active		{ background-color:#efe; }
-coupon.expired	{ background-color:#fee; }
 
 a:hover{ text-decoration:underline; }
 a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }

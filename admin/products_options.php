@@ -51,7 +51,7 @@ if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	}
 } elseif( !empty( $_REQUEST['save_attribute'] ) ) {
-	$productManager->storeOptionsValue( $_REQUEST );
+	$productManager->storeOptionsValue( $_REQUEST, $_FILES );
 	bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 } elseif( !empty( $_REQUEST['save_attribute_map'] ) ) {
 	$gBitProduct->expungeAllAttributes();
@@ -62,7 +62,7 @@ if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
 	}
 	bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php?products_id='.$gBitProduct->getField( 'products_id' ) );
 } elseif( !empty( $_REQUEST['save_option'] ) ) {
-	if( $productManager->storeOption( $_REQUEST ) ) {
+	if( $productManager->storeOption( $_REQUEST, $_FILES ) ) {
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	} else {
 bit_error_log( 'option store failed' );

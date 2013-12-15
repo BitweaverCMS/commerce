@@ -8,9 +8,9 @@
 <div id="caldiv" style="width:200px;position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
 
 <div class="admin bitcommerce">
-	<div class="page-header">
+	<header class="page-header">
 		<h1>{tr}Revenue{/tr}</h1>
-	</div>
+	</header>
 	<div class="body">
 
 	<table class="table data span-24 last">

@@ -208,7 +208,9 @@ class order extends CommerceOrderBase {
 						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 		}
 
-		$order_query = "SELECT co.*, uu.*, cpccl.* $selectSql
+
+
+		$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
 						FROM " . TABLE_ORDERS . " co
 							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 							$joinSql

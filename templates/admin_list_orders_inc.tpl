@@ -24,8 +24,8 @@
 	<tr>
 		<td style="width:10em;text-align:left">{$order.purchase_time}</td>
 		<td colspan="5"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a></td>
-		<td class="alignright">{$order.orders_status_name}</td>
-		<td class="alignright">{$order.order_total|round:2}</td>
+		<td class="text-right">{$order.orders_status_name}</td>
+		<td class="text-right">{$gCommerceCurrencies->format($order.order_total)}</td>
 	</tr>
 	{if $order.comments && $order.comments!='Credit Card processed'}
 	<tr class="comments">
@@ -39,26 +39,26 @@
 		<td colspan="2">
 			<img src="{$gBitProduct->getImageUrl($product.products_id)}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
 		</td>
-		<td class="alignright">
+		<td class="text-right">
 			{assign var=quantityTotal value=$quantityTotal+$product.products_quantity}
 			{$product.products_quantity} x 
 			{assign var=finalIncome value=$product.products_quantity*$product.final_price}
 			{assign var=finalTotal value=$finalTotal+$finalIncome}
 			${$product.final_price} {if $product.products_quantity>1} : ${$finalIncome} {/if} = 
 		</td>
-		<td class="alignright">
+		<td class="text-right">
 			{math equation="n*(x-y)" assign=wholesaleProfit n=$product.products_quantity x=$product.final_price y=$product.products_wholesale }
 			{assign var=wholesaleProfitTotal value=$wholesaleProfitTotal+$wholesaleProfit}
 			+ {$wholesaleProfit|number_format:2}
 		</td>
-		<td class="alignright">
+		<td class="text-right">
 			{if $gBitUser->hasPermission('p_admin')}
 			{math equation="n*(x-y)" assign=distributorIncome n=$product.products_quantity x=$product.products_wholesale y=$product.products_cogs}
 			{assign var=distributorIncomeTotal value=$distributorIncomeTotal+$distributorIncome}
 			+ [{$distributorIncome|number_format:2}]
 			{/if}
 		</td>
-		<td class="alignright">
+		<td class="text-right">
 			{if $gBitUser->hasPermission('p_admin')}
 			{math equation="n*(x)" assign=cogs n=$product.products_quantity x=$product.products_cogs}
 			{assign var=cogsTotal value=$cogsTotal+$cogs}
@@ -79,14 +79,14 @@
 {/foreach}
 <tr>
 	{if $wholesaleProfitTotal}
-	<th class="item alignright" colspan="3"></th>
-	<th class="item alignright">{tr}Total{/tr}: {$quantityTotal}</th>
-	<th class="item alignright">${$finalTotal|round:2}</th>
-	<th class="item alignright">${$wholesaleProfitTotal|round:2}</th>
-	<th class="item alignright">{if $gBitUser->hasPermission('p_admin')}${$distributorIncomeTotal|round:2}{/if}</th>
-	<th class="item alignright">{if $gBitUser->hasPermission('p_admin')}${$cogsTotal|round:2}{/if}</th>
+	<th class="item text-right" colspan="3"></th>
+	<th class="item text-right">{tr}Total{/tr}: {$quantityTotal}</th>
+	<th class="item text-right">${$finalTotal|round:2}</th>
+	<th class="item text-right">${$wholesaleProfitTotal|round:2}</th>
+	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$distributorIncomeTotal|round:2}{/if}</th>
+	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$cogsTotal|round:2}{/if}</th>
 	{else}
-	<th class="item alignright" colspan="8">{tr}Total{/tr}: ${$grossTotal}</th>
+	<th class="item text-right" colspan="8">{tr}Total{/tr}: ${$grossTotal}</th>
 	{/if}
 </tr>
 

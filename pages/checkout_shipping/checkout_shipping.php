@@ -107,6 +107,8 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 		if ( ($pass == true) && ($gBitCustomer->mCart->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) ) {
 			$free_shipping = true;
 		}
+	} elseif( $gBitCustomer->mCart->free_shipping_items() == $gBitCustomer->mCart->quantity ) {
+		$free_shipping = TRUE;
 	} else {
 		$free_shipping = false;
 	}
@@ -155,7 +157,11 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	}
 	if( $gBitUser->isRegistered() && zen_count_shipping_modules() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
-		$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
+		$quotes = array();
+
+		if( empty( $free_shipping ) ) {		
+			$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
+		}
 
 		// if no shipping method has been selected, automatically select the cheapest method.
 		// if the modules status was changed when none were available, to save on implementing

@@ -123,7 +123,7 @@
 				ORDER BY `orders_status_id` DESC";
 	if( $rs = $gBitDb->query( $query ) ) {
 		while( $orders_status = $rs->fetchRow() ) {
-		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td> ' . $orders_status['orders_count'] . '</td></tr>';
+		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $orders_status['orders_count'] . '</td></tr>';
 		}
 	}
 ?>

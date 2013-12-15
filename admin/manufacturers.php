@@ -138,7 +138,6 @@ if (!is_dir(DIR_FS_CATALOG_IMAGES . 'manufacturers')) mkdir(DIR_FS_CATALOG_IMAGE
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
-<script type="text/javascript" src="includes/general.js"></script>
 </head>
 <body>
 <!-- header //-->
