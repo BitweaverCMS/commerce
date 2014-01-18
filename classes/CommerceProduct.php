@@ -1182,6 +1182,7 @@ If a special exist * 10+9
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
+			$selectSql .= ' , f.`featured_date_available`, f.`expires_date`, f.`featured_last_modified`, f.`featured_date_added` ';
 			$joinSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
 			$whereSql .= " AND f.`status` = '1' ";
 		}
@@ -1381,7 +1382,7 @@ If a special exist * 10+9
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
 			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : $this->getProductType()),
-			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)!empty( $pParamHash['products_status'] ) & (int)$this->isValid() : 0),
+			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)!empty( $pParamHash['products_status'] ) : 0),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
@@ -1508,6 +1509,7 @@ If a special exist * 10+9
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
+
 		return( TRUE );
 	}
 
