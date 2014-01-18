@@ -1,7 +1,7 @@
 {strip}
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
-		<div class="header">
+		<div class="page-header">
 			<h1>{tr}{$smarty.const.TEXT_GV_NAMES} FAQ{/tr}</h1>
 		</div>
 
@@ -18,13 +18,13 @@
 	</ul>
 
 	<h2><a href="#balance"></a>{$smarty.const.TEXT_GV_NAME} Balance</h2>
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Gift Certificate Balance"}
 		{forminput}{$gvBalance}{if $gvBalance} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send">{tr}Send {$smarty.const.TEXT_GV_NAME}{/tr}</a> {/if}{/forminput}
     </div>
 
 {if $smarty.session.gv_id}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="`$smarty.const.TEXT_GV_NAME` Redeemed"}
 		{forminput}{$couponAmount}{/forminput}
     </div>

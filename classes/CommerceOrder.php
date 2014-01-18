@@ -63,6 +63,24 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	function getPaymentModule() {
+		global $gBitCustomer;
+		$ret = NULL;
+		if( $this->isValid() ) {
+			if ($this->info['payment_module_code']) {
+				if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php')) {
+					require_once( DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php' );
+					$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $this->info['payment_module_code'] . '.php';
+					if( file_exists( $langFile ) ) {
+						require( $langFile );
+					}
+					$ret = new $this->info['payment_module_code']();
+				}
+			}
+		}
+		return $ret;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -190,7 +208,9 @@ class order extends CommerceOrderBase {
 						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 		}
 
-		$order_query = "SELECT co.*, uu.*, cpccl.* $selectSql
+
+
+		$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
 						FROM " . TABLE_ORDERS . " co
 							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 							$joinSql
@@ -283,8 +303,8 @@ class order extends CommerceOrderBase {
 													 'suburb' => $order->fields['billing_suburb'],
 													 'city' => $order->fields['billing_city'],
 													 'postcode' => $order->fields['billing_postcode'],
+													 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
 													 'state' => $order->fields['billing_state'],
-													 'country' => $order->fields['billing_country'],
 													 'telephone' => $order->fields['billing_telephone'],
 													 'format_id' => $order->fields['billing_address_format_id']);
 

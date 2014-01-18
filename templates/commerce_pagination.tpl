@@ -21,6 +21,7 @@
 
 		{section name=current_page start=$blockStart loop=$blockStart+$listInfo.block_pages*2+1}
 		{if $smarty.section.current_page.index <= $listInfo.total_pages}
+			&nbsp;
 			{if $smarty.section.current_page.index != $listInfo.current_page}
 			<a href="{$pageUrl}&amp;page={$smarty.section.current_page.index}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">{$smarty.section.current_page.index}</a>
 			{else}

@@ -35,9 +35,6 @@
   }
 ?>
   <tr>
-    <td class="main" colspan="2" ><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-  </tr>
-  <tr>
     <td class="plainBoxHeading" width="40%"><?php echo FORM_TITLE_CUSTOMER_DETAILS; ?></td>
     <td class="inputRequirement" align="right"><?php echo FORM_REQUIRED_INFORMATION; ?></td>
   </tr>

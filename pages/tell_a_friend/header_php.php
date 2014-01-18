@@ -18,17 +18,14 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 
-// $Id$
-
-//
-	if (!empty( $_SESSION['customer_id'] ) && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
+	if( !$gBitUser->isRegistered() && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
 		$_SESSION['navigation']->set_snapshot();
 		zen_redirect(FILENAME_LOGIN);
 	}
 
 	$valid_product = false;
 	if( !$gBitProduct->isAvailable() ) {
-		zen_redirect(zen_href_link(zen_get_info_page($_GET['products_id']), 'products_id=' . $_GET['products_id']));
+		zen_redirect( $gBitProduct->getDisplayUrl() );
 	}
 
   require_once(DIR_FS_MODULES . 'require_languages.php');

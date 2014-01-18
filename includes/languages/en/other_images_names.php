@@ -30,8 +30,6 @@ define('OTHER_IMAGE_BOX_NOTIFY_YES', 'box_products_notifications.gif');
 define('OTHER_IMAGE_BOX_WRITE_REVIEW', 'box_write_review.gif');
 define('OTHER_IMAGE_CALL_FOR_PRICE', 'call_for_prices.jpg');
 define('OTHER_IMAGE_DOWN_FOR_MAINTENANCE', 'down_for_maintenance.gif');
-define('OTHER_IMAGE_PRICE_IS_FREE', 'free.jpg');
-define('OTHER_IMAGE_SILVER_SEPARATOR', 'pixel_silver.gif');
 define('OTHER_IMAGE_TRANPARENT', 'pixel_trans.gif');
 define('OTHER_IMAGE_BOX_CORNER_TOP_L', 'corner_left.jpg');
 define('OTHER_IMAGE_BOX_CORNER_TOP_R', 'corner_right.jpg');
@@ -55,7 +53,6 @@ define('OTHER_BOX_WRITE_REVIEW_ALT', 'Write a review on this product.');
 define('OTHER_CALL_FOR_PRICE_ALT', '');
 define('OTHER_DOWN_FOR_MAINTENANCE_ALT', 'The site is currently down for maintenance. Please come back later.');
 define('OTHER_PRICE_IS_FREE_ALT', '');
-define('OTHER_SILVER_SEPARATOR_ALT', '');
 define('OTHER_TRANPARENT_ALT', '');
 define('OTHER_IMAGE_CUSTOMERS_AUTHORIZATION_ALT', 'CUSTOMER APPROVAL IS PENDING ...');
 ?>

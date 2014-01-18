@@ -1,4 +1,4 @@
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}My Shopping Information{/tr}</h1>
 	</div>
 	{formfeedback warning=$accountMessage}
@@ -21,7 +21,7 @@
 
 	{if $gvBalance} 
 	<h2>{tr}Gift Certificate Account{/tr}</h2>
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Gift Certificate Balance"}
 		{forminput}
           {$gvBalance}

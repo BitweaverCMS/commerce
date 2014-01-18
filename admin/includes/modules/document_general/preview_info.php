@@ -61,7 +61,7 @@
 
       $specials_price = zen_get_products_special_price($pID);
 ?>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <table>
       <tr>
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>

@@ -1,5 +1,8 @@
+<div class="page-header">
+	<h1>{tr}Order List{/tr}</h1>
+</div>
 
-<div class="header">
+<div class="page-header">
 {form method="get"}
 Update Listing
 	<div class="floatright"> <strong>{tr}Status{/tr}</strong> {html_options name='orders_status_id' options=$commerceStatuses selected=$smarty.request.orders_status_id onchange="this.form.submit();"}</div>

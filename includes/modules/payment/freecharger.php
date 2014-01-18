@@ -20,7 +20,9 @@
 // $Id$
 //
 
-  class freecharger {
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+
+  class freecharger extends CommercePluginPaymentBase {
     var $code, $title, $description, $enabled, $payment;
 
 // class constructor

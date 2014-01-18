@@ -116,7 +116,7 @@
 	global $gBitCustomer, $gCommerceCart;
 	$gBitCustomer = new CommerceCustomer( $customerId );
 	$gBitCustomer->load();
-	$gBitSmarty->assign_by_ref( 'gBitCustomer', $gBitCustomer );
+	$gBitSmarty->assign( 'gBitCustomer', $gBitCustomer );
 
 	// lookup information
 	require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
@@ -129,7 +129,7 @@
 	require_once(DIR_FS_CLASSES . 'currencies.php');
 	global $currencies;
 	$currencies = new currencies();
-	$gBitSmarty->assign_by_ref( 'gCommerceCurrencies', $currencies );
+	$gBitSmarty->assign( 'gCommerceCurrencies', $currencies );
 
 	require_once(DIR_FS_CLASSES . 'category_tree.php');
 
@@ -169,7 +169,7 @@
 // include the breadcrumb class and start the breadcrumb trail
   require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
   $breadcrumb = new breadcrumb;
-  $gBitSmarty->assign_by_ref( 'gCommerceBreadcrumbs', $breadcrumb );
+  $gBitSmarty->assign( 'gCommerceBreadcrumbs', $breadcrumb );
 
 // add category names or the manufacturer name to the breadcrumb trail
   if (isset($cPath_array)) {
@@ -203,9 +203,13 @@
     }
   }
 
-
 // create the global product. products_id can be an array, such as in removing from cart
-if ( !empty( $_REQUEST['products_id'] ) && is_numeric( $_REQUEST['products_id'] ) ) {
+if ( isset( $_REQUEST['products_id'] ) ) {
+	// clean products id to by signed 4 byte integer regardless of what kind of crap comes in
+	$_GET['products_id'] = $_REQUEST['products_id'] = (int)$_REQUEST['products_id'] & 0xFFFFFFFF;
+	if( !empty( $_POST['products_id'] ) ) {
+		$_POST['products_id'] = $_GET['products_id']; 
+	}
 	$gBitProduct = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) );
 
 	if( $gBitProduct->isValid() ) {
@@ -229,7 +233,7 @@ if($gBitProduct->isValid() ) {
 	$breadcrumb->add( $gBitProduct->getTitle(), $gBitProduct->getDisplayUrl() );
 }
 if( !empty( $gBitProduct ) ) {
-	$gBitSmarty->assign_by_ref( 'gBitProduct', $gBitProduct );
+	$gBitSmarty->assign( 'gBitProduct', $gBitProduct );
 }
 
 $gBitSmarty->assign( 'runNormal', zen_run_normal() );

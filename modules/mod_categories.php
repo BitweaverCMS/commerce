@@ -28,10 +28,10 @@ $box_categories_array = array();
 
 // don't build a tree when no categories
 if ( $gBitDb->getOne("select `categories_id` from " . TABLE_CATEGORIES . " where `categories_status` = 1") ) {
-	$gBitSmarty->assign( 'box_categories_array', $main_category_tree->zen_category_tree() );
+	$_template->tpl_vars['box_categories_array'] = new Smarty_variable( $main_category_tree->zen_category_tree() );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle', 'Categories' );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( 'Categories' );
 }
 
 //	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);

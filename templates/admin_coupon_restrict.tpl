@@ -5,7 +5,7 @@
 {formfeedback hash=$feedback}
 {strip}
 <div class="admin bitcommerce coupons">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Discount Coupons{/tr}: {tr}Restrictions for {/tr} {$gCoupon->getField('coupon_name')} ({$gCoupon->getField('coupon_code')})</h1>
 	</div>
 	<div class="body">
@@ -14,7 +14,7 @@
 		<li class="item {if $r.coupon_restrict=='Y'}restricted{else}permitted{/if}">
 			<div class="floaticon">
 				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=switch_status">{if $r.coupon_restrict=='Y'}{biticon ipackage="bitcommerce" iname="icon_status_red" iexplain="Restricted"}{elseif $r.coupon_restrict=='O'}{biticon ipackage="bitcommerce" iname="icon_status_yellow" iexplain="Restricted"}{else}{biticon ipackage="bitcommerce" iname="icon_status_green" iexplain="Permitted"}{/if}</a>
-				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{biticon iname="edit-delete" iexplain="Remove"}</a>
+				<a class="" href="{$smarty.server.SCRIPT_NAME}?cid={$gCoupon->mCouponId}&amp;info={$r.restrict_id}&amp;action=remove">{booticon iname="icon-trash" iexplain="Remove"}</a>
 			</div>
 			{if $r.category_id}<strong>{tr}Category{/tr}:</strong> {$r.categories_name}<br/>{/if}
 			{if $r.product_id}<strong>{tr}Product{/tr}:</strong> <a href="{$gBitProduct->getDisplayUrlFromHash($r)}">{$r.products_name|escape} #{$r.product_id}</a><br/>{/if}
@@ -28,13 +28,13 @@
 
 {form name="restrict_category" method="post" action="`$smarty.server.SCRIPT_NAME`?cid=`$gCoupon->mCouponId`"}
 {legend legend="Add Restriction"}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Category"}
 	{forminput}
 		{$categorySelect}
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Options"}
 	{forminput}
 		<select name="products_options_values_id">
@@ -49,7 +49,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Product Type"}
 	{forminput}
 		<select name="product_type_id">
@@ -60,7 +60,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Specific Product"}
 	{forminput}
 		{$productCategorySelect}
@@ -72,7 +72,7 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row">
+<div class="control-group">
 	{formlabel label="Restriction"}
 	{forminput}
 		<select name="restrict_status">
@@ -82,9 +82,9 @@
 		</select>
 	{/forminput}
 </div>
-<div class="row submit">
+<div class="control-group submit">
 	{forminput}
-		<input type="submit" name="action" value="Add">
+		<input type="submit" class="btn" name="action" value="Add">
 	{/forminput}
 </div>
 {/legend}

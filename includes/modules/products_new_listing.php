@@ -22,9 +22,6 @@
 
 ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-          <tr>
-            <td colspan="3"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-          </tr>
 <?php
   $group_id = zen_get_configuration_key_value('PRODUCT_NEW_LIST_GROUP_ID');
 
@@ -202,12 +199,8 @@
               ?>
             </td>
           </tr>
-<?php } ?>
-
-          <tr>
-            <td colspan="3"><?php echo zen_draw_separator(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_SILVER_SEPARATOR, '100%', '1'); ?></td>
-          </tr>
 <?php
+      } 
       $products_new->MoveNext();
     }
   } else {

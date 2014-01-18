@@ -58,11 +58,11 @@ if( $gBitUser->isRegistered() ) {
 			$products_history->MoveNext();
 		}
 
-		$gBitSmarty->assign( 'sideboxCustomerOrders', $customer_orders );
+		$_template->tpl_vars['sideboxCustomerOrders'] = new Smarty_variable( $customer_orders );
 
 	}
 	if( empty( $moduleTitle ) ) {
-		$gBitSmarty->assign( 'moduleTitle',  'Order History' ) ;
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Order History' );
 	}
 }
 ?>

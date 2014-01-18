@@ -60,6 +60,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		global $gBitUser;
 
 		$this->contents = array();
+		$this->quantity = NULL;
 		$this->total = NULL;
 		$this->weight = NULL;
 		$this->content_type = false;
@@ -326,6 +327,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$this->subtotal = 0;
 			$this->total = 0;
 			$this->weight = 0;
+			$this->quantity = 0;
 
 			// shipping adjustment
 			$this->free_shipping_item = 0;
@@ -362,6 +364,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					$this->total += $productsTotal;
 					$this->subtotal += $productsTotal;
 					$this->weight += $product->getWeight( $qty, $productAttributes );
+					$this->quantity += $qty;
 				}
 			}
 		}
@@ -385,8 +388,9 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['name'] = $product->getField('products_name');
 			$productHash['purchase_group_id'] = $product->getField('purchase_group_id');
 			$productHash['model'] = $product->getField('products_model');
+			$productHash['display_url'] = $product->getDisplayUrl();
 			$productHash['image'] = $product->getField('products_image');
-			$productHash['image_url'] = $product->getField('products_image_url');
+			$productHash['image_url'] = $product->getImageUrl();
 			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
@@ -402,6 +406,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['attributes'] = $attr;
 			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
+
 		return $productHash;
 	}
 

@@ -34,12 +34,12 @@ if ($show_languages == true) {
 		$lng = new language;
 	}
 	reset($lng->catalog_languages);
-	$gBitSmarty->assign_by_ref( 'sideboxLanguages', $lng->catalog_languages );
+	$_template->tpl_vars['sideboxLanguages'] = new Smarty_variable( $lng->catalog_languages );
 	$baseUrl = preg_replace( '/[\?&]?language=[a-z]{2}/', '', $_SERVER['REQUEST_URI'] );
 	$baseUrl .= strpos( $baseUrl, '?' ) ? '&amp;' : '?' ;
-	$gBitSmarty->assign( 'sideboxLanguagesBaseUrl', $baseUrl );
+	$_template->tpl_vars['sideboxLanguagesBaseUrl'] = new Smarty_variable( $baseUrl );
 }
 if( empty( $moduleTitle ) ) {
-	$gBitSmarty->assign( 'moduleTitle',  'Languages' ) ;
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Languages' );
 }
 ?>

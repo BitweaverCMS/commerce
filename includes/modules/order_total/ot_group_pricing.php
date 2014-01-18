@@ -25,14 +25,16 @@
 
     function ot_group_pricing() {
       $this->code = 'ot_group_pricing';
-      $this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
-      $this->description = MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION;
-      $this->sort_order = MODULE_ORDER_TOTAL_GROUP_PRICING_SORT_ORDER;
-      $this->include_shipping = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING;
-      $this->include_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX;
-      $this->calculate_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX;
-      $this->credit_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CREDIT_TAX;
-      $this->credit_class = true;
+      if( defined( 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS' ) ) {
+		  $this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
+		  $this->description = MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION;
+		  $this->sort_order = MODULE_ORDER_TOTAL_GROUP_PRICING_SORT_ORDER;
+		  $this->include_shipping = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING;
+		  $this->include_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX;
+		  $this->calculate_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX;
+		  $this->credit_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CREDIT_TAX;
+		  $this->credit_class = true;
+      }
 
       $this->output = array();
     }

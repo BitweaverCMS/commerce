@@ -4,13 +4,13 @@
 {formfeedback hash=$feedback}
 
 <div class="admin bitcommerce coupons">
-	<div class="header">
+	<div class="page-header">
 		<h1>{tr}Discount Coupons{/tr}: {tr}Report for {/tr} {$gCoupon->getField('coupon_name')} ({$gCoupon->getField('coupon_code')})</h1>
 	</div>
 	<div class="body">
 		<h2>{$gCoupon->getField('coupon_description')|escape}</h2>
 
-		<table class="data">
+		<table class="table data">
 		<caption>{tr}Summary{/tr}</caption>
 		<thead>
 		<tr>
@@ -42,7 +42,7 @@
 		</tr>
 		</tfoot>
 		</table>
-		<table class="data">
+		<table class="table data">
 		<caption>{tr}Details{/tr}</caption>
 		<tr >
 			<th>&nbsp;</th>

@@ -40,6 +40,12 @@ class CommerceStatistics extends BitSingleton {
 				case 'first_purchase_desc':
 					$sortMode = 'MIN(co.`date_purchased`) DESC, ';
 					break;
+				case 'age_asc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) ASC, ';
+					break;
+				case 'age_desc':
+					$sortMode = 'MAX(co.`date_purchased`) - MIN(co.`date_purchased`) DESC, ';
+					break;
 				case 'last_purchase_asc':
 					$sortMode = 'MAX(co.`date_purchased`) ASC, ';
 					break;
@@ -54,19 +60,26 @@ class CommerceStatistics extends BitSingleton {
 			$pParamHash['sort_mode'] = 'revenue_desc';
 		}
 
+
+		$interval = BitBase::getParameter( $pParamHash, 'interval', '2 years' );
+
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+		$bindVars[] = $interval;
+
 		$comparison = $pRetained ? '<' : '>';
 
 		$sortMode .= 'SUM(co.`order_total`) DESC';
 
 		BitBase::prepGetList( $pParamHash );
 
-		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`
+		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`, MAX(date_purchased) - MIN(date_purchased) AS `age`
 				FROM com_orders co 
 					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
-				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > interval '2 years' 
+				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > ? 
 				GROUP BY  uu.`user_id`,uu.`real_name`, uu.`login`
-				HAVING NOW() - MIN(co.date_purchased) > interval '2 years' AND NOW() - MAX(co.date_purchased) ".$comparison." interval '2 years' ORDER BY $sortMode";
-		if( $rs = $this->mDb->query( $sql ) ) {
+				HAVING NOW() - MIN(co.date_purchased) > ? AND NOW() - MAX(co.date_purchased) ".$comparison." ? ORDER BY $sortMode";
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret['customers'][$row['user_id']] = $row;
 				@$ret['totals']['orders'] += $row['orders'];
@@ -98,23 +111,26 @@ class CommerceStatistics extends BitSingleton {
 		}
 		
 		$ret = array();
-		$ret['stats']['gross_revenue_max'] = 0;
-		$ret['stats']['order_count_max'] = 0;
 
 		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
 				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` $whereSql
 				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
-			while( $row = $rs->fetchRow() ) {
-				$ret[$row['hash_key']] = $row;
-				if( $ret['stats']['order_count_max'] < $row['order_count'] ) {
-					$ret['stats']['order_count_max'] = $row['order_count'];
-				}
-				if( $ret['stats']['gross_revenue_max'] < $row['gross_revenue'] ) {
-					$ret['stats']['gross_revenue_max'] = $row['gross_revenue'];
+			if( $rs->RowCount() ) {
+				$ret['stats']['gross_revenue_max'] = 0;
+				$ret['stats']['order_count_max'] = 0;
+				while( $row = $rs->fetchRow() ) {
+					$ret[$row['hash_key']] = $row;
+					if( $ret['stats']['order_count_max'] < $row['order_count'] ) {
+						$ret['stats']['order_count_max'] = $row['order_count'];
+					}
+					if( $ret['stats']['gross_revenue_max'] < $row['gross_revenue'] ) {
+						$ret['stats']['gross_revenue_max'] = $row['gross_revenue'];
+					}
 				}
 			}
 		}
+
 		return( $ret );
 	}
 

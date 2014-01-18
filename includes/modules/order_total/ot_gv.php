@@ -25,26 +25,38 @@ class ot_gv {
 	function ot_gv() {
 		global $currencies, $order, $gBitUser;
 		$this->code = 'ot_gv';
-		$this->title = MODULE_ORDER_TOTAL_GV_TITLE;
-		$this->header = MODULE_ORDER_TOTAL_GV_HEADER;
-		$this->description = MODULE_ORDER_TOTAL_GV_DESCRIPTION;
-		$this->user_prompt = MODULE_ORDER_TOTAL_GV_USER_PROMPT;
-		$this->sort_order = MODULE_ORDER_TOTAL_GV_SORT_ORDER;
-		$this->include_shipping = MODULE_ORDER_TOTAL_GV_INC_SHIPPING;
-		$this->include_tax = MODULE_ORDER_TOTAL_GV_INC_TAX;
-		$this->calculate_tax = MODULE_ORDER_TOTAL_GV_CALC_TAX;
-		$this->credit_tax = MODULE_ORDER_TOTAL_GV_CREDIT_TAX;
-		$this->tax_class	= MODULE_ORDER_TOTAL_GV_TAX_CLASS;
-		$this->credit_class = true;
-		$gvAmount = $currencies->format( $this->user_has_gv_account( $gBitUser->mUserId ) );
-		if( (isset( $_SESSION['cot_gv'] ) && ltrim($_SESSION['cot_gv'], ' 0')) || empty( $_SESSION['cot_gv'] ) ) {
-			$gvNum = preg_replace( '/[^\d\.]/', '', $gvAmount );
-			if( is_numeric( $gvNum ) ) {
-				$_SESSION['cot_gv'] = ($order->info['total'] > $gvNum ? $gvNum : $order->info['total']);
+        if( defined( 'MODULE_ORDER_TOTAL_GV_STATUS' ) ) {
+			$this->title = MODULE_ORDER_TOTAL_GV_TITLE;
+			$this->header = MODULE_ORDER_TOTAL_GV_HEADER;
+			$this->description = MODULE_ORDER_TOTAL_GV_DESCRIPTION;
+			$this->user_prompt = tra( 'Apply Balance' );
+			$this->sort_order = MODULE_ORDER_TOTAL_GV_SORT_ORDER;
+			$this->include_shipping = MODULE_ORDER_TOTAL_GV_INC_SHIPPING;
+			$this->include_tax = MODULE_ORDER_TOTAL_GV_INC_TAX;
+			$this->calculate_tax = MODULE_ORDER_TOTAL_GV_CALC_TAX;
+			$this->credit_tax = MODULE_ORDER_TOTAL_GV_CREDIT_TAX;
+			$this->tax_class	= MODULE_ORDER_TOTAL_GV_TAX_CLASS;
+			$this->credit_class = true;
+			$gvAmount = $currencies->format( $this->user_has_gv_account( $gBitUser->mUserId ) );
+			if( (isset( $_SESSION['cot_gv'] ) && ltrim($_SESSION['cot_gv'], ' 0')) || empty( $_SESSION['cot_gv'] ) ) {
+				$gvNum = preg_replace( '/[^\d\.]/', '', $gvAmount );
+				if( is_numeric( $gvNum ) && is_object( $order ) ) {
+					$_SESSION['cot_gv'] = ($order->info['total'] > $gvNum ? $gvNum : $order->info['total']);
+				}
 			}
+			$this->checkbox = '';
+			if( $this->user_has_gv_account( $gBitUser->mUserId ) ) {
+				$this->checkbox = '
+						<div class="control-group">
+							<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
+							<div class="controls">
+								<input type="text" class="input-mini" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '"> ' . tra( 'of' ) . ' ' . $gvAmount . '
+							</div>
+						</div>';
+			}
+
+			$this->output = array();
 		}
-		$this->checkbox = $this->user_prompt . '<input type="textfield" size="6" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '">' . ($this->user_has_gv_account( $gBitUser->mUserId ) > 0 ? '<br />' . MODULE_ORDER_TOTAL_GV_USER_BALANCE . $gvAmount : '');
-		$this->output = array();
 	}
 
 	function process() {

@@ -1,8 +1,8 @@
-<ul class="data">
 {foreach from=$customersInterests key=interestsId item=interest}
-	<li class="item"><input type="checkbox" name="interersts_id" onchange="storeCustomerInterest(this.value,this.checked)" value="{$interestsId}" {if $interest.is_interested}checked="checked"{/if}/>{$interest.interests_name}</li>
+<label class="checkbox">
+	<input type="checkbox" name="interersts_id" onchange="storeCustomerInterest(this.value,this.checked)" value="{$interestsId}" {if $interest.is_interested}checked="checked"{/if}/>{$interest.interests_name}</li>
+</label>
 {/foreach}
-</ul>
 <div id="interestsfeedback"></div>
 {literal}
 <script type="text/javascript">/* <![CDATA[ */

@@ -39,7 +39,7 @@ class CommerceSystem extends BitSingleton {
 	}
 
 	static function isConfigActive( $pConfigName ) {
-		return ((defined( $pConfigName ) && constant( $pConfigName ) == 'True') ? true : false);
+		return ((defined( $pConfigName ) && strtolower( constant( $pConfigName ) ) == 'true') ? true : false);
 	}
 
 	function setHeadingTitle( $pTitle ) {

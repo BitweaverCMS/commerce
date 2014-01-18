@@ -53,7 +53,7 @@ try {
 	if( $listOrdersResult->isSetOrders() ) { 
 		$orders = $listOrdersResult->getOrders();
 		$memberList = $orders->getOrder();
-		$gBitSmarty->assign_by_ref( 'orderList', $memberList );
+		$gBitSmarty->assign( 'orderList', $memberList );
 	}
  } catch (MarketplaceWebServiceOrders_Exception $ex) {
 	 echo("Caught Exception: " . $ex->getMessage() . "\n");

@@ -143,14 +143,12 @@ class CommerceCustomer extends BitBase {
 			}
 		} else {
 			$newUser = new BitPermUser();
-			if( $newUser->register( $_REQUEST ) ) {
-				$newUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
-				$newUser->load();
+			if( $newUser->preRegisterVerify( $_REQUEST ) && $newUser->register( $_REQUEST ) ) {
+				$gBitUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE );
 				$_REQUEST['customers_id'] = $gBitUser->mUserId;
 				$this->mCustomerId = $gBitUser->mUserId;
+				$this->syncBitUser( $gBitUser->mInfo );
 				$this->load();
-				$this->syncBitUser( $newUser->mInfo );
-				$gBitUser = $newUser;
 			} else {
 				$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
 			}
@@ -160,17 +158,14 @@ class CommerceCustomer extends BitBase {
 
 
 
-//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
-
-
+	//=-=-=-=-=-=-=-=-=-=-= ADDRESS FUNCTIONS
 
 	function verifyAddress( &$pParamHash, &$errorHash ) {
-		global $gBitUser;
 		if( empty( $pParamHash['customers_id'] ) || !is_numeric( $pParamHash['customers_id'] ) ) {
 			if( $this->isValid() ) {
 				$pParamHash['address_store']['customers_id'] = $this->mCustomerId;
 			} else {
-				$errorHash['customers_id'] = tra( 'Your must be registered to save addresses' );
+				$errorHash['customers_id'] = tra( 'You must be registered to save addresses' );
 			}
 		} else {
 			$pParamHash['address_store']['customers_id'] = $pParamHash['customers_id'];
@@ -224,6 +219,8 @@ class CommerceCustomer extends BitBase {
 
 		if( ACCOUNT_SUBURB == 'true' && !empty( $pParamHash['suburb'] ) ) {
 			$pParamHash['address_store']['entry_suburb'] = $pParamHash['suburb'];
+		} else {
+			$pParamHash['address_store']['entry_suburb'] = NULL;
 		}
 
 		if( empty( $pParamHash['country_id'] ) || !is_numeric( $pParamHash['country_id'] ) || ($pParamHash['country_id'] < 1) ) {
@@ -252,7 +249,7 @@ class CommerceCustomer extends BitBase {
 		return( count( $errorHash ) == 0 );
 	}
 
-	// process a new shipping address
+	// store an address
 	function storeAddress( &$pParamHash ) {
 		global $current_page_base, $language_page_directory, $template;
 
@@ -263,18 +260,34 @@ class CommerceCustomer extends BitBase {
 
 		if( $this->verifyAddress( $pParamHash, $this->mErrors ) ) {
 			$process = true;
-			if( empty( $pParamHash['address'] ) ) {
+			if( isset( $pParamHash['address_book_id'] ) && self::verifyId( $pParamHash['address_book_id'] ) ) {
+				$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address_book_id'] ) );
+			} else {
 				$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 				$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
-			} else {
-				$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address'] ) );
 			}
 			if( !$this->getDefaultAddress() || !empty( $pParamHash['primary'] ) ) {
 				$this->setDefaultAddress( $pParamHash['address'] );
 			}
-		// process the selected shipping destination
 		}
 		return( count( $this->mErrors ) == 0 );
+	}
+
+	function expungeAddress( $pAddressId, $pSecure = TRUE ) {
+		$ret = NULL;
+		if( is_numeric( $pAddressId ) && (!$pSecure || ($pSecure && $this->isValid())) ) {
+			$bindVars = array( $pAddressId );
+			$whereSql = '';
+			if( $pSecure ) {
+				$whereSql = " AND `customers_id`=?";
+				array_push( $bindVars, $this->mCustomerId );
+			}
+			$query = "DELETE FROM " . TABLE_ADDRESS_BOOK . " cab WHERE `address_book_id`=? $whereSql";
+			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
+				$ret = $this->mDb->Affected_Rows;
+			}
+		}
+		return( $ret );
 	}
 
 	function getAddress( $pAddressId, $pSecure = TRUE ) {
@@ -352,8 +365,7 @@ class CommerceCustomer extends BitBase {
 	function isAddressOwner( $pAddressId ) {
 		$ret = FALSE;
 		if( is_numeric( $pAddressId ) ) {
-			$query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . "
-					  where `customers_id` = ? and `address_book_id` = ?";
+			$query = "select count(*) as `total` from " . TABLE_ADDRESS_BOOK . " where `customers_id` = ? and `address_book_id` = ?";
 			$ret = $this->mDb->getOne( $query, array( $this->mCustomerId, $pAddressId ) );
 		}
 		return $ret;
@@ -379,6 +391,35 @@ class CommerceCustomer extends BitBase {
 			}
 		}
 		return $ret;
+	}
+
+	function getStateInputHtml( $pAddressHash ) {
+		global $gCommerceSystem;
+
+		$stateInput = '';
+
+		if( empty( $pAddressHash['country_id'] ) ) {
+			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		}
+
+		if( $gCommerceSystem->isConfigActive( 'ACCOUNT_STATE' ) ) {
+			if ( !empty( $pAddressHash['country_id'] ) ) {
+				if( !($stateInput = zen_get_country_zone_list('state', $pAddressHash['country_id'], (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : '') )) ) { 
+					$stateInput = zen_draw_input_field('state', zen_get_zone_name($pAddressHash['country_id'], $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
+				}
+			} else {
+				$stateInput = zen_draw_input_field('state');
+			}
+		}
+		return $stateInput;
+	}
+
+	function getCountryInputHtml( $pAddressHash ) {
+		if( empty( $pAddressHash['country_id'] ) ) {
+			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		}
+
+		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
 	}
 
 	function getCountryZones( $pCountryId ) {

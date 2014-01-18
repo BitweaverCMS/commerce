@@ -1,3 +1,24 @@
+
+table.order-items	{ background-color:#f3f3f3; }
+table.table tr.comments	td { border-top:none; }
+
+.table td.supplemental	{ border: none; }
+
+#bitcommerce.adminmode .navbar-inner {
+	padding-left: 0px;
+}
+
+.admin.bitcommerce h1.page-header	{ font-size:16pt; }
+
+.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
+
+.coupon.active{}
+.coupon.inactive	{ background-color:#ddd; }
+.coupon.pending	{ background-color:#ffe; }
+.coupon.active		{ background-color:#efe; }
+.coupon.expired	{ background-color:#fee; }
+
+/* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions
 http://www.oscommerce.com
@@ -5,19 +26,10 @@ Copyright (c) 2002 osCommerce
 Released under the GNU General Public License
 
 $Id: stylesheet.css,v 1.6 2010/03/08 23:37:25 spiderr Exp $
-*/
-@import url("menu.css");/* including stylesheet for dhtml menu */
-@import url("index.css");/* including stylesheet for index.php */
+* /
+@import url("index.css");/* including stylesheet for index.php * /
 a{ text-decoration:none; }
 body,html,#content table { font:normal normal 11px Verdana,sans-serif; }
-
-.admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
-
-.active{}
-.inactive	{ background-color:#ddd; }
-.pending	{ background-color:#ffe; }
-.active		{ background-color:#efe; }
-.expired	{ background-color:#fee; }
 
 a:hover{ text-decoration:underline; }
 a.headerLink:link{ color:#ffffff; font-weight:bold; text-decoration:none; }
@@ -155,13 +167,13 @@ background-color:#ffffff;
 .dataTableRowOverWhois{
 background-color:#ffffff;
 }
-.dataTableRowSelected{
+.info{
 background-color:#e7e6e0;
 }
-.dataTableRowSelectedBot{
+.infoBot{
 background-color:#ff93ff;
 }
-.dataTableRowSelectedWhois{
+.infoWhois{
 background-color:#dee4e8;
 }
 .dataTableRowSpacer,td.dataTableRowSpacer,TR.dataTableRowSpacer{
@@ -237,7 +249,7 @@ margin: 10px 0;
 text-decoration:line-through;
 }
 .pageHeading{
-color:#c96e29; /*727272*/
+color:#c96e29;
 font-size:16px;
 font-variant:small-caps;
 font-weight:bold;
@@ -267,3 +279,4 @@ form.status textarea {width:100%;height:9em;}
 .orderhistory.data li.item.notified { background-color:#ffffee; color:black; }
 .orderhistory.data .item .date { float:right;}
 .orderhistory.data .item p { padding:6px ; color:#666; margin: 0 0 0 3px; clear:both; }
+*/

@@ -32,6 +32,6 @@ if( $sideboxFeature = $gBitProduct->getList( $listHash ) ) {
 	$sideboxFeature = current( $sideboxFeature );
 	$whats_new_price = CommerceProduct::getDisplayPrice($sideboxFeature['products_id']);
 
-	$gBitSmarty->assign_by_ref( 'sideboxFeature', $sideboxFeature );
+	$_template->tpl_vars['sideboxFeature'] = new Smarty_variable( $sideboxFeature );
 }
 ?>

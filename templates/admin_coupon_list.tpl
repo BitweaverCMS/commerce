@@ -4,8 +4,9 @@
 {formfeedback hash=$feedback}
 {strip}
 <div class="admin bitcommerce coupons">
-	<div class="header">
+	<header>
 		<h1>{tr}Discount Coupons{/tr}</h1>
+		<a href="{$smarty.server.SCRIPT_NAME}?action=new" class="pull-right btn btn-primary btn-mini">{tr}Create Coupon{/tr}</a>
 		<form name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php" method="get">
 			<select name="status" onchange="this.form.submit();">
 				<option value="" selected="selected">All Coupons</option>
@@ -18,11 +19,10 @@
 				<option value="" {if empty($smarty.request.uses)}selected="selected"{/if}>All Coupons</option>
 			</select>							
 		</form>
-		<div class="floaticon"><a href="{$smarty.server.SCRIPT_NAME}?action=new" class="button">{tr}Create Coupon{/tr}</a></div>
-	</div>
+	</header>
 	<div class="body">
 
-		<table class="data">
+		<table class="table data">
 		<tr >
 			<th>&nbsp;</th>
 			<th>{smartlink ititle="Coupon Code" isort="coupon_code" icontrol=$listInfo }</th>
@@ -36,15 +36,15 @@
 		</tr>
 
 		{foreach from=$couponList item=coupon key=couponId name=couponList}
-		<tr class="{if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
+		<tr class="coupon {if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
 			<td class="item">{$smarty.foreach.couponList.iteration+$listInfo.offset}</td>
 			<td class="item">
-				<div class="floaticon">
+				<div class="floaticon text-left">
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=edit&amp;cid={$couponId}">{booticon iname="icon-edit"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}({$coupon.restrictions_count}){/if}{booticon iname="icon-lock"}</a>
 				{if $coupon.redeemed_count == 0}
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{biticon iname="edit-delete"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{booticon iname="icon-trash"}</a>
 				{/if}
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}({$coupon.restrictions_count}){/if}{biticon iname="emblem-readonly"}</a>
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=edit&amp;cid={$couponId}">{biticon iname="accessories-text-editor"}</a>
 				</div>
 				<strong>{if $coupon.redeemed_count > 0}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=report&amp;cid={$couponId}">{/if}{$coupon.coupon_code}{if $coupon.redeemed_count > 0}</a>{/if}</strong> <em>{$coupon.coupon_name|escape}</em>
 				<br/>{$coupon.coupon_description}: {if $coupon.uses_per_coupon}{$coupon.uses_per_coupon}{else}{tr}unlimited{/tr}{/if} {tr}use{/tr}{if $coupon.uses_per_user}, {$coupon.uses_per_user} per user{/if}

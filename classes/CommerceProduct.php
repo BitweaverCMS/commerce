@@ -105,18 +105,19 @@ class CommerceProduct extends LibertyMime {
 		$ret = NULL;
 		if( is_numeric( $pProductsId ) ) {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
-			array_push( $bindVars, $pProductsId, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
+			array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1, $pProductsId );
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 			$query = "SELECT p.*, pd.*, pt.*, uu.`real_name`, uu.`login` $selectSql , m.*, cat.*, catd.*, lc.*
 						FROM " . TABLE_PRODUCTS . " p
 							INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (p.`products_type`=pt.`type_id`)
 							INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=p.`content_id`)
-							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) $joinSql
+							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`) 
 							INNER JOIN ".TABLE_CATEGORIES." cat ON ( p.`master_categories_id`=cat.`categories_id` )
-						LEFT OUTER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id`)
+						$joinSql
+						LEFT OUTER JOIN ".TABLE_PRODUCTS_DESCRIPTION." pd ON (p.`products_id`=pd.`products_id` AND pd.`language_id`=?)
 						LEFT OUTER JOIN ".TABLE_CATEGORIES_DESCRIPTION." catd ON ( cat.`categories_id`=catd.`categories_id` AND catd.`language_id`=pd.`language_id` )
 						LEFT OUTER JOIN ".TABLE_MANUFACTURERS." m ON ( p.`manufacturers_id`=m.`manufacturers_id` )
-						LEFT OUTER JOIN ".TABLE_SUPPLIERS." s ON ( p.`suppliers_id`=s.`suppliers_id` )						WHERE p.`products_id`=? AND pd.`language_id`=? $whereSql";
+						LEFT OUTER JOIN ".TABLE_SUPPLIERS." s ON ( p.`suppliers_id`=s.`suppliers_id` )						WHERE p.`products_id`=? $whereSql";
 // Leave these out for now... and possibly forever. These can produce multiple row returns
 //						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
@@ -608,7 +609,10 @@ If a special exist * 10+9
 			if( $productHash ) {
 				$show_sale_discount = '';
 				$discountAmount = $productHash['products_price'] - $productHash['lowest_purchase_price'];
-				if( $discountAmount > 0 ) {
+				// If Free, Show it
+				if ($productHash['product_is_free'] == '1') {
+					$final_display_price = '<span class="free">'.tra( 'FREE' ).'</span>';
+				} elseif( $discountAmount > 0 ) {
 					$final_display_price = '<span class="normalprice discounted">' . CommerceProduct::getNotatedPrice( $productHash['products_price'], $productHash['products_tax_class_id'] ) . ' </span>';
 					$show_sale_price = '&nbsp;' . '<span class="productSpecialPrice">' . CommerceProduct::getNotatedPrice( $productHash['lowest_purchase_price'], $productHash['products_tax_class_id'] ) . '</span>';
 					if( SHOW_SALE_DISCOUNT_STATUS == '1' ) {
@@ -624,15 +628,6 @@ If a special exist * 10+9
 				}
 
 
-				// If Free, Show it
-				$free_tag = '';
-				if ($productHash['product_is_free'] == '1') {
-					if (OTHER_IMAGE_PRICE_IS_FREE_ON=='0') {
-						$free_tag = '<br />' . PRODUCTS_PRICE_IS_FREE_TEXT;
-					} else {
-						$free_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_PRICE_IS_FREE, PRODUCTS_PRICE_IS_FREE_TEXT);
-					}
-				}
 
 				// If Call for Price, Show it
 				$call_tag = '';
@@ -643,7 +638,7 @@ If a special exist * 10+9
 						$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
 					}
 				}
-				$ret = $final_display_price . $free_tag . $call_tag;
+				$ret = $final_display_price  . $call_tag;
 			}
 		}
 		return $ret;
@@ -1060,6 +1055,14 @@ If a special exist * 10+9
 		$ret = BITCOMMERCE_PKG_URL;
 		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
 			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
+			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) && empty( $pParamHash['short_form'] ) ) {
+				if( $pParamHash['products_name'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_name'] );
+				}
+				if( $pParamHash['products_model'] ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_model'] );
+				}
+			}
 			if( !empty( $pParamHash['cat_path'] ) ) {
 				if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 					$ret .= '/' . $pParamHash['cat_path'];
@@ -1084,27 +1087,37 @@ If a special exist * 10+9
 	}
 
 	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+		$ret = NULL;
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
 		}
 
 		if( is_numeric( $pMixed ) ) {
-			$path = ($pMixed % 1000).'/'.$pMixed.'/';
-			if( is_dir( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'thumbs/' ) ) {
-				$path .= 'thumbs/';
+			$branch = static::getImageBranch( $pMixed );
+			$basePath = static::getImageBasePath( $pMixed );
+			if( is_dir( $basePath.'thumbs/' ) ) {
+				$basePath .= 'thumbs/';
+				$branch .= 'thumbs/';
 			}
-			$path .= $pSize;
-			if( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.jpg';
-			} elseif( file_exists( STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/'.$path.'.png' ) ) {
-				$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/'.$path.'.png';
+			if( file_exists( $basePath.$pSize.'.jpg' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.jpg';
+			} elseif( file_exists( $basePath.$pSize.'.png' ) ) {
+				$ret = STORAGE_PKG_URL.$branch.$pSize.'.png';
 			} else {
-				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
+//				$ret = BITCOMMERCE_PKG_URL.'images/blank_'.$pSize.'.jpg';
 			}
 		} else {
 			$ret = STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/images/'.$pMixed;
 		}
 		return $ret;
+	}
+
+	static function getImageBasePath( $pProductsId ) {
+		return STORAGE_PKG_PATH.static::getImageBranch( $pProductsId );
+	}
+
+	static function getImageBranch( $pProductsId ) {
+		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
 	}
 
 	function getGatekeeperSql( &$pSelectSql, &$pJoinSql, &$pWhereSql ) {
@@ -1137,7 +1150,7 @@ If a special exist * 10+9
 		global $gBitSystem, $gBitUser;
 
 		if( empty( $pListHash['sort_mode'] ) ) {
-			$pListHash['sort_mode'] = 'products_date_added_desc';
+			$pListHash['sort_mode'] = 'created_desc';
 		}
 		$this->prepGetList( $pListHash );
 		$bindVars = array();
@@ -1165,10 +1178,11 @@ If a special exist * 10+9
 		}
 
 		if( empty( $pListHash['thumbnail_size'] ) ) {
-			$pListHash['thumbnail_size'] = 'icon';
+			$pListHash['thumbnail_size'] = 'small';
 		}
 
 		if( !empty( $pListHash['featured'] ) ) {
+			$selectSql .= ' , f.`featured_date_available`, f.`expires_date`, f.`featured_last_modified`, f.`featured_date_added` ';
 			$joinSql .= " INNER JOIN " . TABLE_FEATURED . " f ON ( p.`products_id` = f.`products_id` ) ";
 			$whereSql .= " AND f.`status` = '1' ";
 		}
@@ -1246,6 +1260,7 @@ If a special exist * 10+9
 
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 		$pListHash['total_records'] = 0;
+
 		$query = "SELECT p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					FROM " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
@@ -1300,7 +1315,7 @@ If a special exist * 10+9
 		$pListHash['current_page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_records'] / $pListHash['max_records'] );
 		$pListHash['page_records'] = count( $ret );
-		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
+//		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);
 		$pListHash['offset'] = $pListHash['offset'];
 		$pListHash['block_pages'] = 5;
 		$pListHash['start_block'] = floor( $pListHash['offset'] / $pListHash['max_records'] ) * $pListHash['max_records'] + 1;
@@ -1367,7 +1382,7 @@ If a special exist * 10+9
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
 			'products_type' => (!empty( $pParamHash['products_type'] ) ? $pParamHash['products_type'] : $this->getProductType()),
-			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)!empty( $pParamHash['products_status'] ) & (int)$this->isValid() : 0),
+			'products_status' => (isset( $pParamHash['products_status'] ) ? (int)!empty( $pParamHash['products_status'] ) : 0),
 			'products_qty_box_status' => (int)(!empty( $pParamHash['products_qty_box_status'] )),
 			'products_quantity_order_units' => (!empty( $pParamHash['products_quantity_order_units'] ) && is_numeric( $pParamHash['products_quantity_order_units'] ) ? $pParamHash['products_quantity_order_units'] : 1),
 			'products_quantity_order_min' => (!empty( $pParamHash['products_quantity_order_min'] ) && is_numeric( $pParamHash['products_quantity_order_min'] ) ? $pParamHash['products_quantity_order_min'] : 1),
@@ -1494,6 +1509,7 @@ If a special exist * 10+9
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
+
 		return( TRUE );
 	}
 
@@ -1595,7 +1611,7 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']		= str_replace( STORAGE_PKG_URL, '', dirname( dirname( $this->getThumbnailUrl() ) ) ).'/';
+					$fileHash['dest_branch']	= static::getImageBranch( $this->mProductsId );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
@@ -1816,13 +1832,11 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$tmp_radio .= '<div class="productoptions">' .
-											zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .
-											"<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
+							$tmp_radio .= '<div class="productoptions"><label class="radio">' .  zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .  "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
 							if( !empty( $vals['attributes_image'] ) ) {
 								$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
 							}
-							$tmp_radio .= '</div>';
+							$tmp_radio .= '</label></div>';
 						}
 
 
@@ -1865,63 +1879,63 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') . '&nbsp;' : '') . $products_options_details . '<br />';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>';
+									break;
 								case '2':
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '<br />';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>';
+									break;
 								case '3':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
+									}
+									break;
 
 								case '4':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
-																. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
-																. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
-																. (!empty( $products_options_details_noname )	? '<br />' . $products_options_details_noname : '')
-																. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
+																	. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
+																	. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
+																	. (!empty( $products_options_details_noname )	? '<br />' . $products_options_details_noname : '')
+																	. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . $vals['products_options_values_name'] . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib']) . '</td>';
+									}
+									break;
 
 								case '5':
-								$tmp_attributes_image_row++;
+									$tmp_attributes_image_row++;
 
-								if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-									$tmp_attributes_image .= '</tr><tr>';
-									$tmp_attributes_image_row = 1;
-								}
+									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
+										$tmp_attributes_image .= '</tr><tr>';
+										$tmp_attributes_image_row = 1;
+									}
 
-								if( !empty( $vals['attributes_image'] ) ) {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
-								} else {
-									$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
-								}
-								break;
+									if( !empty( $vals['attributes_image'] ) ) {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
+									} else {
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+									}
+									break;
 								case '0':
 								default:
-								$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'<br />';
-								break;
+									$tmp_checkbox .= '<label class="checkbox">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'</label>';
+									break;
 							}
 						}
 
@@ -2076,7 +2090,7 @@ If a special exist * 10+9
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
 					// dropdownmenu auto switch to selected radio button display
-					case ( count( $this->mOptions[$optionsId]['values'] ) == 1):
+					case (!empty( $this->mOptions[$optionsId]['values'] ) && count( $this->mOptions[$optionsId]['values'] ) == 1):
 						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
 							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
 						} else {
@@ -2272,6 +2286,7 @@ Skip deleting of images for now
 					}
 				}
 */
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `products_id` = ?", array( $this->mProductsId ) );
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ?", array( $this->mProductsId ) );
 			$this->mDb->query("DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
@@ -2533,9 +2548,12 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
 		$lookupValue = current( $pLookupMixed );
+		if( is_numeric( $lookupValue) ) {
+			$lookupValue = (int)$lookupValue & 0xFFFFFFFF;
+		}
 	} elseif( is_numeric( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = (int)$pLookupMixed;
+		$lookupValue = (int)$pLookupMixed & 0xFFFFFFFF;
 	}
 
 	if( !empty( $lookupValue ) ) {
