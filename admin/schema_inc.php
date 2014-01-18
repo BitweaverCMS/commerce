@@ -221,8 +221,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_product_types' => "
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_product_types_to_category' => "
-  product_type_id I4,
-  category_id I4
+  product_type_id I4 NOTNULL,
+  category_id I4 NOTNULL
   CONSTRAINT ', CONSTRAINT `prod_types_to_cat_type_ref` FOREIGN KEY ( `product_type_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_product_types`( `type_id` )
   			 , CONSTRAINT `prod_types_to_cat_cat_ref` FOREIGN KEY ( `category_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_categories`( `categories_id` )'
 ",
@@ -304,7 +304,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_options_values_id I4 PRIMARY,
-  products_attributes_id I4 NOTNULL,
+  products_attributes_id I4 NOTNULL AUTO,
   products_options_values_name C(128),
   products_options_id I4 NOTNULL,
   options_values_price N(15,4),
