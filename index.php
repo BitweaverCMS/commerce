@@ -114,7 +114,7 @@ $zv_onload = str_replace(';;',';',$zv_onload.';'); //ensure we have just one ';'
 if (trim($zv_onload) == ';') $zv_onload='';  // ensure that a blank list is truly blank and thus ignored.
 
 // Define the template that will govern the overall page layout, can be done on a page by page basis
-// or using a default template. The default template installed will be a standard 3 column lauout. This
+// or using a default template. The default template installed will be a standard 3 column layout. This
 // template also loads the page body code based on the variable $body_code.
 
 require($template->get_template_dir('tpl_main_page.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_main_page.php');
@@ -131,7 +131,9 @@ if( !empty( $gCommercePopupTemplate ) ) {
 		// Display the template
 		$gDefaultCenter = 'bitpackage:bitcommerce/default_index.tpl';
 		$gBitSmarty->assign_by_ref( 'gDefaultCenter', $gDefaultCenter );
-
+		if( !empty( $_REQUEST['products_id'] ) && !$gBitProduct->isValid() ) {
+			$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
+		}
 		// Display the template
 		$gBitSystem->display( 'bitpackage:kernel/dynamic.tpl', HEADING_TITLE , array( 'display_mode' => 'display' ));
 	} else {
