@@ -16,12 +16,12 @@ if( !empty( $_REQUEST['export'] ) ) {
 	}
 
 	if( $gBitSystem->isPackageActive( 'newsletters' ) ) {
-		$selectSql .= ", ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_date`";
+		$selectSql .= ", ". $gBitDb->SqlIntToTimestamp( 'ms.`unsubscribe_date`' ) ." AS `unsubscribe_timestamp`";
 		$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."mail_subscriptions` ms ON (ms.`user_id` = uu.`user_id`) ";
-		$groupSql .= " ,ms.unsubscribe_date ";
+		$groupSql .= " ,ms.unsubscribe_timestamp";
 	}
 
-	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_date, MAX(date_purchased) as last_purchase_date, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `total_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_date` $selectSql
+	$sql = "SELECT uu.email,real_name,uu.user_id,cab.*,ccou.countries_name,MIN(date_purchased) as first_purchase_timestamp, MAX(date_purchased) as last_purchase_timestamp, COUNT(co.orders_id) AS num_purchases, SUM(co.`order_total`) AS `total_revenue`, ". $gBitDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ." AS `registration_timestamp` $selectSql
 			FROM users_users uu
 			 	 INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`user_id` = uu.`user_id`) 
 				LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.`customers_id`=uu.`user_id`)
@@ -52,8 +52,10 @@ if( !empty( $_REQUEST['export'] ) ) {
 				$csvOutput[] = $row['email'];
 
 				// Unsubscribe Date
-				if( !$headerSet ) { $header[] = 'unsubscribe_date'; }
-				$csvOutput[] = $row['unsubscribe_date'];
+				if( !empty( $row['unsubscribe_timestamp'] ) ) {
+					if( !$headerSet ) { $header[] = 'unsubscribe_timestamp'; }
+					$csvOutput[] = $row['unsubscribe_timestamp'];
+				}
 
 				if( !empty( $_REQUEST['customers_id'] ) ) {
 					if( !$headerSet ) { $header[] = 'customers_id'; }
@@ -115,17 +117,12 @@ if( !empty( $_REQUEST['export'] ) ) {
 					if( !$headerSet ) { $header[] = 'total_revenue'; }
 					$csvOutput[] = round( $row['total_revenue'], 2 );
 				}
-				if( !empty( $_REQUEST['registration_date'] ) ) {
-					if( !$headerSet ) { $header[] = 'registration_date'; }
-					$csvOutput[] = $row['registration_date'];
-				}
-				if( !empty( $_REQUEST['first_purchase_date'] ) ) {
-					if( !$headerSet ) { $header[] = 'first_purchase_date'; }
-					$csvOutput[] = $row['first_purchase_date'];
-				}
-				if( !empty( $_REQUEST['last_purchase_date'] ) ) {
-					if( !$headerSet ) { $header[] = 'last_purchase_date'; }
-					$csvOutput[] = $row['last_purchase_date'];
+				foreach( array( 'registration', 'first_purchase', 'last_purchase' ) as $dateCol ) {
+					if( !empty( $_REQUEST[$dateCol.'_date'] ) ) {
+						if( !$headerSet ) { $header[] = $dateCol.'_timestamp'; $header[] = $dateCol.'_date'; }
+						$csvOutput[] = $row[$dateCol.'_timestamp'];
+						$csvOutput[] = !empty( $row[$dateCol.'_timestamp'] ) ? date( 'Y-m-d', strtotime( $row[$dateCol.'_timestamp'] ) ) : NULL;
+					}
 				}
 				if( !empty( $_REQUEST['num_purchases'] ) ) {
 					if( !$headerSet ) { $header[] = 'num_purchases'; }
