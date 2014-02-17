@@ -4,7 +4,7 @@
 	<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page={$smarty.const.FILENAME_TELL_A_FRIEND}&amp;products_id={$gBitProduct->mProductsId}">{booticon ipackage="icons" iexplain="Tell a Friend" iname="icon-share-sign"}</a>
 {/if}
 
-{if $gBitProduct->hasUpdatePermission()}
+{if $gBitUser->hasPermission('p_commerce_admin')}
 		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&pID={$gBitProduct->getField('products_id')}&action=new_product">{booticon ipackage="bitcommerce" iname="icon-pencil" iexplain="Edit Product"}</a>
 		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{booticon iname="icon-cogs" iexplain="Edit Product Options"}</a>
 		<a title="{tr}Prices{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_price_manager.php?product_type={$gBitProduct->getField('products_type')}&current_category_id={$gBitProduct->getField('categories_id')}">{booticon  iname="icon-money" iexplain="Edit Product Prices"}</a>
@@ -48,6 +48,7 @@
 			{/if}
 			<div class="span5">
 				<div class="box addtocart">
+					{if $gBitProduct->getBasePrice() > 0}
 					<div class="control-group">
 						<h2>
 							{if $gBitProduct->getField('show_onetime_charges_description') && $gBitProduct->getField('show_onetime_charges_description') == 'true'}
@@ -60,6 +61,7 @@
 							{/if}
 						</h2>
 					</div>
+					{/if}
 
 				{if $smarty.const.SHOW_PRODUCT_INFO_WEIGHT == '1' && $gBitProduct->getField('products_weight')} 
 					<div class="control-group">
