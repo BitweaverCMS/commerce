@@ -19,6 +19,9 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
+	global $gBitSystem, $gBitProduct;
+	$gBitSystem->setCanonicalLink( $gBitProduct->getDisplayUrl() );
+
 ?>
 <?php echo zen_draw_form('email_friend', zen_href_link(FILENAME_TELL_A_FRIEND, 'action=process&products_id=' . $gBitProduct->mProductsId )); ?>
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
