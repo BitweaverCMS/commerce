@@ -110,6 +110,7 @@ function submitFunction($gv,$total) {
 
 	{if count($creditSelection)}
 		{foreach from=$creditSelection item=selection}
+			{if $selection}
 			<fieldset>
 				<legend>
 					{$selection.module|tra}
@@ -129,6 +130,7 @@ function submitFunction($gv,$total) {
 					</div>
 				{/foreach}
 			</fieldset>
+			{/if}
 		{/foreach}
 	{/if}
 
