@@ -471,7 +471,11 @@ If a special exist * 10+9
 						$optionId = $att['options_id'];
 						$valueId = $att['options_values_id'];
 					}
-					$ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
+					$finalPrince = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
+					$taxRate = zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) );
+					$ret += zen_add_tax( $finalPrince, $taxRate );
+
+					// $ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
 				}
 			}
 
