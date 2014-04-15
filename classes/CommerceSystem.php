@@ -3,26 +3,32 @@
 require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
 
 class CommerceSystem extends BitSingleton {
-	var $mConfig;
-	var $mProductTypeLayout;
+	var $mConfig = array();
+	var $mProductTypeLayout = array();
 
 	function __construct() {
 		parent::__construct();
 		$this->loadConfig();
 	}
 
-	function loadConfig() {
-		if( $this->mConfig = $this->mDb->getAssoc( 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue` FROM ' . TABLE_CONFIGURATION ) ) {
-			foreach( $this->mConfig AS $key=>$value ) {
-				define($key, $value );
-			}
+    public function __wakeup() {
+		$this->loadConstants();
+	}
+
+	private function loadConstants() {
+		foreach( $this->mConfig AS $key=>$value ) {
+			define($key, $value );
 		}
 
-		if( $this->mProductTypeLayout = $this->mDb->getAssoc( 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue` from ' . TABLE_PRODUCT_TYPE_LAYOUT ) ) {
-			foreach( $this->mProductTypeLayout AS $key=>$value ) {
-				define($key, $value );
-			}
+		foreach( $this->mProductTypeLayout AS $key=>$value ) {
+			define($key, $value );
 		}
+    }
+
+	function loadConfig() {
+		$this->mConfig = $this->mDb->getAssoc( 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue` FROM ' . TABLE_CONFIGURATION ); 
+		$this->mProductTypeLayout = $this->mDb->getAssoc( 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue` from ' . TABLE_PRODUCT_TYPE_LAYOUT );
+		$this->loadConstants();
 	}
 
 	function getConfig( $pConfigName, $pDefault=NULL ) {

@@ -471,7 +471,11 @@ If a special exist * 10+9
 						$optionId = $att['options_id'];
 						$valueId = $att['options_values_id'];
 					}
-					$ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
+					$finalPrince = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
+					$taxRate = zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) );
+					$ret += zen_add_tax( $finalPrince, $taxRate );
+
+					// $ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
 				}
 			}
 
@@ -1943,18 +1947,8 @@ If a special exist * 10+9
 
 
 						// =-=-=-=-=-=-=-=-=-=-= text
-
 						if (($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
-							if ( !empty( $pSelectedId ) ) {
-								reset($pSelectedId);
-								while(list($key,$value) = each($pSelectedId)) {
-									if ((str_replace('txt_', '', $key) == $this->mOptions[$optionsId]['products_options_id'])) {
-										$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . stripslashes($value) .'" />	';
-										$tmp_html .= $products_options_details;
-										break;
-									}
-								}
-							} elseif( is_object( $pCart ) ) {
+							if( is_object( $pCart ) ) {
 								$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
 								$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />	';
 								$tmp_html .= $products_options_details;
@@ -1986,6 +1980,11 @@ If a special exist * 10+9
 									$tmp_html = $tmp_html . '<br />' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price;
 								}
 
+							} else {
+									if ((str_replace('txt_', '', $key) == $this->mOptions[$optionsId]['products_options_id'])) {
+										$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . stripslashes($value) .'" />	';
+										$tmp_html .= $products_options_details;
+									}
 							}
 						}
 
