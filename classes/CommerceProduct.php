@@ -563,7 +563,7 @@ If a special exist * 10+9
 	}
 
 
-	function getNotatedPrice( $pPrice, $pTaxClassId ) {
+	static function getNotatedPrice( $pPrice, $pTaxClassId ) {
 		global $currencies;
 		return $currencies->display_price( $pPrice, zen_get_tax_rate( $pTaxClassId ) );
 	}
@@ -572,8 +572,8 @@ If a special exist * 10+9
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	function getDisplayPrice( $pProductsMixed=NULL ) {
-		global $gBitDb;
+	static function getDisplayPrice( $pProductsMixed=NULL ) {
+		global $gBitDb, $gBitUser;
 		$ret = '';
 
 		if( STORE_STATUS == '1' ) {
@@ -628,7 +628,6 @@ If a special exist * 10+9
 				}
 
 
-
 				// If Call for Price, Show it
 				$call_tag = '';
 				if ($productHash['product_is_call']) {
@@ -641,6 +640,7 @@ If a special exist * 10+9
 				$ret = $final_display_price  . $call_tag;
 			}
 		}
+
 		return $ret;
 	}
 
@@ -1086,7 +1086,7 @@ If a special exist * 10+9
 		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
-	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+	static function getImageUrl( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
