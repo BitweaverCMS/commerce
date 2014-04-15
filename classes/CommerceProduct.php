@@ -576,7 +576,7 @@ If a special exist * 10+9
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	function getDisplayPrice( $pProductsMixed=NULL ) {
+	static function getDisplayPrice( $pProductsMixed=NULL ) {
 		global $gBitDb;
 		$ret = '';
 
