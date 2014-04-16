@@ -390,7 +390,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['model'] = $product->getField('products_model');
 			$productHash['display_url'] = $product->getDisplayUrl();
 			$productHash['image'] = $product->getField('products_image');
-			$productHash['image_url'] = $product->getImageUrl();
+			$productHash['image_url'] = $product->__getImageUrl();
 			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );

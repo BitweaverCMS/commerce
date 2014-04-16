@@ -572,11 +572,16 @@ If a special exist * 10+9
 		return $currencies->display_price( $pPrice, zen_get_tax_rate( $pTaxClassId ) );
 	}
 
+	public function __getDisplayPrice() {
+		if( $this->isValid() ) {
+			static::getDisplayPrice( $this->mInfo );
+		}
+	}
 
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	function getDisplayPrice( $pProductsMixed=NULL ) {
+	public static function getDisplayPrice( $pProductsMixed=NULL ) {
 		global $gBitDb, $gBitUser;
 		$ret = '';
 
@@ -601,9 +606,7 @@ If a special exist * 10+9
 		} else {
 			// proceed normally
 
-			if( empty( $pProductsMixed ) && !empty( $this ) && $this->isValid() ) {
-				$productHash = $this->mInfo;
-			} elseif( is_array( $pProductsMixed ) ) {
+			if( is_array( $pProductsMixed ) ) {
 				$productHash = $pProductsMixed;
 			} elseif( BitBase::verifyId( $pProductsMixed ) ) {
 				// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
@@ -1090,15 +1093,22 @@ If a special exist * 10+9
 		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
-	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+	function __getImageUrl( $pSize='small' ) {
+		return static::getImageUrl( $this->mProductsId );
+	}
+
+	public static function getImageUrl( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
-		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
-			$pMixed = $this->mProductsId;
+		if( is_array( $pMixed ) && !empty( $pMixed['products_id'] ) ) {
+bt(); die;
+			$productsId = $pMixed['products_id'];
+		} elseif( is_numeric( $pMixed ) ) {
+			$productsId = $pMixed;
 		}
 
-		if( is_numeric( $pMixed ) ) {
-			$branch = static::getImageBranch( $pMixed );
-			$basePath = static::getImageBasePath( $pMixed );
+		if( !empty( $productsId ) ) {
+			$branch = static::getImageBranch( $productsId );
+			$basePath = static::getImageBasePath( $productsId );
 			if( is_dir( $basePath.'thumbs/' ) ) {
 				$basePath .= 'thumbs/';
 				$branch .= 'thumbs/';
@@ -1738,7 +1748,6 @@ If a special exist * 10+9
 						// reset
 						$new_value_price= '';
 						$price_onetime = '';
-
 						$products_options_array[] = array('id' => $vals['products_options_values_id'],
 															'text' => $vals['products_options_values_name']);
 						if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
