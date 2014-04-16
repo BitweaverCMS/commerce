@@ -576,7 +576,7 @@ If a special exist * 10+9
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	static function getDisplayPrice( $pProductsMixed=NULL ) {
+	function getDisplayPrice( $pProductsMixed=NULL ) {
 		global $gBitDb, $gBitUser;
 		$ret = '';
 
@@ -1090,7 +1090,7 @@ If a special exist * 10+9
 		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
-	static function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+	function getImageUrl( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
 		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
 			$pMixed = $this->mProductsId;
