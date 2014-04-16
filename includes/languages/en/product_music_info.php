@@ -26,7 +26,6 @@ define('TEXT_RECORD_COMPANY_URL', tra( 'For more information, please visit the R
 define('TEXT_ARTIST_URL', tra( 'For more information, please visit the Artist\'s <a href="%s" target="_blank">webpage</a>.' ) );
 define('TEXT_DATE_ADDED', tra( 'This product was added to our catalog on %s.' ) );
 define('TEXT_DATE_AVAILABLE', tra( '<font color="#ff0000">This product will be in stock on %s.</font>' ) );
-define('TEXT_ALSO_PURCHASED_PRODUCTS', tra( 'Customers who bought this product also purchased...' ) );
 define('TEXT_PRODUCT_OPTIONS', tra( '<strong>Please Choose:</strong>' ) );
 define('TEXT_PRODUCT_RECORD_COMPANY', tra( 'Record Company: ' ) );
 define('TEXT_PRODUCT_ARTIST', tra( 'Artist: ' ) );

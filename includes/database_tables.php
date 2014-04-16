@@ -118,12 +118,4 @@ DEFINE('SQL_SHOW_PRODUCT_INFO_LISTING_BELOW',"select `configuration_key`, `confi
 DEFINE('SQL_BANNER_CHECK_QUERY', 'select count(*) as "count" from ' . TABLE_BANNERS_HISTORY . "                where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_BANNER_CHECK_UPDATE', "update " . TABLE_BANNERS_HISTORY . " set `banners_shown` = `banners_shown` +1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
 DEFINE('SQL_BANNER_UPDATE_CLICK_COUNT', "update " . TABLE_BANNERS_HISTORY . " set `banners_clicked` = `banners_clicked` + 1 where `banners_id` = '%s' and ".$gBitDb->SQLDate( 'Ymd', 'banners_history_date' )." = ".$gBitDb->SQLDate( 'Ymd' ));
-DEFINE('SQL_ALSO_PURCHASED', "select p.`products_id`, p.`products_image`
-                     from " . TABLE_ORDERS_PRODUCTS . " opa, " . TABLE_ORDERS_PRODUCTS . " opb, "
-                            . TABLE_ORDERS . " o, " . TABLE_PRODUCTS . " p
-                     where opa.`products_id` = ?  and opa.`orders_id` = opb.`orders_id` and opb.`products_id` != ?  and opb.`products_id` = p.`products_id` and opb.`orders_id` = o.`orders_id` and p.`products_status` = '1'
-                     order by o.`date_purchased` desc"
-                     );
 
-
-?>

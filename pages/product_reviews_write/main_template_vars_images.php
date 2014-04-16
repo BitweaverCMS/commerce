@@ -52,7 +52,7 @@ echo
 
 ?>
 <script language="javascript" type="text/javascript"><!--
-document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '\\\')">' . zen_image( $gBitProduct->getImageUrl() ) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
+document.write('<?php echo '<a href="javascript:popupWindow(\\\'' . zen_href_link(FILENAME_POPUP_IMAGE, 'products_id=' . $_GET['products_id']) . '\\\')">' . zen_image( $gBitProduct->__getImageUrl() ) . '<br />' . TEXT_CLICK_TO_ENLARGE . '</a>'; ?>');
 //--></script>
 <noscript>
 <?php
