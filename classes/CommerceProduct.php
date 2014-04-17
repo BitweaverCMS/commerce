@@ -1093,7 +1093,7 @@ If a special exist * 10+9
 		return( static::getImageUrl( $pProductsId, $pSize ) );
 	}
 
-	function __getImageUrl( $pSize='small' ) {
+	public function __getImageUrl( $pSize='small' ) {
 		return static::getImageUrl( $this->mProductsId );
 	}
 
