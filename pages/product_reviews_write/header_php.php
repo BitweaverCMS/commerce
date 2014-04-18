@@ -108,7 +108,7 @@
     }
   }
 
-  $products_price = CommerceProduct::getDisplayPrice($product_info->fields['products_id']);
+  $products_price = CommerceProduct::getDisplayPriceFromHash($product_info->fields['products_id']);
 
   $products_name = $product_info->fields['products_name'];
 

@@ -33,7 +33,7 @@
 
 	if( $productList = $gBitProduct->getList( $listHash ) ) {
 		$newProduct = current( $productList );
-		$whats_new_price = CommerceProduct::getDisplayPrice( $newProduct['products_id'] );
+		$whats_new_price = CommerceProduct::getDisplayPriceFromHash( $newProduct['products_id'] );
 		$_template->tpl_vars['newProduct'] = new Smarty_variable( $newProduct );
 	}
 ?>

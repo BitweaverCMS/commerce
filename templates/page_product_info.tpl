@@ -16,10 +16,10 @@
 		</header>
 
 <div class="row-fluid">
-	{if $gBitProduct->__getImageUrl(0,'medium')}	
+	{if $gBitProduct->getImageUrl(0,'medium')}	
 	<div class="span4">
-		<a rel="nofollow" href="{$gBitProduct->__getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
-		<img class="thumb" src="{$gBitProduct->__getImageUrl('medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
+		<a rel="nofollow" href="{$gBitProduct->getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
+		<img class="thumb" src="{$gBitProduct->getImageUrl('medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
 	</div>
 	{/if}
 		
@@ -55,7 +55,7 @@
 								<div class="smallText">{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}</div>
 							{/if}
 							{if $gBitProduct->hasAttributes() and $smarty.const.SHOW_PRODUCT_INFO_STARTING_AT == '1'}{tr}Starting at{/tr}:{/if}
-							{$gBitProduct->__getDisplayPrice()}
+							{$gBitProduct->getDisplayPrice()}
 							{if $gBitProduct->getCommissionUserDiscount() }
 								(<span class="success">{tr}Retail Price{/tr} {$gBitProduct->getPrice('products')}</span>)
 							{/if}

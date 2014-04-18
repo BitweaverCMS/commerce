@@ -29,7 +29,7 @@ $listHash['specials'] = TRUE;
 
 if( $specialsList = $gBitProduct->getList( $listHash ) ) {
 	$sideboxSpecial = current( $specialsList );
-	$sideboxSpecial['display_special_price'] = CommerceProduct::getDisplayPrice( $sideboxSpecial['products_id'] );
+	$sideboxSpecial['display_special_price'] = CommerceProduct::getDisplayPriceFromHash( $sideboxSpecial['products_id'] );
 
 	$_template->tpl_vars['sideboxSpecial'] = new Smarty_variable( $sideboxSpecial );
 }

@@ -58,7 +58,7 @@ abstract class MarketplaceWebServiceOrders_Model
      * 
      * @param string $propertyName name of the property
      */
-    public function __get($propertyName)
+    public function get($propertyName)
     {
        $getter = "get$propertyName"; 
        return $this->$getter();

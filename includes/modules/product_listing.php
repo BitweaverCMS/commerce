@@ -116,7 +116,7 @@
             $lc_text = '&nbsp;<a href="' . zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $listing->fields['manufacturers_id']) . '">' . $listing->fields['manufacturers_name'] . '</a>&nbsp;';
             break;
           case 'PRODUCT_LIST_PRICE':
-            $lc_price = CommerceProduct::getDisplayPrice($listing->fields['products_id']) . '<br />';
+            $lc_price = CommerceProduct::getDisplayPriceFromHash($listing->fields['products_id']) . '<br />';
             $lc_align = 'right';
             $lc_text = '&nbsp;' . $lc_price . '&nbsp;';
 

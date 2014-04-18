@@ -123,7 +123,7 @@ class CommerceProduct extends LibertyMime {
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
-					$ret['products_image_url'] = $ret['type_class']::getImageUrl( $ret['products_image'] );
+					$ret['products_image_url'] = $ret['type_class']::getImageUrlFromHash( $ret );
 				} else {
 					$ret['products_image_url'] = NULL;
 				}
@@ -572,16 +572,16 @@ If a special exist * 10+9
 		return $currencies->display_price( $pPrice, zen_get_tax_rate( $pTaxClassId ) );
 	}
 
-	public function __getDisplayPrice() {
+	public function getDisplayPrice() {
 		if( $this->isValid() ) {
-			static::getDisplayPrice( $this->mInfo );
+			static::getDisplayPriceFromHash( $this->mInfo );
 		}
 	}
 
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	public static function getDisplayPrice( $pProductsMixed=NULL ) {
+	public static function getDisplayPriceFromHash( $pProductsMixed=NULL ) {
 		global $gBitDb, $gBitUser;
 		$ret = '';
 
@@ -1081,34 +1081,39 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		$ret = BIT_ROOT_PATH.static::getImageUrl( $pProductsId, $pSize );
+	public function getThumbnailFile( $pSize='small' ) {
+		if( $this->isValid() ) {
+			return static::getThumbnailFileFromHash( $this->mInfo, $pSize );
+		}	
+	}
+
+	public static function getThumbnailFileFromHash( $pMixed, $pSize='small' ) {
+		$ret = BIT_ROOT_PATH.static::getImageUrlFromHash( $pMixed, $pSize );
 		if( !file_exists( dirname( $ret ) ) ) {
 			mkdir_p( dirname( $ret ) );
 		}
 		return $ret;
 	}
 
-	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL, $pDefault=TRUE ) {
-		return( static::getImageUrl( $pProductsId, $pSize ) );
+	function getThumbnailUrl( $pMixed, $pSize='small' ) {
+		return( static::getImageUrlFromHash( $pMixed, $pSize ) );
 	}
 
-	function __getImageUrl( $pSize='small' ) {
-		return static::getImageUrl( $this->mProductsId );
+	function getImageUrl( $pSize='small' ) {
+		return static::getImageUrlFromHash( $this->mProductsId );
 	}
 
-	public static function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
 		if( is_array( $pMixed ) && !empty( $pMixed['products_id'] ) ) {
-bt(); die;
 			$productsId = $pMixed['products_id'];
 		} elseif( is_numeric( $pMixed ) ) {
 			$productsId = $pMixed;
 		}
 
 		if( !empty( $productsId ) ) {
-			$branch = static::getImageBranch( $productsId );
-			$basePath = static::getImageBasePath( $productsId );
+			$branch = static::getImageBranchFromId( $productsId );
+			$basePath = static::getImageBasePathFromId( $productsId );
 			if( is_dir( $basePath.'thumbs/' ) ) {
 				$basePath .= 'thumbs/';
 				$branch .= 'thumbs/';
@@ -1126,11 +1131,11 @@ bt(); die;
 		return $ret;
 	}
 
-	static function getImageBasePath( $pProductsId ) {
-		return STORAGE_PKG_PATH.static::getImageBranch( $pProductsId );
+	protected static function getImageBasePathFromId( $pProductsId ) {
+		return STORAGE_PKG_PATH.static::getImageBranchFromId( $pProductsId );
 	}
 
-	static function getImageBranch( $pProductsId ) {
+	protected static function getImageBranchFromId( $pProductsId ) {
 		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
 	}
 
@@ -1311,7 +1316,7 @@ bt(); die;
 				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 				$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
+					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrlFromHash( $ret[$productId], $pListHash['thumbnail_size'] );
 				}
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
@@ -1321,7 +1326,7 @@ bt(); die;
 
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPrice( $ret[$productId] );
+				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPriceFromHash( $ret[$productId] );
 				$ret[$productId]['title'] = $ret[$productId]['products_name'];
 			}
 		}
@@ -1625,7 +1630,7 @@ bt(); die;
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']	= static::getImageBranch( $this->mProductsId );
+					$fileHash['dest_branch']	= static::getImageBranchFromId( $this->mProductsId );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';

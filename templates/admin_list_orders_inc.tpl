@@ -37,7 +37,7 @@
 	<tr>
 		<td>{$smarty.foreach.orderproducts.iteration}</td>
 		<td colspan="2">
-			<img src="{$gBitProduct->__getImageUrl()}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
+			<img src="{$gBitProduct->getImageUrl()}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
 		</td>
 		<td class="text-right">
 			{assign var=quantityTotal value=$quantityTotal+$product.products_quantity}

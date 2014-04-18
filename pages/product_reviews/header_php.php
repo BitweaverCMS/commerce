@@ -29,7 +29,7 @@
 
   $review = $gBitDb->Execute($review_query_raw);
 
-  $products_price = CommerceProduct::getDisplayPrice($review->fields['products_id']);
+  $products_price = CommerceProduct::getDisplayPriceFromHash($review->fields['products_id']);
 
   if (zen_not_null($review->fields['products_model'])) {
     $products_name = $review->fields['products_name'] . '<br /><span class="smallText">[' . $review->fields['products_model'] . ']</span>';

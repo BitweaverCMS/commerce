@@ -30,7 +30,7 @@ $listHash['sort_mode'] = 'random';
 $listHash['featured'] = TRUE;
 if( $sideboxFeature = $gBitProduct->getList( $listHash ) ) {
 	$sideboxFeature = current( $sideboxFeature );
-	$whats_new_price = CommerceProduct::getDisplayPrice($sideboxFeature['products_id']);
+	$whats_new_price = CommerceProduct::getDisplayPriceFromHash($sideboxFeature['products_id']);
 
 	$_template->tpl_vars['sideboxFeature'] = new Smarty_variable( $sideboxFeature );
 }

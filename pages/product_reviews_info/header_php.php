@@ -76,7 +76,7 @@
 
   $review_info = $gBitDb->Execute($review_info_query);
 
-  $products_price = CommerceProduct::getDisplayPrice($review_info->fields['products_id']);
+  $products_price = CommerceProduct::getDisplayPriceFromHash($review_info->fields['products_id']);
 
   $products_name = $review_info->fields['products_name'];
 

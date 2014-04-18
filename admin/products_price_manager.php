@@ -266,7 +266,7 @@ if ($_GET['products_id'] != '') {
 // FIX HERE
   $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
   echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
-  echo CommerceProduct::getDisplayPrice($_GET['products_id']) . '<br /><br />';
+  echo CommerceProduct::getDisplayPriceFromHash($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
   $not_for_cart = $gBitDb->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
   while (!$not_for_cart->EOF) {

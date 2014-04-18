@@ -73,7 +73,7 @@
     $one_time = '';
   }
 
-  echo $one_time . (($gBitProduct->hasAttributes() and SHOW_PRODUCT_MUSIC_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . $gBitProduct->__getDisplayPrice();
+  echo $one_time . (($gBitProduct->hasAttributes() and SHOW_PRODUCT_MUSIC_INFO_STARTING_AT == '1') ? TEXT_BASE_PRICE : '') . $gBitProduct->getDisplayPrice();
 ?>
     </td>
   </tr>
