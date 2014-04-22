@@ -63,7 +63,7 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	function getOrdersHistory( $pCustomerId=NULL ) {
+	static function getOrdersHistory( $pCustomerId=NULL ) {
 		global $gBitDb;
 		if( empty( $pCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
@@ -78,7 +78,7 @@ class CommerceCustomer extends BitBase {
 		return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
 	}
 
-	function getPurchaseStats( $pCustomerId ) {
+	static function getPurchaseStats( $pCustomerId ) {
 		global $gBitDb;
 		if( empty( $pCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
@@ -339,7 +339,7 @@ class CommerceCustomer extends BitBase {
 		return( $ret );
 	}
 
-	function addressExists( $pAddressId ) {
+	static function addressExists( $pAddressId ) {
 		global $gBitDb;
 		$ret = FALSE;
 		if( is_numeric( $pAddressId ) ) {
@@ -371,7 +371,7 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	function getAddresses( $pCustomerId=NULL ) {
+	static function getAddresses( $pCustomerId=NULL ) {
 		global $gBitDb;
 		$ret = NULL;
 		if( is_null( $pCustomerId ) && $this && !empty( $this->mCustomerId ) ) {
@@ -422,7 +422,7 @@ class CommerceCustomer extends BitBase {
 		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
 	}
 
-	function getCountryZones( $pCountryId ) {
+	static function getCountryZones( $pCountryId ) {
 		global $gBitDb;
 		$ret = array();
 		if( is_numeric( $pCountryId ) ) {
@@ -490,13 +490,13 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	function getCustomerInterests( $pCustomersId ) {
+	static function getCustomerInterests( $pCustomersId ) {
 		global $gBitDb;
 		$ret = $gBitDb->getAssoc( "SELECT ci.`interests_id`, ci.`interests_name`, cim.`customers_id` AS `is_interested` FROM " . TABLE_CUSTOMERS_INTERESTS . " ci LEFT OUTER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(ci.`interests_id`=cim.`interests_id` AND cim.`customers_id`=?) ORDER BY `interests_name`", array( $pCustomersId ) );
 		return $ret;
 	}
 
-	function getUninterestedCustomers() {
+	static function getUninterestedCustomers() {
 		global $gBitDb;
 		$sql = "SELECT uu.`user_id` AS `hash_key`, MAX(co.`orders_id`) AS `most_recent_order`, MAX(co.`date_purchased`) AS `most_recent_date`, COUNT(co.`orders_id`) AS `num_orders`, SUM(co.`order_total`) AS `total_revenue`
 				FROM `".BIT_DB_PREFIX."users_users` uu 
@@ -529,7 +529,7 @@ class CommerceCustomer extends BitBase {
 	}
 
 	// Can be called statically, and is for user registration
-	function getInterests() {
+	static function getInterests() {
 		global $gBitDb;
 		return( $gBitDb->getAssoc( "SELECT `interests_id`, `interests_name` FROM `".BITCOMMERCE_DB_PREFIX."com_customers_interests` ORDER BY `interests_name` " ) );
 	}
