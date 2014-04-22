@@ -63,7 +63,7 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	static function getOrdersHistory( $pCustomerId=NULL ) {
+	public static function getOrdersHistory( $pCustomerId=NULL ) {
 		global $gBitDb;
 		if( empty( $pCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
@@ -78,7 +78,7 @@ class CommerceCustomer extends BitBase {
 		return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
 	}
 
-	static function getPurchaseStats( $pCustomerId ) {
+	public static function getPurchaseStats( $pCustomerId ) {
 		global $gBitDb;
 		if( empty( $pCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
@@ -98,7 +98,7 @@ class CommerceCustomer extends BitBase {
 		}
 	}
 
-	static function syncBitUser( $pInfo ) {
+	public static function syncBitUser( $pInfo ) {
 		global $gBitDb;
 		// bitcommerce customers table to bitweaver users_users table
 		$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
@@ -339,7 +339,7 @@ class CommerceCustomer extends BitBase {
 		return( $ret );
 	}
 
-	static function addressExists( $pAddressId ) {
+	public static function addressExists( $pAddressId ) {
 		global $gBitDb;
 		$ret = FALSE;
 		if( is_numeric( $pAddressId ) ) {
@@ -371,7 +371,7 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	static function getAddresses( $pCustomerId=NULL ) {
+	public static function getAddresses( $pCustomerId=NULL ) {
 		global $gBitDb;
 		$ret = NULL;
 		if( is_null( $pCustomerId ) && $this && !empty( $this->mCustomerId ) ) {
@@ -422,7 +422,7 @@ class CommerceCustomer extends BitBase {
 		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
 	}
 
-	static function getCountryZones( $pCountryId ) {
+	public static function getCountryZones( $pCountryId ) {
 		global $gBitDb;
 		$ret = array();
 		if( is_numeric( $pCountryId ) ) {
