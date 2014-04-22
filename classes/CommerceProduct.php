@@ -1612,8 +1612,8 @@ If a special exist * 10+9
 		return( $this->mProductsId );
 	}
 
-	function storeProductImage( $pParamHash ) {
-		if( $this->isValid() ) {
+	public static function storeProductImage( $pParamHash ) {
+		if( !empty( $pParamHash['products_id'] ) ) {
 			// did we recieve an arbitrary file, or uploaded file as the product image?
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
@@ -1630,15 +1630,14 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']	= static::getImageBranchFromId( $this->mProductsId );
+					$fileHash['dest_branch']	= static::getImageBranchFromId( $pParamHash['products_id'] );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
-
-				liberty_process_image( $fileHash, empty( $pParamHash['copy_file'] ) );
+				liberty_process_image( $fileHash, !empty( $pParamHash['copy_file'] ) );
 			}
 		}
 	}
