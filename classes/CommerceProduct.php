@@ -32,6 +32,7 @@ class CommerceProduct extends LibertyMime {
 	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
+		$this->mProductsId = $pProductsId;
 		parent::__construct();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
@@ -41,7 +42,6 @@ class CommerceProduct extends LibertyMime {
 						'handler_file' => 'classes/CommerceProduct.php',
 						'maintainer_url' => 'http://www.bitcommerce.org'
 				) );
-		$this->mProductsId = $pProductsId;
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
 		$this->mViewContentPerm	= 'p_bitcommerce_product_view';
@@ -61,6 +61,12 @@ class CommerceProduct extends LibertyMime {
 	// Override LibertyBase method
 	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
+	}
+
+	public function getCacheKey() {
+		if( $this->isValid() ) {
+			return $this->mProductsId;
+		}
 	}
 
 	function load( $pContentId=NULL, $pPluginParams = TRUE ) {
@@ -1087,7 +1093,7 @@ If a special exist * 10+9
 		}	
 	}
 
-	public static function getThumbnailFileFromHash( $pMixed, $pSize='small' ) {
+	public static function getThumbnailFileFromHash( &$pMixed, $pSize='small' ) {
 		$ret = BIT_ROOT_PATH.static::getImageUrlFromHash( $pMixed, $pSize );
 		if( !file_exists( dirname( $ret ) ) ) {
 			mkdir_p( dirname( $ret ) );
@@ -1095,8 +1101,10 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	function getThumbnailUrl( $pMixed, $pSize='small' ) {
-		return( static::getImageUrlFromHash( $pMixed, $pSize ) );
+	public function getThumbnailUrl( $pSize='small', $pInfoHash=NULL, $pSecondary=NULL, $pDefault=TRUE ) {
+		if( $this->isValid() ) {
+			return( static::getImageUrlFromHash( $this->mProductsId, $pSize ) );
+		}
 	}
 
 	function getImageUrl( $pSize='small' ) {
@@ -1105,6 +1113,7 @@ If a special exist * 10+9
 
 	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
+
 		if( is_array( $pMixed ) && !empty( $pMixed['products_id'] ) ) {
 			$productsId = $pMixed['products_id'];
 		} elseif( is_numeric( $pMixed ) ) {
@@ -2590,10 +2599,12 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
 	$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
 
-	$product = new $productClass( $productsId, $contentId );
+	if( !($product = $productClass::loadFromCache( $productsId )) ) {
+		$product = new $productClass( $productsId, $contentId );
 
-	if( !$product->load() ) {
-		unset( $product->mProductsId );
+		if( !$product->load() ) {
+			unset( $product->mProductsId );
+		}
 	}
 
 	return $product;
