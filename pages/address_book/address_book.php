@@ -27,7 +27,7 @@ require_once(DIR_FS_MODULES . 'require_languages.php');
 $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));
 $breadcrumb->add(NAVBAR_TITLE_2);
 
-if( $addresses = CommerceCustomer::getAddresses( $_SESSION['customer_id'] ) ) {
+if( $addresses = CommerceCustomer::getAddressesFromId( $_SESSION['customer_id'] ) ) {
 	$gBitSmarty->assign( 'addresses', $addresses );
 }
 
