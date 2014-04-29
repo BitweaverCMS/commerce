@@ -25,6 +25,24 @@ class CommerceSystem extends BitSingleton {
 		}
     }
 
+	public function storeConfig ( $pConfigName, $pConfigValue ) {
+          if( is_array( $pConfigValue ) ){
+			// see usage in UPS and USPS
+            $pConfigValue = implode( ", ", $pConfigValue );
+            $pConfigValue = str_replace ( ", --none--", "", $pConfigValue );
+          }
+			if( !empty( $this->mConfig[$pConfigKey] ) ) {
+	        	$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ? WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
+				$this->mConfig[$pConfigKey] = $pConfigValue;
+			} else {
+				// TODO Need more robust insert here.
+//	        	$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key` ) VALUES ( ?, ? )", array( $pConfigValue, $pConfigKey ) );
+			}
+
+
+		
+	}
+
 	function loadConfig() {
 		$this->mConfig = $this->mDb->getAssoc( 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue` FROM ' . TABLE_CONFIGURATION ); 
 		$this->mProductTypeLayout = $this->mDb->getAssoc( 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue` from ' . TABLE_PRODUCT_TYPE_LAYOUT );
