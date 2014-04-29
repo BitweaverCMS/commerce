@@ -38,7 +38,7 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$_REQUEST['orders_products'] = TRUE;
 	$_REQUEST['orders_status_comparison'] = '>';
 	$_REQUEST['orders_status_id'] = 0;
-	$gBitSmarty->assign_by_ref( 'listOrders', order::getList( $_REQUEST ) );
+	$gBitSmarty->assign( 'listOrders', order::getList( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_interest.tpl', tra( 'Revenue By Interest' ).' '.$interests[$_REQUEST['interests_id']].' : '.$_REQUEST['timeframe'] , array( 'display_mode' => 'admin' ) );
 } elseif( !empty( $_REQUEST['referer'] ) ) {
 	foreach( array( 'period', 'timeframe', 'referer', 'exclude', 'include', 'new_reg' ) as $param ) {
@@ -53,7 +53,7 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$_REQUEST['listInfo']['page_records'] = count( $statsByReferer['hosts'] );
 	$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
 
-	$gBitSmarty->assign_by_ref( 'statsByReferer', $stats->getRevenueByReferer( $_REQUEST ) );
+	$gBitSmarty->assign( 'statsByReferer', $stats->getRevenueByReferer( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_referer.tpl', 'Revenue By Referer' , array( 'display_mode' => 'admin' ));
 } elseif( !empty( $_REQUEST['timeframe'] ) ) {
 	$statsByType = $stats->getRevenueByType( $_REQUEST );
@@ -62,16 +62,16 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	foreach( $statsByOption as $stat ) {
 		@$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];
 	}
-	$gBitSmarty->assign_by_ref( 'statsByOption', $statsByOption );
-	$gBitSmarty->assign_by_ref( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );
-	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( $_REQUEST ) );
-	$gBitSmarty->assign_by_ref( 'valuableInterests' , $stats->getMostValuableInterests( $_REQUEST ) );
-	$gBitSmarty->assign_by_ref( 'valuableCustomers' , $stats->getMostValuableCustomers( $_REQUEST ) );
+	$gBitSmarty->assign( 'statsByOption', $statsByOption );
+	$gBitSmarty->assign( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );
+	$gBitSmarty->assign( 'statsCustomers', $stats->getCustomerConversions( $_REQUEST ) );
+	$gBitSmarty->assign( 'valuableInterests' , $stats->getMostValuableInterests( $_REQUEST ) );
+	$gBitSmarty->assign( 'valuableCustomers' , $stats->getMostValuableCustomers( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue By Timeframe' , array( 'display_mode' => 'admin' ));
 } else {
 	$listHash['max_records'] = -1;
-	$gBitSmarty->assign_by_ref( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );
-	$gBitSmarty->assign_by_ref( 'stats', $stats->getAggregateRevenue( $listHash ) );
+	$gBitSmarty->assign( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );
+	$gBitSmarty->assign( 'stats', $stats->getAggregateRevenue( $listHash ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
 }
 
