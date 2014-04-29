@@ -67,7 +67,7 @@ $gBitSmarty->assign( 'order', $order );
 // if the no delivery address, try to get one by default
 if( empty( $_SESSION['sendto'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
 	if( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
-		$order->delivery = $gBitCustomer->getAddress( $defaultAddress );
+		$order->delivery = $gBitCustomer->getAddress( $defaultAddressId );
 		$_SESSION['sendto'] =	$defaultAddressId;
 	}
 }
