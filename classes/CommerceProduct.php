@@ -32,6 +32,7 @@ class CommerceProduct extends LibertyMime {
 	var $mRelatedContent;
 
 	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
+		$this->mProductsId = $pProductsId;
 		parent::__construct();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
 						'content_type_guid' => BITPRODUCT_CONTENT_TYPE_GUID,
@@ -41,7 +42,6 @@ class CommerceProduct extends LibertyMime {
 						'handler_file' => 'classes/CommerceProduct.php',
 						'maintainer_url' => 'http://www.bitcommerce.org'
 				) );
-		$this->mProductsId = $pProductsId;
 		$this->mContentId = $pContentId;
 		$this->mContentTypeGuid = BITPRODUCT_CONTENT_TYPE_GUID;
 		$this->mViewContentPerm	= 'p_bitcommerce_product_view';
@@ -61,6 +61,12 @@ class CommerceProduct extends LibertyMime {
 	// Override LibertyBase method
 	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
+	}
+
+	public function getCacheKey() {
+		if( $this->isValid() ) {
+			return $this->mProductsId;
+		}
 	}
 
 	function load( $pContentId=NULL, $pPluginParams = TRUE ) {
@@ -123,7 +129,7 @@ class CommerceProduct extends LibertyMime {
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				if( !empty( $ret['products_image'] ) ) {
-					$ret['products_image_url'] = $ret['type_class']::getImageUrl( $ret['products_image'] );
+					$ret['products_image_url'] = $ret['type_class']::getImageUrlFromHash( $ret );
 				} else {
 					$ret['products_image_url'] = NULL;
 				}
@@ -572,11 +578,16 @@ If a special exist * 10+9
 		return $currencies->display_price( $pPrice, zen_get_tax_rate( $pTaxClassId ) );
 	}
 
+	public function getDisplayPrice() {
+		if( $this->isValid() ) {
+			static::getDisplayPriceFromHash( $this->mInfo );
+		}
+	}
 
 	////
 	// Display Price Retail
 	// Specials and Tax Included
-	static function getDisplayPrice( $pProductsMixed=NULL ) {
+	public static function getDisplayPriceFromHash( $pProductsMixed=NULL ) {
 		global $gBitDb, $gBitUser;
 		$ret = '';
 
@@ -601,9 +612,7 @@ If a special exist * 10+9
 		} else {
 			// proceed normally
 
-			if( empty( $pProductsMixed ) && !empty( $this ) && $this->isValid() ) {
-				$productHash = $this->mInfo;
-			} elseif( is_array( $pProductsMixed ) ) {
+			if( is_array( $pProductsMixed ) ) {
 				$productHash = $pProductsMixed;
 			} elseif( BitBase::verifyId( $pProductsMixed ) ) {
 				// $new_fields = ', `product_is_free`, `product_is_call`, `product_is_showroom_only`';
@@ -1078,27 +1087,42 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	function getThumbnailFile( $pSize='small', $pContentId=NULL, $pProductsId=NULL ) {
-		$ret = BIT_ROOT_PATH.static::getImageUrl( $pProductsId, $pSize );
+	public function getThumbnailFile( $pSize='small' ) {
+		if( $this->isValid() ) {
+			return static::getThumbnailFileFromHash( $this->mInfo, $pSize );
+		}	
+	}
+
+	public static function getThumbnailFileFromHash( &$pMixed, $pSize='small' ) {
+		$ret = BIT_ROOT_PATH.static::getImageUrlFromHash( $pMixed, $pSize );
 		if( !file_exists( dirname( $ret ) ) ) {
 			mkdir_p( dirname( $ret ) );
 		}
 		return $ret;
 	}
 
-	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pProductsId=NULL, $pDefault=TRUE ) {
-		return( static::getImageUrl( $pProductsId, $pSize ) );
+	public function getThumbnailUrl( $pSize='small', $pInfoHash=NULL, $pSecondary=NULL, $pDefault=TRUE ) {
+		if( $this->isValid() ) {
+			return( static::getImageUrlFromHash( $this->mProductsId, $pSize ) );
+		}
 	}
 
-	static function getImageUrl( $pMixed=NULL, $pSize='small' ) {
+	function getImageUrl( $pSize='small' ) {
+		return static::getImageUrlFromHash( $this->mProductsId );
+	}
+
+	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
-		if( empty( $pMixed ) && !empty( $this ) && is_object( $this ) && !empty( $this->mProductsId ) ) {
-			$pMixed = $this->mProductsId;
+
+		if( is_array( $pMixed ) && !empty( $pMixed['products_id'] ) ) {
+			$productsId = $pMixed['products_id'];
+		} elseif( is_numeric( $pMixed ) ) {
+			$productsId = $pMixed;
 		}
 
-		if( is_numeric( $pMixed ) ) {
-			$branch = static::getImageBranch( $pMixed );
-			$basePath = static::getImageBasePath( $pMixed );
+		if( !empty( $productsId ) ) {
+			$branch = static::getImageBranchFromId( $productsId );
+			$basePath = static::getImageBasePathFromId( $productsId );
 			if( is_dir( $basePath.'thumbs/' ) ) {
 				$basePath .= 'thumbs/';
 				$branch .= 'thumbs/';
@@ -1116,11 +1140,11 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	static function getImageBasePath( $pProductsId ) {
-		return STORAGE_PKG_PATH.static::getImageBranch( $pProductsId );
+	protected static function getImageBasePathFromId( $pProductsId ) {
+		return STORAGE_PKG_PATH.static::getImageBranchFromId( $pProductsId );
 	}
 
-	static function getImageBranch( $pProductsId ) {
+	protected static function getImageBranchFromId( $pProductsId ) {
 		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
 	}
 
@@ -1301,7 +1325,7 @@ If a special exist * 10+9
 				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 				$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
 				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrl( $ret[$productId]['products_id'], $pListHash['thumbnail_size'] );
+					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrlFromHash( $ret[$productId], $pListHash['thumbnail_size'] );
 				}
 
 				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
@@ -1311,7 +1335,7 @@ If a special exist * 10+9
 
 				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
 				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPrice( $ret[$productId] );
+				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPriceFromHash( $ret[$productId] );
 				$ret[$productId]['title'] = $ret[$productId]['products_name'];
 			}
 		}
@@ -1597,8 +1621,8 @@ If a special exist * 10+9
 		return( $this->mProductsId );
 	}
 
-	function storeProductImage( $pParamHash ) {
-		if( $this->isValid() ) {
+	public static function storeProductImage( $pParamHash ) {
+		if( !empty( $pParamHash['products_id'] ) ) {
 			// did we recieve an arbitrary file, or uploaded file as the product image?
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
@@ -1615,15 +1639,14 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']	= static::getImageBranch( $this->mProductsId );
+					$fileHash['dest_branch']	= static::getImageBranchFromId( $pParamHash['products_id'] );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
-
-				liberty_process_image( $fileHash, empty( $pParamHash['copy_file'] ) );
+				liberty_process_image( $fileHash, !empty( $pParamHash['copy_file'] ) );
 			}
 		}
 	}
@@ -1738,7 +1761,6 @@ If a special exist * 10+9
 						// reset
 						$new_value_price= '';
 						$price_onetime = '';
-
 						$products_options_array[] = array('id' => $vals['products_options_values_id'],
 															'text' => $vals['products_options_values_name']);
 						if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
@@ -2577,10 +2599,12 @@ function bc_get_commerce_product( $pLookupMixed ) {
 	$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
 	$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
 
-	$product = new $productClass( $productsId, $contentId );
+	if( !($product = $productClass::loadFromCache( $productsId )) ) {
+		$product = new $productClass( $productsId, $contentId );
 
-	if( !$product->load() ) {
-		unset( $product->mProductsId );
+		if( !$product->load() ) {
+			unset( $product->mProductsId );
+		}
 	}
 
 	return $product;

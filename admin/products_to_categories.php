@@ -663,7 +663,7 @@ function go_option() {
       }
       $contents[] = array('text' => '<br />' . TEXT_PRODUCTS_NAME . $product_to_copy->fields['products_name']);
       $contents[] = array('text' => TEXT_PRODUCTS_MODEL . $product_to_copy->fields['products_model']);
-      $contents[] = array('text' => TEXT_PRODUCTS_PRICE . CommerceProduct::getDisplayPrice($productsId));
+      $contents[] = array('text' => TEXT_PRODUCTS_PRICE . CommerceProduct::getDisplayPriceFromHash($productsId));
       switch (true) {
         case ($product_to_copy->fields['master_categories_id'] == 0 and $productsId > 0):
           $contents[] = array('text' => '<br /><span class="alert">' . WARNING_MASTER_CATEGORIES_ID . '</span><br />&nbsp;');

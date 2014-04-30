@@ -590,7 +590,7 @@ function zen_get_info_page($zf_product_id) {
 // look up a products image and send back the image
   function zen_get_products_image($product_id, $width = SMALL_IMAGE_WIDTH, $height = SMALL_IMAGE_HEIGHT) {
     global $gBitDb;
-    return zen_image( CommerceProduct::getImageUrl( $product_id ), zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
+    return zen_image( CommerceProduct::getImageUrlFromHash( $product_id ), zen_get_products_name($product_id), $width, $height, 'hspace="5" vspace="5"');
   }
 
 ////

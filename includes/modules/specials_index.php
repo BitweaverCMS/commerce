@@ -68,7 +68,7 @@
     }
 
 	foreach( array_keys( $specialProducts ) AS $productsId ) {
-		$products_price = CommerceProduct::getDisplayPrice( $productsId );
+		$products_price = CommerceProduct::getDisplayPriceFromHash( $productsId );
 		$specialProducts['products_name'] = zen_get_products_name($specialProducts[$productsId]['products_id']);
 		$listBoxContents[$row][$col] = array('align' => 'center',
 												'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',

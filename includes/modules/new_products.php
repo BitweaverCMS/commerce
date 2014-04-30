@@ -48,7 +48,7 @@
     }
 
     foreach( $new_products as $product ) {
-      $products_price = CommerceProduct::getDisplayPrice($product['products_id']);
+      $products_price = CommerceProduct::getDisplayPriceFromHash($product['products_id']);
 
       $listBoxContents[$row][$col] = array('align' => 'center',
                                              'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',

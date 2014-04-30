@@ -265,7 +265,7 @@ if ( isset($_GET['page']) and $_GET['page'] == '' and $_GET['pID'] != '') {
                 <td class="dataTableContent" width="20" align="right"><?php echo $products->fields['products_id']; ?></td>
                 <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCT, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id'] . '&action=new_product_preview&read=only' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image(DIR_WS_ICONS . 'preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $products->fields['products_name']; ?></td>
                 <td class="dataTableContent"><?php echo $products->fields['products_model']; ?></td>
-                <td colspan="2" class="dataTableContent" align="right"><?php echo CommerceProduct::getDisplayPrice($products->fields['products_id']); ?></td>
+                <td colspan="2" class="dataTableContent" align="right"><?php echo CommerceProduct::getDisplayPriceFromHash($products->fields['products_id']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_quantity']; ?></td>
                 <td class="dataTableContent" width="50" align="left">
 <?php

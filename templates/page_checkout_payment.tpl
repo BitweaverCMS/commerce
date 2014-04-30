@@ -1,18 +1,3 @@
-{literal}
-<script language="javascript" type="text/javascript"><!--
-var selected;
-var submitter = null;
-function popupWindow(url) {
-	window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=280,screenX=150,screenY=150,top=150,left=150')
-}
-function submitFunction($gv,$total) {
-	if ($gv >=$total) {
-		submitter = 1;	
-	}
-}
-//--></script>
-{/literal}
-
 <div class="edit bitcommerce">
 
 	<header class="page-header">
@@ -139,7 +124,7 @@ function submitFunction($gv,$total) {
 			<p>{tr}- to confirm your order.{/tr} </p>
 			<div class="control-group submit">
 				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
-				<button class="btn btn-primary" value="Continue" onclick="submitFunction('<?=$gBitCustomer->getGiftBalance()?>','<?=$order->info['total']?>')"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
 		</div>
 	</div>

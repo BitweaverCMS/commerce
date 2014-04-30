@@ -16,11 +16,11 @@ function printSuccess($client, $response) {
 }
 function printRequestResponse($client){
 	echo '<h2>Request</h2>' . "\n";
-	echo '<pre>' . htmlspecialchars($client->__getLastRequest()). '</pre>';  
+	echo '<pre>' . htmlspecialchars($client->getLastRequest()). '</pre>';  
 	echo "\n";
    
 	echo '<h2>Response</h2>'. "\n";
-	echo '<pre>' . htmlspecialchars($client->__getLastResponse()). '</pre>';
+	echo '<pre>' . htmlspecialchars($client->getLastResponse()). '</pre>';
 	echo "\n";
 }
 
@@ -44,7 +44,7 @@ if (!$logfile = fopen(TRANSACTIONS_LOG_FILE, "a"))
    exit(1);
 }
 
-fwrite($logfile, sprintf("\r%s:- %s",date("D M j G:i:s T Y"), $client->__getLastRequest(). "\n\n" . $client->__getLastResponse()));
+fwrite($logfile, sprintf("\r%s:- %s",date("D M j G:i:s T Y"), $client->getLastRequest(). "\n\n" . $client->getLastResponse()));
 }
 
 /**

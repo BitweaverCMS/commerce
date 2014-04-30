@@ -24,7 +24,7 @@
 			$col_width = 100/$columnCount;
 		}
 		foreach( array_keys( $commissionedProducts ) as $productsId ) {
-			$products_price = CommerceProduct::getDisplayPrice( $productsId );
+			$products_price = CommerceProduct::getDisplayPriceFromHash( $productsId );
 			$listBoxContents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
 													'text' => '<a href="' . CommerceProduct::getDisplayUrlFromId( $productsId ) . '">' . zen_image( $commissionedProducts[$productsId]['products_image_url'], $commissionedProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrlFromId( $productsId ) . '">' . $commissionedProducts[$productsId]['products_name'] . '</a><br />' . $products_price);

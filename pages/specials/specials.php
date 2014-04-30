@@ -47,7 +47,7 @@
     while (!$specials->EOF) {
       $row++;
 
-      echo '            <td valign="bottom" align="center" width="33%" class="smallText"><a href="' . zen_href_link(zen_get_info_page($specials->fields['products_id']), 'products_id=' . $specials->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $specials->fields['products_id'], 'avatar' ), $specials->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($specials->fields['products_id']), 'products_id=' . $specials->fields['products_id']) . '">' . $specials->fields['products_name'] . '</a><br />' . CommerceProduct::getDisplayPrice($specials->fields['products_id']) . '</td>' . "\n";
+      echo '            <td valign="bottom" align="center" width="33%" class="smallText"><a href="' . zen_href_link(zen_get_info_page($specials->fields['products_id']), 'products_id=' . $specials->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $specials->fields['products_id'], 'avatar' ), $specials->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($specials->fields['products_id']), 'products_id=' . $specials->fields['products_id']) . '">' . $specials->fields['products_name'] . '</a><br />' . CommerceProduct::getDisplayPriceFromHash($specials->fields['products_id']) . '</td>' . "\n";
 
       if ((($row / 3) == floor($row / 3))) {
 ?>

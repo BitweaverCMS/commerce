@@ -78,7 +78,7 @@
       }
 
       if ((PRODUCT_FEATURED_LIST_PRICE != '0' and zen_get_products_allow_add_to_cart($featured_products->fields['products_id']) == 'Y')  and zen_check_show_prices() == 'true') {
-        $products_price = CommerceProduct::getDisplayPrice($featured_products->fields['products_id']);
+        $products_price = CommerceProduct::getDisplayPriceFromHash($featured_products->fields['products_id']);
         $display_products_price = TEXT_PRICE . ' ' . $products_price . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_PRICE, 3, 1)) . (zen_get_show_product_switch($featured_products->fields['products_id'], 'ALWAYS_FREE_SHIPPING_IMAGE_SWITCH') ? (zen_get_product_is_always_free_ship($featured_products->fields['products_id']) ? TEXT_PRODUCT_FREE_SHIPPING_ICON . '<br />' : '') : '');
       } else {
         $display_products_price = '';

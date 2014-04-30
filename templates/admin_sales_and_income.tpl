@@ -1,6 +1,6 @@
 <div class="page-header">
 	<div class="floaticon">
-		<a href="{$smarty.server.REQUEST_URI}">{biticon iname='view-refresh'}</a>
+		<a href="{$smarty.server.REQUEST_URI}">{booticon iname='icon-refresh'}</a>
 	</div>
 	<h1>{tr}Sales and Income{/tr}</h1>
 </div>

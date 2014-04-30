@@ -35,7 +35,7 @@ if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listH
 	}
 	$_template->tpl_vars['listColWidth'] = new Smarty_variable( $col_width );
 	foreach( array_keys( $listedProducts ) as $productsId ) {
-		$products_price = CommerceProduct::getDisplayPrice( $productsId );
+		$products_price = CommerceProduct::getDisplayPriceFromHash( $productsId );
 		$listBoxContents[$row][$col] = $listedProducts[$productsId];
 		$col ++;
 		if ($col > ($columnCount - 1)) {

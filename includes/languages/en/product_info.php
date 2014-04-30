@@ -25,7 +25,6 @@ define('TEXT_CURRENT_REVIEWS', tra( 'Current Reviews:' ) );
 define('TEXT_MORE_INFORMATION', tra( 'For more information, please visit this product\'s <a href="%s" target="_blank">webpage</a>.' ) );
 define('TEXT_DATE_ADDED', tra( 'This product was added to our catalog on %s.' ) );
 define('TEXT_DATE_AVAILABLE', tra( '<font color="#ff0000">This product will be in stock on %s.</font>' ) );
-define('TEXT_ALSO_PURCHASED_PRODUCTS', tra( 'Customers who bought this product also purchased...' ) );
 define('TEXT_PRODUCT_OPTIONS', tra( '<strong>Please Choose:</strong>' ) );
 define('TEXT_PRODUCT_MANUFACTURER', tra( 'Manufactured by: ' ) );
 define('TEXT_PRODUCT_WEIGHT', tra( 'Shipping Weight: ' ) );

@@ -43,7 +43,7 @@
 			$col_width = 100/SHOW_PRODUCT_INFO_COLUMNS_FEATURED_PRODUCTS;
 		}
 		foreach( array_keys( $featuredProducts ) as $productsId ) {
-			$products_price = CommerceProduct::getDisplayPrice( $productsId );
+			$products_price = CommerceProduct::getDisplayPriceFromHash( $productsId );
 			$listBoxContents[$row][$col] = array('align' => 'center',
 													'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
 													'text' => '<a href="' . CommerceProduct::getDisplayUrlFromId( $productsId ) . '">' . zen_image( $featuredProducts[$productsId]['products_image_url'], $featuredProducts[$productsId]['products_name'] ) . '</a><br /><a href="' . CommerceProduct::getDisplayUrlFromId( $productsId ) . '">' . $featuredProducts[$productsId]['products_name'] . '</a><br />' . $products_price);

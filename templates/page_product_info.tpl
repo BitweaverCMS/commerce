@@ -18,8 +18,8 @@
 <div class="row-fluid">
 	{if $gBitProduct->getImageUrl(0,'medium')}	
 	<div class="span4">
-		<a rel="nofollow" href="{$gBitProduct->getImageUrl(0,'large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
-		<img class="thumb" src="{$gBitProduct->getImageUrl(0,'medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
+		<a rel="nofollow" href="{$gBitProduct->getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
+		<img class="thumb" src="{$gBitProduct->getImageUrl('medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
 	</div>
 	{/if}
 		

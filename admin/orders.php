@@ -189,7 +189,7 @@ if( !empty( $order ) ) {
 		case 'delete':
 			$formHash['action'] = 'deleteconfirm';
 			$formHash['oID'] = $oID;
-			$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete order #'.$oID.'?', 'error' => 'This cannot be undone!' ) );
+			$gBitSystem->confirmDialog( $formHash, array( 'confirm_item' => 'Are you sure you want to delete order #'.$oID.'?', 'error' => 'This cannot be undone!' ) );
 			break;
 		case 'deleteconfirm':
 			$gBitUser->verifyTicket();

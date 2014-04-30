@@ -68,7 +68,6 @@ class CommerceCustomer extends BitBase {
 		if( $this->isValid() ) {
 			static::getOrdersHistoryById( $this->mCustomerId );
 		}
-		return $ret;
 	}
 
 	public static function getOrdersHistoryById( $pCustomerId ) {
@@ -85,7 +84,7 @@ class CommerceCustomer extends BitBase {
 		}
 	}
 
-	function getPurchaseStats( $pCustomerId ) {
+	public static function getPurchaseStats( $pCustomerId ) {
 		global $gBitDb;
 		if( empty( $pCustomerId ) ) {
 			$pCustomerId = $this->mCustomerId;
@@ -105,7 +104,7 @@ class CommerceCustomer extends BitBase {
 		}
 	}
 
-	static function syncBitUser( $pInfo ) {
+	public static function syncBitUser( $pInfo ) {
 		global $gBitDb;
 		// bitcommerce customers table to bitweaver users_users table
 		$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
@@ -346,7 +345,7 @@ class CommerceCustomer extends BitBase {
 		return( $ret );
 	}
 
-	function addressExists( $pAddressId ) {
+	public static function addressExists( $pAddressId ) {
 		global $gBitDb;
 		$ret = FALSE;
 		if( is_numeric( $pAddressId ) ) {
@@ -378,13 +377,16 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	function getAddresses( $pCustomerId=NULL ) {
+	public function getAddresses() {
+		if( $this->isValid() ) {
+			return static::getAddressesFromId( $this->mCustomerId );
+		}
+	}
+
+	public static function getAddressesFromId( $pCustomerId ) {
 		global $gBitDb;
 		$ret = NULL;
-		if( is_null( $pCustomerId ) && $this && !empty( $this->mCustomerId ) ) {
-			$pCustomerId = $this->mCustomerId;
-		}
-		if( is_numeric( $pCustomerId ) ) {
+		if( static::verifyId( $pCustomerId ) ) {
 			$query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
 								`entry_company` as `company`, `entry_street_address` as `street_address`,
 								`entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
@@ -429,7 +431,7 @@ class CommerceCustomer extends BitBase {
 		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
 	}
 
-	function getCountryZones( $pCountryId ) {
+	public static function getCountryZones( $pCountryId ) {
 		global $gBitDb;
 		$ret = array();
 		if( is_numeric( $pCountryId ) ) {
@@ -480,30 +482,32 @@ class CommerceCustomer extends BitBase {
 		}
 	}
 
-	function expungeInterest( $pInterestsId ) {
+	public static function expungeInterest( $pInterestsId ) {
+		global $gBitDb;
 		if( BitBase::verifyId( $pInterestsId ) ) {
-			$this->mDb->StartTrans();
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `interests_id`=?", array( $pInterestsId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
-			$this->mDb->CompleteTrans();
+			$gBitDb->StartTrans();
+			$gBitDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `interests_id`=?", array( $pInterestsId ) );
+			$gBitDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
+			$gBitDb->CompleteTrans();
 		}
 	}
 
-	function getInterest( $pInterestsId ) {
+	public static function getInterest( $pInterestsId ) {
+		global $gBitDb;
 		$ret = array();
 		if( BitBase::verifyId( $pInterestsId ) ) {
-			$ret = $this->mDb->getRow( "SELECT * FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
+			$ret = $gBitDb->getRow( "SELECT * FROM " . TABLE_CUSTOMERS_INTERESTS . " WHERE `interests_id`=?", array( $pInterestsId ) );
 		}
 		return $ret;
 	}
 
-	function getCustomerInterests( $pCustomersId ) {
+	public static function getCustomerInterests( $pCustomersId ) {
 		global $gBitDb;
 		$ret = $gBitDb->getAssoc( "SELECT ci.`interests_id`, ci.`interests_name`, cim.`customers_id` AS `is_interested` FROM " . TABLE_CUSTOMERS_INTERESTS . " ci LEFT OUTER JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim ON(ci.`interests_id`=cim.`interests_id` AND cim.`customers_id`=?) ORDER BY `interests_name`", array( $pCustomersId ) );
 		return $ret;
 	}
 
-	function getUninterestedCustomers() {
+	public static function getUninterestedCustomers() {
 		global $gBitDb;
 		$sql = "SELECT uu.`user_id` AS `hash_key`, MAX(co.`orders_id`) AS `most_recent_order`, MAX(co.`date_purchased`) AS `most_recent_date`, COUNT(co.`orders_id`) AS `num_orders`, SUM(co.`order_total`) AS `total_revenue`
 				FROM `".BIT_DB_PREFIX."users_users` uu 
@@ -515,20 +519,22 @@ class CommerceCustomer extends BitBase {
 		return $gBitDb->getAssoc( $sql );
 	}
 
-	function expungeCustomerInterest( $pParamHash ) {
+	public static function expungeCustomerInterest( $pParamHash ) {
+		global $gBitDb;
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pParamHash['customers_id'] ) && @BitBase::verifyId( $pParamHash['interests_id'] ) ) {
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP ." WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
+			$gBitDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP ." WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
 			$ret = TRUE;
 		}
 		return $ret;
 	}
 
 	function storeCustomerInterest( $pParamHash ) {
+		global $gBitDb;
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pParamHash['customers_id'] ) && @BitBase::verifyId( $pParamHash['interests_id'] ) ) {
-			if( !($this->mDb->getOne( "SELECT `interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) ) ) ) {
-				$this->mDb->query( "INSERT INTO " . TABLE_CUSTOMERS_INTERESTS_MAP ." (`customers_id`,`interests_id`) VALUES (?,?)", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
+			if( !($gBitDb->getOne( "SELECT `interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id`=? AND `interests_id`=?", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) ) ) ) {
+				$gBitDb->query( "INSERT INTO " . TABLE_CUSTOMERS_INTERESTS_MAP ." (`customers_id`,`interests_id`) VALUES (?,?)", array( $pParamHash['customers_id'], $pParamHash['interests_id'] ) );
 				$ret = TRUE;
 			}
 		}
@@ -536,7 +542,7 @@ class CommerceCustomer extends BitBase {
 	}
 
 	// Can be called statically, and is for user registration
-	function getInterests() {
+	public static function getInterests() {
 		global $gBitDb;
 		return( $gBitDb->getAssoc( "SELECT `interests_id`, `interests_name` FROM `".BITCOMMERCE_DB_PREFIX."com_customers_interests` ORDER BY `interests_name` " ) );
 	}

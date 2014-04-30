@@ -59,19 +59,9 @@
     switch ($action) {
       case 'save':
         while (list($key, $value) = each($_POST['configuration'])) {
-// BOF: UPS USPS
-          if( is_array( $value ) ){
-            $value = implode( ", ", $value);
-            $value = str_replace (", --none--", "", $value);
-          }
-// EOF: UPS USPS
-          $gBitDb->query("update " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = ?", array( $value, $key ) );
-        }
-        $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
-                          from ' . TABLE_CONFIGURATION;
-
-        $configuration = $gBitDb->Execute($configuration_query);
-
+			global $gCommerceSystem;
+			$gCommerceSystem->storeConfig( $key, $value );
+		}
         zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
         break;
       case 'install':
@@ -85,10 +75,6 @@
 	    }
 
         if ( !empty( $moduleFile ) ) {
-    $configuration_query = 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue`
-                                from ' . TABLE_CONFIGURATION;
-
-          $configuration = $gBitDb->Execute($configuration_query);
           include( $moduleFile );
           $module = new $class;
           if ($action == 'install') {
