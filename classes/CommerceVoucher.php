@@ -497,7 +497,7 @@ class CommerceVoucher extends BitBase {
 		}
 	}
 
-	function getList( &$pListHash ) {
+	public static function getList( &$pListHash ) {
 		global $gBitDb;
 
 		$whereSql = '';

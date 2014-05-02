@@ -235,10 +235,10 @@ class CommerceCustomer extends BitBase {
 			$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 			if (ACCOUNT_STATE == 'true') {
 				if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
-					if( is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					if( !empty( $pParamHash['state'] ) && is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 						$pParamHash['address_store']['entry_zone_id'] = $pParamHash['state'];
 						$pParamHash['address_store']['entry_state'] = $zoneName;
-					} elseif( $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					} elseif( !empty( $pParamHash['state'] ) && $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 						$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 						$pParamHash['address_store']['entry_zone_id'] = $zoneId;
 					} else {
