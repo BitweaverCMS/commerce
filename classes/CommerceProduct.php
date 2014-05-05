@@ -85,8 +85,7 @@ class CommerceProduct extends LibertyMime {
 				$this->mContentId = $this->mInfo['content_id'];
 			}
 			if( !empty( $this->mInfo['related_content_id'] ) ) {
-				global $gLibertySystem;
-				if( $this->mRelatedContent = $gLibertySystem->getLibertyObject( $this->mInfo['related_content_id'] ) ) {
+				if( $this->mRelatedContent = static::getLibertyObject( $this->mInfo['related_content_id'] ) ) {
 					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
 				}
 			}
