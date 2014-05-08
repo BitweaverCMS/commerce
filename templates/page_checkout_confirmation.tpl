@@ -24,6 +24,7 @@
 
 <div class="row-fluid">
 	<div class="span12">
+
 	{legend legend="Shopping Cart Contents"}
 		<table class="table">
 			{if sizeof($order->info.tax_groups) > 1}
@@ -35,7 +36,7 @@
 			<tr>
 				<td><a href="{$orderItem.display_url}"><img src="{$orderItem.image_url}" alt="{$orderItem.name|escape}"/></a></td>
 				<td><strong>{$orderItem.products_quantity}</strong>&nbsp;x
-					<a href="{CommerceProduct::getDisplayUrlFromHash($orderItem)}">{$orderItem.name}</a>
+					<a href="{$orderItem.display_url}">{$orderItem.name}</a>
 					{if !empty( $orderItem.attributes )}
 						<ul>
 						{foreach $orderItem.attributes item=orderItemAttribute}
