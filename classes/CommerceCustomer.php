@@ -63,19 +63,25 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	public static function getOrdersHistory( $pCustomerId=NULL ) {
-		global $gBitDb;
+	function getOrdersHistory() {
 		$ret = array();
-		if( BitBase::verifyId( $pCustomerId ) ) {
+		if( $this->isValid() ) {
+			static::getOrdersHistoryById( $this->mCustomerId );
+		}
+	}
+
+	public static function getOrdersHistoryById( $pCustomerId ) {
+		global $gBitDb;
+		if( static::verifyId( $pCustomerId ) ) {
 			$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
 						FROM   " . TABLE_ORDERS . " o 
 							INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
 							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status` = s.`orders_status_id`)
 						WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
 						ORDER BY `orders_id` DESC";
-			$ret = $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
+
+			return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
 		}
-		return $ret;
 	}
 
 	public static function getPurchaseStats( $pCustomerId ) {
@@ -229,10 +235,10 @@ class CommerceCustomer extends BitBase {
 			$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
 			if (ACCOUNT_STATE == 'true') {
 				if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
-					if( is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					if( !empty( $pParamHash['state'] ) && is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 						$pParamHash['address_store']['entry_zone_id'] = $pParamHash['state'];
 						$pParamHash['address_store']['entry_state'] = $zoneName;
-					} elseif( $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					} elseif( !empty( $pParamHash['state'] ) && $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 						$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 						$pParamHash['address_store']['entry_zone_id'] = $zoneId;
 					} else {

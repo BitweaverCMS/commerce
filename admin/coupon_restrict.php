@@ -66,7 +66,7 @@ $gBitSmarty->assign_by_ref( 'gCoupon', $gCoupon );
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
 $productManager = new CommerceProductManager();
-$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 
 $categoryTree = zen_get_category_tree();
 $gBitSmarty->assign( 'categorySelect', zen_draw_pull_down_menu('category_id', $categoryTree, $current_category_id) );

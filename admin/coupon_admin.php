@@ -164,12 +164,12 @@
 			$_POST['uses_per_user'] = 1;
 		}
 
-		if (!$_POST['coupon_start_date']) {
+		if( empty( $_POST['coupon_start_date'] ) ) {
 			$coupon_start_date = explode("-", date('Y-m-d'));
 		} else {
 			$coupon_start_date = explode("-", $_POST['coupon_start_date']);
 		}
-		if (!$_POST['coupon_expire_date']) {
+		if( empty( $_POST['coupon_expire_date'] ) ) {
 			$coupon_expire_date = explode("-", date('Y-m-d'));
 			$coupon_expire_date[0] = $coupon_expire_date[0] + 1;
 		} else {

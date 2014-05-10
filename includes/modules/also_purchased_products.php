@@ -51,7 +51,7 @@
 		$typeClass = $orders->fields['type_class'];
         $list_box_contents[$row][$col] = array('align' => 'center',
                                                'params' => 'class="smallText" width="' . $col_width . '%" valign="top"',
-                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image( $typeClass::getImageUrl( $orders->fields, 'avatar' ), $orders->fields['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
+                                               'text' => '<a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . zen_image( $typeClass::getImageUrlFromHash( $orders->fields, 'avatar' ), $orders->fields['products_name'] ) . '</a><br /><a href="' . zen_href_link(zen_get_info_page($orders->fields['products_id']), 'products_id=' . $orders->fields['products_id']) . '">' . $orders->fields['products_name'] . '</a>');
 
         $col ++;
         if ($col > (SHOW_PRODUCT_INFO_COLUMNS_ALSO_PURCHASED_PRODUCTS - 1)) {

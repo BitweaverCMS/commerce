@@ -12,6 +12,7 @@ class CommerceSystem extends BitSingleton {
 	}
 
     public function __wakeup() {
+		parent::__wakeup();
 		$this->loadConstants();
 	}
 
@@ -25,22 +26,20 @@ class CommerceSystem extends BitSingleton {
 		}
     }
 
-	public function storeConfig ( $pConfigName, $pConfigValue ) {
-          if( is_array( $pConfigValue ) ){
+	public function storeConfig ( $pConfigKey, $pConfigValue ) {
+		if( is_array( $pConfigValue ) ){
 			// see usage in UPS and USPS
-            $pConfigValue = implode( ", ", $pConfigValue );
-            $pConfigValue = str_replace ( ", --none--", "", $pConfigValue );
-          }
-			if( !empty( $this->mConfig[$pConfigKey] ) ) {
-	        	$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ? WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
-				$this->mConfig[$pConfigKey] = $pConfigValue;
-			} else {
-				// TODO Need more robust insert here.
+			$pConfigValue = implode( ", ", $pConfigValue );
+			$pConfigValue = str_replace ( ", --none--", "", $pConfigValue );
+		}
+
+		if( !empty( $this->mConfig[$pConfigKey] ) ) {
+			$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ? WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
+			$this->mConfig[$pConfigKey] = $pConfigValue;
+		} else {
+			// TODO Need more robust insert here.
 //	        	$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key` ) VALUES ( ?, ? )", array( $pConfigValue, $pConfigKey ) );
-			}
-
-
-		
+		}
 	}
 
 	function loadConfig() {
