@@ -65,17 +65,17 @@ class CommerceCustomer extends BitBase {
 
 	public static function getOrdersHistory( $pCustomerId=NULL ) {
 		global $gBitDb;
-		if( empty( $pCustomerId ) ) {
-			$pCustomerId = $this->mCustomerId;
+		$ret = array();
+		if( BitBase::verifyId( $pCustomerId ) ) {
+			$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
+						FROM   " . TABLE_ORDERS . " o 
+							INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
+							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status` = s.`orders_status_id`)
+						WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
+						ORDER BY `orders_id` DESC";
+			$ret = $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
 		}
-		$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
-					FROM   " . TABLE_ORDERS . " o 
-						INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
-						INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status` = s.`orders_status_id`)
-					WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
-					ORDER BY `orders_id` DESC";
-
-		return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
+		return $ret;
 	}
 
 	public static function getPurchaseStats( $pCustomerId ) {
