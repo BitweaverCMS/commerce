@@ -66,8 +66,9 @@ class CommerceCustomer extends BitBase {
 	function getOrdersHistory() {
 		$ret = array();
 		if( $this->isValid() ) {
-			static::getOrdersHistoryById( $this->mCustomerId );
+			$ret = static::getOrdersHistoryById( $this->mCustomerId );
 		}
+		return $ret;
 	}
 
 	public static function getOrdersHistoryById( $pCustomerId ) {

@@ -14,5 +14,6 @@
 
 global $gBitSmarty, $gBitCustomer;
 $history = $gBitCustomer->getOrdersHistory(); 
+vd( $history );
 $_template->tpl_vars['ordersHistory'] = new Smarty_variable( $history );
 
