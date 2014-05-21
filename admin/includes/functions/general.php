@@ -710,6 +710,19 @@
 		return zen_draw_pull_down_menu($name, $select_array, (int)$key_value);
 	}
 
+	function zen_cfg_groups_drop_down( $pValue ) {
+		global $gBitUser;
+		$listHash = array();
+		$groupSelect = array();
+		if( $groups = $gBitUser->getAllGroups( $listHash ) ) {
+			$groupSelect[] = array( 'id' => NULL, 'text' => '' );
+			foreach( $groups as $groupId => $groupHash ) {
+				$groupSelect[] = array( 'id' => $groupId, 'text' => $groupHash['group_name'] );
+			}
+		}
+		return zen_cfg_select_drop_down( $groupSelect, $pValue );
+	}
+
 ////
 // Alias function for module configuration keys
 	function zen_mod_select_option($select_array, $key_name, $key_value) {

@@ -219,8 +219,11 @@
 	}
 
     function after_order_create($zf_order_id) {
-		global $gBitProduct, $order;
+		global $gBitUser, $gBitProduct, $gCommerceSystem, $order;
 		$ret = NULL;
+		if( $order->getField( 'total' ) && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
+			$gBitUser->addUserToGroup( $gBitUser->mUserId, $groupId );
+		}
 		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		if (is_array($this->modules)) {
 			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {

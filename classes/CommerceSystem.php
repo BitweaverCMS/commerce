@@ -26,6 +26,11 @@ class CommerceSystem extends BitSingleton {
 		}
     }
 
+	public function storeConfigId ( $pConfigId, $pConfigValue ) {
+		$configKey = $this->mDb->getOne( 'SELECT `configuration_key` FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_id`=? ', array( $pConfigId ) );
+		$this->storeConfig( $configKey, $pConfigValue );
+	}
+
 	public function storeConfig ( $pConfigKey, $pConfigValue ) {
 		if( is_array( $pConfigValue ) ){
 			// see usage in UPS and USPS
@@ -33,13 +38,16 @@ class CommerceSystem extends BitSingleton {
 			$pConfigValue = str_replace ( ", --none--", "", $pConfigValue );
 		}
 
-		if( !empty( $this->mConfig[$pConfigKey] ) ) {
-			$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ? WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
-			$this->mConfig[$pConfigKey] = $pConfigValue;
+		if( $pConfigValue !== NULL ) {
+			if( isset( $this->mConfig[$pConfigKey] ) ) {
+				$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ?, `last_modified`='NOW' WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
+			} else {
+				$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key` ) VALUES ( ?, ? )", array( $pConfigValue, $pConfigKey ) );
+			}
 		} else {
-			// TODO Need more robust insert here.
-//	        	$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key` ) VALUES ( ?, ? )", array( $pConfigValue, $pConfigKey ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $pConfigKey ) );
 		}
+		$this->mConfig[$pConfigKey] = $pConfigValue;
 	}
 
 	function loadConfig() {

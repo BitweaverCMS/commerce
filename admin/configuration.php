@@ -25,37 +25,11 @@
 
 	$action = (isset($_GET['action']) ? $_GET['action'] : '');
 
-	if (zen_not_null($action)) {
+	if( !empty( $action ) ) {
 		switch ($action) {
 			case 'save':
-				// demo active test
-				if (zen_admin_demo()) {
-					$_GET['action']= '';
-					$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-					zen_redirect(zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cID));
-				}
-				$configuration_value = zen_db_prepare_input($_POST['configuration_value']);
 				$cID = zen_db_prepare_input($_GET['cID']);
-
-				$gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
-					SET `configuration_value` = '" . zen_db_input($configuration_value) . "',
-					`last_modified` = ".$gBitDb->qtNOW()." WHERE `configuration_id` = '" . (int)$cID . "'");
-		$configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` as `cfgvalue`
-													FROM ' . TABLE_CONFIGURATION;
-
-				$configuration = $gBitDb->Execute($configuration_query);
-
-				// set the WARN_BEFORE_DOWN_FOR_MAINTENANCE to false if DOWN_FOR_MAINTENANCE = true
-				if ( (WARN_BEFORE_DOWN_FOR_MAINTENANCE == 'true') && (DOWN_FOR_MAINTENANCE == 'true') ) {
-				$gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
-											SET `configuration_value` = 'false', `last_modified` = '" . NOW . "'
-											WHERE `configuration_key` = 'WARN_BEFORE_DOWN_FOR_MAINTENANCE'"); }
-
-				$configuration_query = 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue`
-													FROM ' . TABLE_CONFIGURATION;
-
-				$configuration = $gBitDb->Execute($configuration_query);
-
+				$gCommerceSystem->storeConfigId( $cID, $_POST['configuration_value'] );
 				zen_redirect(zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cID));
 				break;
 		}
@@ -137,9 +111,9 @@
 		}
 
 		if ( (isset($cInfo) && is_object($cInfo)) && ($configuration->fields['configuration_id'] == $cInfo->configuration_id) ) {
-			echo '									<tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=edit') . '\'">' . "\n";
+			echo '									<tr id="defaultSelected" class="info" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=edit') . '\'">' . "\n";
 		} else {
-			echo '									<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $configuration->fields['configuration_id'] . '&action=edit') . '\'">' . "\n";
+			echo '									<tr class="dataTableRow" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $configuration->fields['configuration_id'] . '&action=edit') . '\'">' . "\n";
 		}
 ?>
 								<td class="dataTableContent"><?php echo $configuration->fields['configuration_title']; ?></td>
