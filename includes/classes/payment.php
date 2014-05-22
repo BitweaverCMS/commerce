@@ -221,7 +221,7 @@
     function after_order_create($zf_order_id) {
 		global $gBitUser, $gBitProduct, $gCommerceSystem, $order;
 		$ret = NULL;
-		if( round( $order->getField( 'total' ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
+		if( round( $order->getField( 'total', 2 ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
 			$gBitUser->addUserToGroup( $gBitUser->mUserId, $groupId );
 		}
 		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
