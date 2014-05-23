@@ -15,7 +15,7 @@ function editAddress( pAddress ) {
 
 
 <div class="row">
-	<div class="span4">
+	<div class="col-md-4">
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
 		<a href="product_history.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
@@ -34,7 +34,7 @@ function editAddress( pAddress ) {
 			{/if}
 		{/if}
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 		<h4>{tr}Payment Info{/tr}</h4>
 		{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
 		<div class="clear">
@@ -62,7 +62,7 @@ function editAddress( pAddress ) {
 </div>
 
 <div class="row">
-	<div class="span4">
+	<div class="col-md-4">
 		<h4><a class="icon" onclick="editAddress('delivery');return false;"><i class="icon-edit"></i></a> {tr}Shipping Address{/tr}</h4>
 		<div id="deliveryaddress">
 		{php}
@@ -71,7 +71,7 @@ function editAddress( pAddress ) {
 		{/php}
 		</div>
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 		<h4><a class="icon" onclick="editAddress('billing');return false;"><i class="icon-edit"></i></a> {tr}Billing Address{/tr}</h4>
 		<div id="billingaddress">
 		{php}

@@ -5,16 +5,16 @@
 
 {form class="form-horizontal" action=$formActionUrl}
 <div class="row-fluid">
-	<div class="span8">
+	<div class="col-md-8">
 
 <div class="row-fluid">
-	<div class="span6">
+	<div class="col-md-6">
 		{legend legend="Shipping Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
 			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		{legend legend="Billing Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->billing}
 			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
@@ -23,7 +23,7 @@
 </div>
 
 <div class="row-fluid">
-	<div class="span12">
+	<div class="col-md-12">
 
 	{legend legend="Shopping Cart Contents"}
 		<table class="table">
@@ -83,7 +83,7 @@
 	</div>
 </div>
 </div>
-<div class="span4">
+<div class="col-md-4">
 	{legend legend="Payment Method"}
 		{if $paymentConfirmation}
 			<h4>{$paymentConfirmation.title|escape}</h4>
