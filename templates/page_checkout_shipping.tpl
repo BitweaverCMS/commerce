@@ -16,7 +16,7 @@
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
-						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" /> <a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
+						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" /> <a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
 				</div>
 				{/if}
@@ -30,7 +30,7 @@
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
-						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					</div>
 				</div>
 			</div>
@@ -91,7 +91,7 @@
 			<h3>{tr}Continue to Step 2{/tr}</h3>
 			<p>{tr}- choose your payment method.{/tr} </p>
 			<div class="control-group submit">
-				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
 		{/form}
 	{/if}

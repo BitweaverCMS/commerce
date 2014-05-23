@@ -17,7 +17,7 @@
 </div>
 <div class="control-group submit">
 	{forminput}
-		<input class="btn" type="submit" name="change_shipping" value="{tr}Change Shipping{/tr}" />
+		<input class="btn btn-default" type="submit" name="change_shipping" value="{tr}Change Shipping{/tr}" />
 	{/forminput}
 </div>
 {/form}

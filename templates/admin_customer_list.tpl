@@ -10,7 +10,7 @@
 			<form class="form-search form-inline">
 			  <div class="input-append">
 				<input type="text" class="span2 search-query">
-				<button type="submit" class="btn">Search</button>
+				<button type="submit" class="btn btn-default">Search</button>
 			  </div>
 			</form>
 		</div>

@@ -96,8 +96,8 @@
 				</div>
 				<div id="optval{$optionsValueId}edit" style="display:none">
 					<input type="text" name="products_options_values_name{$optionsValueId}" id="products_options_values_name{$optionsValueId}" value="{$optionsValue.products_options_values_name}" />
-					<input type="submit" class="btn" value="save" name="save_options_value" onclick="return saveOptionsValue('{$optionsValueId}');" />
-					<input type="submit" class="btn" value="cancel" name="cancel_options_value" onclick="return editOptionsValue('{$optionsValueId}');" />
+					<input type="submit" class="btn btn-default" value="save" name="save_options_value" onclick="return saveOptionsValue('{$optionsValueId}');" />
+					<input type="submit" class="btn btn-default" value="cancel" name="cancel_options_value" onclick="return editOptionsValue('{$optionsValueId}');" />
 				</div>
 			</li>
 		{/foreach}
@@ -122,7 +122,7 @@ function saveOptionsValue( pOptValId ) {
 </div>
 
 <div class="control-group submit">
-	<input type="submit" class="btn" name="save_option" value="{tr}Save{/tr}" />
-	<input type="submit" class="btn" name="cancel" value="{tr}Cancel{/tr}">
+	<input type="submit" class="btn btn-default" name="save_option" value="{tr}Save{/tr}" />
+	<input type="submit" class="btn btn-default" name="cancel" value="{tr}Cancel{/tr}">
 </div>
 

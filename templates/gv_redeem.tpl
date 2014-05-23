@@ -19,7 +19,7 @@
 			{forminput}<input type="text" name="gv_no" size="10" maxlength="32" />{/forminput}
 		</div>
 		<div class="control-group">
-			{forminput}<input type="submit" class="btn" name="action" value="Submit" />{/forminput}
+			{forminput}<input type="submit" class="btn btn-default" name="action" value="Submit" />{/forminput}
 		</div>
 	</form>
 {/if}

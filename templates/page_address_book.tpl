@@ -31,7 +31,7 @@
 			{legend legend=$formTitle}
 				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress}
 				<div class="control-group clear">
-					<input type="submit" class="btn" name="save_address" value="{tr}Save Address{/tr}"/>
+					<input type="submit" class="btn btn-default" name="save_address" value="{tr}Save Address{/tr}"/>
 				</div>
 			{/legend}
 		{/form}

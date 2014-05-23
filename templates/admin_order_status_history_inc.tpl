@@ -24,7 +24,7 @@
 			</div>
 		</label>
 			
-	<input type="submit" class="btn" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
+	<input type="submit" class="btn btn-default" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
 {/legend}
 </div></form>
 {if $gBitOrder->loadHistory()}

@@ -80,7 +80,7 @@
 	{/if}
 </table>
 <div class="text-right">
-	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn">{tr}Shipping Estimator{/tr}</a> {/if} <input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
+	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn btn-default">{tr}Shipping Estimator{/tr}</a> {/if} <input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
 </div>
 
 {else}

@@ -107,7 +107,7 @@ button      : "anchorperiodend{$userId}"       // ID of the button
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" class="btn" name="save_payment" value="Save Payment" />
+			<input type="submit" class="btn btn-default" name="save_payment" value="Save Payment" />
 		</div>
 	{/form}
 {/if}

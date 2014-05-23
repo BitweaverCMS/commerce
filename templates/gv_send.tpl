@@ -19,7 +19,7 @@
 		{formfeedback success="Congratulations, your `$smarty.const.TEXT_GV_NAME` has successfully been sent"}
 		{forminput}
 			<form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send" method="post">
-			<input type="submit" class="btn" name="" value="{tr}Send More Certificates{/tr}" />
+			<input type="submit" class="btn btn-default" name="" value="{tr}Send More Certificates{/tr}" />
 			</form>
 		{/forminput}
 	</div>
@@ -55,8 +55,8 @@
 		<input type="hidden" name="message" value="{$smarty.post.message|escape:html}" />
 
 	<div class="control-group submit">
-		<input type="submit" class="btn" name="action" value="{tr}Back{/tr}" />
-        <input type="submit" class="btn" name="action" value="{tr}Process{/tr}" />
+		<input type="submit" class="btn btn-default" name="action" value="{tr}Back{/tr}" />
+        <input type="submit" class="btn btn-default" name="action" value="{tr}Process{/tr}" />
 	</div>
     </form>
 {elseif !$smarty.get.action || $feedback.error}
@@ -84,7 +84,7 @@
 	</div>
 
 	<div class="control-group submit">
-        <input type="submit" class="btn" name="send_now" value="{tr}Send{/tr}" />
+        <input type="submit" class="btn btn-default" name="send_now" value="{tr}Send{/tr}" />
 	</div>
 	</form>
     <h4>{tr}This message is included with all emails sent from this site{/tr}:</h4>

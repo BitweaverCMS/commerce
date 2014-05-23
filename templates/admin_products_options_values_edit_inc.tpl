@@ -175,7 +175,7 @@
 	{/legend}
 
 	<div class="control-group submit">
-			<input type="submit" class="btn" name="save_attribute" value="{tr}Save{/tr}" />
-			<input type="submit" class="btn" name="cancel" value="{tr}Cancel{/tr}" />
+			<input type="submit" class="btn btn-default" name="save_attribute" value="{tr}Save{/tr}" />
+			<input type="submit" class="btn btn-default" name="cancel" value="{tr}Cancel{/tr}" />
 	</div>
 

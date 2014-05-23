@@ -67,7 +67,7 @@
 	{/forminput}
 </div>
 <div class="control-group submit">
-	<input class="btn" type="submit" value="save" name="save_address" />
+	<input class="btn btn-default" type="submit" value="save" name="save_address" />
 </div>
 </fieldset>
 </form>

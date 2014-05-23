@@ -20,7 +20,7 @@
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
-						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 						<a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
 				</div>
@@ -31,7 +31,7 @@
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
 					<div class="control-group clear">
-						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					</div>
 				</div>
 			</div>
@@ -123,7 +123,7 @@
 			<h3>{tr}Continue to Step 3{/tr}</h3>
 			<p>{tr}- to confirm your order.{/tr} </p>
 			<div class="control-group submit">
-				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
+				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
 				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
 		</div>
@@ -132,7 +132,7 @@
 		{legend legend="Billing Address"}
 					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 					{formhelp note="The billing address should match the address on your credit card statement."}
-					<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
+					<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
 		{/legend}
 	
 		<fieldset>

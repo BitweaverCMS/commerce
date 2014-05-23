@@ -125,7 +125,7 @@
 </div>
 <div class="control-group submit">
 	{forminput}
-		<input type="submit" class="btn" value="{tr}Export{/tr}" name="export"/>
+		<input type="submit" class="btn btn-default" value="{tr}Export{/tr}" name="export"/>
 	{/forminput}
 </div>
 {/form}

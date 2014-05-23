@@ -48,8 +48,8 @@ function getShippingQuotes( pOrderId ) {
 
 <header>
 	<div class="btn-group pull-right">
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
+		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
 	</div>
 	<h1>{$smarty.const.HEADING_TITLE}</h1>
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
@@ -213,11 +213,11 @@ function getShippingQuotes( pOrderId ) {
 
 
 <div style="margin:15px 0;">
-	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
+	<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
 		<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
-		<input class="btn" type="submit" name="Send" value="Send Gift Certificate" />
-	</form> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
+		<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
+	</form> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
 	{form class="form-inline" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
 		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="input-small"/>
 		<label class="checkbox">
