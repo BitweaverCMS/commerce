@@ -4,10 +4,10 @@
 	{if $quotes[ix].methods || $quotes[ix].error}
 		{counter assign=radioButtons start=0}
 		<li class="row-fluid">
-			<div class="span2 text-right">
+			<div class="col-md-2 text-right">
 				{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{/if}
 			</div>
-			<div class="span10">
+			<div class="col-md-10">
 				{if !$quotes[ix].icon}}<h4>{$quotes[ix].module}</h4>{/if}
 				{forminput}
 					{formfeedback error=$quotes[ix].error}

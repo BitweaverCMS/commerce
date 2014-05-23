@@ -15,11 +15,11 @@
 
 
 <div class="row">
-	<div class="span6">
+	<div class="col-md-6">
 	{include file="bitpackage:bitcommerce/admin_stats_sales_by_type_inc.tpl"}
 	{include file="bitpackage:bitcommerce/admin_stats_sales_by_option_inc.tpl"}
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		<table class="table data stats">
 			<caption>{tr}Customer Created Products Stats{/tr}</caption>
 			<thead>
@@ -80,7 +80,7 @@
 		</table>
 	</div>
 
-<div class="span6 last">
+<div class="col-md-6 last">
 	<table class="table data stats">
 		<caption>{tr}Revenue By Interest{/tr}</caption>
 		<thead>
@@ -105,7 +105,7 @@
 </div>
 
 
-<div class="span6 last">
+<div class="col-md-6 last">
 <table class="table data stats">
 	<caption>{tr}Most Valuable Customers{/tr}</caption>
 	<thead>

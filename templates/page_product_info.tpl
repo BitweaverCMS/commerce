@@ -17,18 +17,18 @@
 
 <div class="row-fluid">
 	{if $gBitProduct->getImageUrl(0,'medium')}	
-	<div class="span4">
+	<div class="col-md-4">
 		<a rel="nofollow" href="{$gBitProduct->getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
 		<img class="thumb" src="{$gBitProduct->getImageUrl('medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
 	</div>
 	{/if}
 		
-	<div class="span8">
+	<div class="col-md-8">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
 		<div class="row-fluid">
 			{if $gBitProduct->getField('products_description')}
-			<div class="span7">
+			<div class="col-md-7">
 				<div class="content">
 					{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
 						<div class="control-group">
@@ -46,7 +46,7 @@
 				</div>
 			</div>
 			{/if}
-			<div class="span5">
+			<div class="col-md-5">
 				<div class="box addtocart">
 					{if $gBitProduct->getBasePrice() > 0}
 					<div class="control-group">

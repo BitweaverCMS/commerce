@@ -15,7 +15,7 @@
 
 			<div class="row-fluid">
 				{if count( $addresses )}
-				<div class="span6">
+				<div class="col-md-6">
 					{legend legend="Choose Shipping Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
@@ -26,7 +26,7 @@
 				</div>
 				{/if}
 				
-				<div class="span6">
+				<div class="col-md-6">
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
@@ -51,7 +51,7 @@
 	</tr>
 {/if}
 <div class="row-fluid">
-	<div class="span6">
+	<div class="col-md-6">
 	{if count($paymentSelection) > 1}
 		{tr}Please select a payment method for this order.{/tr}
 	{/if}
@@ -128,7 +128,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		{legend legend="Billing Address"}
 					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 					{formhelp note="The billing address should match the address on your credit card statement."}

@@ -8,9 +8,10 @@
 		<div class="pull-right">
 			<a class="btn btn-small btn-info" href="export_users.php">Export as CSV</a> &nbsp;
 			<form class="form-search form-inline">
-			  <div class="input-append">
-				<input type="text" class="span2 search-query">
+			  <div class="col-md-2 input-append">
+				<input type="text" class="search-query">
 				<button type="submit" class="btn btn-default">Search</button>
+				<button type="submit" class="btn">Search</button>
 			  </div>
 			</form>
 		</div>

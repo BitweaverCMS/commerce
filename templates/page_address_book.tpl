@@ -5,7 +5,7 @@
 {$messageStack->output('address')}
 
 <div class="row-fluid">
-	<div class="span6">
+	<div class="col-md-6">
 		{if count( $addresses )}
 			<ul class="unstyled data">
 				{section name=ix loop=$addresses}
@@ -26,7 +26,7 @@
 		{/if}
 	</div>
 	
-	<div class="span6">
+	<div class="col-md-6">
 		{form class="form-horizontal" action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
 			{legend legend=$formTitle}
 				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress}

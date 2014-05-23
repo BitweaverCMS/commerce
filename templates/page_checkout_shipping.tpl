@@ -11,7 +11,7 @@
 			<input type="hidden" name="main_page" value="checkout_shipping" />
 			<div class="row-fluid">
 				{if count( $addresses )}
-				<div class="span6">
+				<div class="col-md-6">
 					{legend legend="Choose Shipping Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
@@ -21,7 +21,7 @@
 				</div>
 				{/if}
 				
-				<div class="span6">
+				<div class="col-md-6">
 			{if !$gBitUser->isRegistered()}
 				{include file="bitpackage:bitcommerce/register_customer.tpl"}
 			{/if}
@@ -40,7 +40,7 @@
 		{form name='checkout_address' }
 		{formfeedback error=$errors}
 		<div class="row-fluid">
-			<div class="span6">
+			<div class="col-md-6">
 				<fieldset>
 					<legend>{tr}Shipping Address{/tr}</legend>
 					<input type="hidden" name="action" value="process" />
@@ -65,7 +65,7 @@
 			</div>
 
 			{if $shippingModules}
-			<div class="span6">
+			<div class="col-md-6">
 				<fieldset>
 				<legend>{tr}Shipping Method{/tr}</legend>
 				{if count( $quotes ) > 1}
