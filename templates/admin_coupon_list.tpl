@@ -6,7 +6,7 @@
 <div class="admin bitcommerce coupons">
 	<header>
 		<h1>{tr}Discount Coupons{/tr}</h1>
-		<a href="{$smarty.server.SCRIPT_NAME}?action=new" class="pull-right btn btn-primary btn-mini">{tr}Create Coupon{/tr}</a>
+		<a href="{$smarty.server.SCRIPT_NAME}?action=new" class="pull-right btn btn-primary btn-xs">{tr}Create Coupon{/tr}</a>
 		<form name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php" method="get">
 			<select name="status" onchange="this.form.submit();">
 				<option value="" selected="selected">All Coupons</option>

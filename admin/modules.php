@@ -93,7 +93,7 @@
 <!-- header_eof //-->
 
 <div class="row">
-	<div class="span8">
+	<div class="col-md-8">
 		<table class="table table-hover">
               <tr class="dataTableHeadingRow">
                 <th colspan="2"><?php echo TABLE_HEADING_MODULES; ?></th>
@@ -207,7 +207,7 @@
             </table>
             <p><?php echo TEXT_MODULE_DIRECTORY . ' ' . $module_directory; ?></p>
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 		<div class="well">
 <?php
   $heading = array();

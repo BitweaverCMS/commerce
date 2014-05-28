@@ -31,7 +31,7 @@
 <div class="control-group">
 	{formlabel label="Amount"}
 	{forminput}
-		{$smarty.request.amount|escape} {if $smarty.request.amount <= 0}<span class="alert">{$smarty.const.ERROR_GV_AMOUNT}</span>{/if}
+		{$smarty.request.amount|escape} {if $smarty.request.amount <= 0}<span class="alert alert-warning">{$smarty.const.ERROR_GV_AMOUNT}</span>{/if}
 	{/forminput}
 </div>
 
@@ -74,8 +74,8 @@
 
 <div class="control-group submit">
 	{forminput}
-		<input class="btn btn-small" name="Back" value="Back" type="submit" />
-		<input class="btn btn-small" name="send_gv" value="Send Email" type="submit" />
+		<input class="btn btn-sm" name="Back" value="Back" type="submit" />
+		<input class="btn btn-sm" name="send_gv" value="Send Email" type="submit" />
 	{/forminput}
 </div>
 
@@ -246,7 +246,7 @@ function check_form(form_name) {
 
 <div class="control-group submit">
 	{forminput}
-		<input class="btn btn-small" name="Send Email" value="Send Email" type="submit">
+		<input class="btn btn-sm" name="Send Email" value="Send Email" type="submit">
 	{/forminput}
 </div>
 

@@ -11,13 +11,13 @@
 	<div class="col-md-6">
 		{legend legend="Shipping Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
-			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
+			<a class="btn btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
 	<div class="col-md-6">
 		{legend legend="Billing Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->billing}
-			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
+			<a class="btn btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
 </div>
@@ -63,7 +63,7 @@
 			{if $order->content_type!='virtual' && $order->info.shipping_method}
 			<tr>
 				<td class="text-right" colspan="{$colspan}">{tr}Shipping Method{/tr}: {$order->info.shipping_method}</td>
-				<td><a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></td>
+				<td><a class="btn btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></td>
 			</tr>
 			{/if}
 			{if $orderTotalsModules}
@@ -97,7 +97,7 @@
 			{$smarty.session.payment->title}
 		{/if}
 		<div class="clear">
-			<a class="btn btn-small" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a>
+			<a class="btn btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a>
 		</div>
 	{/legend}
 

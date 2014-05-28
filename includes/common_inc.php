@@ -312,9 +312,9 @@
 // Output a function button in the selected language
 	function zen_image_button($image, $alt = '', $parameters = '') {
 		global $template, $current_page_base, $gBitCustomer;
-		// return '<span class="btn btn-small">'.$alt.'</span>';
+		// return '<span class="btn btn-sm">'.$alt.'</span>';
 		if( is_string( $alt ) ) {
-			$ret = '<span class="btn btn-small">'.$alt.'</span>';
+			$ret = '<span class="btn btn-sm">'.$alt.'</span>';
 		} elseif( $template ) {
 			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
 		} else {
@@ -331,7 +331,7 @@
     global $template, $current_page_base, $gBitCustomer;
 
 	if( is_string( $alt ) ) {
-		$ret = '<input type="submit" class="btn btn-small" name="'.$alt.'" value="'.$alt.'" />';
+		$ret = '<input type="submit" class="btn btn-sm" name="'.$alt.'" value="'.$alt.'" />';
 	} else {
 		if( $template ) {
 			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);

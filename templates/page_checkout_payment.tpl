@@ -78,7 +78,7 @@
 			</legend>
 			{formfeedback error=$selection.error}
 		{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
-			<div class="alert">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
+			<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
 		{/if}
 		{if $selection.fields && is_array($selection.fields)}
 			{foreach from=$selection.fields item=selectionField}

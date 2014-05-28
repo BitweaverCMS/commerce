@@ -17,7 +17,7 @@
 				{tr}Starting at:{/tr}<span class="price">{$listBoxContents[ix][jx].lowest_purchase_price}</span>
 			{/if}
 		</div>
-		<div class="buynow"><a class="btn btn-small" href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
+		<div class="buynow"><a class="btn btn-sm" href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
 		</div>
     </td>
 	{/section}

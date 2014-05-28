@@ -148,7 +148,7 @@ function getShippingQuotes( pOrderId ) {
 			<small>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
 				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
-				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
+				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
 			</small> 
 		</li>
 {/section}
@@ -223,7 +223,7 @@ function getShippingQuotes( pOrderId ) {
 		<label class="checkbox">
 			<input type="checkbox" name="combine_notify" value="on" checked="checked"/>{tr}Notify Customer{/tr}
 		</label>
-		<input class="btn btn-small" type="submit" name="combine" value="{tr}Combine{/tr}"/>
+		<input class="btn btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
 		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
 	{/form}
 </div>

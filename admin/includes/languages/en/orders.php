@@ -89,7 +89,7 @@ define('SUCCESS_ORDER_UPDATED', 'Success: Order has been successfully updated.')
 define('WARNING_ORDER_NOT_UPDATED', 'Warning: Nothing to change. The order was not updated.');
 
 define('ENTRY_ORDER_ID','Invoice No. ');
-define('TEXT_INFO_ATTRIBUTE_FREE', '&nbsp;-&nbsp;<span class="alert">FREE</span>');
+define('TEXT_INFO_ATTRIBUTE_FREE', '&nbsp;-&nbsp;<span class="alert alert-warning">FREE</span>');
 
 define('TEXT_DOWNLOAD_TITLE', 'Order Download Status');
 define('TEXT_DOWNLOAD_STATUS', 'Status');

@@ -90,7 +90,7 @@ function updateShippingQuote( pForm ) {
 </div>
 	{/if}
 <div class="control-group submit">
-	<input type="button" class="btn btn-mini" value="Update" onclick="updateShippingQuote( this.form )"/>
+	<input type="button" class="btn btn-xs" value="Update" onclick="updateShippingQuote( this.form )"/>
 </div>
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}
 	{tr}Free Shipping{/tr} {tr}- Downloads{/tr}

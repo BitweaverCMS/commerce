@@ -103,7 +103,7 @@
 						{/if}
 					</div>
 					<div class="control-group">
-						<input type="submit" class="btn btn-large btn-primary" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
+						<input type="submit" class="btn btn-lg btn-primary" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
 					</div>
 				{/if}
 			</div>

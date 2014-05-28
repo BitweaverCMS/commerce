@@ -6,7 +6,7 @@
 <div class="admin bitcommerce coupons">
 	<header>
 		<div class="pull-right">
-			<a class="btn btn-small btn-info" href="export_users.php">Export as CSV</a> &nbsp;
+			<a class="btn btn-sm btn-info" href="export_users.php">Export as CSV</a> &nbsp;
 			<form class="form-search form-inline">
 			  <div class="col-md-2 input-append">
 				<input type="text" class="search-query">

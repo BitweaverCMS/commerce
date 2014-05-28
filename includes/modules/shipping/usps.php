@@ -88,10 +88,10 @@ class usps extends BitBase {
 		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_USPS_STATUS' );
 
 		if ( $this->enabled && MODULE_SHIPPING_USPS_DEBUG_MODE != 'Off') {
-			$this->title .=	'<span class="alert"> (Debug is ON: ' . MODULE_SHIPPING_USPS_DEBUG_MODE . ')</span>';
+			$this->title .=	'<span class="alert alert-warning"> (Debug is ON: ' . MODULE_SHIPPING_USPS_DEBUG_MODE . ')</span>';
 		}
 		if ( $this->enabled && MODULE_SHIPPING_USPS_SERVER != 'production') {
-			$this->title .=	'<span class="alert"> (USPS Server set to: ' . MODULE_SHIPPING_USPS_SERVER . ')</span>';
+			$this->title .=	'<span class="alert alert-warning"> (USPS Server set to: ' . MODULE_SHIPPING_USPS_SERVER . ')</span>';
 		}
 		$this->description = 'United States Postal Service';
 		$this->icon = 'shipping_usps';
@@ -104,7 +104,7 @@ class usps extends BitBase {
 				$chk_sql = $this->mDb->Execute("select * from " . TABLE_CONFIGURATION . " where configuration_key like 'MODULE\_SHIPPING\_USPS\_%' ");
 				$chk_keys = $this->keys();
 				if (sizeof($chk_keys) != $chk_sql->RecordCount()) {
-					$this->title = $this->title . '<span class="alert">' . ' - Missing Keys you should reinstall!' . '</span>';
+					$this->title = $this->title . '<span class="alert alert-warning">' . ' - Missing Keys you should reinstall!' . '</span>';
 				}
 			}
 		}

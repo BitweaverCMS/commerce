@@ -10,7 +10,7 @@
 
 {html_options name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
 
-<input class="btn btn-small" type="submit" value="Go" name="list_filter"/>
+<input class="btn btn-sm" type="submit" value="Go" name="list_filter"/>
 {/form}
 {/if}
 

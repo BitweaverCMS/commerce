@@ -446,8 +446,8 @@ define('NOT_INSTALLED_TEXT','Not Installed');
   define('HEADING_TITLE_SEARCH_DETAIL','Search: ');
 
   define('PREV_NEXT_PRODUCT', 'Products: ');
-  define('TEXT_CATEGORIES_STATUS_INFO_OFF', '<span class="alert">*Category is Disabled</span>');
-  define('TEXT_PRODUCTS_STATUS_INFO_OFF', '<span class="alert">*Product is Disabled</span>');
+  define('TEXT_CATEGORIES_STATUS_INFO_OFF', '<span class="alert alert-warning">*Category is Disabled</span>');
+  define('TEXT_PRODUCTS_STATUS_INFO_OFF', '<span class="alert alert-warning">*Product is Disabled</span>');
 
 // admin demo
   define('ADMIN_DEMO_ACTIVE','Admin Demo is currently Active. Some settings are will be disabled');

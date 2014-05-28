@@ -68,7 +68,7 @@
 </header>
 
 <div class="row">
-	<div class="span8" id="colone">
+	<div class="col-md-8" id="colone">
 <?php
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
@@ -110,7 +110,7 @@
 ?>
 	</div>
 
-	<div class="span4" id="coltwo">
+	<div class="col-md-4" id="coltwo">
 
 <div class="well nopadding">
 <table class="table data">

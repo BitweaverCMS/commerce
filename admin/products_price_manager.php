@@ -265,7 +265,7 @@ if ($_GET['products_id'] != '') {
 <?php
 // FIX HERE
   $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
-  echo ($display_priced_by_attributes ? '<span class="alert">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
+  echo ($display_priced_by_attributes ? '<span class="alert alert-warning">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
   echo CommerceProduct::getDisplayPriceFromHash($_GET['products_id']) . '<br /><br />';
   echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
   $not_for_cart = $gBitDb->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
@@ -510,7 +510,7 @@ var SpecialEndDate = new ctlSpiffyCalendarBox("SpecialEndDate", "new_prices", "s
         <td colspan="4"><table border="0" cellspacing="0" cellpadding="2" align="center" width="100%">
           <tr>
             <td class="pageHeading" align="center" valign="middle">
-              <?php echo ($action == '' ? '<span class="alert">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : ''); ?>
+              <?php echo ($action == '' ? '<span class="alert alert-warning">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : ''); ?>
             </td>
           </tr>
           <tr>
@@ -550,7 +550,7 @@ if (zen_get_product_is_linked($productsId) == 'true') {
             <td colspan="5" class="main"><?php echo TEXT_INFO_MASTER_CATEGORIES_ID; ?></td>
           </tr>
           <tr>
-            <td colspan="5" class="main" align="center"><?php echo ($action == '' ? '<span class="alert">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : TEXT_INFO_UPDATE_REMINDER); ?></td>
+            <td colspan="5" class="main" align="center"><?php echo ($action == '' ? '<span class="alert alert-warning">' . TEXT_INFO_PREVIEW_ONLY . '</span>' : TEXT_INFO_UPDATE_REMINDER); ?></td>
           </tr>
 <?php } // master category linked ?>
 
@@ -558,7 +558,7 @@ if (zen_get_product_is_linked($productsId) == 'true') {
 if (zen_get_product_is_linked($productsId) == 'false' and $pInfo->master_categories_id != zen_get_products_category_id($productsId)) {
 ?>
           <tr>
-            <td colspan="5" class="main"><span class="alert">
+            <td colspan="5" class="main"><span class="alert alert-warning">
               <?php echo sprintf(TEXT_INFO_MASTER_CATEGORIES_ID_WARNING, $pInfo->master_categories_id, zen_get_products_category_id($productsId)); ?></span>
               <br /><strong><?php echo sprintf(TEXT_INFO_MASTER_CATEGORIES_ID_UPDATE_TO_CURRENT, $pInfo->master_categories_id, zen_get_products_category_id($productsId)); ?></strong>
             </td>
