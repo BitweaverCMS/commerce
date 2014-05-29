@@ -1,9 +1,12 @@
-<div class="navbar">
-<div class="navbar-inner">
-<div class="container">
-	<div class="nav-collapse collapse navbar-responsive-collapse">
-		<ul class="nav width100p">
-			<li class="<?php if( $_SERVER['SCRIPT_URL'] == DIR_WS_HTTPS_ADMIN ) { echo 'active'; } ?>"><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>">Summary</a></li>
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#commerce-admin-menu"><i class="icon-reorder"></i></button>
+			<a class="navbar-brand" href="<?php echo DIR_WS_HTTPS_ADMIN;?>"><?php echo ucwords( BITCOMMERCE_PKG_DIR )?></a>
+        </div>
+        <div class="collapse navbar-collapse" id="commerce-admin-menu">
+		<ul class="nav navbar-nav">
+			<li class="<?php if( $_SERVER['SCRIPT_URL'] == DIR_WS_HTTPS_ADMIN ) { echo 'active'; } ?>"></li>
 
 <?php
 	// ### CONFIGRUATION MENU
@@ -138,13 +141,18 @@
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>sqlpatch.php">Install SQL Patches</a></li>
 				</ul>
 			</li>
+		</ul>
 
-
-
-		<form class="navbar-search pull-right" method="get" action="<?=BITCOMMERCE_PKG_URL?>admin/index.php">
-			<input type="text" name="lookup_order_id" class="search-query col-md-1" placeholder="Order #"/>
-		</form>
-	</div><!-- /.nav-collapse -->
-</div>
-</div><!-- /navbar-inner -->
-</div>
+		<div class="col-sm-3 col-md-2 navbar-right">
+			<form action="<?=BITCOMMERCE_PKG_URL?>admin/index.php" class="navbar-form form-search" role="search">
+				<div class="input-group input-group-sm">
+					<input type="text" name="lookup_order_id" class="form-control" placeholder="Order #" name="srch-term" id="srch-term">
+					<div class="input-group-btn input-group-sm">
+						<button class="btn btn-default" type="submit"><i class="icon-search"></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+		</div>
+	</div>
+</nav><!-- /navbar-inner -->

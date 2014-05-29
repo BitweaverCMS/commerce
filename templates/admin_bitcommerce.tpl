@@ -1,4 +1,3 @@
-{* $Header$ *}
 {strip}
 {include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
 

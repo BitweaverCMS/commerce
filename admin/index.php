@@ -112,7 +112,9 @@
 
 	<div class="col-md-4" id="coltwo">
 
-<div class="well nopadding">
+		<div class="row">
+
+<div class="col-md-12 col-sm-6"><div class="well nopadding">
 <table class="table data">
 <tr><th><?php echo tra( 'Order Summary' ); ?></th><th>#</th></tr>
 <?php	 $orders_contents = '';
@@ -128,13 +130,13 @@
 	}
 ?>
 </table>
-</div>
+</div></div>
 
 <?php
 	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
 ?>
 
-<div class="well nopadding">
+<div class="col-md-12 col-sm-6"><div class="well nopadding">
 <table class="table data">
 <tr><th><?php echo tra( 'Statistics' ); ?></th><th></th></tr>
 <?php
@@ -156,7 +158,7 @@
 
 ?>
 </table>
-</div>
+</div></div>
 
 	</div>
 </div>
