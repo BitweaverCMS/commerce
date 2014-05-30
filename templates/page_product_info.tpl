@@ -15,7 +15,7 @@
 			<h1>{$gBitProduct->getTitle()}</h1>
 		</header>
 
-<div class="row-fluid">
+<div class="row">
 	{if $gBitProduct->getImageUrl(0,'medium')}	
 	<div class="col-md-4">
 		<a rel="nofollow" href="{$gBitProduct->getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
@@ -26,7 +26,7 @@
 	<div class="col-md-8">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
-		<div class="row-fluid">
+		<div class="row">
 			{if $gBitProduct->getField('products_description')}
 			<div class="col-md-7">
 				<div class="content">

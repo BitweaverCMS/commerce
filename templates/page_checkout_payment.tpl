@@ -13,7 +13,7 @@
 				{include file="bitpackage:bitcommerce/register_customer.tpl"}
 			{/if}
 
-			<div class="row-fluid">
+			<div class="row">
 				{if count( $addresses )}
 				<div class="col-md-6">
 					{legend legend="Choose Shipping Address"}
@@ -50,7 +50,7 @@
 		<td colspan="2" class="main" valign="top"><?php echo TEXT_CONDITIONS_DESCRIPTION . '<br /><br />' . zen_draw_checkbox_field('conditions', '1', false, 'id="conditions"') . '<label for="conditions">&nbsp;' . TEXT_CONDITIONS_CONFIRM . '</label>'; ?></td>
 	</tr>
 {/if}
-<div class="row-fluid">
+<div class="row">
 	<div class="col-md-6">
 	{if count($paymentSelection) > 1}
 		{tr}Please select a payment method for this order.{/tr}

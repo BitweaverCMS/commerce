@@ -4,10 +4,10 @@
 </header>
 
 {form class="form-horizontal" action=$formActionUrl}
-<div class="row-fluid">
+<div class="row">
 	<div class="col-md-8">
 
-<div class="row-fluid">
+<div class="row">
 	<div class="col-md-6">
 		{legend legend="Shipping Address"}
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
@@ -22,7 +22,7 @@
 	</div>
 </div>
 
-<div class="row-fluid">
+<div class="row">
 	<div class="col-md-12">
 
 	{legend legend="Shopping Cart Contents"}

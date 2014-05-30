@@ -4,7 +4,7 @@
 
 {$messageStack->output('address')}
 
-<div class="row-fluid">
+<div class="row">
 	<div class="col-md-6">
 		{if count( $addresses )}
 			<ul class="unstyled data">

@@ -46,7 +46,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 														'print_result'	=> FALSE ), $gBitSmarty );
 			print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
 		} else {
-			print "<span class='alert alert-error'>Unkown Option</span>";
+			print "<span class='alert alert-danger'>Unkown Option</span>";
 		}
 	} elseif( !empty( $_REQUEST['address_type'] ) ) {
 		$addressType = $_REQUEST['address_type'];
@@ -67,7 +67,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 		$gBitSmarty->assign_by_ref( 'address', $entry );
 		$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 	} else {
-			print "<span class='alert alert-error'>Empty Option</span>";
+			print "<span class='alert alert-danger'>Empty Option</span>";
 	}
 
 	exit;

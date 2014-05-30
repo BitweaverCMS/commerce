@@ -3,7 +3,7 @@
 {section name=ix loop=$quotes}
 	{if $quotes[ix].methods || $quotes[ix].error}
 		{counter assign=radioButtons start=0}
-		<li class="row-fluid">
+		<li class="row">
 			<div class="col-md-2 text-right">
 				{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{/if}
 			</div>
