@@ -10,25 +10,25 @@
 {if $smarty.get.action == 'preview' && ($smarty.post.customers_email_address || $smarty.post.email_to)}
 
 {form name="mail" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`gv_mail.php?action=send_email_to_user" method="post"}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Customer"}
 	{forminput}
 		{$mailSentTo}
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="From"}
 	{forminput}
 		{$smarty.request.from|escape}
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Subject"}
 	{forminput}
 		{$smarty.request.subject|escape}
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Amount"}
 	{forminput}
 		{$smarty.request.amount|escape} {if $smarty.request.amount <= 0}<span class="alert alert-warning">{$smarty.const.ERROR_GV_AMOUNT}</span>{/if}
@@ -36,7 +36,7 @@
 </div>
 
 {if $smarty.request.message_html}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Rich Text Message"}
 	{forminput}
 		{$smarty.request.message_html}
@@ -44,14 +44,14 @@
 </div>
 {/if}
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Email Message"}
 	{forminput}
 		{$smarty.request.message|escape|nl2br}
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Admin Note"}
 	{forminput}
 		{$smarty.request.admin_note|escape|nl2br}
@@ -59,7 +59,7 @@
 </div>
 
 {if $smarty.request.oID}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Related Order"}
 	{forminput}
 		{$smarty.request.oID}
@@ -72,7 +72,7 @@
 	<input type="hidden" name="{$key}" value="{$value|escape}" />
 {/foreach}
 
-<div class="control-group submit">
+<div class="form-group submit">
 	{forminput}
 		<input class="btn btn-sm" name="Back" value="Back" type="submit" />
 		<input class="btn btn-sm" name="send_gv" value="Send Email" type="submit" />
@@ -165,28 +165,28 @@ function check_form(form_name) {
 
 
 {form name="mail" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`gv_mail.php?action=preview" method="post" onsubmit="return check_form(mail);"}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Email To"}
 	{forminput}
 		<input type="text" name="email_to" value="{$smarty.request.email_to}" />
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="From"}
 	{forminput}
 		<input type="text" name="from" value="{$smarty.request.from|default:$smarty.const.EMAIL_FROM}" />
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Subject"}
 	{forminput}
 		<input type="text" name="subject" value="{$smarty.request.subject|default:"`$gBitSystem->mConfig.site_title` Gift Certificate"|tra}" />
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Amount"}
 	{forminput}
 		<input type="text" name="amount" value="{$smarty.request.amount}" />
@@ -222,14 +222,14 @@ function check_form(form_name) {
 			  </tr>
 *}
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Message"}
 	{forminput}
 		<textarea name="message" wrap="soft" cols="60" rows="15">{$smarty.request.message|default:$smarty.const.TEXT_GV_ANNOUNCE|strip_tags|stripslashes|escape|trim}</textarea>
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Admin Note"}
 	{forminput}
 		<input type="text" name="admin_note" value="{$smarty.request.message|strip_tags|stripslashes|escape|trim}"/>
@@ -237,14 +237,14 @@ function check_form(form_name) {
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Related to Order"}
 	{forminput}
 		<input type="text" name="oID" value="{$smarty.request.oID}" />
 	{/forminput}
 </div>
 
-<div class="control-group submit">
+<div class="form-group submit">
 	{forminput}
 		<input class="btn btn-sm" name="Send Email" value="Send Email" type="submit">
 	{/forminput}

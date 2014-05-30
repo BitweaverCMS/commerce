@@ -19,7 +19,7 @@
 					{legend legend="Choose Shipping Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
+					<div class="form-group clear">
 						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 						<a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
@@ -30,7 +30,7 @@
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
+					<div class="form-group clear">
 						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					</div>
 				</div>
@@ -82,7 +82,7 @@
 		{/if}
 		{if $selection.fields && is_array($selection.fields)}
 			{foreach from=$selection.fields item=selectionField}
-				<div class="control-group">
+				<div class="form-group">
 				<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
 				<div class="controls">
 					{$selectionField.field}
@@ -107,7 +107,7 @@
 					{formfeedback error=$smarty.request.credit_class_error}
 				{/if}
 				{foreach from=$selection.fields item=selectionField}
-					<div class="control-group">
+					<div class="form-group">
 						<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
 						<div class="controls">
 							{$selectionField.field}
@@ -119,10 +119,10 @@
 		{/foreach}
 	{/if}
 
-		<div class="control-group">
+		<div class="form-group">
 			<h3>{tr}Continue to Step 3{/tr}</h3>
 			<p>{tr}- to confirm your order.{/tr} </p>
-			<div class="control-group submit">
+			<div class="form-group submit">
 				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
 				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
@@ -136,7 +136,7 @@
 		{/legend}
 	
 		<fieldset>
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Order Comments" for=""}
 				{forminput}
 					<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>

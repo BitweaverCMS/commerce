@@ -1,5 +1,5 @@
 {if $comInterests}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Interests"}
 	{forminput}
 		{foreach from=$comInterests key=interestId item=interestName}

@@ -47,7 +47,7 @@ class ot_gv {
 			$this->checkbox = '';
 			if( $this->user_has_gv_account( $gBitUser->mUserId ) ) {
 				$this->checkbox = '
-						<div class="control-group">
+						<div class="form-group">
 							<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
 							<div class="controls">
 								<input type="text" class="input-mini" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '"> ' . tra( 'of' ) . ' ' . $gvAmount . '

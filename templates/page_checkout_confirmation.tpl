@@ -116,7 +116,7 @@
 	{$paymentModules->process_button()}
 {/if}
 
-<div class="control-group submit">
+<div class="form-group submit">
 	<input type="submit" class="btn btn-primary" value="{tr}Confirm Order{/tr}" />
 </div>
 

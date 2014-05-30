@@ -27,14 +27,14 @@ function updateShippingQuote( pForm ) {
 <p>{tr}Shipping prices are an estimate only. The actual amount may vary once a final total is calculated during checkout.{/tr}</p>
 
 {if $addresses}
-<div class="control-group">
+<div class="form-group">
 	<select onchange="updateShippingQuote( this.form );" name="address_id" id="addressid">
 	{foreach from=$addresses item=addr}
 		<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
 	{/foreach}
 	</select>
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Ship To"}
 	{forminput}
 		{$selAddr.address_format_id|zen_address_format:$selAddr:1:' ':'<br />'}
@@ -42,21 +42,21 @@ function updateShippingQuote( pForm ) {
 </div>
 {else}
 	{if $gBitCustomer->mCart->get_content_type() != 'virtual'}
-<div class="control-group country">
+<div class="form-group country">
 	{formlabel label="Country"}
 	{forminput}
 		{$countryMenu}
 	{/forminput}
 </div>
 {if $stateMenu}
-<div class="control-group state">
+<div class="form-group state">
 	{formlabel label="State / Province"}
 	{forminput}
 		{$stateMenu}
 	{/forminput}
 </div>
 {/if}
-<div class="control-group postalcode">
+<div class="form-group postalcode">
 	{formlabel label="Postal Code"}
 	{forminput}
 		<input type="text" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
@@ -66,14 +66,14 @@ function updateShippingQuote( pForm ) {
 {/if}
 
 	{if $gBitProduct->isValid()}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Product"}
 	{forminput}
 		{$gBitProduct->getTitle()|escape}
 	{/forminput}
 </div>
 	{elseif !$gBitProduct->isValid() && $gBitCustomer->mCart && $gBitCustomer->mCart->count_contents()}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Items in Cart"}
 	{forminput}
 		{$gBitCustomer->mCart->count_contents()}
@@ -82,14 +82,14 @@ function updateShippingQuote( pForm ) {
 	{/if}
 
 	{if $smarty.request.cart_quantity}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Quantity"}
 	{forminput}
 		<input type="text" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
 	{/forminput}
 </div>
 	{/if}
-<div class="control-group submit">
+<div class="form-group submit">
 	<input type="button" class="btn btn-xs" value="Update" onclick="updateShippingQuote( this.form )"/>
 </div>
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}

@@ -10,7 +10,7 @@
 		<input type="checkbox" name="update_totals" value="y" onclick="$('#additional-charge').toggle()"/><i class="icon-money"></i> {tr}Make Additional Charge{/tr}
 	</label>
 		<label class="checkbox hide" id="additional-charge">
-			<div class="control-group">
+			<div class="form-group">
 				{forminput}
 					{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol()}
 					{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol()}

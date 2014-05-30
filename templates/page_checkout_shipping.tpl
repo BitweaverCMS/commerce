@@ -15,7 +15,7 @@
 					{legend legend="Choose Shipping Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
+					<div class="form-group clear">
 						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" /> <a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
 				</div>
@@ -29,7 +29,7 @@
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
+					<div class="form-group clear">
 						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					</div>
 				</div>
@@ -48,13 +48,13 @@
 							<p>{tr}Your order will be shipped to the following address:{/tr}</p>
 							{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
 
-					<div class="control-group submit">
+					<div class="form-group submit">
 						<button class="btn btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Address{/tr}</button>
 					</div>
 				</fieldset>
 
 				<fieldset>
-					<div class="control-group">
+					<div class="form-group">
 						{formlabel label="Special Instructions or Comments About Your Order" for=""}
 						{forminput}
 							<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>
@@ -90,7 +90,7 @@
 
 			<h3>{tr}Continue to Step 2{/tr}</h3>
 			<p>{tr}- choose your payment method.{/tr} </p>
-			<div class="control-group submit">
+			<div class="form-group submit">
 				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
 			</div>
 		{/form}
