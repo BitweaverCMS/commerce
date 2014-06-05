@@ -285,7 +285,6 @@
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<br>
 </body>
 </html>
 <?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

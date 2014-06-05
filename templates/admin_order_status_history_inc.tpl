@@ -1,28 +1,26 @@
 <form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;origin=index&amp;action=update_order" method="post"><div style="display:inline">
 {legend legend="Order History"}
-	<label>{tr}Change Status{/tr}</label> {html_options name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
+	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>
-	<textarea name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
+	<textarea class="form-control" name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
 	<label class="checkbox">
 		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	</label>
 	<label class="checkbox">
-		<input type="checkbox" name="update_totals" value="y" onclick="$('#additional-charge').toggle()"/><i class="icon-money"></i> {tr}Make Additional Charge{/tr}
+		<input type="checkbox" name="update_totals" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
 	</label>
-		<label class="checkbox hide" id="additional-charge">
-			<div class="form-group">
-				{forminput}
-					{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol()}
-					{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol()}
-					<div class="{if $leftSymbol}input-prepend{/if} {if $rightSymbol}input-append{/if}">
-						{if $leftSymbol}<span class="add-on">{$leftSymbol}</span>{/if}
-						<input class="input-small text-right" id="appendedPrependedInput" type="text" name="additional_charge" value="{$smarty.request.additional_charge}"/>
-						{if $rightSymbol}<span class="add-on">{$rightSymbol}</span>{/if}
-					</div>
-					{formhelp note="Enter a negative number for a credit"}
-				{/forminput}
-			</div>
-		</label>
+		<div id="additional-charge" style="display:none">
+			{forminput}
+				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol()}
+				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol()}
+				<div class="input-group">
+					{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
+					<input class="form-control input-sm text-right" type="text" name="additional_charge" value="{$smarty.request.additional_charge}"/>
+					{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
+				</div>
+				{formhelp note="Enter a negative number for a credit"}
+			{/forminput}
+		</div>
 			
 	<input type="submit" class="btn btn-default" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
 {/legend}
