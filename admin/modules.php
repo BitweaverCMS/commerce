@@ -208,7 +208,7 @@
             <p><?php echo TEXT_MODULE_DIRECTORY . ' ' . $module_directory; ?></p>
 	</div>
 	<div class="col-md-4">
-		<div class="well">
+		<div class="panel-group">
 <?php
   $heading = array();
   $contents = array();
@@ -263,7 +263,7 @@
           $contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
         }
         $keys = substr($keys, 0, strrpos($keys, '<br><br>'));
-        $contents[] = array('text' => '<a class="btn" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . tra( 'Remove' ) . '</a>');
+        $contents[] = array('text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . tra( 'Remove' ) . '</a>');
         $contents[] = array('text' => '<br>' . $mInfo->description);
         $contents[] = array('text' => '<br>' . $keys);
       } else {
@@ -277,6 +277,7 @@
     echo $box->infoBox($heading, $contents);
   }
 ?>
+			</div>
 		</div>
 	</div>
 </div>

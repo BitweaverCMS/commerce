@@ -311,16 +311,7 @@
 ////
 // Output a function button in the selected language
 	function zen_image_button($image, $alt = '', $parameters = '') {
-		global $template, $current_page_base, $gBitCustomer;
-		// return '<span class="btn btn-sm">'.$alt.'</span>';
-		if( is_string( $alt ) ) {
-			$ret = '<span class="btn btn-sm">'.$alt.'</span>';
-		} elseif( $template ) {
-			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
-		} else {
-			$ret = zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $parameters);
-		}
-		return $ret;
+		return '<span class="btn btn-default btn-sm">'.$alt.'</span>';
 	}
 
 
@@ -328,30 +319,7 @@
 // The HTML form submit button wrapper function
 // Outputs a button in the selected language
   function zen_image_submit($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base, $gBitCustomer;
-
-	if( is_string( $alt ) ) {
-		$ret = '<input type="submit" class="btn btn-sm" name="'.$alt.'" value="'.$alt.'" />';
-	} else {
-		if( $template ) {
-			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
-		} else {
-		  $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image);
-		}
-		$ret = '<input type="image" src="'.$imgSrc. '" alt="' . zen_output_string($alt) . '"';
-	
-		if (zen_not_null($alt)) { 
-			$ret .= ' title=" ' . zen_output_string($alt) . ' "';
-		}
-	
-		if (zen_not_null($parameters)) {
-			$ret .= ' ' . $parameters;
-		}
-	
-		$ret .= ' />';
-	}
-	
-	return $ret;
+	return '<input type="submit" class="btn btn-primary btn-sm" name="'.$alt.'" value="'.$alt.'" />';
   }
 
   function bit_get_images_dir( $pDir ) {
