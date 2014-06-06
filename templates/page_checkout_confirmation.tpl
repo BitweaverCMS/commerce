@@ -3,7 +3,7 @@
 	<h1>{tr}Step 3 of 3{/tr} - {tr}Order Confirmation{/tr}</h1>
 </header>
 
-{form class="form-horizontal" action=$formActionUrl}
+{form action=$formActionUrl}
 <div class="row">
 	<div class="col-md-8">
 

@@ -4,7 +4,7 @@
 	</div>
 	<div class="body">
 
-	{form class="form-horizontal" name="customer" method="post" action="`$smarty.server.SCRIPT_NAME`"}
+	{form name="customer" method="post" action="`$smarty.server.SCRIPT_NAME`"}
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="default_address_id" value="{$cInfo->customers_default_address_id}">
 		{legend legend=$smarty.const.CATEGORY_PERSONAL}

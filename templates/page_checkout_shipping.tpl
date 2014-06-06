@@ -7,7 +7,7 @@
 
 	<section class="body">
 	{if !$gBitUser->isRegistered() || !$order->delivery || $changeAddress}
-		{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
+		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 			<input type="hidden" name="main_page" value="checkout_shipping" />
 			<div class="row">
 				{if count( $addresses )}

@@ -7,7 +7,7 @@
 	<section class="body">
 
 	{if !$gBitUser->isRegistered() || !$order->billing || $changeAddress}
-		{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
+		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
 			<input type="hidden" name="main_page" value="checkout_payment" />
 			{if !$gBitUser->isRegistered()}
 				{include file="bitpackage:bitcommerce/register_customer.tpl"}
@@ -38,7 +38,7 @@
 
 		{/form}
 	{else}
-{form class="form-horizontal" name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
+{form name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
 
 {if $messageStack->size('checkout_payment')}
 	{$messageStack->output('checkout_payment')}

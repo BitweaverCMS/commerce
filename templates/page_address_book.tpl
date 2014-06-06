@@ -27,7 +27,7 @@
 	</div>
 	
 	<div class="col-md-6">
-		{form class="form-horizontal" action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
+		{form action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
 			{legend legend=$formTitle}
 				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress}
 				<div class="form-group clear">
