@@ -56,6 +56,6 @@ if (!file_exists(DIR_WS_IMAGES . 'large/' . $products_image_large)) {
   $products_image_large = DIR_WS_IMAGES . 'large/' . $products_image_large;
 }
 */
-$products_image_medium = CommerceProduct::getImageUrl( $_GET['pID'], 'medium' );
-$products_image_large = CommerceProduct::getImageUrl( $_GET['pID'], 'large' );
+$products_image_medium = CommerceProduct::getImageUrlFromHash( $_GET['pID'], 'medium' );
+$products_image_large = CommerceProduct::getImageUrlFromHash( $_GET['pID'], 'large' );
 ?>

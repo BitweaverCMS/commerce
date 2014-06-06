@@ -25,5 +25,5 @@
 <div class="header">
 	<h1><?=$gBitProduct->getTitle();?></h1>
 </div>
-<?php echo zen_image( CommerceProduct::getImageUrl( $gBitProduct->mProductsId, 'large' ), $gBitProduct->getTitle() ); ?>
+<?php echo zen_image( CommerceProduct::getImageUrlFromHash( $gBitProduct->mProductsId, 'large' ), $gBitProduct->getTitle() ); ?>
 </body>

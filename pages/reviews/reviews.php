@@ -38,7 +38,7 @@
 ?>
   <tr>
     <td colspan="2"><table width="100%"><tr>
-      <td class="pageresults"><?php echo $reviews_split->display_count(TEXT_DISPLAY_NUMBER_OF_REVIEWS); ?></td>
+      <td class="pagination"><?php echo $reviews_split->display_count(TEXT_DISPLAY_NUMBER_OF_REVIEWS); ?></td>
       <td align="right" class="pageresults"><?php echo TEXT_RESULT_PAGE . ' ' . $reviews_split->display_links(MAX_DISPLAY_PAGE_LINKS, zen_get_all_get_params(array('page', 'info', 'main_page'))); ?></td>
     </tr></table></td>
   </tr>
@@ -60,7 +60,7 @@
     <td class="smallText" align="left"><?php echo sprintf(TEXT_REVIEW_DATE_ADDED, zen_date_long($reviews->fields['date_added'])); ?></td>
   </tr>
   <tr>
-    <td width="<?php echo SMALL_IMAGE_WIDTH + 10; ?>" align="left" valign="top" class="main"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS_INFO, 'products_id=' . $reviews->fields['products_id'] . '&reviews_id=' . $reviews->fields['reviews_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $reviews->fields['products_id'], 'avatar' ), $reviews->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a>'; ?></td>
+    <td width="<?php echo SMALL_IMAGE_WIDTH + 10; ?>" align="left" valign="top" class="main"><?php echo '<a href="' . zen_href_link(FILENAME_PRODUCT_REVIEWS_INFO, 'products_id=' . $reviews->fields['products_id'] . '&reviews_id=' . $reviews->fields['reviews_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash( $reviews->fields['products_id'], 'avatar' ), $reviews->fields['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) . '</a>'; ?></td>
     <td valign="top" class="main"><?php echo zen_break_string(nl2br(zen_output_string_protected(stripslashes( substr( $reviews->fields['reviews_text'], 0, 100 ) ))), 60, '-<br />') . ((strlen($reviews->fields['reviews_text']) >= 100) ? '..' : '') . '<br /><br /><i>' . sprintf(TEXT_REVIEW_RATING, zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $reviews->fields['reviews_rating'] . '.png', sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])), sprintf(TEXT_OF_5_STARS, $reviews->fields['reviews_rating'])) . '</i>'; ?></td>
   </tr>
 <?php

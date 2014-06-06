@@ -84,50 +84,61 @@
 
 /* class functions */
 
-// display split-page-number-links
-    function display_links($max_page_links, $parameters = '') {
-      global $request_type;
+	// display split-page-number-links
+	function display_links($max_page_links, $parameters = '') {
+		global $request_type;
 
-      $display_links_string = '';
+		$display_links_string = '<ul class="pagination">';
 
-      $class = '';
+		$class = '';
 
-      if (zen_not_null($parameters) && (substr($parameters, -1) != '&')) $parameters .= '&';
+		if (zen_not_null($parameters) && (substr($parameters, -1) != '&')) {
+			$parameters .= '&';
+		}
 
-// previous button - not displayed on first page
-      if ($this->current_page_number > 1) $display_links_string .= '<a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . ($this->current_page_number - 1), $request_type) . '" title=" ' . PREVNEXT_TITLE_PREVIOUS_PAGE . ' ">' . PREVNEXT_BUTTON_PREV . '</a>&nbsp;&nbsp;';
+		// previous button - not displayed on first page
+		if ($this->current_page_number > 1) {
+			$display_links_string .= '<li><a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . ($this->current_page_number - 1), $request_type) . '" title=" ' . PREVNEXT_TITLE_PREVIOUS_PAGE . ' ">&laquo;</a><li>';
+		}
 
-// check if number_of_pages > $max_page_links
-      $cur_window_num = intval($this->current_page_number / $max_page_links);
-      if ($this->current_page_number % $max_page_links) $cur_window_num++;
+		// check if number_of_pages > $max_page_links
+		$cur_window_num = intval($this->current_page_number / $max_page_links);
+		if ($this->current_page_number % $max_page_links) {
+			$cur_window_num++;
+		}
 
-      $max_window_num = intval($this->number_of_pages / $max_page_links);
-      if ($this->number_of_pages % $max_page_links) $max_window_num++;
+		$max_window_num = intval($this->number_of_pages / $max_page_links);
 
-// previous window of pages
-      if ($cur_window_num > 1) $display_links_string .= '<a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . (($cur_window_num - 1) * $max_page_links), $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE, $max_page_links) . ' ">...</a>';
+		if ($this->number_of_pages % $max_page_links) {
+			$max_window_num++;
+		}
 
-// page nn button
-      for ($jump_to_page = 1 + (($cur_window_num - 1) * $max_page_links); ($jump_to_page <= ($cur_window_num * $max_page_links)) && ($jump_to_page <= $this->number_of_pages); $jump_to_page++) {
-        if ($jump_to_page == $this->current_page_number) {
-          $display_links_string .= '&nbsp;<strong class="current">' . $jump_to_page . '</strong>&nbsp;';
-        } else {
-          $display_links_string .= '&nbsp;<a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . $jump_to_page, $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_PAGE_NO, $jump_to_page) . ' ">' . $jump_to_page . '</a>&nbsp;';
-        }
-      }
+		// previous window of pages
+		if ($cur_window_num > 1) {
+			$display_links_string .= '<li><a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . (($cur_window_num - 1) * $max_page_links), $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE, $max_page_links) . ' ">...</a></li>';
+		}
 
-// next window of pages
-      if ($cur_window_num < $max_window_num) $display_links_string .= '<a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . (($cur_window_num) * $max_page_links + 1), $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE, $max_page_links) . ' ">...</a>&nbsp;';
+		// page nn button
+		for ($jump_to_page = 1 + (($cur_window_num - 1) * $max_page_links); ($jump_to_page <= ($cur_window_num * $max_page_links)) && ($jump_to_page <= $this->number_of_pages); $jump_to_page++) {
+			if ($jump_to_page == $this->current_page_number) {
+				$display_links_string .= '<li class="active"><span>' . $jump_to_page . '<span class="sr-only">(current)</span></span></li>';
+			} else {
+				$display_links_string .= '<li><a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . $jump_to_page, $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_PAGE_NO, $jump_to_page) . ' ">' . $jump_to_page . '</a></li>';
+			}
+		}
 
-// next button
-      if (($this->current_page_number < $this->number_of_pages) && ($this->number_of_pages != 1)) $display_links_string .= '&nbsp;<a href="' . zen_href_link($_GET['main_page'], $parameters . 'page=' . ($this->current_page_number + 1), $request_type) . '" title=" ' . PREVNEXT_TITLE_NEXT_PAGE . ' ">' . PREVNEXT_BUTTON_NEXT . '</a>&nbsp;';
+		// next window of pages
+		if ($cur_window_num < $max_window_num) $display_links_string .= '<li><a href="' . zen_href_link($_GET['main_page'], $parameters . $this->page_name . '=' . (($cur_window_num) * $max_page_links + 1), $request_type) . '" title=" ' . sprintf(PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE, $max_page_links) . ' ">...</a></li>';
 
-      if ($display_links_string == '&nbsp;<strong class="current">1</strong>&nbsp;') {
-        return '&nbsp;';
-      } else {
-        return $display_links_string;
-      }
-    }
+		// next button
+		if (($this->current_page_number < $this->number_of_pages) && ($this->number_of_pages != 1)) {
+			$display_links_string .= '<li><a href="' . zen_href_link($_GET['main_page'], $parameters . 'page=' . ($this->current_page_number + 1), $request_type) . '" title=" ' . PREVNEXT_TITLE_NEXT_PAGE . ' ">&raquo;</a></li>';
+		}
+
+		$display_links_string .= '</ul>';
+
+		return $display_links_string;
+	}
 
 // display number of total products found
     function display_count($text_output) {

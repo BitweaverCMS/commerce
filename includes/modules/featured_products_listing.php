@@ -32,7 +32,7 @@
 
 
       if (PRODUCT_FEATURED_LIST_IMAGE != '0') {
-        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $featured_products->fields['products_id'], 'avatar' ), $featured_products->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
+        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($featured_products->fields['products_id']), 'products_id=' . $featured_products->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash( $featured_products->fields['products_id'], 'avatar' ), $featured_products->fields['products_name'] ) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_FEATURED_LIST_IMAGE, 3, 1));
       } else {
         $display_products_image = '';
       }

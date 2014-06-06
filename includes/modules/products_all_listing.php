@@ -30,7 +30,7 @@
     while (!$products_all->EOF) {
 
       if (PRODUCT_ALL_LIST_IMAGE != '0') {
-        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($products_all->fields['products_id']), 'products_id=' . $products_all->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $products_all->fields , 'small' ), $products_all->fields['products_name'], IMAGE_PRODUCT_ALL_LISTING_WIDTH, IMAGE_PRODUCT_ALL_LISTING_HEIGHT) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_IMAGE, 3, 1));
+        $display_products_image = '<a href="' . zen_href_link(zen_get_info_page($products_all->fields['products_id']), 'products_id=' . $products_all->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash( $products_all->fields , 'small' ), $products_all->fields['products_name'], IMAGE_PRODUCT_ALL_LISTING_WIDTH, IMAGE_PRODUCT_ALL_LISTING_HEIGHT) . '</a>' . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_LIST_IMAGE, 3, 1));
       } else {
         $display_products_image = '';
       }

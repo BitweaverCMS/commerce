@@ -28,7 +28,6 @@ define('TABLE_HEADING_ORDERS_STATUS', 'Orders Status');
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
 define('TEXT_INFO_ORDERS_STATUS_NAME', 'Orders Status:');
 define('TEXT_INFO_INSERT_INTRO', 'Please enter the new orders status with its related data');
-define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete this order status?');
 define('TEXT_INFO_HEADING_NEW_ORDERS_STATUS', 'New Orders Status');
 define('TEXT_INFO_HEADING_EDIT_ORDERS_STATUS', 'Edit Orders Status');
 define('TEXT_INFO_HEADING_DELETE_ORDERS_STATUS', 'Delete Orders Status');

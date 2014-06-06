@@ -75,14 +75,14 @@
   }
 
 //  $select_str = "select distinct " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, IF(s.status = '1', s.specials_new_products_price, NULL) as specials_new_products_price, IF(s.status = '1', s.specials_new_products_price, p.`products_price`) as final_price ";
-  $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`lowest_purchase_price`, p.`products_priced_by_attribute` ";
+  $select_str = "select " . $select_column_list . " m.`manufacturers_id`, p.`products_id`, pd.`products_name`, p.`products_price`, p.`products_tax_class_id`, p.`lowest_purchase_price`, p.`products_priced_by_attribute`, pt.* ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     $select_str .= ", SUM(tr.tax_rate) as tax_rate ";
   }
 
 //  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd left join " . TABLE_SPECIALS . " s on p.`products_id` = s.`products_id`, " . TABLE_CATEGORIES . " c, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c";
-  $from_str = "from " . TABLE_PRODUCTS . " p left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id) ";
+  $from_str = "from " . TABLE_PRODUCTS . " p INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(p.`products_type`=pt.`type_id`) left join " . TABLE_MANUFACTURERS . " m using(manufacturers_id) ";
 
   if ((DISPLAY_PRICE_WITH_TAX == 'true') && ((isset($_REQUEST['pfrom']) && zen_not_null($_REQUEST['pfrom'])) || (isset($_REQUEST['pto']) && zen_not_null($_REQUEST['pto'])))) {
     if (!$_SESSION['customer_country_id']) {
@@ -147,8 +147,7 @@
     $where_str .= " and p.`products_date_added` <= '" . zen_date_raw($dto) . "'";
   }
 
-  $rate = $currencies->get_value($_SESSION['currency']);
-  if ($rate) {
+  if( !empty( $_SESSION['currency'] ) && $rate = $currencies->get_value($_SESSION['currency']) ) {
     $pfrom = $_REQUEST['pfrom'] / $rate;
     $pto = $_REQUEST['pto'] / $rate;
   }
@@ -270,7 +269,7 @@
         break;
     }
 
-    if ( ($column_list[$col] != 'PRODUCT_LIST_IMAGE') ) {
+    if ( ($column_list[$col] != 'PRODUCT_LIST_IMAGE') && isset( $_GET['sort'] ) ) {
       $lc_text = zen_create_sort_heading($_GET['sort'], $col+1, $lc_text);
     }
 
@@ -351,9 +350,15 @@
           case 'PRODUCT_LIST_IMAGE':
             $lc_align = 'center';
             if (isset($_GET['manufacturers_id'])) {
-              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
+              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrlFromHash( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+				$typeClass = BitBase::getParameter( $listing->fields, 'type_class', 'CommerceProduct' );
+				if( !empty( $listing->fields['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$listing->fields['type_class_file'] ) ) {
+					require_once( BIT_ROOT_PATH.$listing->fields['type_class_file'] );
+				}
+				if( $thumbnail = $typeClass::getImageUrlFromHash( $listing->fields['products_id'], 'avatar' ) ) {
+	              $lc_text = '<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . zen_image( $thumbnail, $listing->fields['products_name'] ) . '</a>';
+				}
             }
             break;
         }

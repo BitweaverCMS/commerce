@@ -44,7 +44,6 @@ define('TEXT_ALL_MANUFACTURERS', tra( 'All Manufacturers' ) );
 
 define('HEADING_SEARCH_HELP', tra( 'Search Help' ) );
 define('TEXT_SEARCH_HELP', tra( 'Keywords may be separated by AND and/or OR statements for greater control of the search results.For example, Microsoft AND mouse would generate a result set that contain both words. However, for mouse OR keyboard, the result set returned would contain both or either words.Exact matches can be searched for by enclosing keywords in double-quotes.For example, "notebook computer" would generate a result set which match the exact string.Brackets can be used for further control on the result set.For example, Microsoft and (keyboard or mouse or "visual basic").' ) );
-define('TEXT_CLOSE_WINDOW', tra( 'Close Window [x]' ) );
 
 define('TABLE_HEADING_IMAGE', tra( '' ) );
 define('TABLE_HEADING_MODEL', tra( 'Model' ) );
