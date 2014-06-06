@@ -148,9 +148,9 @@
           case 'PRODUCT_LIST_IMAGE':
             $lc_align = 'center';
             if (isset($_GET['manufacturers_id'])) {
-              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
+              $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrlFromHash( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>';
             } else {
-              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+              $lc_text = '&nbsp;<a href="' . CommerceProduct::getDisplayUrlFromId( $listing->fields['products_id'] ) . '">' . zen_image( CommerceProduct::getImageUrlFromHash( $listing->fields['products_id'], 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
             }
             break;
         }

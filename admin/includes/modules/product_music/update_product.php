@@ -149,7 +149,7 @@
 // future image handler code
 define('IMAGE_MANAGER_HANDLER', 0);
           if ($new_image == 'true' and IMAGE_MANAGER_HANDLER >= 1) {
-            $src= CommerceProduct::getImageUrl( $products_id );
+            $src= CommerceProduct::getImageUrlFromHash( $products_id );
             $filename_small= $src;
             preg_match("/.*\/(.*)\.(\w*)$/", $src, $fname);
             list($oiwidth, $oiheight, $oitype) = getimagesize($src);
@@ -173,7 +173,7 @@ define('IMAGE_MANAGER_HANDLER', 0);
             $large_width= $oiwidth;
             $large_height= $oiheight;
 
-            $products_image = CommerceProduct::getImageUrl( $products_id );
+            $products_image = CommerceProduct::getImageUrlFromHash( $products_id );
             $products_image_extention = substr($products_image, strrpos($products_image, '.'));
             $products_image_base = ereg_replace($products_image_extention, '', $products_image);
 
