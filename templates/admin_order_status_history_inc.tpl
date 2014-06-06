@@ -28,7 +28,7 @@
 {/legend}
 </div></form>
 {if $gBitOrder->loadHistory()}
-<ul class="unstyled orderhistory data">
+<ul class="list-unstyled orderhistory data">
 	{section loop=$gBitOrder->mHistory name=ix step=-1}
 	<li class="item {if $gBitOrder->mHistory[ix].customer_notified == '1'}alert alert-info{/if}" style="clear:both"> 
 		<small class="floatright">

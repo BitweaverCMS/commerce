@@ -141,7 +141,7 @@ function getShippingQuotes( pOrderId ) {
 <tr>
 	<td class="supplemental" colspan="4">
 {if !empty( $ordersProduct.attributes )}
-<ul class="unstyled">
+<ul class="list-unstyled">
 {section loop=$ordersProduct.attributes name=a}
 		<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
 <a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>

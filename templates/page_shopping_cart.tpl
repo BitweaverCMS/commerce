@@ -37,7 +37,7 @@
 	<td class="productListing-data">{if $gCommerceSystem->getConfig('IMAGE_SHOPPING_CART_STATUS')}<a href="{$product->getDisplayUrl()}"><img src="{$product->getThumbnailUrl('avatar')}" alt="{$product->getTitle()|escape}"/></a>{/if}</td>
 	<td class="productListing-data" valign="top"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()|escape}</span></a>
 		{if $basket.attributes}
-			<ul class="unstyled">
+			<ul class="list-unstyled">
 			{foreach from=$basket.attributes key=optionKey item=valueId}
 				{assign var=option value=$product->getOptionValue('',$valueId)}
 				<li>{$option.products_options_values_name|escape}</li>

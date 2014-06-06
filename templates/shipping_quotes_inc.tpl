@@ -1,5 +1,5 @@
 <div id="shippingquotes">
-<ul class="unstyled">
+<ul class="list-unstyled">
 {section name=ix loop=$quotes}
 	{if $quotes[ix].methods || $quotes[ix].error}
 		{counter assign=radioButtons start=0}

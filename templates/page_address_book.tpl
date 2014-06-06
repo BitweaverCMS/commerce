@@ -7,7 +7,7 @@
 <div class="row">
 	<div class="col-md-6">
 		{if count( $addresses )}
-			<ul class="unstyled data">
+			<ul class="list-unstyled data">
 				{section name=ix loop=$addresses}
 				<li class="item">
 					{if $addresses[ix].address_book_id == $sendToAddressId}
