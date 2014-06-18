@@ -194,7 +194,7 @@
 ////
 // Output a selection field - alias function for zen_draw_checkbox_field() and zen_draw_radio_field()
   function zen_draw_selection_field($name, $type, $value = '', $checked = false, $parameters = '') {
-    $selection = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
+    $selection = '<input  class="form-control" type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
 
     if (zen_not_null($value)) $selection .= ' value="' . zen_output_string($value) . '"';
 
