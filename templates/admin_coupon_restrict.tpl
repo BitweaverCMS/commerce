@@ -37,7 +37,7 @@
 <div class="form-group">
 	{formlabel label="Options"}
 	{forminput}
-		<select name="products_options_values_id">
+		<select class="form-control" name="products_options_values_id">
 		<option value="">Any</option>
 		{foreach from=$optionsList item=optionGroup}
 		<optgroup label="{$optionGroup.products_options_name|escape}">
@@ -52,7 +52,7 @@
 <div class="form-group">
 	{formlabel label="Product Type"}
 	{forminput}
-		<select name="product_type_id">
+		<select class="form-control" name="product_type_id">
 		<option value="">Any</option>
 		{foreach from=$productTypes item=type}
 			<option value="{$type.type_id}">{$type.type_name|escape}{if $type.type_class} - {$type.type_class|escape}{/if}</option>
@@ -64,7 +64,7 @@
 	{formlabel label="Specific Product"}
 	{forminput}
 		{$productCategorySelect}
-		<select name="product_id">
+		<select class="form-control" name="product_id">
 		<option value="">Any</option>
 		{foreach from=$productsList item=prod key=prodId}
 			<option value="{$prodId}">{$prod|escape}</option>
@@ -75,7 +75,7 @@
 <div class="form-group">
 	{formlabel label="Restriction"}
 	{forminput}
-		<select name="restrict_status">
+		<select class="form-control" name="restrict_status">
 			<option value="Deny" selected="selected">{tr}Deny{/tr}</option>
 			<option value="Maybe" selected="selected">{tr}Allow - Optional{/tr}</option>
 			<option value="Allow" selected="selected">{tr}Allow - Mandatory{/tr}</option>

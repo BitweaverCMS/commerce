@@ -240,7 +240,7 @@
 ////
 // Output a form pull down menu
   function zen_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false, $blank = false ) {
-    $field = '<select name="' . zen_output_string($name) . '"';
+    $field = '<select class="form-control" name="' . zen_output_string($name) . '"';
 
     if (zen_not_null($parameters)) $field .= ' ' . $parameters;
 

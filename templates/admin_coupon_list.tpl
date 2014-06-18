@@ -8,12 +8,12 @@
 		<h1>{tr}Discount Coupons{/tr}</h1>
 		<a href="{$smarty.server.SCRIPT_NAME}?action=new" class="pull-right btn btn-primary btn-xs">{tr}Create Coupon{/tr}</a>
 		<form name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php" method="get">
-			<select name="status" onchange="this.form.submit();">
+			<select class="form-control" name="status" onchange="this.form.submit();">
 				<option value="" selected="selected">All Coupons</option>
 				<option value="Y" {if $smarty.request.status=='Y'}selected="selected"{/if}>{tr}Active Coupons{/tr}</option>
 				<option value="N" {if $smarty.request.status=='N'}selected="selected"{/if}>{tr}Inactive Coupons{/tr}</option>
 			</select>							
-			<select name="uses" onchange="this.form.submit();">
+			<select class="form-control" name="uses" onchange="this.form.submit();">
 				<option value="+" {if $smarty.request.uses=='+'}selected="selected"{/if}>{tr}Multiple Use{/tr}</option>
 				<option value="1" {if $smarty.request.uses=='1'}selected="selected"{/if}>{tr}Single Use{/tr}</option>
 				<option value="" {if empty($smarty.request.uses)}selected="selected"{/if}>All Coupons</option>

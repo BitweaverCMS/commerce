@@ -18,7 +18,7 @@
 	<div class="form-group">
 		<div class="formlabel">{tr}Option{/tr}</div>
 		<div class="forminput">
-			<select name="products_options_id">
+			<select class="form-control" name="products_options_id">
 				{foreach from=$optionsList item=option key=optionsId}
 				<option value="{$option.products_options_id}" 
 				{if $editValue.products_options_id == $option.products_options_id}selected="selected"{/if}

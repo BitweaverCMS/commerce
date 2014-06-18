@@ -2,7 +2,7 @@
 {form class="form-inline" }
 {html_options name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
 : <input type="text" class="input-small" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
-<select name="orders_status_comparison" class="input-small" >
+<select class="form-control" name="orders_status_comparison" class="input-small" >
 	<option value="">{tr}Exactly{/tr}</option>
 	<option value=">=" {if $smarty.session.orders_status_comparison == '>='}selected="selected"{/if}>{tr}At Least{/tr}</option>
 	<option value="<=" {if $smarty.session.orders_status_comparison == '<='}selected="selected"{/if}>{tr}At Most{/tr}</option>

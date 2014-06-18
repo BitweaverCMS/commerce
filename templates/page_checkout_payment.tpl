@@ -119,14 +119,6 @@
 		{/foreach}
 	{/if}
 
-		<div class="form-group">
-			<h3>{tr}Continue to Step 3{/tr}</h3>
-			<p>{tr}- to confirm your order.{/tr} </p>
-			<div class="form-group submit">
-				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
-				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
-			</div>
-		</div>
 	</div>
 	<div class="col-md-6">
 		{legend legend="Billing Address"}
@@ -143,13 +135,21 @@
 				{/forminput}
 			</div>
 		</fieldset>
-
-		{if $orderTotalModules}
-					<table>{$orderTotalModules->output()}</table>
-		{/if}
 	</div>
 </div>
 
+		{if $orderTotalModules}
+			<table>{$orderTotalModules->output()}</table>
+		{/if}
+
+		<div class="form-group">
+			<h3>{tr}Continue to Step 3{/tr}</h3>
+			<p>{tr}- to confirm your order.{/tr} </p>
+			<div class="form-group submit">
+				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
+				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+			</div>
+		</div>
 {/form}
 	{/if}
 

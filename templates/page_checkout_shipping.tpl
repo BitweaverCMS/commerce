@@ -16,7 +16,7 @@
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
 					<div class="form-group clear">
-						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" /> <a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
+						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" /> <a class="btn btn-default pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
 				</div>
 				{/if}
@@ -49,7 +49,7 @@
 							{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
 
 					<div class="form-group submit">
-						<button class="btn btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Address{/tr}</button>
+						<button class="btn btn-default btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Address{/tr}</button>
 					</div>
 				</fieldset>
 
@@ -57,7 +57,7 @@
 					<div class="form-group">
 						{formlabel label="Special Instructions or Comments About Your Order" for=""}
 						{forminput}
-							<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>
+							<textarea name="comments" wrap="soft" class="form-control" rows="4">{$smarty.session.comments}</textarea>
 						{/forminput}
 					</div>
 				</fieldset>
@@ -85,8 +85,7 @@
 				</fieldset>
 			</div>
 			{/if}
-
-			<div class="clear"></div>
+		</div>
 
 			<h3>{tr}Continue to Step 2{/tr}</h3>
 			<p>{tr}- choose your payment method.{/tr} </p>

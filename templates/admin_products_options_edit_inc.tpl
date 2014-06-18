@@ -67,7 +67,7 @@
 <div class="form-group">
 	{formlabel label="Attribute Style for Radio Buttons/Checkbox"}
 	{forminput}
-		<select name="products_options_images_style">
+		<select class="form-control" name="products_options_images_style">
 			<option value="" ></option>
 			<option value="0" {if $editOption.products_options_images_style===0}selected="selected"{/if}>{tr}Images Below Option Names{/tr}</option>
 			<option value="1" {if $editOption.products_options_images_style==1}selected="selected"{/if}>{tr}Element, Image and Option Value{/tr}</option>

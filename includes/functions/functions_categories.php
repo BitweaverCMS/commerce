@@ -285,7 +285,7 @@
       $exclude = array();
     }
 
-    $select_string = '<select name="' . $name . '"';
+    $select_string = '<select class="form-control" name="' . $name . '"';
 
     if ($parameters) {
       $select_string .= ' ' . $parameters;
@@ -321,7 +321,7 @@
       $exclude = array();
     }
 
-    $select_string = '<select name="' . $name . '"';
+    $select_string = '<select class="form-control" name="' . $name . '"';
 
     if ($parameters) {
       $select_string .= ' ' . $parameters;
@@ -362,7 +362,7 @@
       $exclude = array();
     }
 
-    $select_string = '<select name="' . $name . '"';
+    $select_string = '<select class="form-control" name="' . $name . '"';
 
     if ($parameters) {
       $select_string .= ' ' . $parameters;
@@ -400,7 +400,7 @@
       $exclude = array();
     }
 
-    $select_string = '<select name="' . $name . '"';
+    $select_string = '<select class="form-control" name="' . $name . '"';
 
     if ($parameters) {
       $select_string .= ' ' . $parameters;

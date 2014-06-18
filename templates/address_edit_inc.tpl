@@ -5,7 +5,6 @@
 {if $gCommerceSystem->isConfigActive('ACCOUNT_GENDER')}
 	<div class="form-group">
 		{formfeedback error=$addressErrors.gender}
-		{formlabel label="Salutation" for=""}
 		{forminput}
 			<label class="radio inline-block"><input type="radio" value="m" name="gender"/> {tr}Mr.{/tr}</label> &nbsp; <label class="radio inline-block"><input type="radio" value="f" name="gender"/> {tr}Ms.{/tr}</label>
 		{/forminput}
@@ -14,14 +13,14 @@
 <div class="form-group {if $addressErrors.firstname}error{/if}">
 	{formlabel label="First Name" for=""}
 	{forminput}
-		<input type="text" maxlength="64" name="firstname" value="{$address.entry_firstname|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		<input type="text" class="form-control" maxlength="64" name="firstname" value="{$address.entry_firstname|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.firstname}
 	{/forminput}
 </div>
 <div class="form-group {if $addressErrors.lastname}error{/if}">
 	{formlabel label="Last Name" for=""}
 	{forminput}
-		<input type="text" maxlength="64" name="lastname" value="{$address.entry_lastname|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		<input type="text" class="form-control" maxlength="64" name="lastname" value="{$address.entry_lastname|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.lastname}
 	{/forminput}
 </div>
@@ -29,29 +28,29 @@
 	<div class="form-group">
 	{formlabel label="Company" for=""}
 	{forminput}
-		<input type="text" maxlength="128" name="company" value="{$address.entry_company|escape:"htmlall"}" />
+		<input type="text" class="form-control" maxlength="128" name="company" value="{$address.entry_company|escape:"htmlall"}" />
 	{/forminput}
 	</div>
 {/if}
 <div class="form-group {if $addressErrors.street_address}error{/if}">
 	{formlabel label="Street Address" for=""}
 	{forminput}
-		<input type="text" maxlength="250" name="street_address" value="{$address.entry_street_address|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		<input type="text" class="form-control" maxlength="250" name="street_address" value="{$address.entry_street_address|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.street_address}
 	{/forminput}
 </div>
 {if $gCommerceSystem->isConfigActive('ACCOUNT_SUBURB')}
 <div class="form-group">
-	{formlabel label="Address Line 2" for=""}
+	{formlabel label="Address Line 2 (Optional)" for=""}
 	{forminput}
-		<input type="text" maxlength="64" name="suburb" value="{$address.entry_suburb|escape:"htmlall"}" />
+		<input type="text" class="form-control" maxlength="64" name="suburb" value="{$address.entry_suburb|escape:"htmlall"}" />
 	{/forminput}
 </div>
 {/if}
 <div class="form-group {if $addressErrors.city}error{/if}">
 	{formlabel label="City" for=""}
 	{forminput}
-		<input type="text" maxlength="64" name="city" value="{$address.entry_city|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		<input type="text" class="form-control" maxlength="64" name="city" value="{$address.entry_city|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.city}
 	{/forminput}
 </div>
@@ -59,7 +58,7 @@
 <div class="form-group {if $addressErrors.state}error{/if}">
 	{formlabel label="State/Province" for=""}
 	{forminput id="addr_state"}
-		{$gBitCustomer->getStateInputHtml($address)}<acronym title="{tr}Required{/tr}">*</acronym>
+		{$gBitCustomer->getStateInputHtml($address)}
 		{formhelp note=$addressErrors.state}
 	{/forminput}
 </div>
@@ -67,14 +66,14 @@
 <div class="form-group {if $addressErrors.postcode}error{/if}">
 	{formlabel label="Postal Code" for=""}
 	{forminput}
-		<input type="text" maxlength="10" name="postcode" value="{$address.entry_postcode|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+		<input type="text" class="form-control" maxlength="10" name="postcode" value="{$address.entry_postcode|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.postcode}
 	{/forminput}
 </div>
 <div class="form-group {if $addressErrors.country_id}error{/if}">
 	{formlabel label="Country" for=""}
 	{forminput}
-		{$gBitCustomer->getCountryInputHtml($address)}<acronym title="{tr}Required{/tr}">*</acronym>
+		{$gBitCustomer->getCountryInputHtml($address)}
 		{formhelp note=$addressErrors.country_id}
 	{/forminput}
 
@@ -82,7 +81,7 @@
 <div class="form-group {if $addressErrors.telephone}error{/if}">
 	{formlabel label="Telephone" for=""}
 	{forminput}
-		<input type="text" maxlength="32" name="telephone" value="{$address.entry_telephone|escape:"htmlall"}" />
+		<input type="text" class="form-control" maxlength="32" name="telephone" value="{$address.entry_telephone|escape:"htmlall"}" />
 		{formhelp note=$addressErrors.telephone}
 	{/forminput}
 </div>
@@ -107,4 +106,3 @@ function updateStates( pCountryId ) {
 }
 //]]></script>
 {/literal}
-{tr}<span class="inputrequirement">* Required information</span>{/tr}

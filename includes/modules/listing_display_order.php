@@ -35,7 +35,7 @@ echo zen_draw_hidden_field('main_page', $_GET['main_page']);
 ?>
   <tr>
     <td class="main" align="right" colspan="2"><?php echo TEXT_INFO_SORT_BY; ?>
-    <select name="disp_order" onChange="this.form.submit();">
+    <select class="form-control" name="disp_order" onChange="this.form.submit();">
 <?php if ($disp_order != $disp_order_default) { ?>
     <option value="<?php echo $disp_order_default; ?>" <?php echo ($disp_order == $disp_order_default ? 'selected="selected"' : ''); ?>><?php echo PULL_DOWN_ALL_RESET; ?></option>
 <?php } // reset to store default ?>

@@ -3,7 +3,7 @@
 	{form action=$smarty.server.REQUEST_URI}
 		<div class="floaticon">
 		{tr}Sort by:{/tr}
-			<select name="sort_mode" onChange="this.form.submit();">
+			<select class="form-control" name="sort_mode" onChange="this.form.submit();">
 				<option value="products_name_asc" {if $listInfo.sort_mode == 'products_name_asc'}selected="selected"{/if}>{tr}Product Name{/tr}</option>
 				<option value="products_name_desc" {if $listInfo.sort_mode == 'products_name_desc'}selected="selected"{/if}>{tr}Product Name - desc{/tr}</option>
 				<option value="products_price_asc" {if $listInfo.sort_mode == 'products_price_asc'}selected="selected"{/if}>{tr}Price - low to high{/tr}</option>
