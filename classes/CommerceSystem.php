@@ -48,6 +48,7 @@ class CommerceSystem extends BitSingleton {
 			$this->mDb->query( "DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $pConfigKey ) );
 		}
 		$this->mConfig[$pConfigKey] = $pConfigValue;
+		$this->clearFromCache();
 	}
 
 	function loadConfig() {
