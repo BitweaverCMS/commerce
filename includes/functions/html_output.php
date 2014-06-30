@@ -194,7 +194,16 @@
 ////
 // Output a selection field - alias function for zen_draw_checkbox_field() and zen_draw_radio_field()
   function zen_draw_selection_field($name, $type, $value = '', $checked = false, $parameters = '') {
-    $selection = '<input  class="form-control" type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
+	$cssClass = '';
+	switch( $type ) {
+		case 'radio':
+		case 'checkbox':
+			break;
+		default:
+			$cssClass .= 'form-control';
+			break;
+	}
+    $selection = '<input class="'.$cssClass.'" type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
 
     if (zen_not_null($value)) $selection .= ' value="' . zen_output_string($value) . '"';
 
@@ -224,7 +233,7 @@
 ////
 // Output a form textarea field
   function zen_draw_textarea_field($name, $wrap, $width, $height, $text = '', $parameters = '', $reinsert_value = true) {
-    $field = '<textarea name="' . zen_output_string($name) . '" wrap="' . zen_output_string($wrap) . '" cols="' . zen_output_string($width) . '" rows="' . zen_output_string($height) . '"';
+    $field = '<textarea class="form-control" name="' . zen_output_string($name) . '" wrap="' . zen_output_string($wrap) . '" cols="' . zen_output_string($width) . '" rows="' . zen_output_string($height) . '"';
 
     if (zen_not_null($parameters)) $field .= ' ' . $parameters;
 

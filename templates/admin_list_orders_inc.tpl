@@ -35,9 +35,23 @@
 	{if $order.products}
 	{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
 	<tr>
-		<td>{$smarty.foreach.orderproducts.iteration}</td>
-		<td colspan="2">
-			<img src="{$gBitProduct->getImageUrl()}" style="float:left;width:48px;"/><a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
+		<td colspan="4" class="container">
+			<div class="row">
+				<div class="col-xs-2">
+					<img src="{CommerceProduct::getImageUrlFromHash($product)}" class="img-responsive"/>
+				</div>
+				<div class="col-xs-8">		
+					#{$smarty.foreach.orderproducts.iteration} - 
+					<a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
+					{if $product.attributes}
+						<ul>
+							{foreach from=$product.attributes item=attrName key=optionId}
+								<li>{$attrName}</li>
+							{/foreach}
+						</ul>
+					{/if}
+				</div>
+			</div>
 		</td>
 		<td class="text-right">
 			{assign var=quantityTotal value=$quantityTotal+$product.products_quantity}
@@ -86,7 +100,7 @@
 	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$distributorIncomeTotal|round:2}{/if}</th>
 	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$cogsTotal|round:2}{/if}</th>
 	{else}
-	<th class="item text-right" colspan="8">{tr}Total{/tr}: ${$grossTotal}</th>
+	<th class="item text-right" colspan="8">{tr}Total{/tr}: ${$grossTotal|round:2}</th>
 	{/if}
 </tr>
 
