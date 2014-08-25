@@ -1,16 +1,16 @@
 {if $searchScopes}
 {form class="form-inline" }
-{html_options name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
-: <input type="text" class="input-small" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
+{html_options class="form-control" name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
+: <input type="text" class="form-control" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
 <select class="form-control" name="orders_status_comparison" class="input-small" >
 	<option value="">{tr}Exactly{/tr}</option>
 	<option value=">=" {if $smarty.session.orders_status_comparison == '>='}selected="selected"{/if}>{tr}At Least{/tr}</option>
 	<option value="<=" {if $smarty.session.orders_status_comparison == '<='}selected="selected"{/if}>{tr}At Most{/tr}</option>
 </select>
 
-{html_options name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
+{html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
 
-<input class="btn btn-sm" type="submit" value="Go" name="list_filter"/>
+<input class="btn btn-default btn-sm" type="submit" value="Go" name="list_filter"/>
 {/form}
 {/if}
 

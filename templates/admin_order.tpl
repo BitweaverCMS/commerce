@@ -158,7 +158,7 @@ function getShippingQuotes( pOrderId ) {
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
 			<input type="hidden" name="orders_products_id" value="{$ordersProduct.orders_products_id}"/>
-			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
+			{html_options class="form-control" name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
 			<span id="neworderattr{$ordersProduct.orders_products_id}"></span>
 		</form>
 	</td>

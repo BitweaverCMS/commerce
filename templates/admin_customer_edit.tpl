@@ -24,7 +24,7 @@
 			<div class="form-group">
 				{formlabel label='Authorization Status'}
 				{forminput}
-					{html_options name='customers_authorization' options=$customerAuth selected=$cInfo->customers_authorization}
+					{html_options class="form-control" name='customers_authorization' options=$customerAuth selected=$cInfo->customers_authorization}
 				{/forminput}
 			</div>
 			<div class="form-group">
@@ -57,7 +57,7 @@
 			<div class="form-group">
 				{formlabel label='Discount Pricing Group'}
 				{forminput}
-					{html_options name="customers_group_pricing" options=$groupPricing selected=$cInfo->customers_group_pricing}
+					{html_options class="form-control" name="customers_group_pricing" options=$groupPricing selected=$cInfo->customers_group_pricing}
 				{/forminput}
 			</div>
 		{/legend}

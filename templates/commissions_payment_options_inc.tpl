@@ -3,7 +3,7 @@
 	<div class="form-group">
 		{formlabel label="Payment Method"}
 		{forminput}
-			{html_options id="commissions_payment_method" name="commissions_payment_method" options=$paymentOptions selected=$gBitUser->getPreference('commissions_payment_method')  onchange="updatePaymentMethod()" }
+			{html_options class="form-control" id="commissions_payment_method" name="commissions_payment_method" options=$paymentOptions selected=$gBitUser->getPreference('commissions_payment_method')  onchange="updatePaymentMethod()" }
 			{formhelp note="Select the way in which you would like to receive payments. <a href='`$smarty.const.WIKI_PKG_URL`Selling+Products'>Fees</a> may be required for some payment methods."}
 		{/forminput}
 	</div>
@@ -28,7 +28,7 @@
 	<div class="form-group" id="commissioncheck"> 
 		{formlabel label="Mailing Address"}
 		{forminput}
-			{html_options name="commissions_check_address" options=$addressList selected=$defaultAddressId}
+			{html_options class="form-control" name="commissions_check_address" options=$addressList selected=$defaultAddressId}
 		<div style="padding:10px"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=address_book">{tr}Add Address{/tr}</a></div>
 		{/forminput}
 	</div>

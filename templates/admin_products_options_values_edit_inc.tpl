@@ -35,7 +35,7 @@
 
 	<div class="form-group">
 		<div class="formlabel">{tr}Related Group ID{/tr}</div>
-		<div class="forminput">{html_options name="purchase_group_id" options=$groupList selected=$editValue.purchase_group_id}
+		<div class="forminput">{html_options class="form-control" name="purchase_group_id" options=$groupList selected=$editValue.purchase_group_id}
 			{formhelp note="User will be added to this group upon successful purchase"}
 		</div>
 	</div>

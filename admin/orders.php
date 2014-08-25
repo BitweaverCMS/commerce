@@ -43,6 +43,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 			$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
 			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 														'name'			=> 'newOrderOptionValue',
+														'class'			=> 'form-control',
 														'print_result'	=> FALSE ), $gBitSmarty );
 			print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
 		} else {

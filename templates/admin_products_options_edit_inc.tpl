@@ -22,7 +22,7 @@
 <div class="form-group">
 	{formlabel label="Type"}
 	{forminput}
-		{html_options name="products_options_type" options=$optionsTypes selected=$editOption.products_options_type}
+		{html_options class="form-control" name="products_options_type" options=$optionsTypes selected=$editOption.products_options_type}
 	{/forminput}
 </div>
 
