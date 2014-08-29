@@ -58,27 +58,23 @@
 </td>
 </tr>
 {/foreach}
+</table>
 	{if $gCommerceSystem->getConfig('SHOW_SHOPPING_CART_UPDATE')}
-<tr class="subtotal">
-	<td colspan="2">
+<div class="row subtotal">
+	<div class="col-xs-8 text-right">
 		<select class="form-control" name="currency" onchange="this.form.submit()">
 			<option value="">{tr}Change Currency{/tr}...</option>
 			{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
 				<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
 			{/foreach}
 		</select>
-	</td>
-	<td>
+	</div>
+	<div class="col-xs-4 currency">
 		{tr}Sub-Total:{/tr}
-	</td>
-	<td class="currency">
 		 {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
-	</td>
-	<td>
-	</td>
-</tr>
+	</div>
+</div>
 	{/if}
-</table>
 <div class="text-right">
 	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn btn-default">{tr}Shipping Estimator{/tr}</a> {/if} <input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
 </div>
