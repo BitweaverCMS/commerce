@@ -118,13 +118,13 @@ class payflowpro extends CommercePluginPaymentBase {
 							 			'field' => zen_draw_input_field('payflowpro_cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
 								),
 								array(	'title' => tra( 'Card Number' ),
-										'field' => zen_draw_input_field('payflowpro_cc_number')
+										'field' => zen_draw_input_field('payflowpro_cc_number', NULL, NULL, 'number' )
 								),
 								array(	'title' => tra( 'Expiration Date' ),
-										'field' => '<div class="row"><div class="col-xs-8">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-4">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
+										'field' => '<div class="row"><div class="col-xs-7 col-sm-8">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-4">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
 								),
-								array(	'title' => tra( 'CVV Number' ) . ' <i onclick="javascript:popupWindow(\'' . zen_href_link(FILENAME_POPUP_CVV_HELP) . '\')" style="font-size:18pt" class="icon-credit-card"></i>',
-										'field' => zen_draw_input_field('payflowpro_cc_csc','','class="input-mini"')
+								array(	'title' => '<i class="icon-credit-card"></i> ' . tra( 'CVV Number' ),
+										'field' => zen_draw_input_field('payflowpro_cc_csc',NULL, NULL, 'number')
 								)
 							)
 						);
