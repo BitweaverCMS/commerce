@@ -46,7 +46,7 @@
 		{/if}
 	</td>
 	<td>
-		<input type="text" class="input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
+		<input type="number" class="input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
 	</td>
 	<td class="currency text-right">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
 	<td>
