@@ -56,7 +56,7 @@
 		<div class="form-group">
 			{formlabel label="Quantity Limit"}
 			{forminput}
-				<input type="text" name="quantity_max" value="{$smarty.post.quantity_max|escape}"/>
+				<input type="number" name="quantity_max" value="{$smarty.post.quantity_max|escape}"/>
 				{formhelp note="The maximum cart quantity that will be deducted. Additional quantity over the max will be priced at full price."}
 			{/forminput}
 		</div>

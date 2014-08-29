@@ -87,7 +87,7 @@ function updateShippingQuote( pForm ) {
 		{forminput}
 			{formlabel class="col-xs-3" label="Quantity"}
 			<div class="col-xs-9">
-				<input type="text" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+				<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
 			</div>
 		{/forminput}
 	{/if}

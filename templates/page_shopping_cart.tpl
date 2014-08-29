@@ -46,7 +46,7 @@
 		{/if}
 	</td>
 	<td>
-		<input type="text" class="input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
+		<input type="number" class="form-control input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
 	</td>
 	<td class="currency text-right">{$productHash.final_price_display}{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</td>
 	<td>
@@ -76,7 +76,7 @@
 </div>
 	{/if}
 <div class="text-right">
-	{if $gBitCustomer->mCart->getWeight() && $smarty.const.SHOW_SHIPPING_ESTIMATOR_BUTTON}<a href="javascript:popupWindow('{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=popup_shipping_estimator&&site_style=basic')" class="btn btn-default">{tr}Shipping Estimator{/tr}</a> {/if} <input type="submit" class="btn" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
+	<input type="submit" class="btn btn-default" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
 </div>
 
 {else}
