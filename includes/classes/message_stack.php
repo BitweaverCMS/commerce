@@ -65,7 +65,8 @@
       $this->table_data_parameters = 'class="messageBox"';
 	  $ret = '<ul class="list-unstyled">';
       for ($i=0, $n=sizeof($this->messages); $i<$n; $i++) {
-	  	$ret .= '<li class="alert alert-'.$this->messages[$i]['type'].'">'.$this->messages[$i]['text'].'</li>';
+		$cssClass = $this->messages[$i]['type'] == 'error' ? 'danger' : $this->messages[$i]['type'];
+	  	$ret .= '<li class="alert alert-'.$cssClass.'">'.$this->messages[$i]['text'].'</li>';
       }
 	  $ret .= '</ul>';
 
