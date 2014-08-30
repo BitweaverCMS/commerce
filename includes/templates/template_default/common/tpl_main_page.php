@@ -24,8 +24,4 @@
 	$footer_template = 'tpl_footer.php';
 	require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php');
 	require($body_code);
-?>
-
-<div id="footer">
-	<?php require(DIR_FS_MODULES . 'footer.php'); ?>
-</div> <!-- end footer -->
+	require(DIR_FS_MODULES . 'footer.php'); 
