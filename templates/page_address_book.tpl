@@ -4,10 +4,10 @@
 
 {$messageStack->output('address')}
 
-<div class="row-fluid">
-	<div class="span6">
+<div class="row">
+	<div class="col-md-6">
 		{if count( $addresses )}
-			<ul class="unstyled data">
+			<ul class="list-unstyled data">
 				{section name=ix loop=$addresses}
 				<li class="item">
 					{if $addresses[ix].address_book_id == $sendToAddressId}
@@ -26,12 +26,12 @@
 		{/if}
 	</div>
 	
-	<div class="span6">
-		{form class="form-horizontal" action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
+	<div class="col-md-6">
+		{form action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
 			{legend legend=$formTitle}
 				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress}
-				<div class="control-group clear">
-					<input type="submit" class="btn" name="save_address" value="{tr}Save Address{/tr}"/>
+				<div class="form-group clear">
+					<input type="submit" class="btn btn-default" name="save_address" value="{tr}Save Address{/tr}"/>
 				</div>
 			{/legend}
 		{/form}

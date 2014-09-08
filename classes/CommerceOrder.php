@@ -187,6 +187,15 @@ class order extends CommerceOrderBase {
 								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 							WHERE cop.`orders_id`=?";
 					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
+
+					$sql = "SELECT copa.`orders_products_attributes_id` AS `hash_key`, copa.*
+							FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
+							WHERE copa.`orders_id`=?";
+					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
+						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values'];
+						
+					}
 				}
 			}
 		}

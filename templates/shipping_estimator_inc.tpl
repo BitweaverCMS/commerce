@@ -1,7 +1,7 @@
 {literal}
 <script type="text/javascript">//<![CDATA[
 function updateShippingQuote( pForm ) {
-	$('#shippingquotes').html('{/literal}{biticon ipackage=liberty iname=busy iexplain=Loading style="vertical-align:middle;padding-right:5px"}<em>{tr}Getting Shipping Estimate{/tr}</em>{literal}');
+	$('#shippingquotes').html('{/literal}{booticon iexplain=Loading iclass="icon-spinner icon-spin"} <em>{tr}Getting Shipping Estimate{/tr}</em>{literal}');
 	jQuery.ajax({
 		data: $(pForm).serialize(),
 		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}shipping_estimator.php{literal}",
@@ -16,7 +16,7 @@ function updateShippingQuote( pForm ) {
 
 <div id="shippingestimate">
 
-{form}
+{form class="form-horizontal"}
 {legend legend="Shipping Estimate"}
 
 <input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}"/>
@@ -27,71 +27,76 @@ function updateShippingQuote( pForm ) {
 <p>{tr}Shipping prices are an estimate only. The actual amount may vary once a final total is calculated during checkout.{/tr}</p>
 
 {if $addresses}
-<div class="control-group">
-	<select onchange="updateShippingQuote( this.form );" name="address_id" id="addressid">
-	{foreach from=$addresses item=addr}
-		<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
-	{/foreach}
-	</select>
-</div>
-<div class="control-group">
-	{formlabel label="Ship To"}
 	{forminput}
-		{$selAddr.address_format_id|zen_address_format:$selAddr:1:' ':'<br />'}
+		<div class="col-xs-12">
+			<select class="form-control" onchange="updateShippingQuote( this.form );" name="address_id" id="addressid">
+			{foreach from=$addresses item=addr}
+				<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
+			{/foreach}
+			</select>
+		</div>
 	{/forminput}
-</div>
+	{forminput}
+		{formlabel class="col-xs-3" label="Ship To"}
+		<div class="col-xs-9">
+			{$selAddr.address_format_id|zen_address_format:$selAddr:1:' ':'<br />'}
+		</div>
+	{/forminput}
 {else}
 	{if $gBitCustomer->mCart->get_content_type() != 'virtual'}
-<div class="control-group country">
-	{formlabel label="Country"}
-	{forminput}
-		{$countryMenu}
-	{/forminput}
-</div>
-{if $stateMenu}
-<div class="control-group state">
-	{formlabel label="State / Province"}
-	{forminput}
-		{$stateMenu}
-	{/forminput}
-</div>
-{/if}
-<div class="control-group postalcode">
-	{formlabel label="Postal Code"}
-	{forminput}
-		<input type="text" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
-	{/forminput}
-</div>
+		{forminput class="country"}
+			{formlabel class="col-xs-3" label="Country"}
+			<div class="col-xs-9">
+				{$countryMenu}
+			</div>
+		{/forminput}
+		{if $stateMenu}
+			{forminput class="state"}
+				{formlabel class="col-xs-3" label="State / Province"}
+				<div class="col-xs-9">
+					{$stateMenu}
+				</div>
+			{/forminput}
+		{/if}
+		{forminput class="postalcode"}
+			{formlabel class="col-xs-3" label="Postal Code"}
+			<div class="col-xs-9">
+				<input type="text" class="form-control" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
+			</div>
+		{/forminput}
 	{/if}
 {/if}
 
 	{if $gBitProduct->isValid()}
-<div class="control-group">
-	{formlabel label="Product"}
-	{forminput}
-		{$gBitProduct->getTitle()|escape}
-	{/forminput}
-</div>
+		{forminput}
+			{formlabel class="col-xs-3" label="Product"}
+			<div class="col-xs-9">
+				{$gBitProduct->getTitle()|escape}
+			</div>
+		{/forminput}
 	{elseif !$gBitProduct->isValid() && $gBitCustomer->mCart && $gBitCustomer->mCart->count_contents()}
-<div class="control-group">
-	{formlabel label="Items in Cart"}
-	{forminput}
-		{$gBitCustomer->mCart->count_contents()}
-	{/forminput}
-</div>
+		{forminput}
+			{formlabel class="col-xs-3" label="Items in Cart"}
+			<div class="col-xs-9">
+				{$gBitCustomer->mCart->count_contents()}
+			</div>
+		{/forminput}
 	{/if}
 
 	{if $smarty.request.cart_quantity}
-<div class="control-group">
-	{formlabel label="Quantity"}
-	{forminput}
-		<input type="text" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
-	{/forminput}
-</div>
+		{forminput}
+			{formlabel class="col-xs-3" label="Quantity"}
+			<div class="col-xs-9">
+				<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+			</div>
+		{/forminput}
 	{/if}
-<div class="control-group submit">
-	<input type="button" class="btn btn-mini" value="Update" onclick="updateShippingQuote( this.form )"/>
-</div>
+{forminput class="submit"}
+	<div class="col-xs-offset-3 col-xs-9">
+		<input type="button" class="btn btn-default btn-xs" value="Update" onclick="updateShippingQuote( this.form )"/>
+	</div>
+{/forminput}
+
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}
 	{tr}Free Shipping{/tr} {tr}- Downloads{/tr}
 {elseif $freeShipping == 1}

@@ -43,10 +43,11 @@ if( $gBitThemes->isAjaxRequest() ) {
 			$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
 			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 														'name'			=> 'newOrderOptionValue',
+														'class'			=> 'form-control',
 														'print_result'	=> FALSE ), $gBitSmarty );
-			print '<input class="btn btn-small btn-primary" type="submit" value="save" name="save_new_option">';
+			print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
 		} else {
-			print "<span class='alert alert-error'>Unkown Option</span>";
+			print "<span class='alert alert-danger'>Unkown Option</span>";
 		}
 	} elseif( !empty( $_REQUEST['address_type'] ) ) {
 		$addressType = $_REQUEST['address_type'];
@@ -67,7 +68,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 		$gBitSmarty->assign_by_ref( 'address', $entry );
 		$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 	} else {
-			print "<span class='alert alert-error'>Empty Option</span>";
+			print "<span class='alert alert-danger'>Empty Option</span>";
 	}
 
 	exit;
@@ -269,8 +270,8 @@ if( $order_exists ) {
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['id'] ) );
 
 	print '<div class="row">';
-	print '<div class="span8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
-	print '<div class="span4">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '<div class="col-md-8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
+	print '<div class="col-md-4">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
 	print '</div>';
 
 	// check if order has open gv

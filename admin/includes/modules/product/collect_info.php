@@ -369,7 +369,7 @@ echo zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_pric
 					<tr>
 						<td class="main"><?php echo tra( 'Subscription Frequency' ); ?>:</td>
 						<td class="main">
-				<select name="reorders_interval_number">
+				<select class="form-control" name="reorders_interval_number">
 					<option value="">None</option>
 <?php
 for( $i=1; $i<=12; $i++ ) {
@@ -378,7 +378,7 @@ for( $i=1; $i<=12; $i++ ) {
 ?>
 				</select>
 
-				<select name="reorders_interval">
+				<select class="form-control" name="reorders_interval">
 					<option value="Years">Years</option>
 					<option value="Months">Months</option>
 					<option value="Weeks">Weeks</option>
@@ -419,7 +419,7 @@ for( $i=1; $i<=12; $i++ ) {
 					<tr>
 						<td class="main"><?=tra("Related Group ID")?></td>
 						<td class="main">
-				<select name="purchase_group_id">
+				<select class="form-control" name="purchase_group_id">
 					<option value=""></value>
 <?php
 	foreach( $groups as $group ) {

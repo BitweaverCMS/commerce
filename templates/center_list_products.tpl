@@ -2,28 +2,34 @@
 <div class="listproducts" id="module{$moduleParams.module_id}">
 <h2 class="centerboxheading">{$productListTitle|default:"Products"}</h2>
 
-<table border="0" cellspacing="0" cellpadding="5">
-{section name=ix loop=$listBoxContents}
-<tr>
-    {section name=jx loop=$listBoxContents[ix]}
-    <td style="width:{$listColWidth}%">
-		<span class="productimage"><a href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}" /><img class="thumb" src="{$listBoxContents[ix][jx].products_image_url}"/></a></span>
+
+<div class="row">
+{foreach name=listedProducts from=$listedProducts item=prod key=productId}
+    <div class="col-sm-4 col-xs-6">
+		<span class="productimage"><a href="{CommerceProduct::getDisplayUrlFromHash($prod)}" /><img class="img-responsive" src="{$prod.products_image_url}"/></a></span>
 		<div class="productinfo">
-		<h3><a href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}" />{$listBoxContents[ix][jx].products_name}</a></h3>
-		{if $listBoxContents[ix][jx].user_id!=$smarty.const.ROOT_USER_ID}{tr}by{/tr} {displayname hash=$listBoxContents[ix][jx]}{/if}
+		<h3><a href="{CommerceProduct::getDisplayUrlFromHash($prod)}" />{$prod.products_name}</a></h3>
+		{if $prod.user_id!=$smarty.const.ROOT_USER_ID}{tr}by{/tr} {displayname hash=$prod}{/if}
 		<div class="details">
-			{if $listBoxContents[ix][jx].products_model}<span class="model">{$listBoxContents[ix][jx].products_model}</span><br/>{/if}
-			{if $listBoxContents[ix][jx].lowest_purchase_price}
-				{tr}Starting at:{/tr}<span class="price">{$listBoxContents[ix][jx].lowest_purchase_price}</span>
+			{if $prod.products_model}<span class="model">{$prod.products_model}</span><br/>{/if}
+			{if $prod.lowest_purchase_price}
+				{tr}Starting at:{/tr}<span class="price">{$prod.lowest_purchase_price}</span>
 			{/if}
 		</div>
-		<div class="buynow"><a class="btn btn-small" href="{CommerceProduct::getDisplayUrlFromHash($listBoxContents[ix][jx])}">{tr}Buy Now{/tr}</a></div>
+		<div class="buynow"><a class="btn btn-default btn-sm" href="{CommerceProduct::getDisplayUrlFromHash($prod)}">{tr}Buy Now{/tr}</a></div>
 		</div>
-    </td>
-	{/section}
-</tr>
-{/section}
-</table>
-
+    </div>
+{if $smarty.foreach.listedProducts.iteration%3==0}
+	<!-- Add the extra clearfix for only the required viewport -->
+	<div class="clearfix visible-sm"></div>
+	<div class="clearfix visible-md"></div>
+	<div class="clearfix visible-lg"></div>
+{/if}
+{if $smarty.foreach.listedProducts.iteration%2==0}
+	<!-- Add the extra clearfix for only the required viewport -->
+	<div class="clearfix visible-xs"></div>
+{/if}
+{/foreach}
 </div>
+
 {/if}

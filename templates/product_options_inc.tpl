@@ -1,7 +1,7 @@
 {if $productOptions}
 	<div class="product options">
 		{foreach from=$productOptions key=optionsId item=opts}
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label=$opts.name}
 				{forminput}
 					{$opts.menu}
@@ -12,14 +12,14 @@
 			</div>
 
 			{if $opts.comment}
-				<div class="control-group">
+				<div class="form-group">
 					{formlabel label=''}
 					{forminput}{$opts.comment}{/forminput}
 				</div>
 			{/if}
 
 			{if $productSettings.show_onetime_charges_description == 'true'}
-				<div class="control-group">
+				<div class="form-group">
 					{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}
 				</div>
 			{/if}

@@ -425,7 +425,7 @@ function go_option() {
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
 <?php if ($product_to_copy->EOF) { ?>
           <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE . '<br />' . '<span class="alert">' . TEXT_PRODUCTS_ID . $productsId . TEXT_PRODUCTS_ID_INVALID . '</span>'; ?></td>
+            <td class="pageHeading"><?php echo HEADING_TITLE . '<br />' . '<span class="alert alert-warning">' . TEXT_PRODUCTS_ID . $productsId . TEXT_PRODUCTS_ID_INVALID . '</span>'; ?></td>
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_ID_NOT_REQUIRED; ?></td>
@@ -449,7 +449,7 @@ function go_option() {
                 echo '&nbsp;&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
                 echo '<strong>' . TEXT_MASTER_CATEGORIES_ID . '</strong> ' . zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($productsId), $product_to_copy->fields['master_categories_id'], 'onChange="this.form.submit();"');
                 if ($product_to_copy->fields['master_categories_id'] <= 0) {
-                  echo '&nbsp;&nbsp;' . '<span class="alert">' . WARNING_MASTER_CATEGORIES_ID . '</span>';
+                  echo '&nbsp;&nbsp;' . '<span class="alert alert-warning">' . WARNING_MASTER_CATEGORIES_ID . '</span>';
                 }
                 echo TEXT_INFO_LINKED_TO_COUNT . $products_list->RecordCount();
               ?>
@@ -666,7 +666,7 @@ function go_option() {
       $contents[] = array('text' => TEXT_PRODUCTS_PRICE . CommerceProduct::getDisplayPriceFromHash($productsId));
       switch (true) {
         case ($product_to_copy->fields['master_categories_id'] == 0 and $productsId > 0):
-          $contents[] = array('text' => '<br /><span class="alert">' . WARNING_MASTER_CATEGORIES_ID . '</span><br />&nbsp;');
+          $contents[] = array('text' => '<br /><span class="alert alert-warning">' . WARNING_MASTER_CATEGORIES_ID . '</span><br />&nbsp;');
           break;
         default:
           $contents[] = array('text' => '<form action="' . FILENAME_PRODUCTS_TO_CATEGORIES . '.php' . '?action=edit&products_id=' . $productsId . '" method="post">');

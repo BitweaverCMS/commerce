@@ -11,7 +11,7 @@
 	( <span class="clickable" onclick="BitBase.toggleElementDisplay('currencychooser','inline',false);return false;">{$gCommerceCurrencies->format($sessionCart->show_total())}</span> ) 
 	<a href="" onclick="BitBase.toggleElementDisplay('currencychooser');return false;">{$smarty.session.currency|default:$smarty.const.DEFAULT_CURRENCY} &raquo; &euro;,&yen;</a>
 	<form action="{$smarty.server.REQUEST_URI}" id="currencychooser" style="display:none">
-	<select name="currency" onchange="this.form.submit()">
+	<select class="form-control" name="currency" onchange="this.form.submit()">
 		<option value="">{tr}Change Currency{/tr}...</option>
 		{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
 			<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>

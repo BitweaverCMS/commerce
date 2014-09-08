@@ -20,16 +20,12 @@
 // $Id: stylesheet.css,v 1.13 2009/08/28 06:39:10 spiderr Exp $
 */
 
-.table td.currency,
-td.currency,
-th.currency	{ text-align:right; }
+.subtotal .currency,
+.subtotal .currency	{ text-align:right; font-weight:bold; font-size:125%; padding-top:10px; padding-bottom:10px; }
 .clickable { cursor:pointer; text-decoration:underline; }
 
-.shoppingcart th,
-.shoppingcart td	{ padding:15px; }
-.shoppingcart .subtotal 		{ font-size:16px; font-weight:900; }
-.shoppingcart .subtotal td	{ vertical-align: middle; text-align:right; }
-.shoppingcart .subtotal td.currency	{ text-align:right; }
+.shopping-cart .subtotal 		{ font-size:16px; font-weight:900; }
+.shopping-cart .subtotal td	{ vertical-align: middle; text-align:right; }
 
 .centershop {
 	padding: 0px;
@@ -173,10 +169,9 @@ TR.leftboxheading, TR.rightboxheading, TR.centerboxheading, TR.singleboxheading 
 TD.productlisting {
 }
 
-TD.productListing-data {
-  padding: 5px;
+.shopping-cart .cart-item {
+	padding-bottom:15px; margin-bottom:15px; border-bottom:1px solid #eeeeee; 
 }
-
 
 .center_column {
   padding: 8px;
@@ -338,14 +333,6 @@ TD.ot-subtotal-Amount, TD.ot-cod-fee-Amount, TD.ot-total-Amount, TD.ot-group-pri
   padding-top: 6px;
   padding-bottom: 6px;
   border-top: 1px solid #9a9a9a;
-}
-
-/* popup tables */
-TABLE.popupattributeqty, TABLE.popupcouponhelp, TABLE.popupcvvhelp, TABLE.popupimage, TABLE.popupimageadditional, TABLE.popupsearchhelp, TABLE.popupshippingestimator, TABLE.popupinfoshoppingcart {
-  background-color: #ffffff;
-	margin: 6px;
-  padding: 6px;
-  font: 11px Verdana, Arial, sans-serif;
 }
 
 /* categories_description */

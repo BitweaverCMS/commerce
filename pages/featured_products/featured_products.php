@@ -21,10 +21,9 @@
 //
 ?>
 
+<h1><?php echo HEADING_TITLE; ?></h1>
+
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-    <td class="pageHeading" colspan="2"><h1><?php echo HEADING_TITLE; ?></h1></td>
-  </tr>
 <?php
 // display order dropdown
   $disp_order_default = PRODUCT_FEATURED_LIST_SORT_DEFAULT;
@@ -72,27 +71,12 @@
       $show_bottom_submit_button = 'false';
     }
 
-    if ($show_top_submit_button == 'true' or $show_bottom_submit_button == 'true') {
-      echo zen_draw_form('multiple_products_cart_quantity', zen_href_link(zen_get_info_page($_GET['products_id']), zen_get_all_get_params(array('action')) . 'action=multiple_products_add_product'), 'post', 'enctype="multipart/form-data"');
-    }
   }
-?>
-<?php
-  if ($show_top_submit_button == 'true') {
-// only show when there is something to submit
-?>
-  <tr>
-    <td align="right" colspan="2"><input type="submit" align="absmiddle" value="<?php echo SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART; ?>" id="submit1" name="submit1" Class="SubmitBtn"></td>
-  </tr>
-<?php
-  } // PRODUCT_FEATURED_LISTING_MULTIPLE_ADD_TO_CART > 0
-?>
-<?php
 
   if (($featured_products_split->number_of_rows > 0) && ((PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3'))) {
 ?>
   <tr>
-    <td class="pageresults"><?php echo $featured_products_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_FEATURED_PRODUCTS); ?></td>
+    <td class="pagination"><?php echo $featured_products_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_FEATURED_PRODUCTS); ?></td>
     <td align="right" class="pageresults"><?php echo TEXT_RESULT_PAGE . ' ' . $featured_products_split->display_links(MAX_DISPLAY_PAGE_LINKS, zen_get_all_get_params(array('page', 'info', 'x', 'y', 'main_page'))); ?></td>
   </tr>
 <?php
@@ -105,26 +89,10 @@
   if (($featured_products_split->number_of_rows > 0) && ((PREV_NEXT_BAR_LOCATION == '2') || (PREV_NEXT_BAR_LOCATION == '3'))) {
 ?>
   <tr>
-    <td class="pageresults"><?php echo $featured_products_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_FEATURED_PRODUCTS); ?></td>
+    <td class="pagination"><?php echo $featured_products_split->display_count(TEXT_DISPLAY_NUMBER_OF_PRODUCTS_FEATURED_PRODUCTS); ?></td>
     <td align="right" class="pageresults"><?php echo TEXT_RESULT_PAGE . ' ' . $featured_products_split->display_links(MAX_DISPLAY_PAGE_LINKS, zen_get_all_get_params(array('page', 'info', 'x', 'y', 'main_page'))); ?></td>
   </tr>
 <?php
   }
 ?>
-<?php
-  if ($show_bottom_submit_button == 'true') {
-// only show when there is something to submit
-?>
-  <tr>
-    <td align="right" colspan="2"><input type="submit" align="absmiddle" value="<?php echo SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART; ?>" id="submit1" name="submit1" Class="SubmitBtn"></td>
-  </tr>
-<?php
-  } // PRODUCT_FEATURED_LISTING_MULTIPLE_ADD_TO_CART > 0
-?>
-<?php
-// only end form if form is created
-    if ($show_top_submit_button = 'true' or $show_bottom_submit_button = 'true') {
-?>
-</form>
-<?php } // end if form is made ?>
 </table>

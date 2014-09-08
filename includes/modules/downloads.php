@@ -133,7 +133,7 @@ if ($downloads_check_query->RecordCount() > 0 and $downloads->RecordCount() < 1)
 		<td class="plainBox">
 		  <table width="100%">
         <tr>
-          <td valign="top" class="alert" height="30"><?php echo DOWNLOADS_CONTROLLER_ON_HOLD_MSG ?></td>
+          <td valign="top" class="alert alert-warning" height="30"><?php echo DOWNLOADS_CONTROLLER_ON_HOLD_MSG ?></td>
         </tr>
       </table>
 		</td>

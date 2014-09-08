@@ -48,8 +48,8 @@ function getShippingQuotes( pOrderId ) {
 
 <header>
 	<div class="btn-group pull-right">
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
-		<button class="btn"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
+		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
 	</div>
 	<h1>{$smarty.const.HEADING_TITLE}</h1>
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
@@ -141,14 +141,14 @@ function getShippingQuotes( pOrderId ) {
 <tr>
 	<td class="supplemental" colspan="4">
 {if !empty( $ordersProduct.attributes )}
-<ul class="unstyled">
+<ul class="list-unstyled">
 {section loop=$ordersProduct.attributes name=a}
 		<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
 <a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>
 			<small>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
 				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
-				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert">{tr}FREE{/tr}</span>{/if}
+				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
 			</small> 
 		</li>
 {/section}
@@ -158,7 +158,7 @@ function getShippingQuotes( pOrderId ) {
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
 			<input type="hidden" name="orders_products_id" value="{$ordersProduct.orders_products_id}"/>
-			{html_options name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
+			{html_options class="form-control" name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
 			<span id="neworderattr{$ordersProduct.orders_products_id}"></span>
 		</form>
 	</td>
@@ -212,20 +212,24 @@ function getShippingQuotes( pOrderId ) {
 {/jstabs}
 
 
-<div style="margin:15px 0;">
-	<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
-		<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
-		<input type="hidden" name="oID" value="{$smarty.request.oID}" />
-		<input class="btn" type="submit" name="Send" value="Send Gift Certificate" />
-	</form> <a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
-	{form class="form-inline" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
-		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="input-small"/>
-		<label class="checkbox">
-			<input type="checkbox" name="combine_notify" value="on" checked="checked"/>{tr}Notify Customer{/tr}
-		</label>
-		<input class="btn btn-small" type="submit" name="combine" value="{tr}Combine{/tr}"/>
+<div class="row">
+	<div class="col-xs-12">
+		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
+			<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
+			<input type="hidden" name="oID" value="{$smarty.request.oID}" />
+			<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
+		</form> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+	{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
+		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="form-control input-small"/> <label class="checkbox">
+			<input type="checkbox" name="combine_notify" value="on" checked="checked"/> {tr}Notify Customer{/tr}
+		</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
 		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
 	{/form}
+	</div>
 </div>
 
 {/strip} 

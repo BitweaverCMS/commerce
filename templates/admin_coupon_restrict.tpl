@@ -28,16 +28,16 @@
 
 {form name="restrict_category" method="post" action="`$smarty.server.SCRIPT_NAME`?cid=`$gCoupon->mCouponId`"}
 {legend legend="Add Restriction"}
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Category"}
 	{forminput}
 		{$categorySelect}
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Options"}
 	{forminput}
-		<select name="products_options_values_id">
+		<select class="form-control" name="products_options_values_id">
 		<option value="">Any</option>
 		{foreach from=$optionsList item=optionGroup}
 		<optgroup label="{$optionGroup.products_options_name|escape}">
@@ -49,10 +49,10 @@
 		</select>
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Product Type"}
 	{forminput}
-		<select name="product_type_id">
+		<select class="form-control" name="product_type_id">
 		<option value="">Any</option>
 		{foreach from=$productTypes item=type}
 			<option value="{$type.type_id}">{$type.type_name|escape}{if $type.type_class} - {$type.type_class|escape}{/if}</option>
@@ -60,11 +60,11 @@
 		</select>
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Specific Product"}
 	{forminput}
 		{$productCategorySelect}
-		<select name="product_id">
+		<select class="form-control" name="product_id">
 		<option value="">Any</option>
 		{foreach from=$productsList item=prod key=prodId}
 			<option value="{$prodId}">{$prod|escape}</option>
@@ -72,19 +72,19 @@
 		</select>
 	{/forminput}
 </div>
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Restriction"}
 	{forminput}
-		<select name="restrict_status">
+		<select class="form-control" name="restrict_status">
 			<option value="Deny" selected="selected">{tr}Deny{/tr}</option>
 			<option value="Maybe" selected="selected">{tr}Allow - Optional{/tr}</option>
 			<option value="Allow" selected="selected">{tr}Allow - Mandatory{/tr}</option>
 		</select>
 	{/forminput}
 </div>
-<div class="control-group submit">
+<div class="form-group submit">
 	{forminput}
-		<input type="submit" class="btn" name="action" value="Add">
+		<input type="submit" class="btn btn-default" name="action" value="Add">
 	{/forminput}
 </div>
 {/legend}

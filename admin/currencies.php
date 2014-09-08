@@ -160,7 +160,7 @@
 <!-- header_eof //-->
 
 <div class="row">
-	<div class="span8">
+	<div class="col-md-8">
 		<table class="table table-hover width100p">
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CURRENCY_NAME; ?></td>
@@ -227,7 +227,7 @@ JPY Japan Yen                             0.0089098765        112.2350011215
 </form>
 
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 		<div class="well">
 
 <?php

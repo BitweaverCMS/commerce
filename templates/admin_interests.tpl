@@ -7,15 +7,15 @@
 <div class="body">
 
 {form}
-<div class="control-group">
+<div class="form-group">
 	<label class="checkbox">
 		<input type="checkbox" name="commerce_register_interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />Registration Interests
 		{formhelp note="Ask new users to choose their interests during registration."}
 	</label>
 </div>
-<div class="control-group submit">
+<div class="form-group submit">
 	{forminput}
-		<input type="submit" class="btn" value="{tr}Save{/tr}" name="save_options"/>
+		<input type="submit" class="btn btn-default" value="{tr}Save{/tr}" name="save_options"/>
 	{/forminput}
 </div>
 {/form}
@@ -42,12 +42,12 @@
 			<input type="hidden" name="interests_id" value="{$editInterest.interests_id}"/>
 			<input type="text" name="interests_name" value="{$editInterest.interests_name}"/>
 			<input type="hidden" name="action" value="save" />
-			<input type="submit" class="btn" name="save" value="{tr}Save{/tr}" />
+			<input type="submit" class="btn btn-default" name="save" value="{tr}Save{/tr}" />
 		{/forminput}
 	{/form}
 {else}
 	<a href="{$smarty.server.php_self}?new=1">New Interest</a>
 {/if}
 
-<a href="{$smarty.server.SCRIPT_NAME}?uninterested=1" class="btn">{tr}Uninterested Customers{/tr}</a>
+<a href="{$smarty.server.SCRIPT_NAME}?uninterested=1" class="btn btn-default">{tr}Uninterested Customers{/tr}</a>
 </div>

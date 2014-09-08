@@ -7,38 +7,38 @@
 	<section class="body">
 
 	{if !$gBitUser->isRegistered() || !$order->billing || $changeAddress}
-		{form class="form-horizontal" name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
+		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
 			<input type="hidden" name="main_page" value="checkout_payment" />
 			{if !$gBitUser->isRegistered()}
 				{include file="bitpackage:bitcommerce/register_customer.tpl"}
 			{/if}
 
-			<div class="row-fluid">
+			<div class="row">
 				{if count( $addresses )}
-				<div class="span6">
+				<div class="col-md-6">
 					{legend legend="Choose Shipping Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
-						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+					<div class="form-group clear">
+						<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 						<a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 					</div>
 				</div>
 				{/if}
 				
-				<div class="span6">
+				<div class="col-md-6">
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}
-					<div class="control-group clear">
-						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn" name="" value="Cancel" />
+					<div class="form-group clear">
+						<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					</div>
 				</div>
 			</div>
 
 		{/form}
 	{else}
-{form class="form-horizontal" name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
+{form name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
 
 {if $messageStack->size('checkout_payment')}
 	{$messageStack->output('checkout_payment')}
@@ -50,8 +50,8 @@
 		<td colspan="2" class="main" valign="top"><?php echo TEXT_CONDITIONS_DESCRIPTION . '<br /><br />' . zen_draw_checkbox_field('conditions', '1', false, 'id="conditions"') . '<label for="conditions">&nbsp;' . TEXT_CONDITIONS_CONFIRM . '</label>'; ?></td>
 	</tr>
 {/if}
-<div class="row-fluid">
-	<div class="span6">
+<div class="row">
+	<div class="col-md-6">
 	{if count($paymentSelection) > 1}
 		{tr}Please select a payment method for this order.{/tr}
 	{/if}
@@ -78,11 +78,11 @@
 			</legend>
 			{formfeedback error=$selection.error}
 		{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
-			<div class="alert">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
+			<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
 		{/if}
 		{if $selection.fields && is_array($selection.fields)}
 			{foreach from=$selection.fields item=selectionField}
-				<div class="control-group">
+				<div class="form-group">
 				<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
 				<div class="controls">
 					{$selectionField.field}
@@ -107,7 +107,7 @@
 					{formfeedback error=$smarty.request.credit_class_error}
 				{/if}
 				{foreach from=$selection.fields item=selectionField}
-					<div class="control-group">
+					<div class="form-group">
 						<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
 						<div class="controls">
 							{$selectionField.field}
@@ -119,37 +119,37 @@
 		{/foreach}
 	{/if}
 
-		<div class="control-group">
-			<h3>{tr}Continue to Step 3{/tr}</h3>
-			<p>{tr}- to confirm your order.{/tr} </p>
-			<div class="control-group submit">
-				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
-				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
-			</div>
-		</div>
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		{legend legend="Billing Address"}
 					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 					{formhelp note="The billing address should match the address on your credit card statement."}
-					<a class="btn" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
+					<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
 		{/legend}
 	
 		<fieldset>
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Order Comments" for=""}
 				{forminput}
 					<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>
 				{/forminput}
 			</div>
 		</fieldset>
-
-		{if $orderTotalModules}
-					<table>{$orderTotalModules->output()}</table>
-		{/if}
 	</div>
 </div>
 
+		{if $orderTotalModules}
+			<table>{$orderTotalModules->output()}</table>
+		{/if}
+
+		<div class="form-group">
+			<h3>{tr}Continue to Step 3{/tr}</h3>
+			<p>{tr}- to confirm your order.{/tr} </p>
+			<div class="form-group submit">
+				<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
+				<button class="btn btn-primary" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+			</div>
+		</div>
 {/form}
 	{/if}
 

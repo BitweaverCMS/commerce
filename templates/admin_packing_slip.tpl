@@ -10,7 +10,7 @@
 
 <p>&nbsp;</p>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Return Address"}
 	{forminput}
 		<div style="font-size:larger;">{$smarty.const.STORE_NAME_ADDRESS|nl2br}</div>
@@ -21,14 +21,14 @@
   <tr>
 	<td valign="top" style="width:50%">
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Order #"}
 	{forminput}
 		<div style="font-size:large">{$gBitOrder->mOrdersId}</div>
 	{/forminput}
 </div>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Date Ordered"}
 	{forminput}
 		{$gBitOrder->info.date_purchased|bit_long_date}
@@ -52,7 +52,7 @@
 
 <p>&nbsp;</p>
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Products"}
 	{forminput}
 <table class="table data" style="border:0">

@@ -685,9 +685,9 @@ $linebreak = '
         <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
         <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
       </tr>
-      <tr><td class="alert"><?php echo HEADING_WARNING; ?></td></tr>
+      <tr><td class="alert alert-warning"><?php echo HEADING_WARNING; ?></td></tr>
        <tr>
-          <td class="alert"><b><?php echo HEADING_WARNING2; ?></td>
+          <td class="alert alert-warning"><b><?php echo HEADING_WARNING2; ?></td>
        </tr>
     </table></td>
   </tr>

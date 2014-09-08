@@ -181,5 +181,5 @@ define('ERROR_CANNOT_MOVE_CATEGORY_TO_PARENT', 'Error: Category cannot be moved 
   define('TEXT_META_TAGS_TITLE','<strong>Meta Tag Title:</strong>');
   define('TEXT_META_TAGS_KEYWORDS','<strong>Meta Tag Keywords:</strong>');
   define('TEXT_META_TAGS_DESCRIPTION','<strong>Meta Tag Description:</strong>');
-  define('TEXT_META_EXCLUDED', '<span class="alert">EXCLUDED</span>');
+  define('TEXT_META_EXCLUDED', '<span class="alert alert-warning">EXCLUDED</span>');
 ?>

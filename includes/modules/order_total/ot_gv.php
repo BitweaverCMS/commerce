@@ -47,10 +47,10 @@ class ot_gv {
 			$this->checkbox = '';
 			if( $this->user_has_gv_account( $gBitUser->mUserId ) ) {
 				$this->checkbox = '
-						<div class="control-group">
+						<div class="form-group">
 							<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
-							<div class="controls">
-								<input type="text" class="input-mini" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '"> ' . tra( 'of' ) . ' ' . $gvAmount . '
+							<div class="row">
+								<div class="col-xs-6"><input type="text" class="form-control" onChange="submitFunction()" name="cot_gv" value="' . number_format($_SESSION['cot_gv'], 2) . '"/></div><div class="col-xs-6">' . tra( 'of' ) . ' ' . $gvAmount . '</div>
 							</div>
 						</div>';
 			}
@@ -164,7 +164,7 @@ function update_credit_account($pOpid) {
 			$selection = array(	'id' => $this->code,
 								'module' => $this->title,
 								'checkbox' => $this->use_credit_amount(),
-								'fields' => array(array('title' => tra( 'Gift Code' ),
+								'fields' => array(array('title' => tra( 'Gift Certificate Code' ),
 								'field' => zen_draw_input_field('gv_redeem_code'))));
 
 		}

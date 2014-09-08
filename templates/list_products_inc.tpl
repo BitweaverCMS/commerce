@@ -3,7 +3,7 @@
 	{form action=$smarty.server.REQUEST_URI}
 		<div class="floaticon">
 		{tr}Sort by:{/tr}
-			<select name="sort_mode" onChange="this.form.submit();">
+			<select class="form-control" name="sort_mode" onChange="this.form.submit();">
 				<option value="products_name_asc" {if $listInfo.sort_mode == 'products_name_asc'}selected="selected"{/if}>{tr}Product Name{/tr}</option>
 				<option value="products_name_desc" {if $listInfo.sort_mode == 'products_name_desc'}selected="selected"{/if}>{tr}Product Name - desc{/tr}</option>
 				<option value="products_price_asc" {if $listInfo.sort_mode == 'products_price_asc'}selected="selected"{/if}>{tr}Price - low to high{/tr}</option>
@@ -23,7 +23,7 @@
 			{if $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART and $runNormal == 'true'}
 				{formhelp}To purchase multiple products at once, enter the quantity for each product you would like to purchase, and click "{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}"
 
-				<input type="submit" class="btn" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
+				<input type="submit" class="btn btn-default" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
 			{/if}
 
 {*
@@ -110,9 +110,9 @@
 		  case 'PRODUCT_LIST_IMAGE':
 			$lc_align = 'center';
 			if (isset($_GET['manufacturers_id'])) {
-			  $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrl( $listing->fields, 'avatar' ), $listing->fields['products_name'] ) . '</a>';
+			  $lc_text = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'manufacturers_id=' . $_GET['manufacturers_id'] . '&products_id=' . $listing->fields['products_id']) . '">' . zen_image(  CommerceProduct::getImageUrlFromHash( $listing->fields, 'avatar' ), $listing->fields['products_name'] ) . '</a>';
 			} else {
-			  $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrl( $listing->fields, 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
+			  $lc_text = '&nbsp;<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $listing->fields['products_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash( $listing->fields, 'avatar' ), $listing->fields['products_name'] ) . '</a>&nbsp;';
 			}
 			break;
 		}
@@ -135,7 +135,7 @@
 *}
 
 		{if $runNormal == 'true' && $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART and $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART >= 2 }
-			<input type="submit" class="btn" align="absmiddle" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
+			<input type="submit" class="btn btn-default" align="absmiddle" value="{$smarty.const.SUBMIT_BUTTON_ADD_PRODUCTS_TO_CART}" id="submit1" name="submit1" Class="SubmitBtn">
 		{/if}
 	</form>
 {else}

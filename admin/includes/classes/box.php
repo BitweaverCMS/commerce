@@ -49,7 +49,8 @@
       $this->table_data_parameters = 'class="infoBoxContent"';
       $this->contents = $this->tableBlock($contents);
 
-      return $this->heading . $this->contents;
+			
+      return '<div class="panel panel-default"><div class="panel-heading">'.$this->heading.'</div><div class="panel-body">'.$this->contents.'</div></div>';
     }
 
     function menuBox($heading, $contents) {

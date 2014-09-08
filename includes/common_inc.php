@@ -133,7 +133,7 @@
 
     while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
 // Add the session ID when moving from different HTTP and HTTPS servers, or when SID is defined
-    if ( ($add_session_id == true) && ($session_started == true) && (SESSION_FORCE_COOKIE_USE == 'False') ) {
+    if ( ($add_session_id == true) && ($session_started == true) && (!defined( 'SESSION_FORCE_COOKIE_USE' ) || SESSION_FORCE_COOKIE_USE == 'False') ) {
       if (defined('SID') && zen_not_null(SID)) {
         $sid = SID;
 //      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
@@ -188,7 +188,7 @@
 ////
 // Output a form input field
   function zen_draw_input_field($name, $value = '', $parameters = '', $type = 'text', $reinsert_value = true, $required = false) {
-    $field = '<input type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
+    $field = '<input  class="form-control" type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
 
     if (isset($GLOBALS[$name]) && ($reinsert_value == true) && is_string($GLOBALS[$name])) {
       $field .= ' value="' . zen_output_string(stripslashes($GLOBALS[$name])) . '"';
@@ -240,7 +240,7 @@
 ////
 // Output a form pull down menu
   function zen_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false, $blank = false ) {
-    $field = '<select name="' . zen_output_string($name) . '"';
+    $field = '<select class="form-control" name="' . zen_output_string($name) . '"';
 
     if (zen_not_null($parameters)) $field .= ' ' . $parameters;
 
@@ -311,16 +311,7 @@
 ////
 // Output a function button in the selected language
 	function zen_image_button($image, $alt = '', $parameters = '') {
-		global $template, $current_page_base, $gBitCustomer;
-		// return '<span class="btn btn-small">'.$alt.'</span>';
-		if( is_string( $alt ) ) {
-			$ret = '<span class="btn btn-small">'.$alt.'</span>';
-		} elseif( $template ) {
-			$ret = zen_image($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image, $alt, '', '', $parameters);
-		} else {
-			$ret = zen_image(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image, $alt, '', '', $parameters);
-		}
-		return $ret;
+		return '<span class="btn btn-default btn-sm">'.$alt.'</span>';
 	}
 
 
@@ -328,30 +319,7 @@
 // The HTML form submit button wrapper function
 // Outputs a button in the selected language
   function zen_image_submit($image, $alt = '', $parameters = '') {
-    global $template, $current_page_base, $gBitCustomer;
-
-	if( is_string( $alt ) ) {
-		$ret = '<input type="submit" class="btn btn-small" name="'.$alt.'" value="'.$alt.'" />';
-	} else {
-		if( $template ) {
-			$imgSrc = zen_output_string($template->get_template_dir($image, DIR_WS_TEMPLATE, $current_page_base, 'buttons/' . $gBitCustomer->getLanguage() . '/') . $image);
-		} else {
-		  $imgSrc = zen_output_string(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/images/buttons/' . $image);
-		}
-		$ret = '<input type="image" src="'.$imgSrc. '" alt="' . zen_output_string($alt) . '"';
-	
-		if (zen_not_null($alt)) { 
-			$ret .= ' title=" ' . zen_output_string($alt) . ' "';
-		}
-	
-		if (zen_not_null($parameters)) {
-			$ret .= ' ' . $parameters;
-		}
-	
-		$ret .= ' />';
-	}
-	
-	return $ret;
+	return '<input type="submit" class="btn btn-primary btn-sm" name="'.$alt.'" value="'.$alt.'" />';
   }
 
   function bit_get_images_dir( $pDir ) {

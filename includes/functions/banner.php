@@ -142,9 +142,9 @@
       $banner_string = $banner['banners_html_text'];
     } else {
       if ($banner['banners_open_new_windows'] == '1') {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner['banners_image']), $banner['banners_title']) . '</a>';
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash($banner['banners_image']), $banner['banners_title']) . '</a>';
       } else {
-        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrl($banner['banners_image']), $banner['banners_title']) . '</a>';
+        $banner_string = '<a href="' . zen_href_link(FILENAME_REDIRECT, 'action=banner&amp;goto=' . $banner['banners_id']) . '">' . zen_image( CommerceProduct::getImageUrlFromHash($banner['banners_image']), $banner['banners_title']) . '</a>';
       }
     }
     zen_update_banner_display_count($banner['banners_id']);

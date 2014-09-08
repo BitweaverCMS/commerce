@@ -29,7 +29,7 @@
 				{else}
 					{form}
 						<input type="hidden" name="amazon_order_id" value="{$azOrder->getAmazonOrderId()}"/>
-						<input type="submit" class="btn btn-mini" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
+						<input type="submit" class="btn btn-xs" value="{tr}Process{/tr}" name="{tr}mws_process_order{/tr}"/>
 					{/form}
 				{/if}
 				</div>

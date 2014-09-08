@@ -46,7 +46,7 @@
 
     function add($message, $type = 'error') {
       if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="alert alert-error"', 'text' => '<i class=" icon-minus-sign"></i> ' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-danger"', 'text' => '<i class=" icon-minus-sign"></i> ' . $message);
       } elseif ($type == 'warning') {
         $this->errors[] = array('params' => 'class="alert alert-warning"', 'text' => '<i class=" icon-exclamation-sign"></i> ' . $message);
       } elseif ($type == 'success') {
@@ -54,7 +54,7 @@
       } elseif ($type == 'caution') {
         $this->errors[] = array('params' => 'class="alert alert-info"', 'text' => '<i class="icon-info-sign"></i> ' . $message);
       } else {
-        $this->errors[] = array('params' => 'class="alert alert-error"', 'text' => $message);
+        $this->errors[] = array('params' => 'class="alert alert-danger"', 'text' => $message);
       }
 
 

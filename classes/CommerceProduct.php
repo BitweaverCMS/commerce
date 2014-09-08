@@ -1107,7 +1107,9 @@ If a special exist * 10+9
 	}
 
 	function getImageUrl( $pSize='small' ) {
-		return static::getImageUrlFromHash( $this->mProductsId );
+		if( !empty( $this ) ) {
+			return static::getImageUrlFromHash( $this->mProductsId );
+		}
 	}
 
 	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {

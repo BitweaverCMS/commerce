@@ -47,10 +47,10 @@
 			{/if}
 			</ul>
 	
-	<div class="control-group submit">
+	<div class="form-group submit">
 			<input type="hidden" name="products_id" value="{$gBitProduct->getField('products_id')}">
-			<input type="submit" class="btn" name="save_attribute_map" value="{tr}Save{/tr}">
-			<input type="submit" class="btn" name="cancel" value="{tr}Cancel{/tr}">
+			<input type="submit" class="btn btn-default" name="save_attribute_map" value="{tr}Save{/tr}">
+			<input type="submit" class="btn btn-default" name="cancel" value="{tr}Cancel{/tr}">
 	</div>
 
 		</li>
