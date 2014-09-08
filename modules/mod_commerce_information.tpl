@@ -1,5 +1,5 @@
 {bitmodule title=$smarty.const.BOX_HEADING_INFORMATION name="bc_commerceinformation"}
-	<ul>
+	<ul class="list-unstyled">
 		<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shippinginfo">{tr}Shipping &amp; Returns{/tr}</a></li>
 		<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=privacy">{tr}Privacy Notice{/tr}</a></li>
 		<li><a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=conditions">{tr}Conditions of Use{/tr}</a></li>

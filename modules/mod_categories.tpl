@@ -1,6 +1,6 @@
 {strip}
 {bitmodule title="$moduleTitle" name="bc_categories"}
-	<ul>
+	<ul class="list-unstyled">
 		{section name=ix loop=$box_categories_array}
 			<li>
 				<a {if $box_categories_array[ix].current}id="active"{/if} href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=index&amp;{$box_categories_array[ix].path}">
