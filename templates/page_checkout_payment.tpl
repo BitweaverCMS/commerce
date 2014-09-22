@@ -66,30 +66,32 @@
 				</div>
 			{/if}
 
-	{foreach from=$paymentSelection item=selection}
+	{foreach from=$paymentSelection item=selection name='payment_selection'}
 		<fieldset>
 			<legend>
 		{if count($paymentSelection) > 1}
-			<input type="radio" name="payment" value="{$selection.id}" /> 
+			<input type="radio" name="payment" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" /> 
 		{else}
 			<input type="hidden" name="payment" value="{$selection.id}" />
 		{/if}
 				{$selection.module}
 			</legend>
-			{formfeedback error=$selection.error}
-		{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
-			<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
-		{/if}
-		{if $selection.fields && is_array($selection.fields)}
-			{foreach from=$selection.fields item=selectionField}
-				<div class="form-group">
-				<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
-				<div class="controls">
-					{$selectionField.field}
-				</div>
-				</div>
-			{/foreach}
-		{/if}
+			<div class="payment-selection" id="payment-{$selection.id}" {if $smarty.foreach.payment_selection.iteration>1}style="display:none"{/if}>
+				{formfeedback error=$selection.error}
+			{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
+				<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
+			{/if}
+			{if $selection.fields && is_array($selection.fields)}
+				{foreach from=$selection.fields item=selectionField}
+					<div class="form-group">
+					<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
+					<div class="controls">
+						{$selectionField.field}
+					</div>
+					</div>
+				{/foreach}
+			{/if}
+			</div>
 		</fieldset>
 	{/foreach}
 
