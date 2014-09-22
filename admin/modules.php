@@ -150,10 +150,7 @@
         $module_keys = $module->keys();
         $keys_extra = array();
         for ($j=0, $k=sizeof($module_keys); $j<$k; $j++) {
-          $key_value = $gBitDb->Execute("select `configuration_title`, `configuration_value`, `configuration_key`,
-                                        `configuration_description`, `use_function`, `set_function`
-                     from " . TABLE_CONFIGURATION . "
-                   where `configuration_key` = '" . $module_keys[$j] . "'");
+          $key_value = $gBitDb->Execute("select `configuration_title`, `configuration_value`, `configuration_key`, `configuration_description`, `use_function`, `set_function` from " . TABLE_CONFIGURATION . " where `configuration_key` = '" . $module_keys[$j] . "'");
 
           $keys_extra[$module_keys[$j]]['title'] = $key_value->fields['configuration_title'];
           $keys_extra[$module_keys[$j]]['value'] = $key_value->fields['configuration_value'];
@@ -190,9 +187,7 @@
   $check = $gBitDb->query("select `configuration_value` FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $module_key ) );
   if ($check->RecordCount() > 0) {
     if ($check->fields['configuration_value'] != implode(';', $installed_modules)) {
-      $gBitDb->Execute("update " . TABLE_CONFIGURATION . "
-                  set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$gBitDb->qtNOW()."
-          where `configuration_key` = '" . $module_key . "'");
+      $gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$gBitDb->qtNOW()." where `configuration_key` = '" . $module_key . "'");
     }
   } else {
     $gBitDb->Execute("insert into " . TABLE_CONFIGURATION . "
@@ -267,7 +262,7 @@
         $contents[] = array('text' => '<br>' . $mInfo->description);
         $contents[] = array('text' => '<br>' . $keys);
       } else {
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=install', 'NONSSL') . '">' . zen_image_button('button_module_install.gif', IMAGE_MODULE_INSTALL) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=install', 'NONSSL') . '">' . tra( 'Install Module' ) . '</a>');
         $contents[] = array('text' => '<br>' . $mInfo->description);
       }
       break;

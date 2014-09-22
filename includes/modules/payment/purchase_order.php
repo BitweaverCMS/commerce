@@ -26,14 +26,18 @@ class purchase_order extends CommercePluginPaymentBase {
 	var $code, $title, $description, $enabled;
 
 // class constructor
-	function purchase_order() {
+	function __construct() {
 		global $order;
+
+		parent::__construct();
+
+		$this->mStatusKey = 'MODULE_PAYMENT_PURCHASEORDER_STATUS';
 
 		$this->code = 'purchase_order';
 		$this->title = 'Purchase Order';
 		$this->description = 'Payment via purchase request from verified organization';
 		$this->sort_order = defined( 'MODULE_PAYMENT_PURCHASEORDER_SORT_ORDER' ) ? MODULE_PAYMENT_PURCHASEORDER_SORT_ORDER : 0;
-		$this->enabled = ((defined( 'MODULE_PAYMENT_PURCHASEORDER_STATUS' ) && MODULE_PAYMENT_PURCHASEORDER_STATUS == 'True') ? true : false);
+		$this->enabled = $this->isEnabled();
 
 		if( defined( 'MODULE_PAYMENT_PURCHASEORDER_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_PURCHASEORDER_ORDER_STATUS_ID > 0) {
 			$this->order_status = MODULE_PAYMENT_PURCHASEORDER_ORDER_STATUS_ID;
@@ -112,27 +116,6 @@ class purchase_order extends CommercePluginPaymentBase {
 
       return $process_button_string;
     }
-
-	function before_process() {
-		return false;
-	}
-
-	function after_process() {
-		return false;
-	}
-
-	function get_error() {
-		return false;
-	}
-
-	function check() {
-		global $gBitDb;
-		if (!isset($this->_check)) {
-			$check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PURCHASEORDER_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-		return $this->_check;
-	}
 
 	function install() {
 		global $gBitDb;

@@ -25,4 +25,17 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
 		return FALSE;
 	}
+
+	function before_process() {
+		return false;
+	}
+
+	function after_process() {
+		return false;
+	}
+
+	function get_error() {
+		return false;
+	}
+
 }
