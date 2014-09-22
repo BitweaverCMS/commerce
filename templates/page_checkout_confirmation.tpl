@@ -93,8 +93,8 @@
 			<h4>{$paymentConfirmation.title|escape}</h4>
 			{foreach from=$paymentConfirmation.fields item=payFields}
 			<div class="clear">
-				<label class="control-label">{$payFields.title}</label>
-				<div class="controls">{$payFields.field}</div>
+				{if $payFields.title}<label class="control-label">{$payFields.title}</label>{/if}
+				{if $payFields.field}<div class="controls">{$payFields.field}</div>{/if}
 			</div>
 			{/foreach}
 		{elseif $smarty.session.payment}
