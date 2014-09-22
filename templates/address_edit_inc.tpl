@@ -6,7 +6,7 @@
 	<div class="form-group">
 		{formfeedback error=$addressErrors.gender}
 		{forminput}
-			<label class="radio inline-block"><input type="radio" value="m" name="gender"/> {tr}Mr.{/tr}</label> &nbsp; <label class="radio inline-block"><input type="radio" value="f" name="gender"/> {tr}Ms.{/tr}</label>
+			<label class="radio inline-block"><input type="radio" value="m" {if $address.entry_gender == 'm'}checked="checked"{/if} name="gender"/> {tr}Mr.{/tr}</label> &nbsp; <label class="radio inline-block"><input type="radio" {if $address.entry_gender == 'f'}checked="checked"{/if} value="f" name="gender"/> {tr}Ms.{/tr}</label>
 		{/forminput}
 	</div>
 {/if}
@@ -88,7 +88,7 @@
 <div class="form-group">
 	{forminput}
 		<label class="checkbox">
-			{html_checkboxes name="primary" values="on" checked=$address.entry_primary labels=false id="primary"} {tr}Set as Primary Address{/tr}
+			<input type="checkbox" name="primary" values="on" {if $address.entry_primary=='t'}checked="checked"{/if} id="primary"> {tr}Set as Primary Address{/tr}
 		<label>
 	{/forminput}
 </div>

@@ -303,12 +303,13 @@ class CommerceCustomer extends BitBase {
 			$bindVars = array( $pAddressId );
 			$whereSql = '';
 			if( $pSecure ) {
-				$whereSql = " AND `customers_id`=?";
+				$whereSql = " AND cab.`customers_id`=?";
 				array_push( $bindVars, $this->mCustomerId );
 			}
-			$query = "SELECT * 
+			$query = "SELECT cab.*,ccou.*, cab.`address_book_id`=cu.`customers_default_address_id` AS `entry_primary`
 					  FROM " . TABLE_ADDRESS_BOOK . " cab
 						INNER JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id`=cab.`entry_country_id`)
+						INNER JOIN " . TABLE_CUSTOMERS . " cu ON( cab.`customers_id`=cu.`customers_id` )
 					  WHERE `address_book_id`=? $whereSql";
 			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
 				$ret = $rs->fields;
@@ -388,13 +389,15 @@ class CommerceCustomer extends BitBase {
 		global $gBitDb;
 		$ret = NULL;
 		if( static::verifyId( $pCustomerId ) ) {
-			$query = "select `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
+			$query = "SELECT `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
 								`entry_company` as `company`, `entry_street_address` as `street_address`,
 								`entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
 								`entry_state` as `state`, `entry_zone_id` as `zone_id`,
-								`entry_country_id` as `country_id`, c.*
-						from " . TABLE_ADDRESS_BOOK . " ab INNER JOIN " . TABLE_COUNTRIES . " c ON( ab.`entry_country_id`=c.`countries_id` )
-						where `customers_id` = ?";
+								`entry_country_id` as `country_id`, co.*, ab.`address_book_id`=cu.`customers_default_address_id` AS `entry_primary`
+						FROM " . TABLE_ADDRESS_BOOK . " ab 
+							INNER JOIN " . TABLE_COUNTRIES . " co ON( ab.`entry_country_id`=co.`countries_id` )
+							INNER JOIN " . TABLE_CUSTOMERS . " cu ON( ab.`customers_id`=cu.`customers_id` )
+						WHERE ab.`customers_id` = ?";
 
 			if( $rs = $gBitDb->query( $query, array( $pCustomerId ) ) ) {
 				$ret = $rs->GetRows();
