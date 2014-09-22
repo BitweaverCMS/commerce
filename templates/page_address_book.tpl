@@ -9,7 +9,7 @@
 		{if count( $addresses )}
 			<ul class="list-group">
 				{section name=ix loop=$addresses}
-				<li class="list-group-item {if $smarty.request.edit == $addresses[ix].address_book_id}active{elseif $addresses[ix].address_book_id == $gBitCustomer->mInfo.customers_default_address_id}list-group-item-warning{/if}">
+				<li class="list-group-item {if $smarty.request.edit == $addresses[ix].address_book_id}active{elseif $addresses[ix].address_book_id == $gBitCustomer->mInfo.customers_default_address_id}list-group-item-success{/if}">
 					{if $addresses[ix].address_book_id == $sendToAddressId}
 						{assign var=checked value=$addresses[ix].address_book_id}
 						{assign var=class value="row selected"}

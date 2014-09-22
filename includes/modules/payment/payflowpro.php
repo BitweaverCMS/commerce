@@ -117,15 +117,12 @@ class payflowpro extends CommercePluginPaymentBase {
 								array(	'title' => tra( 'Card Owner\'s Name' ),
 							 			'field' => zen_draw_input_field('payflowpro_cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
 								),
-								array(	'title' => tra( 'Card Number' ),
-										'field' => zen_draw_input_field('payflowpro_cc_number', NULL, NULL, 'number' )
+								array(	'title' => '<div class="row"><div class="col-xs-8 col-sm-8">'.tra( 'Card Number' ).'</div><div class="col-xs-4 col-sm-4"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</div></div>',
+										'field' => '<div class="row"><div class="col-xs-8 col-sm-8">' . zen_draw_input_field('payflowpro_cc_number', NULL, NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4">' . zen_draw_input_field('payflowpro_cc_csc',NULL, NULL, 'number')  . '</div></div>',
 								),
 								array(	'title' => tra( 'Expiration Date' ),
 										'field' => '<div class="row"><div class="col-xs-7 col-sm-8">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-4">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
 								),
-								array(	'title' => '<i class="icon-credit-card"></i> ' . tra( 'CVV Number' ),
-										'field' => zen_draw_input_field('payflowpro_cc_csc',NULL, NULL, 'number')
-								)
 							)
 						);
 
