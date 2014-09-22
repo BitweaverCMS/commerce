@@ -986,7 +986,7 @@ If a special exist * 10+9
 
 
 
-	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
+	function getTitleFromHash( $pHash, $pDefault=TRUE ) {
 		$ret = NULL;
 		if( !empty( $pHash ) ) {
 			if( !empty( $pHash['products_name'] ) ) {
