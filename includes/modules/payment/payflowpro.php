@@ -121,7 +121,7 @@ class payflowpro extends CommercePluginPaymentBase {
 										'field' => '<div class="row"><div class="col-xs-8 col-sm-8">' . zen_draw_input_field('payflowpro_cc_number', NULL, NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4">' . zen_draw_input_field('payflowpro_cc_csc',NULL, NULL, 'number')  . '</div></div>',
 								),
 								array(	'title' => tra( 'Expiration Date' ),
-										'field' => '<div class="row"><div class="col-xs-7 col-sm-8">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-4">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
+										'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
 								),
 							)
 						);
