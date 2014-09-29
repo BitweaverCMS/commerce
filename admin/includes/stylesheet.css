@@ -12,11 +12,11 @@ table.table tr.comments	td { border-top:none; }
 
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
 
-.coupon.active{}
-.coupon.inactive	{ background-color:#ddd; }
-.coupon.pending	{ background-color:#ffe; }
-.coupon.active		{ background-color:#efe; }
-.coupon.expired	{ background-color:#fee; }
+.coupon.coupon-active{}
+.coupon.coupon-inactive	{ background-color:#ddd; }
+.coupon.coupon-pending	{ background-color:#ffe; }
+.coupon.coupon-active		{ background-color:#efe; }
+.coupon.coupon-expired	{ background-color:#fee; }
 
 /* including stylesheet for dhtml menu * /
 /*

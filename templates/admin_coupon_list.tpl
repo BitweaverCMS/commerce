@@ -36,7 +36,7 @@
 		</tr>
 
 		{foreach from=$couponList item=coupon key=couponId name=couponList}
-		<tr class="coupon {if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
+		<tr class="coupon coupon-{if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
 			<td class="item">{$smarty.foreach.couponList.iteration+$listInfo.offset}</td>
 			<td class="item">
 				<div class="floaticon text-left">
