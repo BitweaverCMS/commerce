@@ -98,19 +98,18 @@ class CommerceVoucher extends BitBase {
 		}
 
 
-		if ( empty( $pParamHash['coupon_amount'] ) && empty( $pParamHash['coupon_free_ship'] ) ) {
+		foreach( array( 'coupon_amount', 'uses_per_coupon', 'uses_per_user', 'coupon_minimum_order', 'quantity_max' ) as $field ) {
+			$pParamHash['coupon_store'][$field] = !empty( $pParamHash[$field] ) ? trim( preg_replace('/[^0-9\.\%]/', '', $pParamHash[$field] ) ) : NULL;
+		}
+
+		if ( empty( $pParamHash['coupon_store']['coupon_amount'] ) && empty( $pParamHash['coupon_free_ship'] ) ) {
 			$this->mFeedback['errors'][] = ERROR_NO_COUPON_AMOUNT;
 		} else {
-			if( trim($pParamHash['coupon_amount'] ) ) {
-				$pParamHash['coupon_store']['coupon_amount'] = trim($pParamHash['coupon_amount']);
-			} else {
-				$pParamHash['coupon_store']['coupon_amount'] = NULL;
-			}
-
 			if( !empty( $pParamHash['coupon_free_ship'] ) ) {
 				$pParamHash['coupon_store']['coupon_type'] = 'S';
-			} elseif (substr($pParamHash['coupon_amount'], -1) == '%') {
-				$pParamHash['coupon_store']['coupon_amount'] = str_replace( '%', '', $pParamHash['coupon_amount'] );
+				$pParamHash['coupon_store']['coupon_amount'] = NULL;
+			} elseif( strpos( $pParamHash['coupon_store']['coupon_amount'], '%' ) !== FALSE ) {
+				$pParamHash['coupon_store']['coupon_amount'] = str_replace( '%', '', $pParamHash['coupon_store']['coupon_amount'] );
 				$pParamHash['coupon_store']['coupon_type'] = 'P';
 			} elseif( !empty( $pParamHash['coupon_type'] ) ) {
 				$pParamHash['coupon_store']['coupon_type'] = $pParamHash['coupon_type'];
@@ -119,7 +118,7 @@ class CommerceVoucher extends BitBase {
 			}
 		}
 
-		foreach( array( 'uses_per_coupon', 'uses_per_user', 'coupon_minimum_order', 'quantity_max', 'restrict_to_shipping', 'restrict_to_products', 'restrict_to_categories', 'coupon_start_date', 'coupon_expire_date', 'admin_note' ) as $field ) {
+		foreach( array( 'restrict_to_shipping', 'restrict_to_products', 'restrict_to_categories', 'coupon_start_date', 'coupon_expire_date', 'admin_note' ) as $field ) {
 			$pParamHash['coupon_store'][$field] = !empty( $pParamHash[$field] ) ? trim( $pParamHash[$field] ) : NULL;
 		}
 
