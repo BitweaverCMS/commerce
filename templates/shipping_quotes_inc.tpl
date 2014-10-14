@@ -6,7 +6,7 @@
 		<li>
 			<div class="row">
 				<div class="col-xs-3 text-right">
-					{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title}{/if}
+					{if $quotes[ix].icon}{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title class="img-responsive"}{/if}
 				</div>
 				<div class="col-xs-9">
 					{if !$quotes[ix].icon}}<h4>{$quotes[ix].module}</h4>{/if}

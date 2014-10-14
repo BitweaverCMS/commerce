@@ -76,7 +76,7 @@
 					{assign var=className value=$classInfo.filename}
 					{foreach from=$GLOBALS.$className->output item=otOutput}
 						<tr>
-							<td  colspan="{$colspan}" class="text-right">{$otOutput.title|escape}</td>
+							<td  colspan="{$colspan}" class="text-right">{$otOutput.title}</td>
 							<td class="text-right">{$otOutput.text|escape}</td>
 						</tr>
 					{/foreach}
