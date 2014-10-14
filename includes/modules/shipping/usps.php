@@ -145,7 +145,8 @@ class usps extends BitBase {
       }
     }
 
-    if (SHIPPING_ORIGIN_COUNTRY != '200000256') {
+	$originCountry = zen_get_countries( SHIPPING_ORIGIN_COUNTRY, TRUE );
+    if ( $originCountry['countries_iso_code_3'] != 'USA') {
       $this->title .= '<span class="alert">' . ' - USPS can only ship from USA. But your store is configured with another origin! See Admin->Configuration->Shipping/Packaging.' . '</span>';
     }
 
@@ -487,7 +488,7 @@ if (false) {
         }
 
         // set module-specific handling fee
-        if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY || $this->usps_countries == 'US') {
+        if ($order->delivery['country']['countries_iso_code_3'] == 'USA' || $this->usps_countries == 'US') {
           // domestic/national
           $usps_handling_fee = MODULE_SHIPPING_USPS_HANDLING;
         } else {
@@ -508,7 +509,7 @@ if (false) {
 
         // process customization of transit times in quotes
         if (in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) {
-          if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY || $this->usps_countries == 'US') {
+          if ($order->delivery['country']['countries_iso_code_3'] == 'USA' || $this->usps_countries == 'US') {
             if ($this->transitTimeCalculationMode != 'OLD') $this->parseDomesticTransitTimeResults($Package, $type_rebuilt);
           } else {
             $this->parseIntlTransitTimeResults($Package, $type_rebuilt);
@@ -781,7 +782,7 @@ if (true) {
 }
 
     // US Domestic destinations
-    if ($order->delivery['country']['countries_id'] == SHIPPING_ORIGIN_COUNTRY || $this->usps_countries == 'US') {
+    if ($order->delivery['country']['countries_iso_code_3'] == 'USA' || $this->usps_countries == 'US') {
 
       // build special services for domestic
       // Some Special Services cannot work with others
@@ -1670,7 +1671,8 @@ if (!preg_match('#Priority Mail Express#i', $service)) {
 		global $order;
 		global $selected_country, $state_zone_id;
 		if( !empty( $order->delivery['country']['countries_iso_code_2'] ) ) {
-			if (SHIPPING_ORIGIN_COUNTRY == '200000256') {
+			$originCountry = zen_get_countries( SHIPPING_ORIGIN_COUNTRY, TRUE );
+			if ( $originCountry['countries_iso_code_3'] == 'USA') {
 				switch($order->delivery['country']['countries_iso_code_2']) {
 					case 'AS': // Samoa American
 					case 'GU': // Guam
