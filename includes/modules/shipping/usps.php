@@ -149,10 +149,6 @@ class usps extends BitBase {
       $this->title .= '<span class="alert">' . ' - USPS can only ship from USA. But your store is configured with another origin! See Admin->Configuration->Shipping/Packaging.' . '</span>';
     }
 
-    if (isset($template)) {
-      $this->icon = $template->get_template_dir('shipping_usps.gif', DIR_WS_TEMPLATE, $current_page_base,'images/icons'). '/' . 'shipping_usps.gif';
-    }
-
     // prepare list of countries which USPS ships to
     $this->countries = $this->country_list();
 
@@ -614,8 +610,10 @@ $show_hiddenCost = '';
                            );
 
       // add icon/message, if any
-		$this->quotes['icon'] = $this->icon;
-      if ($iInfo != '') $this->quotes['icon'] .= '<br />' . $iInfo;
+		if ( !empty( $this->icon ) ) {
+			$this->quotes['icon'] = $this->icon;
+		}
+//      if (!empty($iInfo)) $this->quotes['icon'] .= '<br />' . $iInfo;
       return $this->quotes;
     }
 
