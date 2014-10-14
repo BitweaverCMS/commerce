@@ -102,10 +102,7 @@
 		}
 
 		if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $configuration->fields['configuration_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
-			$cfg_extra = $gBitDb->Execute("SELECT `configuration_key`, `configuration_description`, `date_added`,
-																				`last_modified`, `use_function`, `set_function`
-																 FROM " . TABLE_CONFIGURATION . "
-																 WHERE `configuration_id` = '" . (int)$configuration->fields['configuration_id'] . "'");
+			$cfg_extra = $gBitDb->query("SELECT `configuration_key`, `configuration_description`, `date_added`, `last_modified`, `use_function`, `set_function` FROM " . TABLE_CONFIGURATION . " WHERE `configuration_id` = ?", array( (int)$configuration->fields['configuration_id'] ) );
 			$cInfo_array = array_merge($configuration->fields, $cfg_extra->fields);
 			$cInfo = new objectInfo($cInfo_array);
 		}
