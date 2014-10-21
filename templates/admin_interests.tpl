@@ -46,7 +46,7 @@
 		{/forminput}
 	{/form}
 {else}
-	<a href="{$smarty.server.php_self}?new=1">New Interest</a>
+	<a href="{$smarty.server.php_self}?new=1" class="btn btn-primary">New Interest</a>
 {/if}
 
 <a href="{$smarty.server.SCRIPT_NAME}?uninterested=1" class="btn btn-default">{tr}Uninterested Customers{/tr}</a>
