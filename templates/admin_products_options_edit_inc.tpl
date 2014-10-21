@@ -15,7 +15,7 @@
 <div class="form-group">
 	{formlabel label="Title"}
 	{forminput}
-		<input type="text" name="products_options_name" value="{$editOption.products_options_name|escape:html}" />
+		<input type="text" class="form-control" name="products_options_name" value="{$editOption.products_options_name|escape:html}" />
 	{/forminput}
 </div>
 
@@ -29,7 +29,7 @@
 <div class="form-group">
 	{formlabel label="HTML Attributes"}
 	{forminput}
-		<input type="text" name="products_options_html_attrib" value="{$editOption.products_options_html_attrib|escape:html}" />
+		<input type="text" class="form-control" name="products_options_html_attrib" value="{$editOption.products_options_html_attrib|escape:html}" />
 		{formhelp note="Use this for extra HTML elements, such as Javascript onchange or a custom 'id'."}
 	{/forminput}
 </div>
@@ -37,31 +37,31 @@
 <div class="form-group">
 	{formlabel label="Comment"}
 	{forminput}
-		<input type="text" name="products_options_comment" value="{$editOption.products_options_comment|escape:html}" />
+		<input type="text" class="form-control" name="products_options_comment" value="{$editOption.products_options_comment|escape:html}" />
 	{/forminput}
 </div>
 <div class="form-group">
 	{formlabel label="Sort Order"}
 	{forminput}
-		<input type="text" name="products_options_sort_order" value="{$editOption.products_options_sort_order}" />
+		<input type="text" class="form-control" name="products_options_sort_order" value="{$editOption.products_options_sort_order}" />
 	{/forminput}
 </div>
 <div class="form-group">
 	{formlabel label="Display Size"}
 	{forminput}
-		<input type="text" name="products_options_size" value="{$editOption.products_options_size}" />
+		<input type="text" class="form-control" name="products_options_size" value="{$editOption.products_options_size}" />
 	{/forminput}
 </div>
 <div class="form-group">
 	{formlabel label="Maximum Length"}
 	{forminput}
-		<input type="text" name="products_options_length" value="{$editOption.products_options_length}" />
+		<input type="text" class="form-control" name="products_options_length" value="{$editOption.products_options_length}" />
 	{/forminput}
 </div>
 <div class="form-group">
 	{formlabel label="Attribute Images per Row"}
 	{forminput}
-		<input type="text" name="products_options_images_per_row" value="{$editOption.products_options_images_per_row}" />
+		<input type="text" class="form-control" name="products_options_images_per_row" value="{$editOption.products_options_images_per_row}" />
 	{/forminput}
 </div>
 <div class="form-group">
@@ -95,7 +95,7 @@
 					<span id="optval{$optionsValueId}title">{$optionsValue.products_options_values_name}</span>
 				</div>
 				<div id="optval{$optionsValueId}edit" style="display:none">
-					<input type="text" name="products_options_values_name{$optionsValueId}" id="products_options_values_name{$optionsValueId}" value="{$optionsValue.products_options_values_name}" />
+					<input type="text" class="form-control" name="products_options_values_name{$optionsValueId}" id="products_options_values_name{$optionsValueId}" value="{$optionsValue.products_options_values_name}" />
 					<input type="submit" class="btn btn-default" value="save" name="save_options_value" onclick="return saveOptionsValue('{$optionsValueId}');" />
 					<input type="submit" class="btn btn-default" value="cancel" name="cancel_options_value" onclick="return editOptionsValue('{$optionsValueId}');" />
 				</div>

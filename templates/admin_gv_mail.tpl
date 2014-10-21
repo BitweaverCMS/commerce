@@ -69,7 +69,7 @@
 
 {* Re-Post all POST'ed variables *}
 {foreach from=$smarty.post key=key item=value}
-	<input type="hidden" name="{$key}" value="{$value|escape}" />
+	<input class="form-control" type="hidden" name="{$key}" value="{$value|escape}" />
 {/foreach}
 
 <div class="form-group submit">
@@ -168,28 +168,28 @@ function check_form(form_name) {
 <div class="form-group">
 	{formlabel label="Email To"}
 	{forminput}
-		<input type="text" name="email_to" value="{$smarty.request.email_to}" />
+		<input class="form-control" type="text" name="email_to" value="{$smarty.request.email_to}" />
 	{/forminput}
 </div>
 
 <div class="form-group">
 	{formlabel label="From"}
 	{forminput}
-		<input type="text" name="from" value="{$smarty.request.from|default:$smarty.const.EMAIL_FROM}" />
+		<input class="form-control" type="text" name="from" value="{$smarty.request.from|default:$smarty.const.EMAIL_FROM}" />
 	{/forminput}
 </div>
 
 <div class="form-group">
 	{formlabel label="Subject"}
 	{forminput}
-		<input type="text" name="subject" value="{$smarty.request.subject|default:"`$gBitSystem->mConfig.site_title` Gift Certificate"|tra}" />
+		<input class="form-control" type="text" name="subject" value="{$smarty.request.subject|default:"`$gBitSystem->mConfig.site_title` Gift Certificate"|tra}" />
 	{/forminput}
 </div>
 
 <div class="form-group">
 	{formlabel label="Amount"}
 	{forminput}
-		<input type="text" name="amount" value="{$smarty.request.amount}" />
+		<input class="form-control" type="text" name="amount" value="{$smarty.request.amount}" />
 	{/forminput}
 </div>
 
@@ -232,7 +232,7 @@ function check_form(form_name) {
 <div class="form-group">
 	{formlabel label="Admin Note"}
 	{forminput}
-		<input type="text" name="admin_note" value="{$smarty.request.message|strip_tags|stripslashes|escape|trim}"/>
+		<input class="form-control" type="text" name="admin_note" value="{$smarty.request.message|strip_tags|stripslashes|escape|trim}"/>
 		{formhelp note="Enter the reason for this gift certificate. It will NOT be visible to the customer."}
 	{/forminput}
 </div>
@@ -240,7 +240,7 @@ function check_form(form_name) {
 <div class="form-group">
 	{formlabel label="Related to Order"}
 	{forminput}
-		<input type="text" name="oID" value="{$smarty.request.oID}" />
+		<input class="form-control" type="number" name="oID" value="{$smarty.request.oID}" />
 	{/forminput}
 </div>
 

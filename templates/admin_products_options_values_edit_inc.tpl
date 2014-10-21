@@ -12,7 +12,7 @@
 
 	<div class="form-group">
 		<div class="formlabel">{tr}Options Name{/tr}</div>
-		<div class="forminput"><input type="text" name="products_options_values_name" value="{$editValue.products_options_values_name|escape:html}">&nbsp;</div>
+		<div class="forminput"><input type="text" class="form-control" name="products_options_values_name" value="{$editValue.products_options_values_name|escape:html}">&nbsp;</div>
 	</div>
 	
 	<div class="form-group">
@@ -30,7 +30,7 @@
 
 	<div class="form-group">
 		<div class="formlabel">{tr}Sort Order{/tr}</div>
-		<div class="forminput"><input type="text" name="products_options_sort_order" value="{$editValue.products_options_sort_order}" size="4">&nbsp;</div>
+		<div class="forminput"><input type="text" class="form-control" name="products_options_sort_order" value="{$editValue.products_options_sort_order}" size="4">&nbsp;</div>
 	</div>
 
 	<div class="form-group">
@@ -44,29 +44,29 @@
 	{legend legend="Attribute Pricing"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Fixed Attribute Price{/tr}</div>
-			<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="{$editValue.price_prefix|default:'+'}" />&nbsp;<input type="text" name="options_values_price" value="{$editValue.options_values_price}" size="6" />&nbsp;</div>
+			<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="{$editValue.price_prefix|default:'+'}" />&nbsp;<input type="text" class="form-control" name="options_values_price" value="{$editValue.options_values_price}" size="6" />&nbsp;</div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}One Time{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_onetime" value="{$editValue.attributes_price_onetime}" size="6" />&nbsp;</div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_onetime" value="{$editValue.attributes_price_onetime}" size="6" />&nbsp;</div>
 		</div>
 
 	{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_PRICE_FACTOR') == 'true'}
 		<div class="form-group">
 			<div class="formlabel">{tr}% Attribute Price{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_factor" value="{$editValue.attributes_price_factor}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_factor" value="{$editValue.attributes_price_factor}" size="6" /></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}Offset{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_pf_offset" size="6" value="{$editValue.attributes_pf_offset}" />&nbsp;</div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_offset" size="6" value="{$editValue.attributes_pf_offset}" />&nbsp;</div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}One Time Factor{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_pf_onetime" value="{$editValue.attributes_pf_onetime}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_onetime" value="{$editValue.attributes_pf_onetime}" size="6" /></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}Offset{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_pf_onetime_offset" value="{$editValue.attributes_pf_onetime_offset}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_onetime_offset" value="{$editValue.attributes_pf_onetime_offset}" size="6" /></div>
 		</div>
 	{/if}
 	{/legend}
@@ -75,11 +75,11 @@
 	{legend legend="Attribute Quantity Pricing"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Option Qty Price Discount{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_qty_prices" value="{$editValue.attributes_qty_prices}" size="60"></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_qty_prices" value="{$editValue.attributes_qty_prices}" size="60"></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}Onetime Option Qty Price Discount{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_qty_prices_onetime" value="{$editValue.attributes_qty_prices_onetime}" size="60"></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_qty_prices_onetime" value="{$editValue.attributes_qty_prices_onetime}" size="60"></div>
 		</div>
 	{/legend}
 {/if}
@@ -88,19 +88,19 @@
 	{legend legend="Attribute Text Pricing"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Price Per Word{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_words" value="{$editValue.attributes_price_words}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_words" value="{$editValue.attributes_price_words}" size="6" /></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}- Free Words{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_words_free" value="{$editValue.attributes_price_words_free}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_words_free" value="{$editValue.attributes_price_words_free}" size="6" /></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}Price Per Letter{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_letters" value="{$editValue.attributes_price_letters}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_letters" value="{$editValue.attributes_price_letters}" size="6" /></div>
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}- Free Letters{/tr}</div>
-			<div class="forminput"><input type="text" name="attributes_price_letters_free" value="{$editValue.attributes_price_letters_free}" size="6" /></div>
+			<div class="forminput"><input type="text" class="form-control" name="attributes_price_letters_free" value="{$editValue.attributes_price_letters_free}" size="6" /></div>
 		</div>
 	{/legend}
 {/if}
@@ -108,7 +108,7 @@
 	{legend legend="Attribute Weights"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Weight{/tr}</div>
-			<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlength="1"  value="{$editValue.products_attributes_wt_pfix|default:'+'}" />&nbsp;<input type="text" name="products_attributes_wt" value="{$editValue.products_attributes_wt}" size="6" /></div>
+			<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlength="1"  value="{$editValue.products_attributes_wt_pfix|default:'+'}" />&nbsp;<input type="text" class="form-control" name="products_attributes_wt" value="{$editValue.products_attributes_wt}" size="6" /></div>
 		</div>
 	{/legend}
 
