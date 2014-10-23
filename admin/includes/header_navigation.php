@@ -23,6 +23,13 @@
 			print '<li><a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $configuration_groups['cg_id'], 'NONSSL') . '">' . $configuration_groups['cg_title'] . '</a></li>';
 		}
 ?>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>template_select.php">Template Selection</a></li>
+					<li><a href="/kernel/admin/index.php?page=layout&amp;module_package=bitcommerce">Layout Boxes Controller</a></li>
+					<li><a href="layout_controller.php?action=reset_defaults">RESET LAYOUT</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>banner_manager.php">Banner Manager</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>admin.php">Admin Settings</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>store_manager.php">Store Manager</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>define_pages_editor.php">Define Pages Editor</a></li>
 				</ul>
 			</li>
 <?php
@@ -75,6 +82,7 @@
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>music_genre.php">Music Genre</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>media_manager.php">Media Manager</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>media_types.php">Media Types</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>easypopulate.php">Easy Populate</a></li>
 				</ul>
 			</li>
             <li class="dropdown">
@@ -92,6 +100,9 @@
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_queue.php">Gift Certificates Queue</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_mail.php">Mail Gift Certificate</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_sent.php">Gift Certificates sent</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>mail.php">Send Email</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>email_welcome.php">Email Welcome</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>newsletters.php">Newsletter Manager</a></li>
 				</ul>
 			</li>
 
@@ -120,30 +131,9 @@
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>stats_customers_referrals.php">Customers Referral</a></li>
 				</ul>
 			</li>
-
-            <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Tools');?> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>template_select.php">Template Selection</a></li>
-					<li><a href="/kernel/admin/index.php?page=layout&amp;module_package=bitcommerce">Layout Boxes Controller</a></li>
-					<li><a href="layout_controller.php?action=reset_defaults">RESET LAYOUT</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>banner_manager.php">Banner Manager</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>mail.php">Send Email</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>newsletters.php">Newsletter Manager</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>server_info.php">Server Info</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>whos_online.php">Who's Online</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>admin.php">Admin Settings</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>email_welcome.php">Email Welcome</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>store_manager.php">Store Manager</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>developers_tool_kit.php">Developers Tool Kit</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>define_pages_editor.php">Define Pages Editor</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>easypopulate.php">Easy Populate</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>sqlpatch.php">Install SQL Patches</a></li>
-				</ul>
-			</li>
 		</ul>
 
-		<div class="col-sm-3 col-md-2 navbar-right">
+		<div class="col-md-3 navbar-right hidden-sm">
 			<form action="<?=BITCOMMERCE_PKG_URL?>admin/index.php" class="navbar-form form-search" role="search">
 				<div class="input-group input-group-sm">
 					<input type="text" name="lookup_order_id" class="form-control" placeholder="Order #" name="srch-term" id="srch-term">
