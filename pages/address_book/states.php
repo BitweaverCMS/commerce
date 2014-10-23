@@ -18,4 +18,4 @@ if ( !empty( $entry['country_id'] ) ) {
 	$stateInput = zen_draw_input_field('state');
 }
 
-print $stateInput.'<acronym title="'.tra('Required').'">*</acronym>';
+print $stateInput;

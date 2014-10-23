@@ -265,7 +265,7 @@
 function zen_get_country_zone_list( $pName, $pCountriesId, $pSelected = '', $pParameters = '') {
 	$ret = '';
 	if( $zones = zen_get_country_zones( $pCountriesId ) ) {
-		$zoneArray = array(array('id' => '', 'text' => tra('Please Choose Your State') ));
+		$zoneArray = array(array('id' => '', 'text' => tra('Please Choose Your State or Province') ));
 		foreach( $zones as $zoneId=>$zoneHash ) {
 			$zoneArray[] = array('id' => $zoneHash['zone_id'], 'text' => $zoneHash['zone_name']);
 		}

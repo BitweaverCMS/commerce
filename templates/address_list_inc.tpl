@@ -8,8 +8,8 @@
 			{assign var=class value="row"}
 		{/if}
 		<div class="{$class}">
-			<label class="radio">
-				{html_radios name='address' values=$addresses[ix].address_book_id checked=$checked}
+			<label class="radio-inline">
+				<input type="radio" name="address" value="{$addresses[ix].address_book_id}" {if $checked}checked=checked{/if}/>
 				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$addresses[ix]}
 			</label>
 		</div>

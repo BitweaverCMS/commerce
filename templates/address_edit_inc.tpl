@@ -6,7 +6,7 @@
 	<div class="form-group">
 		{formfeedback error=$addressErrors.gender}
 		{forminput}
-			<label class="radio inline-block"><input type="radio" value="m" {if $address.entry_gender == 'm'}checked="checked"{/if} name="gender"/> {tr}Mr.{/tr}</label> &nbsp; <label class="radio inline-block"><input type="radio" {if $address.entry_gender == 'f'}checked="checked"{/if} value="f" name="gender"/> {tr}Ms.{/tr}</label>
+			<label class="radio-inline width-auto"><input type="radio" value="m" {if $address.entry_gender == 'm'}checked="checked"{/if} name="gender"/> {tr}Mr.{/tr}</label> &nbsp; <label class="radio-inline width-auto"><input type="radio" {if $address.entry_gender == 'f'}checked="checked"{/if} value="f" name="gender"/> {tr}Ms.{/tr}</label>
 		{/forminput}
 	</div>
 {/if}
@@ -56,7 +56,7 @@
 </div>
 {if $gCommerceSystem->isConfigActive('ACCOUNT_STATE')}
 <div class="form-group {if $addressErrors.state}error{/if}">
-	{formlabel label="State/Province" for=""}
+	{formlabel label="State or Province" for=""}
 	{forminput id="addr_state"}
 		{$gBitCustomer->getStateInputHtml($address)}
 		{formhelp note=$addressErrors.state}
@@ -87,7 +87,7 @@
 </div>
 <div class="form-group">
 	{forminput}
-		<label class="checkbox">
+		<label class="checkbox-inline">
 			<input type="checkbox" name="primary" values="on" {if $address.entry_primary=='t'}checked="checked"{/if} id="primary"> {tr}Set as Primary Address{/tr}
 		<label>
 	{/forminput}
@@ -98,7 +98,6 @@
 function updateStates( pCountryId ) {
 	var ajax = new BitBase.SimpleAjax();
 	var donefn = function (r){
-		BitBase.hideSpinner();	
 		document.getElementById('addr_state').innerHTML = r.responseText;
 	};
 	
