@@ -256,7 +256,6 @@ class CommerceStatistics extends BitSingleton {
 	}
 
 	function getCustomerConversions( $pParamHash ) {
-//$this->debug();
 		$ret = array();
 
 		// #### Total Registrations
@@ -391,7 +390,6 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
 				WHERE co.`orders_status`>0 $whereSql";
 		$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
-$this->debug(0);
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 		} elseif( !empty( $pParamHash['period'] ) ) {
