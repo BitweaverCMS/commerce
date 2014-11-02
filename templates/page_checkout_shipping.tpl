@@ -49,7 +49,7 @@
 							{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
 
 					<div class="form-group submit">
-						<button class="btn btn-default btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Address{/tr}</button>
+						<button class="btn btn-default btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Shipping Address{/tr}</button>
 					</div>
 				</fieldset>
 

@@ -7,6 +7,8 @@
 	<section class="body">
 
 	{if !$gBitUser->isRegistered() || !$order->billing || $changeAddress}
+		<div class="alert alert-info">{tr}The billing address should match the address on your credit card statement.{/tr}</div>
+
 		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
 			<input type="hidden" name="main_page" value="checkout_payment" />
 			{if !$gBitUser->isRegistered()}
@@ -16,7 +18,7 @@
 			<div class="row">
 				{if count( $addresses )}
 				<div class="col-md-6">
-					{legend legend="Choose Shipping Address"}
+					{legend legend="Choose Billing Address"}
 						{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
 					{/legend}
 					<div class="form-group clear">
@@ -126,7 +128,7 @@
 		{legend legend="Billing Address"}
 					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 					{formhelp note="The billing address should match the address on your credit card statement."}
-					<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Address{/tr}</a>
+					<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Billing Address{/tr}</a>
 		{/legend}
 	
 		<fieldset>
