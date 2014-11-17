@@ -179,7 +179,10 @@ class order extends CommerceOrderBase {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
 				if( !empty( $pListHash['recent_comment'] ) ) {
-					$ret[$row['orders_id']]['comments'] = $gBitDb->getOne( "SELECT `comments` FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) );
+					if( $lastComment = $gBitDb->getRow( "SELECT *, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
+						$ret[$row['orders_id']]['comments_time'] = $lastComment['comments_time'];
+						$ret[$row['orders_id']]['comments'] = $lastComment['comments'];
+					}
 				}
 				if( !empty( $pListHash['orders_products'] ) ) {
 					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cp.*, cop.*

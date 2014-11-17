@@ -29,7 +29,7 @@
 	</tr>
 	{if $order.comments && $order.comments!='Credit Card processed'}
 	<tr class="comments">
-		<td colspan="8">{$order.comments}</td>
+		<td colspan="8"><span class="badge">{$order.comments_time}</span> {$order.comments}</td>
 	</tr>
 	{/if}
 	{if $order.products}
