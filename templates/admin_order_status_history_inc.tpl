@@ -3,12 +3,12 @@
 	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>
 	<textarea class="form-control" name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
-	<label class="checkbox">
+	{forminput label="checkbox"}
 		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
-	</label>
-	<label class="checkbox">
+	{/forminput}
+	{forminput label="checkbox"}
 		<input type="checkbox" name="update_totals" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
-	</label>
+	{/forminput}
 		<div id="additional-charge" style="display:none">
 			{forminput}
 				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol()}

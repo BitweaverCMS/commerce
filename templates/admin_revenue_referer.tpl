@@ -27,10 +27,10 @@
 			{/forminput}
 		</div>
 		<div class="form-group">
-			<label class="checkbox">
+			{forminput label="checkbox"}
 				<input type="checkbox" name="new_reg" value="y" {if $smarty.request.new_reg}checked="checked"{/if}/>New Registrations
 				{formhelp note="Only include new registrations that occurred during this timeframe."}
-			</label>
+			{/forminput}
 		</div>
 		<div class="form-group submit">
 			{forminput}
