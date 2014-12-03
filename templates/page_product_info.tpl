@@ -16,19 +16,19 @@
 		</header>
 
 <div class="row">
-	{if $gBitProduct->getImageUrl(0,'medium')}	
-	<div class="col-md-4">
-		<a rel="nofollow" href="{$gBitProduct->getImageUrl('large')}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} >
-		<img class="thumb" src="{$gBitProduct->getImageUrl('medium')}" alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb" /></a>
+	{assign var=thumbUrl value=$gBitProduct->getImageUrl('large')}	
+	{if $thumbUrl}
+	<div class="col-sm-4">
+		<a rel="nofollow" href="{$thumbUrl}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} ><img src="{$thumbUrl}" class="img-responsive"  alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb"/></a>
 	</div>
 	{/if}
 		
-	<div class="col-md-8">
+	<div class="col-sm-8">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
 		<div class="row">
 			{if $gBitProduct->getField('products_description')}
-			<div class="col-md-7">
+			<div class="col-sm-7">
 				<div class="content">
 					{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
 						<div class="form-group">
@@ -46,7 +46,7 @@
 				</div>
 			</div>
 			{/if}
-			<div class="col-md-5">
+			<div class="col-sm-5">
 				<div class="box addtocart">
 					{if $gBitProduct->getBasePrice() > 0}
 					<div class="form-group">
