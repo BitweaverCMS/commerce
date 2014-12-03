@@ -1,13 +1,13 @@
 <h2>{tr}Previous Orders{/tr}</h2>
 
-<dl class="data">
+<table class="table table-hover">
 {foreach from=$ordersHistory item=ordersRow key=ordersId}
-	<dt class="item clear">
-		<div class="floaticon">
-			<div>{$ordersRow.orders_status_name}, {$ordersRow.date_purchased|zen_date_short}</div>
-			<div>{$ordersRow.order_total}</div>
-		</div>
+<tr>
+	<td>
 		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}index.php?main_page=account_history_info&order_id={$ordersRow.orders_id}">{tr}#{/tr}{$ordersRow.orders_id}</a>
+		<div class="small">{$ordersRow.date_purchased|zen_date_short}</div>
+	</td>
+	<td>
 		{$ordersRow.billing_name}
 		{if $ordersRow.delivery_name|trim && $ordersRow.billing_name != $ordersRow.delivery_name}
 			<em>{tr}sent to{/tr} {$ordersRow.delivery_name}</em>
@@ -20,7 +20,17 @@
 			<em>{tr}Online Order{/tr}</em>
 		{/if}
 		</dd>
+	</td>
+	<td>
+		<div>{$ordersRow.order_total}</div>
+		<div class="small">{$ordersRow.orders_status_name}</div>
+	</td>
+</tr>
 {foreachelse}
-	<dt><em>{tr}No Orders{/tr}</em></dt>
+<tr>
+	<td>
+		<em>{tr}No Orders{/tr}</em>
+	</td>
+</tr>
 {/foreach}
-</dl>
+</table>
