@@ -35,26 +35,32 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
 </head>
-<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
+<body>
 
 <!-- body_text //-->
-<table>
-  <tr>
-    <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="pageHeading"><?php echo nl2br(STORE_NAME_ADDRESS); ?></td>
-        <td class="pageHeading" align="right"></td>
-      </tr>
-    </table></td>
-  </tr>
-  <tr>
-    <td><table width="100%" border="0" cellspacing="0" cellpadding="2">
-      <tr>
-        <td colspan="2"><?php echo zen_draw_separator(); ?></td>
-      </tr>
-
+<div class="container">
+	<div class="row">
+		<div class="col-sm-6">
+			<header>
+				<h1 class="page-heading"><?php echo ENTRY_ORDER_ID . $oID; ?></h1>
+			</header>
+		</div>
+		<div class="col-sm-6 text-right">
+			<div><strong><?php echo ENTRY_DATE_PURCHASED; ?></strong> <?php echo ($order->info['date_purchased']); ?></div>
+			<div><strong><?php echo ENTRY_PAYMENT_METHOD; ?></strong> <?php echo $order->info['payment_method']; ?></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="panel panel-default height">
+				<div class="panel-body">
+					<?php echo nl2br(STORE_NAME_ADDRESS); ?>
+				</div>
+			</div>
+		</div>
 <?php
       $order_check = $gBitDb->Execute("select cc_cvv, customers_name, customers_company, customers_street_address,
                                     customers_suburb, customers_city, customers_postcode,
@@ -70,74 +76,29 @@
                              from " . TABLE_ORDERS . "
                              where `orders_id` = '" . (int)$oID . "'");
   $show_customer = 'false';
-  if ($order_check->fields['billing_name'] != $order_check->fields['delivery_name']) {
-    $show_customer = 'true';
-  }
-  if ($order_check->fields['billing_street_address'] != $order_check->fields['delivery_street_address']) {
-    $show_customer = 'true';
-  }
-  if ($show_customer == 'true') {
 ?>
+		<div class="col-xs-12 col-sm-3">
+			<div class="panel panel-default height">
+				<div class="panel-heading">Billing Adddres</div>
+				<div class="panel-body">
+					<?php echo zen_address_format($order->customer['format_id'], $order->billing, 1, '', '<br>'); ?>
+					<div><?php echo $order->customer['telephone']; ?></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-3">
+			<div class="panel panel-default height">
+				<div class="panel-heading">Shipping Address</div>
+				<div class="panel-body">
+					<?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br>'); ?>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	
+	<table class="table">
       <tr>
-        <td class="main"><b><?php echo ENTRY_CUSTOMER; ?></b></td>
-      </tr>
-      <tr>
-        <td class="main"><?php echo zen_address_format($order->customer['format_id'], $order->customer, 1, '', '<br>'); ?></td>
-      </tr>
-<?php } ?>
-      <tr>
-        <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
-          <tr>
-            <td class="main"><b><?php echo ENTRY_SOLD_TO; ?></b></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo zen_address_format($order->customer['format_id'], $order->billing, 1, '', '<br>'); ?></td>
-          </tr>
-          <tr>
-            <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '5'); ?></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo $order->customer['telephone']; ?></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo '<a href="mailto:' . $order->customer['email_address'] . '">' . $order->customer['email_address'] . '</a>'; ?></td>
-          </tr>
-        </table></td>
-        <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
-          <tr>
-            <td class="main"><b><?php echo ENTRY_SHIP_TO; ?></b></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br>'); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-    </table></td>
-  </tr>
-  <tr>
-    <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-  </tr>
-  <tr>
-    <td class="main"><b><?php echo ENTRY_ORDER_ID . $oID; ?></b></td>
-  </tr>
-  <tr>
-    <td><table border="0" cellspacing="0" cellpadding="2">
-      <tr>
-        <td class="main"><strong><?php echo ENTRY_DATE_PURCHASED; ?></strong></td>
-        <td class="main"><?php echo zen_date_long($order->info['date_purchased']); ?></td>
-      </tr>
-      <tr>
-        <td class="main"><b><?php echo ENTRY_PAYMENT_METHOD; ?></b></td>
-        <td class="main"><?php echo $order->info['payment_method']; ?></td>
-      </tr>
-    </table></td>
-  </tr>
-  <tr>
-    <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-  </tr>
-  <tr>
-    <td><table>
-      <tr class="dataTableHeadingRow">
         <td class="dataTableHeadingContent" colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
         <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></td>
         <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TAX; ?></td>
@@ -154,7 +115,7 @@
 
       if (isset($order->contents[$opid]['attributes']) && (($k = sizeof($order->contents[$opid]['attributes'])) > 0)) {
         for ($j = 0; $j < $k; $j++) {
-          echo '<div style="white-space:nowrap;"><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'];
+          echo '<div><small>&nbsp;<i> - ' . $order->contents[$opid]['attributes'][$j]['option'] . ': ' . $order->contents[$opid]['attributes'][$j]['value'];
           if ($order->contents[$opid]['attributes'][$j]['price'] != '0') echo ' (' . $order->contents[$opid]['attributes'][$j]['prefix'] . $currencies->format($order->contents[$opid]['attributes'][$j]['price'] * $order->contents[$opid]['products_quantity'], true, $order->info['currency'], $order->info['currency_value']) . ')';
           if ($order->contents[$opid]['attributes'][$j]['product_attribute_is_free'] == '1' and $order->contents[$opid]['product_is_free'] == '1') echo TEXT_INFO_ATTRIBUTE_FREE;
           echo '</i></small></div>';
@@ -182,25 +143,19 @@
                     '</b></td>' . "\n";
       echo '      </tr>' . "\n";
     }
-?>
-      <tr>
-        <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
-<?php
+
   for ($i = 0, $n = sizeof($order->totals); $i < $n; $i++) {
     echo '          <tr>' . "\n" .
-         '            <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Text">' . $order->totals[$i]['title'] . '</td>' . "\n" .
-         '            <td align="right" class="'. str_replace('_', '-', $order->totals[$i]['class']) . '-Amount">' . $order->totals[$i]['text'] . '</td>' . "\n" .
+         '            <td colspan="7" class="text-right '. str_replace('_', '-', $order->totals[$i]['class']) . '-Text">' . $order->totals[$i]['title'] . '</td>' . "\n" .
+         '            <td colspan="7" class="text-right '. str_replace('_', '-', $order->totals[$i]['class']) . '-Amount">' . $order->totals[$i]['text'] . '</td>' . "\n" .
          '          </tr>' . "\n";
   }
 ?>
-        </table></td>
-      </tr>
-    </table></td>
-  </tr>
-</table>
+    </table>
 <!-- body_text_eof //-->
 
-<br>
+</div>
+
 </body>
 </html>
 <?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
