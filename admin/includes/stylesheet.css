@@ -1,6 +1,6 @@
 
 table.order-items	{ background-color:#f3f3f3; color:#555555; }
-table.table tr.comments	td { border-top:none; }
+table.table tr.comments	td { border-top:none; font-size:80%; }
 
 .table td.supplemental	{ border: none; }
 
