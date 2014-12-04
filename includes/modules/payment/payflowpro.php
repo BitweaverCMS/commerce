@@ -216,6 +216,7 @@ class payflowpro extends CommercePluginPaymentBase {
 
 
 	protected function verifyPaymentParameters( &$pPaymentParameters ) {
+		global $gCommerceSystem, $currencies;
 
 		if( empty( $pPaymentParameters['charge_amount'] ) || !is_numeric( $pPaymentParameters['charge_amount'] ) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
@@ -223,12 +224,18 @@ class payflowpro extends CommercePluginPaymentBase {
 			$pPaymentParameters['charge_amount'] = (float)$pPaymentParameters['charge_amount'];
 		}
 
+		$payflowCurrency = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+
+		if( $pPaymentParameters['CURRENCY'] != $payflowCurrency ) {
+			$pPaymentParameters['charge_amount'] = $currencies->convert( $pPaymentParameters['charge_amount'], $payflowCurrency, $pPaymentParameters['CURRENCY'] );
+			$pPaymentParameters['CURRENCY'] = $payflowCurrency;
+		}
+
 		return count( $this->mErrors ) == 0;
 	}
 
 	function processPayment( $pPaymentParameters ) {
 		global $gDebug;
-
 		if( self::verifyPaymentParameters( $pPaymentParameters ) ) {
 			$postFields = array();
 /*
@@ -400,6 +407,7 @@ ZIP
 			'charge_amount' => number_format($order->info['total'], 2,'.',''),
 			'CVV2' => $order->getField( 'cc_cvv' ),
 			'NAME' => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
+			'CURRENCY' => $order->info['currency'],
 		) ) ) {
 			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
@@ -546,6 +554,7 @@ function after_process() {
 	global $gBitDb;
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
+		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', 'NOW')");
