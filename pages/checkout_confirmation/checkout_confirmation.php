@@ -82,18 +82,11 @@ $shipping_modules = new CommerceShipping($_SESSION['shipping']);
 
 // update customers_referral with $_SESSION['gv_id']
 if ($_SESSION['cc_id']) {
-	$discount_coupon_query = "select `coupon_code`
-							 from " . TABLE_COUPONS . "
-							 where `coupon_id` = '" . $_SESSION['cc_id'] . "'";
-
-	$discount_coupon = $gBitDb->Execute($discount_coupon_query);
-
-	$customers_referral_query = "select `customers_referral` from " . TABLE_CUSTOMERS . " where `customers_id`='" . $_SESSION['customer_id'] . "'";
-	$customers_referral = $gBitDb->Execute($customers_referral_query);
-
-// only use discount coupon if set by coupon
-	if ($customers_referral->fields['customers_referral'] == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
-		$gBitDb->Execute("update " . TABLE_CUSTOMERS . " set `customers_referral` ='" . $discount_coupon->fields['coupon_code'] . "' where `customers_id` ='" . $_SESSION['customer_id'] . "'");
+	$customersReferral = $gBitDb->getOne( "SELECT `customers_referral` FROM " . TABLE_CUSTOMERS . " WHERE `customers_id` = ?", array( $_SESSION['customer_id'] ) );
+	// only use discount coupon if set by coupon
+	if ($customersReferral == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
+		$discountCoupon = $gBitDb->getOne( "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?", array( $_SESSION['cc_id'] ) );
+		$gBitDb->query( "UPDATE " . TABLE_CUSTOMERS . " SET `customers_referral` = ? WHERE `customers_id` = ?", array( $discountCoupon, $_SESSION['customer_id'] ) );
 	} else {
 		// do not update referral was added before
 	}
