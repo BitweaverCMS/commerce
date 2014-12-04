@@ -116,7 +116,7 @@ class canadapost
 			$order->delivery['state'] = $state_name;
 		}
 
-		$strXml = "<?xml version=\"1.0\" ?>";
+		$strXml = '<?xml version="1.0" ?>';
 		// set package configuration.
 		$strXml .= "<eparcel>\n";
 		$strXml .= "	<language>" . $this->language . "</language>\n";
@@ -127,11 +127,11 @@ class canadapost
 		$strXml .= "		<itemsPrice>" . (string)$this->items_price . "</itemsPrice>\n";
 		// add items information.
 		$itemXml = '';
-		foreach( array_keys( $order->contents ) as $i ) {
-			$productObject = $order->getProductObject( $i );
+
+		for( $i= 0; $i < $pShipHash['shipping_num_boxes']; $i++ ) {
 			$itemXml .= "	<item>\n";
-			$itemXml .= "		<quantity>" . $order->contents[$i]['products_quantity'] . "</quantity>\n";
-			$itemXml .= "		<weight>" . $productObject->getWeight() . "</weight>\n";
+			$itemXml .= "		<quantity>1</quantity>\n";
+			$itemXml .= "		<weight>" . $shippingWeight / $shippingNumBoxes . "</weight>\n";
 /*
 			if ($this->item_dim_type[$i] == 'in') //convert to centimeters
 			{
@@ -140,12 +140,12 @@ class canadapost
 				$itemXml .= "		<height>" . ($this->item_height[$i] * (254 / 100)) . "</height>\n";
 			} else {
 */
-				$itemXml .= "		<length>30</length>\n";
-				$itemXml .= "		<width>30</width>\n";
+				$itemXml .= "		<length>5</length>\n";
+				$itemXml .= "		<width>5</width>\n";
 				$itemXml .= "		<height>5</height>\n";
 
 //			}
-			$itemXml .= "		<description>" . xmlentities( $productObject->getProductsModel() ) . "</description>\n";
+			$itemXml .= "		<description>Goods</description>\n";
 // Not sure what this means at the moment
 //			if ($this->item_ready_to_ship[$i] == '1') {
 //				$itemXml .= "		<readyToShip/>\n";
@@ -205,7 +205,7 @@ class canadapost
 				}
 			}
 
-			if( !empty( $canadapostQuote ) ) {
+			if( !empty( $canadapostQuote ) && is_array( $canadapostQuote ) ) {
 				$methods = array();
 				foreach( $canadapostQuote as $quoteCode => $quote ) {
 					if( empty( $pShipHash['method'] ) || $quoteCode == $pShipHash['method'] ) {
@@ -230,7 +230,7 @@ class canadapost
 			$errmsg = tra( 'There was no response from the Canada Post shipping estimate server.' );
 		}
 		if( !empty( $errmsg ) ) {
-			$errmsg .= ' '.tra( 'If you prefer to use Canada Post as your shipping method, please <a href="mailto:'.STORE_OWNER_EMAIL_ADDRESS.'">send us an email</a>.' );
+			$errmsg .= ' '.tra( 'If you prefer to use Canada Post as your shipping method, please contact <strong><a href="mailto:'.STORE_OWNER_EMAIL_ADDRESS.'">send us an email</a></strong>.' );
 			$ret['error'] = $errmsg;
 		}
 		return $ret;
