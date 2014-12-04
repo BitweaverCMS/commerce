@@ -1,21 +1,21 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
+// |zen-cart Open Source E-commerce																			 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
+// | Copyright (c) 2003 The zen-cart developers													 |
+// |																																			|
+// | http://www.zen-cart.com/index.php																		|
+// |																																			|
+// | Portions Copyright (c) 2003 osCommerce															 |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
+// | This source file is subject to version 2.0 of the GPL license,			 |
+// | that is bundled with this package in the file LICENSE, and is				|
+// | available through the world-wide-web at the following url:					 |
+// | http://www.zen-cart.com/license/2_0.txt.														 |
 // | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
+// | to obtain it through the world-wide-web, please send a note to			 |
+// | license@zen-cart.com so we can mail you a copy immediately.					|
 // +----------------------------------------------------------------------+
 // $Id$
 //
@@ -23,35 +23,32 @@
 ////
 // Class to handle currencies
 // TABLES: currencies
-  class currencies extends BitBase {
-    var $currencies;
+class currencies extends BitBase {
+	var $currencies;
 
 // class constructor
-    function __construct() {
-      global $gBitDb;
-	  parent::__construct();
-      $this->currencies = array();
-      $currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`,
-                                  `thousands_point`, `decimal_places`, `currency_value`
-                          FROM " . TABLE_CURRENCIES;
+	function __construct() {
+		global $gBitDb;
+		parent::__construct();
+		$this->currencies = array();
+		$currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `currency_value` FROM " . TABLE_CURRENCIES;
 
-      $currencies = $gBitDb->query( $currencies_query );
+		$currencies = $gBitDb->query( $currencies_query );
 
-      while (!$currencies->EOF) {
-        $this->currencies[$currencies->fields['code']] = array('title' => $currencies->fields['title'],
-                                                       'symbol_left' => $currencies->fields['symbol_left'],
-                                                       'symbol_right' => $currencies->fields['symbol_right'],
-                                                       'decimal_point' => $currencies->fields['decimal_point'],
-                                                       'thousands_point' => $currencies->fields['thousands_point'],
-                                                       'decimal_places' => $currencies->fields['decimal_places'],
-                                                       'currency_value' => $currencies->fields['currency_value']);
+		while (!$currencies->EOF) {
+			$this->currencies[$currencies->fields['code']] = array( 'title' => $currencies->fields['title'],
+																	 'symbol_left' => $currencies->fields['symbol_left'],
+																	 'symbol_right' => $currencies->fields['symbol_right'],
+																	 'decimal_point' => $currencies->fields['decimal_point'],
+																	 'thousands_point' => $currencies->fields['thousands_point'],
+																	 'decimal_places' => $currencies->fields['decimal_places'],
+																	 'currency_value' => $currencies->fields['currency_value']);
+			$currencies->MoveNext();
+		}
+	}
 
-      $currencies->MoveNext();
-      }
-    }
-
-    function formatAddTax( $pPrice, $pTax ) {
-		$this->format( zen_add_tax( $pPrice, $pTax  ) );
+	function formatAddTax( $pPrice, $pTax ) {
+		$this->format( zen_add_tax( $pPrice, $pTax	) );
 	}
 
 	function getRightSymbol( $pCurrency = NULL ) {
@@ -64,9 +61,17 @@
 		return $this->currencies[$pCurrency]['symbol_left'];
 	}
 
+	public function getActiveCurrency() {
+		return  !empty( $_SESSION['currency'] ) && !empty( $this->currencies[ $_SESSION['currency']] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+	}
+
+	public function getActiveCurrencyHash() {
+		return $this->currencies[$this->getActiveCurrency()];
+	}
+
 	function verifyCurrency( $pCurrency ) {
 		if( empty( $pCurrency ) ) {
-			$pCurrency = !empty( $_SESSION['currency'] ) && !empty( $this->currencies[ $_SESSION['currency']] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+			$pCurrency = $this->getActiveCurrency();
 		}
 		if( empty( $this->currencies[$pCurrency] ) ) {
 			$pCurrency = DEFAULT_CURRENCY;
@@ -76,8 +81,29 @@
 	}
 
 // class methods
-    function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
 
+	function convert( $pValue, $pToCurrency=NULL, $pFromCurrency=DEFAULT_CURRENCY ) {
+		$convertValue = $pValue;
+		if( empty( $pToCurrency ) ) {
+			$pToCurrency = $this->getActiveCurrency();
+		}
+
+		if( !empty( $this->currencies[$pFromCurrency] ) && !empty( $this->currencies[$pToCurrency] ) ) {
+			// convert to DEFAULT VALUE
+			$convertValue = $pValue / $this->currencies[$pFromCurrency]['currency_value'];
+			if( $pToCurrency != DEFAULT_CURRENCY ) {
+				$convertValue = $convertValue * $this->currencies[$pToCurrency]['currency_value'];
+			}
+		}
+		return zen_round( $convertValue, $this->currencies[$pToCurrency]['decimal_places']);
+	}
+
+	function displayConversion( $pValue, $pToCurrency, $pFromCurrency=DEFAULT_CURRENCY ) {
+		$convertValue = $this->convert( $pValue, $pToCurrency, $pFromCurrency );
+		return $this->currencies[$pToCurrency]['symbol_left'] . number_format( $convertValue, $this->currencies[$pToCurrency]['decimal_places'], $this->currencies[$pToCurrency]['decimal_point'], $this->currencies[$pToCurrency]['thousands_point']) . $this->currencies[$pToCurrency]['symbol_right'];
+	}
+
+	function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
 		$currency_type = $this->verifyCurrency( $currency_type );
 		if ($calculate_currency_value == true) {
 			$rate = (float)(zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
@@ -91,46 +117,46 @@
 		}
 
 		return $format_string;
-    }
+	}
 
-    function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
-    	if (empty($currency_type)) {
-			$currency_type = !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY;
+	function value($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
+		if (empty($currency_type)) {
+			$currency_type = $this->getActiveCurrency();
 		}
 
-      if ($calculate_currency_value == true) {
-        if ($currency_type == DEFAULT_CURRENCY) {
-          $rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$currency_type]['currency_value'];
-        } else {
-          $rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
-        }
-        $currency_value = zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']);
-      } else {
-        $currency_value = zen_round($number, $this->currencies[$currency_type]['decimal_places']);
-      }
+		if ($calculate_currency_value == true) {
+			if ($currency_type == DEFAULT_CURRENCY) {
+				$rate = (zen_not_null($currency_value)) ? $currency_value : 1/$this->currencies[$currency_type]['currency_value'];
+			} else {
+				$rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
+			}
+			$currency_value = zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']);
+		} else {
+			$currency_value = zen_round($number, $this->currencies[$currency_type]['decimal_places']);
+		}
 
-      return $currency_value;
-    }
+		return $currency_value;
+	}
 
-    function is_set($code) {
-      if (isset($this->currencies[$code]) && zen_not_null($this->currencies[$code])) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+	function is_set($code) {
+		if (isset($this->currencies[$code]) && zen_not_null($this->currencies[$code])) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    function get_value($code) {
-      return $this->currencies[$code]['currency_value'];
-    }
+	function get_value($code) {
+		return $this->currencies[$code]['currency_value'];
+	}
 
-    function get_decimal_places($code) {
-      return $this->currencies[$code]['decimal_places'];
-    }
+	function get_decimal_places($code) {
+		return $this->currencies[$code]['decimal_places'];
+	}
 
-    function display_price($products_price, $products_tax, $quantity = 1) {
-      return $this->format(zen_add_tax($products_price, $products_tax) * $quantity);
-    }
+	function display_price($products_price, $products_tax, $quantity = 1) {
+		return $this->format(zen_add_tax($products_price, $products_tax) * $quantity);
+	}
 
 	function verify( &$pParamHash ) {
 		if( empty( $pParamHash['code'] ) ) {
@@ -191,5 +217,5 @@
 		}
 		sscanf( $pBulkString, "\n" );
 	}
-  }
+}
 ?>
