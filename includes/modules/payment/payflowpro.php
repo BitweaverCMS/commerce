@@ -226,9 +226,8 @@ class payflowpro extends CommercePluginPaymentBase {
 
 		$payflowCurrency = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
 
-		if( $pPaymentParameters['CURRENCY'] != $payflowCurrency ) {
-			$pPaymentParameters['charge_amount'] = $currencies->convert( $pPaymentParameters['charge_amount'], $payflowCurrency, $pPaymentParameters['CURRENCY'] );
-			$pPaymentParameters['CURRENCY'] = $payflowCurrency;
+		if( DEFAULT_CURRENCY != $payflowCurrency ) {
+			$pPaymentParameters['charge_amount'] = $currencies->convert( $pPaymentParameters['charge_amount'], $payflowCurrency, DEFAULT_CURRENCY );
 		}
 
 		return count( $this->mErrors ) == 0;
@@ -407,7 +406,6 @@ ZIP
 			'charge_amount' => number_format($order->info['total'], 2,'.',''),
 			'CVV2' => $order->getField( 'cc_cvv' ),
 			'NAME' => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
-			'CURRENCY' => $order->info['currency'],
 		) ) ) {
 			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
