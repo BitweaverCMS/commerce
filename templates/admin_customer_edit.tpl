@@ -12,10 +12,10 @@
 			<div class="form-group">
 				{formlabel label='Gender'}
 				{forminput}
-					<label class="radio inline">
+					<label class="radio-inline">
 					<input type="radio" name="customers_gender" value="f" {if $cInfo->customers_gender=='f'}selected="selected"{/if}/> {tr}Female{/tr}
 					</label>
-					<label class="radio inline">
+					<label class="radio-inline">
 					<input type="radio" name="customers_gender" value="m" {if $cInfo->customers_gender=='m'}selected="selected"{/if}/> {tr}Male{/tr}
 					</label>
 				{/forminput}

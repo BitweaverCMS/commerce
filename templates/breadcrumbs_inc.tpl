@@ -1,5 +1,5 @@
 {if $breadcrumbs}
-<ul class="breadcrumbs">
+<ol class="breadcrumb">
 	<li class="crumb0"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}">{tr}Shopping{/tr}</a></li>
 	{section name="crumb" loop=$breadcrumbs}
 		<li class="crumb{$smarty.section.crumb.iteration}" >
@@ -8,5 +8,5 @@
 		{if $breadcrumbs[crumb].link} </a>{else}</span>{/if}
 		</li>
 	{/section}
-</ul>
+</ol>
 {/if}

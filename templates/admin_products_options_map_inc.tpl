@@ -11,7 +11,7 @@
 			{if $option.values}
 					{foreach from=$option.values key=optionValueId item=optionValue}
 					<li class="item {cycle values="odd,even"}">
-						<label class="checkbox">
+						{forminput label="checkbox"}
 							<input type="checkbox" name="products_options[]" value="{$optionValueId}" {if $gBitProduct->hasOptionValue($optionValueId)}checked="checked"{/if} />
 							{$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
 						
@@ -41,7 +41,7 @@
 							{if $optionValue.attributes_required}
 								<em class="warning">{tr}Required{/tr}</em>
 							{/if}
-						</label>
+						{/forminput}
 					</li>
 					{/foreach}
 			{/if}

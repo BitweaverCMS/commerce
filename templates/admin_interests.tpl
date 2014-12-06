@@ -8,10 +8,10 @@
 
 {form}
 <div class="form-group">
-	<label class="checkbox">
+	{forminput label="checkbox"}
 		<input type="checkbox" name="commerce_register_interests" value="y" {if $gBitSystem->isFeatureActive('commerce_register_interests')}checked="checked"{/if} />Registration Interests
 		{formhelp note="Ask new users to choose their interests during registration."}
-	</label>
+	{/forminput}
 </div>
 <div class="form-group submit">
 	{forminput}

@@ -10,9 +10,9 @@
 </div>
 <div class="form-group">
 	{forminput}
-		<label class="checkbox">
+		{forminput label="checkbox"}
 			<input type="checkbox" name="update_totals" value="y" checked="checked"/> {tr}Update Order Totals{/tr}<br/>
-		</label>
+		{/forminput}
 	{/forminput}
 </div>
 <div class="form-group submit">
