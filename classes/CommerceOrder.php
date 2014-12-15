@@ -244,9 +244,6 @@ class order extends CommerceOrderBase {
 		$order_total_query = "select `text`, `orders_value` from " . TABLE_ORDERS_TOTAL . " where `orders_id` = '" . (int)$order_id . "' and class = 'ot_total'";
 		$order_total = $gBitDb->Execute($order_total_query);
 
-		$shipping_method_query = "select 'title', `orders_value` AS `shipping_total` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` =	? AND class = 'ot_shipping'";
-		$shippingInfo = $gBitDb->getRow($shipping_method_query, array( (int)$order_id ) );
-
 		$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
 		$order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
 
@@ -257,7 +254,6 @@ class order extends CommerceOrderBase {
 							'shipping_method' => $order->fields['shipping_method'],
 							'shipping_method_code' => $order->fields['shipping_method_code'],
 							'shipping_module_code' => $order->fields['shipping_module_code'],
-							'shipping_total' => $shippingInfo['shipping_total'],
 							'coupon_code' => $order->fields['coupon_code'],
 							'cc_type' => $order->fields['cc_type'],
 							'cc_owner' => $order->fields['cc_owner'],
@@ -272,6 +268,8 @@ class order extends CommerceOrderBase {
 							'tax' => $order->fields['order_tax'],
 							'ip_address' => $order->fields['ip_address']
 							);
+
+		$this->info['shipping_total'] =  $gBitDb->getRow( "SELECT `orders_value` AS `shipping_total` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( (int)$order_id ) );
 
 		$this->customer = array('id' => $order->fields['customers_id'],
 								'user_id' => $order->fields['user_id'],
