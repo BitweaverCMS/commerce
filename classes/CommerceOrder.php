@@ -413,7 +413,6 @@ class order extends CommerceOrderBase {
 				if( $product && $product->isValid() ) {
 					$productAttributes = array();
 					if( !empty( $this->contents[$productsKey]['attributes'] ) ) {
-vd( $this->contents[$productsKey]['attributes'] );
 						foreach( $this->contents[$productsKey]['attributes'] as $attribute ) {
 							$productAttributes[$attribute['option_id']] = $attribute['value_id'];
 						}
