@@ -68,9 +68,9 @@ class payflowpro extends CommercePluginPaymentBase {
 	function javascript_validation() {
 		if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
 			$js = '	if (payment_value == "' . $this->code . '") {' . "\n" .
-					'	var cc_owner = document.checkout_payment.payflowpro_cc_owner.value;' . "\n" .
-					'	var cc_number = document.checkout_payment.payflowpro_cc_number.value;' . "\n" .
-					'	var cc_cvv = document.checkout_payment.payflowpro_cc_csc.value;' . "\n" .
+					'	var cc_owner = document.checkout_payment.pfp_card_owner.value;' . "\n" .
+					'	var cc_number = document.checkout_payment.pfp_card_number.value;' . "\n" .
+					'	var cc_cvv = document.checkout_payment.pfp_card_cvv.value;' . "\n" .
 					'		if (cc_owner == "" || cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
 					'			error_message = error_message + "' . tra( '* The credit card number must be at least ' . CC_NUMBER_MIN_LENGTH . ' characters.\n' ) . '";' . "\n" .
 					'			error = 1;' . "\n" .
@@ -115,13 +115,13 @@ class payflowpro extends CommercePluginPaymentBase {
 							 'module' => $this->title,
 							 'fields' => array(
 								array(	'title' => tra( 'Card Owner\'s Name' ),
-							 			'field' => zen_draw_input_field('payflowpro_cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
+							 			'field' => zen_draw_input_field('pfp_card_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
 								),
 								array(	'title' => '<div class="row"><div class="col-xs-8 col-sm-8">'.tra( 'Card Number' ).'</div><div class="col-xs-4 col-sm-4"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</div></div>',
-										'field' => '<div class="row"><div class="col-xs-8 col-sm-8">' . zen_draw_input_field('payflowpro_cc_number', NULL, NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4">' . zen_draw_input_field('payflowpro_cc_csc',NULL, NULL, 'number')  . '</div></div>',
+										'field' => '<div class="row"><div class="col-xs-8 col-sm-8">' . zen_draw_input_field('pfp_card_number', NULL, NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4">' . zen_draw_input_field('pfp_card_cvv',NULL, NULL, 'number')  . '</div></div>',
 								),
 								array(	'title' => tra( 'Expiration Date' ),
-										'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payflowpro_cc_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payflowpro_cc_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
+										'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('pfp_card_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('pfp_card_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
 								),
 							)
 						);
@@ -140,11 +140,11 @@ class payflowpro extends CommercePluginPaymentBase {
 
 		include(DIR_WS_CLASSES . 'cc_validation.php');
 		$result = FALSE;
-		if( empty( $_POST['payflowpro_cc_number'] ) ) {
+		if( empty( $_POST['pfp_card_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
 		} else {
 			$cc_validation = new cc_validation();
-			$result = $cc_validation->validate($_POST['payflowpro_cc_number'], $_POST['payflowpro_cc_expires_month'], $_POST['payflowpro_cc_expires_year'], $_POST['payflowpro_cc_csc']);
+			$result = $cc_validation->validate($_POST['pfp_card_number'], $_POST['pfp_card_expires_month'], $_POST['pfp_card_expires_year'], $_POST['pfp_card_cvv']);
 
 			$error = '';
 			switch ($result) {
@@ -163,7 +163,7 @@ class payflowpro extends CommercePluginPaymentBase {
 		}
 
 		if ( ($result == false) || ($result < 1) ) {
-			$payment_error_return = 'payment_error=' . $this->code . '&error=' . urlencode($error) . '&payflowpro_cc_owner=' . urlencode($_POST['payflowpro_cc_owner']) . '&payflowpro_cc_expires_month=' . $_POST['payflowpro_cc_expires_month'] . '&payflowpro_cc_expires_year=' . $_POST['payflowpro_cc_expires_year'];
+			$payment_error_return = 'payment_error=' . $this->code . '&error=' . urlencode($error) . '&pfp_card_owner=' . urlencode($_POST['pfp_card_owner']) . '&pfp_card_expires_month=' . $_POST['pfp_card_expires_month'] . '&pfp_card_expires_year=' . $_POST['pfp_card_expires_year'];
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, $payment_error_return, 'SSL', true, false));
 		}
 
@@ -184,13 +184,13 @@ class payflowpro extends CommercePluginPaymentBase {
 		$confirmation = array('title' => $this->title . ': ' . $this->cc_card_type,
 								'fields' => array(
 									array(	'title' => tra( 'Card Owner:' ),
-											'field' => $_POST['payflowpro_cc_owner']),
+											'field' => $_POST['pfp_card_owner']),
 									array(	'title' => tra( 'Card Number:' ),
 											'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
 									array(	'title' => tra( 'Expiration Date:' ),
-											'field' => strftime('%B,%Y', mktime(0,0,0,$_POST['payflowpro_cc_expires_month'], 1, '20' . $_POST['payflowpro_cc_expires_year']))),
+											'field' => strftime('%B,%Y', mktime(0,0,0,$_POST['pfp_card_expires_month'], 1, '20' . $_POST['pfp_card_expires_year']))),
 									array(	'title' => tra( 'CVV Number' ),
-											'field' => $_POST['payflowpro_cc_csc'])
+											'field' => $_POST['pfp_card_cvv'])
 									)
 								);
 
@@ -204,11 +204,11 @@ class payflowpro extends CommercePluginPaymentBase {
 	function process_button() {
 		global $_SERVER, $_POST, $order, $total_tax, $shipping_cost, $customer_id;
 		// These are hidden fields on the checkout confirmation page
-		$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['payflowpro_cc_owner']) .
+		$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['pfp_card_owner']) .
 								 zen_draw_hidden_field('cc_expires', $this->cc_expiry_month . substr($this->cc_expiry_year, -2)) .
 								 zen_draw_hidden_field('cc_type', $this->cc_card_type) .
 								 zen_draw_hidden_field('cc_number', $this->cc_card_number) .
-								 zen_draw_hidden_field('cc_cvv', $_POST['payflowpro_cc_csc']);
+								 zen_draw_hidden_field('cc_cvv', $_POST['pfp_card_cvv']);
 
 		$process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
 		return $process_button_string;
