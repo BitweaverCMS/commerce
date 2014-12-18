@@ -507,37 +507,6 @@
 
 <!-- body //-->
 <table border="0" width="100%" cellspacing="2" cellpadding="2">
-<?php if ($action == '') { ?>
-  <tr>
-    <td class="smallText" width="100%" align="right">
-      <?php
-// toggle switch for display sort order
-        $categories_products_sort_order_array = array(array('id' => '0', 'text' => TEXT_SORT_PRODUCTS_SORT_ORDER_PRODUCTS_NAME),
-                              array('id' => '1', 'text' => TEXT_SORT_PRODUCTS_NAME),
-                              array('id' => '2', 'text' => TEXT_SORT_PRODUCTS_MODEL),
-                              );
-        echo TEXT_CATEGORIES_PRODUCTS_SORT_ORDER_INFO . zen_draw_form_admin('set_categories_products_sort_order_form', FILENAME_CATEGORIES, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_categories_products_sort_order', $categories_products_sort_order_array, $reset_categories_products_sort_order, 'onChange="this.form.submit();"') .
-        zen_draw_hidden_field('cID', $cPath) .
-        zen_draw_hidden_field('cPath', $cPath) .
-        @zen_draw_hidden_field('pID', $_GET['pID']) .
-        @zen_draw_hidden_field('page', $_GET['page']) .
-        zen_draw_hidden_field('action', 'set_categories_products_sort_order') .
-        '</form>';
-
-// toggle switch for editor
-        $editor_array = array(array('id' => '0', 'text' => TEXT_NONE),
-                              array('id' => '1', 'text' => TEXT_HTML_AREA));
-        echo TEXT_EDITOR_INFO . zen_draw_form_admin('set_editor_form', FILENAME_CATEGORIES, '', 'get') . '&nbsp;&nbsp;' . zen_draw_pull_down_menu('reset_editor', $editor_array, ($_SESSION['html_editor_preference_status'] == 'HTMLAREA' ? '1' : '0'), 'onChange="this.form.submit();"') .
-        zen_draw_hidden_field('cID', $cPath) .
-        zen_draw_hidden_field('cPath', $cPath) .
-        @zen_draw_hidden_field('pID', $_GET['pID']) .
-        @zen_draw_hidden_field('page', $_GET['page']) .
-        zen_draw_hidden_field('action', 'set_editor') .
-        '</form>';
-      ?>
-    </td>
-  </tr>
-<?php } ?>
   <tr>
 <!-- body_text //-->
     <td width="100%" valign="top">

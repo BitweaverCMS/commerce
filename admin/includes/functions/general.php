@@ -862,79 +862,8 @@
 	}
 
 	function zen_remove_product($product_id, $ptc = 'true') {
-		global $gBitDb;
-		$product_image = $gBitDb->Execute("SELECT `products_image`
-																	 FROM " . TABLE_PRODUCTS . "
-																	 WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$duplicate_image = $gBitDb->Execute("SELECT count(*) as `total`
-																		 FROM " . TABLE_PRODUCTS . "
-																		 WHERE `products_image` = '" . zen_db_input($product_image->fields['products_image']) . "'");
-
-		if ($duplicate_image->fields['total'] < 2 and $product_image->fields['products_image'] != '') {
-			$products_image = $product_image->fields['products_image'];
-			$products_image_extention = substr($products_image, strrpos($products_image, '.'));
-			$products_image_base = ereg_replace($products_image_extention, '', $products_image);
-
-			$filename_medium = 'medium/' . $products_image_base . IMAGE_SUFFIX_MEDIUM . $products_image_extention;
-			$filename_large = 'large/' . $products_image_base . IMAGE_SUFFIX_LARGE . $products_image_extention;
-
-			if (file_exists(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image'])) {
-				@unlink(DIR_FS_CATALOG_IMAGES . $product_image->fields['products_image']);
-			}
-			if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_medium)) {
-				@unlink(DIR_FS_CATALOG_IMAGES . $filename_medium);
-			}
-			if (file_exists(DIR_FS_CATALOG_IMAGES . $filename_large)) {
-				@unlink(DIR_FS_CATALOG_IMAGES . $filename_large);
-			}
-		}
-
-		$gBitDb->Execute("delete FROM " . TABLE_SPECIALS . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-//		if ($ptc == 'true') {
-			$gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_TO_CATEGORIES . "
-										WHERE `products_id` = '" . (int)$product_id . "'");
-//		}
-
-		$gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_OPTIONS_MAP . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-
-		$product_reviews = $gBitDb->Execute("SELECT `reviews_id`
-																		 FROM " . TABLE_REVIEWS . "
-																		 WHERE `products_id` = '" . (int)$product_id . "'");
-
-		while (!$product_reviews->EOF) {
-			$gBitDb->Execute("delete FROM " . TABLE_REVIEWS_DESCRIPTION . "
-										WHERE `reviews_id` = '" . (int)$product_reviews->fields['reviews_id'] . "'");
-			$product_reviews->MoveNext();
-		}
-		$gBitDb->Execute("delete FROM " . TABLE_REVIEWS . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_FEATURED . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$gBitDb->Execute("delete FROM " . TABLE_PRODUCTS . "
-									WHERE `products_id` = '" . (int)$product_id . "'");
-
+vd( 'zen_remove_product is dead. Need to use CommerceProduct::expunge' );
+bt(); die;
 	}
 
 /* TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD has been removed
