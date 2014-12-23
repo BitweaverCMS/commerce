@@ -1791,12 +1791,21 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (4,'Canada Dollars', 'CAD', '', '', '.', ',', '2', '1.2115475341', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (5,'Australia Dollars', 'AUD', '', '', '.', ',', '2', '1.3121995036', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (6,'Japan Yen', 'JPY', '', '&yen;', '.', ',', '2', '112.2350011215', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_languages` VALUES (1,'English', 'en', 'icon.gif', 'en',1)",
 
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '10', '1', 'Pending')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '20', '1', 'Processing')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '30', '1', 'Shipped')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` VALUES ( '40', '1', 'Update')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-20, 1, 'Refunded')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-10, 1, 'Cancelled')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (10, 1, 'Pending')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (20, 1, 'Processing')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (21, 1, 'Reviewing')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (22, 1, 'Checking')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (23, 1, 'Testing')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (30, 1, 'Transferring')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (40, 1, 'Fulfilling')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (41, 1, 'Expediting')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (50, 1, 'Shipped')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (60, 1, 'Updated')",
+
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_languages` (languages_id, name, code, image, directory, sort_order) VALUES (1,'English', 'en', 'icon.gif', 'en',1)",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - General', 'product', '1', 'Y', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - Music', 'product_music', '1', 'Y', 'NOW', 'NOW')",
@@ -4317,6 +4326,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (239,'MS','Matabeleland South')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (239,'MI','Midlands')",
 
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('Florida', 'Florida local sales tax zone', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('UKVAT', 'United Kingdom VAT zone', 'NOW')",
+
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones_to_geo_zones` (`zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (223,1953,1,'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones_to_geo_zones` (`zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (222,1837,2,'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones_to_geo_zones` (`zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (222,1838,2,'NOW')",
@@ -4418,8 +4430,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones_to_geo_zones` (`zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (222,1934,2,'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones_to_geo_zones` (`zone_country_id`, `zone_id`, `geo_zone_id`,`date_added`) VALUES (222,1935,2,'NOW')",
 
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('Florida', 'Florida local sales tax zone', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_geo_zones` (`geo_zone_name`, `geo_zone_description`,`date_added`) VALUES ('UKVAT', 'United Kingdom VAT zone', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_tax_class` (`tax_class_title`, `tax_class_description`, `last_modified`, `date_added`) VALUES ('Taxable Goods', 'The following types of products are included non-food, services, etc', '2004-01-21 01:35:29', '2004-01-21 01:35:29')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_tax_rates` (`tax_zone_id`, `tax_class_id`, `tax_priority`, `tax_rate`, `tax_description`, `last_modified`, `date_added`) VALUES (1, 1, 1, 7.0000, 'FL TAX 7.0%', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_tax_rates` (`tax_zone_id`, `tax_class_id`, `tax_priority`, `tax_rate`, `tax_description`, `last_modified`, `date_added`) VALUES (2, 1, 1, 17.500, 'UK VAT 17.5%', 'NOW', 'NOW')",
