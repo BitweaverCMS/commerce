@@ -1647,7 +1647,7 @@ If a special exist * 10+9
 				$fileHash['max_height']		= 1024;
 				$fileHash['max_width']		= 1280;
 				$fileHash['type'] = $gBitSystem->verifyMimeType( $fileHash['source_file'] );
-				liberty_process_image( $fileHash, !empty( $pParamHash['copy_file'] ) );
+				liberty_process_image( $fileHash, empty( $pParamHash['copy_file'] ) );
 			}
 		}
 	}
