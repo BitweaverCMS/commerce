@@ -23,7 +23,7 @@ if( $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_IMAGES') == 'true' ) {
 }
 
 if( $gBitProduct->isValid() ) {
-	$gBitSmarty->assign_by_ref( 'optionsList', $productManager->getOptionsList() );
+	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_map_inc.tpl';
 } elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_id'] ) ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_id'] ) && $editOption = current( $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['products_options_id'] ) ) ) ) {
