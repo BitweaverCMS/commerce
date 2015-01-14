@@ -802,17 +802,16 @@
 	}
 
 	function zen_output_generated_category_path($id, $from = 'category') {
-		$calculated_category_path_string = '';
+		$calculated_category_path_string = '<ol class="breadcrumb"><li>'.TEXT_TOP.'</li>';
 		$calculated_category_path = zen_generate_category_path($id, $from);
 		for ($i=0, $n=sizeof($calculated_category_path); $i<$n; $i++) {
 			for ($j=0, $k=sizeof($calculated_category_path[$i]); $j<$k; $j++) {
-				$calculated_category_path_string .= $calculated_category_path[$i][$j]['text'] . '&nbsp;&gt;&nbsp;';
+				$calculated_category_path_string .= '<li>'.$calculated_category_path[$i][$j]['text'] . '</li>';
 			}
-			$calculated_category_path_string = substr($calculated_category_path_string, 0, -16) . '<br>';
 		}
-		$calculated_category_path_string = substr($calculated_category_path_string, 0, -4);
 
-		if (strlen($calculated_category_path_string) < 1) $calculated_category_path_string = TEXT_TOP;
+
+		$calculated_category_path_string .= '</ol>';
 
 		return $calculated_category_path_string;
 	}
