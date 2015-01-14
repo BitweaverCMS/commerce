@@ -19,7 +19,7 @@
 {else}
 <div id="attrlist" {$listStyle} >
 
-<a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="btn btn-xs">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="btn btn-xs">{tr}New Option Value{/tr}</a>
+<a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="btn btn-default btn-xs">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="btn btn-default btn-xs">{tr}New Option Value{/tr}</a>
 
 
 	<ul class="data">
