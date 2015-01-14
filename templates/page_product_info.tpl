@@ -47,19 +47,22 @@
 			</div>
 			{/if}
 			<div class="col-sm-5">
-				<div class="box addtocart">
+				<div class="well">
 					{if $gBitProduct->getBasePrice() > 0}
 					<div class="form-group">
+						{assign var=displayPrice value=$gBitProduct->getDisplayPrice()}
+						{if $displayPrice}
 						<h2>
 							{if $gBitProduct->getField('show_onetime_charges_description') && $gBitProduct->getField('show_onetime_charges_description') == 'true'}
 								<div class="smallText">{$smarty.const.TEXT_ONETIME_CHARGE_SYMBOL}{$smarty.const.TEXT_ONETIME_CHARGE_DESCRIPTION}</div>
 							{/if}
 							{if $gBitProduct->hasAttributes() and $smarty.const.SHOW_PRODUCT_INFO_STARTING_AT == '1'}{tr}Starting at{/tr}:{/if}
-							{$gBitProduct->getDisplayPrice()}
+							{$displayPrice}
 							{if $gBitProduct->getCommissionUserDiscount() }
 								(<span class="success">{tr}Retail Price{/tr} {$gBitProduct->getPrice('products')}</span>)
 							{/if}
 						</h2>
+						{/if}
 					</div>
 					{/if}
 
@@ -99,7 +102,7 @@
 								({$qtyInCart} {tr}In Cart{/tr})
 							{/if}
 							</label>
-							<input class="input-mini" type="number" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
+							<input class="input-mini form-control" type="number" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
 						{/if}
 					</div>
 					<div class="form-group">
