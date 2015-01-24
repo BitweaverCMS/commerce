@@ -48,8 +48,8 @@
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_MIN_ORDER}
 			{forminput}
-				<input type="text" name="coupon_minimum_order" value="{$smarty.post.coupon_minimum_order|escape}"/>
-				{formhelp note=$smarty.const.COUPON_MIN_ORDER_HELP}
+				<input type="number" name="coupon_minimum_order" value="{$smarty.post.coupon_minimum_order|escape}"/>
+				{formhelp note="The minimum order value before the coupon is valid. Leave blank for no minimum."}
 			{/forminput}
 		</div>
 
@@ -85,7 +85,7 @@
 		<div class="form-group">
 			{formlabel label="Minimum Quantity"}
 			{forminput}
-				<input type="text" name="restrict_to_quantity" value="{$smarty.post.restrict_to_quantity|escape}"/>
+				<input type="number" name="restrict_to_quantity" value="{$smarty.post.restrict_to_quantity|escape}"/>
 				{formhelp note="Comma seperated list of category ID's"}
 			{/forminput}
 		</div>
@@ -100,14 +100,14 @@
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_USES_COUPON}
 			{forminput}
-				<input type="text" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>
+				<input type="number" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_COUPON_HELP}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_USES_USER}
 			{forminput}
-				<input type="text" name="uses_per_user" value="{$smarty.post.uses_per_user|escape}"/>
+				<input type="number" name="uses_per_user" value="{$smarty.post.uses_per_user|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_USER_HELP}
 			{/forminput}
 		</div>
