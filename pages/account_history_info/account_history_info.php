@@ -1,102 +1,70 @@
-<?php
-//
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id$
-//
-?>
-<div align="center">
-<table  style="width:650px" border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td class="pageHeading" colspan="2"><h1><?=tra( 'Order Receipt' )?></h1></td>
-  </tr>
-  <tr>
-    <td class="plainBoxHeading" colspan="2" valign="bottom">
-      <?php echo sprintf(HEADING_ORDER_NUMBER, $_GET['order_id']); ?><br />
-      <?php echo HEADING_ORDER_DATE . ' ' . zen_date_long($order->info['date_purchased']); ?>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" width="50%" class="plainBox">
-      <table border="0" width="100%" cellspacing="0" cellpadding="2">
-        <tr>
-          <td class="main"><strong><?php echo HEADING_BILLING_ADDRESS; ?></strong></td>
-        </tr>
-        <tr>
-          <td class="main"><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?></td>
-        </tr>
-        <tr>
-          <td class="main"><strong><?php echo HEADING_PAYMENT_METHOD; ?></strong></td>
-        </tr>
-        <tr>
-          <td class="main">
+<header>
+	<h1 class="page-heading"><?php echo sprintf(HEADING_ORDER_NUMBER, $_GET['order_id']); ?></h1>
+    <div class="date"><?php echo HEADING_ORDER_DATE . ' ' . zen_date_long($order->info['date_purchased']); ?></div>
+</header>
+
+<div class="row">
+	<div class="col-xs-6">
+		<div class="panel panel-default height">
+			<div class="panel-heading"><?php echo HEADING_BILLING_ADDRESS; ?></div>
+			<div class="panel-body">
+<?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="panel panel-default height">
+			<div class="panel-heading"><?php echo HEADING_PAYMENT_METHOD; ?></div>
+			<div class="panel-body">
 <?php 
-				echo $order->info['payment_method']; 
-				foreach( array( 'cc_owner', 'cc_number', 'cc_ref_id' ) as $key ) {
-					$value = trim( $order->getField( $key ) );
-					if( $key == 'cc_number' ) {
-						$value = substr($value, 0, 6) . str_repeat('X', (strlen($value) - 6)) . substr($value, -4);
-					}
-					if( !empty( $value ) ) {
-						echo '<div>';
-						echo '<em>'.tra( ucwords( str_replace( '_', ' ', $key ) ) ).'</em> ';
-						echo $value;
-						echo '</div>';
-					}
+			echo $order->info['payment_method']; 
+			foreach( array( 'cc_owner', 'cc_number', 'cc_ref_id' ) as $key ) {
+				$value = trim( $order->getField( $key ) );
+				if( $key == 'cc_number' && $value ) {
+					$value = substr($value, 0, 6) . str_repeat('X', (strlen($value) - 6)) . substr($value, -4);
 				}
+				if( !empty( $value ) ) {
+					echo '<div>';
+					echo '<em>'.tra( ucwords( str_replace( '_', ' ', $key ) ) ).'</em> ';
+					echo $value;
+					echo '</div>';
+				}
+			}
 ?>
-		</td>
-        </tr>
-      </table>
-    </td>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
 <?php
   if ($order->delivery != false) {
 ?>
-    <td valign="top" width="50%" class="plainBox">
-      <table border="0" width="100%" cellspacing="0" cellpadding="2">
-        <tr>
-          <td class="main"><strong><?php echo HEADING_DELIVERY_ADDRESS; ?></strong></td>
-        </tr>
-        <tr>
-          <td class="main"><?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?></td>
-        </tr>
+		<div class="col-xs-6">
+			<div class="panel panel-default height">
+				<div class="panel-heading"><?php echo HEADING_DELIVERY_ADDRESS; ?></div>
+				<div class="panel-body">
+<?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?>
+				</div>
+			</div>
+		</div>
 <?php
     if (zen_not_null($order->info['shipping_method'])) {
 ?>
-        <tr>
-          <td class="main"><strong><?php echo HEADING_SHIPPING_METHOD; ?></strong></td>
-        </tr>
-        <tr>
-          <td class="main"><?php echo $order->info['shipping_method']; ?></td>
-        </tr>
-<?php } else { // temporary just remove these 4 lines ?>
-        <tr>
-          <td class="main"><strong>WARNING: Missing Shipping Information</strong></td>
-        </tr>
-<?php
-    }
-?>
-      </table>
-    </td>
+		<div class="col-xs-6">
+			<div class="panel panel-default height">
+				<div class="panel-heading"><?php echo HEADING_SHIPPING_METHOD; ?></div>
+				<div class="panel-body">
+<?php echo $order->info['shipping_method']; ?>
+				</div>
+			</div>
+		</div>
  <?php
   }
+}
 ?>
-  </tr>
+	</div>
+<table>
   <tr>
     <td class="plainBox" colspan="2">
       <table border="0" width="100%" cellspacing="0" cellpadding="2">
