@@ -2547,6 +2547,10 @@ Skip deleting of images for now
 		}
 	}
 
+	public function isVirtual( $pOptionsHash=NULL ) {
+		return $this->getField( 'products_virtual' );
+	}
+
 	function isFree() {
 		return( !empty( $this->mInfo['product_is_free'] ) );
 	}

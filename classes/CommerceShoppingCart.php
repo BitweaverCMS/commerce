@@ -354,7 +354,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
 
 					// shipping adjustments
-					if (($product->getField('product_is_always_free_ship') == 1) or ($product->getField('products_virtual') == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
+					if (($product->getField('product_is_always_free_ship') == 1) or ($product->isVirtual( $this->contents[$productsKey] ) == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += zen_add_tax($purchasePrice, $products_tax) * $qty;
 						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
@@ -448,7 +448,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						while (list(, $value) = each($this->contents[$productsKey]['attributes'])) {
 							$virtual_check_query = "SELECT COUNT(*) as `total`
 													FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-														INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id` = pad.`products_attributes_id`)
+														INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_options_values_id` = pad.`products_options_values_id`)
 													WHERE pa.`products_options_values_id` = ?";
 
 							$virtualCount = $this->mDb->getOne( $virtual_check_query, array( (int)$value ) );
