@@ -36,6 +36,7 @@ class order extends CommerceOrderBase {
 		$this->contents = array();
 		$this->customer = array();
 		$this->delivery = array();
+		$this->billing = array();
 
 		if( self::verifyId( $pOrdersId ) ) {
 			$this->mOrdersId = $pOrdersId;
