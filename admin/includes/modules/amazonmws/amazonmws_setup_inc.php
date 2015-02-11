@@ -150,8 +150,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 
 				if( $azOrders = $azOrderList->getOrder() ) {
 					require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-					$order = new order;
-					$order->initOrder();
+					$order = new order();
 
 					$order->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 										'subtotal' => 0,

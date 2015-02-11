@@ -11,11 +11,13 @@
 
 		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
 			<input type="hidden" name="main_page" value="checkout_payment" />
-			{if !$gBitUser->isRegistered()}
-				{include file="bitpackage:bitcommerce/register_customer.tpl"}
-			{/if}
-
 			<div class="row">
+				{if !$gBitUser->isRegistered()}
+				<div class="col-md-6">
+					{include file="bitpackage:bitcommerce/register_customer.tpl"}
+				</div>
+				{/if}
+
 				{if count( $addresses )}
 				<div class="col-md-6">
 					{legend legend="Choose Billing Address"}

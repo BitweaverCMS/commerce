@@ -27,25 +27,22 @@ class order extends CommerceOrderBase {
 	var $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
 			$products_ordered, $products_ordered_email;
 
-	function order($order_id = '') {
+	function __construct( $pOrdersId=NULL ) {
 		parent::__construct();
-		$this->mOrdersId = $order_id;
-		$this->initOrder();
 
-		if (zen_not_null($order_id)) {
-			$this->load($order_id);
-		} else {
-			$this->cart();
-		}
-	}
-
-	function initOrder() {
 		$this->info = array();
 		$this->totals = array();
 		$this->subtotal = 0;
 		$this->contents = array();
 		$this->customer = array();
 		$this->delivery = array();
+
+		if( self::verifyId( $pOrdersId ) ) {
+			$this->mOrdersId = $pOrdersId;
+			$this->load();
+		} else {
+			$this->cart();
+		}
 	}
 
 	function getField( $pFieldName, $pDefault = NULL ) {
@@ -206,182 +203,183 @@ class order extends CommerceOrderBase {
 		return( $ret );
 	}
 
-	function load($order_id) {
+	protected function load() {
 		global $gBitDb, $gBitSystem;
+		$ret = FALSE;
 
-		$selectSql = '';
-		$joinSql = '';
+		if( $this->isValid() ) {
+			$selectSql = '';
+			$joinSql = '';
 
-		$order_id = zen_db_prepare_input($order_id);
+			if( $gBitSystem->isPackageActive( 'stats' ) ) {
+				$selectSql .= " , sru.`referer_url` ";
+				$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
+							  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
+			}
 
-		if( $gBitSystem->isPackageActive( 'stats' ) ) {
-			$selectSql .= " , sru.`referer_url` ";
-			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
-						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
-		}
+			$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
+							FROM " . TABLE_ORDERS . " co
+								INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
+								$joinSql
+								LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`)
+							WHERE co.`orders_id` = ?";
+			$order = $gBitDb->query( $order_query, array( $this->mOrdersId ) );
 
+			$totals_query = "SELECT `title`, `text`, `class`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id`=? ORDER BY `sort_order`";
+			$totals = $gBitDb->query($totals_query, array( $this->mOrdersId ) );
 
+			while (!$totals->EOF) {
+				$this->totals[] = array('title' => $totals->fields['title'],
+										'text' => $totals->fields['text'],
+										'class' => $totals->fields['class'],
+										'orders_value' => $totals->fields['orders_value']);
+				$totals->MoveNext();
+			}
 
-		$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
-						FROM " . TABLE_ORDERS . " co
-							INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
-							$joinSql
-							LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`)
-						WHERE co.`orders_id` = ?";
-		$order = $gBitDb->query( $order_query, array( $order_id ) );
+			$order_total_query = "SELECT `text`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id` =? AND class = 'ot_total'";
+			$order_total = $gBitDb->query( $order_total_query, array( $this->mOrdersId ) );
 
-		$totals_query = "select `title`, `text`, `class`, `orders_value` from " . TABLE_ORDERS_TOTAL . " where `orders_id` = '" . (int)$order_id . "' order by `sort_order`";
-		$totals = $gBitDb->Execute($totals_query);
+			$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
+			$order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
 
-		while (!$totals->EOF) {
-			$this->totals[] = array('title' => $totals->fields['title'],
-									'text' => $totals->fields['text'],
-									'class' => $totals->fields['class'],
-									'orders_value' => $totals->fields['orders_value']);
-			$totals->MoveNext();
-		}
+			$this->info = array('currency' => $order->fields['currency'],
+								'currency_value' => $order->fields['currency_value'],
+								'payment_method' => $order->fields['payment_method'],
+								'payment_module_code' => $order->fields['payment_module_code'],
+								'shipping_method' => $order->fields['shipping_method'],
+								'shipping_method_code' => $order->fields['shipping_method_code'],
+								'shipping_module_code' => $order->fields['shipping_module_code'],
+								'coupon_code' => $order->fields['coupon_code'],
+								'cc_type' => $order->fields['cc_type'],
+								'cc_owner' => $order->fields['cc_owner'],
+								'cc_number' => $order->fields['cc_number'],
+								'cc_expires' => $order->fields['cc_expires'],
+								'cc_ref_id' => $order->fields['ref_id'],
+								'date_purchased' => $order->fields['date_purchased'],
+								'orders_status_id' => $order->fields['orders_status'],
+								'orders_status' => $order_status->fields['orders_status_name'],
+								'last_modified' => $order->fields['last_modified'],
+								'total' => $order->fields['order_total'],
+								'tax' => $order->fields['order_tax'],
+								'ip_address' => $order->fields['ip_address']
+								);
 
-		$order_total_query = "select `text`, `orders_value` from " . TABLE_ORDERS_TOTAL . " where `orders_id` = '" . (int)$order_id . "' and class = 'ot_total'";
-		$order_total = $gBitDb->Execute($order_total_query);
+			$this->info['shipping_total'] =  $gBitDb->getRow( "SELECT `orders_value` AS `shipping_total` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
-		$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
-		$order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
+			$this->customer = array('id' => $order->fields['customers_id'],
+									'user_id' => $order->fields['user_id'],
+									'name' => $order->fields['customers_name'],
+									'real_name' => $order->fields['real_name'],
+									'login' => $order->fields['login'],
+									'company' => $order->fields['customers_company'],
+									'street_address' => $order->fields['customers_street_address'],
+									'suburb' => $order->fields['customers_suburb'],
+									'city' => $order->fields['customers_city'],
+									'postcode' => $order->fields['customers_postcode'],
+									'state' => $order->fields['customers_state'],
+									'country' => $order->fields['customers_country'],
+									'format_id' => $order->fields['customers_address_format_id'],
+									'telephone' => $order->fields['customers_telephone'],
+									'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
 
-		$this->info = array('currency' => $order->fields['currency'],
-							'currency_value' => $order->fields['currency_value'],
-							'payment_method' => $order->fields['payment_method'],
-							'payment_module_code' => $order->fields['payment_module_code'],
-							'shipping_method' => $order->fields['shipping_method'],
-							'shipping_method_code' => $order->fields['shipping_method_code'],
-							'shipping_module_code' => $order->fields['shipping_module_code'],
-							'coupon_code' => $order->fields['coupon_code'],
-							'cc_type' => $order->fields['cc_type'],
-							'cc_owner' => $order->fields['cc_owner'],
-							'cc_number' => $order->fields['cc_number'],
-							'cc_expires' => $order->fields['cc_expires'],
-							'cc_ref_id' => $order->fields['ref_id'],
-							'date_purchased' => $order->fields['date_purchased'],
-							'orders_status_id' => $order->fields['orders_status'],
-							'orders_status' => $order_status->fields['orders_status_name'],
-							'last_modified' => $order->fields['last_modified'],
-							'total' => $order->fields['order_total'],
-							'tax' => $order->fields['order_tax'],
-							'ip_address' => $order->fields['ip_address']
-							);
+			if( !empty( $order->fields['referer_url'] ) ) {
+				$this->customer['referer_url'] = $order->fields['referer_url'];
+			}
 
-		$this->info['shipping_total'] =  $gBitDb->getRow( "SELECT `orders_value` AS `shipping_total` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( (int)$order_id ) );
+			$this->delivery = array('name' => $order->fields['delivery_name'],
+									'company' => $order->fields['delivery_company'],
+									'street_address' => $order->fields['delivery_street_address'],
+									'suburb' => $order->fields['delivery_suburb'],
+									'city' => $order->fields['delivery_city'],
+									'postcode' => $order->fields['delivery_postcode'],
+									'state' => $order->fields['delivery_state'],
+									'country' => zen_get_countries( $order->fields['delivery_country'], TRUE ),
+									'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
+									'telephone' => $order->fields['delivery_telephone'],
+									'format_id' => $order->fields['delivery_address_format_id']);
 
-		$this->customer = array('id' => $order->fields['customers_id'],
-								'user_id' => $order->fields['user_id'],
-								'name' => $order->fields['customers_name'],
-								'real_name' => $order->fields['real_name'],
-								'login' => $order->fields['login'],
-								'company' => $order->fields['customers_company'],
-								'street_address' => $order->fields['customers_street_address'],
-								'suburb' => $order->fields['customers_suburb'],
-								'city' => $order->fields['customers_city'],
-								'postcode' => $order->fields['customers_postcode'],
-								'state' => $order->fields['customers_state'],
-								'country' => $order->fields['customers_country'],
-								'format_id' => $order->fields['customers_address_format_id'],
-								'telephone' => $order->fields['customers_telephone'],
-								'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
+			if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
+				$this->delivery = false;
+			}
 
-		if( !empty( $order->fields['referer_url'] ) ) {
-			$this->customer['referer_url'] = $order->fields['referer_url'];
-		}
+			$this->billing = array('name' => $order->fields['billing_name'],
+														 'company' => $order->fields['billing_company'],
+														 'street_address' => $order->fields['billing_street_address'],
+														 'suburb' => $order->fields['billing_suburb'],
+														 'city' => $order->fields['billing_city'],
+														 'postcode' => $order->fields['billing_postcode'],
+														 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
+														 'state' => $order->fields['billing_state'],
+														 'telephone' => $order->fields['billing_telephone'],
+														 'format_id' => $order->fields['billing_address_format_id']);
 
-		$this->delivery = array('name' => $order->fields['delivery_name'],
-								'company' => $order->fields['delivery_company'],
-								'street_address' => $order->fields['delivery_street_address'],
-								'suburb' => $order->fields['delivery_suburb'],
-								'city' => $order->fields['delivery_city'],
-								'postcode' => $order->fields['delivery_postcode'],
-								'state' => $order->fields['delivery_state'],
-								'country' => zen_get_countries( $order->fields['delivery_country'], TRUE ),
-								'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
-								'telephone' => $order->fields['delivery_telephone'],
-								'format_id' => $order->fields['delivery_address_format_id']);
+			$orders_products_query = "SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
+																FROM " . TABLE_ORDERS_PRODUCTS . " op
+									LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
+									LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
+									LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
+																WHERE `orders_id` = ?
+								ORDER BY op.`orders_products_id`";
+			$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
-		if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
-			$this->delivery = false;
-		}
-
-		$this->billing = array('name' => $order->fields['billing_name'],
-													 'company' => $order->fields['billing_company'],
-													 'street_address' => $order->fields['billing_street_address'],
-													 'suburb' => $order->fields['billing_suburb'],
-													 'city' => $order->fields['billing_city'],
-													 'postcode' => $order->fields['billing_postcode'],
-													 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
-													 'state' => $order->fields['billing_state'],
-													 'telephone' => $order->fields['billing_telephone'],
-													 'format_id' => $order->fields['billing_address_format_id']);
-
-		$orders_products_query = "SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
-															FROM " . TABLE_ORDERS_PRODUCTS . " op
-								LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
-								LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-								LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
-															WHERE `orders_id` = ?
-							ORDER BY op.`orders_products_id`";
-		$orders_products = $this->mDb->query( $orders_products_query, array( $order_id ) );
-
-		while (!$orders_products->EOF) {
-			// convert quantity to proper decimals - account history
-			if (QUANTITY_DECIMALS != 0) {
-				$fix_qty = $orders_products->fields['products_quantity'];
-				switch (true) {
-				case (!strstr($fix_qty, '.')):
-					$new_qty = $fix_qty;
-					break;
-				default:
-					$new_qty = preg_replace('/[0]+$/', '', $orders_products->fields['products_quantity']);
-					break;
+			while (!$orders_products->EOF) {
+				// convert quantity to proper decimals - account history
+				if (QUANTITY_DECIMALS != 0) {
+					$fix_qty = $orders_products->fields['products_quantity'];
+					switch (true) {
+					case (!strstr($fix_qty, '.')):
+						$new_qty = $fix_qty;
+						break;
+					default:
+						$new_qty = preg_replace('/[0]+$/', '', $orders_products->fields['products_quantity']);
+						break;
+					}
+				} else {
+					$new_qty = $orders_products->fields['products_quantity'];
 				}
-			} else {
-				$new_qty = $orders_products->fields['products_quantity'];
-			}
 
-			$new_qty = round($new_qty, QUANTITY_DECIMALS);
+				$new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-			if ($new_qty == (int)$new_qty) {
-				$new_qty = (int)$new_qty;
-			}
-
-			$productsKey = $orders_products->fields['orders_products_id'];
-			$this->contents[$productsKey] = $orders_products->fields;
-			$this->contents[$productsKey]['products_quantity'] = $new_qty;
-			$this->contents[$productsKey]['id'] = $orders_products->fields['products_id'];
-			$this->contents[$productsKey]['name'] = $orders_products->fields['products_name'];
-			$this->contents[$productsKey]['model'] = $orders_products->fields['products_model'];
-			$this->contents[$productsKey]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
-			$this->contents[$productsKey]['price'] = $orders_products->fields['products_price'];
-
-			$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
-								 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
-								 WHERE `orders_id` = ? AND `orders_products_id` = ?
-								 ORDER BY `orders_products_id`";
-			$attributes = $this->mDb->query( $attributes_query, array( $order_id, $orders_products->fields['orders_products_id'] ) );
-			if ($attributes->RecordCount()) {
-				while (!$attributes->EOF) {
-					$this->contents[$productsKey]['attributes'][] = array( 'options_id' => $attributes->fields['products_options_id'],
-																			'options_values_id' => $attributes->fields['products_options_values_id'],
-																			'option' => $attributes->fields['products_options'],
-																			'value' => $attributes->fields['products_options_values'],
-																			'prefix' => $attributes->fields['price_prefix'],
-																			'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] ),
-																			'price' => $attributes->fields['options_values_price'],
-																			'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
-
-					$attributes->MoveNext();
+				if ($new_qty == (int)$new_qty) {
+					$new_qty = (int)$new_qty;
 				}
+
+				$productsKey = $orders_products->fields['orders_products_id'];
+				$this->contents[$productsKey] = $orders_products->fields;
+				$this->contents[$productsKey]['products_quantity'] = $new_qty;
+				$this->contents[$productsKey]['id'] = $orders_products->fields['products_id'];
+				$this->contents[$productsKey]['name'] = $orders_products->fields['products_name'];
+				$this->contents[$productsKey]['model'] = $orders_products->fields['products_model'];
+				$this->contents[$productsKey]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
+				$this->contents[$productsKey]['price'] = $orders_products->fields['products_price'];
+
+				$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
+									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
+									 WHERE `orders_id` = ? AND `orders_products_id` = ?
+									 ORDER BY `orders_products_id`";
+				$attributes = $this->mDb->query( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) );
+				if ($attributes->RecordCount()) {
+					while (!$attributes->EOF) {
+						$this->contents[$productsKey]['attributes'][] = array( 'options_id' => $attributes->fields['products_options_id'],
+																				'options_values_id' => $attributes->fields['products_options_values_id'],
+																				'option' => $attributes->fields['products_options'],
+																				'value' => $attributes->fields['products_options_values'],
+																				'prefix' => $attributes->fields['price_prefix'],
+																				'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] ),
+																				'price' => $attributes->fields['options_values_price'],
+																				'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
+
+						$attributes->MoveNext();
+					}
+				}
+
+				$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
+
+				$orders_products->MoveNext();
 			}
-
-			$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
-
-			$orders_products->MoveNext();
-		 }
+			$ret = TRUE;
+		}
+		return $ret;
 	}
 
 	// calculates totals

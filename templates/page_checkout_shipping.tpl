@@ -10,6 +10,12 @@
 		{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 			<input type="hidden" name="main_page" value="checkout_shipping" />
 			<div class="row">
+				{if !$gBitUser->isRegistered()}
+				<div class="col-md-6">
+					{include file="bitpackage:bitcommerce/register_customer.tpl"}
+				</div>
+				{/if}
+
 				{if count( $addresses )}
 				<div class="col-md-6">
 					{legend legend="Choose Shipping Address"}
@@ -22,10 +28,6 @@
 				{/if}
 				
 				<div class="col-md-6">
-			{if !$gBitUser->isRegistered()}
-				{include file="bitpackage:bitcommerce/register_customer.tpl"}
-			{/if}
-
 					{legend legend="Enter a New Address"}
 						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
 					{/legend}

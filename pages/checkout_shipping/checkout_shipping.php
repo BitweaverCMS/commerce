@@ -61,7 +61,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 }
 
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-$order = new order;
+$order = new order();
 $gBitSmarty->assign( 'order', $order );
 
 // if the no delivery address, try to get one by default
