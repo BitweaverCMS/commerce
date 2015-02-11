@@ -89,14 +89,14 @@
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php print tra('Customer');?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>customers.php">Customers</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>orders.php">Orders</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>includes/modules/amazonmws/index.php">Amazon Orders</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>interests.php">Interests</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>orders.php">Orders</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>coupon_admin.php">Coupon Admin</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>includes/modules/amazonmws/index.php">Amazon Orders</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>commissions.php">Commissions</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>orders_status.php">Orders Status</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>group_pricing.php">Group Pricing</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>paypal.php">PayPal IPN</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>coupon_admin.php">Coupon Admin</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_queue.php">Gift Certificates Queue</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_mail.php">Mail Gift Certificate</a></li>
 					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>gv_sent.php">Gift Certificates sent</a></li>

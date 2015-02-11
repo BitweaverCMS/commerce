@@ -925,14 +925,12 @@ class order extends CommerceOrderBase {
 				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->contents[$productsKey]['purchase_group_id'] );
 			}
 
-
 			//------insert customer choosen option to order--------
 			$attributes_exist = '0';
 			$this->products_ordered_attributes = '';
 			if( !empty($this->contents[$productsKey]['attributes']) ) {
 				$attributes_exist = '1';
 				foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
-
 					$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['option_id'], (int)$this->contents[$productsKey]['attributes'][$j]['value_id'] );
 					if( !empty( $optionValues['purchase_group_id'] ) ) {
 						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );

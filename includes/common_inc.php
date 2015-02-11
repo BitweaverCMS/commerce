@@ -786,10 +786,10 @@ function zen_get_languages() {
 function zen_get_option_value( $pOptionId, $pValueId ) {
 	global $gBitDb;
 
-	$query = "SELECT *
+	$query = "SELECT popt.*, pa.*, pad.`products_attributes_filename`, pad.`products_attributes_maxdays`, pad.`products_attributes_maxcount`
 			  FROM " . TABLE_PRODUCTS_OPTIONS . " popt
 				INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON(pa.`products_options_id` = popt.`products_options_id`)
-				LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad on(pa.`products_attributes_id` = pad.`products_attributes_id`)
+				LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad on(pa.`products_options_values_id` = pad.`products_options_values_id`)
 			  WHERE pa.`products_options_id` = ?  AND pa.`products_options_values_id` = ?  AND popt.`language_id` = ? ";
 	return( $gBitDb->getRow( $query, array( $pOptionId, $pValueId, (int)$_SESSION['languages_id'] ) ) );
 }
