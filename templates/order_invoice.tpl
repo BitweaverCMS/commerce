@@ -1,17 +1,17 @@
 
 <header>
 	<div class="row">
-		<div class="col-xs-6">
+		<div class="col-xs-12 col-sm-6 text-center">
+			<h1 class="page-heading">{tr}Order{/tr} #{$order->mOrdersId}</h1>
+			<div class="date">{tr}Purchased{/tr}: {$order->getField('date_purchased')|bit_long_datetime}</div>
+		</div>
+		<div class="col-xs-12 col-sm-6">
 			<div class="panel panel-default height">
 				<div class="panel-body">
 					<h2>{$gBitSystem->getConfig('site_title')}</h2>
 					{$smarty.const.STORE_NAME_ADDRESS|nl2br}
 				</div>
 			</div>
-		</div>
-		<div class="col-xs-6 text-right">
-			<h1 class="page-heading">{tr}Order{/tr} #{$order->mOrdersId}</h1>
-			<div class="date">{tr}Purchased{/tr}: {$order->getField('date_purchased')|bit_long_datetime}</div>
 		</div>
 	</div>
 </header>
