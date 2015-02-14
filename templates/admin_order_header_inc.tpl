@@ -65,19 +65,13 @@ function editAddress( pAddress ) {
 	<div class="col-xs-6">
 		<h4><a class="icon" onclick="editAddress('delivery');return false;"><i class="icon-edit"></i></a> {tr}Shipping Address{/tr}</h4>
 		<div id="deliveryaddress">
-		{php}
-		global $order;
-		echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br />');
-		{/php}
+			{$order->getFormattedAddress('delivery')}
 		</div>
 	</div>
 	<div class="col-xs-6">
 		<h4><a class="icon" onclick="editAddress('billing');return false;"><i class="icon-edit"></i></a> {tr}Billing Address{/tr}</h4>
 		<div id="billingaddress">
-		{php}
-		global $order;
-		echo zen_address_format($order->billing['format_id'], $order->billing, 1, '', '<br />');
-		{/php}
+			{$order->getFormattedAddress('billing')}
 		</div>
 	</div>
 </div>

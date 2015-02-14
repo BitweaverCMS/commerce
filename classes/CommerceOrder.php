@@ -79,6 +79,15 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	public function displayOrderProductData( $opid ) {
+		if( $this->isValid() && $this->contents[$opid] ) {
+			$ordersProduct = $this->contents[$opid];
+			$productObject = $this->getProductObject( $ordersProduct['products_id'] );
+			$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$ordersProduct['type_handler'].'_info/orders_product_inc.php';
+			$productObject->displayOrderData( $ordersProduct );
+		}
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -379,6 +388,15 @@ class order extends CommerceOrderBase {
 				$orders_products->MoveNext();
 			}
 			$ret = TRUE;
+		}
+		return $ret;
+	}
+
+	function hasViewPermission() {
+		global $gBitUser;
+		$ret = FALSE;
+		if( $this->isValid() && self::verifyIdParameter( $this->customer, 'user_id' ) ) {
+			$ret = ($gBitUser->mUserId == $this->customer['user_id']) || $gBitUser->hasPermission( 'p_commerce_admin' );
 		}
 		return $ret;
 	}
@@ -1123,6 +1141,37 @@ class order extends CommerceOrderBase {
 		$ret = '';
 		if( $this->isValid() ) {
 			$ret = zen_address_format( $this->customer['format_id'], $this->$pAddressHash, 1, '', $pBreak );
+		}
+		return $ret;
+	}
+
+	function getDownloads() {
+		global $gBitDb;
+		$ret = array();
+		if( $this->isValid() ) {
+			$query = "SELECT ".$gBitDb->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`, opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`, opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
+					  FROM " . TABLE_ORDERS . " o
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " op ON (o.`orders_id`=op.`orders_id`)
+						INNER JOIN " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd ON (op.`orders_products_id`=opd.`orders_products_id`)
+					  WHERE o.`customers_id` = ? AND (o.`orders_status` >= ? AND o.`orders_status` <= ?) AND o.`orders_id` = ?  AND opd.`orders_products_filename` != ''
+					  ORDER BY op.`orders_products_id`";
+			$ret = $gBitDb->getAll( $query, array( $this->getField('customers_id'), DOWNLOADS_CONTROLLER_ORDERS_STATUS, DOWNLOADS_CONTROLLER_ORDERS_STATUS_END, $this->mOrdersId ) );
+
+// copies from includes/modules/downloads.php before git rm
+/*
+list($dt_year, $dt_month, $dt_day) = explode('-', $downloads->fields['date_purchased_day']);
+$download_timestamp = mktime(23, 59, 59, $dt_month, $dt_day + $downloads->fields['download_maxdays'], $dt_year);
+$download_expiry = date('Y-m-d H:i:s', $download_timestamp);
+
+  echo '            <td align="center">' . zen_date_short($download_expiry) . '</td>' . "\n" .
+	   '            <td align="center">' . $downloads->fields['download_count'] . '</td>' . "\n" .
+
+// If there is a download in the order and they cannot get it, tell customer about download rules
+$downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_products_download_id
+					                       from " .  TABLE_ORDERS . " o, " .  TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
+            		   				       where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
+*/
+
 		}
 		return $ret;
 	}

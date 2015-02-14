@@ -193,6 +193,7 @@ function getShippingQuotes( pOrderId ) {
 			{assign var=couponAmount value=$couponAmount+$order->totals[t].orders_value}
 		{/if}
 	</td>
+</tr>
 {/section}
 
 {php}
