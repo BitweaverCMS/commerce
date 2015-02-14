@@ -70,7 +70,7 @@ function getShippingQuotes( pOrderId ) {
 {assign var=couponAmount value=0}
 {assign var=giftAmount value=0}
 
-{foreach from=$order->contents item=ordersProduct}
+{foreach from=$order->contents item=ordersProduct key=opid}
 <tr>
 <td class="text-right" valign="top">{$ordersProduct.products_quantity}&nbsp;x
 	<div>{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="icon-time" iexplain="Products History"}</div>
@@ -140,20 +140,20 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 <tr>
 	<td class="supplemental" colspan="4">
-{if !empty( $ordersProduct.attributes )}
-<ul class="list-unstyled">
-{section loop=$ordersProduct.attributes name=a}
-		<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
-<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>
-			<small>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
-				{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
-				{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
-				{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
-			</small> 
-		</li>
-{/section}
-</ul>
-{/if}
+		{if !empty( $ordersProduct.attributes )}
+		<ul class="list-unstyled">
+		{section loop=$ordersProduct.attributes name=a}
+				<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
+		<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].option|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].value|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>
+					<small>{$ordersProduct.attributes[a].option}: {$ordersProduct.attributes[a].value}
+						{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
+						{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
+						{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
+					</small> 
+				</li>
+		{/section}
+		</ul>
+		{/if}
 		<form class="form-inline condensed" method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php">
 			<input type="hidden" name="oID" value="{$smarty.request.oID}"/>
 			<input type="hidden" name="action" value="save_new_option"/>
@@ -161,9 +161,9 @@ function getShippingQuotes( pOrderId ) {
 			{html_options class="form-control" name="newOrderOptionType" options=$optionsList id="neworderoption`$ordersProduct.orders_products_id`" onchange="getNewOption(`$ordersProduct.orders_products_id`);" selected="0"}
 			<span id="neworderattr{$ordersProduct.orders_products_id}"></span>
 		</form>
+		{$order->displayOrderProductData($opid)}
 	</td>
 </tr>
-
 {/foreach}
 {section loop=$order->totals name=t}
 <tr>
