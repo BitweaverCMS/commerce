@@ -22,8 +22,8 @@
 
 require('includes/application_top.php');
 
-$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'/javascript/libs/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
-$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/libs/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
+$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
+$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
 $currencies = new currencies();
 
