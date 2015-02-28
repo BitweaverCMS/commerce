@@ -76,20 +76,20 @@ class CommerceVoucher extends BitBase {
 		} else {
 			if( $existingId = $this->mDb->getOne( "SELECT `coupon_id` FROM " . TABLE_COUPONS . " WHERE UPPER( `coupon_code` )=?", array( strtoupper( $pParamHash['coupon_code'] ) ) ) ) {
 				if( !empty( $pParamHash['coupon_id'] ) && ($pParamHash['coupon_id'] != $existingId) ) {
-					$this->mFeedback['errors'][] = ERROR_COUPON_EXISTS;
+					$this->mFeedback['error'][] = ERROR_COUPON_EXISTS;
 				}
 			}
 			$pParamHash['coupon_store']['coupon_code'] = trim($pParamHash['coupon_code']);
 		}
 
 		if( empty( $pParamHash['coupon_name'] ) ) {
-			$this->mFeedback['errors'][] = 'No coupon name entered';
+			$this->mFeedback['error'][] = 'No coupon name entered';
 		} else {
 			$languages = zen_get_languages();
 			for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
 				$languageId = $languages[$i]['id'];
 				if( empty( $pParamHash['coupon_name'][$languageId] ) ) {
-					$this->mFeedback['errors'][] = 'No coupon name entered' . $languages[$i]['name'];
+					$this->mFeedback['error'][] = 'No coupon name entered' . $languages[$i]['name'];
 				} else {
 					$pParamHash['voucher_lang_store'][$languageId]['coupon_name'] = trim($pParamHash['coupon_name'][$languageId]);
 					$pParamHash['voucher_lang_store'][$languageId]['coupon_description'] = trim($pParamHash['coupon_description'][$languageId]);
@@ -103,7 +103,7 @@ class CommerceVoucher extends BitBase {
 		}
 
 		if ( empty( $pParamHash['coupon_store']['coupon_amount'] ) && empty( $pParamHash['coupon_free_ship'] ) ) {
-			$this->mFeedback['errors'][] = ERROR_NO_COUPON_AMOUNT;
+			$this->mFeedback['error'][] = ERROR_NO_COUPON_AMOUNT;
 		} else {
 			if( !empty( $pParamHash['coupon_free_ship'] ) ) {
 				$pParamHash['coupon_store']['coupon_type'] = 'S';
@@ -138,7 +138,7 @@ class CommerceVoucher extends BitBase {
 			$pParamHash['coupon_store']['coupon_expire_date'] = date('m/d/Y', mktime(0, 0, 0, $pParamHash['coupon_expire_date_month'],$pParamHash['coupon_expire_date_day'] ,$pParamHash['coupon_expire_date_year'] ));
 		}
 
-		return( empty( $this->mFeedback['errors'] ) );
+		return( empty( $this->mFeedback['error'] ) );
 	}
 
 	function store( &$pParamHash ) {
@@ -169,7 +169,7 @@ class CommerceVoucher extends BitBase {
 			$this->mDb->CompleteTrans();
 			$this->load();
 		}
-		return( empty( $this->mFeedback['errors'] ) );
+		return( empty( $this->mFeedback['error'] ) );
 	}
 
 	function storeRestriction( $pParamHash ) {
@@ -442,13 +442,9 @@ class CommerceVoucher extends BitBase {
 		if( !empty( $pCode ) ) {
 			$error = true;
 
-			$gv_query = "select `coupon_id`, `coupon_amount`
-						from " . TABLE_COUPONS . "
-						where `coupon_code` = ? AND `coupon_active`='Y'";
+			$gv_query = "SELECT `coupon_id`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ? AND `coupon_active`='Y'";
 			if( $coupon = $gBitDb->getRow($gv_query, array( $pCode ) ) ) {
-				$redeem_query = "select coupon_id
-								 from ". TABLE_COUPON_REDEEM_TRACK . "
-								 where coupon_id = ?";
+				$redeem_query = "SELECT coupon_id FROM ". TABLE_COUPON_REDEEM_TRACK . " WHERE coupon_id = ?";
 				$isRedeemed = $gBitDb->getOne( $redeem_query, array( $coupon['coupon_id'] ) );
 				if( !$isRedeemed ) {
 			// check for required session variables

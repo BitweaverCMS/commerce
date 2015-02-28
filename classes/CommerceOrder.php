@@ -1405,7 +1405,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 		$ret = NULL;
 		if( self::verifyId( $pOrdersProductId ) ) {
 			$orderHash = $gBitDb->getRow( "SELECT co.`orders_id`, co.`customers_id` FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PRODUCTS . "cop ON (cop.`orders_id`=co.`orders_id`) WHERE `orders_products_id`=?", array( $pOrdersProductId ) );
-			if( $orderHash['customers_id'] == $gBitUser->mUserId || $gBitUser->hasPermission( 'p_commerce_admin' ) ) {
+			if( $orderHash['customers_id'] == $gBitUser->mUserId || $gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
 				$ret = new order( $orderHash['orders_id'] );
 			}
 		}

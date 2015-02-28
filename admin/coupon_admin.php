@@ -63,6 +63,7 @@ switch ($getAction) {
 		if( $gCoupon->store( $_REQUEST ) ) {
 			$feedback['success'] = tra( 'Coupon Saved:' ).' '.$gCoupon->getField( 'coupon_code' );
 		} else {
+			$feedback = $gCoupon->mFeedback;
 			$getAction = 'edit';
 		}
 		break;
