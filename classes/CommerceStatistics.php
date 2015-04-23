@@ -134,6 +134,16 @@ class CommerceStatistics extends BitSingleton {
 		return( $ret );
 	}
 
+	public static function getCustomerRevenue( $pParamHash ) {
+		global $gBitDb;
+
+		$bindVars['customers_id'] = $pParamHash['customers_id'];
+		$sql = "SELECT SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
+				FROM " . TABLE_ORDERS . " co
+				WHERE co.`orders_status`>0 AND co.`customers_id`=?";
+		return $gBitDb->getRow( $sql, $bindVars );
+	}
+
 	function getProductRevenue( $pParamHash ) {
 		switch( $pParamHash['period'] ) {
 			case 'day':

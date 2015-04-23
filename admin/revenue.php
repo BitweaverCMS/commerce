@@ -70,9 +70,41 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue By Timeframe' , array( 'display_mode' => 'admin' ));
 } else {
 	$listHash['max_records'] = -1;
-	$gBitSmarty->assign( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );
-	$gBitSmarty->assign( 'stats', $stats->getAggregateRevenue( $listHash ) );
-	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
+	$revStats = $stats->getAggregateRevenue( $listHash );
+	$gBitSmarty->assign( 'stats', $revStats );
+	if( BitBase::getParameter( $_REQUEST, 'display' ) == 'matrix' ) {
+		switch( BitBase::getParameter( $_REQUEST, 'period' ) ) {
+			case 'Y-':
+				$headers = array( '' );
+				break;
+			case 'Y-\QQ':
+				$headers = array( 'Q1', 'Q2', 'Q3', 'Q4' );
+				break;
+			case 'Y-m':
+				$headers = array( '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' );
+				break;
+			case 'Y-\WeekW':
+			default:
+				for( $i = 1; $i <= 53; $i++ ) {
+					$headers[] = 'Week'.str_pad($i, 2, '0', STR_PAD_LEFT);
+				}
+				break;
+		}
+		next( $revStats ); // first hashKey is summary stats
+		$keyParts = explode( '-', key( $revStats ) );
+		$gBitSmarty->assign( 'beginYear', $keyParts[0] );
+		end( $revStats );
+		$keyParts = explode( '-', key( $revStats ) );
+		$gBitSmarty->assign( 'endYear', $keyParts[0] );
+		reset( $revStats );
+	
+
+		$gBitSmarty->assign( 'matrixHeaders', $headers );
+		$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_matrix.tpl', 'Revenue Matrix' , array( 'display_mode' => 'admin' ));
+	} else {
+		$gBitSmarty->assign( 'statsCustomers', $stats->getCustomerConversions( array( 'period' => $_REQUEST['period'] ) ) );
+		$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue.tpl', 'Revenue' , array( 'display_mode' => 'admin' ));
+	}
 }
 
 function list_customers_interests( $pCustomersId ) {
