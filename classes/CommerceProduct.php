@@ -2547,6 +2547,10 @@ Skip deleting of images for now
 		}
 	}
 
+	public function displayOrderData( $pOrdersProductHash ) {
+		// stub function does nothing in base class
+	}
+
 	public function isVirtual( $pOptionsHash=NULL ) {
 		return $this->getField( 'products_virtual' );
 	}
