@@ -16,7 +16,9 @@
 	<fieldset>
 	{forminput}
 		<p>{tr}Please notify me of updates to the products I have selected below:{/tr}</p>
-		{html_checkboxes name='notify' options=$notifyProducts seperator='br/>'}
+		<div class="checkbox">
+			{html_checkboxes name='notify' options=$notifyProducts class="checkbox"}
+		</div>
 	{/forminput}
 	</fieldset>
 {/if}
@@ -28,11 +30,7 @@
 		You have funds in your {$smarty.const.TEXT_GV_NAME} Account. If you want you can send those funds by <a class="pageResults" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send"><strong>{tr}email{/tr}</strong></a> {tr}to someone{/tr}.
 	{/if}
 	
-	{if $gCommerceSystem->getConfig('DOWNLOAD_ENABLED') == 'true'}
-		{include_php file="`$smarty.const.DIR_WS_MODULES`downloads.php"}
-	{/if}
-
-	<input class="btn btn-sm" name="Continue" value="{tr}Continue{/tr}" type="submit">
+	<input class="btn btn-info" name="Continue" value="{tr}Continue{/tr}" type="submit">
 
 	</form>
 
