@@ -304,9 +304,9 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_options_values_id I4 PRIMARY,
+  products_options_id I4 NOTNULL,
   products_attributes_id I4 NOTNULL AUTO,
   products_options_values_name C(128),
-  products_options_id I4 NOTNULL,
   options_values_price N(15,4),
   options_values_wholesale N(15,4),
   options_values_cogs N(15,4),
@@ -349,7 +349,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
-  products_attributes_id I4,
+  products_options_values_id I4 NOT NULL,
   products_attributes_filename C(255),
   products_attributes_maxdays I2 default '0',
   products_attributes_maxcount I2 default '0'
@@ -796,6 +796,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   orders_products_attributes_id I4 PRIMARY AUTO,
   orders_id I4 NOTNULL,
   orders_products_id I4 NOTNULL,
+  products_options_id INT( 11 ) NOTNULL,
+  products_options_values_id INT( 11 ) NOTNULL,
   products_options C(32),
   products_options_values C(128),
   options_values_price N(15,4),
@@ -817,9 +819,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   attributes_price_words N(15,4),
   attributes_price_words_free I2,
   attributes_price_letters N(15,4),
-  attributes_price_letters_free I2,
-  products_options_id INT( 11 ) NOTNULL,
-  products_options_values_id INT( 11 ) NOTNULL
+  attributes_price_letters_free I2
   CONSTRAINT ', CONSTRAINT `ord_prod_att_prod_ref` FOREIGN KEY ( `orders_products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_products`( `orders_products_id` )
   			  , CONSTRAINT `ord_prod_att_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )'
 ",
