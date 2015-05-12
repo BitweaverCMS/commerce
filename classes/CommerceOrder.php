@@ -431,7 +431,7 @@ class order extends CommerceOrderBase {
 					$productAttributes = array();
 					if( !empty( $this->contents[$productsKey]['attributes'] ) ) {
 						foreach( $this->contents[$productsKey]['attributes'] as $attribute ) {
-							$productAttributes[$attribute['option_id']] = $attribute['value_id'];
+							$productAttributes[$attribute['options_id']] = $attribute['options_values_id'];
 						}
 					}
 
