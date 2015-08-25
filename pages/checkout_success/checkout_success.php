@@ -22,7 +22,10 @@
 
 global $newOrdersId;
 $newOrdersId = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
+require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+$newOrder = new order( $newOrdersId );
 $gBitSmarty->assign( 'newOrdersId', $newOrdersId );
+$gBitSmarty->assign( 'newOrder', $newOrder );
 
 if (isset($_GET['action']) && ($_GET['action'] == 'update')) {
 	$notify_string = 'action=notify&';

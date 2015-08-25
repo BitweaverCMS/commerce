@@ -17,7 +17,8 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-
+print 'disabled';
+return;
 	if( !$gBitUser->isRegistered() && (ALLOW_GUEST_TO_TELL_A_FRIEND == 'false') ) {
 		$_SESSION['navigation']->set_snapshot();
 		zen_redirect(FILENAME_LOGIN);

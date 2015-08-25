@@ -19,6 +19,7 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
+return;
 	global $gBitSystem, $gBitProduct;
 	$gBitSystem->setCanonicalLink( $gBitProduct->getDisplayUrl() );
 

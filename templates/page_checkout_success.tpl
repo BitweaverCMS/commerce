@@ -36,12 +36,8 @@
 
 	{if $gBitSystem->isLive() && $smarty.const.IS_LIVE}
 		{if $gBitSystem->getConfig('google_analytics_ua')}
-			{php}
-			global $newOrdersId, $gBitUser, $gBitSystem, $newOrder;
-			require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
-			$newOrder = new order( $newOrdersId );
-			{/php}
 
+			<!-- START Google Analytics -->
 			<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
 			<script type="text/javascript">
 				_uacct = "{$gBitSystem->getConfig('google_analytics_ua')}";
@@ -65,6 +61,80 @@
 			<script type="text/javascript"> 
 			__utmSetTrans(); 
 			</script>
+			<!-- END Google Analytics -->
+		{/if}
+		{if $gBitSystem->getConfig('google_conversion_id')}
+<!-- START Google Code for Checkout Success Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = {$gBitSystem->getConfig('google_conversion_id')};
+var google_conversion_language = "en";
+var google_conversion_format = "1";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "QhXYCIrwsAEQzKj8_QM";
+var google_remarketing_only = false;
+{if $newOrder->getField('total')}
+	var google_conversion_value = {$newOrder->getField('total')}; 
+	var google_conversion_currency = "{$newOrder->getField('currency',$smarty.const.DEFAULT_CURRENCY)}";
+{/if}
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/{$gBitSystem->getConfig('google_conversion_id')}/?value={$newOrder->getField('total')}&conversion_currency={$newOrder->getField('currency',$smarty.const.DEFAULT_CURRENCY)}&amp;label=QhXYCIrwsAEQzKj8_QM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+<!-- END Google Code for Checkout Success Conversion Page -->
+		{/if}
+		{if $gBitSystem->getConfig('google_trusted_store')}
+			{php}
+			global $newOrdersId, $gBitUser, $gBitSystem, $gCommerceSystem, $newOrder;
+			$discountCost = $taxCost = $shipCost = 0;
+			foreach( $newOrder->totals as $tot ) {
+				switch( $tot['class'] ) {
+					case 'ot_gv':
+					case 'ot_coupon':
+						$discountCost += $tot['orders_value'];
+						break;
+					case 'ot_tax':
+						$taxCost += $tot['orders_value'];
+						break;
+					case 'ot_shipping':
+						$shipCost += $tot['orders_value'];
+						break;
+				}
+			}
+
+			print '<!-- START Google Trusted Stores Order -->
+<div id="gts-order" style="display:none;" translate="no">
+  <!-- start order and merchant information -->
+  <span id="gts-o-id">'.$gCommerceSystem->getConfig('GOOGLE_TRUSTED_STORE').'</span>
+  <span id="gts-o-domain">'.$_SERVER['HTTP_HOST'].'.</span>
+  <span id="gts-o-email">'.$gBitUser->getField('email').'</span>
+  <span id="gts-o-country">'.$newOrder->delivery['country']['countries_name'].'</span>
+  <span id="gts-o-currency">'.$newOrder->getField( 'currency', DEFAULT_CURRENCY ).'</span>
+  <span id="gts-o-total">'.$newOrder->info['total'].'</span>
+  <span id="gts-o-discounts">'.$discountCost.'</span>
+  <span id="gts-o-shipping-total">'.$shipCost.'</span>
+  <span id="gts-o-tax-total">'.$taxCost.'</span>
+  <span id="gts-o-est-ship-date">'.date( 'Y-m-d', (time() + 86400 * 7) ).'</span>
+  <span id="gts-o-est-delivery-date">'.date( 'Y-m-d', (time() + 86400 * (7 + ($newOrder->delivery['country']['countries_iso_code_2'] == 'US' ? 5 : 15))) ).'</span>
+  <span id="gts-o-has-preorder">N</span>
+  <span id="gts-o-has-digital">N</span>
+  <!-- end order and merchant information -->
+';
+
+			foreach( $newOrder->contents AS $product ) {
+				print '  <span class="gts-item">
+    <span class="gts-i-name">'.htmlspecialchars( $product['name'], ENT_NOQUOTES ).'</span>
+    <span class="gts-i-price">'.$product['price'].'</span>
+    <span class="gts-i-quantity">'.$product['products_quantity'].'</span>
+  </span>';
+			}
+{/php}
+</div>
+<!-- END Google Trusted Stores Order -->
 		{/if}
 		{if $gBitSystem->getConfig('boostsuite_site_id')}
 			{literal}
