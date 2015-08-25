@@ -47,7 +47,7 @@ class order extends CommerceOrderBase {
 	}
 
 	function getField( $pFieldName, $pDefault = NULL ) {
-		$ret = (isset( $this->info[$pFieldName] ) ? $this->info[$pFieldName] : NULL );
+		$ret = (isset( $this->info[$pFieldName] ) && (!empty( $this->info[$pFieldName] ) || is_numeric( $this->info[$pFieldName] )) ? $this->info[$pFieldName] : $pDefault );
 		return $ret;
 	}
 
