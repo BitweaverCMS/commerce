@@ -13,21 +13,21 @@
 	<tr class="sale">
 		{assign var=totalUnits value=$totalUnits+$commission.products_quantity}
 		{assign var=totalSales value=$totalSales+$commission.products_quantity*$commission.unit_commission_earned}
-		<td style="text-align:left" class="item">{$commission.purchased_epoch|date_format:"%Y-%m-%d %H:%I:%S"}</td>
-		<td style="text-align:left" class="item"><a href="{$commission.products_link}">{$commission.products_name}</a></td>
-		<td style="text-align:right" class="item">{$commission.products_quantity} @ ${$commission.unit_commission_earned}</td>
-		<td style="text-align:right" class="item">${$commission.products_quantity*$commission.unit_commission_earned}</td>
-		<td style="text-align:right" class="item"></td>
-		<td style="text-align:left" class="item"></td>
+		<td class="item text-left">{$commission.purchased_epoch|date_format:"%Y-%m-%d %H:%I:%S"}</td>
+		<td class="item text-left"><a href="{$commission.products_link}">{$commission.products_name}</a></td>
+		<td class="item text-right">{$commission.products_quantity} @ ${$commission.unit_commission_earned}</td>
+		<td class="item text-right">${$commission.products_quantity*$commission.unit_commission_earned}</td>
+		<td class="item text-right"></td>
+		<td class="item text-left"></td>
 	</tr>
 		{elseif $commission.commissions_payments_id}
 	<tr class="payment success">
 		{assign var=totalCommissions value=$totalCommissions+$commission.payment_amount}
 		<td>{$commission.period_end_date}</td>
-		<td colspan="3" style="text-align:left" class="item">{tr}Payment for sales ending on this date. Payment was made on{/tr} {$commission.payment_date|strtotime|date_format:"%Y-%m-%d"}
+		<td colspan="2" class="item text-left">{tr}Payment for sales ending on this date. Payment was made on{/tr} {$commission.payment_date|strtotime|date_format:"%Y-%m-%d"}
 		</td>
-		<td style="text-align:right" class="item">${$commission.payment_amount}</td>
-		<td style="text-align:left" class="item">{$commission.payment_method}</td>
+		<td class="item text-right">${$commission.payment_amount}</td>
+		<td class="item text-left">{$commission.payment_method}</td>
 	</tr>
 		{/if}
 	{/foreach}
