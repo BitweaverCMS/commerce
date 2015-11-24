@@ -38,19 +38,19 @@
 		{foreach from=$couponList item=coupon key=couponId name=couponList}
 		<tr class="coupon coupon-{if $coupon.coupon_active!='Y'}inactive{elseif $coupon.coupon_start_date|strtotime > time()}pending{elseif $coupon.coupon_expire_date|strtotime > time()}active{else}expired{/if}">
 			<td class="item">{$smarty.foreach.couponList.iteration+$listInfo.offset}</td>
-			<td class="item">
+			<td class="item text-left">
 				<div class="floaticon text-left">
 					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=edit&amp;cid={$couponId}">{booticon iname="icon-edit"}</a>
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}({$coupon.restrictions_count}){/if}{booticon iname="icon-lock"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}<span class="badge">{$coupon.restrictions_count} {booticon iname="icon-lock"}</span>{else}{booticon iname="icon-lock"}{/if}</a>
 				{if $coupon.redeemed_count == 0}
 					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{booticon iname="icon-trash"}</a>
 				{/if}
 				</div>
-				<strong>{if $coupon.redeemed_count > 0}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=report&amp;cid={$couponId}">{/if}{$coupon.coupon_code}{if $coupon.redeemed_count > 0}</a>{/if}</strong> <em>{$coupon.coupon_name|escape}</em>
+				<strong>{$coupon.coupon_code}</strong> <em>{$coupon.coupon_name|escape}</em>
 				<br/>{$coupon.coupon_description}: {if $coupon.uses_per_coupon}{$coupon.uses_per_coupon}{else}{tr}unlimited{/tr}{/if} {tr}use{/tr}{if $coupon.uses_per_user}, {$coupon.uses_per_user} per user{/if}
 			</td>
 			<td class="item currency">{if $coupon.coupon_type=='P'}{$coupon.coupon_amount}%{elseif $coupon.coupon_type=='S'}<em>{tr}FREE SHIP{/tr}</em>{else}{$gCommerceCurrencies->format($coupon.coupon_amount)}{/if} {$coupon.restrict_to_shipping}</td>
-			<td class="item currency">{$coupon.redeemed_count}</td>
+			<td class="item currency">{if $coupon.redeemed_count > 0}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=report&amp;cid={$couponId}">{/if}{$coupon.redeemed_count}{if $coupon.redeemed_count > 0}</a>{/if}</td>
 			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_sum)}</td>
 			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_revenue)}</td>
 			<td class="item">{$coupon.coupon_start_date|strtotime|bit_short_datetime}<div class="date">{$coupon.redeemed_first_date|strtotime|bit_short_datetime}</div></td>
