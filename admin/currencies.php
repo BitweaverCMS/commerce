@@ -97,31 +97,10 @@
       case 'update':
         $server_used = CURRENCY_SERVER_PRIMARY;
 
-        $currency = $gBitDb->Execute("SELECT `currencies_id`, `code`, `title` FROM " . TABLE_CURRENCIES);
-        while (!$currency->EOF) {
-          $quote_function = 'quote_' . CURRENCY_SERVER_PRIMARY . '_currency';
-          $rate = $quote_function($currency->fields['code']);
-
-          if (empty($rate) && (zen_not_null(CURRENCY_SERVER_BACKUP))) {
-            $messageStack->add_session(sprintf(WARNING_PRIMARY_SERVER_FAILED, CURRENCY_SERVER_PRIMARY, $currency->fields['title'], $currency->fields['code']), 'warning');
-
-            $quote_function = 'quote_' . CURRENCY_SERVER_BACKUP . '_currency';
-            $rate = $quote_function($currency->fields['code']);
-
-            $server_used = CURRENCY_SERVER_BACKUP;
-          }
-
-          if (zen_not_null($rate)) {
-            $gBitDb->Execute("UPDATE " . TABLE_CURRENCIES . "
-                          SET `currency_value` = '" . $rate . "', `last_updated` = ".$gBitDb->qtNOW()."
-                          WHERE `currencies_id` = '" . (int)$currency->fields['currencies_id'] . "'");
-
-            $messageStack->add_session(sprintf(TEXT_INFO_CURRENCY_UPDATED, $currency->fields['title'], $currency->fields['code'], $server_used), 'success');
-          } else {
-            $messageStack->add_session(sprintf(ERROR_CURRENCY_INVALID, $currency->fields['title'], $currency->fields['code'], $server_used), 'error');
-          }
-          $currency->MoveNext();
-        }
+		$output = currency_update_quotes();
+		foreach( $output as $result ) {
+            $messageStack->add_session($result['message'], $result['result']);
+		}
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $_GET['cID']));
         break;
