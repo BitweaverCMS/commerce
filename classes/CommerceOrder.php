@@ -1140,7 +1140,7 @@ class order extends CommerceOrderBase {
 	function getFormattedAddress( $pAddressHash, $pBreak='<br>' ) {
 		$ret = '';
 		if( $this->isValid() ) {
-			$ret = zen_address_format( $this->customer['format_id'], $this->$pAddressHash, 1, '', $pBreak );
+			$ret = zen_address_format( BitBase::getParameter( $this->$pAddressHash, 'format_id', 2 ), $this->$pAddressHash, 1, '', $pBreak );
 		}
 		return $ret;
 	}
