@@ -169,6 +169,7 @@ function getShippingQuotes( pOrderId ) {
 <tr>
 	<td colspan="3" class="alignright {'ot_'|str_replace:'':$order->totals[t].class} text">
 		{if $order->totals[t].class=='ot_shipping'}
+			{assign var=hasShipping value=true}
 			<a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="icon-edit"></i></a>
 		{/if}
 		{$order->totals[t].title}
@@ -195,6 +196,17 @@ function getShippingQuotes( pOrderId ) {
 	</td>
 </tr>
 {/section}
+{if !$hasShipping}
+<tr>
+	<td colspan="3" class="alignright shipping text">
+		Add shipping <a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="icon-edit"></i></a>
+		<span id="shippingquote"></span>
+	</td>
+	<td colspan="2">
+		
+	</td>
+</tr>
+{/if}
 
 {php}
 	// show downloads

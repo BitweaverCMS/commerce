@@ -59,7 +59,7 @@
 		global $order, $currencies;
 
 		$this->quotes['id'] = $this->code;
-		$this->quotes['module'] = MODULE_SHIPPING_SUPERSAVER_TEXT_TITLE;
+		$this->quotes['module'] = tra('SuperSaver Shipping');
 		$this->quotes['icon'] = $this->icon;
 
 		$min = MODULE_SHIPPING_SUPERSAVER_MIN;

@@ -227,7 +227,7 @@ class usps extends BitBase {
    * @return array of quotation results
    */
 	function quote( $pShipHash = array() ) {
-      global $order, $currencies, $shipping;
+      global $order, $currencies, $shipping, $shipping_num_boxes, $gCommerceSystem;
       $iInfo = '';
       $methods = array();
 		if ( !empty( $pShipHash['method'] ) && isset($this->types[$pShipHash['method']] ) ) {
@@ -335,7 +335,7 @@ class usps extends BitBase {
           }
         }
 
-        if (MODULE_SHIPPING_USPS_REGULATIONS == 'True') {
+        if ( $gCommerceSystem->isConfigActive( 'MODULE_SHIPPING_USPS_REGULATIONS' ) ) {
           $iInfo = '<div id="iInfo">' . "\n" .
                    '  <div id="showInfo" class="ui-state-error" style="cursor:pointer; text-align:center;" onclick="$(\'#showInfo\').hide();$(\'#hideInfo, #Info\').show();">' . MODULE_SHIPPING_USPS_TEXT_INTL_SHOW . '</div>' . "\n" .
                    '  <div id="hideInfo" class="ui-state-error" style="cursor:pointer; text-align:center; display:none;" onclick="$(\'#hideInfo, #Info\').hide();$(\'#showInfo\').show();">' . MODULE_SHIPPING_USPS_TEXT_INTL_HIDE .'</div>' . "\n" .
@@ -452,7 +452,7 @@ if (false) {
         $Package['lookupRegex'] = str_replace('ParcelPARCEL', 'Parcel', $Package['lookupRegex']);
 
         // Certain methods cannot ship if declared value is over $400, so we "continue" which skips the current $type and proceeds with the next one in the loop:
-        if (isset($this->types_to_skip_over_certain_value[$type]) && $_SESSION['cart']->total > $this->types_to_skip_over_certain_value[$type]) {
+        if (isset($this->types_to_skip_over_certain_value[$type]) && $order->subtotal > $this->types_to_skip_over_certain_value[$type]) {
           continue;
         }
 
@@ -1859,11 +1859,8 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
         }
       }
     }
-    if ($extraserviceinternational) {
-      $extraserviceinternational =
-      '<ExtraServices>' .
-        $extraserviceinternational .
-      '</ExtraServices>';
+    if( !empty( $extraserviceinternational ) ) {
+      $extraserviceinternational = '<ExtraServices>' .  $extraserviceinternational . '</ExtraServices>';
     } else {
       $extraserviceinternational = '';
     }
