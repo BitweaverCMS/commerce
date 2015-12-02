@@ -539,7 +539,7 @@ if (false) {
               if ($found === true) break;
             }
           }
-          if ($found === false) continue;
+          if (isset( $found ) && $found === false) continue;
 
 
           // display 1st occurance of First Class and skip others for the US
