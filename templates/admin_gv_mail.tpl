@@ -169,6 +169,7 @@ function check_form(form_name) {
 	{formlabel label="Email To"}
 	{forminput}
 		<input class="form-control" type="text" name="email_to" value="{$smarty.request.email_to}" />
+		{formhelp note="To send to multiple people, enter a comma separated list of email addresses"}
 	{/forminput}
 </div>
 
@@ -189,7 +190,12 @@ function check_form(form_name) {
 <div class="form-group">
 	{formlabel label="Amount"}
 	{forminput}
-		<input class="form-control" type="text" name="amount" value="{$smarty.request.amount}" />
+		<div class="input-group">
+			<div class="input-group-addon">{$gCommerceCurrencies->getLeftSymbol()}</div>
+			<input class="form-control" type="number" step="{$gCommerceCurrencies->getInputStep()}" name="amount" value="{$smarty.request.amount}" />
+			<div class="input-group-addon">{$gCommerceCurrencies->getRightSymbol()}</div>
+		</div>
+
 	{/forminput}
 </div>
 

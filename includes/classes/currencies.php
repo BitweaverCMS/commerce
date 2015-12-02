@@ -150,6 +150,10 @@ class currencies extends BitBase {
 		return $this->currencies[$code]['currency_value'];
 	}
 
+	function getInputStep( $pCurrency = DEFAULT_CURRENCY ) {
+		return '0.'.str_pad( '1', $this->get_decimal_places( $pCurrency ), '0', STR_PAD_LEFT );
+	}
+
 	function get_decimal_places($code) {
 		return $this->currencies[$code]['decimal_places'];
 	}

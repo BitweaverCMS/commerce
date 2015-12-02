@@ -304,7 +304,7 @@ class CommerceVoucher extends BitBase {
 	// admin or automated means. Eventually these two functions should be
 	// merged/simplified
 	function adminSendCoupon( $pParamHash ) {
-		global $gBitUser, $gBitCustomer, $gBitSystem, $currencies;
+		global $gBitUser, $gBitCustomer, $gCommerceSystem, $gBitSystem, $currencies;
 
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
@@ -328,22 +328,26 @@ class CommerceVoucher extends BitBase {
 				$pParamHash['message'] = trim( stripslashes( strip_tags( TEXT_GV_ANNOUNCE ) ) );
 			}
 			$message = zen_db_prepare_input($pParamHash['message']);
+			$html_msg['GV_MESSAGE'] = $message;
 			$message .= "\n\n" . TEXT_GV_WORTH  . $currencies->format($pParamHash['amount']) . "\n\n";
 			$message .= TEXT_TO_REDEEM;
 			$message .= TEXT_WHICH_IS . ' ' . $id1 . ' ' . TEXT_IN_CASE . "\n\n";
 
+			$html_msg['GV_AMOUNT']  = $currencies->format($pParamHash['amount']);
+			$html_msg['GV_CODE']  = $id1; 
 			$html_msg['GV_WORTH']  = TEXT_GV_WORTH  . $currencies->format($pParamHash['amount']) .'<br />';
-			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . "\n\n";
+			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . '<p>' . TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE . '</p>';
 
-			if (SEARCH_ENGINE_FRIENDLY_URLS == 'true') {
-				$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1 . "\n\n";
-				$html_msg['GV_CODE_URL']  = '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>'. "&nbsp;";
+			
+			if ( 0 && $gCommerceSystem->isConfigActive( 'SEARCH_ENGINE_FRIENDLY_URLS' ) ) { // TODO Fix
+				$html_msg['GV_CODE_URL']  = HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1;
+				$html_msg['GV_CODE_LINK'] = '<a href="'.HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>';
 			} else {
-				$message .= HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 . "\n\n";
-				$html_msg['GV_CODE_URL']  =  '<a href="'. HTTP_SERVER  . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>' . "&nbsp;";
+				$html_msg['GV_CODE_URL'] = HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1;
+				$html_msg['GV_CODE_LINK']  =  '<a href="'. HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>';
 			}
-			$message .= TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG  . TEXT_ENTER_CODE . "\n\n";
-			$html_msg['GV_CODE_URL']  .= TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE;
+vd( $html_msg['GV_CODE_URL'] );
+			$message .= $html_msg['GV_CODE_URL'] . "\n\n" . TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG  . TEXT_ENTER_CODE . "\n\n";
 			$html_msg['EMAIL_MESSAGE_HTML'] = !empty( $pParamHash['message_html'] ) ? zen_db_prepare_input($pParamHash['message_html']) : '';
 			$html_msg['EMAIL_FIRST_NAME'] = ''; // unknown, since only an email address was supplied
 			$html_msg['EMAIL_LAST_NAME']  = ''; // unknown, since only an email address was supplied

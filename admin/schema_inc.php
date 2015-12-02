@@ -46,7 +46,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers' => "
   customers_password C(40),
   customers_newsletter C(1),
   customers_group_pricing I4,
-  customers_email_format C(4) DEFAULT 'TEXT' NOTNULL,
+  customers_email_format C(4),
   customers_authorization I1,
   customers_referral C(32)
 ",

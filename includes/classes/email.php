@@ -167,7 +167,7 @@
  */
 
     function add_html($html, $text = NULL, $images_dir = NULL) {
-      $this->html = zen_convert_linefeeds(array("\r\n", "\n", "\r"), '<br />', $html);
+      $this->html = $html;
       $this->html_text = zen_convert_linefeeds(array("\r\n", "\n", "\r"), $this->lf, $text);
 
       if (isset($images_dir)) $this->find_html_images($images_dir);
