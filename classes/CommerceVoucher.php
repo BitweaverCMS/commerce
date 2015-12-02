@@ -346,7 +346,7 @@ class CommerceVoucher extends BitBase {
 				$html_msg['GV_CODE_URL'] = HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1;
 				$html_msg['GV_CODE_LINK']  =  '<a href="'. HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>';
 			}
-vd( $html_msg['GV_CODE_URL'] );
+
 			$message .= $html_msg['GV_CODE_URL'] . "\n\n" . TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG  . TEXT_ENTER_CODE . "\n\n";
 			$html_msg['EMAIL_MESSAGE_HTML'] = !empty( $pParamHash['message_html'] ) ? zen_db_prepare_input($pParamHash['message_html']) : '';
 			$html_msg['EMAIL_FIRST_NAME'] = ''; // unknown, since only an email address was supplied
