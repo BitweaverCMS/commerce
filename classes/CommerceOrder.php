@@ -1189,7 +1189,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 	}
 
 	function updateStatus( $pParamHash ) {
-		global $gBitUser;
+		global $gBitUser, $gBitSmarty;
 
 		$order_updated = false;
 
@@ -1207,7 +1207,6 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 			$this->info['orders_status_id'] = $status;
 			$this->info['orders_status'] = zen_get_order_status_name( $status );
-
 			$customer_notified = '0';
 			if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
 				$notify_comments = '';
@@ -1216,33 +1215,35 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 				}
 
 				//send emails
-				$message = STORE_NAME . "\n------------------------------------------------------\n" .
+				$textMessage = STORE_NAME . "\n------------------------------------------------------\n" .
 					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n\n" .
 					tra( 'Detailed Invoice' ) . ': ' . $this->getDisplayLink() . "\n\n" .
 					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
 					strip_tags($notify_comments) ;
+				
 				if( $statusChanged ) {
-					$message .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
+					$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
 				}
-				$message .= tra( 'Please reply to this email if you have any questions.' );
+				$textMessage .= tra( 'Please reply to this email if you have any questions.' );
 
 				$html_msg['EMAIL_CUSTOMERS_NAME']		= $this->customer['name'];
 				$html_msg['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
 				$html_msg['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
 				$html_msg['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
-				$html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = $notify_comments;
+				$html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
 				if( $statusChanged ) {
 					$html_msg['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
 					$html_msg['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
 				}
 				$html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
-				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
+				$gBitSmarty->assign( 'order', $this );
+				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
 
 				$customer_notified = '1';
 				//send extra emails
 				if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
-					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status_extra');
+					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status_extra');
 				}
 			}
 
@@ -1382,6 +1383,21 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 	function isValid() {
 		return( !empty( $this->mOrdersId ) && is_numeric( $this->mOrdersId ) );
+	}
+
+	function getFirstName() {
+		$ret = '';
+		if( $this->isValid() ) {
+			if( !empty( $this->customer['real_name'] ) ) {
+				$names = explode(' ', $this->customer['real_name'], 2);
+				$ret = $names[0];
+			} elseif( !empty( $this->customer['real_name'] ) ) {
+				$ret = explode(' ', $this->customer['real_name'], 1);
+			} else {
+				$ret = $this->customer['email_address'];
+			}
+		}
+		return $ret;
 	}
 
 	function getDisplayLink() {
