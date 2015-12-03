@@ -807,10 +807,10 @@ class order extends CommerceOrderBase {
 							'shipping_method_code' => $this->info['shipping_method_code'],
 							'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
 							'coupon_code' => $this->info['coupon_code'],
-							'cc_type' => $this->info['cc_type'],
-							'cc_owner' => $this->info['cc_owner'],
-							'cc_number' => $this->info['cc_number'],
-							'cc_expires' => $this->info['cc_expires'],
+							'cc_type' => $this->getField( 'cc_type' ),
+							'cc_owner' => $this->getField( 'cc_owner' ),
+							'cc_number' => $this->getField( 'cc_number' ),
+							'cc_expires' => $this->getField( 'cc_expires' ),
 							'date_purchased' => $this->mDb->NOW(),
 							'orders_status' => $this->info['order_status'],
 							'order_total' => $this->info['total'],
@@ -1039,7 +1039,8 @@ class order extends CommerceOrderBase {
 
 // lets start with the email confirmation
 // make an array to store the html version
-		$html_msg=array();
+		$emailVars=array();
+		$emailVars['order'] = $this;
 
 //intro area
 		$email_order = EMAIL_TEXT_HEADER . EMAIL_TEXT_FROM . STORE_NAME . "\n\n" .
@@ -1049,24 +1050,24 @@ class order extends CommerceOrderBase {
 									 EMAIL_TEXT_ORDER_NUMBER . ' ' . $zf_insert_id . "\n" .
 									 EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
 									 EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $zf_insert_id, 'SSL', false) . "\n\n";
-		$html_msg['EMAIL_TEXT_HEADER']		 = EMAIL_TEXT_HEADER;
-		$html_msg['EMAIL_TEXT_FROM']			 = EMAIL_TEXT_FROM;
-		$html_msg['INTRO_STORE_NAME']			= STORE_NAME;
-		$html_msg['EMAIL_THANKS_FOR_SHOPPING'] = EMAIL_THANKS_FOR_SHOPPING;
-		$html_msg['EMAIL_DETAILS_FOLLOW']	= EMAIL_DETAILS_FOLLOW;
-		$html_msg['INTRO_ORDER_NUM_TITLE'] = EMAIL_TEXT_ORDER_NUMBER;
-		$html_msg['INTRO_ORDER_NUMBER']		= $zf_insert_id;
-		$html_msg['INTRO_DATE_TITLE']			= EMAIL_TEXT_DATE_ORDERED;
-		$html_msg['INTRO_DATE_ORDERED']		= strftime(DATE_FORMAT_LONG);
-		$html_msg['INTRO_URL_TEXT']				= EMAIL_TEXT_INVOICE_URL_CLICK;
-		$html_msg['INTRO_URL_VALUE']			 = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $zf_insert_id, 'SSL', false);
+		$emailVars['EMAIL_TEXT_HEADER']		 = EMAIL_TEXT_HEADER;
+		$emailVars['EMAIL_TEXT_FROM']			 = EMAIL_TEXT_FROM;
+		$emailVars['INTRO_STORE_NAME']			= STORE_NAME;
+		$emailVars['EMAIL_THANKS_FOR_SHOPPING'] = EMAIL_THANKS_FOR_SHOPPING;
+		$emailVars['EMAIL_DETAILS_FOLLOW']	= EMAIL_DETAILS_FOLLOW;
+		$emailVars['INTRO_ORDER_NUM_TITLE'] = EMAIL_TEXT_ORDER_NUMBER;
+		$emailVars['INTRO_ORDER_NUMBER']		= $zf_insert_id;
+		$emailVars['INTRO_DATE_TITLE']			= EMAIL_TEXT_DATE_ORDERED;
+		$emailVars['INTRO_DATE_ORDERED']		= strftime(DATE_FORMAT_LONG);
+		$emailVars['INTRO_URL_TEXT']				= EMAIL_TEXT_INVOICE_URL_CLICK;
+		$emailVars['INTRO_URL_VALUE']			 = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $zf_insert_id, 'SSL', false);
 
 //comments area
 		if ($this->info['comments']) {
 			$email_order .= zen_db_output($this->info['comments']) . "\n\n";
-			$html_msg['ORDER_COMMENTS'] = zen_db_output($this->info['comments']);
+			$emailVars['ORDER_COMMENTS'] = zen_db_output($this->info['comments']);
 		} else {
-			$html_msg['ORDER_COMMENTS'] = '';
+			$emailVars['ORDER_COMMENTS'] = '';
 		}
 
 //products area
@@ -1074,8 +1075,8 @@ class order extends CommerceOrderBase {
 										EMAIL_SEPARATOR . "\n" .
 										$this->products_ordered .
 										EMAIL_SEPARATOR . "\n";
-		$html_msg['PRODUCTS_TITLE'] = EMAIL_TEXT_PRODUCTS;
-		$html_msg['PRODUCTS_DETAIL']='<table class="product-details" border="0" width="100%" cellspacing="0" cellpadding="2">' . $this->products_ordered_html . '</table>';
+		$emailVars['PRODUCTS_TITLE'] = EMAIL_TEXT_PRODUCTS;
+		$emailVars['PRODUCTS_DETAIL']='<table class="product-details" border="0" width="100%" cellspacing="0" cellpadding="2">' . $this->products_ordered_html . '</table>';
 
 //order totals area
 		$html_ot = '<td class="order-totals-text alignright" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num alignright" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
@@ -1083,14 +1084,14 @@ class order extends CommerceOrderBase {
 			$email_order .= strip_tags($order_totals[$i]['title']) . ' ' . strip_tags($order_totals[$i]['text']) . "\n";
 		$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . $order_totals[$i]['title'] . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' .($order_totals[$i]['text']) .'</td></tr><tr>';
 		}
-		$html_msg['ORDER_TOTALS'] = '<table border="0" width="100%" cellspacing="0" cellpadding="2">' . $html_ot . '</table>';
+		$emailVars['ORDER_TOTALS'] = '<table border="0" width="100%" cellspacing="0" cellpadding="2">' . $html_ot . '</table>';
 
 //addresses area: Delivery
-		$html_msg['HEADING_ADDRESS_INFORMATION']= HEADING_ADDRESS_INFORMATION;
-		$html_msg['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
-		$html_msg['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], true, '', "<br />") : 'n/a';
-		$html_msg['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
-		$html_msg['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
+		$emailVars['HEADING_ADDRESS_INFORMATION']= HEADING_ADDRESS_INFORMATION;
+		$emailVars['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
+		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], true, '', "<br />") : 'n/a';
+		$emailVars['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
+		$emailVars['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
 
 		if ($this->content_type != 'virtual') {
 			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .  EMAIL_SEPARATOR . "\n" .  zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], 0, '', "\n") . "\n";
@@ -1098,20 +1099,21 @@ class order extends CommerceOrderBase {
 
 //addresses area: Billing
 		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .  EMAIL_SEPARATOR . "\n" .  zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], 0, '', "\n") . "\n\n";
-		$html_msg['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
-		$html_msg['ADDRESS_BILLING_DETAIL']	= zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, '', "<br />");
+		$emailVars['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
+		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], true, '', "<br />");
 
-		if (is_object($GLOBALS[$_SESSION['payment']])) {
+		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
+		if(!empty( $_SESSION['payment'] ) && is_object($GLOBALS[$_SESSION['payment']])) {
 			$email_order .= EMAIL_TEXT_PAYMENT_METHOD . "\n" .  EMAIL_SEPARATOR . "\n";
 			$payment_class = $_SESSION['payment'];
 			$email_order .= $GLOBALS[$payment_class]->title . "\n\n";
 			if( !empty( $GLOBALS[$payment_class]->email_footer ) ) {
 				$email_order .= $GLOBALS[$payment_class]->email_footer . "\n\n";
 			}
+			$emailVars['PAYMENT_METHOD_TITLE'] = EMAIL_TEXT_PAYMENT_METHOD;
+			$emailVars['PAYMENT_METHOD_DETAIL'] = $GLOBALS[$payment_class]->title;
+			$emailVars['PAYMENT_METHOD_FOOTER'] = (!empty( $GLOBALS[$payment_class]->email_footer ) ? $GLOBALS[$payment_class]->email_footer : '');
 		}
-		$html_msg['PAYMENT_METHOD_TITLE'] = (is_object($GLOBALS[$_SESSION['payment']]) ? EMAIL_TEXT_PAYMENT_METHOD : '') ;
-		$html_msg['PAYMENT_METHOD_DETAIL'] = (is_object($GLOBALS[$_SESSION['payment']]) ? $GLOBALS[$payment_class]->title : '' );
-		$html_msg['PAYMENT_METHOD_FOOTER'] = (is_object($GLOBALS[$_SESSION['payment']]) && !empty( $GLOBALS[$payment_class]->email_footer ) ? $GLOBALS[$payment_class]->email_footer : '');
 
 // include disclaimer
 		$email_order .= "\n-----\n" . sprintf(EMAIL_DISCLAIMER, STORE_OWNER_EMAIL_ADDRESS) . "\n\n";
@@ -1122,18 +1124,19 @@ class order extends CommerceOrderBase {
 			$email_order = str_replace('&nbsp;', ' ', $email_order);
 		}
 
-		$html_msg['EMAIL_FIRST_NAME'] = $this->customer['firstname'];
-		$html_msg['EMAIL_LAST_NAME'] = $this->customer['lastname'];
-//	$html_msg['EMAIL_TEXT_HEADER'] = EMAIL_TEXT_HEADER;
-		$html_msg['EXTRA_INFO'] = '';
-		zen_mail($this->customer['firstname'] . ' ' . $this->customer['lastname'], $this->customer['email_address'], EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $zf_insert_id, $email_order, STORE_NAME, EMAIL_FROM, $html_msg, 'checkout');
+		$emailVars['EMAIL_FIRST_NAME'] = $this->customer['firstname'];
+		$emailVars['EMAIL_LAST_NAME'] = $this->customer['lastname'];
+//	$emailVars['EMAIL_TEXT_HEADER'] = EMAIL_TEXT_HEADER;
+		$emailVars['EXTRA_INFO'] = '';
+
+		zen_mail($this->customer['firstname'] . ' ' . $this->customer['lastname'], $this->customer['email_address'], EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $zf_insert_id, $email_order, STORE_NAME, EMAIL_FROM, $emailVars, 'checkout');
 
 // send additional emails
 		 if (SEND_EXTRA_ORDER_EMAILS_TO != '') {
 			 $extra_info=email_collect_extra_info('','', $this->customer['firstname'] . ' ' . $this->customer['lastname'], $this->customer['email_address'], $this->customer['telephone']);
-			 $html_msg['EXTRA_INFO'] = $extra_info['HTML'];
+			 $emailVars['EXTRA_INFO'] = $extra_info['HTML'];
 			 zen_mail('', SEND_EXTRA_ORDER_EMAILS_TO, SEND_EXTRA_NEW_ORDERS_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $zf_insert_id,
-			 $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg, 'checkout_extra');
+			 $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $emailVars, 'checkout_extra');
 		}
 	}
 
@@ -1207,7 +1210,6 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 			$this->info['orders_status_id'] = $status;
 			$this->info['orders_status'] = zen_get_order_status_name( $status );
-
 			$customer_notified = '0';
 			if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
 				$notify_comments = '';
@@ -1216,33 +1218,35 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 				}
 
 				//send emails
-				$message = STORE_NAME . "\n------------------------------------------------------\n" .
+				$textMessage = STORE_NAME . "\n------------------------------------------------------\n" .
 					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n\n" .
 					tra( 'Detailed Invoice' ) . ': ' . $this->getDisplayLink() . "\n\n" .
 					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
 					strip_tags($notify_comments) ;
+				
 				if( $statusChanged ) {
-					$message .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
+					$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
 				}
-				$message .= tra( 'Please reply to this email if you have any questions.' );
+				$textMessage .= tra( 'Please reply to this email if you have any questions.' );
 
-				$html_msg['EMAIL_CUSTOMERS_NAME']		= $this->customer['name'];
-				$html_msg['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
-				$html_msg['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
-				$html_msg['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
-				$html_msg['EMAIL_TEXT_STATUS_COMMENTS'] = $notify_comments;
+				$emailVars['EMAIL_CUSTOMERS_NAME']		= $this->customer['name'];
+				$emailVars['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
+				$emailVars['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
+				$emailVars['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
+				$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
 				if( $statusChanged ) {
-					$html_msg['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
-					$html_msg['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
+					$emailVars['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
+					$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
 				}
-				$html_msg['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
+				$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
-				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status');
+				$emailVars['order'] = $this;
+				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status');
 
 				$customer_notified = '1';
 				//send extra emails
 				if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
-					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $message, STORE_NAME, EMAIL_FROM, $html_msg, 'order_status_extra');
+					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status_extra');
 				}
 			}
 
@@ -1382,6 +1386,25 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 	function isValid() {
 		return( !empty( $this->mOrdersId ) && is_numeric( $this->mOrdersId ) );
+	}
+
+	function getFirstName() {
+		$ret = '';
+		if( $this->isValid() ) {
+			if( !empty( $this->customer['real_name'] ) ) {
+				$names = explode(' ', $this->customer['real_name'], 2);
+				$ret = $names[0];
+			} elseif( !empty( $this->customer['real_name'] ) ) {
+				$ret = explode(' ', $this->customer['real_name'], 1);
+			} elseif( !empty( $this->billing['firstname'] ) ) {
+				$ret = $this->billing['firstname'];
+			} elseif( !empty( $this->delivery['firstname'] ) ) {
+				$ret = $this->delivery['firstname'];
+			} else {
+				$ret = $this->customer['email_address'];
+			}
+		}
+		return $ret;
 	}
 
 	function getDisplayLink() {

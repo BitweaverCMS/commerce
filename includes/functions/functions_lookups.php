@@ -20,20 +20,15 @@
 // $Id$
 //
 //
-  function zen_get_order_status_name($order_status_id, $language_id = '') {
-    global $gBitDb;
+	function zen_get_order_status_name($order_status_id, $language_id = '') {
+		global $gBitDb;
 
-    if ($order_status_id < 1) return TEXT_DEFAULT;
+		if (!is_numeric($language_id)) {
+			$language_id = $_SESSION['languages_id'];
+		}
 
-    if (!is_numeric($language_id)) $language_id = $_SESSION['languages_id'];
-
-    $status = $gBitDb->Execute("SELECT `orders_status_name`
-                            FROM " . TABLE_ORDERS_STATUS . "
-                            WHERE `orders_status_id` = '" . (int)$order_status_id . "'
-                            and `language_id` = '" . (int)$language_id . "'");
-
-    return $status->fields['orders_status_name'] . ' [' . (int)$order_status_id . ']';
-  }
+		return $gBitDb->getOne("SELECT `orders_status_name` FROM " . TABLE_ORDERS_STATUS . " WHERE `orders_status_id` = ? and `language_id` = ?", array( (int)$order_status_id, (int)$language_id ) );
+	}
 
 
 	function commerce_get_statuses( $pHash=FALSE ) {

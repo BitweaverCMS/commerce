@@ -200,7 +200,7 @@
 		global $gBitProduct, $order;
 		$ret = NULL;
 		if (is_array($this->modules)) {
-			if( is_object( $GLOBALS[$this->selected_module] ) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
+			if( !empty( $GLOBALS[$this->selected_module] ) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
 				$ret = $GLOBALS[$this->selected_module]->before_process();
 			}
 		}
@@ -211,7 +211,7 @@
 	function after_process() {
 		$ret = NULL;
 		if (is_array($this->modules)) {
-			if (is_object($GLOBALS[$this->selected_module]) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
+			if (!empty($GLOBALS[$this->selected_module]) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
 				$ret = $GLOBALS[$this->selected_module]->after_process();
 			}
 		}
@@ -226,7 +226,7 @@
 		}
 		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
 		if (is_array($this->modules)) {
-			if (is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
+			if (!empty($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) && (method_exists($GLOBALS[$this->selected_module], 'after_order_create'))) {
 				return $GLOBALS[$this->selected_module]->after_order_create($zf_order_id);
 			}
 		}

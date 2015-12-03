@@ -263,7 +263,9 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 		//now replace the $BLOCK_NAME items in the template file with the values passed to this function's array
 			foreach ($block as $key=>$value) {
-				$htmlMessage = str_replace('$' . $key, $value, $htmlMessage);
+				if( !is_object( $block[$key] ) ) {
+					$htmlMessage = str_replace('$' . $key, $value, $htmlMessage);
+				}
 			}
 
 	//DEBUG -- to display preview on-screen

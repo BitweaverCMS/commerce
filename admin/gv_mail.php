@@ -43,7 +43,7 @@ if ( !empty( $_GET['action'] ) ) {
 			if( !empty( $_REQUEST['oID'] ) ) {
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $_REQUEST['oID'] ));
 			} else {
-				zen_redirect(zen_href_link_admin(FILENAME_GV_MAIL, 'mailSentTo=' . urlencode($mailSentTo) . '&recip_count='. $recip_count ));
+				zen_redirect(zen_href_link_admin(FILENAME_GV_SENT));
 			}
 		}
 	}
