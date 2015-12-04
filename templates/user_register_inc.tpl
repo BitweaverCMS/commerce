@@ -1,11 +1,11 @@
 {if $comInterests}
 <div class="form-group">
 	{formlabel label="Interests"}
-	{forminput}
+	{forminput class="checkbox"}
 		{foreach from=$comInterests key=interestId item=interestName}
-		{forminput label="checkbox"}
-			<input type="checkbox" name="com_interests[]" value="{$interestId}"/>{$interestName}<br/>
-		{/forminput}
+			<div><label>
+			<input type="checkbox" name="com_interests[]" value="{$interestId}"/>{$interestName}
+			</label></div>
 		{/foreach}
 		{formhelp note="Let us know your interests so we can best serve you."}
 	{/forminput}
