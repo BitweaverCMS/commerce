@@ -176,10 +176,7 @@ if( !empty( $order ) ) {
 			break;
 		case 'email':
 			if( validate_email_syntax( $_REQUEST['email'] ) ) {
-				$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' ;
-				require_once( BITCOMMERCE_PKG_PATH . $language_page_directory . 'checkout_process.php' );
-				require_once( BITCOMMERCE_PKG_PATH. './includes/functions/functions_customers.php' );
-				$order->send_order_email( $order->mOrdersId, $_REQUEST['email'] );
+				$order->send_order_email( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
 				$messageStack->add_session('Copy of receipt emailed to '.$_REQUEST['email'], 'success');
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['oID'] );
 			}

@@ -36,7 +36,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 //                    This is passed to the archive function denoting what module initiated the sending of the email
 // $attachments_list  Array of attachment names/mime-types to be included  (this portion still in testing, and not fully reliable)
 
-	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='' ) {
+	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='', $pFormat ) {
 		global $gBitDb, $messageStack;
 		if (SEND_EMAILS != 'true') return false;  // if sending email is disabled in Admin, just exit
 		if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
@@ -49,98 +49,101 @@ define('EMAIL_SYSTEM_DEBUG','off');
 		// if email name is same as email address, use the Store Name as the senders 'Name'
 		if ($from_email_name == $from_email_address) $from_email_name = STORE_NAME;
 
-	// loop thru multiple email recipients if more than one listed  --- (esp for the admin's "Extra" emails)...
-	foreach(explode(',',$to_address) as $key=>$value) {
-		if (preg_match("/ *([^<]*) *<([^>]*)> */i",$value,$regs)) {
-			$to_name = str_replace('"', '', trim($regs[1]));
-			$to_email_address = $regs[2];
-		} elseif (preg_match("/ *([^ ]*) */i",$value,$regs)) {
-			$to_email_address = trim($regs[1]);
-		}
-		if (!isset($to_email_address)) $to_email_address=$to_address; //if not more than one, just use the main one.
+		// loop thru multiple email recipients if more than one listed  --- (esp for the admin's "Extra" emails)...
+		foreach(explode(',',$to_address) as $key=>$value) {
+			if (preg_match("/ *([^<]*) *<([^>]*)> */i",$value,$regs)) {
+				$to_name = str_replace('"', '', trim($regs[1]));
+				$to_email_address = $regs[2];
+			} elseif (preg_match("/ *([^ ]*) */i",$value,$regs)) {
+				$to_email_address = trim($regs[1]);
+			}
+			if (!isset($to_email_address)) $to_email_address=$to_address; //if not more than one, just use the main one.
 
-		//define some additional html message blocks available to templates, then build the html portion.
-		if( empty( $block['EMAIL_TO_NAME'] ) )      $block['EMAIL_TO_NAME'] = $to_name;
-		if( empty( $block['EMAIL_TO_ADDRESS'] ) )   $block['EMAIL_TO_ADDRESS'] = $to_email_address;
-		if( empty( $block['EMAIL_SUBJECT'] ) )      $block['EMAIL_SUBJECT'] = $email_subject;
-		if( empty( $block['EMAIL_FROM_NAME'] ) )    $block['EMAIL_FROM_NAME'] = $from_email_name;
-		if( empty( $block['EMAIL_FROM_ADDRESS'] ) ) $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
-		$email_html = zen_build_html_email_from_template($module, $block);
+			//define some additional html message blocks available to templates, then build the html portion.
+			if( empty( $block['EMAIL_TO_NAME'] ) )      $block['EMAIL_TO_NAME'] = $to_name;
+			if( empty( $block['EMAIL_TO_ADDRESS'] ) )   $block['EMAIL_TO_ADDRESS'] = $to_email_address;
+			if( empty( $block['EMAIL_SUBJECT'] ) )      $block['EMAIL_SUBJECT'] = $email_subject;
+			if( empty( $block['EMAIL_FROM_NAME'] ) )    $block['EMAIL_FROM_NAME'] = $from_email_name;
+			if( empty( $block['EMAIL_FROM_ADDRESS'] ) ) $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
+			$email_html = zen_build_html_email_from_template($module, $block);
 
 
-//  if ($attachments_list == '') $attachments_list= array();
+			//  if ($attachments_list == '') $attachments_list= array();
 
-		// Instantiate a new mail object
-		$message = new email(array('X-Mailer: Zen Cart Mailer'));
+			// Instantiate a new mail object
+			$message = new email(array('X-Mailer: Zen Cart Mailer'));
 
-// bof: body of the email clean-up
-// clean up &amp; and && from email text
-		while (strstr($email_text, '&amp;&amp;')) $email_text = str_replace('&amp;&amp;', '&amp;', $email_text);
-		while (strstr($email_text, '&amp;')) $email_text = str_replace('&amp;', '&', $email_text);
-		while (strstr($email_text, '&&')) $email_text = str_replace('&&', '&', $email_text);
+			// bof: body of the email clean-up
+			// clean up &amp; and && from email text
+			while (strstr($email_text, '&amp;&amp;')) $email_text = str_replace('&amp;&amp;', '&amp;', $email_text);
+			while (strstr($email_text, '&amp;')) $email_text = str_replace('&amp;', '&', $email_text);
+			while (strstr($email_text, '&&')) $email_text = str_replace('&&', '&', $email_text);
 
-// clean up money &euro; to e
-		while (strstr($email_text, '&euro;')) $email_text = str_replace('&euro;', 'e', $email_text);
+			// clean up money &euro; to e
+			while (strstr($email_text, '&euro;')) $email_text = str_replace('&euro;', 'e', $email_text);
 
-// fix double quotes
-		while (strstr($email_text, '&quot;')) $email_text = str_replace('&quot;', '"', $email_text);
+			// fix double quotes
+			while (strstr($email_text, '&quot;')) $email_text = str_replace('&quot;', '"', $email_text);
 
-// fix slashes
-		$email_text = stripslashes($email_text);
-		$email_html = stripslashes($email_html);
+			// fix slashes
+			$email_text = stripslashes($email_text);
+			$email_html = stripslashes($email_html);
+			// eof: body of the email clean-up
 
-// eof: body of the email clean-up
-
-//determine customer's email preference type: HTML or TEXT-ONLY  (HTML assumed if not specified)
-		if( !$customers_email_format = $gBitDb->getOne("select customers_email_format from " . TABLE_CUSTOMERS . " where customers_email_address = ?", array( $to_email_address ) ) ) {
-		$customers_email_format='HTML'; // Default to HTML messages, then send HTML format
-		} elseif ($customers_email_format=='NONE' || $customers_email_format=='OUT') {
-		return; //if requested no mail, then don't send.
-	}
-//determine what format to send messages in if this is an "extra"/admin-copy email:
-		if (ADMIN_EXTRA_EMAIL_FORMAT == 'TEXT' && substr($module,-6)=='_extra') {
-		 $email_html='';  // just blank out the html portion if admin has selected text-only
-		}
-
-// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
-		if (!zen_not_null($email_text)) {
-				$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "@CRLF", $block['EMAIL_MESSAGE_HTML']);
-				$text = str_replace('</p>', '</p>@CRLF', $text);
-				$text = htmlspecialchars(stripslashes(strip_tags($text)));
-		} else {
-			$text = strip_tags($email_text);
-		}
-
-		if (EMAIL_USE_HTML == 'true' && !empty( $email_html ) && ($customers_email_format == 'HTML' || (ADMIN_EXTRA_EMAIL_FORMAT != 'TEXT' && substr($module,-6)=='_extra'))) {
-			$message->add_html($email_html, $text);
-		} else {
-			$message->add_text($text);
-			$email_html=''; // since sending a text-only message, empty the HTML portion so it's not archived either.
-		}
-
-// process attachments
-		if ( defined( 'EMAIL_ATTACHMENTS_ENABLED' ) && EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
-//    while ( list($key, $value) = each($attachments_list)) {
-			$fileraw = $message->get_file(DIR_FS_ADMIN.'attachments/'.$attachments_list['file']);
-			$filemime = ((zen_not_null($attachments_list['file_type']) ) ? $attachments_list['file_type'] : $message->findMime($attachments_list) );    //findMime determines what type this attachment is (XLS, PDF, etc) and sends proper vendor c_type.
-			$message->add_attachment($fileraw, $attachments_list['file'], $filemime);
-//     } //endwhile attach_list
-		 } //endif attachments
-
-			// Prepare message
-			$message->build_message();
-
-			// send the actual email
-			$result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
-			if (!$result && $messageStack) {
-				$messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
+			//determine customer's email preference type: HTML or TEXT-ONLY  (HTML assumed if not specified)
+			$customers_email_format = $gBitDb->getOne("select customers_email_format from " . TABLE_CUSTOMERS . " where customers_email_address = ?", array( $to_email_address ) );
+			if( !empty( $pFormat ) ) { 
+				$customers_email_format=$pFormat;
+			} elseif ($customers_email_format=='NONE' || $customers_email_format=='OUT') {
+				return; //if requested no mail, then don't send.
+			} elseif( empty( $customers_email_format ) ) {
+				$customers_email_format='HTML'; // Default to HTML messages, then send HTML format
 			}
 
-		 // Archive this message to storage log
-		 if (EMAIL_ARCHIVE == 'true'  && $module != 'password_forgotten_admin' && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
-			 zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $text, $module );
-		 } // endif archiving
-	 } // end foreach loop thru possible multiple email addresses
+			//determine what format to send messages in if this is an "extra"/admin-copy email:
+			if (ADMIN_EXTRA_EMAIL_FORMAT == 'TEXT' && substr($module,-6)=='_extra') {
+				$email_html='';  // just blank out the html portion if admin has selected text-only
+			}
+
+			// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
+			if (!zen_not_null($email_text)) {
+					$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "@CRLF", $block['EMAIL_MESSAGE_HTML']);
+					$text = str_replace('</p>', '</p>@CRLF', $text);
+					$text = htmlspecialchars(stripslashes(strip_tags($text)));
+			} else {
+				$text = strip_tags($email_text);
+			}
+
+			if (EMAIL_USE_HTML == 'true' && !empty( $email_html ) && ($customers_email_format == 'HTML' || (ADMIN_EXTRA_EMAIL_FORMAT != 'TEXT' && substr($module,-6)=='_extra'))) {
+				$message->add_html($email_html, $text);
+			} else {
+				$message->add_text($text);
+				$email_html=''; // since sending a text-only message, empty the HTML portion so it's not archived either.
+			}
+
+			// process attachments
+			if ( defined( 'EMAIL_ATTACHMENTS_ENABLED' ) && EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
+	//    while ( list($key, $value) = each($attachments_list)) {
+				$fileraw = $message->get_file(DIR_FS_ADMIN.'attachments/'.$attachments_list['file']);
+				$filemime = ((zen_not_null($attachments_list['file_type']) ) ? $attachments_list['file_type'] : $message->findMime($attachments_list) );    //findMime determines what type this attachment is (XLS, PDF, etc) and sends proper vendor c_type.
+				$message->add_attachment($fileraw, $attachments_list['file'], $filemime);
+	//     } //endwhile attach_list
+			 } //endif attachments
+
+				// Prepare message
+				$message->build_message();
+
+				// send the actual email
+				$result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
+				if (!$result && $messageStack) {
+					$messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
+				}
+
+			 // Archive this message to storage log
+			 if (EMAIL_ARCHIVE == 'true'  && $module != 'password_forgotten_admin' && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
+				 zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $text, $module );
+			 } // endif archiving
+		} // end foreach loop thru possible multiple email addresses
 	}  // end function
 
 	function zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $email_text, $module) {
