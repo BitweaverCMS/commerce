@@ -231,7 +231,8 @@ function getShippingQuotes( pOrderId ) {
 			<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 			<input type="hidden" name="oID" value="{$smarty.request.oID}" />
 			<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
-		</form> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
+		</form> 
+		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
 	</div>
 </div>
 <div class="row">
@@ -242,6 +243,19 @@ function getShippingQuotes( pOrderId ) {
 		</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
 		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
 	{/form}
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=email"}
+			{tr}Email Receipt to:{/tr} 
+			<div class="form-group">
+				<input type="email" name="email" class="form-control input-small" id="recipient-list" placeholder="jane.doe@example.com" value="{$order->customer.email_address}">
+			</div> <div class="form-group"> 
+				<button type="submit" class="btn btn-default btn-sm">Email Receipt</button>
+			</div>
+			{formhelp note="You can enter multiple addresses, separated by a comma."}
+		{/form}
 	</div>
 </div>
 
