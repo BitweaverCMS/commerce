@@ -174,6 +174,13 @@ if( !empty( $order ) ) {
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
 			}
 			break;
+		case 'email':
+			if( validate_email_syntax( $_REQUEST['email'] ) ) {
+				$order->send_order_email( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
+				$messageStack->add_session('Copy of receipt emailed to '.$_REQUEST['email'], 'success');
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['oID'] );
+			}
+			break;
 		case 'combine':
 			if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
 				$combineOrder = new order( $_REQUEST['combine_order_id'] );

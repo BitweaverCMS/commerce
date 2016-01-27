@@ -60,10 +60,10 @@ $gBitDb->mDb->StartTrans();
 	$order->create_add_products($insert_id);
 
 	$payment_modules->after_order_create($insert_id);
+	$order->send_order_email($insert_id);
 
 $gBitDb->mDb->completeTrans();
 
-	$order->send_order_email($insert_id, 2);
 
 
 ?>

@@ -231,17 +231,47 @@ function getShippingQuotes( pOrderId ) {
 			<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 			<input type="hidden" name="oID" value="{$smarty.request.oID}" />
 			<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
-		</form> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
+		</form> 
+		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
 	</div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
-	{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
-		{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="form-control input-small"/> <label class="checkbox-inline">
-			<input type="checkbox" name="combine_notify" value="on" checked="checked"/> {tr}Notify Customer{/tr}
-		</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
-		<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
-	{/form}
+		<span class="link pointer" onclick="BitBase.toggleElementDisplay('combine-order-form','block')">{tr}Combine this Order{/tr}</span>
+		<div style="display:none" id="combine-order-form">
+		{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
+			{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="form-control input-small"/> <label class="checkbox-inline">
+				<input type="checkbox" name="combine_notify" value="on" checked="checked"/> {tr}Notify Customer{/tr}
+			</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
+			<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
+		{/form}
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<span class="link pointer" onclick="BitBase.toggleElementDisplay('email-receipt-form','block')">Email Receipt</span>
+		{form id="email-receipt-form" class="box" style="display:none" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=email"}
+			<div class="form-group">
+				{formlabel label="Email Order Receipt"}
+				{forminput}
+					<input type="email" name="email" class="form-control input-small" id="recipient-list" placeholder="jane.doe@example.com" value="{$order->customer.email_address}">
+					{formhelp note="You can enter multiple addresses, separated by a comma."}
+				{/forminput}
+				<div class="radio">
+					<label>
+						<input type="radio" name="email_format" value="HTML" checked="checked">{tr}HTML{/tr}
+					</label>
+					<label class="radio">
+						<input type="radio" name="email_format" value="TEXT">{tr}Text{/tr}
+					</label>
+					{formhelp note="Email Format"}
+				</div>
+			</div>
+			<div class="form-group"> 
+				<button type="submit" class="btn btn-default btn-sm">Email Receipt</button>
+			</div>
+		{/form}
 	</div>
 </div>
 
