@@ -106,6 +106,8 @@ define('EMAIL_SYSTEM_DEBUG','off');
 			}
 
 			// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
+// $customers_email_format = 'TEXT';  // FORCE to text messages
+			// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
 			if (!zen_not_null($email_text)) {
 					$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "@CRLF", $block['EMAIL_MESSAGE_HTML']);
 					$text = str_replace('</p>', '</p>@CRLF', $text);
