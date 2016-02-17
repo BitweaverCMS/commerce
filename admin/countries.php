@@ -111,7 +111,7 @@
 <?php
 	$countries_query_numrows = 20;
 	$countries_query_raw = "select `countries_id`, `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id` from " . TABLE_COUNTRIES . " order by `countries_name`";
-	$countries = $gBitDb->query( $countries_query_raw, FALSE );
+	$countries = $gBitDb->query( $countries_query_raw );
 	while (!$countries->EOF) {
 		if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $countries->fields['countries_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 			$cInfo = new objectInfo($countries->fields);
