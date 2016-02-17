@@ -31,12 +31,13 @@
         $master_type = $master_type_result->fields['type_master_type'];
       }
       $this->tree = array();
+		$bindVars = array( (int)$_SESSION['languages_id'] );
       if ($product_type == 'all') {
         $categories_query = "select c.`categories_id`, cd.`categories_name`, c.`parent_id`
                              from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
                              where c.`parent_id` = '0'
                              and c.`categories_id` = cd.`categories_id`
-                             and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
+                             and cd.`language_id`=?
                              and c.`categories_status`= '1'
                              order by `sort_order`, cd.`categories_name`";
       } else {
@@ -44,13 +45,14 @@
                              from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
                              where c.`parent_id` = '0'
                              and ptc.`category_id` = cd.`categories_id`
-                             and ptc.`product_type_id` = '" . $master_type . "'
                              and c.`categories_id` = ptc.`category_id`
-                             and cd.`language_id`='" . (int)$_SESSION['languages_id'] ."'
+                             and cd.`language_id`=?
+                             and ptc.`product_type_id` = ?
                              and c.`categories_status`= '1'
                              order by `sort_order`, cd.`categories_name`";
+		$bindVars[] = $master_type;
       }
-      $categories = $gBitDb->Execute($categories_query, '', true, 150);
+      $categories = $gBitDb->Execute($categories_query, $bindVars, true, 150);
       while (!$categories->EOF)  {
         $this->tree[$categories->fields['categories_id']] = array('name' => $categories->fields['categories_name'],
                                                     'parent' => $categories->fields['parent_id'],

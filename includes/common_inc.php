@@ -428,7 +428,7 @@
 
 function zen_get_languages() {
 	global $gBitDb;
-	return $gBitDb->getAll( "SELECT `languages_id` AS `id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", array(), 3600 );
+	return $gBitDb->getAll( "SELECT `languages_id` AS `id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", FALSE, 3600 );
 }
 
 

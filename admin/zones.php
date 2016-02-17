@@ -92,7 +92,7 @@
 					</tr>
 				<?php
 	$zones_query_raw = "select z.`zone_id`, c.`countries_id`, c.`countries_name`, z.`zone_name`, z.`zone_code`, z.`zone_country_id` from " . TABLE_ZONES . " z, " . TABLE_COUNTRIES . " c where z.`zone_country_id` = c.`countries_id` ORDER BY c.`countries_name`, z.`zone_name`";
-	$zones = $gBitDb->query( $zones_query_raw, NULL );
+	$zones = $gBitDb->query( $zones_query_raw, FALSE );
 	while (!$zones->EOF) {
 		if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $zones->fields['zone_id']))) && !isset($cInfo) && (substr($action, 0, 3) != 'new')) {
 			$cInfo = new objectInfo($zones->fields);

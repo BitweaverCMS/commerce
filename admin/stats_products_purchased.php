@@ -59,7 +59,7 @@
 
 	$products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $products_query_raw, $products_query_numrows);
 
-	$products = $gBitDb->query($products_query_raw, NULL, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $rows);
+	$products = $gBitDb->query($products_query_raw, FALSE, MAX_DISPLAY_SEARCH_RESULTS_REPORTS, $rows);
 	while (!$products->EOF) {
 		$rows++;
 
