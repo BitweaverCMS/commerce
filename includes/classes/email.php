@@ -354,13 +354,9 @@
 
       switch (true) {
         case (($text == true) && ($attachments == false)):
-/* HPDL PHP3 */
-//          $message =& $this->add_text_part($null, $this->text);
           $message = $this->add_text_part($null, $this->text);
           break;
         case (($text == false) && ($attachments == true) && ($html == false)):
-/* HPDL PHP3 */
-//          $message =& $this->add_mixed_part();
           $message = $this->add_mixed_part();
 
           for ($i=0, $n=count($this->attachments); $i<$n; $i++) {
@@ -368,8 +364,6 @@
           }
           break;
         case (($text == true) && ($attachments == true)):
-/* HPDL PHP3 */
-//          $message =& $this->add_mixed_part();
           $message = $this->add_mixed_part();
           $this->add_text_part($message, $this->text);
 
@@ -379,30 +373,19 @@
           break;
         case (($html == true) && ($attachments == false) && ($html_images == false)):
           if (zen_not_null($this->html_text)) {
-/* HPDL PHP3 */
-//            $message =& $this->add_alternative_part($null);
             $message = $this->add_alternative_part($null);
             $this->add_text_part($message, $this->html_text);
             $this->add_html_part($message);
           } else {
-/* HPDL PHP3 */
-//            $message =& $this->add_html_part($null);
             $message = $this->add_html_part($null);
           }
           break;
         case (($html == true) && ($attachments == false) && ($html_images == true)):
           if (zen_not_null($this->html_text)) {
-/* HPDL PHP3 */
-//            $message =& $this->add_alternative_part($null);
             $message = $this->add_alternative_part($null);
             $this->add_text_part($message, $this->html_text);
-/* HPDL PHP3 */
-//            $related =& $this->add_related_part($message);
             $related = $this->add_related_part($message);
           } else {
-/* HPDL PHP3 */
-//            $message =& $this->add_related_part($null);
-//            $related =& $message;
             $message = $this->add_related_part($null);
             $related = $message;
           }
@@ -413,12 +396,8 @@
           }
           break;
         case (($html == true) && ($attachments == true) && ($html_images == false)):
-/* HPDL PHP3 */
-//          $message =& $this->add_mixed_part();
           $message = $this->add_mixed_part();
           if (zen_not_null($this->html_text)) {
-/* HPDL PHP3 */
-//            $alt =& $this->add_alternative_part($message);
             $alt = $this->add_alternative_part($message);
             $this->add_text_part($alt, $this->html_text);
             $this->add_html_part($alt);
@@ -431,21 +410,13 @@
           }
           break;
         case (($html == true) && ($attachments == true) && ($html_images == true)):
-/* HPDL PHP3 */
-//          $message =& $this->add_mixed_part();
           $message = $this->add_mixed_part();
 
           if (zen_not_null($this->html_text)) {
-/* HPDL PHP3 */
-//            $alt =& $this->add_alternative_part($message);
             $alt = $this->add_alternative_part($message);
             $this->add_text_part($alt, $this->html_text);
-/* HPDL PHP3 */
-//            $rel =& $this->add_related_part($alt);
             $rel = $this->add_related_part($alt);
           } else {
-/* HPDL PHP3 */
-//            $rel =& $this->add_related_part($message);
             $rel = $this->add_related_part($message);
           }
           $this->add_html_part($rel);
@@ -506,6 +477,7 @@
       if (!isset($xtra_headers)) {
         $xtra_headers = array();
       }
+
 //die(EMAIL_TRANSPORT);
       switch(EMAIL_TRANSPORT) {
       case ('smtp'):

@@ -36,7 +36,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 //                    This is passed to the archive function denoting what module initiated the sending of the email
 // $attachments_list  Array of attachment names/mime-types to be included  (this portion still in testing, and not fully reliable)
 
-	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='', $pFormat ) {
+	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='', $pFormat='' ) {
 		global $gBitDb, $messageStack;
 		if (SEND_EMAILS != 'true') return false;  // if sending email is disabled in Admin, just exit
 		if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
@@ -71,7 +71,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 			//  if ($attachments_list == '') $attachments_list= array();
 
 			// Instantiate a new mail object
-			$message = new email(array('X-Mailer: Zen Cart Mailer'));
+			$message = new email(array('X-Mailer: Bitcommerce'));
 
 			// bof: body of the email clean-up
 			// clean up &amp; and && from email text
@@ -109,9 +109,9 @@ define('EMAIL_SYSTEM_DEBUG','off');
 // $customers_email_format = 'TEXT';  // FORCE to text messages
 			// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
 			if (!zen_not_null($email_text)) {
-					$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "@CRLF", $block['EMAIL_MESSAGE_HTML']);
-					$text = str_replace('</p>', '</p>@CRLF', $text);
-					$text = htmlspecialchars(stripslashes(strip_tags($text)));
+				$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "@CRLF", $block['EMAIL_MESSAGE_HTML']);
+				$text = str_replace('</p>', '</p>@CRLF', $text);
+				$text = htmlspecialchars(stripslashes(strip_tags($text)));
 			} else {
 				$text = strip_tags($email_text);
 			}
@@ -125,26 +125,25 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 			// process attachments
 			if ( defined( 'EMAIL_ATTACHMENTS_ENABLED' ) && EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
-	//    while ( list($key, $value) = each($attachments_list)) {
+//				while ( list($key, $value) = each($attachments_list)) {
 				$fileraw = $message->get_file(DIR_FS_ADMIN.'attachments/'.$attachments_list['file']);
 				$filemime = ((zen_not_null($attachments_list['file_type']) ) ? $attachments_list['file_type'] : $message->findMime($attachments_list) );    //findMime determines what type this attachment is (XLS, PDF, etc) and sends proper vendor c_type.
 				$message->add_attachment($fileraw, $attachments_list['file'], $filemime);
-	//     } //endwhile attach_list
-			 } //endif attachments
+//				} //endwhile attach_list
+			} //endif attachments
 
-				// Prepare message
-				$message->build_message();
+			// Prepare message
+			$message->build_message();
+			// send the actual email
+			$result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
+			if (!$result && $messageStack) {
+				$messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
+			}
 
-				// send the actual email
-				$result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
-				if (!$result && $messageStack) {
-					$messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
-				}
-
-			 // Archive this message to storage log
-			 if (EMAIL_ARCHIVE == 'true'  && $module != 'password_forgotten_admin' && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
-				 zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $text, $module );
-			 } // endif archiving
+			// Archive this message to storage log
+			if (EMAIL_ARCHIVE == 'true'  && $module != 'password_forgotten_admin' && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
+				zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $text, $module );
+			} // endif archiving
 		} // end foreach loop thru possible multiple email addresses
 	}  // end function
 

@@ -1052,7 +1052,7 @@ class order extends CommerceOrderBase {
 		}
 		$email_order = EMAIL_TEXT_HEADER . EMAIL_TEXT_FROM . STORE_NAME . "\n\n" .
 									$customerName . "\n\n" .
-									EMAIL_THANKS_FOR_SHOPPING . "\n" . EMAIL_DETAILS_FOLLOW . "\n" .
+									EMAIL_THANKS_FOR_SHOPPING . "\n\n" . EMAIL_DETAILS_FOLLOW . "\n" .
 									EMAIL_SEPARATOR . "\n" .
 									EMAIL_TEXT_ORDER_NUMBER . ' ' . $pOrdersId . "\n" .
 									EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
@@ -1083,8 +1083,12 @@ class order extends CommerceOrderBase {
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			$email_order .=	$this->contents[$productsKey]['products_quantity'] . ' x ' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') . ' = ' .
 									$currencies->display_price($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity']) .
-									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '') .
-									$this->products_ordered_attributes . "\n";
+									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
+			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
+				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
+				$email_order .= "\n    + " . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
+			}
+			$email_order .= "\n\n";
 		}
 		 
 		$email_order .= EMAIL_SEPARATOR . "\n";
@@ -1255,6 +1259,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 				$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
 				$emailVars['order'] = $this;
+$this->send_order_email( $this->mOrdersId );
 				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status');
 
 				$customer_notified = '1';

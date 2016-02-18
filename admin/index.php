@@ -61,15 +61,6 @@
 	$salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
 	$salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
 
-
-?>
-<header>
-	<h1 class="page-header">Order List</h1>
-</header>
-
-<div class="row">
-	<div class="col-md-8" id="colone">
-<?php
 	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
 	$listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
@@ -101,12 +92,21 @@
 		$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
 	}
 
+?>
+<header>
+	<h1 class="page-header">Order List</h1>
+</header>
+
+<div class="row">
+	<div class="col-md-8" id="colone">
+<?php
+
 	$orders = order::getList( $listHash );
 	$gBitSmarty->assign_by_ref( 'listOrders', $orders );
 	$statuses = commerce_get_statuses( TRUE );
 	$statuses['all'] = 'All';
 	$gBitSmarty->assign( 'commerceStatuses', $statuses );
-	$gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 ?>
 	</div>
 
@@ -173,8 +173,6 @@ following copyright announcement. //-->
 
 <p class="copyrightrow"><a href="http://www.bitcommerce.org" target="_blank">bitcommerce E-Commerce Engine Copyright &copy; <?=date('Y')?> <a href="http://www.bitcommerce.org" target="_blank">bitcommerce&trade;</a></p><p class="warrantyrow">bitcommerce is derived from: Copyright &copy; 2005 Zen Cart is derived from: Copyright &copy; 2003 osCommerce<br />This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br />without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE<br />and is redistributable under the <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">GNU General Public License</a></p>
 </p>
-</body>
-</html>
 
 <?php require('includes/application_bottom.php'); ?>
 <!-- footer //-->
