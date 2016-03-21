@@ -56,13 +56,12 @@ if (zen_not_null($set)) {
 $action = (isset($_GET['action']) ? $_GET['action'] : '');
 
 if (zen_not_null($action)) {
-	$gCommerceSystem->clearFromCache();
 	switch ($action) {
 		case 'save':
 			while (list($key, $value) = each($_POST['configuration'])) {
-			global $gCommerceSystem;
-			$gCommerceSystem->storeConfig( $key, $value );
-		}
+				global $gCommerceSystem;
+				$gCommerceSystem->storeConfig( $key, $value );
+			}
 			zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
 			break;
 		case 'install':
@@ -84,6 +83,7 @@ if (zen_not_null($action)) {
 					$module->remove();
 				}
 			}
+			$gCommerceSystem->clearFromCache();
 			zen_redirect(zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL'));
 			break;
 	}
