@@ -216,8 +216,13 @@ if ( isset( $_REQUEST['products_id'] ) ) {
 		if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
 			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 		}
+	} else {
+		$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
+		unset( $gBitProduct );
 	}
-} elseif( class_exists( 'CommerceProduct' ) ) {
+}
+
+if( empty( $gBitProduct ) && class_exists( 'CommerceProduct' ) ) {
 	$gBitProduct = new CommerceProduct();
 }
 
