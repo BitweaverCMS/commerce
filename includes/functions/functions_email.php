@@ -87,7 +87,6 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 			// fix slashes
 			$email_text = stripslashes($email_text);
-			$email_html = stripslashes($email_html);
 			// eof: body of the email clean-up
 
 			//determine customer's email preference type: HTML or TEXT-ONLY  (HTML assumed if not specified)
