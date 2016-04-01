@@ -1,3 +1,5 @@
+{if $emailVars.order}
+{assign var=order value=$emailVars.order}
 <table class="table">
 <tr>
 {if sizeof($order->info.tax_groups) > 1}
@@ -62,5 +64,4 @@
 </tr>
 {/section}
 </table>
-
-
+{if}
