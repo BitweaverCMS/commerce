@@ -1167,16 +1167,15 @@ class order extends CommerceOrderBase {
 	}
 
 	function getDownloads() {
-		global $gBitDb;
 		$ret = array();
 		if( $this->isValid() ) {
-			$query = "SELECT ".$gBitDb->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`, opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`, opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
+			$query = "SELECT ".$this->mDb->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`, opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`, opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
 					  FROM " . TABLE_ORDERS . " o
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " op ON (o.`orders_id`=op.`orders_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd ON (op.`orders_products_id`=opd.`orders_products_id`)
 					  WHERE o.`customers_id` = ? AND (o.`orders_status` >= ? AND o.`orders_status` <= ?) AND o.`orders_id` = ?  AND opd.`orders_products_filename` != ''
 					  ORDER BY op.`orders_products_id`";
-			$ret = $gBitDb->getAll( $query, array( $this->getField('customers_id'), DOWNLOADS_CONTROLLER_ORDERS_STATUS, DOWNLOADS_CONTROLLER_ORDERS_STATUS_END, $this->mOrdersId ) );
+			$ret = $this->mDb->getAll( $query, array( $this->getField('customers_id'), DOWNLOADS_CONTROLLER_ORDERS_STATUS, DOWNLOADS_CONTROLLER_ORDERS_STATUS_END, $this->mOrdersId ) );
 
 // copies from includes/modules/downloads.php before git rm
 /*
