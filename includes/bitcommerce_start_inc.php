@@ -217,6 +217,7 @@ if ( isset( $_REQUEST['products_id'] ) ) {
 			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
 		}
 	} else {
+		global $gBitSystem;
 		$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
 		unset( $gBitProduct );
 	}
