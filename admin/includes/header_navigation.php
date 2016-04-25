@@ -2,7 +2,7 @@
   <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#commerce-admin-menu"><i class="icon-reorder"></i></button>
-			<a class="navbar-brand" href="<?php echo DIR_WS_HTTPS_ADMIN;?>"><?php echo ucwords( BITCOMMERCE_PKG_DIR )?></a>
+			<a class="navbar-brand" href="<?php echo DIR_WS_HTTPS_ADMIN;?>"><span class="hidden-sm hidden-md"><?php echo ucwords( BITCOMMERCE_PKG_DIR )?></span><span class="hidden-lg hidden-xl"><i class="icon-home"></i></span></a>
         </div>
         <div class="collapse navbar-collapse" id="commerce-admin-menu">
 		<ul class="nav navbar-nav">
