@@ -9,6 +9,17 @@
 chdir( dirname( __FILE__ ) );
 global $gShellScript;
 $gShellScript = TRUE;
+
+if( !empty( $argv ) ) {
+	foreach( $argv AS $arg ) {
+		switch( $arg ) {
+			case '--debug':
+				$gDebug = TRUE;
+				break;
+		}
+	}
+}
+
 require_once( '../../kernel/setup_inc.php' );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
@@ -16,6 +27,10 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 require_once(DIR_WS_FUNCTIONS . 'localization.php');
 
 $output = currency_update_quotes();
+if( !empty( $gDebug ) ) {
+	vd( $output );
+}
+
 foreach( $output as $result ) {
 	if( $result['result'] != 'success' ) {
 		print $result['message']."\n";
