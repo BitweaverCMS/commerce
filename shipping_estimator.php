@@ -39,33 +39,15 @@ require('includes/classes/http_client.php'); // shipping in basket
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order;
 
-if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
-	if( !empty( $_REQUEST['address_id'] ) ) {
-		$_SESSION['cart_address_id'] = $_REQUEST['address_id'];
-	} elseif( empty( $_SESSION['cart_address_id'] ) ) {
-		// no selected address yet, snag the first one
-		$first = current( reset( $addresses ) );
-		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_id'] );
-	}
-
+if( $gBitUser->isRegistered() &&  $addresses = $gBitCustomer->getAddresses() ) {
 	$gBitSmarty->assign_by_ref( 'addresses', $addresses );
-	if( isset( $_SESSION['cart_address_id'] ) && $selAddress = $gBitCustomer->getAddress( $_SESSION['cart_address_id'] ) ) {
-		$order->delivery = array(	'postcode' => $selAddress['entry_postcode'],
-									'country' => array(
-										'countries_id' => $selAddress['entry_country_id'], 
-										'title' => $selAddress['countries_name'], 
-										'countries_iso_code_2' => $selAddress['countries_iso_code_2'], 
-										'countries_iso_code_3' => $selAddress['countries_iso_code_3'] 
-									),
-									'country_id' => $selAddress['entry_country_id'],
-									'format_id' => $selAddress['address_format_id']
-								);
-		if( !empty( $_SESSION['cart_zone_id'] ) ) {
-			$order->delivery['zone_id'] = (int)$selAddress['entry_zone_id'];
-		}
-	}
+}
 
-} else {
+// Explicit country requested takes priority, even if registered.
+if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || empty( $_REQUEST['address_id'] ) ) && (!empty( $_REQUEST['country_id'] ) || !$gBitUser->isRegistered()) ) {
+	if( isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' ) {
+		$_SESSION['cart_address_id'] = 'custom';
+	}
 	if( !empty( $_REQUEST['country_id'] ) ) {
 		if( !empty( $_SESSION['cart_country_id'] ) && $_SESSION['cart_country_id'] != $_REQUEST['country_id'] ) {
 			$_SESSION['cart_zip_code'] = NULL;
@@ -93,9 +75,8 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 	if( !empty( $_REQUEST['zip_code'] ) ) {
 		$_SESSION['cart_zip_code'] = $_REQUEST['zip_code'];
 	}
-	if( !empty( $_SESSION['cart_zip_code'] ) ) {
-		$order->delivery['postcode'] = $_SESSION['cart_zip_code'];
-	}
+
+	$order->delivery['postcode'] = !empty( $_SESSION['cart_zip_code'] ) ? $_SESSION['cart_zip_code'] : NULL;
 
 	// Check for form state 
 	if( isset( $_REQUEST['zone_id'] ) ) {
@@ -105,13 +86,40 @@ if( $gBitUser->isRegistered() && $addresses = $gBitCustomer->getAddresses() ) {
 		$order->delivery['zone_id'] = (int)$_SESSION['cart_zone_id'];
 	}
 
-	// we are unregistered, or have no addresses
-	$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
 	// used as a check below for existence of states
 	$stateMenu = zen_get_country_zone_list( 'zone_id', $order->delivery['country']['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
 	$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
+} elseif( !empty( $addresses ) && (empty( $_REQUEST['address_id'] ) || $_REQUEST['address_id'] != 'custom') ) {
+	if( !empty( $_REQUEST['address_id'] ) ) {
+		$_SESSION['cart_address_id'] = $_REQUEST['address_id'];
+	} elseif( empty( $_SESSION['cart_address_id'] ) && !empty( $addresses ) ) {
+		// no selected address yet, snag the first one
+		reset( $addresses );
+		$first = current( $addresses );
+		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_book_id'] );
+	}
+
+	if( isset( $_SESSION['cart_address_id'] ) && $selAddress = $gBitCustomer->getAddress( $_SESSION['cart_address_id'] ) ) {
+		$order->delivery = array(	'postcode' => $selAddress['entry_postcode'],
+									'country' => array(
+										'countries_id' => $selAddress['entry_country_id'], 
+										'title' => $selAddress['countries_name'], 
+										'countries_iso_code_2' => $selAddress['countries_iso_code_2'], 
+										'countries_iso_code_3' => $selAddress['countries_iso_code_3'] 
+									),
+									'country_id' => $selAddress['entry_country_id'],
+									'format_id' => $selAddress['address_format_id']
+								);
+		if( !empty( $_SESSION['cart_zone_id'] ) ) {
+			$order->delivery['zone_id'] = (int)$selAddress['entry_zone_id'];
+		}
+		$_SESSION['country_id'] = NULL;
+	}
+
+} else {
 
 }
+$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="shippingQuoteUpdate(this.form);"' ) );
 
 // set the cost to be able to calculate free shipping
 $order->info = array('total' => $gBitCustomer->mCart->show_total(), // TAX ????
@@ -152,10 +160,10 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 } elseif($freeShipping) {
 	$order->info['shipping_method'] = MODULE_ORDER_TOTAL_SHIPPING_TITLE;
 	$order->info['shipping_cost'] = 0;
-} elseif( !empty( $order->delivery['postcode'] ) && !empty( $order->delivery['country']['countries_id'] ) ) {
+} elseif( !empty( $order->delivery['country']['countries_id'] ) ) {
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 	// weight and count needed for shipping !
-	if( $gBitProduct->isValid() ) {
+	if( $gBitProduct->isValid() && !empty( $_REQUEST['cart_quantity'] ) ) {
 		$weight = $gBitProduct->getWeight( $_REQUEST['cart_quantity'], $_REQUEST['id'] );
 		$order->subtotal = $gBitProduct->getPurchasePrice( $_REQUEST['cart_quantity'], $_REQUEST['id'] );
 	} elseif( $gBitCustomer->mCart->count_contents() > 0 ) {
@@ -164,7 +172,8 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 		$weight = 0;
 	}
 	$shipping = new CommerceShipping();
-	if( empty( $stateMenu ) || !empty( $order->delivery['zone_id'] ) ) {
+
+	if( empty( $stateMenu ) || !empty( $order->delivery['postcode'] ) ) {
 		$gBitSmarty->assign_by_ref( 'quotes', $shipping->quote( $weight ) );
 	}
 	$order->subtotal = $gBitCustomer->mCart->show_total();
