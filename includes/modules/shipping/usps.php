@@ -775,11 +775,8 @@ MODULE_SHIPPING_USPS_HEIGHT 1.625
     }
 
 
-if (true) {
-  $shipment_value = $order->subtotal > 0 ? $order->subtotal + $order->info['tax'] : $_SESSION['cart']->total;
-  global $uninsurable_value;
-  $insurable_value = $shipment_value - $uninsurable_value;
-}
+	$shipment_value = (float)$order->subtotal > 0 ? $order->subtotal + $order->getField( 'tax' ) : (!empty( $_SESSION['cart']->total  ) ? $_SESSION['cart']->total: 0);
+	$insurable_value = $shipment_value; // spiderr - where is this defined? - $uninsurable_value;
 
     // US Domestic destinations
     if ($order->delivery['country']['countries_iso_code_3'] == 'USA' || $this->usps_countries == 'US') {
@@ -963,7 +960,7 @@ $specialservices .
       // adjust <ValueOfContents> to not exceed $2499 per box
       global $shipping_num_boxes;
 		
-      $max_usps_allowed_price = ($order->subtotal > 0 ? $order->subtotal + $order->info['tax'] : $_SESSION['cart']->total);
+      $max_usps_allowed_price = ($order->subtotal > 0 ? $order->subtotal + $order->getField( 'tax', 0 ) : (!empty( $_SESSION['cart'] ) ? $_SESSION['cart']->total : 0));
       $max_usps_allowed_price = ($max_usps_allowed_price/$shipping_num_boxes);
 
 $extraservices = $extra_service_international;

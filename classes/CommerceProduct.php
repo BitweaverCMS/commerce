@@ -1106,6 +1106,12 @@ If a special exist * 10+9
 		}
 	}
 
+	function getImageUri( $pSize='small' ) {
+		if( $this->isValid() ) {
+			return BIT_ROOT_URI.static::getImageUrlFromHash( $this->mProductsId, $pSize );
+		}
+	}
+
 	function getImageUrl( $pSize='small' ) {
 		if( !empty( $this ) ) {
 			return static::getImageUrlFromHash( $this->mProductsId, $pSize );
