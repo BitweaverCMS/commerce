@@ -2585,16 +2585,17 @@ Skip deleting of images for now
 function bc_get_commerce_product( $pLookupMixed ) {
 	global $gBitDb;
 	$product = NULL;
+	$lookupValue = NULL;
 
 	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
-		$lookupValue = current( $pLookupMixed );
-		if( is_numeric( $lookupValue) ) {
-			$lookupValue = (int)$lookupValue & 0xFFFFFFFF;
+		$currentValue = current( $pLookupMixed );
+		if( BitBase::verifyId( $currentValue) ) {
+			$lookupValue = $currentValue;
 		}
-	} elseif( is_numeric( $pLookupMixed ) ) {
+	} elseif( BitBase::verifyId( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = (int)$pLookupMixed & 0xFFFFFFFF;
+		$lookupValue = $pLookupMixed;
 	}
 
 	if( !empty( $lookupValue ) ) {
