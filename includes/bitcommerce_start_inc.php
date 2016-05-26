@@ -206,7 +206,7 @@
 // create the global product. products_id can be an array, such as in removing from cart
 if ( isset( $_REQUEST['products_id'] ) ) {
 	// clean products id to by signed 4 byte integer regardless of what kind of crap comes in
-	$_GET['products_id'] = $_REQUEST['products_id'] = (int)$_REQUEST['products_id'] & 0xFFFFFFFF;
+	$_GET['products_id'] = $_REQUEST['products_id'] = (int)$_REQUEST['products_id'] & 0x1FFFFFFF;
 	if( !empty( $_POST['products_id'] ) ) {
 		$_POST['products_id'] = $_GET['products_id']; 
 	}
