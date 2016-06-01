@@ -1082,7 +1082,7 @@ class order extends CommerceOrderBase {
 
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			$email_order .=	$this->contents[$productsKey]['products_quantity'] . ' x ' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') . ' = ' .
-									$currencies->display_price($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity']) .
+									$currencies->display_price( $this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
 									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
 				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
