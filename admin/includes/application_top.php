@@ -255,7 +255,7 @@ require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
   require_once(DIR_WS_CLASSES . 'upload.php');
 
 // set a default time limit
-  zen_set_time_limit(GLOBAL_SET_TIME_LIMIT);
+  zen_set_time_limit( $gCommerceSystem->getConfig( 'GLOBAL_SET_TIME_LIMIT', 600 ) );
 
 // auto activate and expire banners
   require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
