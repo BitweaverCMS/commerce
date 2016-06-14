@@ -30,6 +30,7 @@ class CommerceProduct extends LibertyMime {
 	var $mProductsId;
 	var $mOptions;
 	var $mRelatedContent;
+	var $mDiscounts;
 
 	function __construct( $pProductsId=NULL, $pContentId=NULL ) {
 		$this->mProductsId = $pProductsId;
@@ -54,7 +55,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	public function __sleep() {
-		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent' ) );
+		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent', 'mDiscounts', 'mOptions' ) );
 	}
 
 	// Override LibertyBase method
