@@ -16,6 +16,10 @@ class CommerceSystem extends BitSingleton {
 		$this->loadConstants();
 	}
 
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mConfig', 'mProductTypeLayout' ) );
+	}
+
 	private function loadConstants() {
 		foreach( $this->mConfig AS $key=>$value ) {
 			define($key, $value );
