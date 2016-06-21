@@ -55,7 +55,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	public function __sleep() {
-		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent', 'mDiscounts', 'mOptions' ) );
+		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent', 'mDiscounts' ) );
 	}
 
 	// Override LibertyBase method
