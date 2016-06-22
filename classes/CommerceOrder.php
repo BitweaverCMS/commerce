@@ -855,7 +855,7 @@ class order extends CommerceOrderBase {
 	function create_add_products($pOrdersId, $zf_mode = false) {
 		global $gBitDb, $gBitUser, $currencies, $order_total_modules, $order_totals;
 
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		// initialized for the email confirmation
 
 		$this->products_ordered_html = '';
@@ -1018,7 +1018,7 @@ class order extends CommerceOrderBase {
 		}
 
 		$order_total_modules->apply_credit();//ICW ADDED FOR CREDIT CLASS SYSTEM
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 	}
 
 
@@ -1220,7 +1220,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 		$statusChanged = ($this->getStatus() != $status);
 
 		if ( $statusChanged || !empty( $comments ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$this->mDb->query( "update " . TABLE_ORDERS . "
 								set `orders_status` = ?, `last_modified` = ".$this->mDb->NOW()."
 								where `orders_id` = ?", array( $status, $this->mOrdersId ) );
@@ -1272,7 +1272,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
 						values ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$order_updated = true;
 		}
 		return $order_updated;
@@ -1281,9 +1281,9 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 	function updateOrder( $pParamHash ) {
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$this->mDb->associateUpdate( TABLE_ORDERS, $pParamHash, array( 'orders_id' => $this->mOrdersId ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$this->load( $this->mOrdersId );
 			$ret = TRUE;
 		}
@@ -1292,7 +1292,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 	function changeShipping( $pQuote, $pParamHash ) {
 		global $currencies;
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		$newTotal = 0;
 		foreach( array_keys( $this->totals ) as $k ) {
 			if( $this->totals[$k]['class'] == 'ot_shipping' ) {
@@ -1340,7 +1340,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 			$message .= "\n--\n".trim( $pParamHash['comment'] );
 		}
 		$this->updateStatus( array( 'notify' => FALSE , "comments" => $message ) );
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 	}
 
 	function combineOrders( $pParamHash ) {
@@ -1366,7 +1366,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 			($sourceHash['delivery_state'] == $destHash['delivery_state']) &&
 			($sourceHash['delivery_country'] == $destHash['delivery_country']) ) {
 
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			// update new order with combined total and combined tax
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS . " SET `order_total`=?, `order_tax`=? WHERE `orders_id`=?", array( ($sourceHash['order_total'] + $destHash['order_total']), ($sourceHash['order_tax'] + $destHash['order_tax']), $pParamHash['dest_orders_id'] ) );
 
@@ -1393,7 +1393,7 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 			$this->updateStatus( array( 'notify' => !empty( $pParamHash['combine_notify'] ) , "comments" => "Order $pParamHash[source_orders_id] was combined with this order" ) );
 			$delOrder	= new order( $pParamHash['source_orders_id'] );
 			$delOrder->expunge();
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		} else {
 			$this->mErrors['combine'] = "Address mismatch. To combine orders, they must have the same delivery address.";
 		}

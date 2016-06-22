@@ -1564,7 +1564,7 @@ If a special exist * 10+9
 	function store( &$pParamHash ) {
 		// we have already done all the permission checking needed for this user to upload an image
 		$pParamHash['no_perm_check'] = TRUE;
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( CommerceProduct::verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
@@ -1636,7 +1636,7 @@ If a special exist * 10+9
 				$this->storeProductImage( $pParamHash );
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 		$this->load();
 		return( $this->mProductsId );
 	}
@@ -2298,7 +2298,7 @@ If a special exist * 10+9
 	function expunge() {
 		global $gBitSystem;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 /*
 Skip deleting of images for now
 			if( !empty( $this->mInfo['products_image'] ) ) {
@@ -2358,7 +2358,7 @@ Skip deleting of images for now
 			unset( $this->mRelatedContent );
 			unset( $this->mProductsId );
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}

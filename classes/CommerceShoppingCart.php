@@ -92,7 +92,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$pQty = MAX_CART_QUANTITY;
 		}
 
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if ($this->in_cart($productsKey)) {
 			$this->updateQuantity( $productsKey, $pQty );
 		} elseif( $exists = $this->mDb->GetOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( (int)zen_get_prid( $productsKey ) ) ) ) {
@@ -149,7 +149,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				}
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 		$this->cleanup();
 
 		$this->load();
