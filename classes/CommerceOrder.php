@@ -23,8 +23,8 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
 
 class order extends CommerceOrderBase {
-	var $mOrdersId;
-	var $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
+	public $mOrdersId;
+	public $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
 			$products_ordered_email;
 
 	function __construct( $pOrdersId=NULL ) {

@@ -17,7 +17,7 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class CommerceCommissionBase extends BitBase {
 
 	// Must be set by all derivative classes
-	var $mCommissionType = NULL;
+	public $mCommissionType = NULL;
 
 	function verifyPayment( &$pParamHash ) {
 		global $gBitUser;

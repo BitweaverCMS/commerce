@@ -15,7 +15,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
 define( 'MAX_CART_QUANTITY', 9999999 );
 
 class CommerceShoppingCart extends CommerceOrderBase {
-	var $cartID, $content_type;
+	public $cartID, $content_type;
 
 	function load() {
 		global $gBitUser;

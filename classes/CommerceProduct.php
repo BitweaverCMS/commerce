@@ -27,10 +27,10 @@ require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
  * @package bitcommerce
  */
 class CommerceProduct extends LibertyMime {
-	var $mProductsId;
-	var $mOptions;
-	var $mRelatedContent;
-	var $mDiscounts;
+	public $mProductsId;
+	public $mOptions;
+	public $mRelatedContent;
+	public $mDiscounts;
 
 	function __construct( $pProductsId=NULL, $pContentId=NULL ) {
 		$this->mProductsId = $pProductsId;
