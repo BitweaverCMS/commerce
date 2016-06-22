@@ -15,6 +15,14 @@ require_once( KERNEL_PKG_PATH . 'BitSingleton.php' );
 
 class CommerceStatistics extends BitSingleton {
 
+    public function __wakeup() {
+		parent::__wakeup();
+	}
+
+	public function __sleep() {
+		return parent::__sleep();
+	}
+
 // {{{ =================== Customers ====================
 
 	function getAbandonedCustomers( &$pParamHash ) {

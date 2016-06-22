@@ -13,8 +13,8 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
 
 class CommerceCustomer extends BitBase {
-	var $mCustomerId;
-	var $mCart;
+	public $mCustomerId;
+	public $mCart;
 
 	function __construct( $pCustomerId ) {
 		parent::__construct();

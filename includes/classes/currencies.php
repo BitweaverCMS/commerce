@@ -158,8 +158,8 @@ class currencies extends BitBase {
 		return $this->currencies[$code]['decimal_places'];
 	}
 
-	function display_price($products_price, $products_tax, $quantity = 1) {
-		return $this->format(zen_add_tax($products_price, $products_tax) * $quantity);
+	function display_price($products_price, $products_tax, $quantity = 1, $currency_type = '', $currency_value = '') {
+		return $this->format( (zen_add_tax($products_price, $products_tax) * $quantity), true, $currency_type, $currency_value );
 	}
 
 	function verify( &$pParamHash ) {

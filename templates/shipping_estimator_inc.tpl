@@ -9,7 +9,11 @@ function shippingQuoteAddressChange( pForm ) {
 	}
 }
 function shippingQuoteUpdate( pForm ) {
+<<<<<<< HEAD
 	$('#shippingquotes').html('{/literal}{booticon iexplain=Loading iclass="icon-spinner icon-spin"} <em>{tr}Getting Shipping Estimate{/tr}</em>{literal}');
+=======
+	$('#shippingquotes').html('{/literal}<p class="alert alert-info">{booticon iclass="icon-spinner icon-spin"} {tr}Getting Shipping Estimate{/tr}</p>{literal}');
+>>>>>>> 81b7dac5f792772323c212cf80a9da1d87687e26
 	jQuery.ajax({
 		data: $(pForm).serialize(),
 		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}shipping_estimator.php{literal}",
@@ -80,7 +84,13 @@ function shippingQuoteUpdate( pForm ) {
 			</div>
 		</div>
 	{/if}
+<<<<<<< HEAD
 	<input type="button" class="btn btn-default btn-xs" value="Update" onclick="shippingQuoteUpdate( this.form )"/>
+=======
+	<input type="button" class="btn btn-info btn-sm" value="Update" onclick="shippingQuoteUpdate( this.form )"/>
+
+	<hr>
+>>>>>>> 81b7dac5f792772323c212cf80a9da1d87687e26
 
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}
 	{tr}Free Shipping{/tr} {tr}- Downloads{/tr}
