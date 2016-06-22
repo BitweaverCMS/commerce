@@ -26,30 +26,6 @@ if( $catList = CommerceCategory::getList( $catListHash ) ) {
 }
 $gBitSmarty->assign( 'catCount', $catCount );
 
-// Split Page
-// reset page when page is unknown
-if ( !empty( $_GET['page'] ) && !empty( $_GET['pID'] ) ) {
-	$old_page = $_GET['page'];
-	$check_page = $gBitDb->Execute($products_query_raw);
-	if ($check_page->RecordCount() > MAX_DISPLAY_RESULTS_CATEGORIES) {
-		$check_count=1;
-		while (!$check_page->EOF) {
-			if ($check_page->fields['products_id'] == $_GET['pID']) {
-				break;
-			}
-			$check_count++;
-			$check_page->MoveNext();
-		}
-		$_GET['page'] = round((($check_count/MAX_DISPLAY_RESULTS_CATEGORIES)+(fmod($check_count,MAX_DISPLAY_RESULTS_CATEGORIES) !=0 ? .5 : 0)),0);
-		$page = $_GET['page'];
-		if ($old_page != $_GET['page']) {
-	//			zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $_GET['cPath'] . '&pID=' . $_GET['pID'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
-		}
-	} else {
-		$_GET['page'] = 1;
-	}
-}
-
 $product = new CommerceProduct();
 
 $offset = new splitPageResults($_GET['page'], MAX_DISPLAY_RESULTS_CATEGORIES, $products_query_raw, $products_query_numrows);

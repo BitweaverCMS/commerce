@@ -13,7 +13,7 @@
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
 class CommerceVoucher extends BitBase {
-	var $pCategoryId;
+	public $pCategoryId;
 
 	function __construct( $pCouponId=NULL ) {
 		$this->mCouponId = $pCouponId;
@@ -58,14 +58,14 @@ class CommerceVoucher extends BitBase {
 
 	function expunge() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "DELETE FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id`=?";
 			$this->mDb->query( $query, array( $this->mCouponId ) );
 			$query = "DELETE FROM " . TABLE_COUPON_EMAIL_TRACK . " WHERE `coupon_id`=?";
 			$this->mDb->query( $query, array( $this->mCouponId ) );
 			$query = "DELETE FROM " . TABLE_COUPONS . " WHERE `coupon_id`=?";
 			$this->mDb->query( $query, array( $this->mCouponId ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
@@ -143,7 +143,7 @@ class CommerceVoucher extends BitBase {
 
 	function store( &$pParamHash ) {
 		if( $this->verify( $pParamHash ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$languages = zen_get_languages();
 
 			if( empty( $pParamHash['coupon_id'] ) ) {
@@ -166,7 +166,7 @@ class CommerceVoucher extends BitBase {
 						array( $pParamHash['voucher_lang_store'][$languageId]['coupon_name'],  $pParamHash['voucher_lang_store'][$languageId]['coupon_description'], $pParamHash['coupon_id'], $languageId ) );
 				}
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$this->load();
 		}
 		return( empty( $this->mFeedback['error'] ) );
@@ -310,7 +310,7 @@ class CommerceVoucher extends BitBase {
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
 		$ret = FALSE;
 		if( !empty( $pParamHash['email_to'] ) && !empty( $pParamHash['amount'] ) )  {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 
 			if( empty( $pParamHash['from'] ) ) {
 				$pParamHash['from'] = EMAIL_FROM;
@@ -371,7 +371,7 @@ class CommerceVoucher extends BitBase {
 				$order->updateStatus( $status );
 			}
 			$ret = TRUE;
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return $ret;
 	}

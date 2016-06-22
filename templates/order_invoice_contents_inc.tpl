@@ -11,7 +11,7 @@
 </th>
 {foreach from=$order->contents item=ordersProduct key=opid}
 <tr>
-	<td class="text-right" valign="top">{$ordersProduct.products_quantity}&nbsp;x</td>
+	<td style="text-align:right;" class="text-right" valign="top">{$ordersProduct.products_quantity}&nbsp;x</td>
 	<td valign="top">
 		<a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
 		<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}
@@ -32,12 +32,12 @@
 	</td>
 
     {if sizeof($order->getField('tax_groups')) > 1}
-    <td class="text-right">{$ordersProduct.tax|zen_display_tax_value}%</td>
+    <td style="text-align:right;" class="text-right">{$ordersProduct.tax|zen_display_tax_value}%</td>
     {/if}
 
-    <td class="text-right">
-		{$gCommerceCurrencies->format(zen_add_tax($orderProduct.final_price, $orderProduct.tax) * $orderProduct.products_quantity, true, $order->getField('currency'), $order->getField('currency_value'))} 
-		{if $orderProduct.onetime_charges}<br />{$gCommerceCurrencies->format(zen_add_tax($orderProduct.onetime_charges, $ordersProduct.tax), true, $order->getField('currency'), $order->getField('currency_value'))}{/if}
+    <td style="text-align:right;" class="text-right">
+		{$gCommerceCurrencies->display_price( $ordersProduct.final_price, $ordersProduct.tax, $ordersProduct.products_quantity, $order->getField('currency'), $order->getField('currency_value'))} 
+		{if $ordersProduct.onetime_charges}<br />{$gCommerceCurrencies->format(zen_add_tax($ordersProduct.onetime_charges, $ordersProduct.tax), true, $order->getField('currency'), $order->getField('currency_value'))}{/if}
 	</td>
 </tr>
 {/foreach}
@@ -54,11 +54,11 @@
 
 {section loop=$order->totals name=t}
 <tr>
-	<td colspan="2" class="text-right {'ot_'|str_replace:'':$order->totals[t].class}">
+	<td colspan="2" style="text-align:right;" class="text-right {'ot_'|str_replace:'':$order->totals[t].class}">
 		<label>{$order->totals[t].title}</label>
 	</td>
-	<td class="text-right {'ot_'|str_replace:'':$order->totals[t].class}">
-		{$gCommerceCurrencies->format($order->totals[t].orders_value)} {if $isForeignCurrency}{$gCommerceCurrencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	<td style="text-align:right;" class="text-right {'ot_'|str_replace:'':$order->totals[t].class}">
+		{$gCommerceCurrencies->format($order->totals[t].orders_value, 1, $order->getField('currency'), $order->getField('currency_value'))} {if $isForeignCurrency}{$gCommerceCurrencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
 	</td>
 </tr>
 {/section}

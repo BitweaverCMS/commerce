@@ -16,7 +16,7 @@
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
 class CommerceCategory extends BitBase {
-	var $pCategoryId;
+	public $pCategoryId;
 
 	function __construct( $pCategoryId=NULL, $pContentId=NULL ) {
 		parent::__construct();

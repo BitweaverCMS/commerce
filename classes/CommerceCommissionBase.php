@@ -17,7 +17,7 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class CommerceCommissionBase extends BitBase {
 
 	// Must be set by all derivative classes
-	var $mCommissionType = NULL;
+	public $mCommissionType = NULL;
 
 	function verifyPayment( &$pParamHash ) {
 		global $gBitUser;
@@ -42,7 +42,7 @@ class CommerceCommissionBase extends BitBase {
 	}
 
 	function storePayment( &$pParamHash ) {
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( $this->verifyPayment( $pParamHash ) ) {
 			if( @BitBase::verifyId( $pParamHash['commissions_payments_id'] ) ) {
 				$this->mDb->associateUpdate( TABLE_COMMISSIONS_PAYMENTS, $pParamHash['payment_store'], array( 'commissions_payments_id' =>$pParamHash['commissions_payments_id'] ) );
@@ -62,7 +62,7 @@ class CommerceCommissionBase extends BitBase {
 				default:
 					break;
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		} else {
 			$this->mDb->RollbackTrans();
 		}

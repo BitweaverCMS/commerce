@@ -1,4 +1,4 @@
-{if $gBitSystem->isPackageActive( $smarty.const.BITCOMMERCE_PKG_NAME ) && $smarty.const.ACTIVE_PACKAGE==$smarty.const.BITCOMMERCE_PKG_NAME}
+{if $gBitSystem->isPackageActive( $smarty.const.BITCOMMERCE_PKG_NAME ) && $gBitSystem->getActivePackage()==$smarty.const.BITCOMMERCE_PKG_NAME}
 	{if $smarty.const.BITCOMMERCE_ADMIN}
 <link rel="stylesheet" type="text/css" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/includes/stylesheet.css"/>
 	{else}

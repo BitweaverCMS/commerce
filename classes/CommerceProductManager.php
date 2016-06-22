@@ -167,7 +167,7 @@ class CommerceProductManager extends BitBase {
 	}
 
 	function storeOptionsValue( $pParamHash, $pFiles = NULL ) {
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		$ret = FALSE;
 		if( $this->verifyOptionsValue( $pParamHash ) ) {
 			if( !empty( $pParamHash['products_options_values_id'] ) ) {
@@ -182,7 +182,7 @@ vd( $_FILES );
 die;
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 		return $ret;
 	}
 

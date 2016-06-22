@@ -21,7 +21,7 @@
 //
 
 class CommerceShipping {
-	var $modules;
+	public $modules;
 
 // class constructor
 	function CommerceShipping($module = '') {
