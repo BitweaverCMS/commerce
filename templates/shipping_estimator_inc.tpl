@@ -1,6 +1,14 @@
 {literal}
 <script type="text/javascript">//<![CDATA[
-function updateShippingQuote( pForm ) {
+function shippingQuoteAddressChange( pForm ) {
+	if( $('#addressid').val() == 'custom' ) {
+		$('#customaddress').show();
+	} else {
+		$('#customaddress').hide();
+		shippingQuoteUpdate( pForm );
+	}
+}
+function shippingQuoteUpdate( pForm ) {
 	$('#shippingquotes').html('{/literal}{booticon iexplain=Loading iclass="icon-spinner icon-spin"} <em>{tr}Getting Shipping Estimate{/tr}</em>{literal}');
 	jQuery.ajax({
 		data: $(pForm).serialize(),
@@ -16,7 +24,7 @@ function updateShippingQuote( pForm ) {
 
 <div id="shippingestimate">
 
-{form class="form-horizontal"}
+{form class=""}
 {legend legend="Shipping Estimate"}
 
 <input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}"/>
@@ -26,76 +34,53 @@ function updateShippingQuote( pForm ) {
 
 <p>{tr}Shipping prices are an estimate only. The actual amount may vary once a final total is calculated during checkout.{/tr}</p>
 
-{if $addresses}
-	{forminput}
+	{if $addresses}
+	<div class="row form-group">
 		<div class="col-xs-12">
-			<select class="form-control" onchange="updateShippingQuote( this.form );" name="address_id" id="addressid">
+			<select class="form-control" onchange="shippingQuoteAddressChange( this.form );" name="address_id" id="addressid">
 			{foreach from=$addresses item=addr}
 				<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
 			{/foreach}
+				<optgroup label="----------"></optgroup>
+				<option value="custom" {if $smarty.session.cart_address_id == "custom"}selected="selected"{/if}>{tr}Enter Country and Postal Code...{/tr}</option>
 			</select>
 		</div>
-	{/forminput}
-	{forminput}
-		{formlabel class="col-xs-3" label="Ship To"}
-		<div class="col-xs-9">
-			{$selAddr.address_format_id|zen_address_format:$selAddr:1:' ':'<br />'}
-		</div>
-	{/forminput}
-{else}
+	</div>
+	{else}
+	<p><em>{tr}Select Country and Postal Code.{/tr}</em></p>
+	{/if}
 	{if $gBitCustomer->mCart->get_content_type() != 'virtual'}
-		{forminput class="country"}
-			{formlabel class="col-xs-3" label="Country"}
-			<div class="col-xs-9">
+		<div id="customaddress" class="row form-group {if $addresses && $smarty.session.cart_address_id != "custom"}display-none{/if}">
+			<div class="col-xs-8">
 				{$countryMenu}
 			</div>
-		{/forminput}
-		{if $stateMenu}
-			{forminput class="state"}
-				{formlabel class="col-xs-3" label="State / Province"}
-				<div class="col-xs-9">
-					{$stateMenu}
-				</div>
-			{/forminput}
-		{/if}
-		{forminput class="postalcode"}
-			{formlabel class="col-xs-3" label="Postal Code"}
-			<div class="col-xs-9">
-				<input type="text" class="form-control" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
+			<div class="col-xs-4">
+				<input type="text" placeholder="Enter zip code." class="form-control" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
 			</div>
-		{/forminput}
+		</div>
 	{/if}
-{/if}
 
 	{if $gBitProduct->isValid()}
-		{forminput}
-			{formlabel class="col-xs-3" label="Product"}
-			<div class="col-xs-9">
-				{$gBitProduct->getTitle()|escape}
-			</div>
-		{/forminput}
 	{elseif !$gBitProduct->isValid() && $gBitCustomer->mCart && $gBitCustomer->mCart->count_contents()}
-		{forminput}
-			{formlabel class="col-xs-3" label="Items in Cart"}
-			<div class="col-xs-9">
+		<div class="row form-group">
+			{formlabel label="Items in Cart"}
+			<div class="col-sm-8">
 				{$gBitCustomer->mCart->count_contents()}
 			</div>
-		{/forminput}
+		</div>
 	{/if}
 
 	{if $smarty.request.cart_quantity}
-		{forminput}
-			{formlabel class="col-xs-3" label="Quantity"}
-			<div class="col-xs-9">
-				<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+		<div class="row form-group">
+			<div class="col-xs-6">
+				<div class="input-group">
+					<div class="input-group-addon">{tr}Quantity{/tr}</div>
+					<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+				</div>
 			</div>
-		{/forminput}
+		</div>
 	{/if}
-{forminput class="submit"}
-	<div class="col-xs-offset-3 col-xs-9">
-		<input type="button" class="btn btn-default btn-xs" value="Update" onclick="updateShippingQuote( this.form )"/>
-	</div>
-{/forminput}
+	<input type="button" class="btn btn-default btn-xs" value="Update" onclick="shippingQuoteUpdate( this.form )"/>
 
 {if $gBitCustomer->mCart->get_content_type() == 'virtual'}
 	{tr}Free Shipping{/tr} {tr}- Downloads{/tr}
