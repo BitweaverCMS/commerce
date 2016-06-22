@@ -775,11 +775,7 @@ MODULE_SHIPPING_USPS_HEIGHT 1.625
     }
 
 
-<<<<<<< HEAD
-	$shipment_value = (float)$order->subtotal > 0 ? $order->subtotal + $order->info['tax'] : (!empty( $_SESSION['cart']->total  ) ? $_SESSION['cart']->total: 0);
-=======
 	$shipment_value = (float)$order->subtotal > 0 ? $order->subtotal + $order->getField( 'tax' ) : (!empty( $_SESSION['cart']->total  ) ? $_SESSION['cart']->total: 0);
->>>>>>> 81b7dac5f792772323c212cf80a9da1d87687e26
 	$insurable_value = $shipment_value; // spiderr - where is this defined? - $uninsurable_value;
 
     // US Domestic destinations
