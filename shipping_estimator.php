@@ -119,7 +119,8 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 } else {
 
 }
-$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="shippingQuoteUpdate(this.form);"' ) );
+
+$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
 
 // set the cost to be able to calculate free shipping
 $order->info = array('total' => $gBitCustomer->mCart->show_total(), // TAX ????
