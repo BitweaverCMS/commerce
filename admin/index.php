@@ -118,14 +118,29 @@
 <table class="table data">
 <tr><th><?php echo tra( 'Order Summary' ); ?></th><th>#</th></tr>
 <?php	 $orders_contents = '';
-	$query = "SELECT `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
+	$query = "SELECT `orders_status_id` AS `key`, `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co
 				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
 				GROUP BY `orders_status_name`, `orders_status_id`
 				ORDER BY `orders_status_id` DESC";
-	if( $rs = $gBitDb->query( $query ) ) {
-		while( $orders_status = $rs->fetchRow() ) {
-		print '<tr><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $orders_status['orders_count'] . '</td></tr>';
+	if( $statusHash = $gBitDb->getAssoc( $query ) ) {
+		function cmp($a, $b) {
+			$ret = 0;
+			if( ($a['orders_status_id'] > 0 && $b['orders_status_id'] > 0 ) ) {
+				$ret = ($a['orders_status_id'] < $b['orders_status_id']) ? -1 : 1;
+			} elseif( ($a['orders_status_id'] > 0 && $b['orders_status_id'] < 0 ) ) {
+				$ret =  -1;
+			} elseif( ($a['orders_status_id'] < 0 && $b['orders_status_id'] > 0 ) ) {
+				$ret =  1;
+			} else {
+				$ret = ($a['orders_status_id'] > $b['orders_status_id']) ? -1 : 1;;
+			}
+			return $ret;
+		}
+
+		usort($statusHash, "cmp");
+		foreach( $statusHash as $orders_status ) {
+			print '<tr class="order-'.($orders_status['orders_status_id'] > 0 ? 'live' : 'dead').' '.strtolower( $orders_status['orders_status_name'] ).'"><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $orders_status['orders_count'] . '</td></tr>';
 		}
 	}
 ?>

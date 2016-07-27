@@ -67,27 +67,20 @@ if (zen_not_null($action)) {
 			}
 			$orders_status_id = zen_db_prepare_input($_GET['orders_status_id']);
 
-			$orders_status = $gBitDb->Execute("select `configuration_value`
-																		 from " . TABLE_CONFIGURATION . "
-																		 where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
+			$orders_status = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 
 			if ($orders_status->fields['configuration_value'] == $orders_status_id) {
-				$gBitDb->Execute("update " . TABLE_CONFIGURATION . "
-											set `configuration_value` = ''
-											where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
+				$gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '' where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 			}
 
-			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . "
-										where orders_status_id = '" . zen_db_input($orders_status_id) . "'");
+			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where orders_status_id = '" . zen_db_input($orders_status_id) . "'");
 
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
 			break;
 		case 'delete':
 			$orders_status_id = zen_db_prepare_input($_GET['orders_status_id']);
 
-			$status = $gBitDb->Execute("select count(*) as `ocount`
-															from " . TABLE_ORDERS . "
-															where orders_status = '" . (int)$orders_status_id . "'");
+			$status = $gBitDb->Execute("select count(*) as `ocount` from " . TABLE_ORDERS . " where orders_status = '" . (int)$orders_status_id . "'");
 
 			$remove_status = true;
 			if ($orders_status_id == DEFAULT_ORDERS_STATUS_ID) {
