@@ -1792,6 +1792,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (5,'Australia Dollars', 'AUD', '', '', '.', ',', '2', '1.3121995036', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (6,'Japan Yen', 'JPY', '', '&yen;', '.', ',', '2', '112.2350011215', 'NOW')",
 
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-40, 1, 'Fraud')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-30, 1, 'Chargeback')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-20, 1, 'Refunded')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-10, 1, 'Cancelled')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (10, 1, 'Pending')",
