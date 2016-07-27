@@ -116,7 +116,7 @@
 
 <div class="col-md-12 col-sm-6"><div class="well nopadding">
 <table class="table data">
-<tr><th><?php echo tra( 'Order Summary' ); ?></th><th>#</th></tr>
+<tr><th><?php echo tra( 'Order Summary' ); ?></th><th class="text-right">#</th></tr>
 <?php	 $orders_contents = '';
 	$query = "SELECT `orders_status_id` AS `key`, `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co
