@@ -201,7 +201,7 @@ switch ($action) {
 		}
 
 		$contents[] = array('text' => '<br>' . TEXT_INFO_ORDERS_STATUS_NAME . $orders_status_inputs_string);
-		if (DEFAULT_ORDERS_STATUS_ID != $oInfo->orders_status_id) $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('default') . ' ' . TEXT_SET_DEFAULT);
+		if (DEFAULT_ORDERS_STATUS_ID != $oInfo->orders_status_id) $contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'default', 'label' => TEXT_SET_DEFAULT ) ));
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	case 'delete':
