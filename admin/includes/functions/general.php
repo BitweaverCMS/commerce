@@ -387,6 +387,12 @@
 				}
 				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
 			}
+			$sql = "SELECT `orders_status_name`, COUNT(`orders_id`) 
+					FROM  " . TABLE_ORDERS . " co 
+						INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON (co.`orders_status`=cos.`orders_status_id`)
+					WHERE `orders_status_id` < -10 AND `customers_id`=?
+					GROUP BY `orders_status_name`";
+			$ret['negative_orders'] = $gBitDb->getAssoc( $sql, array( $pCustomersId ) );
 		}
 		return $ret;
 	}

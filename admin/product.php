@@ -111,7 +111,6 @@ if (is_dir(DIR_FS_CATALOG_IMAGES)) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
 <?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR" and $action != 'new_product_meta_tags') include (DIR_WS_INCLUDES.'fckeditor.php'); ?>
 <?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA" and $action != 'new_product_meta_tags')	include (DIR_WS_INCLUDES.'htmlarea.php'); ?>
 </head>

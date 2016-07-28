@@ -3,8 +3,8 @@
 require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
 
 class CommerceSystem extends BitSingleton {
-	var $mConfig = array();
-	var $mProductTypeLayout = array();
+	public $mConfig = array();
+	public $mProductTypeLayout = array();
 
 	function __construct() {
 		parent::__construct();
@@ -14,6 +14,10 @@ class CommerceSystem extends BitSingleton {
     public function __wakeup() {
 		parent::__wakeup();
 		$this->loadConstants();
+	}
+
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mConfig', 'mProductTypeLayout' ) );
 	}
 
 	private function loadConstants() {

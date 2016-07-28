@@ -15,7 +15,7 @@ abstract class CommercePluginBase extends BitBase {
 	abstract function install();
 	// Check if module is installed (Administration Tool)
 
-	var $mStatusKey;
+	public $mStatusKey;
 
 	public function __construct() {
 		parent::__construct();

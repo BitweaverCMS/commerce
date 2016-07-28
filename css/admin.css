@@ -18,6 +18,13 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 .coupon.coupon-active		{ background-color:#efe; }
 .coupon.coupon-expired	{ background-color:#fee; }
 
+.table tr.order-live	{ background-color:#efe; }
+.table tr.order-live.shipped	{ background-color:inherit; }
+.table tr.refunded, tr.chargeback, tr.fraud	{ color:#a00; }
+.table tr.transferring { background-color:#afa; }
+.table tr.expediting	{ background-color:#fef; }
+.table tr.shipped td	{ border-top: 3px solid #999; }
+
 /* including stylesheet for dhtml menu * /
 /*
 osCommerce,Open Source E-Commerce Solutions

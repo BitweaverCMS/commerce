@@ -27,11 +27,12 @@ require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
  * @package bitcommerce
  */
 class CommerceProduct extends LibertyMime {
-	var $mProductsId;
-	var $mOptions;
-	var $mRelatedContent;
+	public $mProductsId;
+	public $mOptions;
+	public $mRelatedContent;
+	public $mDiscounts;
 
-	function CommerceProduct( $pProductsId=NULL, $pContentId=NULL ) {
+	function __construct( $pProductsId=NULL, $pContentId=NULL ) {
 		$this->mProductsId = $pProductsId;
 		parent::__construct();
 		$this->registerContentType( BITPRODUCT_CONTENT_TYPE_GUID, array(
@@ -53,13 +54,17 @@ class CommerceProduct extends LibertyMime {
 		$this->mRelatedContent = NULL;
 	}
 
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent', 'mDiscounts' ) );
+	}
+
 	// Override LibertyBase method
-	public function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
+	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadFromCache=TRUE ) {
 		return bc_get_commerce_product( array( 'products_id' => $pPrimaryId ) );
 	}
 
 	// Override LibertyBase method
-	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+	public static function getNewObject( $pClass, $pContentId, $pLoadFromCache=TRUE ) {
 		return bc_get_commerce_product( array( 'content_id' => $pContentId ) );
 	}
 
@@ -1106,6 +1111,12 @@ If a special exist * 10+9
 		}
 	}
 
+	function getImageUri( $pSize='small' ) {
+		if( $this->isValid() ) {
+			return BIT_ROOT_URI.static::getImageUrlFromHash( $this->mProductsId, $pSize );
+		}
+	}
+
 	function getImageUrl( $pSize='small' ) {
 		if( !empty( $this ) ) {
 			return static::getImageUrlFromHash( $this->mProductsId, $pSize );
@@ -1553,7 +1564,7 @@ If a special exist * 10+9
 	function store( &$pParamHash ) {
 		// we have already done all the permission checking needed for this user to upload an image
 		$pParamHash['no_perm_check'] = TRUE;
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( CommerceProduct::verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
@@ -1625,7 +1636,7 @@ If a special exist * 10+9
 				$this->storeProductImage( $pParamHash );
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 		$this->load();
 		return( $this->mProductsId );
 	}
@@ -2287,7 +2298,7 @@ If a special exist * 10+9
 	function expunge() {
 		global $gBitSystem;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 /*
 Skip deleting of images for now
 			if( !empty( $this->mInfo['products_image'] ) ) {
@@ -2347,7 +2358,7 @@ Skip deleting of images for now
 			unset( $this->mRelatedContent );
 			unset( $this->mProductsId );
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -2579,16 +2590,17 @@ Skip deleting of images for now
 function bc_get_commerce_product( $pLookupMixed ) {
 	global $gBitDb;
 	$product = NULL;
+	$lookupValue = NULL;
 
 	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 		$lookupKey = key( $pLookupMixed );
-		$lookupValue = current( $pLookupMixed );
-		if( is_numeric( $lookupValue) ) {
-			$lookupValue = (int)$lookupValue & 0xFFFFFFFF;
+		$currentValue = current( $pLookupMixed );
+		if( BitBase::verifyId( $currentValue) ) {
+			$lookupValue = $currentValue;
 		}
-	} elseif( is_numeric( $pLookupMixed ) ) {
+	} elseif( BitBase::verifyId( $pLookupMixed ) ) {
 		$lookupKey = 'products_id';
-		$lookupValue = (int)$pLookupMixed & 0xFFFFFFFF;
+		$lookupValue = $pLookupMixed;
 	}
 
 	if( !empty( $lookupValue ) ) {

@@ -18,7 +18,7 @@ function editAddress( pAddress ) {
 	<div class="col-xs-6">
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
-		<a href="product_history.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
+		<a href="list_orders.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
 		{smartlink ipackage=liberty ifile="list_content.php" user_id=$order->customer.user_id ititle="User Content" booticon="icon-list" iforce="icon"}
 		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="icon-user-md" iforce=icon} 
 		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="icon-pencil" iforce=icon} 
@@ -35,6 +35,13 @@ function editAddress( pAddress ) {
 			{if $customerStats.gifts_redeemed || $customerStats.gifts_balance}<br/>
 				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance|round:2}, ${$customerStats.gifts_balance|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
 			{/if}
+		{/if}
+		{if $customerStats.negative_orders}
+			<div class="alert alert-danger"><ul>
+			{foreach from=$customerStats.negative_orders key=status item=negCount}
+				<li><a href="list_orders.php?user_id={$order->customer.user_id}">{$negCount} {$status}</a></li>
+			{/foreach}
+			</ul></div>
 		{/if}
 	</div>
 	<div class="col-xs-6">

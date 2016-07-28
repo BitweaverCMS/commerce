@@ -37,7 +37,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 // $attachments_list  Array of attachment names/mime-types to be included  (this portion still in testing, and not fully reliable)
 
 	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='', $pFormat='' ) {
-		global $gBitDb, $messageStack;
+		global $gCommerceSystem, $gBitDb, $messageStack;
 		if (SEND_EMAILS != 'true') return false;  // if sending email is disabled in Admin, just exit
 		if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
 
@@ -115,7 +115,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 				$text = strip_tags($email_text);
 			}
 
-			if (EMAIL_USE_HTML == 'true' && !empty( $email_html ) && ($customers_email_format == 'HTML' || (ADMIN_EXTRA_EMAIL_FORMAT != 'TEXT' && substr($module,-6)=='_extra'))) {
+			if ( $gCommerceSystem->isConfigActive( 'EMAIL_USE_HTML' ) && !empty( $email_html ) && ($customers_email_format == 'HTML' || (ADMIN_EXTRA_EMAIL_FORMAT != 'TEXT' && substr($module,-6)=='_extra'))) {
 				$message->add_html($email_html, $text);
 			} else {
 				$message->add_text($text);
@@ -135,6 +135,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 			$message->build_message();
 			// send the actual email
 			$result = $message->send($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject);
+
 			if (!$result && $messageStack) {
 				$messageStack->add(sprintf(EMAIL_SEND_FAILED, $to_name, $to_email_address, $email_subject),'error');
 			}

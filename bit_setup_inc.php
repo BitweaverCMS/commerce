@@ -65,12 +65,12 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	function bitcommerce_user_expunge( &$pObject ) {
 		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) ) {
 			require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-			$pObject->mDb->StartTrans();
+			$pObject->StartTrans();
 			$exCustomer = new CommerceCustomer( $pObject->mUserId );
 			if( $exCustomer->load() ) {
 				$exCustomer->expunge();
 			}
-			$pObject->mDb->CompleteTrans();
+			$pObject->CompleteTrans();
 		}
 	}
 	

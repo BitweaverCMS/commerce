@@ -14,7 +14,6 @@ $gBitSmarty->assign( 'order', $order );
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"/>
 </head>
 <body>
 <div class="container">

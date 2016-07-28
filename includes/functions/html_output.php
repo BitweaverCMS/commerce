@@ -193,9 +193,9 @@
 
 ////
 // Output a selection field - alias function for zen_draw_checkbox_field() and zen_draw_radio_field()
-  function zen_draw_selection_field($name, $type, $value = '', $checked = false, $parameters = '') {
+  function zen_draw_selection_field( $pParamHash ) { // $name, $type, $value = '', $checked = false, $parameters = '', $label='', $help='') {
 	$cssClass = '';
-	switch( $type ) {
+	switch( $pParamHash['type'] ) {
 		case 'radio':
 		case 'checkbox':
 			break;
@@ -203,31 +203,47 @@
 			$cssClass .= 'form-control';
 			break;
 	}
-    $selection = '<input class="'.$cssClass.'" type="' . zen_output_string($type) . '" name="' . zen_output_string($name) . '"';
+    $selection = '<div class="'.$pParamHash['type'].'"><label><input class="'.$cssClass.'" type="' . zen_output_string($pParamHash['type']) . '" name="' . zen_output_string($pParamHash['name']) . '"';
 
-    if (zen_not_null($value)) $selection .= ' value="' . zen_output_string($value) . '"';
+    if( isset( $pParamHash['value'] ) ) {
+		$selection .= ' value="' . zen_output_string($pParamHash['value']) . '"';
+	}
 
-    if ( ($checked == true) || ( isset($GLOBALS[$name]) && is_string($GLOBALS[$name]) && ( ($GLOBALS[$name] == 'on') || (isset($value) && (stripslashes($GLOBALS[$name]) == $value)) ) ) ) {
+    if ( !empty($pParamHash['checked'] ) ) {
       $selection .= ' checked="checked"';
     }
 
-    if (zen_not_null($parameters)) $selection .= ' ' . $parameters;
+    if ( !empty( $pParamHash['parameters'] ) ) {
+		$selection .= ' ' . $pParamHash['parameters'];
+	}
 
     $selection .= ' />';
+
+	if( !empty( $pParamHash['label'] ) ) {
+		$selection .= tra( $pParamHash['label'] );
+	}
+
+	$selection .= '</label>';
+
+	if( !empty( $pParamHash['help'] ) ) {
+		$selection .= '<p class="help-block">'.tra( $pParamHash['help'] ).'</p>';
+	}
+
+	$selection .= '</div>';
 
     return $selection;
   }
 
 ////
 // Output a form checkbox field
-  function zen_draw_checkbox_field($name, $value = '', $checked = false, $parameters = '') {
-    return zen_draw_selection_field($name, 'checkbox', $value, $checked, $parameters);
+  function zen_draw_checkbox_field($name, $value = '', $checked = false, $parameters = '', $label='', $help='') {
+    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'checkbox', 'value'=>$value, 'checked'=>$checked, 'parameters'=>$parameters ));
   }
 
 ////
 // Output a form radio field
-  function zen_draw_radio_field($name, $value = '', $checked = false, $parameters = '') {
-    return zen_draw_selection_field($name, 'radio', $value, $checked, $parameters);
+  function zen_draw_radio_field($name, $value = '', $checked = false, $parameters = '', $label='', $help='') {
+    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'radio', 'value'=>$value, 'checked'=>$checked, 'parameters'=>$parameters ));
   }
 
 ////
