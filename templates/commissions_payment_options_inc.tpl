@@ -16,13 +16,13 @@
 	<div class="form-group" id="commissionpaypal"> 
 		{formlabel label="PayPal Email"}
 		{forminput}
-				<input type="text" name="commissions_paypal_address" value="{$gBitUser->getPreference('commissions_paypal_address',$gBitUser->getField('email'))}" />
+				<input type="text" class="form-control" name="commissions_paypal_address" value="{$gBitUser->getPreference('commissions_paypal_address',$gBitUser->getField('email'))}" />
 		{/forminput}
 	</div>
 	<div class="form-group" id="commissionworldpay"> 
 		{formlabel label="WorldPay Email"}
 		{forminput}
-				<input type="text" name="commissions_worldpay_address" value="{$gBitUser->getPreference('commissions_worldpay_address',$gBitUser->getField('email'))}" />
+				<input type="text" class="form-control" name="commissions_worldpay_address" value="{$gBitUser->getPreference('commissions_worldpay_address',$gBitUser->getField('email'))}" />
 		{/forminput}
 	</div>
 	<div class="form-group" id="commissioncheck"> 
@@ -35,7 +35,7 @@
 
 
 	<div class="form-group submit">
-		<input type="submit" class="btn btn-default" name="save_commission_settings" value="Save" />
+		<input type="submit" class="btn btn-primary" name="save_commission_settings" value="Save" />
 	</div>
 {/form}
 
