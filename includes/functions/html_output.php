@@ -230,20 +230,19 @@
 	}
 
 	$selection .= '</div>';
-
     return $selection;
   }
 
 ////
 // Output a form checkbox field
   function zen_draw_checkbox_field($name, $value = '', $checked = false, $parameters = '', $label='', $help='') {
-    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'checkbox', 'value'=>$value, 'checked'=>$checked, 'parameters'=>$parameters ));
+    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'checkbox', 'value'=>$value, 'checked'=>$checked, 'label'=>$label, 'parameters'=>$parameters ));
   }
 
 ////
 // Output a form radio field
   function zen_draw_radio_field($name, $value = '', $checked = false, $parameters = '', $label='', $help='') {
-    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'radio', 'value'=>$value, 'checked'=>$checked, 'parameters'=>$parameters ));
+    return zen_draw_selection_field( array( 'name' => $name, 'type'=>'radio', 'value'=>$value, 'checked'=>$checked, 'label'=>$label, 'parameters'=>$parameters ));
   }
 
 ////

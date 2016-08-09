@@ -1877,11 +1877,7 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$tmp_radio .= '<div class="productoptions radio"><label>' .  zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute) .  "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>";
-							if( !empty( $vals['attributes_image'] ) ) {
-								$tmp_radio .= zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '');
-							}
-							$tmp_radio .= '</label></div>';
+							$tmp_radio .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, NULL, "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>" . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '') : '') );
 						}
 
 
@@ -1924,10 +1920,10 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>';
+									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>' );
 									break;
 								case '2':
-									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>';
+									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'],  $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>' );
 									break;
 								case '3':
 									$tmp_attributes_image_row++;
@@ -1938,9 +1934,9 @@ If a special exist * 10+9
 									}
 
 									if( !empty( $vals['attributes_image'] ) ) {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname ) . '</td>';
 									} else {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . $products_options_details_noname . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $vals['products_options_values_name'] . $products_options_details_noname ) . '</td>';
 									}
 									break;
 
@@ -1972,14 +1968,14 @@ If a special exist * 10+9
 									}
 
 									if( !empty( $vals['attributes_image'] ) ) {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') ) . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
 									} else {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '<br />' . $vals['products_options_values_name'] . ($products_options_details_noname != '' ? '<br />' . $products_options_details_noname : '') . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $vals['products_options_values_name'] . ($products_options_details_noname != '' ? $products_options_details_noname : '') ) . '</td>';
 									}
 									break;
 								case '0':
 								default:
-									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . $products_options_details .'</label>';
+									$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $products_options_details );
 									break;
 							}
 						}
@@ -2134,7 +2130,7 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected') . $products_options_details;
+						$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected', NULL, $products_options_details );
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
