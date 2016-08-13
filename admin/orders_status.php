@@ -110,11 +110,11 @@ if (zen_not_null($action)) {
 <div class="row">
 <div class="col-md-8">
 	<table class="table table-hover">
-						<tr class="dataTableHeadingRow">
-							<td class="text-right"><?php echo tra( 'ID' ); ?></td>
-							<td><?php echo tra( 'Status Name' ); ?></td>
-							<td class="text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-						</tr>
+		<tr class="dataTableHeadingRow">
+			<td class="text-right"><?php echo tra( 'ID' ); ?></td>
+			<td><?php echo tra( 'Status Name' ); ?></td>
+			<td class="text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
+		</tr>
 <?php
 $orders_status_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
 $orders_status_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $orders_status_query_raw, $orders_status_query_numrows);
@@ -136,7 +136,7 @@ while (!$orders_status->EOF) {
 	}
 	echo "</td>\n";
 ?>
-							<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($orders_status->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $orders_status->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+			<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($orders_status->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $orders_status->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
 	$orders_status->MoveNext();

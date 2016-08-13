@@ -220,7 +220,7 @@
 		if (zen_not_null($image) && (file_exists(DIR_FS_CATALOG_IMAGES . $image)) ) {
 			$image = zen_image(DIR_WS_CATALOG_IMAGES . $image, $alt, $width, $height);
 		} else {
-			$image = TEXT_IMAGE_NONEXISTENT;
+			$image = tra( 'Image does not exist' );
 		}
 
 		return $image;
