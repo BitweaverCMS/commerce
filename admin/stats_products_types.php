@@ -28,8 +28,15 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
 
 $stats = new CommerceStatistics();
 
-$gBitSmarty->assign_by_ref( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
-$gBitSmarty->assign_by_ref( 'statsByOption', $stats->getRevenueByOption( $_REQUEST ) );
+$gBitSmarty->assign( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
+$statsByOption = $stats->getRevenueByOption( $_REQUEST );
+$gBitSmarty->assign_by_ref( 'statsByOption', $statsByOption );
+$statsByOptionTotalUnits = array();
+foreach( $statsByOption as $stat ) {
+	@$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];
+}
+$gBitSmarty->assign_by_ref( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );
+
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_stats_products_types.tpl' );
 
