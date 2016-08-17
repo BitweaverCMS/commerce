@@ -145,7 +145,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	function getProductsModel() {
-		return $this->getField( 'products_model', 'Product' );
+		return $this->getField( 'products_model', $this->getField( 'type_name', 'Product' ) );
 	}
 
 	function exportList( $pList ) {
@@ -1192,7 +1192,9 @@ If a special exist * 10+9
 		if( empty( $pListHash['sort_mode'] ) ) {
 			$pListHash['sort_mode'] = 'created_desc';
 		}
+
 		$this->prepGetList( $pListHash );
+
 		$bindVars = array();
 		$selectSql = '';
 		$joinSql = '';
@@ -2574,6 +2576,55 @@ Skip deleting of images for now
 		global $gBitDb;
 		return $gBitDb->getAssoc( "SELECT `type_id`, * FROM " . TABLE_PRODUCT_TYPES . " ORDER BY `type_name`" );
 	}
+
+	static function getCommerceObject( $pLookupMixed ) {
+		global $gBitDb;
+		$product = NULL;
+		$lookupValue = NULL;
+
+		if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
+			$lookupKey = key( $pLookupMixed );
+			$currentValue = current( $pLookupMixed );
+			if( BitBase::verifyId( $currentValue) ) {
+				$lookupValue = $currentValue;
+			}
+		} elseif( BitBase::verifyId( $pLookupMixed ) ) {
+			$lookupKey = 'products_id';
+			$lookupValue = $pLookupMixed;
+		}
+
+		if( !empty( $lookupValue ) ) {
+			$sql = "SELECT `type_id` AS `hash_key`, cpt.*
+					FROM " . TABLE_PRODUCT_TYPES . " cpt
+						LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
+					WHERE `$lookupKey`=?";
+			$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
+
+			if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
+				require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
+				if( class_exists(	$productTypes['type_class'] ) ) {
+					$productClass = $productTypes['type_class'];
+				}
+			}
+		}
+
+		if( empty( $productClass ) ) {
+			$productClass = 'CommerceProduct';
+		}
+
+		$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
+		$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
+
+		if( !($product = $productClass::loadFromCache( $productsId )) ) {
+			$product = new $productClass( $productsId, $contentId );
+
+			if( !$product->load() ) {
+				unset( $product->mProductsId );
+			}
+		}
+
+		return $product;
+	}
 }
 
 
@@ -2584,52 +2635,7 @@ Skip deleting of images for now
  * See verify for details of the values required
  */
 function bc_get_commerce_product( $pLookupMixed ) {
-	global $gBitDb;
-	$product = NULL;
-	$lookupValue = NULL;
-
-	if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
-		$lookupKey = key( $pLookupMixed );
-		$currentValue = current( $pLookupMixed );
-		if( BitBase::verifyId( $currentValue) ) {
-			$lookupValue = $currentValue;
-		}
-	} elseif( BitBase::verifyId( $pLookupMixed ) ) {
-		$lookupKey = 'products_id';
-		$lookupValue = $pLookupMixed;
-	}
-
-	if( !empty( $lookupValue ) ) {
-		$sql = "SELECT `type_id` AS `hash_key`, cpt.*
-				FROM " . TABLE_PRODUCT_TYPES . " cpt
-					LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
-				WHERE `$lookupKey`=?";
-		$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
-
-		if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
-			require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
-			if( class_exists(	$productTypes['type_class'] ) ) {
-				$productClass = $productTypes['type_class'];
-			}
-		}
-	}
-
-	if( empty( $productClass ) ) {
-		$productClass = 'CommerceProduct';
-	}
-
-	$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
-	$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
-
-	if( !($product = $productClass::loadFromCache( $productsId )) ) {
-		$product = new $productClass( $productsId, $contentId );
-
-		if( !$product->load() ) {
-			unset( $product->mProductsId );
-		}
-	}
-
-	return $product;
+	return CommerceProduct::getCommerceObject( $pLookupMixed );
 }
 
 if( !defined( 'TABLE_PRODUCTS' ) ) {
