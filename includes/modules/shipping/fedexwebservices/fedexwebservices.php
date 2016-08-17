@@ -107,8 +107,12 @@ class fedexwebservices extends BitBase {
 		$street_address = (!empty( $order->delivery['street_address'] ) ? $order->delivery['street_address']: '');
 		$street_address2 = (!empty( $order->delivery['suburb'] ) ? $order->delivery['suburb']: '');
 		$city = (!empty( $order->delivery['city'] ) ? $order->delivery['city'] : '');
-		$state = (!empty( $order->delivery['zone_id'] ) ? zen_get_zone_code($order->delivery['country']['countries_id'], $order->delivery['zone_id'], '') : '');
-		if ($state == "QC") $state = "PQ";
+		if( $stateLookup = BitBase::getParameter( $order->delivery, 'zone_id', BitBase::getParameter( $order->delivery, 'state' ) ) ) {
+			$stateCode = zen_get_zone_code($order->delivery['country']['countries_id'], $stateLookup, '' );
+			if ($stateCode == "QC") {
+				$stateCode = "PQ"; // is this needed? been here forever
+			}
+		}
 		$postcode = str_replace(array(' ', '-'), '', $order->delivery['postcode']);
 		$country_id = $order->delivery['country']['countries_iso_code_2'];
 			
@@ -142,12 +146,12 @@ class fedexwebservices extends BitBase {
 		$request['RequestedShipment']['Recipient'] = array(	'Address' => array (
 															'StreetLines' => array(utf8_encode($street_address), utf8_encode($street_address2)), // customer street address
 															'City' => utf8_encode($city), //customer city
-															//'StateOrProvinceCode' => $state, //customer state
 															'PostalCode' => $postcode, //customer postcode
 															'CountryCode' => $country_id,
 															'Residential' => empty( $order->delivery['company'] ) ) ); //customer county code
-		if (in_array($country_id, array('US', 'CA'))) {
-			$request['RequestedShipment']['Recipient']['StateOrProvinceCode'] = $state;
+
+		if( !empty( $stateCode ) && in_array($country_id, array('US', 'CA'))) {
+			$request['RequestedShipment']['Recipient']['StateOrProvinceCode'] = $stateCode;
 		}
 		$request['RequestedShipment']['ShippingChargesPayment'] = array(	'PaymentType' => 'SENDER',
 																			'Payor' => array('AccountNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_ACT_NUM,
@@ -317,10 +321,7 @@ class fedexwebservices extends BitBase {
 		if ( !empty( $this->icon ) ) {
 			$this->quotes['icon'] = $this->icon;
 		}
-		//echo '<!-- Quotes: ';
-		//print_r($this->quotes);
-		//print_r($_SESSION['shipping']);
-		//echo ' -->';
+
 		return $this->quotes;
 	}
 
