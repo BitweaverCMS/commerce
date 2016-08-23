@@ -1445,7 +1445,6 @@ If a special exist * 10+9
 		$checkFields = array(
 			// VARCHAR string columns
 			'string' => array(
-				'products_model',
 				'products_manufacturers_model',
 			), 'id' => array(
 				// id's used as foreign keys
@@ -1504,6 +1503,9 @@ If a special exist * 10+9
 				}
 			}
 		}
+		if( ($model = $this->getProductsModel()) != 'Product' ) {
+			$pParamHash['product_store']['products_model'] = $model;
+		}
 
 		$pParamHash['products_description'][1] = !empty( $pParamHash['products_description'][1] ) ? $pParamHash['products_description'][1] : $this->getField( 'products_description' );
 
@@ -1520,7 +1522,7 @@ If a special exist * 10+9
 
 		// 'title' trumphs all
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['products_name'][1] = trim( $pParamHash['title'] ); // TODO Need to lookup DEFAULT_LANGUAGE id
+			$pParamHash['products_name'][1] = substr( preg_replace( '/:space:+/m', ' ', trim( filter_var( $pParamHash['title'], FILTER_SANITIZE_STRING ) ) ), 0, BIT_CONTENT_MAX_TITLE_LEN );
 		}
 
 		if( !empty( $pParamHash['products_name'] ) ) {
@@ -1638,9 +1640,10 @@ If a special exist * 10+9
 				$this->storeProductImage( $pParamHash );
 			}
 		}
+
 		$this->CompleteTrans();
 		$this->load();
-		return( $this->mProductsId );
+		return( count( $this->mErrors ) == 0 );
 	}
 
 	public static function storeProductImage( $pParamHash ) {
