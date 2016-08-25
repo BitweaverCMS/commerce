@@ -196,7 +196,7 @@ class CommerceCustomer extends BitBase {
 			$pParamHash['address_store']['entry_street_address'] = $pParamHash['street_address'];
 		}
 
-		if( empty( $pParamHash['postcode'] ) || strlen( $pParamHash['street_address'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
+		if( empty( $pParamHash['postcode'] ) || strlen( $pParamHash['postcode'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
 			$errorHash['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
 		} else {
 			$pParamHash['address_store']['entry_postcode'] = $pParamHash['postcode'];
@@ -234,22 +234,20 @@ class CommerceCustomer extends BitBase {
 			$errorHash['country_id'] = tra( 'You must select a country from the Countries pull down menu.' );
 		} else {
 			$pParamHash['address_store']['entry_country_id'] = $pParamHash['country_id'];
-			if (ACCOUNT_STATE == 'true') {
-				if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
-					if( !empty( $pParamHash['state'] ) && is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
-						$pParamHash['address_store']['entry_zone_id'] = $pParamHash['state'];
-						$pParamHash['address_store']['entry_state'] = $zoneName;
-					} elseif( !empty( $pParamHash['state'] ) && $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
-						$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
-						$pParamHash['address_store']['entry_zone_id'] = $zoneId;
-					} else {
-						$errorHash['state'] = tra( 'Please select a state from the States pull down menu.' );
-					}
-				} elseif( empty( $pParamHash['state'] ) || strlen( $pParamHash['state'] ) < ENTRY_STATE_MIN_LENGTH ) {
-					$errorHash['state'] = tra( 'Your State must contain a minimum of ' . ENTRY_STATE_MIN_LENGTH . ' characters.' );
-				} else {
+			if( $this->getZoneCount( $pParamHash['country_id'] ) ) {
+				if( !empty( $pParamHash['state'] ) && is_numeric( $pParamHash['state'] ) && $zoneName = $this->getZoneName( $pParamHash['state'], $pParamHash['country_id'] ) ) {
+					$pParamHash['address_store']['entry_zone_id'] = $pParamHash['state'];
+					$pParamHash['address_store']['entry_state'] = $zoneName;
+				} elseif( !empty( $pParamHash['state'] ) && $zoneId = $this->getZoneId( $pParamHash['state'], $pParamHash['country_id'] ) ) {
 					$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
+					$pParamHash['address_store']['entry_zone_id'] = $zoneId;
+				} else {
+					$errorHash['state'] = tra( 'Please select a state from the States pull down menu.' );
 				}
+			} elseif( strlen( $pParamHash['state'] ) < ENTRY_STATE_MIN_LENGTH ) {
+				$errorHash['state'] = tra( 'Your State must contain a minimum of ' . ENTRY_STATE_MIN_LENGTH . ' characters.' );
+			} else {
+				$pParamHash['address_store']['entry_state'] = $pParamHash['state'];
 			}
 		}
 
@@ -411,14 +409,16 @@ class CommerceCustomer extends BitBase {
 
 		$stateInput = '';
 
-		if( empty( $pAddressHash['country_id'] ) ) {
-			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'country_id' ) ) ) {
+			if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'entry_country_id' ) ) ) {
+				$selectedCountry = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+			}
 		}
 
 		if( $gCommerceSystem->isConfigActive( 'ACCOUNT_STATE' ) ) {
-			if ( !empty( $pAddressHash['country_id'] ) ) {
-				if( !($stateInput = zen_get_country_zone_list('state', $pAddressHash['country_id'], (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : '') )) ) { 
-					$stateInput = zen_draw_input_field('state', zen_get_zone_name($pAddressHash['country_id'], $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
+			if ( !empty( $selectedCountry ) ) {
+				if( !($stateInput = zen_get_country_zone_list('state', $selectedCountry, (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : '') )) ) { 
+					$stateInput = zen_draw_input_field('state', zen_get_zone_name($selectedCountry, $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
 				}
 			} else {
 				$stateInput = zen_draw_input_field('state');
@@ -428,11 +428,13 @@ class CommerceCustomer extends BitBase {
 	}
 
 	function getCountryInputHtml( $pAddressHash ) {
-		if( empty( $pAddressHash['country_id'] ) ) {
-			$pAddressHash['country_id'] = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+		if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'country_id' ) ) ) {
+			if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'entry_country_id' ) ) ) {
+				$selectedCountry = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
+			}
 		}
 
-		return zen_get_country_list('country_id', $pAddressHash['country_id'], ' onchange="updateStates(this.value)" ' );
+		return zen_get_country_list('country_id', $selectedCountry, ' onchange="updateStates(this.value)" ' );
 	}
 
 	public static function getCountryZones( $pCountryId ) {

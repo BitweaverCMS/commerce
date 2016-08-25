@@ -3,7 +3,7 @@
 {/if}
 {formfeedback error=$addressErrors.customers_id}
 <div class="row pv-2 display-block">
-	<div class="col-xs-12 form-group {if $addressErrors.country_id}error{/if}">
+	<div class="col-xs-12 form-group {if $addressErrors.country_id}has-error{/if}">
 	{formlabel label="<i class='icon-globe'></i> Country" for=""}
 		{forminput}
 			{$gBitCustomer->getCountryInputHtml($address)}
@@ -20,14 +20,14 @@
 	</div>
 {/if}
 <div class="row">
-	<div class="col-xs-6 form-group {if $addressErrors.firstname}error{/if}">
+	<div class="col-xs-6 form-group {if $addressErrors.firstname}has-error{/if}">
 		{formlabel label="First Name" for=""}
 		{forminput}
 			<input type="text" class="form-control" maxlength="64" name="firstname" value="{$address.entry_firstname|escape:"htmlall"}" />
 			{formhelp note=$addressErrors.firstname}
 		{/forminput}
 	</div>
-	<div class="col-xs-6 form-group {if $addressErrors.lastname}error{/if}">
+	<div class="col-xs-6 form-group {if $addressErrors.lastname}has-error{/if}">
 		{formlabel label="Last Name" for=""}
 		{forminput}
 			<input type="text" class="form-control" maxlength="64" name="lastname" value="{$address.entry_lastname|escape:"htmlall"}" />
@@ -43,7 +43,7 @@
 	{/forminput}
 	</div>
 {/if}
-<div class="form-group {if $addressErrors.street_address}error{/if}">
+<div class="form-group {if $addressErrors.street_address}has-error{/if}">
 	{formlabel label="Street Address" for=""}
 	{forminput}
 		<input type="text" class="form-control" maxlength="250" name="street_address" value="{$address.entry_street_address|escape:"htmlall"}" />
@@ -58,7 +58,7 @@
 	{/forminput}
 </div>
 {/if}
-<div class="form-group {if $addressErrors.city}error{/if}">
+<div class="form-group {if $addressErrors.city}has-error{/if}">
 	{formlabel label="City" for=""}
 	{forminput}
 		<input type="text" class="form-control" maxlength="64" name="city" value="{$address.entry_city|escape:"htmlall"}" />
@@ -66,7 +66,7 @@
 	{/forminput}
 </div>
 {if $gCommerceSystem->isConfigActive('ACCOUNT_STATE')}
-<div class="form-group {if $addressErrors.state}error{/if}">
+<div class="form-group {if $addressErrors.state}has-error{/if}">
 	{formlabel label="State or Province" for=""}
 	{forminput id="addr_state"}
 		{$gBitCustomer->getStateInputHtml($address)}
@@ -75,14 +75,14 @@
 </div>
 {/if}
 <div class="row">
-	<div class="col-xs-6 form-group {if $addressErrors.postcode}error{/if}">
+	<div class="col-xs-6 form-group {if $addressErrors.postcode}has-error{/if}">
 		{formlabel label="Postal Code" for=""}
 		{forminput}
 			<input type="text" class="form-control" maxlength="10" name="postcode" value="{$address.entry_postcode|escape:"htmlall"}" />
 			{formhelp note=$addressErrors.postcode}
 		{/forminput}
 	</div>
-	<div class="col-xs-6 form-group {if $addressErrors.telephone}error{/if}">
+	<div class="col-xs-6 form-group {if $addressErrors.telephone}has-error{/if}">
 		{formlabel label="Telephone" for=""}
 		{forminput}
 			<input type="text" class="form-control" maxlength="32" name="telephone" value="{$address.entry_telephone|escape:"htmlall"}" />
