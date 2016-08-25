@@ -9,9 +9,9 @@
 	{/if}
 	{$addressLinebreak}
 	{if $address.address_format_id==1}
-		{$address.city} , {$address.postcode}{$addressLinebreak}{$address.state},
+		{$address.city} , {$address.postcode}{$addressLinebreak}{if $address.state}{$address.state},{/if}
 	{elseif $address.address_format_id==3}
-		{$address.city}{$addressLinebreak}{$address.postcode} - {$address.state},
+		{$address.city}{$addressLinebreak}{$address.postcode}{if $address.state} - {$address.state},{/if}
 	{elseif $address.address_format_id==4}
 		{$address.city} ({$address.postcode}){$addressLinebreak}
 	{elseif $address.address_format_id==5}
