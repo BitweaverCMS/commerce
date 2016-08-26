@@ -170,10 +170,10 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, $payment_error_return, 'SSL', true, false));
       }
 
-      $this->cc_card_type = $cc_validation->cc_type;
-      $this->cc_card_number = $cc_validation->cc_number;
-      $this->cc_expiry_month = $cc_validation->cc_expiry_month;
-      $this->cc_expiry_year = $cc_validation->cc_expiry_year;
+      $this->cc_type = $cc_validation->cc_type;
+      $this->cc_number = $cc_validation->cc_number;
+      $this->cc_expires_month = $cc_validation->cc_expires_month;
+      $this->cc_expires_year = $cc_validation->cc_expires_year;
     }
 
     // Display Credit Card Information on the Checkout Confirmation Page
@@ -183,11 +183,11 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
 	  if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
 	  $confirmation = array(//'title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CATALOG_TITLE, // Redundant
 							'fields' => array(array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_TYPE,
-                                                    'field' => $this->cc_card_type),
+                                                    'field' => $this->cc_type),
 							                  array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER,
                                                     'field' => $_POST['authorizenet_aim_cc_owner']),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER,
-													'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
+													'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES,
                                                     'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['authorizenet_aim_cc_expires_month'], 1, '20' . $_POST['authorizenet_aim_cc_expires_year']))),
 											  array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CVV,
@@ -195,11 +195,11 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
       } else {
 	  $confirmation = array(//'title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CATALOG_TITLE, // Redundant
 							'fields' => array(array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_TYPE,
-                                                    'field' => $this->cc_card_type),
+                                                    'field' => $this->cc_type),
 							                  array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER,
                                                     'field' => $_POST['authorizenet_aim_cc_owner']),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER,
-                                                    'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
+                                                    'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES,
                                                     'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['authorizenet_aim_cc_expires_month'], 1, '20' . $_POST['authorizenet_aim_cc_expires_year'])))));
       }
@@ -210,9 +210,9 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
     function process_button() {
       // These are hidden fields on the checkout confirmation page
 	  $process_button_string = zen_draw_hidden_field('cc_owner', $_POST['authorizenet_aim_cc_owner']) .
-                               zen_draw_hidden_field('cc_expires', $this->cc_expiry_month . substr($this->cc_expiry_year, -2)) .
-                               zen_draw_hidden_field('cc_type', $this->cc_card_type) .
-                               zen_draw_hidden_field('cc_number', $this->cc_card_number);
+                               zen_draw_hidden_field('cc_expires', $this->cc_expires_month . substr($this->cc_expires_year, -2)) .
+                               zen_draw_hidden_field('cc_type', $this->cc_type) .
+                               zen_draw_hidden_field('cc_number', $this->cc_number);
       if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
         $process_button_string .= zen_draw_hidden_field('cc_cvv', $_POST['authorizenet_aim_cc_cvv']);
       }

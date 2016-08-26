@@ -60,7 +60,7 @@ if ($credit_covers) {
 }
 
 $payment_modules = new payment($_SESSION['payment']);
-$payment_modules->update_status();
+$payment_modules->update_status( $_REQUEST );
 if ( (is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
 	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 }
@@ -72,7 +72,7 @@ if ($messageStack->size('checkout_payment') > 0) {
 //die('here');
 
 if (is_array($payment_modules->modules)) {
-	$payment_modules->pre_confirmation_check();
+	$preCheck = $payment_modules->pre_confirmation_check( $_REQUEST );
 }
 
 // load the selected shipping module
@@ -105,7 +105,7 @@ if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
 
 if (is_array($payment_modules->modules)) {
 	$gBitSmarty->assign( 'paymentModules', $payment_modules );
-	$gBitSmarty->assign( 'paymentConfirmation', $payment_modules->confirmation() );
+	$gBitSmarty->assign( 'paymentConfirmation', $payment_modules->confirmation( $_REQUEST ) );
 }
 	
 $gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );

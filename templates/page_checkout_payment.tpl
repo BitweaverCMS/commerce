@@ -87,12 +87,11 @@
 			{/if}
 			{if $selection.fields && is_array($selection.fields)}
 				{foreach from=$selection.fields item=selectionField}
-					<div class="form-group">
-					<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
-					<div class="controls">
-						{$selectionField.field}
-					</div>
-					</div>
+				<div class="form-group{if $selectionField.error} has-error{/if}">
+					{if $selectionField.title}<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>{/if}
+					{$selectionField.field}
+					{if $selectionField.error}<div class="help-block">{$selectionField.error}</div>{/if}
+				</div>
 				{/foreach}
 			{/if}
 			</div>

@@ -36,29 +36,6 @@ class payflowpro extends CommercePluginPaymentBase {
 		$this->form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', false); // Page to go to upon submitting page info
 	}
 
-	// class methods
-	function update_payflowpro_status() {
-		global $order, $gBitDb;
-
-		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_PAYFLOWPRO_ZONE > 0) ) {
-			$check_flag = false;
-			$check = $this->mDb->query("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYFLOWPRO_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
-			while (!$check->EOF) {
-				if ($check->fields['zone_id'] < 1) {
-					$check_flag = true;
-					break;
-				} elseif ($check->fields['zone_id'] == $order->billing['zone_id']) {
-					$check_flag = true;
-					break;
-				}
-				$check->MoveNext();
-			}
-			if ($check_flag == false) {
-				$this->enabled = false;
-			}
-		}
-	}
-
 	////////////////////////////////////////////////////
 	// Javascript form validation
 	// Check the user input submited on checkout_payment.php with javascript (client-side).
@@ -66,29 +43,7 @@ class payflowpro extends CommercePluginPaymentBase {
 	////////////////////////////////////////////////////
 
 	function javascript_validation() {
-		if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Advanced') {
-			$js = '	if (payment_value == "' . $this->code . '") {' . "\n" .
-					'	var cc_owner = document.checkout_payment.pfp_card_owner.value;' . "\n" .
-					'	var cc_number = document.checkout_payment.pfp_card_number.value;' . "\n" .
-					'	var cc_cvv = document.checkout_payment.pfp_card_cvv.value;' . "\n" .
-					'		if (cc_owner == "" || cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
-					'			error_message = error_message + "' . tra( '* The credit card number must be at least ' . CC_NUMBER_MIN_LENGTH . ' characters.\n' ) . '";' . "\n" .
-					'			error = 1;' . "\n" .
-					'		}' . "\n" .
-					'		if (cc_number == "" || cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
-					'			error_message = error_message + "' . tra( '* The credit card number must be at least ' . CC_NUMBER_MIN_LENGTH . ' characters.\n' ) . '";' . "\n" .
-					'			error = 1;' . "\n" .
-					'		}' . "\n" .
-					'		if (cc_cvv == "" || cc_cvv.length < "3") {' . "\n".
-					'			error_message = error_message + "' . tra( '* You must enter the 3 or 4 digit number on the back of your credit card\n' ) . '";' . "\n" .
-					'			error = 1;' . "\n" .
-					'		}' . "\n" .
-					'	}' . "\n";
-
-			return $js;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	////////////////////////////////////////////////////
@@ -103,94 +58,65 @@ class payflowpro extends CommercePluginPaymentBase {
 	function selection() {
 		global $order;
 
+		$expireMonths = array();
 		for ($i=1; $i<13; $i++) {
-			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
+			$expireMonths[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
 		}
 
 		$today = getdate();
-		for ($i=$today['year']; $i < $today['year']+10; $i++) {
-			$expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
+		$expireYears = array();
+		for ($i=$today['year']; $i < $today['year']+15; $i++) {
+			$expireYears[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
 		}
+
 		$selection = array('id' => $this->code,
-							 'module' => $this->title,
-							 'fields' => array(
-								array(	'title' => tra( 'Card Owner\'s Name' ),
-							 			'field' => zen_draw_input_field('pfp_card_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
-								),
-								array(	'title' => '<div class="row"><div class="col-xs-8 col-sm-8">'.tra( 'Card Number' ).'</div><div class="col-xs-4 col-sm-4"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</div></div>',
-										'field' => '<div class="row"><div class="col-xs-8 col-sm-8">' . zen_draw_input_field('pfp_card_number', NULL, NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4">' . zen_draw_input_field('pfp_card_cvv',NULL, NULL, 'number')  . '</div></div>',
-								),
-								array(	'title' => tra( 'Expiration Date' ),
-										'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('pfp_card_expires_month', $expires_month, '', ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('pfp_card_expires_year', $expires_year, '', ' class="input-small" ') . '</div></div>'
-								),
-							)
-						);
+						 'module' => $this->title,
+						 'fields' => array(
+							array(	'title' => tra( 'Name On Card' ),
+									'field' => zen_draw_input_field('cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
+							),
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), NULL, 'text' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), NULL, 'number')  . '</div></div>',
+							),
+							array(	'title' => tra( 'Expiration Date' ),
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('cc_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'cc_expires_month' ), ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('cc_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'cc_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" ') . '</div></div>'
+							),
+						)
+					);
 
+		if( !empty( $_SESSION[$this->code.'_error']['name'] ) ) {
+			$selection['fields'][0]['error'] = $_SESSION[$this->code.'_error']['name'];
+		}
+
+		if( !empty( $_SESSION[$this->code.'_error']['number'] ) ) {
+			$selection['fields'][1]['error'] = $_SESSION[$this->code.'_error']['number'];
+		}
+
+		if( !empty( $_SESSION[$this->code.'_error']['date'] ) ) {
+			$selection['fields'][2]['error'] = $_SESSION[$this->code.'_error']['date'];
+		}
 		return $selection;
-}
+	}
 
-////////////////////////////////////////////////////
-// Pre confirmation checks (ie, check if credit card
-// information is right before sending the info to
-// the payment server
-////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	// Pre confirmation checks (ie, check if credit card
+	// information is right before sending the info to
+	// the payment server
+	////////////////////////////////////////////////////
 
-	function pre_confirmation_check() {
-		global $_POST;
+	////////////////////////////////////////////////////
+	// Functions to execute before displaying the checkout
+	// confirmation page
+	////////////////////////////////////////////////////
 
-		include(DIR_WS_CLASSES . 'cc_validation.php');
-		$result = FALSE;
-		if( empty( $_POST['pfp_card_number'] ) ) {
-			$error = tra( 'Please enter a credit card number.' );
-		} else {
-			$cc_validation = new cc_validation();
-			$result = $cc_validation->validate($_POST['pfp_card_number'], $_POST['pfp_card_expires_month'], $_POST['pfp_card_expires_year'], $_POST['pfp_card_cvv']);
-
-			$error = '';
-			switch ($result) {
-				case -1:
-					$error = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($cc_validation->cc_number, 0, 4));
-					break;
-				case -2:
-				case -3:
-				case -4:
-					$error = TEXT_CCVAL_ERROR_INVALID_DATE;
-					break;
-				case false:
-					$error = TEXT_CCVAL_ERROR_INVALID_NUMBER;
-					break;
-			}
-		}
-
-		if ( ($result == false) || ($result < 1) ) {
-			$payment_error_return = 'payment_error=' . $this->code . '&error=' . urlencode($error) . '&pfp_card_owner=' . urlencode($_POST['pfp_card_owner']) . '&pfp_card_expires_month=' . $_POST['pfp_card_expires_month'] . '&pfp_card_expires_year=' . $_POST['pfp_card_expires_year'];
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, $payment_error_return, 'SSL', true, false));
-		}
-
-		$this->cc_card_type = $cc_validation->cc_type;
-		$this->cc_card_number = $cc_validation->cc_number;
-		$this->cc_expiry_month = $cc_validation->cc_expiry_month;
-		$this->cc_expiry_year = $cc_validation->cc_expiry_year;
-}
-
-////////////////////////////////////////////////////
-// Functions to execute before displaying the checkout
-// confirmation page
-////////////////////////////////////////////////////
-
-	function confirmation() {
-		global $_POST;
-
-		$confirmation = array('title' => $this->title . ': ' . $this->cc_card_type,
+	function confirmation( $pPaymentParameters ) {
+		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
 								'fields' => array(
-									array(	'title' => tra( 'Card Owner:' ),
-											'field' => $_POST['pfp_card_owner']),
-									array(	'title' => tra( 'Card Number:' ),
-											'field' => substr($this->cc_card_number, 0, 4) . str_repeat('X', (strlen($this->cc_card_number) - 8)) . substr($this->cc_card_number, -4)),
-									array(	'title' => tra( 'Expiration Date:' ),
-											'field' => strftime('%B,%Y', mktime(0,0,0,$_POST['pfp_card_expires_month'], 1, '20' . $_POST['pfp_card_expires_year']))),
-									array(	'title' => tra( 'CVV Number' ),
-											'field' => $_POST['pfp_card_cvv'])
+									array(	'title' => tra( 'Card Owner' ),
+											'field' => $pPaymentParameters['cc_owner']),
+									array(	'title' => tra( 'Card Number' ),
+											'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4).' +'.$pPaymentParameters['cc_cvv'] ),
+									array(	'title' => tra( 'Expiration Date' ),
+											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParameters['cc_expires_month'], 1, '20' . $pPaymentParameters['cc_expires_year']))),
 									)
 								);
 
@@ -201,14 +127,14 @@ class payflowpro extends CommercePluginPaymentBase {
 	// Functions to execute before finishing the form
 	// Examples: add extra hidden fields to the form
 	////////////////////////////////////////////////////
-	function process_button() {
-		global $_SERVER, $_POST, $order, $total_tax, $shipping_cost, $customer_id;
+	function process_button( $pPaymentParameters ) {
+		global $_SERVER, $order, $total_tax, $shipping_cost, $customer_id;
 		// These are hidden fields on the checkout confirmation page
-		$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['pfp_card_owner']) .
-								 zen_draw_hidden_field('cc_expires', $this->cc_expiry_month . substr($this->cc_expiry_year, -2)) .
-								 zen_draw_hidden_field('cc_type', $this->cc_card_type) .
-								 zen_draw_hidden_field('cc_number', $this->cc_card_number) .
-								 zen_draw_hidden_field('cc_cvv', $_POST['pfp_card_cvv']);
+		$process_button_string = zen_draw_hidden_field('cc_owner', $pPaymentParameters['cc_owner']) .
+								 zen_draw_hidden_field('cc_expires', $this->cc_expires_month . substr($this->cc_expires_year, -2)) .
+								 zen_draw_hidden_field('cc_type', $this->cc_type) .
+								 zen_draw_hidden_field('cc_number', $this->cc_number) .
+								 zen_draw_hidden_field('cc_cvv', $this->cc_cvv);
 
 		$process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
 		return $process_button_string;
@@ -344,6 +270,7 @@ ZIP
 			if ($response) {
 				$response .= '&CURL_ERRORS=' . ($commErrNo != 0 ? urlencode('(' . $commErrNo . ') ' . $commError) : '') ;
 				$responseHash = $this->_parseNameValueList($response);
+
 				if ( $gDebug ) {
 					$this->_logTransaction($operation,	$response, $errors . ($commErrNo != 0 ? "\n" . print_r($commInfo, true) : ''));
 				}
@@ -356,22 +283,28 @@ ZIP
 					$this->pnref = $responseHash['PNREF'];
 				}
 
-				/*
-				case '1': // User authentication failed
-				case '2': // Invalid tender
-				case '3': // Invalid transaction type
-				case '4': // Invalid amount
-				case '5': // Invalid merchant information
-				case '7': // Field format error 
-				case '12': // Declined
-				case '13': // Referral
-				*/
+				switch( BitBase::getParameter( $responseHash, 'RESULT' ) ) {
+					case '1': // User authentication failed
+					case '2': // Invalid tender
+					case '3': // Invalid transaction type
+					case '4': // Invalid amount
+					case '5': // Invalid merchant information
+					case '7': // Field format error 
+					case '12': // Declined
+					case '13': // Referral
+						$_SESSION[$this->code.'_error']['cc_number'] = BitBase::getParameter( $responseHash, 'RESPMSG' );
+						break;
+				}
 				if( isset( $responseHash['RESULT'] ) ) {
 					$this->result = (int)$responseHash['RESULT'];
 					if( $this->result ) {
 						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
+						$_SESSION[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
 					}
 				} else {
+					foreach( $this->getVarNames() as $key ) {
+						unset( $_SESSION[$key] );
+					}
 					$this->result = 'X';
 				}
 
@@ -387,13 +320,13 @@ ZIP
 		return $this->pnref;
 	}
 
-	function before_process() {
-		global $_GET, $messageStack, $_POST, $response, $gBitDb, $gBitUser, $order;
-		$order->info['cc_number'] = $_POST['cc_number'];
-		$order->info['cc_expires'] = $_POST['cc_expires'];
-		$order->info['cc_type'] = $_POST['cc_type'];
-		$order->info['cc_owner'] = $_POST['cc_owner'];
-		$order->info['cc_cvv'] = $_POST['cc_cvv'];
+	function before_process( $pPaymentParameters ) {
+		global $_GET, $messageStack, $response, $gBitDb, $gBitUser, $order;
+		$order->info['cc_number'] = $pPaymentParameters['cc_number'];
+		$order->info['cc_expires'] = $pPaymentParameters['cc_expires'];
+		$order->info['cc_type'] = $pPaymentParameters['cc_type'];
+		$order->info['cc_owner'] = $pPaymentParameters['cc_owner'];
+		$order->info['cc_cvv'] = $pPaymentParameters['cc_cvv'];
 		// Calculate the next expected order id
 		$nextOrderId = $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
 
@@ -409,7 +342,7 @@ ZIP
 		) ) ) {
 			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
-				$order->info['cc_number'] = substr($_POST['cc_number'], 0, 6) . str_repeat('X', (strlen($_POST['cc_number']) - 6)) . substr($_POST['cc_number'], -4);
+				$order->info['cc_number'] = substr($pPaymentParameters['cc_number'], 0, 6) . str_repeat('X', (strlen($pPaymentParameters['cc_number']) - 6)) . substr($pPaymentParameters['cc_number'], -4);
 			}
 		}
 		if ( $this->result !== 0 ) {
@@ -456,79 +389,78 @@ ZIP
 		return $this->lastParamList;
 	}
 
-  /**
-   * Take a name/value response string and parse it into an
-   * associative array. Doesn't handle length tags in the response
-   * as they should not be present.
-   */
-  function _parseNameValueList($string) {
-    $string = str_replace('&amp;', '|', $string);
-    $pairs = explode('&', str_replace(array("\r\n","\n"), '', $string));
-    //$this->log('['.$string . "]\n\n[" . print_r($pairs, true) .']');
-    $values = array();
-    foreach ($pairs as $pair) {
-      list($name, $value) = explode('=', $pair, 2);
-      $values[$name] = str_replace('|', '&amp;', $value);
-    }
-    return $values;
-  }
+	/**
+	 * Take a name/value response string and parse it into an
+	 * associative array. Doesn't handle length tags in the response
+	 * as they should not be present.
+	 */
+	function _parseNameValueList($string) {
+		$string = str_replace('&amp;', '|', $string);
+		$pairs = explode('&', str_replace(array("\r\n","\n"), '', $string));
+		//$this->log('['.$string . "]\n\n[" . print_r($pairs, true) .']');
+		$values = array();
+		foreach ($pairs as $pair) {
+			list($name, $value) = explode('=', $pair, 2);
+			$values[$name] = str_replace('|', '&amp;', $value);
+		}
+		return $values;
+	}
 
-  /**
-   * Log the current transaction depending on the current log level.
-   *
-   * @access protected
-   *
-   * @param string $operation  The operation called.
-   * @param integer $elapsed   Microseconds taken.
-   * @param object $response   The response.
-   */
-  function _logTransaction($operation, $response, $errors) {
-    $values = $this->_parseNameValueList($response);
-    $token = preg_replace('/[^0-9.A-Z\-]/', '', urldecode($values['TOKEN']));
-    switch ($this->_logLevel) {
-    case PEAR_LOG_DEBUG:
-      $message =   date('Y-m-d h:i:s') . "\n-------------------\n";
-      $message .=  '(' . $this->_server . ' transaction) --> ' . $this->_endpoints[$this->_server] . "\n";
-      $message .= 'Request Headers: ' . "\n" . $this->_sanitizeLog($this->lastHeaders) . "\n\n";
-      $message .= 'Request Parameters: {' . $operation . '} ' . "\n" . urldecode($this->_sanitizeLog($this->_parseNameValueList($this->lastParamList))) . "\n\n";
-      $message .= 'Response: ' . "\n" . urldecode($this->_sanitizeLog($values)) . $errors;
-      bit_error_log( $message );
-      // extra debug email: //
-      if (MODULE_PAYMENT_PAYPALWPP_DEBUGGING == 'Log and Email') {
-        zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, 'PayPal Debug log - ' . $operation, $message, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($message)), 'debug');
-      }
+	/**
+	 * Log the current transaction depending on the current log level.
+	 *
+	 * @access protected
+	 *
+	 * @param string $operation	The operation called.
+	 * @param integer $elapsed	 Microseconds taken.
+	 * @param object $response	 The response.
+	 */
+	function _logTransaction($operation, $response, $errors) {
+		$values = $this->_parseNameValueList($response);
+		$token = preg_replace('/[^0-9.A-Z\-]/', '', urldecode($values['TOKEN']));
+		switch ($this->_logLevel) {
+		case PEAR_LOG_DEBUG:
+			$message =	 date('Y-m-d h:i:s') . "\n-------------------\n";
+			$message .=	'(' . $this->_server . ' transaction) --> ' . $this->_endpoints[$this->_server] . "\n";
+			$message .= 'Request Headers: ' . "\n" . $this->_sanitizeLog($this->lastHeaders) . "\n\n";
+			$message .= 'Request Parameters: {' . $operation . '} ' . "\n" . urldecode($this->_sanitizeLog($this->_parseNameValueList($this->lastParamList))) . "\n\n";
+			$message .= 'Response: ' . "\n" . urldecode($this->_sanitizeLog($values)) . $errors;
+			bit_error_log( $message );
+			// extra debug email: //
+			if (MODULE_PAYMENT_PAYPALWPP_DEBUGGING == 'Log and Email') {
+				zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, 'PayPal Debug log - ' . $operation, $message, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($message)), 'debug');
+			}
 
-    case PEAR_LOG_INFO:
-      $success = false;
-      if ($response) {
-        if ((isset($values['RESULT']) && $values['RESULT'] == 0) || strstr($values['ACK'],'Success')) {
-          $success = true;
-        }
-      }
-      bit_error_log($operation . ', Elapsed: ' . 'ms -- ' . (isset($values['ACK']) ? $values['ACK'] : ($success ? 'Succeeded' : 'Failed')) . $errors );
+		case PEAR_LOG_INFO:
+			$success = false;
+			if ($response) {
+				if ((isset($values['RESULT']) && $values['RESULT'] == 0) || strstr($values['ACK'],'Success')) {
+					$success = true;
+				}
+			}
+			bit_error_log($operation . ', Elapsed: ' . 'ms -- ' . (isset($values['ACK']) ? $values['ACK'] : ($success ? 'Succeeded' : 'Failed')) . $errors );
 
-    case PEAR_LOG_ERR:
-      if (!$response) {
-        $this->log('No response from server' . $errors, $token);
-      } else {
-        if ((isset($values['RESULT']) && $values['RESULT'] != 0) || strstr($values['ACK'],'Failure')) {
-          bit_error_log( $response . $errors );
-        }
-      }
-    }
-  }
+		case PEAR_LOG_ERR:
+			if (!$response) {
+				$this->log('No response from server' . $errors, $token);
+			} else {
+				if ((isset($values['RESULT']) && $values['RESULT'] != 0) || strstr($values['ACK'],'Failure')) {
+					bit_error_log( $response . $errors );
+				}
+			}
+		}
+	}
+
+	function after_process() {
+		global $insert_id, $order, $gBitDb, $gBitUser, $result;
+		$this->mDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->response ), number_format( $order->info['total'], 2, '.', '' ) ) );
+		return false;
+	}
 
 
-function after_process() {
-	global $insert_id, $order, $gBitDb, $gBitUser, $result;
-	$this->mDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->response ), number_format( $order->info['total'], 2, '.', '' ) ) );
-	return false;
-}
-
-
-////////////////////////////////////////////////////
-// If an error occurs with the process, output error messages here
-////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	// If an error occurs with the process, output error messages here
+	////////////////////////////////////////////////////
 
 	function get_error() {
 		global $_GET;
@@ -549,7 +481,7 @@ function after_process() {
 	}
 
 	function install() {
-	global $gBitDb;
+		global $gBitDb;
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
@@ -559,14 +491,13 @@ function after_process() {
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Vendor ID', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', '', 'Your merchant login ID that you created when you registered for the account.', '6', '6', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PayPal', 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>', '6', '6', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Payment Zone', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '8', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', '4111XXXXXXXX1111 out credit card numbers in database.', '6', '13', 'NOW')");
 	}
 
 	function keys() {
-		return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ZONE', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
+		return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
 
 
 	}

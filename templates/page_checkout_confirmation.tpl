@@ -90,11 +90,10 @@
 <div class="col-md-4">
 	{legend legend="Payment Method"}
 		{if $paymentConfirmation}
-			<h4>{$paymentConfirmation.title|escape}</h4>
+			<h4 class="no-margin">{$paymentConfirmation.title|escape}</h4>
 			{foreach from=$paymentConfirmation.fields item=payFields}
 			<div class="clear">
-				{if $payFields.title}<label class="control-label">{$payFields.title}</label>{/if}
-				{if $payFields.field}<div class="controls">{$payFields.field}</div>{/if}
+				{if $payFields.field}<div class="">{$payFields.field}</div>{/if}
 			</div>
 			{/foreach}
 		{elseif $smarty.session.payment}
