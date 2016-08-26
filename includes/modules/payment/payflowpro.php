@@ -283,24 +283,9 @@ ZIP
 					$this->pnref = $responseHash['PNREF'];
 				}
 
-				switch( BitBase::getParameter( $responseHash, 'RESULT' ) ) {
-					case '1': // User authentication failed
-					case '2': // Invalid tender
-					case '3': // Invalid transaction type
-					case '4': // Invalid amount
-					case '5': // Invalid merchant information
-					case '7': // Field format error 
-					case '12': // Declined
-					case '13': // Referral
-						$_SESSION[$this->code.'_error']['cc_number'] = BitBase::getParameter( $responseHash, 'RESPMSG' );
-						break;
-				}
-				if( isset( $responseHash['RESULT'] ) ) {
-					$this->result = (int)$responseHash['RESULT'];
-					if( $this->result ) {
-						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
-						$_SESSION[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
-					}
+				if( !empty( $responseHash['RESULT'] ) ) {
+					$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
+					$_SESSION[$this->code.'_error']['number'] = BitBase::getParameter( $responseHash, 'RESPMSG' );
 				} else {
 					$this->clearSessionDetails();
 					$this->result = 'X';
