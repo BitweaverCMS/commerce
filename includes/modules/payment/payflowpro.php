@@ -449,7 +449,7 @@ ZIP
 		}
 	}
 
-	function after_process() {
+	function after_process( $pPaymentParameters ) {
 		global $insert_id, $order, $gBitDb, $gBitUser, $result;
 		$this->mDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->response ), number_format( $order->info['total'], 2, '.', '' ) ) );
 		return false;
