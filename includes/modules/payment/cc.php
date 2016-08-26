@@ -175,7 +175,7 @@ function pre_confirmation_check( $pPaymentParameters ) {
 		return $process_button_string;
 	}
 
-	function before_process() {
+	function before_process( $pPaymentParameters ) {
 		global $_POST, $order;
 
 		$order->info['cc_expires'] = $_POST['cc_expires'];
@@ -190,7 +190,7 @@ function pre_confirmation_check( $pPaymentParameters ) {
 		}
 	}
 
-	function after_process() {
+	function after_process( $pPaymentParameters ) {
 	}
 
 	function after_order_create($zf_order_id) {
