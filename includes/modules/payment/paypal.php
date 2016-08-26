@@ -88,7 +88,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
                   'module' => $this->title);
    }
 
-   function pre_confirmation_check() {
+   function pre_confirmation_check( $pPaymentParameters ) {
      return false;
    }
 
@@ -168,7 +168,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
      return $process_button_string;
    }
 
-   function before_process() {
+   function before_process( $pPaymentParameters ) {
       global $order_total_modules;
     // now just need to check here whether we are here because of IPN or auto-return, we cn use the referer variable for that
     // If we have come from auto return, check to see wether the order has been created by IPN and if not create it now.
@@ -199,7 +199,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
      return $output;
    }
 
-   function after_process() {
+   function after_process( $pPaymentParameters ) {
      $_SESSION['order_created'] = '';
      return false;
    }

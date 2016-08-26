@@ -23,28 +23,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		parent::__construct();
 	}
 
-	function getTransactionReference() {
-		// default implementation
-		return NULL;
-	}
-
-	function processPayment( $pPaymentParameters ) {
-		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
-		return FALSE;
-	}
-
-	function before_process() {
-		return false;
-	}
-
-	function after_process() {
-		return false;
-	}
-
-	function get_error() {
-		return false;
-	}
-
 	protected function getVarNames() {
 		return array( 'cc_owner', 'cc_number', 'cc_cvv', 'cc_expires_month', 'cc_expires_year' );
 	}
@@ -59,6 +37,28 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		foreach( $this->getVarNames() as $var ) {
 			$_SESSION[$var] = $this->$var;
 		}	
+	}
+
+	function getTransactionReference() {
+		// default implementation
+		return NULL;
+	}
+
+	function get_error() {
+		return false;
+	}
+
+	function processPayment( $pPaymentParameters ) {
+		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
+		return FALSE;
+	}
+
+	function before_process( $pPaymentParameters ) {
+		return false;
+	}
+
+	function after_process( $pPaymentParameters ) {
+		return false;
 	}
 
 	function pre_confirmation_check( $pPaymentParameters ) {
