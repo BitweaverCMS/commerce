@@ -93,7 +93,7 @@
 <div class="form-group">
 	{forminput}
 		<label class="checkbox-inline">
-			<input type="checkbox" name="primary" values="on" {if $address.entry_primary=='t'}checked="checked"{/if} id="primary"> {tr}Set as Primary Address{/tr}
+			<input type="checkbox" name="primary" values="on" {if $address.entry_primary=='t' || !$address.address_book_id}checked="checked"{/if} id="primary"> {tr}Set as Primary Address{/tr}
 		<label>
 	{/forminput}
 </div>
