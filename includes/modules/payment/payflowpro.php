@@ -283,9 +283,14 @@ ZIP
 					$this->pnref = $responseHash['PNREF'];
 				}
 
-				if( !empty( $responseHash['RESULT'] ) ) {
-					$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
-					$_SESSION[$this->code.'_error']['number'] = BitBase::getParameter( $responseHash, 'RESPMSG' );
+				if( isset( $responseHash['RESULT'] ) ) {
+					$this->result = (int)$responseHash['RESULT'];
+					if( $this->result ) {
+						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
+						$_SESSION[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
+					} else {
+						$this->clearSessionDetails();
+					}
 				} else {
 					$this->clearSessionDetails();
 					$this->result = 'X';
