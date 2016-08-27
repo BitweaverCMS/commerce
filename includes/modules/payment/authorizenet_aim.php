@@ -24,9 +24,9 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-  class authorizenet_aim extends CommercePluginPaymentBase {
+  class authorizenet_aim extends CommercePluginPaymentCardBase {
     var $code, $title, $description, $enabled, $response;
 
 // class constructor
@@ -142,7 +142,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
 
 
     // Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
-    function pre_confirmation_check() {
+	function pre_confirmation_check( $pPaymentParameters ) {
       global $_POST;
 
       include(DIR_WS_CLASSES . 'cc_validation.php');
@@ -177,7 +177,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
     }
 
     // Display Credit Card Information on the Checkout Confirmation Page
-	function confirmation() {
+	function confirmation( $pPaymentParameters ) {
       global $_POST;
 
 	  if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
@@ -207,7 +207,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
       return $confirmation;
     }
 
-    function process_button() {
+	function process_button( $pPaymentParameters ) {
       // These are hidden fields on the checkout confirmation page
 	  $process_button_string = zen_draw_hidden_field('cc_owner', $_POST['authorizenet_aim_cc_owner']) .
                                zen_draw_hidden_field('cc_expires', $this->cc_expires_month . substr($this->cc_expires_year, -2)) .
@@ -223,7 +223,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
 	  return false;
     }
 
-    function before_process() {
+	function before_process( $pPaymentParameters ) {
 	  global $_POST, $response, $gBitDb, $order;
 
 	  if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {
@@ -375,10 +375,6 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
 	  if ($x_response_code != '1') {
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $x_response_text . ' - ' . urlencode(MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_DECLINED_MESSAGE), 'SSL', true, false));
       }
-    }
-
-    function after_process() {
-	  return false;
     }
 
     function get_error() {

@@ -9,9 +9,9 @@
  * This source file is subject to the GNU GENERAL PUBLIC LICENSE. See http://www.gnu.org/licenses/gpl.html for details
  */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-class payflowpro extends CommercePluginPaymentBase {
+class payflowpro extends CommercePluginPaymentCardBase {
 	var $code, $title, $description, $enabled;
 
 	public function __construct() {
@@ -163,6 +163,8 @@ class payflowpro extends CommercePluginPaymentBase {
 		global $gDebug;
 		if( self::verifyPaymentParameters( $pPaymentParameters ) ) {
 			$postFields = array();
+vd( $pPaymentParameters );
+bt(); die;
 /*
 ACCT 
 AMT 
@@ -318,16 +320,75 @@ ZIP
 		// Calculate the next expected order id
 		$nextOrderId = $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
 
-		if( $ret = $this->processPayment( array( 
+		$processorParams =  array( 
 			'ACCT' => $order->info['cc_number'], 
 			'EXPDATE' => $order->info['cc_expires'], 
 			'STREET' => $order->billing['street_address'],
 			'ZIP' => $order->customer['postcode'],
 			'COMMENT1' => 'OrderID: ' . $nextOrderId . ' ' . $order->customer['email_address'] . ' (' . $gBitUser->mUserId . ')',
+			'EMAIL' => $order->customer['email_address'],
 			'charge_amount' => number_format($order->info['total'], 2,'.',''),
 			'CVV2' => $order->getField( 'cc_cvv' ),
 			'NAME' => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
-		) ) ) {
+		);
+
+		if( $pPaymentParameters['cc_type'] == 'American Express' ) {
+			// TODO American Express Additional Credit Card Parameters
+		}
+
+		$processors = static::getProcessors();
+
+		switch( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
+			case 'Cielo Payments':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'Elavon':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'First Data Merchant Services Nashville':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'First Data Merchant Services North':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'Heartland':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'Litle':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'Paymentech Salem New Hampshire':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'PayPal':
+				switch( $pPaymentParameters['CHARGE_CURRENCY'] ) {
+					case 'AUD': // Australian dollar 
+						break;
+					case 'CAD': // Canadian dollar 
+						break;
+					case 'EUR': // Euro 
+						break;
+					case 'GBP': // British pound 
+						break;
+					case 'JPY': // Japanese Yen 
+						break;
+					case 'USD': // US dollar 
+					default:
+						break;
+				}
+				break;
+			case 'SecureNet':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'Vantiv':
+				// TODO Additional Credit Card Parameters
+				break;
+			case 'WorldPay':
+				// TODO Additional Credit Card Parameters
+				break;
+		}
+
+		if( $ret = $this->processPayment( $processorParams ) ) {
 			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
 				$order->info['cc_number'] = substr($pPaymentParameters['cc_number'], 0, 6) . str_repeat('X', (strlen($pPaymentParameters['cc_number']) - 6)) . substr($pPaymentParameters['cc_number'], -4);
@@ -335,7 +396,7 @@ ZIP
 		}
 		if ( $this->result !== 0 ) {
 			$this->mDb->RollbackTrans();
-			$this->mDb->query( "insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
+			$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing your credit card, please try again.' ) ), 'SSL', true, false));
 		}
@@ -441,7 +502,7 @@ ZIP
 
 	function after_process( $pPaymentParameters ) {
 		global $insert_id, $order, $gBitDb, $gBitUser, $result;
-		$this->mDb->query("insert into " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->response ), number_format( $order->info['total'], 2, '.', '' ) ) );
+		$this->mDb->query("INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount,trans_date) values ( ?, ?, ?, ?,'-', ?, ?, 'NOW' )", array( $insert_id, $gBitUser->mUserId, $this->pnref, $this->result, 'success for cust_id:'.$order->customer['email_address'].":".urldecode( $this->response ), number_format( $order->info['total'], 2, '.', '' ) ) );
 		return false;
 	}
 
@@ -470,18 +531,21 @@ ZIP
 
 	function install() {
 		global $gBitDb;
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Vendor ID', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', '', 'Your merchant login ID that you created when you registered for the account.', '6', '6', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PayPal', 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>', '6', '6', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', '4111XXXXXXXX1111 out credit card numbers in database.', '6', '13', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
+
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Payment Processor', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', '0', 'Payment processor configured in your Payflow Pro account.', '6', '9', 'zen_cfg_pull_down_payflow_processors(', '', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Currency', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', 'NOW')");
+
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Vendor ID', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', '', 'Your merchant login ID that you created when you registered for the account.', '6', '6', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PayPal', 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>', '6', '6', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', '4111XXXXXXXX1111 out credit card numbers in database.', '6', '13', 'NOW')");
 	}
 
 	function keys() {
@@ -489,5 +553,26 @@ ZIP
 
 
 	}
+
+	static function getProcessors() {
+		return array(
+			'Cielo Payments',
+			'Elavon',
+			'First Data Merchant Services Nashville',
+			'First Data Merchant Services North',
+			'Heartland',
+			'Litle',
+			'Paymentech Salem New Hampshire',
+			'PayPal',
+			'SecureNet',
+			'Vantiv',
+			'WorldPay',
+		);
+	}
 }
 
+	function zen_cfg_paypflow_gateway( $pProcessor, $key = '' ) {
+		$name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
+
+		return zen_draw_pull_down_menu($name, payflowpro::getProcessors(), $pProcessor );
+	}

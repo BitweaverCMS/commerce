@@ -20,9 +20,9 @@
 // $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-class authorizenet extends CommercePluginPaymentBase {
+class authorizenet extends CommercePluginPaymentCardBase {
 	var $code, $title, $description, $enabled;
 
 // class constructor
@@ -196,7 +196,7 @@ class authorizenet extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
-	function confirmation() {
+	function confirmation( $pPaymentParameters ) {
 		global $_POST;
 
 		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
@@ -210,7 +210,7 @@ class authorizenet extends CommercePluginPaymentBase {
 		return $confirmation;
 	}
 
-	function process_button() {
+	function process_button( $pPaymentParameters ) {
 		global $_SERVER, $order;
 
 		$sequence = rand(1, 1000);
@@ -248,7 +248,7 @@ class authorizenet extends CommercePluginPaymentBase {
 		return $process_button_string;
 	}
 
-	function before_process() {
+	function before_process( $pPaymentParameters ) {
 		global $_POST;
 
 		if ($_POST['x_response_code'] == '1') return;
@@ -257,10 +257,6 @@ class authorizenet extends CommercePluginPaymentBase {
 		}
 		// Code 3 is an error - but anything else is an error too (IMHO)
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(MODULE_PAYMENT_AUTHORIZENET_TEXT_ERROR_MESSAGE), 'SSL', true, false));
-	}
-
-	function after_process() {
-		return false;
 	}
 
 	function get_error() {

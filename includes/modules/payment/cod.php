@@ -20,7 +20,7 @@
 // $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
 class cod extends CommercePluginPaymentBase {
 	var $code, $title, $description, $enabled;
@@ -64,38 +64,6 @@ class cod extends CommercePluginPaymentBase {
 				$this->enabled = false;
 			}
 		}
-	}
-
-	function javascript_validation() {
-		return false;
-	}
-
-	function selection() {
-		return array( 'id' => $this->code, 'module' => $this->title );
-	}
-
-	function pre_confirmation_check() {
-		return false;
-	}
-
-	function confirmation() {
-		return false;
-	}
-
-	function process_button() {
-		return false;
-	}
-
-	function before_process() {
-		return false;
-	}
-
-	function after_process() {
-		return false;
-	}
-
-	function get_error() {
-		return false;
 	}
 
 	function check() {

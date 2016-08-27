@@ -20,7 +20,7 @@
 // $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
 class purchase_order extends CommercePluginPaymentBase {
 	var $code, $title, $description, $enabled;
@@ -89,11 +89,11 @@ class purchase_order extends CommercePluginPaymentBase {
 
     }
 
-	function pre_confirmation_check() {
+	function pre_confirmation_check( $pPaymentParameters ) {
 		return false;
 	}
 
-    function confirmation() {
+    function confirmation( $pPaymentParameters ) {
       global $_POST;
 
       $confirmation = array('title' => $this->title,
@@ -107,7 +107,7 @@ class purchase_order extends CommercePluginPaymentBase {
       return $confirmation;
     }
 
-    function process_button() {
+    function process_button( $pPaymentParameters ) {
       global $_POST;
 
       $process_button_string = zen_draw_hidden_field('account_name', $_POST['account_name']) .

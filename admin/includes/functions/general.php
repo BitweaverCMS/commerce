@@ -551,14 +551,11 @@
 // Get list of address_format_id's
 	function zen_get_address_formats() {
 		global $gBitDb;
-		$address_format_values = $gBitDb->Execute("SELECT `address_format_id`
-																					 FROM " . TABLE_ADDRESS_FORMAT . "
-																					 ORDER BY `address_format_id`");
+		$address_format_values = $gBitDb->Execute("SELECT `address_format_id` FROM " . TABLE_ADDRESS_FORMAT . " ORDER BY `address_format_id`");
 
 		$address_format_array = array();
 		while (!$address_format_values->EOF) {
-			$address_format_array[] = array('id' => $address_format_values->fields['address_format_id'],
-																			'text' => $address_format_values->fields['address_format_id']);
+			$address_format_array[] = array('id' => $address_format_values->fields['address_format_id'], 'text' => $address_format_values->fields['address_format_id']);
 			$address_format_values->MoveNext();
 		}
 		return $address_format_array;
@@ -570,12 +567,10 @@
 		global $gBitDb;
 		$name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 		$coupons = $gBitDb->execute("SELECT cd.`coupon_name`, c.`coupon_id` FROM " . TABLE_COUPONS ." c, ". TABLE_COUPONS_DESCRIPTION . " cd WHERE cd.`coupon_id` = c.`coupon_id` and cd.`language_id` = '" . $_SESSION['languages_id'] . "'");
-		$coupon_array[] = array('id' => '0',
-															'text' => 'None');
+		$coupon_array[] = array('id' => '0', 'text' => 'None');
 
 		while (!$coupons->EOF) {
-			$coupon_array[] = array('id' => $coupons->fields['coupon_id'],
-															'text' => $coupons->fields['coupon_name']);
+			$coupon_array[] = array('id' => $coupons->fields['coupon_id'], 'text' => $coupons->fields['coupon_name']);
 			$coupons->MoveNext();
 		}
 		return zen_draw_pull_down_menu($name, $coupon_array, $coupon_id);
@@ -610,19 +605,18 @@
 	}
 
 
-////
+///
 	function zen_cfg_pull_down_tax_classes($tax_class_id, $key = '') {
 		global $gBitDb;
 		$name = (($key) ? 'configuration[' . $key . ']' : 'configuration_value');
 
 		$tax_class_array = array(array('id' => '0', 'text' => TEXT_NONE));
 		$tax_class = $gBitDb->Execute("SELECT `tax_class_id`, `tax_class_title`
-															 FROM " . TABLE_TAX_CLASS . "
-															 ORDER BY `tax_class_title`");
+										 FROM " . TABLE_TAX_CLASS . "
+										 ORDER BY `tax_class_title`");
 
 		while (!$tax_class->EOF) {
-			$tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'],
-																 'text' => $tax_class->fields['tax_class_title']);
+			$tax_class_array[] = array('id' => $tax_class->fields['tax_class_id'], 'text' => $tax_class->fields['tax_class_title']);
 			$tax_class->MoveNext();
 		}
 

@@ -20,9 +20,9 @@
 // $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-class cc extends CommercePluginPaymentBase {
+class cc extends CommercePluginPaymentCardBase {
 	var $code, $title, $description, $enabled;
 
 // class constructor
@@ -127,23 +127,23 @@ class cc extends CommercePluginPaymentBase {
 		return $selection;
 	}
 
-function pre_confirmation_check( $pPaymentParameters ) {
-	if( empty( $pPaymentParameters['cc_number'] ) ) {
-		$error = tra( 'Please enter a credit card number.' );
-	} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
-		$ret = TRUE;
-	} else {
-		foreach( array( 'cc_owner', 'cc_number', 'cc_expires_month', 'cc_expires_year', 'cc_cvv' ) as $key ) {
-			$_SESSION[$key] = BitBase::getParameter( $pPaymentParameters, $key );
+	function pre_confirmation_check( $pPaymentParameters ) {
+		if( empty( $pPaymentParameters['cc_number'] ) ) {
+			$error = tra( 'Please enter a credit card number.' );
+		} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
+			$ret = TRUE;
+		} else {
+			foreach( array( 'cc_owner', 'cc_number', 'cc_expires_month', 'cc_expires_year', 'cc_cvv' ) as $key ) {
+				$_SESSION[$key] = BitBase::getParameter( $pPaymentParameters, $key );
+			}
+			$_SESSION['pfp_error'] = $this->mErrors;
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 		}
-		$_SESSION['pfp_error'] = $this->mErrors;
-		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
+		return $ret;
 	}
-	return $ret;
-}
 
 
-	function confirmation() {
+	function confirmation( $pPaymentParameters ) {
 		global $_POST;
 
 		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
@@ -161,7 +161,7 @@ function pre_confirmation_check( $pPaymentParameters ) {
 		return $confirmation;
 	}
 
-	function process_button() {
+	function process_button( $pPaymentParameters ) {
 		global $_POST;
 
 		$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['cc_owner']) .

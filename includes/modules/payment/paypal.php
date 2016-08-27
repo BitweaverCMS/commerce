@@ -26,7 +26,7 @@
 // Note this is temporary
 DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
  class paypal extends CommercePluginPaymentBase {
    var $code, $title, $description, $enabled;
@@ -79,24 +79,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
      }
    }
 
-   function javascript_validation() {
-     return false;
-   }
-
-   function selection() {
-     return array('id' => $this->code,
-                  'module' => $this->title);
-   }
-
-   function pre_confirmation_check( $pPaymentParameters ) {
-     return false;
-   }
-
-   function confirmation() {
-     return false;
-   }
-
-   function process_button() {
+	function process_button( $pPaymentParameters ) {
      global $gBitDb, $order, $currencies, $currency;
 
      // save the session stuff permanently in case paypal loses the session
