@@ -1,4 +1,4 @@
-<div class="container">
+<div class="nav-commerce">
 	{include file="bitpackage:bitcommerce/breadcrumbs_inc.tpl" breadcrumbs=$gCommerceBreadcrumbs->mTrail}
 	<div class="navbar">
 		<span style="display:inline-block">
