@@ -42,7 +42,8 @@ if ($show_currencies == true) {
 		}
 
 		$_template->tpl_vars['modCurrencies'] = new Smarty_variable( $currenciesHash );
-		$_template->tpl_vars['modSelectedCurrency'] = new Smarty_variable( !empty( $_SESSION['currency'] ) );
+		$_template->tpl_vars['modSelectedCurrency'] = new Smarty_variable( BitBase::getParameter( $_SESSION, 'currency', DEFAULT_CURRENCY ) );
+
 		if( empty( $moduleTitle ) ) {
 			$_template->tpl_vars['moduleTitle'] = new Smarty_variable(  'Currencies' );
 		}

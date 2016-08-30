@@ -134,7 +134,7 @@ class fedexwebservices extends BitBase {
 			//$request['RequestedShipment']['ServiceType'] = $method; // valid values STANDARD_OVERNIGHT, PRIORITY_OVERNIGHT, FEDEX_GROUND, ...
 		//}
 		$request['RequestedShipment']['PackagingType'] = 'YOUR_PACKAGING'; // valid values FEDEX_BOX, FEDEX_PAK, FEDEX_TUBE, YOUR_PACKAGING, ...
-		$request['RequestedShipment']['TotalInsuredValue']=array('Amount'=> $this->insurance, 'Currency' => (!empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : DEFAULT_CURRENCY) );
+		$request['RequestedShipment']['TotalInsuredValue']=array( 'Amount'=> $this->insurance, 'Currency' => DEFAULT_CURRENCY );
 		$request['WebAuthenticationDetail'] = array('UserCredential' => array('Key' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_KEY, 'Password' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_PWD));										 
 		$request['ClientDetail'] = array('AccountNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_ACT_NUM, 'MeterNumber' => MODULE_SHIPPING_FEDEX_WEB_SERVICES_METER_NUM );
 		$request['RequestedShipment']['Shipper'] = array(	'Address' => array(

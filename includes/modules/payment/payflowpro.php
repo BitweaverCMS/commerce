@@ -154,9 +154,11 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				// reference transaction
 				$paymentOrderId = $pOrder->mOrdersId;
 				// charge_currency comes in native
-				$paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency', DEFAULT_CURRENCY );
+				if( !($paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency' ) ) ) {
+					$paymentCurrency = DEFAULT_CURRENCY;
+				}
 				$paymentLocalized = $pPaymentParameters['charge_amount'];
-				$paymentNative = ( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized;
+				$paymentNative = (( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized);
 				// completed orders have a single joined 'name' field
 				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
 				$pOrder->billing['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
@@ -462,9 +464,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
 			$ret = TRUE;
-			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
+			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
-				$pOrder->info['cc_number'] = substr($pPaymentParameters['cc_number'], 0, 6) . str_repeat('X', (strlen($pPaymentParameters['cc_number']) - 6)) . substr($pPaymentParameters['cc_number'], -4);
+				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
 			}
 		} else {
 			$this->mDb->RollbackTrans();
