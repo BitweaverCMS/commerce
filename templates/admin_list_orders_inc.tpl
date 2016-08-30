@@ -35,7 +35,7 @@
 	{if $order.products}
 	{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
 	<tr>
-		<td colspan="4" class="container">
+		<td colspan="4">
 			<div class="row">
 				<div class="col-xs-2">
 					<img src="{CommerceProduct::getImageUrlFromHash($product)}" class="img-responsive"/>
