@@ -274,7 +274,7 @@ class order extends CommerceOrderBase {
 								'ip_address' => $order->fields['ip_address']
 								);
 
-			$this->info['shipping_total'] =  $gBitDb->getRow( "SELECT `orders_value` AS `shipping_total` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
+			$this->info['shipping_cost'] =  $gBitDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
 			$this->customer = array('id' => $order->fields['customers_id'],
 									'user_id' => $order->fields['user_id'],

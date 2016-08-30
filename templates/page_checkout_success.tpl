@@ -16,7 +16,7 @@
 	<fieldset>
 	{forminput}
 		<p>{tr}Please notify me of updates to the products I have selected below:{/tr}</p>
-		{html_checkboxes name='notify' options=$notifyProducts seperator='br/>'}
+		<div class="checkbox">{html_checkboxes name='notify' options=$notifyProducts seperator='br/>'}</div>
 	{/forminput}
 	</fieldset>
 {/if}
@@ -49,7 +49,7 @@
 				// UTM:T|[orders-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
 				// UTM:I|[orders-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
 
-				print "UTM:T|$newOrdersId|".$gBitUser->getPreference('affiliate_code',$gBitSystem->getConfig('site_title'))."|".$newOrder->getField('total')."|".$newOrder->getField('tax')."|".$newOrder->getField('shipping_total')."|".$newOrder->delivery['city']."|".$newOrder->delivery['state']."|".$newOrder->delivery['country']['countries_name'];
+				print "UTM:T|$newOrdersId|".$gBitUser->getPreference('affiliate_code',$gBitSystem->getConfig('site_title'))."|".$newOrder->getField('total')."|".$newOrder->getField('tax')."|".$newOrder->getField('shipping_cost')."|".$newOrder->delivery['city']."|".$newOrder->delivery['state']."|".$newOrder->delivery['country']['countries_name'];
 				foreach( $newOrder->contents AS $product ) {
 					print "\nUTM:I|$newOrdersId|".$product['id']."|".str_replace( '|', ' ', $product['name'])."|".$product['model']."|".$product['price']."|".$product['products_quantity'];
 				}
