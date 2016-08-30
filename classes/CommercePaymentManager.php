@@ -20,7 +20,7 @@
 // $Id$
 //
 
-class payment {
+class CommercePaymentManager {
 	var $modules, $selected_module;
 
 	// class constructor
@@ -165,8 +165,9 @@ class payment {
 		return $selection_array;
 	}
 
-	function pre_confirmation_check( $pPaymentParameters = NULL ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		global $credit_covers, $payment_modules;
+		$ret = FALSE;
 		if (is_array($this->modules)) {
 			if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
 				if ($credit_covers) {
@@ -174,10 +175,11 @@ class payment {
 					$GLOBALS[$this->selected_module] = NULL;
 					$payment_modules = '';
 				} else {
-					return $GLOBALS[$this->selected_module]->pre_confirmation_check( $pPaymentParameters );
+					$ret = $GLOBALS[$this->selected_module]->verifyPayment( $pPaymentParameters, $pOrder );
 				}
 			}
 		}
+		return $ret;
 	}
 
 	function confirmation( $pPaymentParameters = NULL ) {
@@ -196,15 +198,15 @@ class payment {
 		}
 	}
 
-	function before_process( $pPaymentParameters = NULL ) {
-		global $gBitProduct, $order;
+	function processPayment( $pPaymentParameters, $pOrder ) {
+		global $gBitProduct;
 		$ret = NULL;
+		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if (is_array($this->modules)) {
 			if( !empty( $GLOBALS[$this->selected_module] ) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
-				$ret = $GLOBALS[$this->selected_module]->before_process( $pPaymentParameters );
+				$ret = $GLOBALS[$this->selected_module]->processPayment( $pPaymentParameters, $pOrder );
 			}
 		}
-		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $order );
 		return $ret;
 	}
 

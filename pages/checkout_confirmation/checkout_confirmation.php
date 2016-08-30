@@ -52,16 +52,16 @@ $order_total_modules->collect_posts();
 $order_total_modules->pre_confirmation_check();
 
 // load the selected payment module
-require(DIR_FS_CLASSES . 'payment.php');
+require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 
 if ($credit_covers) {
 	unset($_SESSION['payment']);
 	$_SESSION['payment'] = '';
 }
 
-$payment_modules = new payment($_SESSION['payment']);
-$payment_modules->update_status( $_REQUEST );
-if ( (is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
+$paymentManager = new CommercePaymentManager($_SESSION['payment']);
+$paymentManager->update_status( $_REQUEST );
+if ( (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
 	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 }
 
@@ -71,8 +71,10 @@ if ($messageStack->size('checkout_payment') > 0) {
 //echo $messageStack->size('checkout_payment');
 //die('here');
 
-if (is_array($payment_modules->modules)) {
-	$preCheck = $payment_modules->pre_confirmation_check( $_REQUEST );
+if (is_array($paymentManager->modules)) {
+	if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
+		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
+	}
 }
 
 // load the selected shipping module
@@ -103,9 +105,9 @@ if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
 	$gBitSmarty->assign( 'orderTotalsModules', $order_total_modules );
 }
 
-if (is_array($payment_modules->modules)) {
-	$gBitSmarty->assign( 'paymentModules', $payment_modules );
-	$gBitSmarty->assign( 'paymentConfirmation', $payment_modules->confirmation( $_REQUEST ) );
+if (is_array($paymentManager->modules)) {
+	$gBitSmarty->assign( 'paymentModules', $paymentManager );
+	$gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_REQUEST ) );
 }
 	
 $gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );

@@ -127,7 +127,7 @@ class cc extends CommercePluginPaymentCardBase {
 		return $selection;
 	}
 
-	function pre_confirmation_check( $pPaymentParameters ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		if( empty( $pPaymentParameters['cc_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
 		} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
@@ -175,7 +175,7 @@ class cc extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function before_process( $pPaymentParameters ) {
+	function processPayment( &$pPaymentParameters, &$pOrder ) {
 		global $_POST, $order;
 
 		$order->info['cc_expires'] = $_POST['cc_expires'];

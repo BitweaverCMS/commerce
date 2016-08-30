@@ -18,6 +18,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	var $cc_cvv;
 	var $cc_expires_month;
 	var $cc_expires_year;
+	var $pnref = -1;
 
 	public function __construct() {
 		parent::__construct();
@@ -27,24 +28,35 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return array( 'cc_owner', 'cc_number', 'cc_cvv', 'cc_expires_month', 'cc_expires_year' );
 	}
 
-	function pre_confirmation_check( $pPaymentParameters ) {
+	protected function logFailedTransaction( $pResponseHash, $pOrder ) {
+		global $messageStack, $gBitUser;
+		bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'RESPONSE' => $pResponseHash ) );
+		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.$pResponseHash['RESPMSG'], number_format($pOrder->info['total'], 2,'.','') ) );
+		$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.$pResponseHash['RESPMSG'],'error');
+	}
+
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		unset( $_SESSION[$this->code.'_error'] );
 
-		$ret = FALSE;
-
-		if( empty( $pPaymentParameters['cc_number'] ) ) {
-			$error = tra( 'Please enter a credit card number.' );
+		if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
+			// reference transation
+			$this->cc_ref_id = $pPaymentParameters['cc_ref_id'];
+		} elseif( empty( $pPaymentParameters['cc_number'] ) ) {
+			$this->mErrors['number'] = tra( 'Please enter a credit card number.' );
 		} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
-			$ret = TRUE;
+			if( empty( $pPaymentParameters['cc_owner'] ) ) {
+				$this->mErrors['owner'] = tra( 'Please enter the name card holders name as it is written on the card.' );
+			} else {
+				$this->cc_owner = $pPaymentParameters['cc_owner'];
+			}
 		}
 
 		$this->saveSessionDetails();
 
 		if( $this->mErrors ) {
 			$_SESSION[$this->code.'_error'] = $this->mErrors;
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 		}
-		return $ret;
+		return count( $this->mErrors ) === 0;
 	}
 
 	function verifyCreditCard($number, $expires_m, $expires_y, $cvv) {
@@ -83,9 +95,14 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		}
 
 		$current_year = date('Y');
-		$expires_y = substr($current_year, 0, 2) . $expires_y;
+		if( $expires_y < 100 ) {
+			// two digit expire year
+			$expires_y = substr($current_year, 0, 2) . $expires_y;
+		}
+
 		if (is_numeric($expires_y) && ($expires_y >= $current_year) && ($expires_y <= ($current_year + 10))) {
 			$this->cc_expires_year = $expires_y;
+			$this->cc_expires = $this->cc_expires_month.( $this->cc_expires_year % 1000 );
 		} else {
 			$this->mErrors['date'] = TEXT_CCVAL_ERROR_INVALID_DATE;
 		}

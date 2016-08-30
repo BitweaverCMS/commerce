@@ -38,8 +38,8 @@ if (!isset($_SESSION['payment']) && !$credit_covers) {
 }
 
 // load selected payment module
-require(DIR_FS_CLASSES . 'payment.php');
-$payment_modules = new payment($_SESSION['payment']);
+require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+$payment_modules = new CommercePaymentManager($_SESSION['payment']);
 
 // load the selected shipping module
 require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
@@ -55,7 +55,9 @@ $order_totals = $order_total_modules->process( $_REQUEST );
 
 $gBitDb->mDb->StartTrans();
 // load the before_process function from the payment modules
-$payment_modules->before_process( $_REQUEST );
+if( !$payment_modules->processPayment( $_REQUEST, $order ) ) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
+}
 
 $insert_id = $order->create($order_totals, 2);
 $order->create_add_products($insert_id);

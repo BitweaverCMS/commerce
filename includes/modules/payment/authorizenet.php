@@ -181,7 +181,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $selection;
 	}
 
-	function pre_confirmation_check( $pPaymentParameters ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		if( empty( $pPaymentParameters['authorizenet_cc_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
 		} elseif( $this->verifyCreditCard( $pPaymentParameters['authorizenet_cc_number'], $pPaymentParameters['authorizenet_cc_expires_month'], $pPaymentParameters['authorizenet_cc_expires_year'], $pPaymentParameters['authorizenet_cc_cvv'] ) ) {
@@ -248,7 +248,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function before_process( $pPaymentParameters ) {
+	function processPayment( &$pPaymentParameters, &$pOrder ) {
 		global $_POST;
 
 		if ($_POST['x_response_code'] == '1') return;

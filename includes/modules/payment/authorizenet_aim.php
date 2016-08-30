@@ -142,7 +142,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 
 
     // Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
-	function pre_confirmation_check( $pPaymentParameters ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
       global $_POST;
 
       include(DIR_WS_CLASSES . 'cc_validation.php');
@@ -223,7 +223,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 	  return false;
     }
 
-	function before_process( $pPaymentParameters ) {
+	function processPayment( &$pPaymentParameters, &$pOrder ) {
 	  global $_POST, $response, $gBitDb, $order;
 
 	  if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {

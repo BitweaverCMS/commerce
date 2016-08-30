@@ -12,30 +12,27 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
 
 abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
-	var $cc_type;
-	var $cc_owner;
-	var $cc_number;
-	var $cc_cvv;
-	var $cc_expires_month;
-	var $cc_expires_year;
-
 	public function __construct() {
 		parent::__construct();
 	}
 
-	function clearSessionDetails() {
+	protected function getNextOrderId() {
+		return $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
+	}
+
+	protected function clearSessionDetails() {
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;
 		}	
 	}
 
-	function saveSessionDetails() {
+	protected function saveSessionDetails() {
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;
 		}	
 	}
 
-	// Default methods
+	// Default methods that should be overridden in derived classes
 	protected function getSessionVars() {
 		return array();
 	}
@@ -49,13 +46,9 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return NULL;
 	}
 
-	function processPayment( $pPaymentParameters ) {
+	function processPayment( &$pPaymentParameters, &$pOrder ) {
 		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
 		return FALSE;
-	}
-
-	function pre_confirmation_check( $pPaymentParameters ) {
-		return false;
 	}
 
 	function confirmation( $pPaymentParameters ) {
@@ -66,7 +59,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return false;
 	}
 
-	function before_process( $pPaymentParameters ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		return false;
 	}
 

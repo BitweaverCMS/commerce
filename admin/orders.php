@@ -148,11 +148,11 @@ if( !empty( $order ) ) {
 			exit;
 			break;
 		case 'update_order':
-			if( !empty( $_REQUEST['additional_charge'] ) ) {
-				$formatCharge = $currencies->format( $_REQUEST['additional_charge'] );
-				$postFields = array( 'cc_ref_id' => $order->info['cc_ref_id'], 'charge_amount' => $_REQUEST['additional_charge'] );
+			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['charge_amount'] ) ) {
+				$formatCharge = $currencies->format( $_REQUEST['charge_amount'], FALSE, BitBase::getParameter( $_REQUEST, 'charge_currency' ) );
+				$_REQUEST['cc_ref_id'] = $order->info['cc_ref_id'];
 				if( $paymentModule = $order->getPaymentModule() ) {
-					if( $paymentModule->processPayment( $postFields ) ) {
+					if( $paymentModule->processPayment( $_REQUEST, $order ) ) {
 						$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge.' '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
 						$_REQUEST['comments'] = (!empty( $_REQUEST['comments'] ) ? $_REQUEST['comments']."\n\n" : '').$statusMsg;
 						

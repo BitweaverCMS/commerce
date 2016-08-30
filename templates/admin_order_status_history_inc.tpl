@@ -7,15 +7,19 @@
 		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
 	{forminput label="checkbox"}
-		<input type="checkbox" name="update_totals" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
+		<input type="checkbox" name="additional_charge" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
 	{/forminput}
 		<div id="additional-charge" style="display:none">
 			{forminput}
-				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol()}
-				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol()}
+				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
+				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $gBitOrder->getField('currency') )}
+				{if $gBitOrder->getField('currency') != $smarty.const.DEFAULT_CURRENCY}
+				<input type="text" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
+				<input type="text" name="charge_currency_value" value="{$gBitOrder->getField('currency_value')}"/>
+				{/if}
 				<div class="input-group">
 					{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
-					<input class="form-control input-sm text-right" type="text" name="additional_charge" value="{$smarty.request.additional_charge}"/>
+					<input class="form-control input-sm text-right" type="text" name="charge_amount" value="{$smarty.request.charge_amount}"/>
 					{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
 				</div>
 				{formhelp note="Enter a negative number for a credit"}

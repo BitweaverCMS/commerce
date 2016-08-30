@@ -75,10 +75,10 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	$gBitSmarty->assign( 'changeAddress', TRUE );
 } else {
 	// load all enabled payment modules
-	require(DIR_FS_CLASSES . 'payment.php');
-	$payment_modules = new payment;
-	echo $payment_modules->javascript_validation(); 
-	$gBitSmarty->assign( 'paymentSelection', $payment_modules->selection() );
+	require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+	$paymentManager = new CommercePaymentManager();
+	echo $paymentManager->javascript_validation(); 
+	$gBitSmarty->assign( 'paymentSelection', $paymentManager->selection() );
 
 	// Load the selected shipping module(needed to calculate tax correctly)
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');

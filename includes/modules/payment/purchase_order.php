@@ -89,7 +89,7 @@ class purchase_order extends CommercePluginPaymentBase {
 
     }
 
-	function pre_confirmation_check( $pPaymentParameters ) {
+	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		return false;
 	}
 

@@ -59,9 +59,7 @@
         }
 
         if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-          $gBitDb->Execute("UPDATE " . TABLE_CONFIGURATION . "
-                        SET `configuration_value` = '" . zen_db_input($code) . "'
-                        WHERE `configuration_key` = 'DEFAULT_CURRENCY'");
+			$gCommerceSystem->storeConfig( 'DEFAULT_CURRENCY', $code );
         }
 
         zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency_id));
@@ -164,7 +162,7 @@
     }
 ?>
                 <td class="dataTableContent"><?php echo $currency->fields['code']; ?></td>
-                <td class="dataTableContent" align="right"><?php echo number_format($currency->fields['currency_value'], 8); ?></td>
+                <td class="dataTableContent" align="right"><?php echo  $currencies->format($currency->fields['currency_value'], false, $currency->fields['code'] ); ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($currency->fields['currencies_id'] == $cInfo->currencies_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $currency->fields['currencies_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
@@ -206,7 +204,6 @@ JPY Japan Yen                             0.0089098765        112.2350011215
 
 	</div>
 	<div class="col-md-4">
-		<div class="well">
 
 <?php
   $heading = array();
@@ -242,13 +239,13 @@ JPY Japan Yen                             0.0089098765        112.2350011215
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_THOUSANDS_POINT . '<br>' . zen_draw_input_field('thousands_point', $cInfo->thousands_point));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_DECIMAL_PLACES . '<br>' . zen_draw_input_field('decimal_places', $cInfo->decimal_places));
       $contents[] = array('text' => '<br>' . TEXT_INFO_CURRENCY_VALUE . '<br>' . zen_draw_input_field('currency_value', $cInfo->currency_value));
-      if (DEFAULT_CURRENCY != $cInfo->code) $contents[] = array('text' => '<br>' . zen_draw_checkbox_field('default') . ' ' . TEXT_INFO_SET_AS_DEFAULT);
+      $contents[] = array('text' => zen_draw_checkbox_field('default', 'on', (DEFAULT_CURRENCY == $cInfo->code), NULL, TEXT_INFO_SET_AS_DEFAULT ) );
       $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
     case 'delete':
       $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_CURRENCY . '</b>');
 
-      $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
+      $contents[] = array('text' => tra( 'Are you sure you want to delete this currency?' ) );
       $contents[] = array('text' => '<br><b>' . $cInfo->title . '</b>');
       $contents[] = array('align' => 'center', 'text' => '<br>' . (($remove_currency) ? '<a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id . '&action=deleteconfirm') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>' : '') . ' <a href="' . zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page'] . '&cID=' . $cInfo->currencies_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -281,7 +278,6 @@ JPY Japan Yen                             0.0089098765        112.2350011215
   }
 ?>
 
-		</div>
 	</div>
 </div>
 

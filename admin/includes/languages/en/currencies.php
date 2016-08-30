@@ -37,7 +37,6 @@ define('TEXT_INFO_CURRENCY_LAST_UPDATED', 'Last Updated:');
 define('TEXT_INFO_CURRENCY_VALUE', 'Value:');
 define('TEXT_INFO_CURRENCY_EXAMPLE', 'Example Output:');
 define('TEXT_INFO_INSERT_INTRO', 'Please enter the new currency with its related data');
-define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete this currency?');
 define('TEXT_INFO_HEADING_NEW_CURRENCY', 'New Currency');
 define('TEXT_INFO_HEADING_EDIT_CURRENCY', 'Edit Currency');
 define('TEXT_INFO_HEADING_DELETE_CURRENCY', 'Delete Currency');

@@ -754,7 +754,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   cc_owner C(64),
   cc_number C(32),
   cc_expires C(4),
-  cc_cvv B,
   last_modified T,
   date_purchased T,
   orders_date_finished T,
@@ -1788,11 +1787,11 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration_group` VALUES ('26', 'Easy Populate', 'Config options for Easy Populate', '26', '1')",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (1,'US Dollar', 'USD', '\$', '', '.', ',', '2', '1.0000', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (2,'Euro', 'EUR', '', '&euro;', '.', ',', '2', '0.817565', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (2,'Euro', 'EUR', '&euro;', '', '.', ',', '2', '0.817565', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (3,'United Kingdom Pounds', 'GBP', '&pound;', '', '.', ',', '2', '0.5654713399', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (4,'Canada Dollars', 'CAD', '', '', '.', ',', '2', '1.2115475341', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (5,'Australia Dollars', 'AUD', '', '', '.', ',', '2', '1.3121995036', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (6,'Japan Yen', 'JPY', '', '&yen;', '.', ',', '2', '112.2350011215', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (4,'Canada Dollars', 'CAD', '\$', 'CAD', '.', ',', '2', '1.2115475341', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (5,'Australia Dollars', 'AUD', '\$', 'AUD', '.', ',', '2', '1.3121995036', 'NOW')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_currencies` VALUES (6,'Japan Yen', 'JPY', '&yen;', 'JPY', '.', ',', '0', '112.2350011215', 'NOW')",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-40, 1, 'Fraud')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-30, 1, 'Chargeback')",

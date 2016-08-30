@@ -7,6 +7,8 @@
  * Portions Copyright (c) 2003 Zen Cart									|
  * All Rights Reserved. See below for details and a complete list of authors.
  * This source file is subject to the GNU GENERAL PUBLIC LICENSE. See http://www.gnu.org/licenses/gpl.html for details
+ *
+ * Documentation from https://developer.paypal.com/docs/classic/payflow/integration-guide/
  */
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
@@ -16,7 +18,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 	public function __construct() {
 		parent::__construct();
-		global $order, $messageStack;
 
 		$this->code = 'payflowpro';
 		if( !empty( $_GET['main_page'] ) ) {
@@ -128,103 +129,260 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	// Examples: add extra hidden fields to the form
 	////////////////////////////////////////////////////
 	function process_button( $pPaymentParameters ) {
-		global $_SERVER, $order, $total_tax, $shipping_cost, $customer_id;
 		// These are hidden fields on the checkout confirmation page
-		$process_button_string = zen_draw_hidden_field('cc_owner', $pPaymentParameters['cc_owner']) .
-								 zen_draw_hidden_field('cc_expires', $this->cc_expires_month . substr($this->cc_expires_year, -2)) .
+		$process_button_string = zen_draw_hidden_field('cc_owner', $this->cc_owner ) .
+								 zen_draw_hidden_field('cc_expires_month', $this->cc_expires_month ) .
+								 zen_draw_hidden_field('cc_expires_year', $this->cc_expires_year ) .
 								 zen_draw_hidden_field('cc_type', $this->cc_type) .
 								 zen_draw_hidden_field('cc_number', $this->cc_number) .
 								 zen_draw_hidden_field('cc_cvv', $this->cc_cvv);
-
-		$process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
 		return $process_button_string;
 	}
 
 
-	protected function verifyPaymentParameters( &$pPaymentParameters ) {
-		global $gCommerceSystem, $currencies;
+	function processPayment( &$pPaymentParameters, &$pOrder ) {
+		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser;
 
-		if( empty( $pPaymentParameters['charge_amount'] ) || !is_numeric( $pPaymentParameters['charge_amount'] ) ) {
+		if( !self::verifyPayment ( $pPaymentParameters, $pOrder ) ) {
+			// verify basics failed
+		} elseif( !empty( $pPaymentParameters['cc_ref_id'] ) && empty( $pPaymentParameters['charge_amount'] ) ) {
+			$this->mErrors['charge_amount'] = 'Invalid amount';
+		} elseif( !($orderTotal = number_format($pOrder->info['total'], 2,'.','')) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
 		} else {
-			$pPaymentParameters['charge_amount'] = (float)$pPaymentParameters['charge_amount'];
-		}
+			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
+				// reference transaction
+				$paymentOrderId = $pOrder->mOrdersId;
+				// charge_currency comes in native
+				$paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency', DEFAULT_CURRENCY );
+				$paymentLocalized = $pPaymentParameters['charge_amount'];
+				$paymentNative = ( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized;
+				// completed orders have a single joined 'name' field
+				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
+				$pOrder->billing['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
+				$pOrder->delivery['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
+				$pOrder->delivery['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
+			} else {
+				$pOrder->info['cc_number'] = $this->cc_number;
+				$pOrder->info['cc_expires'] = $this->cc_expires;
+				$pOrder->info['cc_type'] = $this->cc_type;
+				$pOrder->info['cc_owner'] = $this->cc_owner;
+				$pOrder->info['cc_cvv'] = $this->cc_cvv;
+				// Calculate the next expected order id
+				$paymentOrderId = $this->getNextOrderId();
+				// orderTotal is in the system DEFAULT_CURRENCY. orderTotal * currency_value = localizedPayment
+				$paymentCurrency = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
+				$paymentNative = $orderTotal;
+				$paymentLocalized = ( $paymentCurrency != DEFAULT_CURRENCY ) ? ($paymentNative * $pOrder->getField('currency_value')) : $paymentNative;
+			}
 
-		$payflowCurrency = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
 
-		if( DEFAULT_CURRENCY != $payflowCurrency ) {
-			$pPaymentParameters['charge_amount'] = $currencies->convert( $pPaymentParameters['charge_amount'], $payflowCurrency, DEFAULT_CURRENCY );
-		}
+			/* === Core Credit Card Parameters ===
 
-		return count( $this->mErrors ) == 0;
-	}
+			All credit card processors accept the basic parameters described in the following table* with one exception: the PayPal processor does not support SWIPE*.
 
-	function processPayment( $pPaymentParameters ) {
-		global $gDebug;
-		if( self::verifyPaymentParameters( $pPaymentParameters ) ) {
-			$postFields = array();
-vd( $pPaymentParameters );
-bt(); die;
-/*
-ACCT 
-AMT 
-CITY 
-COMMENT1
-COMMENT2 
-COMPANYNAME 
-BILLTOCOUNTRY 
-CUSTCODE
-CUSTIP 
-DUTYAMT 
-EMAIL 
-EXPDATE
-FIRSTNAME 
-MIDDLENAME 
-LASTNAME 
-FREIGHTAMT
-INVNUM 
-PONUM 
-SHIPTOCITY 
-SHIPTOCOUNTRY
-SHIPTOFIRSTNAME 
-SHIPTOMIDDLENAME 
-SHIPTOLASTNAME 
-SHIPTOSTATE
-SHIPTOSTREET 
-SHIPTOZIP 
-STATE 
-STREET
-SWIPE 
-TAXAMT 
-PHONENUM 
-TAXEXEMPT
-ZIP
-*/
-			$postFields['PWD'] = MODULE_PAYMENT_PAYFLOWPRO_PWD;
-			$postFields['USER'] = MODULE_PAYMENT_PAYFLOWPRO_LOGIN;
-			$postFields['VENDOR'] = MODULE_PAYMENT_PAYFLOWPRO_VENDOR;
-			$postFields['PARTNER'] = MODULE_PAYMENT_PAYFLOWPRO_PARTNER;
-			$postFields['VERBOSITY'] = 'MEDIUM';
-			$postFields['TENDER'] = 'C';
-			$postFields['REQUEST_ID'] = time();
-			foreach( $pPaymentParameters as $key=>$value ) {
-				if( $key == 'cc_ref_id' ) {
-					$key = 'ORIGID';
-				}
-				if( $key == 'charge_amount' ) {
-					$key = 'AMT';
-				}
-				$postFields[$key] = $value;
+			TENDER	(Required) The method of payment. Values are:
+			- A = Automated clearinghouse (ACH)
+			- C = Credit card
+			- D = Pinless debit
+			- K = Telecheck
+			- P = PayPal
+			Note: If your processor accepts non-decimal currencies, such as, Japanese Yen, include a decimal in the amount you pass to Payflow (use 100.00 not 100). Payflow removes the decimal portion before sending the value to the processor.
+
+			// Not implemented
+
+			RECURRING	(Optional) Identifies the transaction as recurring. It is one of the following values: - Y - Identifies the transaction as recurring. - N - Does not identify the transaction as recurring (default).
+			SWIPE		(Required for card-present transactions only) Used to pass the Track 1 or Track 2 data (card's magnetic stripe information) for card-present transactions. Include either Track 1 or Track 2 data, not both. If Track 1 is physically damaged, the point-of-sale (POS) application can send Track 2 data instead.
+			ORDERID		(Optional) Checks for a duplicate order. If you pass ORDERID in a request and pass it again in the future, the response returns DUPLICATE=2 along with the ORDERID.  Note: Do not use ORDERID to catch duplicate orders processed within seconds of each other. Use ORDERID with Request ID to prevent duplicates as a result of processing or communication errors. * bitcommerce note - this cannot be paymentOrderId as a failed process will block any future transactions
+			*/
+
+			$postFields =  array( 
+				'PWD' => MODULE_PAYMENT_PAYFLOWPRO_PWD,
+				'USER' => MODULE_PAYMENT_PAYFLOWPRO_LOGIN,
+				'VENDOR' => MODULE_PAYMENT_PAYFLOWPRO_VENDOR,
+				'PARTNER' => MODULE_PAYMENT_PAYFLOWPRO_PARTNER,
+				'VERBOSITY' => 'HIGH',
+				'TENDER' => 'C',
+				'REQUEST_ID' => time(),
+
+				'ACCT' => $pOrder->info['cc_number'], // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
+				'EXPDATE' => $pOrder->info['cc_expires'], // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
+				'STREET' => $pOrder->billing['street_address'],
+				'ZIP' => $pOrder->billing['postcode'],
+				'COMMENT1' => 'OrderID: ' . $paymentOrderId . ' ' . $gBitUser->getField( 'email' ) . ' (' . $gBitUser->mUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'EMAIL' => $gBitUser->getField( 'email' ),
+				'CVV2' => $pOrder->getField( 'cc_cvv' ), // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
+				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
+
+				'BILLTOFIRSTNAME' => $pOrder->billing['firstname'], //	(Optional) Cardholder's first name.  Limitations: 30 alphanumeric characters
+				'BILLTOLASTNAME' => $pOrder->billing['lastname'], //	(Optional but recommended) Cardholder's last name.  Limitations: 30 alphanumeric characters
+				'BILLTOSTREET' => $pOrder->billing['street_address'], //	(Optional) The cardholder's street address (number and street name).  The address verification service verifies the STREET address.  Limitations: 30 alphanumeric characters
+				'BILLTOSTREET2' => $pOrder->billing['suburb'], //	(Optional) The second line of the cardholder's street address.  The address verification service verifies the STREET address.  Limitations: 30 alphanumeric characters
+				'BILLTOCITY' => $pOrder->billing['city'], //	(Optional) Bill-to city.  Limitations: 20-character string.
+				'BILLTOSTATE' => $pOrder->billing['state'], //	(Optional) Bill-to state.  Limitations: 2-character string.
+				'BILLTOZIP' => $pOrder->billing['postcode'], //	(Optional) Cardholder's 5- to 9-digit zip (postal) code.  Limitations: 9 characters maximum. Do not use spaces, dashes, or non-numeric characters
+				'BILLTOCOUNTRY' => $pOrder->billing['country']['countries_iso_code_2'], //	(Optional) Bill-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code.
+				'BILLTOPHONENUM' => $pOrder->billing['telephone'], // (Optional) Account holder's telephone number.  Character length and limitations: 10 characters
+
+				'SHIPTOFIRSTNAME' => $pOrder->delivery['firstname'], //	(Optional) Ship-to first name.  Limitations: 30-character string.
+				'SHIPTOLASTNAME' => $pOrder->delivery['lastname'], //	(Optional) Ship-to last name.  Limitations: 30-character string.billingbilling
+				'SHIPTOSTREET' => $pOrder->delivery['street_address'], //	(Optional) Ship-to street address.  Limitations: 30-character string.
+				'SHIPTOCITY' => $pOrder->delivery['city'], //	(Optional) Ship-to city.  Limitations: 20-character string.
+				'SHIPTOSTATE' => $pOrder->delivery['state'], //	(Optional) Ship-to state.  Limitations: 2-character string.
+				'SHIPTOZIP' => $pOrder->delivery['postcode'], //	(Optional) Ship-to postal code.  Limitations: 9-character string.
+				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
+
+				'FREIGHTAMT' => $pOrder->info['shipping_cost'], // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
+			);
+
+			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {	
+				$postFields['ORIGID'] = $pPaymentParameters['cc_ref_id'];
+				$postFields['COMMENT2'] = 'Reference Trans'; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+			}
+
+			/*
+			TRXTYPE	(Required) Indicates the type of transaction to perform. Values are:
+			- A = Authorization
+			- B = Balance Inquiry
+			- C = Credit (Refund)
+			- D = Delayed Capture
+			- F = Voice Authorization
+			- I = Inquiry
+			- K = Rate Lookup
+			- L = Data Upload
+			- N = Duplicate Transaction Note: A type N transaction represents a duplicate transaction (version 4 SDK or HTTPS interface only) with a PNREF that is the same as the original. It appears only in the PayPal Manager user interface and never settles.
+			- S = Sale 
+			- V = Void
+			*/ 
+
+			// Assume we are charging the native amount in the default currency. Some gateways support multiple currencies, check for that shortly
+			$paymentAmount = $paymentNative;
+			$postFields['CURRENCY'] = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+
+			if( $this->cc_type == 'American Express' ) {
+				// TODO American Express Additional Credit Card Parameters
+			}
+
+			$processors = static::getProcessors();
+
+			switch( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
+				case 'Cielo Payments':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'Elavon':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'First Data Merchant Services Nashville':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'First Data Merchant Services North':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'Heartland':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'Litle':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'Paymentech Salem New Hampshire':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'PayPal':
+					if( $gCommerceSystem->isConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
+						switch( $paymentCurrency ) {
+							// PayPal supports charging natively in these 5 currencies
+							case 'AUD': // Australian dollar 
+							case 'CAD': // Canadian dollar 
+							case 'EUR': // Euro 
+							case 'GBP': // British pound 
+							case 'JPY': // Japanese Yen 
+							case 'USD': // US dollar 
+								if( $paymentCurrency != $postFields['CURRENCY'] ) {
+									$paymentAmount =  number_format( $paymentLocalized, 2,'.','' );
+									$postFields['CURRENCY'] = strtoupper( $paymentCurrency );
+								}
+								break;
+							default:
+								// all other currencies to gateway default
+								break;
+						}
+					}
+
+					$postFields['CUSTIP'] = $_SERVER['REMOTE_ADDR']; // (Optional) IP address of payer's browser as recorded in its HTTP request to your website. This value is optional but recommended.  Note: PayPal records this IP address as a means to detect possible fraud.  Limitations: 15-character string in dotted quad format: xxx.xxx.xxx.xxx
+					$postFields['EMAIL'] = $gBitUser->getField( 'email' ); // (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
+					$postFields['INVNUM'] = $paymentOrderId; // (Optional) Your own unique invoice or tracking number.
+					//$postFields['MERCHDESCR'] = ''; //	(Optional) Information that is usually displayed in the account holder's statement, for example, <Your-Not-For-Profit> <State>, <Your-Not-For-Profit> <Branch-Name>, <Your-Website> dues or <Your-Website> list fee.  Character length and limitations: 23 alphanumeric characters, can include the special characters dash (-) and dot (.) only. Asterisks (*) are NOT permitted. If it includes a space character (), enclose the "<Soft-Descriptor>" value in double quotes.
+					$postFields['MERCHANTCITY'] = substr( $_SERVER['SERVER_NAME'], 0, 21 ); //	(Optional) A unique phone number, email address or URL, which is displayed on the account holder's statement. PayPal recommends passing a toll-free phone number because, typically, this is the easiest way for a buyer to contact the seller in the case of an inquiry.
+
+					/* === PayPal Specific Parameters
+
+					Note: You must set CURRENCY to one of the three-character currency codes for any of the supported PayPal currencies. See CURRENCY in this table for details.
+					Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95. Nine numeric characters plus decimal.
+
+					* BUTTONSOURCE	(Optional) Identification code for use by third-party applications to identify transactions.  Limitations: 32 alphanumeric characters.
+					* CAPTURECOMPLETE	(Optional) Indicates if this Delayed Capture transaction is the last capture you intend to make. The values are: - Y (default) - N
+					Note: If CAPTURECOMPLETE is Y, any remaining amount of the original reauthorized transaction is automatically voided.
+					Limitations: 12-character alphanumeric string.
+					* CUSTOM	(Optional) A free-form field for your own use.  Limitations: 256-character alphanumeric string.
+					Limitations: 127 alphanumeric characters.
+					* ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
+					* ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn 
+					Limitations: Nine numeric characters plus decimal.
+					* TAXAMT	(Required if L_TAXAMTn is specified) Sum of tax for all items in this order.
+					Limitations: Nine numeric characters plus decimal.
+					* TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
+					* HANDLINGAMT	(Optional) Total handling costs for this order.
+					Nine numeric characters plus decimal.
+					* DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
+					* INSURANCEAMT	(Optional) Total shipping insurance cost for this order.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
+					* L_NAMEn	(Optional) Line-item name.
+					Character length and limitations: 36 alphanumeric characters.
+					* L_DESCn	(Optional) Line-item description of the item purchased such as hiking boots or cooking utensils.
+					* L_COSTn	(Required if L_QTYn is supplied) Cost of the line item. The line-item unit price must be a positive number and be greater than zero.
+					Note: You must set CURRENCY to one of the three-character currency codes for any of the supported PayPal currencies. See CURRENCY in this table for details.
+					Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95. Nine numeric characters plus decimal.
+					* L_QTYn	(Required if L_COSTn is supplied) Line-item quantity.
+					Limitations: 10-character integer.
+					* L_SKUn	(Optional) Product number. 
+					Limitations: 18-characters.
+					* L_TAXAMTn	(Optional) Line-item tax amount.
+					Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
+					* MERCHANTSESSIONID	(Optional) Your customer Direct Payment session identification token. PayPal records this session token as an additional means to detect possible fraud.  Limitations: 64 characters.
+					Character length and limitations: 13 characters including special characters, such as, space, !, ", #, $, %, &, ', (, ), +, -,*, /, :, ;, <, =, >, ?, @, comma and period.
+
+					If it includes the space character (), enclose the "<Soft-Descriptor-City>" value in double quotes.
+
+					Note: Underscore (_) is an illegal character for this field. If it is passed, then it will be removed leaving the remaining characters in the same order. For example, New_York changes to NewYork.
+					Added in version 115 of the API.
+
+					* NOTIFYURL	(Optional) Your URL for receiving Instant Payment Notification (IPN) about this transaction. If you do not specify NOTIFYURL in the request, the notification URL from your Merchant Profile is used, if one exists.
+					Limitations: 2048 alphanumeric characters.
+					* ORDERDESC	(Optional) Description of items the customer is purchasing.
+					Limitations: 127 alphanumeric characters.
+					* RECURRINGTYPE	(Optional) Type of transaction occurrence. The values are: - F = First occurrence - S = Subsequent occurrence (default) Limitations: One alpha character.
+					*/
+					break;
+				case 'SecureNet':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'Vantiv':
+					// TODO Additional Credit Card Parameters
+					break;
+				case 'WorldPay':
+					// TODO Additional Credit Card Parameters
+					break;
 			}
 
 			if( MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization' ) {
 				$postFields['TRXTYPE'] = 'A';
-			} elseif( $postFields['AMT'] > 0 ) {
+			} elseif( $paymentAmount > 0 ) {
 				$postFields['TRXTYPE'] = 'S';
-			} elseif( $postFields['AMT'] < 0 ) {
+			} elseif( $paymentAmount < 0 ) {
 				$postFields['TRXTYPE'] = 'C';
-				$postFields['AMT'] = -1 * $postFields['AMT'];
+				$paymentAmount = -1.0 * $paymentAmount;
 			}
+
+			$postFields['AMT'] = number_format($paymentAmount, 2,'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';
@@ -255,30 +413,26 @@ ZIP
 									CURLOPT_FORBID_REUSE => true,
 									CURLOPT_POST => 1,
 								);
-
 			foreach ($_curlOptions as $name => $value) {
 				curl_setopt($ch, $name, $value);
 			}
 
 			$response = curl_exec($ch);
-			$commError = curl_error($ch);
-			$commErrNo = curl_errno($ch);
 
-			$commInfo = @curl_getinfo($ch);
+			if( $commError = curl_error($ch) ) {
+				$this->mErrors['curl_errno'] = curl_errno($ch);
+				$this->mErrors['curl_info'] = @curl_getinfo($ch);
+				$this->mErrors['process_payment'] = 'CURL ERROR '.$this->mErrors['curl_errno'];
+			}
+
 			curl_close($ch);
 
-			$rawdata = "CURL raw data:\n" . $response . "CURL RESULTS: (" . $commErrNo . ') ' . $commError . "\n" . print_r($commInfo, true) . "\nEOF";
+			$responseHash = array();
 
-			if ($response) {
-				$response .= '&CURL_ERRORS=' . ($commErrNo != 0 ? urlencode('(' . $commErrNo . ') ' . $commError) : '') ;
+			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
 
-				if ( $gDebug ) {
-					$this->_logTransaction($operation,	$response, $errors . ($commErrNo != 0 ? "\n" . print_r($commInfo, true) : ''));
-				}
-
-				$errors = ($commErrNo != 0 ? "\n(" . $commErrNo . ') ' . $commError : '');
-
+				$this->result = NULL;
 				$this->pnref = '';
 				# Check result
 				if( isset( $responseHash['PNREF'] ) ) {
@@ -287,7 +441,12 @@ ZIP
 
 				if( isset( $responseHash['RESULT'] ) ) {
 					$this->result = (int)$responseHash['RESULT'];
-					if( $this->result ) {
+					
+					if( BitBase::getParameter( $responseHash, 'DUPLICATE' ) == 2 ) {
+						$duplicateError = 'Duplicate Order ( '.$responseHash['ORDERID'].' )';
+						$this->mErrors['process_payment'] = $duplicateError;
+						$_SESSION[$this->code.'_error']['number'] = $duplicateError;
+					} elseif( $this->result ) {
 						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
 						$_SESSION[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
 					} else {
@@ -297,110 +456,26 @@ ZIP
 					$this->clearSessionDetails();
 					$this->result = 'X';
 				}
-
 				$this->response = $response;
-
 			}
-		}
+		} 
 
-		return ( count( $this->mErrors ) == 0 && $this->result === 0 );
+		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
+			$ret = TRUE;
+			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
+				//replace middle CC num with XXXX
+				$pOrder->info['cc_number'] = substr($pPaymentParameters['cc_number'], 0, 6) . str_repeat('X', (strlen($pPaymentParameters['cc_number']) - 6)) . substr($pPaymentParameters['cc_number'], -4);
+			}
+		} else {
+			$this->mDb->RollbackTrans();
+			$ret = FALSE;
+			$this->logFailedTransaction( $responseHash, $pOrder );
+		}
+		return $ret;
 	}
 
 	public function getTransactionReference() {
 		return $this->pnref;
-	}
-
-	function before_process( $pPaymentParameters ) {
-		global $_GET, $messageStack, $response, $gBitDb, $gBitUser, $order;
-		$order->info['cc_number'] = $pPaymentParameters['cc_number'];
-		$order->info['cc_expires'] = $pPaymentParameters['cc_expires'];
-		$order->info['cc_type'] = $pPaymentParameters['cc_type'];
-		$order->info['cc_owner'] = $pPaymentParameters['cc_owner'];
-		$order->info['cc_cvv'] = $pPaymentParameters['cc_cvv'];
-		// Calculate the next expected order id
-		$nextOrderId = $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
-
-		$processorParams =  array( 
-			'ACCT' => $order->info['cc_number'], 
-			'EXPDATE' => $order->info['cc_expires'], 
-			'STREET' => $order->billing['street_address'],
-			'ZIP' => $order->customer['postcode'],
-			'COMMENT1' => 'OrderID: ' . $nextOrderId . ' ' . $order->customer['email_address'] . ' (' . $gBitUser->mUserId . ')',
-			'EMAIL' => $order->customer['email_address'],
-			'charge_amount' => number_format($order->info['total'], 2,'.',''),
-			'CVV2' => $order->getField( 'cc_cvv' ),
-			'NAME' => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
-		);
-
-		if( $pPaymentParameters['cc_type'] == 'American Express' ) {
-			// TODO American Express Additional Credit Card Parameters
-		}
-
-		$processors = static::getProcessors();
-
-		switch( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
-			case 'Cielo Payments':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'Elavon':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'First Data Merchant Services Nashville':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'First Data Merchant Services North':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'Heartland':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'Litle':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'Paymentech Salem New Hampshire':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'PayPal':
-				switch( $pPaymentParameters['CHARGE_CURRENCY'] ) {
-					case 'AUD': // Australian dollar 
-						break;
-					case 'CAD': // Canadian dollar 
-						break;
-					case 'EUR': // Euro 
-						break;
-					case 'GBP': // British pound 
-						break;
-					case 'JPY': // Japanese Yen 
-						break;
-					case 'USD': // US dollar 
-					default:
-						break;
-				}
-				break;
-			case 'SecureNet':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'Vantiv':
-				// TODO Additional Credit Card Parameters
-				break;
-			case 'WorldPay':
-				// TODO Additional Credit Card Parameters
-				break;
-		}
-
-		if( $ret = $this->processPayment( $processorParams ) ) {
-			if( MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
-				//replace middle CC num with XXXX
-				$order->info['cc_number'] = substr($pPaymentParameters['cc_number'], 0, 6) . str_repeat('X', (strlen($pPaymentParameters['cc_number']) - 6)) . substr($pPaymentParameters['cc_number'], -4);
-			}
-		}
-		if ( $this->result !== 0 ) {
-			$this->mDb->RollbackTrans();
-			$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'failed for cust_id: '.$gBitUser->mUserId.' - '.$order->customer['email_address'].':'.$responseHash['RESPMSG'], number_format($order->info['total'], 2,'.','') ) );
-			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your credit card, please try again.' ).'<br/>'.$responseHash['RESPMSG'],'error');
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode( tra( 'There has been an error processing your credit card, please try again.' ) ), 'SSL', true, false));
-		}
-		return $ret;
 	}
 
 	/**
@@ -474,7 +549,7 @@ ZIP
 			$message .= 'Request Headers: ' . "\n" . $this->_sanitizeLog($this->lastHeaders) . "\n\n";
 			$message .= 'Request Parameters: {' . $operation . '} ' . "\n" . urldecode($this->_sanitizeLog($this->_parseNameValueList($this->lastParamList))) . "\n\n";
 			$message .= 'Response: ' . "\n" . urldecode($this->_sanitizeLog($values)) . $errors;
-			bit_error_log( $message );
+			bit_display_error( $message );
 			// extra debug email: //
 			if (MODULE_PAYMENT_PAYPALWPP_DEBUGGING == 'Log and Email') {
 				zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, 'PayPal Debug log - ' . $operation, $message, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($message)), 'debug');
@@ -531,25 +606,26 @@ ZIP
 
 	function install() {
 		global $gBitDb;
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(''Live'', ''Test''), ', 'NOW')");
+
 		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
-
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Payment Processor', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', '0', 'Payment processor configured in your Payflow Pro account.', '6', '9', 'zen_cfg_pull_down_payflow_processors(', '', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Currency', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
 		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(\'Live\', \'Test\'), ', 'NOW')");
 
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Authorization', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(\'Authorization\', \'Sale\'), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Payment Processor', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', 'PayPal', 'Payment processor configured in your Payflow Pro account.', '6', '10', 'zen_cfg_select_option(payflowpro::getProcessors(), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Multiple Currency Support', 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY', 'False', 'Support multiple currencies? PayPal Processor only; AUD, CAD, EUR, GBP, JPY, and USD only.', '6', '10', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Currency', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
+
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Sale', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(''Authorization'', ''Sale''), ', 'NOW')");
 		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Vendor ID', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', '', 'Your merchant login ID that you created when you registered for the account.', '6', '6', 'NOW')");
 		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PayPal', 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>', '6', '6', 'NOW')");
 		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', '4111XXXXXXXX1111 out credit card numbers in database.', '6', '13', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '20', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
+		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
 	}
 
 	function keys() {
-		return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
+		return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
 
 
 	}

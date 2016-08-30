@@ -46,7 +46,8 @@ class CommerceSystem extends BitSingleton {
 			if( isset( $this->mConfig[$pConfigKey] ) ) {
 				$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ?, `last_modified`='NOW' WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
 			} else {
-				$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key` ) VALUES ( ?, ? )", array( $pConfigValue, $pConfigKey ) );
+				$defaultTitle = ucwords( strtolower( str_replace( '_', ' ', preg_replace( '/MODULE_[A-Z]*_/', '', $pConfigKey ) ) ) );
+				$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key`, `configuration_title` ) VALUES ( ?, ?, ? )", array( $pConfigValue, $pConfigKey, $defaultTitle ) );
 			}
 		} else {
 			$this->mDb->query( "DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` = ?", array( $pConfigKey ) );
