@@ -143,6 +143,7 @@ foreach ( $directory_array as $class=>$file ) {
 			}
 		}
 
+		$rowClass = '';
 		if ((!isset($_GET['module']) || (isset($_GET['module']) && ($_GET['module'] == $class))) && !isset($mInfo)) {
 			$module_info = array('code' => $module->code,
 													 'title' => $module->title,
@@ -161,8 +162,18 @@ foreach ( $directory_array as $class=>$file ) {
 			}
 			$module_info['keys'] = $keys_extra;
 			$mInfo = new objectInfo($module_info);
+			if( isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) {
+				$rowClass = 'info';
+			}
+		} else {
+			if( $module->enabled ) {
+				$rowClass = 'success';
+			} elseif( $module->check() ) {
+				$rowClass = 'warning';
+			}
 		}
-		echo '<tr '.(isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ? 'class="info"' : ''). ' onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
+
+		echo '<tr class="'. $rowClass . '" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
 ?>
 							<td class="dataTableContent"><?php echo $module->title; ?></td>
 							<td class="dataTableContent"><?php echo $module->code; ?></td>
@@ -191,15 +202,10 @@ if ($check->RecordCount() > 0) {
 		$gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '" . implode(';', $installed_modules) . "', `last_modified` = ".$gBitDb->qtNOW()." where `configuration_key` = '" . $module_key . "'");
 	}
 } else {
-	$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . "
-							(`configuration_title`, `configuration_key`, `configuration_value`,
-							 `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`)
-							values ('Installed Modules', '" . $module_key . "', '" . implode(';', $installed_modules) . "',
-											'This is automatically updated. No need to edit.', '6', '0', ".$gBitDb->NOW().")");
+	$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`)
+						values ('Installed Modules', '" . $module_key . "', '" . implode(';', $installed_modules) . "', 'This is automatically updated. No need to edit.', '6', '0', ".$gBitDb->NOW().")");
 }
 ?>
-						<tr>
-						</tr>
 					</table>
 					<p><?php echo TEXT_MODULE_DIRECTORY . ' ' . $module_directory; ?></p>
 	</div>

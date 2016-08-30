@@ -40,7 +40,7 @@
       $this->contents = array();
     }
 
-    function infoBox($heading, $contents) {
+    function infoBox($heading, $contents, $panelClass='panel-info') {
       $this->table_row_parameters = 'class="infoBoxHeading"';
       $this->table_data_parameters = 'class="infoBoxHeading"';
       $this->heading = $this->tableBlock($heading);
@@ -48,9 +48,8 @@
       $this->table_row_parameters = '';
       $this->table_data_parameters = 'class="infoBoxContent"';
       $this->contents = $this->tableBlock($contents);
-
 			
-      return '<div class="panel panel-default"><div class="panel-heading">'.$this->heading.'</div><div class="panel-body">'.$this->contents.'</div></div>';
+      return '<div class="panel '.$panelClass.'"><div class="panel-heading">'.$this->heading.'</div><div class="panel-body">'.$this->contents.'</div></div>';
     }
 
     function menuBox($heading, $contents) {
