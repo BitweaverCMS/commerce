@@ -22,7 +22,6 @@
 		{formfeedback error=$gBitCustomer->mCart->mErrors.checkout}
 	{/if}
 
-<div class="container">
 {foreach from=$gBitCustomer->mCart->contents key=productsKey item=basket}
 <div class="row cart-item {cycle values="odd,even"}">
 	{assign var=product value=$gBitCustomer->mCart->getProductObject($productsKey)}
@@ -74,7 +73,6 @@
 		{tr}Your Shopping Cart is empty.{/tr}
 	</div>
 {/if}
-</div>
 
 	{/form}
 	</div><!-- end .body -->
