@@ -64,25 +64,22 @@
 				</tr>
 			{/if}
 			{/foreach}
+		</table>
+			<div class="row">
 			{if $order->content_type!='virtual' && $order->info.shipping_method}
-			<tr>
-				<td class="text-right" colspan="{$colspan}">{tr}Shipping Method{/tr}: {$order->info.shipping_method}</td>
-				<td><a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></td>
-			</tr>
+				<div class="col-xs-12 text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></div>
 			{/if}
 			{if $orderTotalsModules}
 				{foreach from=$orderTotalsModules->modules item=otFile}
 					{assign var=classInfo value=$otFile|pathinfo}
 					{assign var=className value=$classInfo.filename}
 					{foreach from=$GLOBALS.$className->output item=otOutput}
-						<tr>
-							<td  colspan="{$colspan}" class="text-right">{$otOutput.title}</td>
-							<td class="text-right">{$otOutput.text|escape}</td>
-						</tr>
+						<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
+						<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
 					{/foreach}
 				{/foreach}
 			{/if}
-		</table>
+			</div>
 	{/legend}
 	</div>
 </div>
