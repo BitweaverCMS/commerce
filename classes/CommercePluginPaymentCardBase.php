@@ -19,6 +19,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	var $cc_expires_month;
 	var $cc_expires_year;
 	var $pnref = -1;
+	var $paymentOrderId;
 
 	public function __construct() {
 		parent::__construct();
@@ -30,9 +31,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 	protected function logTransaction( $pResponseHash, $pOrder ) {
 		global $messageStack, $gBitUser;
-		bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'RESPONSE' => $pResponseHash ) );
-		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (customers_id, ref_id, trans_result,trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, '-', ?, ?, 'NOW' )", array(	$gBitUser->mUserId, $this->pnref, (int)$this->result, 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.$pResponseHash['RESPMSG'], number_format($pOrder->info['total'], 2,'.','') ) );
-		$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.$pResponseHash['RESPMSG'],'error');
+		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $this->paymentOrderId, $gBitUser->mUserId, $this->getTransactionReference(), (int)$this->result, 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.$pResponseHash['RESPMSG'], number_format($pOrder->info['total'], 2,'.','') ) );
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {

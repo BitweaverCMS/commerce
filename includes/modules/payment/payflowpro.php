@@ -152,7 +152,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		} else {
 			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
 				// reference transaction
-				$paymentOrderId = $pOrder->mOrdersId;
+				$this->paymentOrderId = $pOrder->mOrdersId;
 				// charge_currency comes in native
 				if( !($paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency' ) ) ) {
 					$paymentCurrency = DEFAULT_CURRENCY;
@@ -171,7 +171,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$pOrder->info['cc_owner'] = $this->cc_owner;
 				$pOrder->info['cc_cvv'] = $this->cc_cvv;
 				// Calculate the next expected order id
-				$paymentOrderId = $this->getNextOrderId();
+				$this->paymentOrderId = $this->getNextOrderId();
 				// orderTotal is in the system DEFAULT_CURRENCY. orderTotal * currency_value = localizedPayment
 				$paymentCurrency = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$paymentNative = $orderTotal;
@@ -211,7 +211,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'EXPDATE' => $pOrder->info['cc_expires'], // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $paymentOrderId . ' ' . $gBitUser->getField( 'email' ) . ' (' . $gBitUser->mUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $gBitUser->getField( 'email' ) . ' (' . $gBitUser->mUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 				'EMAIL' => $gBitUser->getField( 'email' ),
 				'CVV2' => $pOrder->getField( 'cc_cvv' ), // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
 				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
@@ -312,7 +312,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 					$postFields['CUSTIP'] = $_SERVER['REMOTE_ADDR']; // (Optional) IP address of payer's browser as recorded in its HTTP request to your website. This value is optional but recommended.  Note: PayPal records this IP address as a means to detect possible fraud.  Limitations: 15-character string in dotted quad format: xxx.xxx.xxx.xxx
 					$postFields['EMAIL'] = $gBitUser->getField( 'email' ); // (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
-					$postFields['INVNUM'] = $paymentOrderId; // (Optional) Your own unique invoice or tracking number.
+					$postFields['INVNUM'] = $this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
 					//$postFields['MERCHDESCR'] = ''; //	(Optional) Information that is usually displayed in the account holder's statement, for example, <Your-Not-For-Profit> <State>, <Your-Not-For-Profit> <Branch-Name>, <Your-Website> dues or <Your-Website> list fee.  Character length and limitations: 23 alphanumeric characters, can include the special characters dash (-) and dot (.) only. Asterisks (*) are NOT permitted. If it includes a space character (), enclose the "<Soft-Descriptor>" value in double quotes.
 					$postFields['MERCHANTCITY'] = substr( $_SERVER['SERVER_NAME'], 0, 21 ); //	(Optional) A unique phone number, email address or URL, which is displayed on the account holder's statement. PayPal recommends passing a toll-free phone number because, typically, this is the easiest way for a buyer to contact the seller in the case of an inquiry.
 
@@ -464,12 +464,15 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
 			$ret = TRUE;
+			$pOrder->info['cc_ref_id'] = $this->getTransactionReference();
 			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
 				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
 			}
 		} else {
+			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'RESPONSE' => $pResponseHash ) );
 			$this->mDb->RollbackTrans();
+			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.$pResponseHash['RESPMSG'],'error');
 			$ret = FALSE;
 		}
 		$this->logTransaction( $responseHash, $pOrder );
@@ -530,51 +533,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$values[$name] = str_replace('|', '&amp;', $value);
 		}
 		return $values;
-	}
-
-	/**
-	 * Log the current transaction depending on the current log level.
-	 *
-	 * @access protected
-	 *
-	 * @param string $operation	The operation called.
-	 * @param integer $elapsed	 Microseconds taken.
-	 * @param object $response	 The response.
-	 */
-	function _logTransaction($operation, $response, $errors) {
-		$values = $this->_parseNameValueList($response);
-		$token = preg_replace('/[^0-9.A-Z\-]/', '', urldecode($values['TOKEN']));
-		switch ($this->_logLevel) {
-		case PEAR_LOG_DEBUG:
-			$message =	 date('Y-m-d h:i:s') . "\n-------------------\n";
-			$message .=	'(' . $this->_server . ' transaction) --> ' . $this->_endpoints[$this->_server] . "\n";
-			$message .= 'Request Headers: ' . "\n" . $this->_sanitizeLog($this->lastHeaders) . "\n\n";
-			$message .= 'Request Parameters: {' . $operation . '} ' . "\n" . urldecode($this->_sanitizeLog($this->_parseNameValueList($this->lastParamList))) . "\n\n";
-			$message .= 'Response: ' . "\n" . urldecode($this->_sanitizeLog($values)) . $errors;
-			bit_display_error( $message );
-			// extra debug email: //
-			if (MODULE_PAYMENT_PAYPALWPP_DEBUGGING == 'Log and Email') {
-				zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, 'PayPal Debug log - ' . $operation, $message, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($message)), 'debug');
-			}
-
-		case PEAR_LOG_INFO:
-			$success = false;
-			if ($response) {
-				if ((isset($values['RESULT']) && $values['RESULT'] == 0) || strstr($values['ACK'],'Success')) {
-					$success = true;
-				}
-			}
-			bit_error_log($operation . ', Elapsed: ' . 'ms -- ' . (isset($values['ACK']) ? $values['ACK'] : ($success ? 'Succeeded' : 'Failed')) . $errors );
-
-		case PEAR_LOG_ERR:
-			if (!$response) {
-				$this->log('No response from server' . $errors, $token);
-			} else {
-				if ((isset($values['RESULT']) && $values['RESULT'] != 0) || strstr($values['ACK'],'Failure')) {
-					bit_error_log( $response . $errors );
-				}
-			}
-		}
 	}
 
 	////////////////////////////////////////////////////
