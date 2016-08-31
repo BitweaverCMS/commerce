@@ -61,3 +61,18 @@ $order->send_order_email($insert_id);
 
 $gBitDb->mDb->completeTrans();
 
+$paymentManager->after_process();
+
+$gBitCustomer->mCart->reset(true);
+
+// unregister session variables used during checkout
+foreach( array( 'sendto', 'billto', 'shipping', 'payment', 'comments' ) as $key ) {
+	if( isset( $_SESSION[$key] ) ) {
+		unset( $_SESSION[$key] );
+	}
+}
+
+$order_total_modules->clear_posts();//ICW ADDED FOR CREDIT CLASS SYSTEM
+
+zen_redirect(zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
+

@@ -23,7 +23,7 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
 
 class ot_coupon {
-	var $title, $output;
+	var $title, $output, $deduction;
 
 	function ot_coupon() {
 
@@ -161,7 +161,7 @@ class ot_coupon {
 	function apply_credit() {
 		global $gBitDb, $insert_id;
 		$cc_id = $_SESSION['cc_id'];
-		if ($this->deduction !=0) {
+		if( !empty( $this->deduction ) ) {
 			$gBitDb->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, redeem_date, redeem_ip, customer_id, order_id)
 						values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
 		}

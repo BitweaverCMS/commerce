@@ -43,20 +43,15 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 	}
 }
 
-require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order;
 
-require(DIR_FS_CLASSES . 'order_total.php');
+require_once(DIR_FS_CLASSES . 'order_total.php');
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
 
 // load the selected payment module
-require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
-
-if ($credit_covers) {
-	unset($_SESSION['payment']);
-	$_SESSION['payment'] = '';
-}
+require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );
@@ -72,7 +67,6 @@ if ($messageStack->size('checkout_payment') > 0) {
 
 if (is_array($paymentManager->modules)) {
 	if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
-vd( $paymentManager ); die;
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 	}
 }

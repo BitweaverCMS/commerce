@@ -66,21 +66,23 @@ class order extends CommerceOrderBase {
 	// true. This is used to bypass the payment method. In other words if the Gift Voucher is more than the order
 	// total, we don't want to go to paypal etc.
 	function hasPaymentDue() {
+		require_once(DIR_FS_CLASSES . 'order_total.php');
+
+		$otModules = new order_total;
 		global $gCommerceSystem;
+		$ret = TRUE;
 		if( ($ret = $this->getField( 'total' ) > 0) && $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' )  ) {
-			$total_deductions	= 0;
-			reset($this->modules);
-			$order_total = $this->info['total'];
-			while (list(, $value) = each($this->modules)) {
-				$class = substr($value, 0, strrpos($value, '.'));
-				$order_total=$this->get_order_total_main($class,$order_total);
-				if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-					$total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
-					$order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);
+			$totalDeductions	= 0;
+			$totalDue = $this->getField( 'total' );
+			foreach( $otModules->modules as $modName ) {
+				$modClass = substr($modName, 0, strrpos( $modName, '.'));
+				$totalDue = $otModules->get_order_total_main( $modClass, $totalDue );
+				if ( !empty( $GLOBALS[$modClass]->credit_class ) ) {
+					$totalDeductions += $GLOBALS[$modClass]->pre_confirmation_check( $totalDue );
+					$totalDue -= $GLOBALS[$modClass]->pre_confirmation_check( $totalDue );
 				}
 			}
-			$difference = $order->info['total'] - $total_deductions;
-			if ( $difference <= 0.009 ) {
+			if ( ($this->getField( 'total' ) - $totalDeductions) <= 0.009 ) {
 				$ret = FALSE;
 			}
 		}
