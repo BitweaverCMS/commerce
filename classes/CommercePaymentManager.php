@@ -25,7 +25,7 @@ class CommercePaymentManager {
 
 	// class constructor
 	function __construct($module = '') {
-		global $payment, $gBitCustomer, $credit_covers;
+		global $payment, $gBitCustomer;
 
 		if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
 			$this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
@@ -61,21 +61,20 @@ class CommercePaymentManager {
 			}
 
 			for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
-//					include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $include_modules[$i]['file']);
-		$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false');
-		if( file_exists( $langFile ) ) {
-			include( $langFile );
-		}
+				$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/', $include_modules[$i]['file'], 'false');
+				if( file_exists( $langFile ) ) {
+					include( $langFile );
+				}
 				include(DIR_WS_MODULES . 'payment/' . $include_modules[$i]['file']);
 
 				$GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class'];
 			}
 
-// if there is only one payment method, select it as default because in
-// checkout_confirmation.php the $payment variable is being assigned the
-// $_POST['payment'] value which will be empty (no radio button selection possible)
+			// if there is only one payment method, select it as default because in
+			// checkout_confirmation.php the $payment variable is being assigned the
+			// $_POST['payment'] value which will be empty (no radio button selection possible)
 			if ( (zen_count_payment_modules() == 1) && (!isset($_SESSION['payment']) || (isset($_SESSION['payment']) && !is_object($_SESSION['payment']))) ) {
-				if (!$credit_covers) $_SESSION['payment'] = $include_modules[0]['class'];
+				$_SESSION['payment'] = $include_modules[0]['class'];
 			}
 
 			if ( (zen_not_null($module)) && (in_array($module, $this->modules)) && (isset($GLOBALS[$module]->form_action_url)) ) {
@@ -84,15 +83,15 @@ class CommercePaymentManager {
 		}
 	}
 
-// class methods
-/* The following method is needed in the checkout_confirmation.php page
- due to a chicken and egg problem with the payment class and order class.
- The payment modules needs the order destination data for the dynamic status
- feature, and the order class needs the payment module title.
- The following method is a work-around to implementing the method in all
- payment modules available which would break the modules in the contributions
- section. This should be looked into again post 2.2.
-*/
+	// class methods
+	/* The following method is needed in the checkout_confirmation.php page
+	 due to a chicken and egg problem with the payment class and order class.
+	 The payment modules needs the order destination data for the dynamic status
+	 feature, and the order class needs the payment module title.
+	 The following method is a work-around to implementing the method in all
+	 payment modules available which would break the modules in the contributions
+	 section. This should be looked into again post 2.2.
+	*/
 	function update_status( $pPaymentParameters ) {
 		if (is_array($this->modules)) {
 			if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module])) {
@@ -166,18 +165,15 @@ class CommercePaymentManager {
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
-		global $credit_covers, $payment_modules;
 		$ret = FALSE;
-		if (is_array($this->modules)) {
-			if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
-				if ($credit_covers) {
-					$GLOBALS[$this->selected_module]->enabled = false;
-					$GLOBALS[$this->selected_module] = NULL;
-					$payment_modules = '';
-				} else {
+		if( $pOrder->hasPaymentDue() ) {	
+			if (is_array($this->modules)) {
+				if ( !empty( $GLOBALS[$this->selected_module] ) && is_object($GLOBALS[$this->selected_module]) && ($GLOBALS[$this->selected_module]->enabled) ) {
 					$ret = $GLOBALS[$this->selected_module]->verifyPayment( $pPaymentParameters, $pOrder );
 				}
 			}
+		} else {
+			$ret = TRUE;
 		}
 		return $ret;
 	}

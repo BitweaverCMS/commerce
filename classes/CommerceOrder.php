@@ -61,6 +61,32 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	// hasPaymentDue is called on checkout confirmation. It's function is to decide whether the
+	// credits available are greater than the order total. If they are then a variable (credit_covers) is set to
+	// true. This is used to bypass the payment method. In other words if the Gift Voucher is more than the order
+	// total, we don't want to go to paypal etc.
+	function hasPaymentDue() {
+		global $gCommerceSystem;
+		if( ($ret = $this->getField( 'total' ) > 0) && $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' )  ) {
+			$total_deductions	= 0;
+			reset($this->modules);
+			$order_total = $this->info['total'];
+			while (list(, $value) = each($this->modules)) {
+				$class = substr($value, 0, strrpos($value, '.'));
+				$order_total=$this->get_order_total_main($class,$order_total);
+				if ( !empty( $GLOBALS[$class]->credit_class ) ) {
+					$total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
+					$order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);
+				}
+			}
+			$difference = $order->info['total'] - $total_deductions;
+			if ( $difference <= 0.009 ) {
+				$ret = FALSE;
+			}
+		}
+		return $ret;
+	}
+
 	function getPaymentModule() {
 		global $gBitCustomer;
 		$ret = NULL;

@@ -49,7 +49,6 @@ $order = new order;
 require(DIR_FS_CLASSES . 'order_total.php');
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
-$order_total_modules->pre_confirmation_check();
 
 // load the selected payment module
 require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
@@ -61,7 +60,7 @@ if ($credit_covers) {
 
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );
-if ( (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) && ( empty( $credit_covers ) ) ) {
+if ( (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) ) {
 	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 }
 
@@ -73,6 +72,7 @@ if ($messageStack->size('checkout_payment') > 0) {
 
 if (is_array($paymentManager->modules)) {
 	if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
+vd( $paymentManager ); die;
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 	}
 }
