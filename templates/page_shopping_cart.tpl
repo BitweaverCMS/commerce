@@ -53,15 +53,14 @@
 	{if $gCommerceSystem->getConfig('SHOW_SHOPPING_CART_UPDATE')}
 <div class="row subtotal">
 	<div class="col-sm-8 text-right">
-		<select class="form-control" name="currency" onchange="this.form.submit()">
-			<option value="">{tr}Change Currency{/tr}...</option>
-			{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
-				<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode}selected="selected"{/if}>{$currencyHash.title|tra|escape:html}</option>
-			{/foreach}
-		</select>
 	</div>
 	<div class="col-sm-4 currency">
 		{tr}Sub-Total:{/tr} {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
+		<select class="form-control inline-block width-auto ml-1" name="currency" onchange="this.form.submit()">
+			{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
+				<option value="{$currencyCode}" {if $smarty.session.currency==$currencyCode || (!$smarty.session.currency && $currencyCode==$smarty.const.DEFAULT_CURRENCY)}selected="selected"{/if}>{$currencyHash.code|escape:html}</option>
+			{/foreach}
+		</select>
 	</div>
 	{/if}
 	<div class="col-xs-12 text-right">

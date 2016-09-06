@@ -23,28 +23,20 @@
 ////
 // Class to handle currencies
 // TABLES: currencies
+
+require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
+
 class currencies extends BitBase {
 	var $currencies;
 
-// class constructor
+	// class constructor
 	function __construct() {
 		global $gBitDb;
 		parent::__construct();
 		$this->currencies = array();
-		$currencies_query = "SELECT `code`, `title`, `symbol_left`, `symbol_right`, `decimal_point`, `thousands_point`, `decimal_places`, `currency_value` FROM " . TABLE_CURRENCIES;
+		$currencies_query = "SELECT `code` AS `hash_key`, * FROM " . TABLE_CURRENCIES;
 
-		$currencies = $gBitDb->query( $currencies_query );
-
-		while (!$currencies->EOF) {
-			$this->currencies[$currencies->fields['code']] = array( 'title' => $currencies->fields['title'],
-																	 'symbol_left' => $currencies->fields['symbol_left'],
-																	 'symbol_right' => $currencies->fields['symbol_right'],
-																	 'decimal_point' => $currencies->fields['decimal_point'],
-																	 'thousands_point' => $currencies->fields['thousands_point'],
-																	 'decimal_places' => $currencies->fields['decimal_places'],
-																	 'currency_value' => $currencies->fields['currency_value']);
-			$currencies->MoveNext();
-		}
+		$this->currencies = $this->mDb->getAssoc( $currencies_query );
 	}
 
 	function formatAddTax( $pPrice, $pTax ) {
@@ -78,6 +70,14 @@ class currencies extends BitBase {
 		}
 
 		return $pCurrency;
+	}
+
+	public function expungeCurrency( $pCurrency ) {
+
+		// Delete the currency as long as it is note the default
+		$this->mDb->query( "DELETE FROM " . TABLE_CURRENCIES . " WHERE `code` = ? AND `code` != ?", array( $pCurrency, DEFAULT_CURRENCY ) );
+		$this->clearFromCache();
+		return $this->mDb->Affected_Rows();
 	}
 
 // class methods
@@ -185,7 +185,7 @@ class currencies extends BitBase {
 			$pParamHash['currency_store']['title'] = trim( $pParamHash['title'] );
 		}
 		$pParamHash['currency_store']['currency_value'] = ( !empty( $pParamHash['currency_value'] ) ? $pParamHash['currency_value'] : 1 );
-		$pParamHash['currency_store']['last_updated'] = $this->mDb->sysTimeStamp;
+		$pParamHash['currency_store']['last_updated'] = $this->mDb->NOW();
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -198,6 +198,7 @@ class currencies extends BitBase {
 				$this->mDb->associateInsert( TABLE_CURRENCIES, $pParamHash['currency_store'] );
 				$currenciesId = zen_db_insert_id( TABLE_CURRENCIES, 'currencies_id' );
 			}
+			$this->clearFromCache();
 		}
 	}
 
