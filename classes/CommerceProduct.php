@@ -29,7 +29,6 @@ require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 class CommerceProduct extends LibertyMime {
 	public $mProductsId;
 	public $mOptions;
-	public $mRelatedContent;
 	public $mDiscounts;
 
 	function __construct( $pProductsId=NULL, $pContentId=NULL ) {
@@ -51,11 +50,10 @@ class CommerceProduct extends LibertyMime {
 		$this->mAdminContentPerm = 'p_bitcommerce_admin';
 		$this->mOptions = NULL;
 		$this->mDiscounts = NULL;
-		$this->mRelatedContent = NULL;
 	}
 
 	public function __sleep() {
-		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mRelatedContent', 'mDiscounts' ) );
+		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mDiscounts' ) );
 	}
 
 	// Override LibertyBase method
@@ -84,15 +82,9 @@ class CommerceProduct extends LibertyMime {
 			parent::load();
 			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $this->isPurchased()) ) {
 				$this->mInfo = array();
-				unset( $this->mRelatedContent );
 				unset( $this->mProductsId );
 			} else {
 				$this->mContentId = $this->mInfo['content_id'];
-			}
-			if( !empty( $this->mInfo['related_content_id'] ) ) {
-				if( $this->mRelatedContent = static::getLibertyObject( $this->mInfo['related_content_id'] ) ) {
-					$this->mInfo['display_link'] = $this->mRelatedContent->getDisplayLink( $this->mRelatedContent->getTitle(), $this->mRelatedContent->mInfo );
-				}
 			}
 		}
 		return( count( $this->mInfo ) );
@@ -2356,8 +2348,7 @@ Skip deleting of images for now
 
 
 			$this->mInfo = array();
-			unset( $this->mRelatedContent );
-			unset( $this->mProductsId );
+			$this->mProductsId = NULL;
 
 			$this->CompleteTrans();
 		}
