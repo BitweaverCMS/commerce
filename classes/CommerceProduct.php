@@ -2584,11 +2584,12 @@ Skip deleting of images for now
 		global $gBitDb;
 		$product = NULL;
 		$lookupValue = NULL;
+		$lookupKey = NULL;
 
 		if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
-			$lookupKey = key( $pLookupMixed );
 			$currentValue = current( $pLookupMixed );
 			if( BitBase::verifyId( $currentValue) ) {
+				$lookupKey = key( $pLookupMixed );
 				$lookupValue = $currentValue;
 			}
 		} elseif( BitBase::verifyId( $pLookupMixed ) ) {
@@ -2612,7 +2613,7 @@ Skip deleting of images for now
 		}
 
 		if( empty( $productClass ) ) {
-			$productClass = 'CommerceProduct';
+			$productClass = get_called_class();
 		}
 
 		$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
