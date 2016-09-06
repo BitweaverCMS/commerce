@@ -168,7 +168,7 @@ class currencies extends BitBase {
 		} else {
 			$pParamHash['currency_store']['code'] = $pParamHash['code'];
 		}
-		$pParamHash['currency_store']['decimal_places'] = ( !empty( $pParamHash['decimal_places'] ) ? $pParamHash['decimal_places'] : 2 );
+		$pParamHash['currency_store']['decimal_places'] = (int)( isset( $pParamHash['decimal_places'] ) ? $pParamHash['decimal_places'] : 2 );
 		$pParamHash['currency_store']['decimal_point'] = ( !empty( $pParamHash['decimal_point'] ) ? $pParamHash['decimal_point'] : '.' );
 		$pParamHash['currency_store']['thousands_point'] = ( !empty( $pParamHash['thousands_point'] ) ? $pParamHash['thousands_point'] : ',' );
 

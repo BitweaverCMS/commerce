@@ -52,9 +52,9 @@
 
 	{if $gCommerceSystem->getConfig('SHOW_SHOPPING_CART_UPDATE')}
 <div class="row subtotal">
-	<div class="col-sm-8 text-right">
+	<div class="col-sm-6 text-right">
 	</div>
-	<div class="col-sm-4 currency">
+	<div class="col-sm-6 currency">
 		{tr}Sub-Total:{/tr} {$gCommerceCurrencies->format($gBitCustomer->mCart->show_total())}
 		<select class="form-control inline-block width-auto ml-1" name="currency" onchange="this.form.submit()">
 			{foreach from=$gCommerceCurrencies->currencies item=currencyHash key=currencyCode}
