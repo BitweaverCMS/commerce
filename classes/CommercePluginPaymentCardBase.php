@@ -31,7 +31,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 	protected function logTransaction( $pResponseHash, $pOrder ) {
 		global $messageStack, $gBitUser;
-		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $this->paymentOrderId, $gBitUser->mUserId, $this->getTransactionReference(), (int)$this->result, 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.$pResponseHash['RESPMSG'], number_format($pOrder->info['total'], 2,'.','') ) );
+		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $this->paymentOrderId, $gBitUser->mUserId, $this->getTransactionReference(), (int)$this->result, 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.BitBase::getParameter( $pResponseHash, 'RESPMSG' ), number_format($pOrder->info['total'], 2,'.','') ) );
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
@@ -56,6 +56,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			$_SESSION[$this->code.'_error'] = $this->mErrors;
 		}
 		return count( $this->mErrors ) === 0;
+	}
+	public static function privatizeCard( $pCardNumber ) {
+		return substr($pCardNumber, 0, 4) . str_repeat('X', (strlen($pCardNumber) - 8)) . substr($pCardNumber, -4);
 	}
 
 	function verifyCreditCard($number, $expires_m, $expires_y, $cvv) {

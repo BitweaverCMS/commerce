@@ -115,7 +115,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 									array(	'title' => tra( 'Card Owner' ),
 											'field' => $pPaymentParameters['cc_owner']),
 									array(	'title' => tra( 'Card Number' ),
-											'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4).' +'.$pPaymentParameters['cc_cvv'] ),
+											'field' => $this->privatizeCard( $pPaymentParameters['cc_number'] )),
 									array(	'title' => tra( 'Expiration Date' ),
 											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParameters['cc_expires_month'], 1, '20' . $pPaymentParameters['cc_expires_year']))),
 									)
@@ -139,9 +139,18 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
+	function getProcessorCurrency() {
+		global $gCommerceSystem;
+		return $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
 		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser;
+
+		$postFields = array();
+		$responseHash = array();
+		$this->result = NULL;
+
 
 		if( !self::verifyPayment ( $pPaymentParameters, $pOrder ) ) {
 			// verify basics failed
@@ -153,10 +162,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
 				// reference transaction
 				$this->paymentOrderId = $pOrder->mOrdersId;
-				// charge_currency comes in native
-				if( !($paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency' ) ) ) {
-					$paymentCurrency = DEFAULT_CURRENCY;
-				}
+				$paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency', DEFAULT_CURRENCY );
 				$paymentLocalized = $pPaymentParameters['charge_amount'];
 				$paymentNative = (( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized);
 				// completed orders have a single joined 'name' field
@@ -207,13 +213,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'TENDER' => 'C',
 				'REQUEST_ID' => time(),
 
-				'ACCT' => $pOrder->info['cc_number'], // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
-				'EXPDATE' => $pOrder->info['cc_expires'], // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $gBitUser->getField( 'email' ) . ' (' . $gBitUser->mUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
-				'EMAIL' => $gBitUser->getField( 'email' ),
-				'CVV2' => $pOrder->getField( 'cc_cvv' ), // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
+				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $pOrder->customer['email_address'] . ' (' . $pOrder->customer['user_id'] . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'EMAIL' => $pOrder->customer['email_address'],	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
 				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
 
 				'BILLTOFIRSTNAME' => $pOrder->billing['firstname'], //	(Optional) Cardholder's first name.  Limitations: 30 alphanumeric characters
@@ -234,12 +237,19 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'SHIPTOZIP' => $pOrder->delivery['postcode'], //	(Optional) Ship-to postal code.  Limitations: 9-character string.
 				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
 
-				'FREIGHTAMT' => $pOrder->info['shipping_cost'], // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
 			);
-
+			if( $pOrder->customer['user_id'] != $gBitUser->mUserId ) {
+				$postFields['COMMENT1'] .= ' / '.$gBitUser->getField( 'login' ).' ('.$gBitUser->mUserId.')';
+			}
 			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {	
 				$postFields['ORIGID'] = $pPaymentParameters['cc_ref_id'];
 				$postFields['COMMENT2'] = 'Reference Trans'; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+			} else {
+				$postFields['ACCT'] = $pOrder->info['cc_number']; // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
+				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
+				$postFields['EXPDATE'] = $pOrder->info['cc_expires']; // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
+				$postFields['INVNUM'] = $this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
+				$postFields['FREIGHTAMT'] = $pOrder->info['shipping_cost']; // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
 			}
 
 			/*
@@ -258,8 +268,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			*/ 
 
 			// Assume we are charging the native amount in the default currency. Some gateways support multiple currencies, check for that shortly
+			if( (DEFAULT_CURRENCY != $this->getProcessorCurrency()) && $paymentCurrency == DEFAULT_CURRENCY ) {
+				global $currencies;
+				// weird situtation where payflow currency default is different from the site. Need to convert site native to processor native
+				$paymentNative = $currencies->convert( $paymentNative, $this->getProcessorCurrency(), $paymentCurrency );
+				bit_error_email( 'PAYMENT WARNING on '.php_uname( 'n' ).': mismatch Payflow currency '.$this->getProcessorCurrency().' != Default Currency '.DEFAULT_CURRENCY, bit_error_string(), array() );
+			}
 			$paymentAmount = $paymentNative;
-			$postFields['CURRENCY'] = $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+			$postFields['CURRENCY'] = $this->getProcessorCurrency();
 
 			if( $this->cc_type == 'American Express' ) {
 				// TODO American Express Additional Credit Card Parameters
@@ -311,8 +327,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					}
 
 					$postFields['CUSTIP'] = $_SERVER['REMOTE_ADDR']; // (Optional) IP address of payer's browser as recorded in its HTTP request to your website. This value is optional but recommended.  Note: PayPal records this IP address as a means to detect possible fraud.  Limitations: 15-character string in dotted quad format: xxx.xxx.xxx.xxx
-					$postFields['EMAIL'] = $gBitUser->getField( 'email' ); // (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
-					$postFields['INVNUM'] = $this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
 					//$postFields['MERCHDESCR'] = ''; //	(Optional) Information that is usually displayed in the account holder's statement, for example, <Your-Not-For-Profit> <State>, <Your-Not-For-Profit> <Branch-Name>, <Your-Website> dues or <Your-Website> list fee.  Character length and limitations: 23 alphanumeric characters, can include the special characters dash (-) and dot (.) only. Asterisks (*) are NOT permitted. If it includes a space character (), enclose the "<Soft-Descriptor>" value in double quotes.
 					$postFields['MERCHANTCITY'] = substr( $_SERVER['SERVER_NAME'], 0, 21 ); //	(Optional) A unique phone number, email address or URL, which is displayed on the account holder's statement. PayPal recommends passing a toll-free phone number because, typically, this is the easiest way for a buyer to contact the seller in the case of an inquiry.
 
@@ -429,8 +443,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			curl_close($ch);
 
-			$responseHash = array();
-
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
 
@@ -470,9 +482,12 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
 			}
 		} else {
-			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'RESPONSE' => $pResponseHash ) );
+			if( isset( $postFields['CVV2'] ) ) { unset( $postFields['CVV2'] ); }
+			if( isset( $postFields['ACCT'] ) ) { $postFields['ACCT'] = $this->privatizeCard( $postFields['ACCT'] ); }
+			
+			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'CURL' => $postFields, 'RESPONSE' => $responseHash ) );
 			$this->mDb->RollbackTrans();
-			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.$pResponseHash['RESPMSG'],'error');
+			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.BitBase::getParameter( $responseHash, 'RESPMSG' ),'error');
 			$ret = FALSE;
 		}
 		$this->logTransaction( $responseHash, $pOrder );
