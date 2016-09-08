@@ -93,7 +93,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		}
 
 		if( !empty( $cvv ) ) {
-			$this->cc_cvv = (int)$cvv;
+			$this->cc_cvv = $cvv;
 		}
 
 		$current_year = date('Y');
