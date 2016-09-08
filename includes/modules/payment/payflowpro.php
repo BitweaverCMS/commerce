@@ -482,7 +482,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
 			}
 		} else {
-			if( isset( $postFields['CVV2'] ) ) { unset( $postFields['CVV2'] ); }
+			foreach( array( 'PWD', 'USER', 'VENDOR', 'PARTNER', 'CVV2' ) as $field ) {
+				if( isset( $postFields[$field] ) ) { unset( $postFields[$field] ); }
+			}
+
 			if( isset( $postFields['ACCT'] ) ) { $postFields['ACCT'] = $this->privatizeCard( $postFields['ACCT'] ); }
 			
 			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'CURL' => $postFields, 'RESPONSE' => $responseHash ) );
