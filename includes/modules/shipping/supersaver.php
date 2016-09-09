@@ -24,7 +24,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
 
 
   class supersaver extends CommercePluginShippingBase {
-    var $code, $title, $description, $icon, $enabled, $quotes;
+    var $code, $title, $description, $icon, $enabled;
 
 // class constructor
     function supersaver() {
