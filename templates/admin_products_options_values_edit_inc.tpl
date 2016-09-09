@@ -44,7 +44,16 @@
 	{legend legend="Attribute Pricing"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Fixed Attribute Price{/tr}</div>
-			<div class="forminput"><input style="width:auto;" type="text" name="price_prefix" size="1" maxlength="1" value="{$editValue.price_prefix|default:'+'}" />&nbsp;<input type="text" class="form-control" name="options_values_price" value="{$editValue.options_values_price}" size="6" />&nbsp;</div>
+			<div class="input-group">
+				<span class="input-group-addon pt-0" style="width:75px">
+					<select class="form-control input-xs" name="price_prefix">
+						<option value="+"> + </option>
+						<option value="-" {if $editValue.price_prefix == '-'}selected{/if}> - </option>
+					</select>
+				</span>
+				<input type="text" class="form-control" name="options_values_price" value="{$editValue.options_values_price}" />
+			</div>
+
 		</div>
 		<div class="form-group">
 			<div class="formlabel">{tr}One Time{/tr}</div>
@@ -108,7 +117,15 @@
 	{legend legend="Attribute Weights"}
 		<div class="form-group">
 			<div class="formlabel">{tr}Weight{/tr}</div>
-			<div class="forminput"><input style="width:auto;" type="text" name="products_attributes_wt_pfix" size="1" maxlength="1"  value="{$editValue.products_attributes_wt_pfix|default:'+'}" />&nbsp;<input type="text" class="form-control" name="products_attributes_wt" value="{$editValue.products_attributes_wt}" size="6" /></div>
+			<div class="input-group">
+				<span class="input-group-addon pt-0" style="width:75px">
+					<select class="form-control input-xs" name="products_attributes_wt_pfix">
+						<option value="+"> + </option>
+						<option value="-" {if $editValue.products_attributes_wt_pfix == '-'}selected{/if}> - </option>
+					</select>
+				</span>
+<input type="text" class="form-control" name="products_attributes_wt" value="{$editValue.products_attributes_wt}"/>
+			</div>
 		</div>
 	{/legend}
 
