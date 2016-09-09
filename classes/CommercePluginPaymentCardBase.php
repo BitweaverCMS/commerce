@@ -48,6 +48,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			} else {
 				$this->cc_owner = $pPaymentParameters['cc_owner'];
 			}
+			if( preg_match( '/^37/', $pPaymentParameters['cc_number'] ) && BitBase::getParameter( $pOrder->info, 'currency' ) != 'USD' ) {
+				 $this->mErrors['number'] = tra( 'American Express cannot process transactions in currencies other than USD. Change the currency in your cart, or use a different card.' );
+			}
 		}
 
 		$this->saveSessionDetails();
