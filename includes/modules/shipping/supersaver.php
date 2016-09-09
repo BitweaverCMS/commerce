@@ -19,8 +19,12 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-  class supersaver {
-    var $code, $title, $description, $icon, $enabled;
+
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+
+
+  class supersaver extends CommercePluginShippingBase {
+    var $code, $title, $description, $icon, $enabled, $quotes;
 
 // class constructor
     function supersaver() {
@@ -33,6 +37,7 @@
       $this->icon = 'shipping_supersaver';
       $this->tax_class = MODULE_SHIPPING_SUPERSAVER_TAX_CLASS;
       $this->enabled = ((MODULE_SHIPPING_SUPERSAVER_STATUS == 'True') ? true : false);
+	$this->quotes = array();
 
       if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_SUPERSAVER_ZONE > 0) ) {
         $check_flag = false;

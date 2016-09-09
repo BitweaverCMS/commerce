@@ -14,11 +14,13 @@
  * @version $Id: usps.php 2014-09-07 ajeh Version K5 $
  */
 
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+
 /**
  * USPS Shipping Module class
  *
  */
-class usps extends BitBase {
+class usps extends CommercePluginShippingBase {
   /**
    * Declare shipping module alias code
    *
