@@ -55,7 +55,7 @@ require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );
-if ( (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) ) {
+if( $order->hasPaymentDue() && (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) ) {
 	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 }
 
