@@ -14,8 +14,8 @@
 				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
 				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $gBitOrder->getField('currency') )}
 				{if $gBitOrder->getField('currency') && $gBitOrder->getField('currency') != $smarty.const.DEFAULT_CURRENCY}
-				<input type="text" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
-				<input type="text" name="charge_currency_value" value="{$gBitOrder->getField('currency_value')}"/>
+				<input type="hidden" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
+				<input type="hidden" name="charge_currency_value" value="{$gBitOrder->getField('currency_value')}"/>
 				{/if}
 				<div class="input-group">
 					{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
