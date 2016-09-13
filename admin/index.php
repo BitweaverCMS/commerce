@@ -19,78 +19,78 @@
 // +------------------------------------------------------------------------+
 //	$Id$
 //
-	$version_check_index=true;
-	require('includes/application_top.php');
+$version_check_index=true;
+require('includes/application_top.php');
 
-	if( !empty( $_REQUEST['lookup_order_id'] ) && BitBase::verifyId( $_REQUEST['lookup_order_id'] ) ) {
-		bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['lookup_order_id'] );
+if( !empty( $_REQUEST['lookup_order_id'] ) && BitBase::verifyId( $_REQUEST['lookup_order_id'] ) ) {
+	bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.(int)$_REQUEST['lookup_order_id'] );
+}
+
+global $language;
+$languages = zen_get_languages();
+$languages_array = array();
+$languages_selected = DEFAULT_LANGUAGE;
+for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
+	$languages_array[] = array( 'id' => $languages[$i]['code'], 'text' => $languages[$i]['name'] );
+	if ($languages[$i]['directory'] == $language) {
+		$languages_selected = $languages[$i]['code'];
 	}
+}
 
-	global $language;
-	$languages = zen_get_languages();
-	$languages_array = array();
-	$languages_selected = DEFAULT_LANGUAGE;
-	for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
-		$languages_array[] = array( 'id' => $languages[$i]['code'], 'text' => $languages[$i]['name'] );
-		if ($languages[$i]['directory'] == $language) {
-			$languages_selected = $languages[$i]['code'];
-		}
-	}
+$customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
 
-	$customers = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS);
+$products = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '1'");
 
-	$products = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '1'");
+$products_off = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '0'");
 
-	$products_off = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_PRODUCTS . " WHERE `products_status` = '0'");
+$reviews = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS);
+$reviews_pending = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS . " WHERE `status`='0'");
 
-	$reviews = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS);
-	$reviews_pending = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_REVIEWS . " WHERE `status`='0'");
+$newsletters = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS . " WHERE `customers_newsletter` = '1'");
 
-	$newsletters = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_CUSTOMERS . " WHERE `customers_newsletter` = '1'");
-
-	$counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
-	$counter = $gBitDb->Execute($counter_query);
-	$counter_startdate = $counter->fields['startdate'];
+$counter_query = "select `startdate`, `counter` from " . TABLE_COUNTER;
+$counter = $gBitDb->Execute($counter_query);
+$counter_startdate = $counter->fields['startdate'];
 //	$counter_startdate_formatted = strftime(DATE_FORMAT_LONG, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
-	$counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
+$counter_startdate_formatted = strftime(DATE_FORMAT_SHORT, mktime(0, 0, 0, substr($counter_startdate, 4, 2), substr($counter_startdate, -2), substr($counter_startdate, 0, 4)));
 
-	$specials = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '0'");
-	$specials_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '1'");
-	$featured = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '0'");
-	$featured_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '1'");
-	$salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
-	$salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
+$specials = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '0'");
+$specials_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SPECIALS . " WHERE `status`= '1'");
+$featured = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '0'");
+$featured_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHERE `status`= '1'");
+$salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
+$salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
 
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 
-	$listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
-	if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
-		$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-		$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-	} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-		unset( $_SESSION['orders_status_comparison'] );
-	} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
-		$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
-	} 
+$listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
+if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
+	$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+	$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
+} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+	unset( $_SESSION['orders_status_comparison'] );
+} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
+	$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
+} 
 
-	if( !empty( $_REQUEST['search_scope'] ) ) {
-		$listHash['search_scope'] = $_REQUEST['search_scope'];
-		$_SESSION['search_scope'] = $_REQUEST['search_scope'];
-	}
-	if( !empty( $_REQUEST['search'] ) ) {
-		$listHash['search'] = $_REQUEST['search'];
-		$_SESSION['search'] = $_REQUEST['search'];
-	}
-	$gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
+if( !empty( $_REQUEST['search_scope'] ) ) {
+	$listHash['search_scope'] = $_REQUEST['search_scope'];
+	$_SESSION['search_scope'] = $_REQUEST['search_scope'];
+}
+if( !empty( $_REQUEST['search'] ) ) {
+	$listHash['search'] = $_REQUEST['search'];
+	$_SESSION['search'] = $_REQUEST['search'];
+}
+$gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
 
-	if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
-		$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
-		$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
-	} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-		unset( $_SESSION['orders_status_id'] );
-	} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
-		$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
-	}
+if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
+	$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
+	$_SESSION['orders_status_id'] = $_REQUEST['orders_status_id'];
+} elseif( !empty( $_SESSION['orders_status_id'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+	unset( $_SESSION['orders_status_id'] );
+} elseif( !empty( $_SESSION['orders_status_id'] ) ) {
+	$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
+}
 
 ?>
 <header>
@@ -101,12 +101,13 @@
 	<div class="col-md-8" id="colone">
 <?php
 
-	$orders = order::getList( $listHash );
-	$gBitSmarty->assign_by_ref( 'listOrders', $orders );
-	$statuses = commerce_get_statuses( TRUE );
-	$statuses['all'] = 'All';
-	$gBitSmarty->assign( 'commerceStatuses', $statuses );
-	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+$orders = order::getList( $listHash );
+$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+$statuses = commerce_get_statuses( TRUE );
+$statuses['all'] = 'All';
+$gBitSmarty->assign( 'commerceStatuses', $statuses );
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
+
 ?>
 	</div>
 
