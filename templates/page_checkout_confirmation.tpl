@@ -3,7 +3,7 @@
 	<h1>{tr}Step 3 of 3{/tr} - {tr}Order Confirmation{/tr}</h1>
 </header>
 
-{form action=$formActionUrl}
+{form action=$formActionUrl onsubmit="paymentSubmit(this)"}
 <div class="row">
 	<div class="col-md-8">
 
@@ -117,7 +117,12 @@
 {/if}
 
 <div class="form-group submit">
-	<input type="submit" class="btn btn-primary" value="{tr}Confirm Order{/tr}" />
+	<button id="payment-submit-btn" type="submit" class="btn btn-primary" />{tr}Confirm Order{/tr}</button>
 </div>
-
+<script type="text/javascript">
+function paymentSubmit( pForm ) {ldelim}
+	$('#payment-submit-btn').html("<i class=\"icon-spinner icon-spin\"></i> {tr}Processsing Payment...{/tr}");
+	$('#payment-submit-btn').prop("disabled",true);
+{rdelim}
+</script>
 {/form}
