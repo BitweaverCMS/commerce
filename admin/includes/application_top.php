@@ -27,7 +27,6 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 // Force hiding of columns in admin side for maximum real estate and productivity. - spiderr
 $gBitSystem->mConfig["bitcommerce_hide_right_col"] = 'y';
 $gBitSystem->mConfig["bitcommerce_hide_left_col"] = 'y';
-$gBitSystem->setConfig('layout-body', '-fluid');
 
 
 // Set the level of error reporting
