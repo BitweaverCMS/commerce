@@ -1166,6 +1166,8 @@ If a special exist * 10+9
 	}
 
 	public static function prepGetList(&$pListHash){
+		// keep a copy of user_id for later...
+		$userId = parent::getParameter( $pListHash, 'user_id' );
 		parent::prepGetList($pListHash);
 		if(empty($pListHash['query_string'])){
 			$pListHash['query_string'] = '';
@@ -1176,7 +1178,10 @@ If a special exist * 10+9
 				$pListHash['query_string'].= "&$key=$value";
 			}
 		}
-
+		if( !empty( $userId ) ) {
+			// LibertyContent clobbers user_id for security reasons base on list_content. For Commerce, we want to loosen this up.
+			$pListHash['user_id'] = $userId;
+		}
 	}
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
@@ -1233,6 +1238,7 @@ If a special exist * 10+9
 			$whereSql .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
+
 		if( !empty( $pListHash['upper_price_limit'] ) ){
 			$whereSql .= " AND p.`products_price` <= ? ";
 			array_push( $bindVars, $pListHash['upper_price_limit']);
