@@ -178,19 +178,19 @@ function getShippingQuotes( pOrderId ) {
 		{/if}
 	</td>
 	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
-		{$currencies->format($order->totals[t].orders_value)} {if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+		{if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$order->info.currency,$order->info.currency_value)}{/if} {$currencies->format($order->totals[t].orders_value)} 
 	</td>
 	<td class="alignright {'ot_'|str_replace:'':$order->totals[t].class} value">
 		{if $order->totals[t].class=='ot_subtotal'}
 			 {$currencies->format($wholesaleIncome)}
 		{elseif $order->totals[t].class=='ot_total'}
 			{math equation="i - c - g" i=$wholesaleIncome c=$couponAmount g=$giftAmount assign=wholesaleNet}
-			<span class="{if $wholesaleNet>0}success{else}error{/if}">{$currencies->format($wholesaleNet)} {if $isForeignCurrency}({$currencies->format($wholesaleNet,true,$smarty.const.DEFAULT_CURRENCY)}{/if}</span>
+			<span class="{if $wholesaleNet>0}success{else}error{/if}">{$currencies->format($wholesaleNet)} {if $isForeignCurrency}({$currencies->format($wholesaleNet,true,$order->info.currency,$order->info.currency_value)}{/if}</span>
 		{elseif $order->totals[t].class=='ot_gv'}
-			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}){/if}
+			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$order->info.currency,$order->info.currency_value)}){/if}
 			{assign var=giftAmount value=$giftAmount-$order->totals[t].orders_value}
 		{elseif $order->totals[t].class=='ot_coupon'}
-			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)}){/if}
+			({$currencies->format($order->totals[t].orders_value)}) {if $isForeignCurrency}({$currencies->format($order->totals[t].orders_value,true,$order->info.currency,$order->info.currency_value)}){/if}
 			{assign var=couponAmount value=$couponAmount+$order->totals[t].orders_value}
 		{/if}
 	</td>
