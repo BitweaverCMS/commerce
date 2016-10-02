@@ -259,7 +259,7 @@ class order extends CommerceOrderBase {
 							FROM " . TABLE_ORDERS . " co
 								INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 								$joinSql
-								LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id`)
+								LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `trans_result`='0')
 							WHERE co.`orders_id` = ?";
 			$order = $gBitDb->query( $order_query, array( $this->mOrdersId ) );
 
