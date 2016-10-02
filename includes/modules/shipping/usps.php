@@ -289,12 +289,12 @@ class usps extends CommercePluginShippingBase {
       // were errors encountered?
       if ($uspsQuote === -1) {
         $this->quotes = array('module' => $this->title,
-                              'error' => MODULE_SHIPPING_USPS_TEXT_SERVER_ERROR . (MODULE_SHIPPING_USPS_SERVER == 'test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
+                              'error' => tra( 'The USPS server had a lookup error.' ));
         return $this->quotes;
       }
       if (!is_array($uspsQuote)) {
         $this->quotes = array('module' => $this->title,
-                              'error' => MODULE_SHIPPING_USPS_TEXT_ERROR . (MODULE_SHIPPING_USPS_SERVER == 'test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
+                              'error' => tra( 'The USPS server had a lookup error.' ));
         return $this->quotes;
       }
       if (isset($uspsQuote['Number']) && !isset($uspsQuote['error'])) $uspsQuote['error'] = $uspsQuote['Number'] . ' - ' . $uspsQuote['Description'];
