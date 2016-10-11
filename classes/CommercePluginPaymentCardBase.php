@@ -61,7 +61,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return count( $this->mErrors ) === 0;
 	}
 	public static function privatizeCard( $pCardNumber ) {
-		return substr($pCardNumber, 0, 4) . str_repeat('X', (strlen($pCardNumber) - 8)) . substr($pCardNumber, -4);
+		if( $pCardNumber ) {
+			return substr($pCardNumber, 0, 4) . str_repeat('X', (strlen($pCardNumber) - 8)) . substr($pCardNumber, -4);
+		}
 	}
 
 	function verifyCreditCard($number, $expires_m, $expires_y, $cvv) {
