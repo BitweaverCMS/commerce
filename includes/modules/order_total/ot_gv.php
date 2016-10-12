@@ -69,7 +69,8 @@ class ot_gv {
 				$od_amount = $this->calculate_credit($order_total);
 			}
 			$this->deduction = $od_amount + $tod_amount;
-			$order->info['total'] = $order->info['total'] - $this->deduction;
+			$order->info['total'] = round( $order->info['total'] - $this->deduction, 5 ); // avoid 64 bit math error
+
 			if ($od_amount > 0) {
 				$this->output[] = array('title' => $this->title . ':',
 												 'text' => '-' . $currencies->format($this->deduction),
@@ -96,8 +97,8 @@ class ot_gv {
 		$_SESSION['cot_gv'] = abs($_SESSION['cot_gv']);
 
 		if ($_SESSION['cot_gv'] > 0) {
-		if ($this->include_shipping == 'false') $order_total -= $order->info['shipping_cost'];
-		if ($this->include_tax == 'false') $order_total -= $order->info['tax'];
+			if ($this->include_shipping == 'false') $order_total -= $order->info['shipping_cost'];
+			if ($this->include_tax == 'false') $order_total -= $order->info['tax'];
 			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			}
