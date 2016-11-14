@@ -145,7 +145,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
-		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser;
+		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
 		$responseHash = array();
@@ -184,6 +184,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$paymentLocalized = ( $paymentCurrency != DEFAULT_CURRENCY ) ? ($paymentNative * $pOrder->getField('currency_value')) : $paymentNative;
 			}
 
+			$paymentEmail = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
+			$paymentUserId = BitBase::getParameter( $pOrder->customer, 'user_id', $gBitUser->getField('user_id') );
+			$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
+
 
 			/* === Core Credit Card Parameters ===
 
@@ -204,6 +208,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			ORDERID		(Optional) Checks for a duplicate order. If you pass ORDERID in a request and pass it again in the future, the response returns DUPLICATE=2 along with the ORDERID.  Note: Do not use ORDERID to catch duplicate orders processed within seconds of each other. Use ORDERID with Request ID to prevent duplicates as a result of processing or communication errors. * bitcommerce note - this cannot be paymentOrderId as a failed process will block any future transactions
 			*/
 
+
 			$postFields =  array( 
 				'PWD' => MODULE_PAYMENT_PAYFLOWPRO_PWD,
 				'USER' => MODULE_PAYMENT_PAYFLOWPRO_LOGIN,
@@ -215,8 +220,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $pOrder->customer['email_address'] . ' (' . $pOrder->customer['user_id'] . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
-				'EMAIL' => $pOrder->customer['email_address'],	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
+				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'EMAIL' => $paymentEmail,	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
 				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
 
 				'BILLTOFIRSTNAME' => $pOrder->billing['firstname'], //	(Optional) Cardholder's first name.  Limitations: 30 alphanumeric characters
@@ -238,12 +243,12 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
 
 			);
-			if( $pOrder->customer['user_id'] != $gBitUser->mUserId ) {
+			if( $paymentUserId != $gBitUser->mUserId ) {
 				$postFields['COMMENT1'] .= ' / '.$gBitUser->getField( 'login' ).' ('.$gBitUser->mUserId.')';
 			}
 			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {	
 				$postFields['ORIGID'] = $pPaymentParameters['cc_ref_id'];
-				$postFields['COMMENT2'] = 'Reference Trans'; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				$postFields['COMMENT2'] = 'Reference Trans for '.$postFields['ORIGID']; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 			} else {
 				$postFields['ACCT'] = $pOrder->info['cc_number']; // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
 				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
@@ -316,7 +321,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 							case 'JPY': // Japanese Yen 
 							case 'USD': // US dollar 
 								if( $paymentCurrency != $postFields['CURRENCY'] ) {
-									$paymentAmount =  number_format( $paymentLocalized, 2,'.','' );
+									$paymentAmount =  number_format( $paymentLocalized, $paymentDecimal, '.','' );
 									$postFields['CURRENCY'] = strtoupper( $paymentCurrency );
 								}
 								break;
@@ -398,7 +403,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$paymentAmount = -1.0 * $paymentAmount;
 			}
 
-			$postFields['AMT'] = number_format($paymentAmount, 2,'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+			$postFields['AMT'] = number_format($paymentAmount, $paymentDecimal,'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';
