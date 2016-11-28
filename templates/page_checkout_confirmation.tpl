@@ -117,12 +117,13 @@
 {/if}
 
 <div class="form-group submit">
-	<button id="payment-submit-btn" type="submit" class="btn btn-primary" />{tr}Confirm Order{/tr}</button>
+	<button id="payment-submit-btn" onclick='paymentSubmit(this.form); this.form.submit();' type="submit" class="btn btn-primary" />{tr}Confirm Order{/tr}</button>
 </div>
 <script type="text/javascript">
 function paymentSubmit( pForm ) {ldelim}
 	$('#payment-submit-btn').html("<i class=\"icon-spinner icon-spin\"></i> {tr}Processsing Payment...{/tr}");
 	$('#payment-submit-btn').prop("disabled",true);
+	return true;
 {rdelim}
 </script>
 {/form}

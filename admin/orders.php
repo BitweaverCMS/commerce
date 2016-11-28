@@ -90,7 +90,9 @@ if( !empty( $order ) ) {
 	$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
 	if( !empty( $_REQUEST['del_ord_prod_att_id'] ) ) {
 		$gBitDb->StartTrans();
+		$delOption = $gBitDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=? ", array( $_REQUEST['del_ord_prod_att_id'], $_REQUEST['oID'] ) );
 		$rs = $gBitDb->query( "DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=? ", array( $_REQUEST['del_ord_prod_att_id'], $_REQUEST['oID'] ) );
+		$order->updateStatus( array( 'comments' => 'Deleted Product Option: '.$delOption['products_options'].' => '.$delOption['products_options_values'].' ('.$_REQUEST['del_ord_prod_att_id'].')' ) );
 		$gBitDb->CompleteTrans();
 		bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 	}
@@ -128,6 +130,7 @@ if( !empty( $order ) ) {
 			$newOption['orders_id'] = $_REQUEST['oID'];
 			$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
 			$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
+			$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['newOrderOptionValue'].')' ) );
 			bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'].'&action=edit' );
 			break;
 		case 'save_address':
