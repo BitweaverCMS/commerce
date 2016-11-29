@@ -1264,9 +1264,9 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 
 				//send emails
 				$textMessage = STORE_NAME . "\n------------------------------------------------------\n" .
-					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n\n" .
-					tra( 'Detailed Invoice' ) . ': ' . $this->getDisplayLink() . "\n\n" .
-					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n\n" .
+					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n" .
+					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n" .
+					$this->getDisplayUrl() . "\n\n" .
 					strip_tags($notify_comments) ;
 				
 				if( $statusChanged ) {
