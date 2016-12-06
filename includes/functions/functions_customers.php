@@ -23,20 +23,15 @@
 ////
 // Returns the address_format_id for the given country
 // TABLES: countries;
-  function zen_get_address_format_id($country_id) {
-    global $gBitDb;
-    $address_format_query = "select `address_format_id` as `format_id`
-                             from " . TABLE_COUNTRIES . "
-                             where `countries_id` = '" . (int)$country_id . "'";
+function zen_get_address_format_id($country_id) {
+	global $gBitDb;
+	$address_format_query = "SELECT `address_format_id` as `format_id` FROM " . TABLE_COUNTRIES . " WHERE `countries_id` = ?";
 
-    $address_format = $gBitDb->Execute($address_format_query);
-
-    if ($address_format->RecordCount() > 0) {
-      return $address_format->fields['format_id'];
-    } else {
-      return '1';
-    }
-  }
+	if( !($ret = $gBitDb->getONe($address_format_query, array( (int)$country_id ) )) ) {
+		$ret = '1';
+	}
+	return $ret;
+}
 
 
 ////
