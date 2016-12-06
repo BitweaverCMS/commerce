@@ -911,21 +911,21 @@ class order extends CommerceOrderBase {
 						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
 						$bindVars[] = $products_attributes[0]['value_id'];
 					}
-					$stock_values = $gBitDb->query($stock_query_raw, $bindVars);
+					$stockValues = $gBitDb->query($stock_query_raw, $bindVars);
 				} else {
-					$stock_values = $gBitDb->Execute("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
+					$stockValues = $gBitDb->getRow("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 				}
 
-				if ($stock_values->RecordCount() > 0) {
+				if ($stock_values && $stock_values->RecordCount() > 0) {
 					// do not decrement quantities if products_attributes_filename exists
-					if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values->fields['products_attributes_filename'])) {
-						$stock_left = $stock_values->fields['products_quantity'] - $this->contents[$productsKey]['products_quantity'];
+					if ((DOWNLOAD_ENABLED != 'true') || (!empty( $stockValues['products_attributes_filename']))) {
+						$stock_left = $stockValues['products_quantity'] - $this->contents[$productsKey]['products_quantity'];
 						$this->contents[$productsKey]['stock_reduce'] = $this->contents[$productsKey]['products_quantity'];
 					} else {
-						$stock_left = $stock_values->fields['products_quantity'];
+						$stock_left = $stockValues['products_quantity'];
 					}
 
-	//				$this->contents[$productsKey]['stock_value'] = $stock_values->fields['products_quantity'];
+	//				$this->contents[$productsKey]['stock_value'] = $stockValues['products_quantity'];
 
 					$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
 	//				if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
