@@ -26,7 +26,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 }
 
 // if no shipping method has been selected, redirect the customer to the shipping method selection page
-if( empty( $_SESSION['shipping'] )  && !$gBitCustomer->mCart->get_content_type() == 'virtual' ) {
+if( empty( $_SESSION['shipping'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 }
 
