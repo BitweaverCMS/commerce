@@ -35,6 +35,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
+		global $gCommerceSystem;
 		unset( $_SESSION[$this->code.'_error'] );
 
 		if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
@@ -48,7 +49,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			} else {
 				$this->cc_owner = $pPaymentParameters['cc_owner'];
 			}
-			if( preg_match( '/^37/', $pPaymentParameters['cc_number'] ) && BitBase::getParameter( $pOrder->info, 'currency' ) != 'USD' ) {
+			if( preg_match( '/^37/', $pPaymentParameters['cc_number'] ) && BitBase::getParameter( $pOrder->info, 'currency', $gCommerceSystem->getConfig( 'DEFAULT_CURRENCY' ) ) != 'USD' ) {
 				 $this->mErrors['number'] = tra( 'American Express cannot process transactions in currencies other than USD. Change the currency in your cart, or use a different card.' );
 			}
 		}
