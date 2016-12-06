@@ -16,10 +16,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		parent::__construct();
 	}
 
-	protected function getNextOrderId() {
-		return $this->mDb->getOne( "select MAX(`orders_id`) + 1 FROM " . TABLE_ORDERS );
-	}
-
 	protected function clearSessionDetails() {
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;

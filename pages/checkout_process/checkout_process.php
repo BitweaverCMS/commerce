@@ -53,11 +53,11 @@ if( $order->hasPaymentDue() && !$paymentManager->processPayment( $_REQUEST, $ord
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 }
 
-$insert_id = $order->create($order_totals, 2);
-$order->create_add_products($insert_id);
+$newOrderId = $order->create($order_totals, 2);
+$order->create_add_products( $newOrderId );
 
-$paymentManager->after_order_create($insert_id);
-$order->send_order_email($insert_id);
+$paymentManager->after_order_create( $newOrderId );
+$order->send_order_email( $newOrderId );
 
 $gBitDb->mDb->completeTrans();
 

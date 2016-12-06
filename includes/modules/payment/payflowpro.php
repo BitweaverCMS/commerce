@@ -177,7 +177,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$pOrder->info['cc_owner'] = $this->cc_owner;
 				$pOrder->info['cc_cvv'] = $this->cc_cvv;
 				// Calculate the next expected order id
-				$this->paymentOrderId = $this->getNextOrderId();
+				$this->paymentOrderId = $pOrder->getNextOrderId();
 				// orderTotal is in the system DEFAULT_CURRENCY. orderTotal * currency_value = localizedPayment
 				$paymentCurrency = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$paymentNative = $orderTotal;

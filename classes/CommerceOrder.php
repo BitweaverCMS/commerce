@@ -27,6 +27,8 @@ class order extends CommerceOrderBase {
 	public $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
 			$products_ordered_email;
 
+	private $mNextOrdersId;
+
 	function __construct( $pOrdersId=NULL ) {
 		parent::__construct();
 
@@ -799,7 +801,10 @@ class order extends CommerceOrderBase {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
 
-		$sql_data_array = array('customers_id' => $_SESSION['customer_id'],
+		$this->mOrdersId = $this->getNextOrderId();
+
+		$sql_data_array = array('orders_id' => $this->mOrdersId,
+							'customers_id' => $_SESSION['customer_id'],
 							'customers_name' => $this->customer['firstname'] . ' ' . $this->customer['lastname'],
 							'customers_company' => $this->customer['company'],
 							'customers_street_address' => $this->customer['street_address'],
@@ -853,8 +858,6 @@ class order extends CommerceOrderBase {
 
 		$gBitDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-		$this->mOrdersId = zen_db_insert_id( TABLE_ORDERS, 'orders_id' );
-
 		for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
 			$sql_data_array = array('orders_id' => $this->mOrdersId,
 									'title' => $zf_ot_modules[$i]['title'],
@@ -879,6 +882,13 @@ class order extends CommerceOrderBase {
 		return( $this->mOrdersId );
 	}
 
+
+	public function getNextOrderId() {
+		if( empty( $this->mNextOrdersId ) ) {
+			$this->mNextOrdersId = $this->mDb->GenID( 'com_orders_orders_id_seq' );
+		}
+		return $this->mNextOrdersId;
+	}
 
 	function create_add_products($pOrdersId, $zf_mode = false) {
 		global $gBitDb, $gBitUser, $currencies, $order_total_modules, $order_totals;
