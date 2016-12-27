@@ -29,7 +29,7 @@
 	<div class="col-md-6">
 		{form action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
 			{legend legend=$formTitle}
-				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress}
+				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress sectionName="shipping"}
 				<div class="form-group clear">
 					<input type="submit" class="btn btn-default" name="save_address" value="{tr}Save Address{/tr}"/>
 				</div>

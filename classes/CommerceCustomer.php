@@ -404,7 +404,7 @@ class CommerceCustomer extends BitBase {
 		return $ret;
 	}
 
-	function getStateInputHtml( $pAddressHash ) {
+	function getStateInputHtml( $pAddressHash, $pSecure='shipping' ) {
 		global $gCommerceSystem;
 
 		$stateInput = '';
@@ -417,24 +417,24 @@ class CommerceCustomer extends BitBase {
 
 		if( $gCommerceSystem->isConfigActive( 'ACCOUNT_STATE' ) ) {
 			if ( !empty( $selectedCountry ) ) {
-				if( !($stateInput = zen_get_country_zone_list('state', $selectedCountry, (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : '') )) ) { 
+				if( !($stateInput = zen_get_country_zone_list('state', $selectedCountry, (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : ''), 'autocomplete="region"' )) ) { 
 					$stateInput = zen_draw_input_field('state', zen_get_zone_name($selectedCountry, $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
 				}
 			} else {
-				$stateInput = zen_draw_input_field('state');
+				$stateInput = zen_draw_input_field( 'state', NULL, 'autocomplete="'.$pSection.' region"' );
 			}
 		}
 		return $stateInput;
 	}
 
-	function getCountryInputHtml( $pAddressHash ) {
+	function getCountryInputHtml( $pAddressHash, $pSection='shipping' ) {
 		if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'country_id' ) ) ) {
 			if( !($selectedCountry = BitBase::getIdParameter( $pAddressHash, 'entry_country_id' ) ) ) {
 				$selectedCountry = defined( 'STORE_COUNTRY' ) ? STORE_COUNTRY : NULL;
 			}
 		}
 
-		return zen_get_country_list('country_id', $selectedCountry, ' onchange="updateStates(this.value)" ' );
+		return zen_get_country_list('country_id', $selectedCountry, ' onchange="updateStates(this.value)" autocomplete="'.$pSection.' country"' );
 	}
 
 	public static function getCountryZones( $pCountryId ) {

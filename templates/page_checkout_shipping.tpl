@@ -29,7 +29,7 @@
 				
 				<div class="col-md-6">
 					{legend legend="Enter a New Address"}
-						{include file="bitpackage:bitcommerce/address_edit_inc.tpl"}
+						{include file="bitpackage:bitcommerce/address_edit_inc.tpl" sectionName="shipping"}
 					{/legend}
 					<div class="form-group clear">
 						 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
