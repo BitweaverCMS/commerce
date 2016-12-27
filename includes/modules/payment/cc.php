@@ -113,16 +113,17 @@ class cc extends CommercePluginPaymentCardBase {
 
 		$selection = array('id' => $this->code,
 							 'module' => $this->title,
-							 'fields' => array(array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
-											 'field' => zen_draw_input_field('cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])),
-										 array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
-											 'field' => zen_draw_input_field('cc_number')),
-										 array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
-											 'field' => zen_draw_pull_down_menu('cc_expires_month', $expires_month) . '&nbsp;' . zen_draw_pull_down_menu('cc_expires_year', $expires_year))));
+							 'fields' => array(
+											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
+											 'field' => zen_draw_input_field('cc_owner', BitBase::getParameter( $_SESSION, 'cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )),
+											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
+											 'field' => zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), ' autocomplete="cc-number" ', 'number')),
+											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
+											 'field' => zen_draw_pull_down_menu('cc_expires_month', $expires_month, ' class="input-small" autocomplete="cc-exp-month" ') . '&nbsp;' . zen_draw_pull_down_menu('cc_expires_year', $expires_year, ' class="input-small" autocomplete="cc-exp-year" '))));
 
 		if( MODULE_PAYMENT_CC_COLLECT_CVV == 'True' ) {
 			$selection['fields'][] = array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV,
-											 'field' => zen_draw_input_field('cc_cvv'));
+											 'field' => zen_draw_input_field( 'cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number' ));
 		}
 		return $selection;
 	}

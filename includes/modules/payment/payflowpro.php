@@ -74,12 +74,12 @@ class payflowpro extends CommercePluginPaymentCardBase {
 						 'module' => $this->title,
 						 'fields' => array(
 							array(	'title' => tra( 'Name On Card' ),
-									'field' => zen_draw_input_field('cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'])
+									'field' => zen_draw_input_field('cc_owner', BitBase::getParameter( $_SESSION, 'cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
 							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), NULL, 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), NULL, 'number')  . '</div></div>',
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
-									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('cc_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'cc_expires_month' ), ' class="input-small" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('cc_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'cc_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" ') . '</div></div>'
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('cc_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'cc_expires_month' ), ' class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('cc_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'cc_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
 							),
 						)
 					);
