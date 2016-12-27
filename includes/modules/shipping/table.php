@@ -64,15 +64,15 @@
 
 // shipping adjustment
       if (MODULE_SHIPPING_TABLE_MODE == 'price') {
-        $order_total = $gBitCustomer->mCart->show_total() - $gBitCustomer->mCart->free_shipping_prices() ;
+        $orderTotal = $gBitCustomer->mCart->show_total() - $gBitCustomer->mCart->free_shipping_prices() ;
       } else {
-        $order_total = $shippingWeight;
+        $orderTotal = $shippingWeight;
       }
 
       $table_cost = preg_split("#[:,]#" , MODULE_SHIPPING_TABLE_COST);
       $size = sizeof($table_cost);
       for ($i=0, $n=$size; $i<$n; $i+=2) {
-        if ($order_total <= $table_cost[$i]) {
+        if ($orderTotal <= $table_cost[$i]) {
           $shipping = $table_cost[$i+1];
           break;
         }

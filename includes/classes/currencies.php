@@ -154,8 +154,8 @@ class currencies extends BitBase {
 		return '0.'.str_pad( '1', $this->get_decimal_places( $pCurrency ), '0', STR_PAD_LEFT );
 	}
 
-	function get_decimal_places($code) {
-		return $this->currencies[$code]['decimal_places'];
+	function get_decimal_places( $pCurrency = DEFAULT_CURRENCY ) {
+		return $this->currencies[$pCurrency]['decimal_places'];
 	}
 
 	function display_price($products_price, $products_tax, $quantity = 1, $currency_type = '', $currency_value = '') {

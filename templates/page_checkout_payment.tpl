@@ -98,31 +98,29 @@
 		</fieldset>
 	{/foreach}
 
-	{if count($creditSelection)}
-		{foreach from=$creditSelection item=selection}
-			{if $selection}
-			<fieldset>
-				<legend>
-					{$selection.module|tra}
-				</legend>
-				{if !empty($selection.checkbox)}
-					{$selection.checkbox}
-				{/if}
-				{if !empty($smarty.request.credit_class_error_code) && $smarty.request.credit_class_error_code == $selection.id}
-					{formfeedback error=$smarty.request.credit_class_error}
-				{/if}
-				{foreach from=$selection.fields item=selectionField}
-					<div class="form-group">
-						<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
-						<div class="controls">
-							{$selectionField.field}
-						</div>
-					</div>
-				{/foreach}
-			</fieldset>
+	{foreach from=$order->otCreditSelection() item=selection}
+		{if $selection}
+		<fieldset>
+			<legend>
+				{$selection.module|tra}
+			</legend>
+			{if !empty($selection.checkbox)}
+				{$selection.checkbox}
 			{/if}
-		{/foreach}
-	{/if}
+			{if !empty($smarty.request.credit_class_error_code) && $smarty.request.credit_class_error_code == $selection.id}
+				{formfeedback error=$smarty.request.credit_class_error}
+			{/if}
+			{foreach from=$selection.fields item=selectionField}
+				<div class="form-group">
+					<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
+					<div class="controls">
+						{$selectionField.field}
+					</div>
+				</div>
+			{/foreach}
+		</fieldset>
+		{/if}
+	{/foreach}
 
 	</div>
 	<div class="col-md-6">
@@ -143,9 +141,14 @@
 	</div>
 </div>
 
-		{if $orderTotalModules}
-			<table>{$orderTotalModules->output()}</table>
-		{/if}
+<div class="row">
+	<div class="col-md-6">
+				{foreach from=$order->otOutput() item=otOutput}
+					<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
+					<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
+				{/foreach}
+	</div>
+</div>
 
 		<div class="form-group">
 			<h3>{tr}Continue to Step 3{/tr}</h3>

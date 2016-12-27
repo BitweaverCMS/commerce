@@ -8,26 +8,20 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-// if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($gBitCustomer->mCart->count_contents() <= 0) {
+	// if there is nothing in the customers cart, redirect them to the shopping cart page
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-// if the customer is not logged on, redirect them to the login page
-if (!$_SESSION['customer_id']) {
+} elseif (!$_SESSION['customer_id']) {
+	// if the customer is not logged on, redirect them to the login page
 	$_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
 	zen_redirect(FILENAME_LOGIN);
-}
-
-// Stock Check and more....
-if( !$gBitCustomer->mCart->verifyCheckout() ) {
+} elseif( empty( $_SESSION['shipping'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
+	// if no shipping method has been selected, redirect the customer to the shipping method selection page
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+} elseif( !$gBitCustomer->mCart->verifyCheckout() ) {
+	// Stock Check and more....
 	$messageStack->add('header', 'Please update your order ...', 'error');
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-// if no shipping method has been selected, redirect the customer to the shipping method selection page
-if( empty( $_SESSION['shipping'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
-	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 }
 
 if (isset($_POST['payment'])) {
@@ -43,32 +37,24 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 	}
 }
 
-require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 $order = new order;
 
-require_once(DIR_FS_CLASSES . 'order_total.php');
-$order_total_modules = new order_total;
-$order_total_modules->collect_posts();
+$order->otCollectPosts();
 
 // load the selected payment module
 require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );
-if( $order->hasPaymentDue() && (is_array($paymentManager->modules)) && (sizeof($paymentManager->modules) > 1) && (empty($$_SESSION['payment']) || !is_object($$_SESSION['payment'])) ) {
-	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
-}
 
-if ($messageStack->size('checkout_payment') > 0) {
+if( $order->hasPaymentDue() && (empty( $_SESSION['payment'] ) || !$paymentManager->isModuleActive( $_SESSION['payment'].'.php' ) ) ) {
+	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 }
-//echo $messageStack->size('checkout_payment');
-//die('here');
 
-if (is_array($paymentManager->modules)) {
-	if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
-		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
-	}
+if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 }
 
 // load the selected shipping module
@@ -95,14 +81,11 @@ $breadcrumb->add(NAVBAR_TITLE_2);
 $gBitSmarty->assign( 'order', $order );
 
 if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
-	$order_totals = $order_total_modules->process();
-	$gBitSmarty->assign( 'orderTotalsModules', $order_total_modules );
+	$order->otProcess();
 }
 
-if (is_array($paymentManager->modules)) {
-	$gBitSmarty->assign( 'paymentModules', $paymentManager );
-	$gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_REQUEST ) );
-}
+$gBitSmarty->assign( 'paymentModules', $paymentManager );
+$gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_REQUEST ) );
 	
 $gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );
 

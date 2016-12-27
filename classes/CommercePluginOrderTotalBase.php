@@ -9,33 +9,29 @@
 // | This source file is subject to version 2.0 of the GPL license        |
 // +----------------------------------------------------------------------+
 
-abstract class CommercePluginBase extends BitBase {
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
 
-	protected $mStatusKey;
+abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
+	protected $title, $output, $mOrder, $mProcessingOutput;
 
-	abstract function keys();
-	abstract function install();
-	// Check if module is installed (Administration Tool)
-
-	public function __construct() {
+	public function __construct( $pOrder ) {
 		parent::__construct();
+		$this->mOrder = &$pOrder;
+		$this->mProcessingOutput = array();
 	}
 
-	function remove() {
-		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` IN ('" . implode("', '", $this->keys()) . "')");
+    function process() {
+		$this->mProcessingOutput = array();
 	}
+    function credit_selection() {}
+    function update_credit_account( $i ) {}
+    function collect_posts() {}
+    function apply_credit() {}
+	function pre_confirmation_check() {}
 
-	function isEnabled() {
-		global $gCommerceSystem;
-		if( !isset( $this->isEnabled ) ) {
-			$this->isEnabled = $gCommerceSystem->isConfigActive( $this->mStatusKey );
-		}
-		return $this->isEnabled;
+	function getOutput() {
+		return $this->mProcessingOutput;
 	}
-
-	function check() {
-		return $this->isEnabled();
-	}
-
 }
+
 

@@ -151,7 +151,6 @@ class paypal extends CommercePluginPaymentBase {
 	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
-			global $order_total_modules;
 		// now just need to check here whether we are here because of IPN or auto-return, we cn use the referer variable for that
 		// If we have come from auto return, check to see wether the order has been created by IPN and if not create it now.
 		if ($_GET['referer'] == 'paypal') {
@@ -161,7 +160,7 @@ class paypal extends CommercePluginPaymentBase {
 			unset($_SESSION['shipping']);
 			unset($_SESSION['payment']);
 			unset($_SESSION['comments']);
-			$order_total_modules->clear_posts();//ICW ADDED FOR CREDIT CLASS SYSTEM
+			$pOrder->otClearPosts();
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
 		} else {
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
@@ -181,7 +180,7 @@ class paypal extends CommercePluginPaymentBase {
 		return $output;
 	}
 
-	function after_process( $pPaymentParameters ) {
+	function after_order_create($zf_order_id) {
 		$_SESSION['order_created'] = '';
 		return false;
 	}

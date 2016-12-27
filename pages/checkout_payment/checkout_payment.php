@@ -38,17 +38,18 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 	}
 }
 
-if( !$gBitCustomer->mCart->count_contents() ) {
+if ($gBitCustomer->mCart->count_contents() <= 0) {
+	// if there is nothing in the customers cart, redirect them to the shopping cart page
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-}
-
-// if no shipping method has been selected, redirect the customer to the shipping method selection page
-if( !isset( $_SESSION['shipping'] ) ) {
+} elseif (!$_SESSION['customer_id']) {
+	// if the customer is not logged on, redirect them to the login page
+	$_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
+	zen_redirect(FILENAME_LOGIN);
+} elseif( empty( $_SESSION['shipping'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
+	// if no shipping method has been selected, redirect the customer to the shipping method selection page
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-}
-
-// Stock Check and more....
-if( !$gBitCustomer->mCart->verifyCheckout() ) {
+} elseif( !$gBitCustomer->mCart->verifyCheckout() ) {
+	// Stock Check and more....
 	$messageStack->add('header', 'Please update your order ...', 'error');
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
@@ -94,11 +95,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	$breadcrumb->add(NAVBAR_TITLE_2);
 	$gBitSmarty->assign( 'order', $order );
 
-	require(DIR_FS_CLASSES . 'order_total.php');
-	$order_total_modules = new order_total;
-	$order_total_modules->process();
-	$gBitSmarty->assign( 'orderTotalModules', $order_total_modules );
-	$gBitSmarty->assign( 'creditSelection', $order_total_modules->credit_selection() );
+	$order->otProcess( $_REQUEST );
 }
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_payment.tpl' );

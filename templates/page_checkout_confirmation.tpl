@@ -69,16 +69,10 @@
 			{if $order->content_type!='virtual' && $order->info.shipping_method}
 				<div class="col-xs-12 text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></div>
 			{/if}
-			{if $orderTotalsModules}
-				{foreach from=$orderTotalsModules->modules item=otFile}
-					{assign var=classInfo value=$otFile|pathinfo}
-					{assign var=className value=$classInfo.filename}
-					{foreach from=$GLOBALS.$className->output item=otOutput}
-						<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
-						<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
-					{/foreach}
+				{foreach from=$order->otOutput() item=otOutput}
+					<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
+					<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
 				{/foreach}
-			{/if}
 			</div>
 	{/legend}
 	</div>
@@ -112,9 +106,7 @@
 <h3>{tr}Final Step{/tr}</h3>
 <p>{tr}- continue to confirm your order. Thank you!{/tr}</p>
 
-{if $paymentModules->modules}
-	{$paymentModules->process_button()}
-{/if}
+{$paymentModules->process_button()}
 
 <div class="form-group submit">
 	<button id="payment-submit-btn" onclick='paymentSubmit(this.form); this.form.submit();' type="submit" class="btn btn-primary" />{tr}Confirm Order{/tr}</button>

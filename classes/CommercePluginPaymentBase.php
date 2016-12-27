@@ -59,10 +59,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return false;
 	}
 
-	function after_process( $pPaymentParameters ) {
-		return false;
-	}
-
 	function get_error() {
 		return false;
 	}

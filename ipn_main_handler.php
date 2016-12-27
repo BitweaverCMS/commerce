@@ -91,12 +91,12 @@ $shipping_modules = new shipping($_SESSION['shipping']);
 require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 $order = new order();
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '7.1 Started Order ' . $_SESSION['payment'] );
-require(DIR_FS_CLASSES . 'order_total.php');
-$order_total_modules = new order_total();
-$order_totals = $order_total_modules->process();
 
+$order->otProcess( $_REQUEST );
 
-if (isset($_SESSION['customer_id'])) $new_order_id = $order->create($order_totals);
+if (isset($_SESSION['customer_id'])) {
+	$new_order_id = $order->create();
+}
 
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '8 Created Order ' . $new_order_id );
 

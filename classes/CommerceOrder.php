@@ -24,10 +24,12 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
 
 class order extends CommerceOrderBase {
 	public $mOrdersId;
-	public $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes,
-			$products_ordered_email;
+	public $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
 
 	private $mNextOrdersId;
+
+	private $mOtClasses = array();
+	private $mOtProcessModules = array();
 
 	function __construct( $pOrdersId=NULL ) {
 		parent::__construct();
@@ -48,9 +50,139 @@ class order extends CommerceOrderBase {
 		}
 	}
 
+	// Called at various times. This function calulates the total value of the order that the
+	// credit will be appled aginst. This varies depending on whether the credit class applies
+	// to shipping & tax
 	function getField( $pFieldName, $pDefault = NULL ) {
 		$ret = (isset( $this->info[$pFieldName] ) && (!empty( $this->info[$pFieldName] ) || is_numeric( $this->info[$pFieldName] )) ? $this->info[$pFieldName] : $pDefault );
 		return $ret;
+	}
+
+	private function scanOtModules( $pRefresh = FALSE ) {
+		if( empty( $this->mOtClasses ) || $pRefresh ) {
+			global $gBitCustomer, $gCommerceSystem;
+
+			if( defined( 'MODULE_ORDER_TOTAL_INSTALLED' ) && MODULE_ORDER_TOTAL_INSTALLED ) {
+				$otActiveClasses = explode(';', str_replace( '.php', '', MODULE_ORDER_TOTAL_INSTALLED ) );
+				foreach( $otActiveClasses as $otClass ) {
+					if( !class_exists( $otClass ) ) {
+						$langFile = zen_get_file_directory( DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $otClass.'.php', 'false' );
+						if( file_exists( $langFile ) ) {
+							include_once( $langFile );
+						}
+						include_once( DIR_WS_MODULES.'order_total/'.$otClass.'.php' );
+					}
+					$this->mOtClasses[$otClass] = new $otClass( $this );
+				}
+			}
+		}
+	}
+
+	function otProcess() {
+		$this->scanOtModules();
+		$ret = array();
+
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$otObject->process();
+			if( $otOutput = $otObject->getOutput() ) {
+				$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->sort_order);
+				foreach( array( 'title', 'text', 'value' ) as $key ) {
+					if( !empty( $otOutput[$key] ) ) {
+						$outHash[$key] = $otOutput[$key];
+					}
+				}
+
+				$ret[] = $outHash;
+			}
+		}
+		$this->mOtProcessModules = $ret;
+		return $ret;
+	}
+
+	function otOutput() {
+		$this->scanOtModules();
+		$ret = array();
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			if( $output = $otObject->getOutput() ) {
+				array_push( $ret, $output );
+			}
+		}
+
+		return $ret;
+	}
+
+	//
+	// This function is called in checkout payment after display of payment methods. It actually calls
+	// two credit class functions.
+	//
+	// use_credit_amount() is normally a checkbox used to decide whether the credit amount should be applied to reduce
+	// the order total. Whether this is a Gift Voucher, or discount coupon or reward points etc.
+	//
+	// The second function called is credit_selection(). This in the credit classes already made is usually a redeem box.
+	// for entering a Gift Voucher number. Note credit classes can decide whether this part is displayed depending on
+	// E.g. a setting in the admin section.
+	//
+	function otCreditSelection() {
+		$this->scanOtModules();
+		$ret = '';
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$selection = $otObject->credit_selection();
+			if (is_array($selection)) {
+				$ret[] = $selection;
+			}
+		}
+		return $ret;
+	}
+
+
+	// update_credit_account is called in checkout process on a per product basis. It's purpose
+	// is to decide whether each product in the cart should add something to a credit account.
+	// e.g. for the Gift Voucher it checks whether the product is a Gift voucher and then adds the amount
+	// to the Gift Voucher account.
+	// Another use would be to check if the product would give reward points and add these to the points/reward account.
+	function otUpdateCreditAccount($i) {
+		$this->scanOtModules();
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$otObject->update_credit_account($i);
+		}
+	}
+
+
+	// This function is called in checkout confirmation.
+	// It's main use is for credit classes that use the credit_selection() method. This is usually for
+	// entering redeem codes(Gift Vouchers/Discount Coupons). This function is used to validate these codes.
+	// If they are valid then the necessary actions are taken, if not valid we are returned to checkout payment
+	// with an error
+	function otCollectPosts() {
+		$this->scanOtModules();
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$post_var = 'c' . $otObject->code;
+			if ( !empty( $_POST[$post_var] ) ) {
+				$_SESSION[$post_var] = $_POST[$post_var];
+			}
+			$otObject->collect_posts();
+		}
+	}
+
+	// this function is called in checkout process. it tests whether a decision was made at checkout payment to use
+	// the credit amount be applied aginst the order. If so some action is taken. E.g. for a Gift voucher the account
+	// is reduced the order total amount.
+	function otApplyCredit() {
+		$this->scanOtModules();
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$otObject->apply_credit();
+		}
+	}
+
+	// Called in checkout process to clear session variables created by each credit class module.
+	function otClearPosts() {
+		$this->scanOtModules();
+		foreach( $this->mOtClasses as $class=>&$otObject ) {
+			$postVar = 'c' . $otObject->code;
+			if( isset( $_SESSION[$postVar] ) ) {
+				unset( $_SESSION[$post_var] );
+			}
+		}
 	}
 
 	function getModuleTotal( $pClass, $pKey ) {
@@ -68,22 +200,18 @@ class order extends CommerceOrderBase {
 	// true. This is used to bypass the payment method. In other words if the Gift Voucher is more than the order
 	// total, we don't want to go to paypal etc.
 	function hasPaymentDue() {
-		require_once(DIR_FS_CLASSES . 'order_total.php');
-
-		$otModules = new order_total;
 		global $gCommerceSystem;
 		$ret = TRUE;
-		if( ($ret = $this->getField( 'total' ) > 0) && $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' )  ) {
-			$totalDeductions	= 0;
+		if( ($ret = $this->getField( 'total' ) > 0) && $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' )	) {
+			$totalDeductions = 0;
 			$totalDue = $this->getField( 'total' );
-			foreach( $otModules->modules as $modName ) {
-				$modClass = substr($modName, 0, strrpos( $modName, '.'));
-				$totalDue = $otModules->get_order_total_main( $modClass, $totalDue );
-				if ( !empty( $GLOBALS[$modClass]->credit_class ) ) {
-					$totalDeductions += $GLOBALS[$modClass]->pre_confirmation_check( $totalDue );
-					$totalDue -= $GLOBALS[$modClass]->pre_confirmation_check( $totalDue );
+			foreach( $this->mOtClasses as $class=>&$otObject ) {
+				if( $orderCredit = $otObject->pre_confirmation_check( $this ) ) {
+					$totalDeductions += $orderCredit;
+					$totalDue -= $orderCredit;
 				}
 			}
+
 			if ( ($this->getField( 'total' ) - $totalDeductions) <= 0.009 ) {
 				$ret = FALSE;
 			}
@@ -201,16 +329,20 @@ class order extends CommerceOrderBase {
 		if( $gBitSystem->isPackageActive( 'stats' ) ) {
 			$selectSql .= " , sru.`referer_url` ";
 			$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
-						  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
+							LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
+		}
+
+		if( !empty( $whereSql ) ) {
+			$whereSql = ' WHERE '.$whereSql;
 		}
 
 		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
 					FROM " . TABLE_ORDERS . " co
 						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status`=os.`orders_status_id`)
-						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(co.`customers_id`=uu.`user_id`)
+						INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON(co.`customers_id`=uu.`user_id`)
 					$joinSql
-						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id`)
-					WHERE `class` = 'ot_total' $whereSql
+						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
+					$whereSql
 					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
@@ -254,7 +386,7 @@ class order extends CommerceOrderBase {
 			if( $gBitSystem->isPackageActive( 'stats' ) ) {
 				$selectSql .= " , sru.`referer_url` ";
 				$joinSql .= " LEFT JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=uu.`user_id`) 
-							  LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
+								LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 			}
 
 			$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
@@ -275,9 +407,6 @@ class order extends CommerceOrderBase {
 										'orders_value' => $totals->fields['orders_value']);
 				$totals->MoveNext();
 			}
-
-			$order_total_query = "SELECT `text`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id` =? AND class = 'ot_total'";
-			$order_total = $gBitDb->query( $order_total_query, array( $this->mOrdersId ) );
 
 			$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
 			$order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
@@ -304,7 +433,7 @@ class order extends CommerceOrderBase {
 								'ip_address' => $order->fields['ip_address']
 								);
 
-			$this->info['shipping_cost'] =  $gBitDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
+			$this->info['shipping_cost'] =	$gBitDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
 			$this->customer = array('id' => $order->fields['customers_id'],
 									'user_id' => $order->fields['user_id'],
@@ -564,7 +693,7 @@ class order extends CommerceOrderBase {
 									 FROM " . TABLE_CUSTOMERS . " c, " . TABLE_ADDRESS_BOOK . " ab
 										 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 										 LEFT JOIN " . TABLE_COUNTRIES . " co on (ab.`entry_country_id` = co.`countries_id`)
-									 WHERE c.`customers_id` = ? AND ab.`customers_id` = ?  AND c.`customers_default_address_id` = ab.`address_book_id`";
+									 WHERE c.`customers_id` = ? AND ab.`customers_id` = ?	AND c.`customers_default_address_id` = ab.`address_book_id`";
 			$defaultAddress = $gBitDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
 
 			// default to primary address in case we have ended up here without anything previously selected
@@ -611,9 +740,9 @@ class order extends CommerceOrderBase {
 			//STORE_PRODUCT_TAX_BASIS
 			if( !empty( $taxAddressId ) ) {
 				$tax_address_query = "SELECT ab.entry_country_id, ab.entry_zone_id, ab.`entry_state`
-									  FROM " . TABLE_ADDRESS_BOOK . " ab
+										FROM " . TABLE_ADDRESS_BOOK . " ab
 										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-									  WHERE ab.`customers_id` = ?  and ab.`address_book_id` = ?";
+										WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
 				$tax_address = $gBitDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
 			}
 
@@ -689,6 +818,11 @@ class order extends CommerceOrderBase {
 									'format_id' => $defaultAddress['address_format_id'],
 									'telephone' => $defaultAddress['entry_telephone'],
 									'email_address' => $defaultAddress['customers_email_address']);
+		} else {
+			$this->customer = array('firstname' => $gBitCustomer->getField( 'customers_firstname' ),
+									'lastname' => $gBitCustomer->getField( 'customers_lastname' ),
+									'user_id' => $gBitCustomer->getField( 'customers_id' ),
+									'email_address' => $gBitCustomer->getField('customers_email_address' ) );
 		}
 
 		if( !empty( $shippingAddress ) ) {
@@ -739,7 +873,7 @@ class order extends CommerceOrderBase {
 			}
 
 			if ( !empty( $this->contents[$productsKey]['attributes'] ) ) {
-				$attributes  = $this->contents[$productsKey]['attributes'];
+				$attributes	= $this->contents[$productsKey]['attributes'];
 				$this->contents[$productsKey]['attributes'] = array();
 				$subindex = 0;
 				foreach( $attributes as $option=>$value ) {
@@ -793,8 +927,45 @@ class order extends CommerceOrderBase {
 		}
 	}
 
-	function create($zf_ot_modules, $zf_mode = 2) {
-		global $gBitDb;
+	public function getNextOrderId() {
+		if( empty( $this->mNextOrdersId ) ) {
+			$this->mNextOrdersId = $this->mDb->GenID( 'com_orders_orders_id_seq' );
+		}
+		return $this->mNextOrdersId;
+	}
+
+	function process( $pProcessParams ) {
+		$ret = FALSE;
+
+		// load the selected shipping module
+		if( !empty( $pProcessParams['shipping'] ) ) {
+			require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+			$shipping_modules = new CommerceShipping($pProcessParams['shipping']);
+		}
+
+		// load selected payment module
+		require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+		$paymentManager = new CommercePaymentManager( $pProcessParams['payment'] );
+
+		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
+
+			$this->mDb->StartTrans();
+
+			$this->otProcess( $pProcessParams );
+			$newOrderId = $this->create();
+			$paymentManager->after_order_create( $newOrderId );
+			$this->sendOrderEmail();
+
+			$this->mDb->completeTrans();
+
+			$ret = TRUE;
+		}
+
+		return $ret;
+	}
+
+	function create() {
+		global $gBitDb, $gBitCustomer;
 
 //		$gBitDb->StartTrans();
 		if( $_SESSION['shipping'] == 'free_free') {
@@ -805,7 +976,7 @@ class order extends CommerceOrderBase {
 
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'customers_id' => $_SESSION['customer_id'],
-							'customers_name' => $this->customer['firstname'] . ' ' . $this->customer['lastname'],
+/* TOODO 2016-DEC-15 - spiderr - data is unpopulated
 							'customers_company' => $this->customer['company'],
 							'customers_street_address' => $this->customer['street_address'],
 							'customers_suburb' => $this->customer['suburb'],
@@ -814,8 +985,10 @@ class order extends CommerceOrderBase {
 							'customers_state' => $this->customer['state'],
 							'customers_country' => $this->customer['country']['countries_name'],
 							'customers_telephone' => $this->customer['telephone'],
-							'customers_email_address' => $this->customer['email_address'],
 							'customers_address_format_id' => $this->customer['format_id'],
+*/
+							'customers_name' => trim( $this->customer['firstname'] . ' ' . $this->customer['lastname'] ),
+							'customers_email_address' => $this->customer['email_address'],
 							'delivery_name' => $this->delivery['firstname'] . ' ' . $this->delivery['lastname'],
 							'delivery_company' => $this->delivery['company'],
 							'delivery_street_address' => $this->delivery['street_address'],
@@ -858,40 +1031,36 @@ class order extends CommerceOrderBase {
 
 		$gBitDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-		for ($i=0, $n=sizeof($zf_ot_modules); $i<$n; $i++) {
-			$sql_data_array = array('orders_id' => $this->mOrdersId,
-									'title' => $zf_ot_modules[$i]['title'],
-									'text' => $zf_ot_modules[$i]['text'],
-									'orders_value' => (is_numeric( $zf_ot_modules[$i]['value'] ) ? $zf_ot_modules[$i]['value'] : 0),
-									'class' => $zf_ot_modules[$i]['code'],
-									'sort_order' => $zf_ot_modules[$i]['sort_order']);
-			$gBitDb->associateInsert(TABLE_ORDERS_TOTAL, $sql_data_array);
+		$this->otApplyCredit();
+
+		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
+			$sqlParams = array( 'orders_id' => $this->mOrdersId,
+								'title' => $this->mOtProcessModules[$key]['title'],
+								'text' => $this->mOtProcessModules[$key]['text'],
+								'orders_value' => (is_numeric( $this->mOtProcessModules[$key]['value'] ) ? $this->mOtProcessModules[$key]['value'] : 0),
+								'class' => $this->mOtProcessModules[$key]['code'],
+								'sort_order' => $this->mOtProcessModules[$key]['sort_order'] );
+			$gBitDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
 		}
 
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
-		$sql_data_array = array('orders_id' => $this->mOrdersId,
+		$sqlParams = array( 'orders_id' => $this->mOrdersId,
 							'orders_status_id' => $this->info['order_status'],
 							'user_id' => $_SESSION['customer_id'],
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
-							'comments' => $this->info['comments']);
-		$gBitDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+							'comments' => $this->info['comments'] );
+		$gBitDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sqlParams );
+
+		$this->createAddProducts( $this->mOrdersId );
 
 //		$gBitDb->CompleteTrans();
 
 		return( $this->mOrdersId );
 	}
 
-
-	public function getNextOrderId() {
-		if( empty( $this->mNextOrdersId ) ) {
-			$this->mNextOrdersId = $this->mDb->GenID( 'com_orders_orders_id_seq' );
-		}
-		return $this->mNextOrdersId;
-	}
-
-	function create_add_products($pOrdersId, $zf_mode = false) {
-		global $gBitDb, $gBitUser, $currencies, $order_total_modules, $order_totals;
+	private function createAddProducts($pOrdersId) {
+		global $gBitDb, $gBitUser, $currencies;
 
 		$this->StartTrans();
 		// initialized for the email confirmation
@@ -921,12 +1090,12 @@ class order extends CommerceOrderBase {
 						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
 						$bindVars[] = $products_attributes[0]['value_id'];
 					}
-					$stockValues = $gBitDb->query($stock_query_raw, $bindVars);
+					$stockValues = $gBitDb->GetRow($stock_query_raw, $bindVars);
 				} else {
-					$stockValues = $gBitDb->getRow("select `products_quantity` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
+					$stockValues = $gBitDb->GetRow( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 				}
 
-				if ($stock_values && $stock_values->RecordCount() > 0) {
+				if ( !empty( $stock_values ) && $stock_values->RecordCount() > 0) {
 					// do not decrement quantities if products_attributes_filename exists
 					if ((DOWNLOAD_ENABLED != 'true') || (!empty( $stockValues['products_attributes_filename']))) {
 						$stock_left = $stockValues['products_quantity'] - $this->contents[$productsKey]['products_quantity'];
@@ -937,12 +1106,12 @@ class order extends CommerceOrderBase {
 
 	//				$this->contents[$productsKey]['stock_value'] = $stockValues['products_quantity'];
 
-					$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = '" . $stock_left . "' where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
+					$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = ? where `products_id` = ?", array( $stock_left, zen_get_prid($this->contents[$productsKey]['id']) ) );
 	//				if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
 					if ($stock_left < 1) {
 						// only set status to off when not displaying sold out
 						if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-							$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
+							$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 						}
 					}
 
@@ -976,7 +1145,7 @@ class order extends CommerceOrderBase {
 			$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 			$this->contents[$productsKey]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
 
-			$order_total_modules->update_credit_account($productsKey);//ICW ADDED FOR CREDIT CLASS SYSTEM
+			$this->otUpdateCreditAccount( $productsKey );//ICW ADDED FOR CREDIT CLASS SYSTEM
 
 			if( !empty( $this->contents[$productsKey]['purchase_group_id'] ) ) {
 				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->contents[$productsKey]['purchase_group_id'] );
@@ -1055,13 +1224,12 @@ class order extends CommerceOrderBase {
 			'</td></tr>';
 		}
 
-		$order_total_modules->apply_credit();//ICW ADDED FOR CREDIT CLASS SYSTEM
 		$this->CompleteTrans();
 	}
 
 
-	function send_order_email( $pOrdersId, $pEmailRecipient=NULL, $pFormat=NULL ) {
-		global $currencies, $order_totals, $gBitCustomer;
+	function sendOrderEmail( $pEmailRecipient=NULL, $pFormat=NULL ) {
+		global $currencies, $gBitCustomer;
 
 		$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' ;
 		require_once( BITCOMMERCE_PKG_PATH . $language_page_directory . 'checkout_process.php' );
@@ -1088,24 +1256,24 @@ class order extends CommerceOrderBase {
 		} else {
 			$customerName = BitUser::getDisplayNameFromHash( FALSE, $this->customer );
 		}
-		$email_order = EMAIL_TEXT_HEADER . EMAIL_TEXT_FROM . STORE_NAME . "\n\n" .
+		$email_order = EMAIL_TEXT_HEADER . ' ' . EMAIL_TEXT_FROM . ' ' . STORE_NAME . "\n\n" .
 									$customerName . "\n\n" .
 									EMAIL_THANKS_FOR_SHOPPING . "\n\n" . EMAIL_DETAILS_FOLLOW . "\n" .
 									EMAIL_SEPARATOR . "\n" .
-									EMAIL_TEXT_ORDER_NUMBER . ' ' . $pOrdersId . "\n" .
+									EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n" .
 									EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
-									EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $pOrdersId, 'SSL', false) . "\n\n";
+									EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false) . "\n\n";
 		$emailVars['EMAIL_TEXT_HEADER']		 = EMAIL_TEXT_HEADER;
 		$emailVars['EMAIL_TEXT_FROM']			 = EMAIL_TEXT_FROM;
 		$emailVars['INTRO_STORE_NAME']			= STORE_NAME;
 		$emailVars['EMAIL_THANKS_FOR_SHOPPING'] = EMAIL_THANKS_FOR_SHOPPING;
 		$emailVars['EMAIL_DETAILS_FOLLOW']	= EMAIL_DETAILS_FOLLOW;
 		$emailVars['INTRO_ORDER_NUM_TITLE'] = EMAIL_TEXT_ORDER_NUMBER;
-		$emailVars['INTRO_ORDER_NUMBER']		= $pOrdersId;
+		$emailVars['INTRO_ORDER_NUMBER']		= $this->mOrdersId;
 		$emailVars['INTRO_DATE_TITLE']			= EMAIL_TEXT_DATE_ORDERED;
 		$emailVars['INTRO_DATE_ORDERED']		= strftime(DATE_FORMAT_LONG);
 		$emailVars['INTRO_URL_TEXT']				= EMAIL_TEXT_INVOICE_URL_CLICK;
-		$emailVars['INTRO_URL_VALUE']			 = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $pOrdersId, 'SSL', false);
+		$emailVars['INTRO_URL_VALUE']			 = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false);
 
 		//comments area
 		if( !empty( $this->info['comments'] ) ) {
@@ -1124,7 +1292,7 @@ class order extends CommerceOrderBase {
 									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
 				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
-				$email_order .= "\n    + " . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
+				$email_order .= "\n		+ " . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
 			}
 			$email_order .= "\n\n";
 		}
@@ -1138,9 +1306,9 @@ class order extends CommerceOrderBase {
 
 //order totals area
 		$html_ot = '<td class="order-totals-text alignright" width="100%">' . '&nbsp;' . '</td><td class="order-totals-num alignright" nowrap="nowrap">' . '---------' .'</td></tr><tr>';
-		for ($i=0, $n=sizeof($order_totals); $i<$n; $i++) {
-			$email_order .= strip_tags($order_totals[$i]['title']) . ' ' . strip_tags($order_totals[$i]['text']) . "\n";
-			$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . $order_totals[$i]['title'] . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' .($order_totals[$i]['text']) .'</td></tr><tr>';
+		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
+			$email_order .= strip_tags($this->mOtProcessModules[$key]['title']) . ' ' . strip_tags( $this->mOtProcessModules[$key]['text'] ) . "\n";
+			$html_ot .= '<td class="order-totals-text" align="right" width="100%">' . $this->mOtProcessModules[$key]['title'] . '</td><td class="order-totals-num" align="right" nowrap="nowrap">' . $this->mOtProcessModules[$key]['text'] .'</td></tr><tr>';
 		}
 		$emailVars['ORDER_TOTALS'] = '<table border="0" width="100%" cellspacing="0" cellpadding="2">' . $html_ot . '</table>';
 
@@ -1152,17 +1320,17 @@ class order extends CommerceOrderBase {
 		$emailVars['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
 
 		if ($this->content_type != 'virtual') {
-			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .  EMAIL_SEPARATOR . "\n" . zen_address_format($this->delivery['format_id'], $this->delivery, FALSE, '', "\n" ) . "\n\n";
+			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->delivery['format_id'], $this->delivery, FALSE, '', "\n" ) . "\n\n";
 		}
 
 		//addresses area: Billing
-		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .  EMAIL_SEPARATOR . "\n" . zen_address_format($this->billing['format_id'], $this->billing, FALSE, '', "\n" ) . "\n\n";
+		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->billing['format_id'], $this->billing, FALSE, '', "\n" ) . "\n\n";
 		$emailVars['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
 		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_label($this->customer['user_id'], $this->billing, true, '', "<br />");
 
 		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
 		if(!empty( $_SESSION['payment'] ) && is_object($GLOBALS[$_SESSION['payment']])) {
-			$email_order .= EMAIL_TEXT_PAYMENT_METHOD . "\n" .  EMAIL_SEPARATOR . "\n";
+			$email_order .= EMAIL_TEXT_PAYMENT_METHOD . "\n" .	EMAIL_SEPARATOR . "\n";
 			$payment_class = $_SESSION['payment'];
 			$email_order .= $GLOBALS[$payment_class]->title . "\n\n";
 			if( !empty( $GLOBALS[$payment_class]->email_footer ) ) {
@@ -1186,13 +1354,13 @@ class order extends CommerceOrderBase {
 //		$emailVars['EMAIL_LAST_NAME'] = $this->customer['lastname'];
 //	$emailVars['EMAIL_TEXT_HEADER'] = EMAIL_TEXT_HEADER;
 		$emailVars['EXTRA_INFO'] = '';
-		zen_mail($customerName, $pEmailRecipient, EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $pOrdersId, $email_order, STORE_NAME, EMAIL_FROM, $emailVars, 'checkout','',$pFormat);
+		zen_mail($customerName, $pEmailRecipient, EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $this->mOrdersId, $email_order, STORE_NAME, EMAIL_FROM, $emailVars, 'checkout','',$pFormat);
 
 		// send additional emails
 		if (SEND_EXTRA_ORDER_EMAILS_TO != '') {
 			$extra_info=email_collect_extra_info('','', $customerName, $this->customer['email_address'], $this->customer['telephone']);
 			$emailVars['EXTRA_INFO'] = $extra_info['HTML'];
-			zen_mail('', SEND_EXTRA_ORDER_EMAILS_TO, tra( '[NEW ORDER]' ) . ' ' . EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $pOrdersId, $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $emailVars, 'checkout_extra','',$pFormat);
+			zen_mail('', SEND_EXTRA_ORDER_EMAILS_TO, tra( '[NEW ORDER]' ) . ' ' . EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $this->mOrdersId, $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $emailVars, 'checkout_extra','',$pFormat);
 		}
 	}
 
@@ -1208,11 +1376,11 @@ class order extends CommerceOrderBase {
 		$ret = array();
 		if( $this->isValid() ) {
 			$query = "SELECT ".$this->mDb->SQLDate('Y-m-d', 'o.date_purchased')." as `date_purchased_day`, opd.`download_maxdays`, op.`products_name`, opd.`orders_products_download_id`, opd.`orders_products_filename`, opd.`download_count`, opd.`download_maxdays`
-					  FROM " . TABLE_ORDERS . " o
+						FROM " . TABLE_ORDERS . " o
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " op ON (o.`orders_id`=op.`orders_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd ON (op.`orders_products_id`=opd.`orders_products_id`)
-					  WHERE o.`customers_id` = ? AND (o.`orders_status` >= ? AND o.`orders_status` <= ?) AND o.`orders_id` = ?  AND opd.`orders_products_filename` != ''
-					  ORDER BY op.`orders_products_id`";
+						WHERE o.`customers_id` = ? AND (o.`orders_status` >= ? AND o.`orders_status` <= ?) AND o.`orders_id` = ?	AND opd.`orders_products_filename` != ''
+						ORDER BY op.`orders_products_id`";
 			$ret = $this->mDb->getAll( $query, array( $this->getField('customers_id'), DOWNLOADS_CONTROLLER_ORDERS_STATUS, DOWNLOADS_CONTROLLER_ORDERS_STATUS_END, $this->mOrdersId ) );
 
 // copies from includes/modules/downloads.php before git rm
@@ -1221,13 +1389,13 @@ list($dt_year, $dt_month, $dt_day) = explode('-', $downloads->fields['date_purch
 $download_timestamp = mktime(23, 59, 59, $dt_month, $dt_day + $downloads->fields['download_maxdays'], $dt_year);
 $download_expiry = date('Y-m-d H:i:s', $download_timestamp);
 
-  echo '            <td align="center">' . zen_date_short($download_expiry) . '</td>' . "\n" .
-	   '            <td align="center">' . $downloads->fields['download_count'] . '</td>' . "\n" .
+	echo '						<td align="center">' . zen_date_short($download_expiry) . '</td>' . "\n" .
+		 '						<td align="center">' . $downloads->fields['download_count'] . '</td>' . "\n" .
 
 // If there is a download in the order and they cannot get it, tell customer about download rules
 $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_products_download_id
-					                       from " .  TABLE_ORDERS . " o, " .  TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
-            		   				       where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
+																 from " .	TABLE_ORDERS . " o, " .	TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
+									 							 where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
 */
 
 		}

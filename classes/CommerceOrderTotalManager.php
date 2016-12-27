@@ -20,11 +20,13 @@
 // $Id$
 //
 
-  class order_total {
+class CommerceOrderTotalManager extends BitBase {
     var $modules;
+	private $mOrder;
+	private $mOtClasses;
 
 // class constructor
-    function order_total() {
+    function __construct( $pOrder ) {
 	  global $gBitCustomer;
 
       if (defined('MODULE_ORDER_TOTAL_INSTALLED') && zen_not_null(MODULE_ORDER_TOTAL_INSTALLED)) {
@@ -41,7 +43,7 @@
 				}
 				include(DIR_WS_MODULES . 'order_total/' . $value);
 			}
-			$GLOBALS[$class] = new $class;
+			$this->mOtClasses[$class] = new $class( $pOrder );
         }
       }
     }
@@ -52,15 +54,15 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          $GLOBALS[$class]->process();
+          $this->mOtClasses[$class]->process( $this->mOrder );
 
-          for ($i=0, $n=sizeof($GLOBALS[$class]->output); $i<$n; $i++) {
-            if (zen_not_null($GLOBALS[$class]->output[$i]['title']) && zen_not_null($GLOBALS[$class]->output[$i]['text'])) {
-              $order_total_array[] = array('code' => $GLOBALS[$class]->code,
-                                           'title' => $GLOBALS[$class]->output[$i]['title'],
-                                           'text' => $GLOBALS[$class]->output[$i]['text'],
-                                           'value' => $GLOBALS[$class]->output[$i]['value'],
-                                           'sort_order' => $GLOBALS[$class]->sort_order);
+          for ($i=0, $n=sizeof($this->mOtClasses[$class]->output); $i<$n; $i++) {
+            if (zen_not_null($this->mOtClasses[$class]->output[$i]['title']) && zen_not_null($this->mOtClasses[$class]->output[$i]['text'])) {
+              $order_total_array[] = array('code' => $this->mOtClasses[$class]->code,
+                                           'title' => $this->mOtClasses[$class]->output[$i]['title'],
+                                           'text' => $this->mOtClasses[$class]->output[$i]['text'],
+                                           'value' => $this->mOtClasses[$class]->output[$i]['value'],
+                                           'sort_order' => $this->mOtClasses[$class]->sort_order);
             }
           }
         }
@@ -75,11 +77,11 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          $size = sizeof($GLOBALS[$class]->output);
+          $size = sizeof($this->mOtClasses[$class]->output);
           for ($i=0; $i<$size; $i++) {
             $output_string .= '              <tr>' . "\n" .
-                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Text">' . $GLOBALS[$class]->output[$i]['title'] . '</td>' . "\n" .
-                              '                <td class="alignright ' . str_replace('_', '-', $GLOBALS[$class]->code) . '-Amount">' . $GLOBALS[$class]->output[$i]['text'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $this->mOtClasses[$class]->code) . '-Text">' . $this->mOtClasses[$class]->output[$i]['title'] . '</td>' . "\n" .
+                              '                <td class="alignright ' . str_replace('_', '-', $this->mOtClasses[$class]->code) . '-Amount">' . $this->mOtClasses[$class]->output[$i]['text'] . '</td>' . "\n" .
                               '              </tr>';
           }
         }
@@ -104,8 +106,8 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-            $selection = $GLOBALS[$class]->credit_selection();
+          if ( !empty( $this->mOtClasses[$class]->credit_class ) ) {
+            $selection = $this->mOtClasses[$class]->credit_selection( $this->mOrder );
             if (is_array($selection)) $selection_array[] = $selection;
           }
         }
@@ -125,8 +127,8 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-            $GLOBALS[$class]->update_credit_account($i);
+          if ( method_exists( $this->mOtClasses[$class], 'update_credit_account' ) ) {
+            $this->mOtClasses[$class]->update_credit_account($i);
           }
         }
       }
@@ -144,12 +146,12 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-            $post_var = 'c' . $GLOBALS[$class]->code;
+          if ( method_exists( $this->mOtClasses[$class], 'collect_posts' ) ) {
+            $post_var = 'c' . $this->mOtClasses[$class]->code;
             if ( !empty( $_POST[$post_var] ) ) {
 				$_SESSION[$post_var] = $_POST[$post_var];
 			}
-            $GLOBALS[$class]->collect_posts();
+            $this->mOtClasses[$class]->collect_posts( $this->mOrder );
           }
         }
       }
@@ -160,12 +162,13 @@
 // is reduced the order total amount.
 //
     function apply_credit() {
+		global $order;
       if (MODULE_ORDER_TOTAL_INSTALLED) {
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-            $GLOBALS[$class]->apply_credit();
+          if ( !empty( $this->mOtClasses[$class]->credit_class ) ) {
+            $this->mOtClasses[$class]->apply_credit( $this->mOrder );
           }
         }
       }
@@ -179,8 +182,8 @@
         reset($this->modules);
         while (list(, $value) = each($this->modules)) {
           $class = substr($value, 0, strrpos($value, '.'));
-          if ( !empty( $GLOBALS[$class]->credit_class ) ) {
-            $post_var = 'c' . $GLOBALS[$class]->code;
+          if ( !empty( $this->mOtClasses[$class]->credit_class ) ) {
+            $post_var = 'c' . $this->mOtClasses[$class]->code;
             $_SESSION[$post_var] = NULL;
           }
         }
@@ -192,8 +195,8 @@
 //
     function get_order_total_main($class, $order_total) {
       global $credit, $order;
-//      if ($GLOBALS[$class]->include_tax == 'false') $order_total=$order_total-$order->info['tax'];
-//      if ($GLOBALS[$class]->include_shipping == 'false') $order_total=$order_total-$order->info['shipping_cost'];
+//      if ($this->mOtClasses[$class]->include_tax == 'false') $order_total=$order_total-$order->info['tax'];
+//      if ($this->mOtClasses[$class]->include_shipping == 'false') $order_total=$order_total-$order->info['shipping_cost'];
       return $order_total;
     }
   }

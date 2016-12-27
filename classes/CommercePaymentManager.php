@@ -21,7 +21,7 @@
 //
 
 class CommercePaymentManager {
-	var $modules, $selected_module;
+	private $modules = array(), $selected_module;
 
 	// class constructor
 	function __construct($module = '') {
@@ -81,6 +81,11 @@ class CommercePaymentManager {
 				$this->form_action_url = $GLOBALS[$module]->form_action_url;
 			}
 		}
+	}
+
+
+	function isModuleActive( $pModuleName ) {
+		return in_array( $pModuleName, $this->modules );
 	}
 
 	// class methods
@@ -201,16 +206,6 @@ class CommercePaymentManager {
 		if (is_array($this->modules)) {
 			if( !empty( $GLOBALS[$this->selected_module] ) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
 				$ret = $GLOBALS[$this->selected_module]->processPayment( $pPaymentParameters, $pOrder );
-			}
-		}
-		return $ret;
-	}
-
-	function after_process( $pPaymentParameters = NULL ) {
-		$ret = NULL;
-		if (is_array($this->modules)) {
-			if (!empty($GLOBALS[$this->selected_module]) && !empty( $GLOBALS[$this->selected_module]->enabled ) ) {
-				$ret = $GLOBALS[$this->selected_module]->after_process( $pPaymentParameters );
 			}
 		}
 		return $ret;

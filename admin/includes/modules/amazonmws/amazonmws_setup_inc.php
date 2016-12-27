@@ -298,14 +298,11 @@ function amazon_process_order( $pAmazonOrderId ) {
 					$_SESSION['sendto'] = NULL;
 					$_SESSION['shipping'] = $shipping;
 					unset( $_SESSION['cot_gv'] );
-					require_once( DIR_FS_CLASSES . 'order_total.php' );
-					global $order_total_modules;
-					$order_total_modules = new order_total;
-					$order_totals = $order_total_modules->pre_confirmation_check();
+					$order->otPreConfirmationCheck();
 					require_once( DIR_WS_MODULES.'payment/amazonmws.php' );
 					$amazon = new amazonmws( $azOrder->getAmazonOrderId() );
 					$amazonOutput = $amazon->process();
-					$order_totals = $order_total_modules->process();
+					$order_totals = $order->otProcess();
 					array_splice( $order_totals, count( $order_totals ) - 1, 0, array( $amazonOutput ) );
 					if( $ordersId = $order->create( $order_totals, 2 ) ) {
 						$order->create_add_products( $ordersId );

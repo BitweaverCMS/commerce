@@ -190,9 +190,6 @@ class cc extends CommercePluginPaymentCardBase {
 		}
 	}
 
-	function after_process( $pPaymentParameters ) {
-	}
-
 	function after_order_create($zf_order_id) {
 		global $gBitDb, $order;
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{

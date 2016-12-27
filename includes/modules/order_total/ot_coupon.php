@@ -1,33 +1,24 @@
 <?php
-//
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce										|
+// | bitcommerce,	http://www.bitcommerce.org                            |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004 The zen-cart developers							|
-// |																	|
-// | http://www.zen-cart.com/index.php									|
-// |																	|
-// | Portions Copyright (c) 2003 osCommerce								|
+// | Copyright (c) 2017 bitcommerce.org                                   |
+// | This source file is subject to version 3.0 of the GPL license        |
+// | Portions Copyrigth (c) 2005 http://www.zen-cart.com                  |
+// | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,		|
-// | that is bundled with this package in the file LICENSE, and is		|
-// | available through the world-wide-web at the following url:			|
-// | http://www.zen-cart.com/license/2_0.txt.							|
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to		|
-// | license@zen-cart.com so we can mail you a copy immediately.		|
-// +----------------------------------------------------------------------+
-// $Id: ot_coupon.php,v 1.20 2010/07/21 03:42:31 spiderr Exp $
-//
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 
-class ot_coupon {
-	var $title, $output, $deduction;
+class ot_coupon extends CommercePluginOrderTotalBase  {
 
-	function ot_coupon() {
-
+	function __construct( $pOrder ) {
 		$this->code = 'ot_coupon';
+		$this->mStatusKey = 'MODULE_ORDER_TOTAL_COUPON_STATUS';
+
+		parent::__construct( $pOrder );
+
 		$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
 		$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
@@ -38,30 +29,31 @@ class ot_coupon {
 		$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
 		$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
 		$this->credit_class = true;
-		$this->output = array();
-
 	}
 
 	function process() {
-		global $order, $currencies, $gBitDb;
+		parent::process();
+		global $currencies;
+
 		if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
 		$this->deduction = $od_amount['total'];
 		if ($od_amount['total'] > 0) {
-			while (list($key, $value) = each($order->info['tax_groups'])) {
+			while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
 				$tax_rate = zen_get_tax_rate_from_desc($key);
 				if( !empty( $od_amount[$key] ) ) {
-					$order->info['tax_groups'][$key] -= $od_amount[$key];
-					$order->info['total'] -=	$od_amount[$key];
+					$this->mOrder->info['tax_groups'][$key] -= $od_amount[$key];
+					$this->mOrder->info['total'] -=	$od_amount[$key];
 				}
 			}
-			if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $order->info['shipping_cost'] = 0;
+			if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $this->mOrder->info['shipping_cost'] = 0;
 				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
-				$zq_coupon_code = $gBitDb->Execute($sql);
+				$zq_coupon_code = $this->mDB->Execute($sql);
 				$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
-				$order->info['total'] = $order->info['total'] - $od_amount['total'];
-				$this->output[] = array( 'title' => $this->title . ': ' . $this->coupon_code . ' :',
-										 'text' => '-' . $currencies->format($od_amount['total']),
-										 'value' => $od_amount['total'] );
+				$this->mOrder->info['total'] = $this->mOrder->info['total'] - $od_amount['total'];
+				$this->mProcessingOutput = array( 'code' => $this->code,
+													 'title' => $this->title . ': ' . $this->coupon_code . ' :',
+													 'text' => '-' . $currencies->format($od_amount['total']),
+													 'value' => $od_amount['total'] );
 			}
 		}
 	}
@@ -85,13 +77,18 @@ class ot_coupon {
 		return $ret;
 	}
 
-	function pre_confirmation_check($order_total) {
-		global $order;
-		if ($this->include_shipping == 'false') $order_total -= $order->info['shipping_cost'];
-		if ($this->include_tax == 'false') $order_total -= $order->info['tax'];
-		$od_amount = $this->calculate_deductions($order_total);
+	function pre_confirmation_check() {
+		$orderTotal = $this->mOrder->getField( 'total' );
+
+		if ($this->include_shipping == 'false') {
+			$orderTotal -= $this->mOrder->info['shipping_cost'];
+		}
+		if ($this->include_tax == 'false') {
+			$orderTotal -= $this->mOrder->info['tax'];
+		}
+		$od_amount = $this->calculate_deductions($orderTotal);
+
 		return $od_amount['total'] + $od_amount['tax'];
-//		return $od_amount['total'];
 	}
 
 	function use_credit_amount() {
@@ -136,11 +133,11 @@ class ot_coupon {
 				if ($coupon->getField('coupon_type')=='S') {
 					if( $coupon->getField( 'restrict_to_shipping' ) ) {
 						$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
-						if( in_array( $order->info['shipping_method_code'], $shippingMethods ) ) {
-							$coupon_amount = $order->info['shipping_cost'];
+						if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
+							$coupon_amount = $this->mOrder->info['shipping_cost'];
 						}
 					} else {
-						$coupon_amount = $order->info['shipping_cost'];
+						$coupon_amount = $this->mOrder->info['shipping_cost'];
 					}
 				} else {
 					$coupon_amount = $currencies->format($coupon->getField('coupon_amount')) . ' ';
@@ -153,23 +150,16 @@ class ot_coupon {
 		}
 	}
 
-
-	function update_credit_account($i) {
-		return false;
-	}
-
 	function apply_credit() {
-		global $gBitDb, $insert_id;
 		$cc_id = $_SESSION['cc_id'];
 		if( !empty( $this->deduction ) ) {
-			$gBitDb->Execute("insert into " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, redeem_date, redeem_ip, customer_id, order_id)
-						values ('" . $cc_id . "', now(), '" . $_SERVER['REMOTE_ADDR'] . "', '" . $_SESSION['customer_id'] . "', '" . $insert_id . "')");
+			$this->mDb->Execute( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (coupon_id, redeem_date, redeem_ip, customer_id, order_id) VALUES ( ?, now(), ?, ?, ?)", array( $cc_id, $_SERVER['REMOTE_ADDR'],  $_SESSION['customer_id'], $insert_id ) );
 		}
 		$_SESSION['cc_id'] = "";
 	}
 
-	function calculate_deductions($order_total) {
-		global $gBitDb, $gBitCustomer, $order;
+	function calculate_deductions($pOrderTotal) {
+		global $gBitCustomer;
 
 		$tax_address = zen_get_tax_locations();
 		$od_amount['total'] = 0;
@@ -177,15 +167,15 @@ class ot_coupon {
 		if ($_SESSION['cc_id']) {
 			$coupon = new CommerceVoucher( $_SESSION['cc_id'] );
 			if( $coupon->load() && $coupon->isRedeemable() ) {
-				if ($coupon->getField( 'coupon_minimum_order' ) <= $order_total) {
+				if ($coupon->getField( 'coupon_minimum_order' ) <= $pOrderTotal) {
 					if ($coupon->getField( 'coupon_type' )=='S') {
 						if( $coupon->getField( 'restrict_to_shipping' ) ) {
 							$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
-							if( in_array( $order->info['shipping_method_code'], $shippingMethods ) ) {
-								$od_amount['total'] = $order->info['shipping_cost'];
+							if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
+								$od_amount['total'] = $this->mOrder->info['shipping_cost'];
 							}
 						} else {
-							$od_amount['total'] = $order->info['shipping_cost'];
+							$od_amount['total'] = $this->mOrder->info['shipping_cost'];
 						}
 						$od_amount['type'] = 'S';
 					} else {
@@ -193,7 +183,7 @@ class ot_coupon {
 							// Max discount is a sum of percentages of valid products
 							$totalDiscount = 0;
 						} else {
-							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($order_total>0);
+							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($pOrderTotal>0);
 						}
 						$runningDiscount = 0;
 						$runningDiscountQuantity = 0;
@@ -252,7 +242,7 @@ class ot_coupon {
 										case 'Standard':
 											$ratio = $runningDiscount/$this->get_order_total();
 											$t_prid = zen_get_prid( $productKey );
-											$cc_result = $gBitDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
+											$cc_result = $this->mDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
 
 											if ($this->is_product_valid( $productHash, $_SESSION['cc_id'])) {
 												if( $runningDiscount < $totalDiscount ) {
@@ -275,8 +265,8 @@ class ot_coupon {
 							}
 						}
 						$od_amount['total'] = $runningDiscount;
-						if ($od_amount['total']>$order_total) {
-							$od_amount['total'] = $order_total;
+						if ($od_amount['total']>$pOrderTotal) {
+							$od_amount['total'] = $pOrderTotal;
 						}
 					}
 				}
@@ -287,13 +277,12 @@ class ot_coupon {
 
 
 	function is_product_valid( $pProductHash, $coupon_id) {
-		global $gBitDb;
 		$ret = false;
 
 		if( is_numeric( $coupon_id ) ) {
 			$ret = TRUE;
-			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$gBitDb->convertSortmode( 'coupon_restrict_asc' );
-			if( $rs = $gBitDb->query( $query, array( $coupon_id ) ) ) {
+			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$this->mDb->convertSortmode( 'coupon_restrict_asc' );
+			if( $rs = $this->mDb->query( $query, array( $coupon_id ) ) ) {
 				// gifts are not valid, so only check non-gifts
 				if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
 					$ret = ($rs->RecordCount() == 0); // if there are restictions, assume false
@@ -351,16 +340,6 @@ class ot_coupon {
 	}
 
 
-	function check() {
-		global $gBitDb;
-		if (!isset($this->check)) {
-			$check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_COUPON_STATUS'");
-			$this->check = $check_query->RecordCount();
-		}
-
-		return $this->check;
-	}
-
 	function keys() {
 		return array('MODULE_ORDER_TOTAL_COUPON_STATUS', 'MODULE_ORDER_TOTAL_COUPON_SORT_ORDER', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS');
 	}
@@ -374,17 +353,4 @@ class ot_coupon {
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', 'NOW')");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', 'NOW')");
 	}
-
-	function remove() {
-		global $gBitDb;
-		$keys = '';
-		$keys_array = $this->keys();
-		for ($i=0; $i<sizeof($keys_array); $i++) {
-			$keys .= "'" . $keys_array[$i] . "',";
-		}
-		$keys = substr($keys, 0, -1);
-
-		$gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in (" . $keys . ")");
-	}
 }
-?>
