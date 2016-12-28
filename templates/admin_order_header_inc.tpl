@@ -47,6 +47,7 @@ function editAddress( pAddress ) {
 	<div class="col-xs-6">
 		<h4>{tr}Payment Info{/tr}</h4>
 		{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
+{if empty( $order->info.cc_ref_id )}<div class="alert alert-danger"><p>{booticon iname="icon-warning-sign"} {tr}This Credit Card Payment has no Transaction ID. Perhaps funds were not actually collected, or this is a duplicate order.{/tr}</p></div>{/if}
 		<div class="clear">
 			<div class="floatleft">{$order->info.cc_type}: </div>
 			<div class="floatright">{$order->info.cc_owner}</div>
