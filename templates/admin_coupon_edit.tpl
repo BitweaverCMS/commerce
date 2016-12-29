@@ -12,7 +12,7 @@
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_CODE}
 			{forminput}
-				<input type="text" name="coupon_code" value="{$smarty.post.coupon_code|escape}"/>
+				<input type="text" class="form-control" name="coupon_code" value="{$smarty.post.coupon_code|escape}"/>
 				{formhelp note=$smarty.const.COUPON_CODE_HELP}
 			{/forminput}
 		</div>
@@ -21,7 +21,7 @@
 			{forminput}
 				{foreach from=$languages key=i item=lang}
 					{assign var=langId value=$lang.id}
-					<div><input type="text" name="coupon_name[{$langId}]" value="{$smarty.post.coupon_name.$langId|escape}"/> {$lang.name|escape}</div>
+					<div><input type="text" class="form-control" name="coupon_name[{$langId}]" value="{$smarty.post.coupon_name.$langId|escape}"/> {$lang.name|escape}</div>
 				{/foreach}
 				{formhelp note=$smarty.const.COUPON_NAME_HELP}
 			{/forminput}
@@ -32,7 +32,7 @@
 			{forminput}
 				{foreach from=$languages key=i item=lang}
 					{assign var=langId value=$lang.id}
-					<div><input type="text" name="coupon_description[{$langId}]" value="{$smarty.post.coupon_description.$langId|escape}"/> {$lang.name|escape}</div>
+					<div><input type="text" class="form-control" name="coupon_description[{$langId}]" value="{$smarty.post.coupon_description.$langId|escape}"/> {$lang.name|escape}</div>
 				{/foreach}
 				{formhelp note=$smarty.const.COUPON_NAME_HELP}
 			{/forminput}
@@ -41,14 +41,14 @@
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_AMOUNT}
 			{forminput}
-				<input type="text" name="coupon_amount" value="{$smarty.post.coupon_amount|escape}"/>
+				<input type="text" class="form-control" name="coupon_amount" value="{$smarty.post.coupon_amount|escape}"/>
 				{formhelp note=$smarty.const.COUPON_AMOUNT_HELP}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_MIN_ORDER}
 			{forminput}
-				<input type="number" name="coupon_minimum_order" value="{$smarty.post.coupon_minimum_order|escape}"/>
+				<input type="number" class="form-control" name="coupon_minimum_order" value="{$smarty.post.coupon_minimum_order|escape}"/>
 				{formhelp note="The minimum order value before the coupon is valid. Leave blank for no minimum."}
 			{/forminput}
 		</div>
@@ -56,36 +56,35 @@
 		<div class="form-group">
 			{formlabel label="Quantity Limit"}
 			{forminput}
-				<input type="number" name="quantity_max" value="{$smarty.post.quantity_max|escape}"/>
+				<input type="number" class="form-control" name="quantity_max" value="{$smarty.post.quantity_max|escape}"/>
 				{formhelp note="The maximum cart quantity that will be deducted. Additional quantity over the max will be priced at full price."}
 			{/forminput}
 		</div>
 
 		<div class="form-group">
-			{formlabel label=$smarty.const.COUPON_FREE_SHIP}
 			{forminput}
-				<input type="checkbox" name="coupon_free_ship" {if $smarty.post.coupon_free_ship}checked='CHECKED'{/if}/>
+				<div class="checkbox"><label><input type="checkbox" name="coupon_free_ship" {if $smarty.post.coupon_free_ship}checked='CHECKED'{/if}/> {tr}Free Shipping{/tr}</label></div>
 				{formhelp note=$smarty.const.COUPON_FREE_SHIP_HELP}
 			{/forminput}
 		</div>
 {*		<div class="form-group">
 			{formlabel label="Product Restrictions"}
 			{forminput}
-				<input type="text" name="restrict_to_products" value="{$smarty.post.restrict_to_products|escape}"/>
+				<input type="text" class="form-control" name="restrict_to_products" value="{$smarty.post.restrict_to_products|escape}"/>
 				{formhelp note="Comma seperated list of product ID's"}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label="Category Restrictions"}
 			{forminput}
-				<input type="text" name="restrict_to_categories" value="{$smarty.post.restrict_to_categories|escape}"/>
+				<input type="text" class="form-control" name="restrict_to_categories" value="{$smarty.post.restrict_to_categories|escape}"/>
 				{formhelp note="Comma seperated list of category ID's"}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label="Minimum Quantity"}
 			{forminput}
-				<input type="number" name="restrict_to_quantity" value="{$smarty.post.restrict_to_quantity|escape}"/>
+				<input type="number" class="form-control" name="restrict_to_quantity" value="{$smarty.post.restrict_to_quantity|escape}"/>
 				{formhelp note="Comma seperated list of category ID's"}
 			{/forminput}
 		</div>
@@ -93,21 +92,21 @@
 		<div class="form-group">
 			{formlabel label="Shipping Restrictions"}
 			{forminput}
-				<input type="text" name="restrict_to_shipping" value="{$smarty.post.restrict_to_shipping|escape}"/>
+				<input type="text" class="form-control" name="restrict_to_shipping" value="{$smarty.post.restrict_to_shipping|escape}"/>
 				{formhelp note="Comma seperated list of shipping_code's (e.g. 'USPSPRI') will only allow enumerated shipping methods if Free Shipping is selected."}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_USES_COUPON}
 			{forminput}
-				<input type="number" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>
+				<input type="number" class="form-control" name="uses_per_coupon" value="{$smarty.post.uses_per_coupon|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_COUPON_HELP}
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label=$smarty.const.COUPON_USES_USER}
 			{forminput}
-				<input type="number" name="uses_per_user" value="{$smarty.post.uses_per_user|escape}"/>
+				<input type="number" class="form-control" name="uses_per_user" value="{$smarty.post.uses_per_user|escape}"/>
 				{formhelp note=$smarty.const.COUPON_USES_USER_HELP}
 			{/forminput}
 		</div>
@@ -128,7 +127,7 @@
 		<div class="form-group">
 			{formlabel label="Administration Note"}
 			{forminput}
-				<textarea name="admin_note">{$smarty.post.admin_note|escape}</textarea>
+				<textarea name="admin_note" class="form-control">{$smarty.post.admin_note|escape}</textarea>
 				{formhelp note="Administrator's private note, not visible to customers."}
 			{/forminput}
 		</div>
