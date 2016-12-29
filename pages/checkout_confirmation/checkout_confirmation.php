@@ -40,7 +40,7 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
 $order = new order;
 
-$order->otCollectPosts();
+$order->otCollectPosts( $_POST );
 
 // load the selected payment module
 require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );

@@ -218,15 +218,15 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	}
 
 
-	function collect_posts() {
+	function collect_posts( $pRequestParams ) {
 		global $gBitUser, $currencies;
-		if ( !empty( $_POST['cot_gv'] ) && is_numeric( $_POST['cot_gv'] ) && $_POST['cot_gv'] > 0 ) {
-			$_SESSION['cot_gv'] = $_POST['cot_gv'];
+		if ( !empty( $pRequestParams['cot_gv'] ) && is_numeric( $pRequestParams['cot_gv'] ) && $pRequestParams['cot_gv'] > 0 ) {
+			$_SESSION['cot_gv'] = $pRequestParams['cot_gv'];
 		} elseif( isset( $_SESSION['cot_gv'] ) ) {
 			unset( $_SESSION['cot_gv'] );
 		}
-		if ( !empty( $_POST['gv_redeem_code'] ) ) {
-			$gv_result = $this->mDb->Execute("select `coupon_id`, `coupon_type`, `coupon_amount` from " . TABLE_COUPONS . " where `coupon_code` = ?", array( $_POST['gv_redeem_code'] ) );
+		if ( !empty( $pRequestParams['gv_redeem_code'] ) ) {
+			$gv_result = $this->mDb->query( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) );
 			if ($gv_result->RecordCount() > 0) {
 				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
 				if ( ($redeem_query->RecordCount() > 0) && ($gv_result->fields['coupon_type'] == 'G')	) {
@@ -262,7 +262,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
 		 }
 	 }
-	 if ( isset( $_POST['submit_redeem_x'] ) && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
+	 if ( isset( $pRequestParams['submit_redeem_x'] ) && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
  }
 
 	private function getGvBalance( $pCustomersId ) {
