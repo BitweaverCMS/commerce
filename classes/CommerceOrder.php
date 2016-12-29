@@ -153,14 +153,14 @@ class order extends CommerceOrderBase {
 	// entering redeem codes(Gift Vouchers/Discount Coupons). This function is used to validate these codes.
 	// If they are valid then the necessary actions are taken, if not valid we are returned to checkout payment
 	// with an error
-	function otCollectPosts() {
+	function otCollectPosts( $pRequestParams ) {
 		$this->scanOtModules();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$post_var = 'c' . $otObject->code;
-			if ( !empty( $_POST[$post_var] ) ) {
-				$_SESSION[$post_var] = $_POST[$post_var];
+			if ( !empty( $pRequestParams[$post_var] ) ) {
+				$_SESSION[$post_var] = $pRequestParams[$post_var];
 			}
-			$otObject->collect_posts();
+			$otObject->collect_posts( $pRequestParams );
 		}
 	}
 
@@ -247,7 +247,7 @@ class order extends CommerceOrderBase {
 	}
 
 	public static function getList( $pListHash ) {
-		global $gBitDb, $gBitSystem;
+		global $gBitSystem;
 		$bindVars = array();
 		$ret = array();
 		$selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -322,7 +322,7 @@ class order extends CommerceOrderBase {
 		}
 
 		if( !empty( $pListHash['period'] ) && !empty( $pListHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$gBitDb->mDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->mDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pListHash['timeframe'];
 		}
 
@@ -336,19 +336,19 @@ class order extends CommerceOrderBase {
 			$whereSql = ' WHERE '.$whereSql;
 		}
 
-		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
+		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$this->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
 					FROM " . TABLE_ORDERS . " co
 						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status`=os.`orders_status_id`)
 						INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON(co.`customers_id`=uu.`user_id`)
 					$joinSql
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
 					$whereSql
-					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
-		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
+					ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
+		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
 				if( !empty( $pListHash['recent_comment'] ) ) {
-					if( $lastComment = $gBitDb->getRow( "SELECT *, ".$gBitDb->mDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
+					if( $lastComment = $this->mDb->getRow( "SELECT *, ".$this->mDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
 						$ret[$row['orders_id']]['comments_time'] = $lastComment['comments_time'];
 						$ret[$row['orders_id']]['comments'] = $lastComment['comments'];
 					}
@@ -358,12 +358,12 @@ class order extends CommerceOrderBase {
 							FROM " . TABLE_ORDERS_PRODUCTS . " cop
 								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 							WHERE cop.`orders_id`=?";
-					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					$ret[$row['orders_id']]['products'] = $this->mDb->getAssoc( $sql, array( $row['orders_id'] ) );
 
 					$sql = "SELECT copa.`orders_products_attributes_id` AS `hash_key`, copa.*
 							FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
 							WHERE copa.`orders_id`=?";
-					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					$orderAttributes = $this->mDb->getAssoc( $sql, array( $row['orders_id'] ) );
 					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
 						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values'];
 						
@@ -376,7 +376,7 @@ class order extends CommerceOrderBase {
 	}
 
 	protected function load() {
-		global $gBitDb, $gBitSystem;
+		global $gBitSystem;
 		$ret = FALSE;
 
 		if( $this->isValid() ) {
@@ -395,10 +395,10 @@ class order extends CommerceOrderBase {
 								$joinSql
 								LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `trans_result`='0')
 							WHERE co.`orders_id` = ?";
-			$order = $gBitDb->query( $order_query, array( $this->mOrdersId ) );
+			$order = $this->mDb->query( $order_query, array( $this->mOrdersId ) );
 
 			$totals_query = "SELECT `title`, `text`, `class`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id`=? ORDER BY `sort_order`";
-			$totals = $gBitDb->query($totals_query, array( $this->mOrdersId ) );
+			$totals = $this->mDb->query($totals_query, array( $this->mOrdersId ) );
 
 			while (!$totals->EOF) {
 				$this->totals[] = array('title' => $totals->fields['title'],
@@ -409,7 +409,7 @@ class order extends CommerceOrderBase {
 			}
 
 			$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
-			$order_status = $gBitDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
+			$order_status = $this->mDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
 
 			$this->info = array('currency' => $order->fields['currency'],
 								'currency_value' => $order->fields['currency_value'],
@@ -433,7 +433,7 @@ class order extends CommerceOrderBase {
 								'ip_address' => $order->fields['ip_address']
 								);
 
-			$this->info['shipping_cost'] =	$gBitDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
+			$this->info['shipping_cost'] =	$this->mDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
 			$this->customer = array('id' => $order->fields['customers_id'],
 									'user_id' => $order->fields['user_id'],
@@ -562,7 +562,6 @@ class order extends CommerceOrderBase {
 
 	// calculates totals
 	function calculate( $pForceRecalculate=FALSE ) {
-		global $gBitDb;
 		if( is_null( $this->total ) || $pForceRecalculate ) {
 			$this->subtotal = 0;
 			$this->total = 0;
@@ -610,30 +609,30 @@ class order extends CommerceOrderBase {
 	}
 
 	function expunge( $pRestock=FALSE ) {
-		global $gBitProduct, $gBitDb;
+		global $gBitProduct;
 		$ret = NULL;
 
 		if( BitBase::verifyId( $this->mOrdersId ) ) {
-			$gBitDb->StartTrans();
+			$this->mDb->StartTrans();
 			if ($pRestock == 'on') {
-				if( $products = $gBitDb->getAssoc("SELECT `products_id`, `products_quantity` FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) ) ) {
+				if( $products = $this->mDb->getAssoc("SELECT `products_id`, `products_quantity` FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) ) ) {
 					foreach( $products AS $productsId=>$productsQuantity	) {
-						$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = `products_quantity` + ?, `products_ordered` = `products_ordered` - ? WHERE `products_id` = ?", array( $productsQuantity, $productsQuantity, $productsId ) );
+						$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_quantity` = `products_quantity` + ?, `products_ordered` = `products_ordered` - ? WHERE `products_id` = ?", array( $productsQuantity, $productsQuantity, $productsId ) );
 					}
 				}
 			}
 
 			$gBitProduct->invokeServices( 'commerce_expunge_order_function', $this );
 
-			$gBitDb->query("DELETE FROM " . TABLE_COUPON_REDEEM_TRACK . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_COUPON_GV_QUEUE . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
-			$gBitDb->query("DELETE FROM " . TABLE_ORDERS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_COUPON_REDEEM_TRACK . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_COUPON_GV_QUEUE . " WHERE `order_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_ORDERS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
 
-			$gBitDb->CompleteTrans();
+			$this->mDb->CompleteTrans();
 			$ret = TRUE;
 		}
 
@@ -685,7 +684,7 @@ class order extends CommerceOrderBase {
 	}
 
 	function cart() {
-		global $gBitDb, $currencies, $gBitUser, $gBitCustomer;
+		global $currencies, $gBitUser, $gBitCustomer;
 		$this->content_type = $gBitCustomer->mCart->get_content_type();
 
 		if( $gBitUser->isRegistered() ) {
@@ -694,7 +693,7 @@ class order extends CommerceOrderBase {
 										 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 										 LEFT JOIN " . TABLE_COUNTRIES . " co on (ab.`entry_country_id` = co.`countries_id`)
 									 WHERE c.`customers_id` = ? AND ab.`customers_id` = ?	AND c.`customers_default_address_id` = ab.`address_book_id`";
-			$defaultAddress = $gBitDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
+			$defaultAddress = $this->mDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
 
 			// default to primary address in case we have ended up here without anything previously selected
 			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : (!empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL);
@@ -704,7 +703,7 @@ class order extends CommerceOrderBase {
 							 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 							 LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
 						 WHERE ab.`customers_id`=? AND ab.`address_book_id`=?";
-				$shippingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $sendToAddressId ) );
+				$shippingAddress = $this->mDb->getRow( $query, array( $gBitUser->mUserId, $sendToAddressId ) );
 				if( !$shippingAddress ) {
 					$shippingAddress = $defaultAddress;
 				}
@@ -718,7 +717,7 @@ class order extends CommerceOrderBase {
 							LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 							LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
 							WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-				$billingAddress = $gBitDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
+				$billingAddress = $this->mDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
 			}
 
 			switch( STORE_PRODUCT_TAX_BASIS ) {
@@ -743,7 +742,7 @@ class order extends CommerceOrderBase {
 										FROM " . TABLE_ADDRESS_BOOK . " ab
 										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 										WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-				$tax_address = $gBitDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
+				$tax_address = $this->mDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
 			}
 
 			if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
@@ -762,7 +761,7 @@ class order extends CommerceOrderBase {
 		$coupon_code = NULL;
 		if( !empty( $_SESSION['cc_id'] ) ) {
 			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
-			$coupon_code = $gBitDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
+			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
 		}
 
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
@@ -965,9 +964,9 @@ class order extends CommerceOrderBase {
 	}
 
 	function create() {
-		global $gBitDb, $gBitCustomer;
+		global $gBitCustomer;
 
-//		$gBitDb->StartTrans();
+//		$this->mDb->StartTrans();
 		if( $_SESSION['shipping'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
@@ -1029,7 +1028,7 @@ class order extends CommerceOrderBase {
 							);
 
 
-		$gBitDb->associateInsert(TABLE_ORDERS, $sql_data_array);
+		$this->mDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
 		$this->otApplyCredit();
 
@@ -1040,7 +1039,7 @@ class order extends CommerceOrderBase {
 								'orders_value' => (is_numeric( $this->mOtProcessModules[$key]['value'] ) ? $this->mOtProcessModules[$key]['value'] : 0),
 								'class' => $this->mOtProcessModules[$key]['code'],
 								'sort_order' => $this->mOtProcessModules[$key]['sort_order'] );
-			$gBitDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
+			$this->mDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
 		}
 
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
@@ -1050,17 +1049,17 @@ class order extends CommerceOrderBase {
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments'] );
-		$gBitDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sqlParams );
+		$this->mDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sqlParams );
 
 		$this->createAddProducts( $this->mOrdersId );
 
-//		$gBitDb->CompleteTrans();
+//		$this->mDb->CompleteTrans();
 
 		return( $this->mOrdersId );
 	}
 
 	private function createAddProducts($pOrdersId) {
-		global $gBitDb, $gBitUser, $currencies;
+		global $gBitUser, $currencies;
 
 		$this->StartTrans();
 		// initialized for the email confirmation
@@ -1090,9 +1089,9 @@ class order extends CommerceOrderBase {
 						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
 						$bindVars[] = $products_attributes[0]['value_id'];
 					}
-					$stockValues = $gBitDb->GetRow($stock_query_raw, $bindVars);
+					$stockValues = $this->mDb->GetRow($stock_query_raw, $bindVars);
 				} else {
-					$stockValues = $gBitDb->GetRow( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
+					$stockValues = $this->mDb->GetRow( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 				}
 
 				if ( !empty( $stock_values ) && $stock_values->RecordCount() > 0) {
@@ -1106,12 +1105,12 @@ class order extends CommerceOrderBase {
 
 	//				$this->contents[$productsKey]['stock_value'] = $stockValues['products_quantity'];
 
-					$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_quantity` = ? where `products_id` = ?", array( $stock_left, zen_get_prid($this->contents[$productsKey]['id']) ) );
+					$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_quantity` = ? where `products_id` = ?", array( $stock_left, zen_get_prid($this->contents[$productsKey]['id']) ) );
 	//				if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
 					if ($stock_left < 1) {
 						// only set status to off when not displaying sold out
 						if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-							$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
+							$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 						}
 					}
 
@@ -1124,7 +1123,7 @@ class order extends CommerceOrderBase {
 			}
 
 			// Update products_ordered (for bestsellers list)
-			$gBitDb->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->contents[$productsKey]['products_quantity']) . " where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
+			$this->mDb->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->contents[$productsKey]['products_quantity']) . " where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
 
 			$sql_data_array = array('orders_id' => $pOrdersId,
 								'products_id' => zen_get_prid($this->contents[$productsKey]['id']),
@@ -1142,7 +1141,7 @@ class order extends CommerceOrderBase {
 								'product_is_free' => $this->contents[$productsKey]['product_is_free'],
 								'products_discount_type' => $this->contents[$productsKey]['products_discount_type'],
 								'products_discount_type_from' => $this->contents[$productsKey]['products_discount_type_from']);
-			$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
+			$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 			$this->contents[$productsKey]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
 
 			$this->otUpdateCreditAccount( $productsKey );//ICW ADDED FOR CREDIT CLASS SYSTEM
@@ -1191,7 +1190,7 @@ class order extends CommerceOrderBase {
 												'products_options_id' => $optionValues['products_options_id'],
 												'products_options_values_id' => $optionValues['products_options_values_id'],
 												);
-						$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 					}
 
 					if ((DOWNLOAD_ENABLED == 'true') && isset($optionValues['products_attributes_filename']) && zen_not_null($optionValues['products_attributes_filename'])) {
@@ -1201,7 +1200,7 @@ class order extends CommerceOrderBase {
 												'download_maxdays' => $optionValues['products_attributes_maxdays'],
 												'download_count' => $optionValues['products_attributes_maxcount']);
 
-						$gBitDb->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
+						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
 					}
 					$this->products_ordered_attributes .= "\n\t" . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
 				}
@@ -1393,7 +1392,7 @@ $download_expiry = date('Y-m-d H:i:s', $download_timestamp);
 		 '						<td align="center">' . $downloads->fields['download_count'] . '</td>' . "\n" .
 
 // If there is a download in the order and they cannot get it, tell customer about download rules
-$downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_products_download_id
+$downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_products_download_id
 																 from " .	TABLE_ORDERS . " o, " .	TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd
 									 							 where o.`orders_id` = opd.`orders_id` and o.`orders_id` = ? and opd.orders_products_filename != '' ", array( $last_order ) );
 */
@@ -1659,10 +1658,10 @@ $downloads_check_query = $gBitDb->query("select o.`orders_id`, opd.orders_produc
 	}
 
 	static function getObjectByOrdersProduct( $pOrdersProductId, $pVerify=TRUE ) {
-		global $gBitUser, $gBitDb;
+		global $gBitUser;
 		$ret = NULL;
 		if( self::verifyId( $pOrdersProductId ) ) {
-			$orderHash = $gBitDb->getRow( "SELECT co.`orders_id`, co.`customers_id` FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PRODUCTS . "cop ON (cop.`orders_id`=co.`orders_id`) WHERE `orders_products_id`=?", array( $pOrdersProductId ) );
+			$orderHash = $this->mDb->getRow( "SELECT co.`orders_id`, co.`customers_id` FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PRODUCTS . "cop ON (cop.`orders_id`=co.`orders_id`) WHERE `orders_products_id`=?", array( $pOrdersProductId ) );
 			if( $orderHash['customers_id'] == $gBitUser->mUserId || $gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
 				$ret = new order( $orderHash['orders_id'] );
 			}
