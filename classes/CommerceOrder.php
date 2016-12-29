@@ -247,7 +247,7 @@ class order extends CommerceOrderBase {
 	}
 
 	public static function getList( $pListHash ) {
-		global $gBitSystem;
+		global $gBitDb, $gBitSystem;
 		$bindVars = array();
 		$ret = array();
 		$selectSql = ''; $joinSql = ''; $whereSql = '';
@@ -322,7 +322,7 @@ class order extends CommerceOrderBase {
 		}
 
 		if( !empty( $pListHash['period'] ) && !empty( $pListHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$gBitDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pListHash['timeframe'];
 		}
 
@@ -336,19 +336,19 @@ class order extends CommerceOrderBase {
 			$whereSql = ' WHERE '.$whereSql;
 		}
 
-		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$this->mDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
+		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
 					FROM " . TABLE_ORDERS . " co
 						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status`=os.`orders_status_id`)
 						INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON(co.`customers_id`=uu.`user_id`)
 					$joinSql
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
 					$whereSql
-					ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
-		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
+					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
+		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
 				if( !empty( $pListHash['recent_comment'] ) ) {
-					if( $lastComment = $this->mDb->getRow( "SELECT *, ".$this->mDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
+					if( $lastComment = $gBitDb->getRow( "SELECT *, ".$gBitDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
 						$ret[$row['orders_id']]['comments_time'] = $lastComment['comments_time'];
 						$ret[$row['orders_id']]['comments'] = $lastComment['comments'];
 					}
@@ -358,12 +358,12 @@ class order extends CommerceOrderBase {
 							FROM " . TABLE_ORDERS_PRODUCTS . " cop
 								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 							WHERE cop.`orders_id`=?";
-					$ret[$row['orders_id']]['products'] = $this->mDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
 
 					$sql = "SELECT copa.`orders_products_attributes_id` AS `hash_key`, copa.*
 							FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
 							WHERE copa.`orders_id`=?";
-					$orderAttributes = $this->mDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
 					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
 						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values'];
 						
@@ -1658,10 +1658,10 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	static function getObjectByOrdersProduct( $pOrdersProductId, $pVerify=TRUE ) {
-		global $gBitUser;
+		global $gBitDb, $gBitUser;
 		$ret = NULL;
 		if( self::verifyId( $pOrdersProductId ) ) {
-			$orderHash = $this->mDb->getRow( "SELECT co.`orders_id`, co.`customers_id` FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PRODUCTS . "cop ON (cop.`orders_id`=co.`orders_id`) WHERE `orders_products_id`=?", array( $pOrdersProductId ) );
+			$orderHash = $gBitDb->getRow( "SELECT co.`orders_id`, co.`customers_id` FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PRODUCTS . "cop ON (cop.`orders_id`=co.`orders_id`) WHERE `orders_products_id`=?", array( $pOrdersProductId ) );
 			if( $orderHash['customers_id'] == $gBitUser->mUserId || $gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
 				$ret = new order( $orderHash['orders_id'] );
 			}
