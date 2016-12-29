@@ -35,25 +35,28 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		parent::process();
 		global $currencies;
 
-		if( $od_amount = $this->calculate_deductions($this->get_order_total()) ) {
-		$this->deduction = $od_amount['total'];
-		if ($od_amount['total'] > 0) {
-			while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
-				$tax_rate = zen_get_tax_rate_from_desc($key);
-				if( !empty( $od_amount[$key] ) ) {
-					$this->mOrder->info['tax_groups'][$key] -= $od_amount[$key];
-					$this->mOrder->info['total'] -=	$od_amount[$key];
+		if( $od_amount = $this->getOrderDeduction($this->get_order_total()) ) {
+			$this->deduction = $od_amount['total'];
+			if ($od_amount['total'] > 0) {
+				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+					$tax_rate = zen_get_tax_rate_from_desc($key);
+					if( !empty( $od_amount[$key] ) ) {
+						$this->mOrder->info['tax_groups'][$key] -= $od_amount[$key];
+						$this->mOrder->info['total'] -=	$od_amount[$key];
+					}
 				}
-			}
-			if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') $this->mOrder->info['shipping_cost'] = 0;
-				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = '" . $_SESSION['cc_id'] . "'";
-				$zq_coupon_code = $this->mDB->Execute($sql);
-				$this->coupon_code = $zq_coupon_code->fields['coupon_code'];
-				$this->mOrder->info['total'] = $this->mOrder->info['total'] - $od_amount['total'];
-				$this->mProcessingOutput = array( 'code' => $this->code,
-													 'title' => $this->title . ': ' . $this->coupon_code . ' :',
-													 'text' => '-' . $currencies->format($od_amount['total']),
-													 'value' => $od_amount['total'] );
+				if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') {
+					$this->mOrder->info['shipping_cost'] = 0;
+				}
+				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = ?";
+				if( $couponCode = $this->mDb->GetOne($sql, array( $_SESSION['cc_id'] ) ) ) {
+					$this->coupon_code = $couponCode;
+					$this->mOrder->info['total'] = $this->mOrder->info['total'] - $od_amount['total'];
+					$this->mProcessingOutput = array( 'code' => $this->code,
+														'title' => $this->title . ': ' . $this->coupon_code . ' :',
+														'text' => '-' . $currencies->format($od_amount['total']),
+														'value' => $od_amount['total'] );
+				}
 			}
 		}
 	}
@@ -86,7 +89,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		if ($this->include_tax == 'false') {
 			$orderTotal -= $this->mOrder->info['tax'];
 		}
-		$od_amount = $this->calculate_deductions($orderTotal);
+		$od_amount = $this->getOrderDeduction($orderTotal);
 
 		return $od_amount['total'] + $od_amount['tax'];
 	}
@@ -105,12 +108,12 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	}
 
 
-	function collect_posts() {
+	function collect_posts( $pRequestParams ) {
 		global $gBitCustomer, $currencies;
-		if ( !empty( $_POST['dc_redeem_code'] ) ) {
+		if ( !empty( $pRequestParams['dc_redeem_code'] ) ) {
 			$coupon = new CommerceVoucher();
-			if ( !$coupon->load( $_POST['dc_redeem_code'] ) ) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$_POST['dc_redeem_code'] ), 'SSL',true, false));
+			if ( !$coupon->load( $pRequestParams['dc_redeem_code'] ) ) {
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$pRequestParams['dc_redeem_code'] ), 'SSL',true, false));
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
@@ -122,12 +125,12 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					}
 				}
 				if (!$foundvalid) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$_POST['dc_redeem_code']), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$pRequestParams['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
 
 				if( !$coupon->isRedeemable() ) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$_POST['dc_redeem_code'] ), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$pRequestParams['dc_redeem_code'] ), 'SSL',true, false));
 				}
 
 				if ($coupon->getField('coupon_type')=='S') {
@@ -144,8 +147,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				}
 				$_SESSION['cc_id'] = $coupon->mCouponId;
 			}
-			if( !empty( $_POST['submit_redeem_coupon_x'] ) && !$_POST['gv_redeem_code']) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$_POST['dc_redeem_code']), 'SSL', true, false));
+			if( !empty( $pRequestParams['submit_redeem_coupon_x'] ) && !$pRequestParams['gv_redeem_code']) {
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$pRequestParams['dc_redeem_code']), 'SSL', true, false));
 			}
 		}
 	}
@@ -158,7 +161,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		$_SESSION['cc_id'] = "";
 	}
 
-	function calculate_deductions($pOrderTotal) {
+	private function getOrderDeduction($pOrderTotal) {
 		global $gBitCustomer;
 
 		$tax_address = zen_get_tax_locations();

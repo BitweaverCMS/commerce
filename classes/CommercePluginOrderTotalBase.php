@@ -25,7 +25,7 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 	}
     function credit_selection() {}
     function update_credit_account( $i ) {}
-    function collect_posts() {}
+    function collect_posts( $pRequestParams ) {}
     function apply_credit() {}
 	function pre_confirmation_check() {}
 
