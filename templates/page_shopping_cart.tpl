@@ -64,7 +64,7 @@
 	</div>
 	{/if}
 	<div class="col-xs-12 text-right">
-		<input type="submit" class="btn btn-default" name="update_cart" value="{tr}Update Cart{/tr}" /> <a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}?main_page=checkout_proof" class="btn btn-primary">{tr}Checkout{/tr}</a>
+		<input type="submit" class="btn btn-default" name="update_cart" value="{tr}Update Cart{/tr}" /> <input type="submit" class="btn btn-primary" name="checkout" value="{tr}Checkout{/tr}" /> 
 	</div>
 
 {else}
