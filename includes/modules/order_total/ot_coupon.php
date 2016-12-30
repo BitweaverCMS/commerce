@@ -35,7 +35,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		parent::process();
 		global $currencies;
 
-		if( $od_amount = $this->getOrderDeduction($this->get_order_total()) ) {
+		if( $od_amount = $this->getDiscountHash() ) {
 			$this->deduction = $od_amount['total'];
 			if ($od_amount['total'] > 0) {
 				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
@@ -69,31 +69,6 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		unset($_SESSION['cc_id']);
 	}
 
-	function get_order_total() {
-		global $gBitCustomer;
-		$gBitCustomer->mCart->calculate();
-		if( $this->include_shipping == 'true' ) {
-			$ret = $gBitCustomer->mCart->total;
-		} else {
-			$ret = $gBitCustomer->mCart->subtotal;
-		}
-		return $ret;
-	}
-
-	function pre_confirmation_check() {
-		$orderTotal = $this->mOrder->getField( 'total' );
-
-		if ($this->include_shipping == 'false') {
-			$orderTotal -= $this->mOrder->info['shipping_cost'];
-		}
-		if ($this->include_tax == 'false') {
-			$orderTotal -= $this->mOrder->info['tax'];
-		}
-		$od_amount = $this->getOrderDeduction($orderTotal);
-
-		return $od_amount['total'] + $od_amount['tax'];
-	}
-
 	function use_credit_amount() {
 		return false;
 	}
@@ -109,7 +84,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 
 
 	function collect_posts( $pRequestParams ) {
-		global $gBitCustomer, $currencies;
+		global $currencies;
 		if ( !empty( $pRequestParams['dc_redeem_code'] ) ) {
 			$coupon = new CommerceVoucher();
 			if ( !$coupon->load( $pRequestParams['dc_redeem_code'] ) ) {
@@ -118,8 +93,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
 				$foundvalid = FALSE;
-				foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-					$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
+				foreach( array_keys( $this->mOrder->contents ) as $productKey ) {
+					$productHash = $this->mOrder->getProductHash( $productKey );
 					if ($this->is_product_valid( $productHash, $coupon->mCouponId ) ) {
 						$foundvalid = TRUE;
 					}
@@ -161,8 +136,16 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		$_SESSION['cc_id'] = "";
 	}
 
-	private function getOrderDeduction($pOrderTotal) {
-		global $gBitCustomer;
+	function getOrderDeduction() {
+
+		$od_amount = $this->getDiscountHash();
+
+		return $od_amount['total'] + $od_amount['tax'];
+	}
+
+	private function getDiscountHash() {
+
+		$orderTotal = $this->getDiscountTotal();
 
 		$tax_address = zen_get_tax_locations();
 		$od_amount['total'] = 0;
@@ -170,7 +153,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		if ($_SESSION['cc_id']) {
 			$coupon = new CommerceVoucher( $_SESSION['cc_id'] );
 			if( $coupon->load() && $coupon->isRedeemable() ) {
-				if ($coupon->getField( 'coupon_minimum_order' ) <= $pOrderTotal) {
+				if ($coupon->getField( 'coupon_minimum_order' ) <= $orderTotal) {
 					if ($coupon->getField( 'coupon_type' )=='S') {
 						if( $coupon->getField( 'restrict_to_shipping' ) ) {
 							$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
@@ -186,12 +169,12 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 							// Max discount is a sum of percentages of valid products
 							$totalDiscount = 0;
 						} else {
-							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($pOrderTotal>0);
+							$totalDiscount = $coupon->getField( 'coupon_amount' ) * ($orderTotal>0);
 						}
 						$runningDiscount = 0;
 						$runningDiscountQuantity = 0;
-						foreach( array_keys( $gBitCustomer->mCart->contents ) as $productKey ) {
-							$productHash = $gBitCustomer->mCart->getProductHash( $productKey );
+						foreach( array_keys( $this->mOrder->contents ) as $productKey ) {
+							$productHash = $this->mOrder->getProductHash( $productKey );
 							if( $coupon->getField( 'quantity_max' ) ) {
 								if( $discountQuantity = $coupon->getField( 'quantity_max' ) - $runningDiscountQuantity ) {
 									if( $discountQuantity > $productHash['products_quantity'] ) {
@@ -223,7 +206,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 											$od_amount['tax'] += $od_amount[$tax_desc];
 											break;
 										case 'Standard':
-											$ratio = $runningDiscount / $this->get_order_total();
+											$ratio = $runningDiscount / $this->getDiscountTotal();
 											$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 											$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 											if ($tax_rate > 0) {
@@ -243,7 +226,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 											$od_amount['tax'] += $od_amount[$tax_desc];
 											break;
 										case 'Standard':
-											$ratio = $runningDiscount/$this->get_order_total();
+											$ratio = $runningDiscount / $this->getDiscountTotal();
 											$t_prid = zen_get_prid( $productKey );
 											$cc_result = $this->mDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
 
@@ -268,8 +251,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 							}
 						}
 						$od_amount['total'] = $runningDiscount;
-						if ($od_amount['total']>$pOrderTotal) {
-							$od_amount['total'] = $pOrderTotal;
+						if ($od_amount['total']>$orderTotal) {
+							$od_amount['total'] = $orderTotal;
 						}
 					}
 				}
@@ -340,6 +323,20 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 			}
 		}
 		return $ret;
+	}
+
+	private function getDiscountTotal() {
+
+		$orderTotal = $this->mOrder->info['total'];
+
+		if ($this->include_tax == 'false') {
+			$orderTotal -= $this->mOrder->info['tax'];
+		}
+		if ($this->include_shipping == 'false') {
+			$orderTotal -= $this->mOrder->info['shipping_cost'];
+		}
+
+		return $orderTotal;
 	}
 
 

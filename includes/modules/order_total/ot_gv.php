@@ -56,7 +56,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	private function getOrderDeduction( $pGvAmount ) {
+	private function getDiscount( $pGvAmount ) {
 		global $gBitUser;
 
 		$od_amount = 0.0;
@@ -137,7 +137,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return( $this->userGvBalance );
 	}
 
-	function pre_confirmation_check() {
+	function getOrderDeduction() {
 		$ret = null;
 		if( !empty( $_SESSION['cot_gv'] ) ) {
 			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
@@ -145,7 +145,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			} elseif ($_SESSION['cot_gv'] > $this->userGvBalance ) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			} else {
-				$ret = $this->getOrderDeduction( $_SESSION['cot_gv'] );
+				$ret = $this->getDiscount( $_SESSION['cot_gv'] );
 			}
 		}
 		return $ret;
@@ -267,18 +267,6 @@ class ot_gv extends CommercePluginOrderTotalBase {
 
 	private function getGvBalance( $pCustomersId ) {
 		return $this->mDb->getOne( "SELECT `amount` FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $pCustomersId ) );
-	}
-
-	function get_order_total() {
-		$orderTotal = $this->mOrder->info['total'];
-		if ($this->include_tax == 'false') {
-			$orderTotal -= $this->mOrder->info['tax'];
-		}
-		if ($this->include_shipping == 'false') {
-			$orderTotal -= $this->mOrder->info['shipping_cost'];
-		}
-
-		return $orderTotal;
 	}
 
 	function keys() {

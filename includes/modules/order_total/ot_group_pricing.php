@@ -112,7 +112,8 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return zen_round($tod_amount, 2);
 	}
 
-	function pre_confirmation_check($order_total) {
+	function getOrderDeduction( $pOrder ) {
+		$order_total = $pOrder->getField( 'total' );
 		if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
 		if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
 		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) {
