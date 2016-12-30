@@ -765,10 +765,8 @@ class order extends CommerceOrderBase {
 
 		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
 
-			$this->mDb->StartTrans();
 			$this->otProcess( $pProcessParams );
 			$newOrderId = $this->create();
-			$this->mDb->completeTrans();
 
 			$paymentManager->after_order_create( $newOrderId );
 			$this->sendOrderEmail();
@@ -783,7 +781,7 @@ class order extends CommerceOrderBase {
 	function create() {
 		global $gBitCustomer;
 
-//		$this->mDb->StartTrans();
+		$this->mDb->StartTrans();
 		if( $_SESSION['shipping'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
@@ -847,8 +845,13 @@ class order extends CommerceOrderBase {
 
 		$this->mDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-		$this->otApplyCredit();
+		$this->mDb->CompleteTrans();
 
+		$this->mDb->StartTrans();
+		$this->otApplyCredit();
+		$this->mDb->CompleteTrans();
+
+		$this->mDb->StartTrans();
 		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
 			$sqlParams = array( 'orders_id' => $this->mOrdersId,
 								'title' => $this->mOtProcessModules[$key]['title'],
@@ -867,10 +870,9 @@ class order extends CommerceOrderBase {
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments'] );
 		$this->mDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sqlParams );
+		$this->mDb->CompleteTrans();
 
 		$this->createAddProducts( $this->mOrdersId );
-
-//		$this->mDb->CompleteTrans();
 
 		return( $this->mOrdersId );
 	}
