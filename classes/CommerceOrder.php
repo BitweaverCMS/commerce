@@ -766,13 +766,13 @@ class order extends CommerceOrderBase {
 		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
 
 			$this->mDb->StartTrans();
-
 			$this->otProcess( $pProcessParams );
 			$newOrderId = $this->create();
+			$this->mDb->completeTrans();
+
 			$paymentManager->after_order_create( $newOrderId );
 			$this->sendOrderEmail();
 
-			$this->mDb->completeTrans();
 
 			$ret = TRUE;
 		}
