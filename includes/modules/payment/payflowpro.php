@@ -156,7 +156,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			// verify basics failed
 		} elseif( !empty( $pPaymentParameters['cc_ref_id'] ) && empty( $pPaymentParameters['charge_amount'] ) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
-		} elseif( !($orderTotal = number_format($pOrder->info['total'], 2,'.','')) ) {
+		} elseif( !($orderTotal = $pOrder->getPaymentDue()) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
 		} else {
 			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {

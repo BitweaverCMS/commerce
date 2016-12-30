@@ -264,9 +264,8 @@ if( !empty( $order ) ) {
 		$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
 	}
 
+	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
 }
-
-$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
 
 if( $order_exists ) {
 	if( $paymentModule = $order->getPaymentModule() ) {

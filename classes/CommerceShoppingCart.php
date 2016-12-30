@@ -370,7 +370,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		}
 	}
 
-	function getProductHash( $pProductsKey = false ) {
+	public function getProductHash( $pProductsKey ) {
 		 global $gBitProduct, $currencies;
 
 		$productHash = array();
