@@ -131,7 +131,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	function apply_credit() {
 		$cc_id = $_SESSION['cc_id'];
 		if( !empty( $this->deduction ) ) {
-			$this->mDb->Execute( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, redeem_ip, customer_id, order_id) VALUES ( now(), ?, ?, ?, ?)", array( $cc_id, $_SERVER['REMOTE_ADDR'],  $this->mOrder->customer['id'], $this->mOrder->mOrdersId ) );
+			$bindVars = array( $cc_id, $_SERVER['REMOTE_ADDR'],  $this->mOrder->customer['customers_id'], $this->mOrder->mOrdersId );
+			$this->mDb->query( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, redeem_ip, customer_id, order_id) VALUES ( now(), ?, ?, ?, ?)", $bindVars );
 		}
 		$_SESSION['cc_id'] = "";
 	}
