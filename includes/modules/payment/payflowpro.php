@@ -243,6 +243,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
 
 			);
+
 			if( $paymentUserId != $gBitUser->mUserId ) {
 				$postFields['COMMENT1'] .= ' / '.$gBitUser->getField( 'login' ).' ('.$gBitUser->mUserId.')';
 			}
@@ -253,7 +254,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$postFields['ACCT'] = $pOrder->info['cc_number']; // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
 				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
 				$postFields['EXPDATE'] = $pOrder->info['cc_expires']; // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
-				$postFields['INVNUM'] = $this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
+				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
 				$postFields['FREIGHTAMT'] = $pOrder->info['shipping_cost']; // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
 			}
 
