@@ -150,7 +150,7 @@ class order extends CommerceOrderBase {
 		}
 
 		if( !empty( $whereSql ) ) {
-			$whereSql = ' WHERE '.$whereSql;
+			$whereSql =  preg_replace('/^ AND /',' WHERE ', $whereSql);
 		}
 
 		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
