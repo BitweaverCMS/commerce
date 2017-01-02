@@ -220,7 +220,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'COMMENT1' => 'OrderID: ' . $pOrder->mDb->mName . '-' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 				'EMAIL' => $paymentEmail,	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
 				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
 
