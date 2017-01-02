@@ -151,7 +151,7 @@ if( !empty( $order ) ) {
 			exit;
 			break;
 		case 'update_order':
-			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['charge_amount'] ) ) {
+			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['additional_charge'] ) ) {
 				$formatCharge = $currencies->format( $_REQUEST['charge_amount'], FALSE, BitBase::getParameter( $_REQUEST, 'charge_currency' ) );
 				$_REQUEST['cc_ref_id'] = $order->info['cc_ref_id'];
 				if( $paymentModule = $order->getPaymentModule() ) {
@@ -179,7 +179,7 @@ if( !empty( $order ) ) {
 			break;
 		case 'email':
 			if( validate_email_syntax( $_REQUEST['email'] ) ) {
-				$order->send_order_email( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
+				$order->sendOrderEmail( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
 				$messageStack->add_session('Copy of receipt emailed to '.$_REQUEST['email'], 'success');
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['oID'] );
 			}

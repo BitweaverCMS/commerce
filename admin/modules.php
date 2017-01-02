@@ -129,9 +129,9 @@ $installed_modules = array();
 foreach ( $directory_array as $class=>$file ) {
 	$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/' . $module_type . '/' . $file;
 	if( file_exists( $langFile ) ) {
-			include( $langFile );
+		include_once( $langFile );
 	}
-	include($module_directory . $file);
+	include_once($module_directory . $file);
 
 	if (zen_class_exists($class)) {
 		$module = new $class;
@@ -145,10 +145,11 @@ foreach ( $directory_array as $class=>$file ) {
 
 		$rowClass = '';
 		if ((!isset($_GET['module']) || (isset($_GET['module']) && ($_GET['module'] == $class))) && !isset($mInfo)) {
-			$module_info = array('code' => $module->code,
-													 'title' => $module->title,
-													 'description' => $module->description,
-													 'status' => $module->check());
+			$module_info = array('class' => $class,
+								'code' => $module->code,
+								'title' => $module->title,
+								'description' => $module->description,
+								'status' => $module->check());
 			$module_keys = $module->keys();
 			$keys_extra = array();
 			for ($j=0, $k=sizeof($module_keys); $j<$k; $j++) {
@@ -162,9 +163,7 @@ foreach ( $directory_array as $class=>$file ) {
 			}
 			$module_info['keys'] = $keys_extra;
 			$mInfo = new objectInfo($module_info);
-			if( isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) {
 				$rowClass = 'info';
-			}
 		} else {
 			if( $module->enabled ) {
 				$rowClass = 'success';

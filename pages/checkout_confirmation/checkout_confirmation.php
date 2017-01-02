@@ -89,6 +89,4 @@ $gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_REQ
 	
 $gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );
 
-$gBitSmarty->assign('GLOBALS',$GLOBALS);
-
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_confirmation.tpl' );

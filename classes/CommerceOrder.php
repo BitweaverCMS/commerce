@@ -573,8 +573,6 @@ class order extends CommerceOrderBase {
 
 		}
 
-		$class = &$_SESSION['payment'];
-
 		$coupon_code = NULL;
 		if( !empty( $_SESSION['cc_id'] ) ) {
 			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
@@ -584,8 +582,8 @@ class order extends CommerceOrderBase {
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
 							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
-							'payment_method' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->title : '',
-							'payment_module_code' => !empty( $GLOBALS[$class] ) ? $GLOBALS[$class]->code : '',
+							'payment_method' => '',
+							'payment_module_code' => '',
 							'coupon_code' => $coupon_code,
 							'shipping_method' => !empty( $_SESSION['shipping']['title'] ) ? $_SESSION['shipping']['title'] : '',
 							'shipping_method_code' => !empty( $_SESSION['shipping']['code'] ) ? $_SESSION['shipping']['code'] : '',
@@ -606,12 +604,15 @@ class order extends CommerceOrderBase {
 				$this->info['order_status'] = DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID;
 			}
 		}
-		if (isset($GLOBALS[$class]) && is_object($GLOBALS[$class])) {
-			if ( isset($GLOBALS[$class]->order_status) && is_numeric($GLOBALS[$class]->order_status) && ($GLOBALS[$class]->order_status > 0) ) {
-				$this->info['order_status'] = $GLOBALS[$class]->order_status;
+
+		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $_SESSION, 'payment' ) ) ) {
+
+			$this->info['payment_method'] = $paymentModule->title;
+			$this->info['payment_module_code'] = $paymentModule->code;
+			if( $paymentModule->order_status && is_numeric( $paymentModule->order_status ) && $paymentModule->order_status > 0 ) {
+				$this->info['order_status'] = $paymentModule->order_status;
 			}
 		}
-
 
 		if( !empty( $defaultAddress ) ) {
 			$this->customer = array('firstname' => $defaultAddress['entry_firstname'],
@@ -750,6 +751,31 @@ class order extends CommerceOrderBase {
 		return $this->mNextOrdersId;
 	}
 
+	function getPaymentModule() {
+		if( $this->isValid() ) {
+			return $this->loadPaymentModule( $this->info['payment_module_code'] );
+		}
+	}
+
+	function loadPaymentModule( $pModule ) {
+		global $gBitCustomer;
+		$ret = NULL;
+		if( $pModule ) {
+			$moduleDir = DIR_FS_CATALOG . DIR_WS_MODULES .'payment/';
+			if( file_exists( $moduleDir . $pModule . '.php') ) {
+				require_once( $moduleDir . $pModule . '.php' );
+				$langFile = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $pModule . '.php';
+				if( file_exists( $langFile ) ) {
+					require( $langFile );
+				}
+			}
+			if( class_exists( $pModule ) ) {
+				$ret = new $pModule();
+			}
+		}
+		return $ret;
+	}
+
 	function process( $pProcessParams ) {
 		$ret = FALSE;
 
@@ -760,7 +786,7 @@ class order extends CommerceOrderBase {
 		}
 
 		// load selected payment module
-		require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+		require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 		$paymentManager = new CommercePaymentManager( $pProcessParams['payment'] );
 
 		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
@@ -1106,15 +1132,15 @@ class order extends CommerceOrderBase {
 
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			$email_order .=	$this->contents[$productsKey]['products_quantity'] . ' x ' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') . ' = ' .
-									$currencies->display_price( $this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
-									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
+							$currencies->display_price( $this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
+							($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
-				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
-				$email_order .= "\n		+ " . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
+//				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
+				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['option']) . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
 			}
 			$email_order .= "\n\n";
 		}
-		 
+
 		$email_order .= EMAIL_SEPARATOR . "\n";
 
 		$emailVars['PRODUCTS_TITLE'] = EMAIL_TEXT_PRODUCTS;
@@ -1147,16 +1173,15 @@ class order extends CommerceOrderBase {
 		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_label($this->customer['user_id'], $this->billing, true, '', "<br />");
 
 		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
-		if(!empty( $_SESSION['payment'] ) && is_object($GLOBALS[$_SESSION['payment']])) {
+		if( $paymentModule = $this->getPaymentModule() ) {
 			$email_order .= EMAIL_TEXT_PAYMENT_METHOD . "\n" .	EMAIL_SEPARATOR . "\n";
-			$payment_class = $_SESSION['payment'];
-			$email_order .= $GLOBALS[$payment_class]->title . "\n\n";
-			if( !empty( $GLOBALS[$payment_class]->email_footer ) ) {
-				$email_order .= $GLOBALS[$payment_class]->email_footer . "\n\n";
+			$email_order .= $paymentModule->title . "\n\n";
+			if( !empty( $paymentModule->email_footer ) ) {
+				$email_order .= $paymentModule->email_footer . "\n\n";
 			}
 			$emailVars['PAYMENT_METHOD_TITLE'] = EMAIL_TEXT_PAYMENT_METHOD;
-			$emailVars['PAYMENT_METHOD_DETAIL'] = $GLOBALS[$payment_class]->title;
-			$emailVars['PAYMENT_METHOD_FOOTER'] = (!empty( $GLOBALS[$payment_class]->email_footer ) ? $GLOBALS[$payment_class]->email_footer : '');
+			$emailVars['PAYMENT_METHOD_DETAIL'] = $paymentModule->title;
+			$emailVars['PAYMENT_METHOD_FOOTER'] = (!empty( $paymentModule->email_footer ) ? $paymentModule->email_footer : '');
 		}
 
 		// include disclaimer
