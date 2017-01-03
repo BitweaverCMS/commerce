@@ -8,7 +8,7 @@
 	<option value="<=" {if $smarty.session.orders_status_comparison == '<='}selected="selected"{/if}>{tr}At Most{/tr}</option>
 </select>
 
-{html_options name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
+{html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
 
 <input class="btn btn-default btn-sm" type="submit" value="Go" name="list_filter"/>
 {/form}
