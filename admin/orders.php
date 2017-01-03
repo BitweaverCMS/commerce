@@ -77,7 +77,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 
 // Put this after header.php because we have a custom <header> when viewing an order
-define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : 's'));
+define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : tra( 'Orders' )));
 
 if( !empty( $order ) ) {
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
@@ -288,12 +288,7 @@ if( $order_exists ) {
 							from " . TABLE_COUPON_GV_QUEUE ."
 							where `order_id` = '" . $_REQUEST['oID'] . "' and `release_flag`='N'");
 	if ($gv_check->RecordCount() > 0) {
-		$goto_gv = '<a href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_REQUEST['oID']) . '">' . zen_image_button('button_gift_queue.gif',IMAGE_GIFT_QUEUE) . '</a>';
-		echo '			<tr><td align="right"><table width="225"><tr>';
-		echo '				<td align="center">';
-		echo $goto_gv . '&nbsp;&nbsp;';
-		echo '				</td>';
-		echo '			</tr></table></td></tr>';
+		echo '<a class="btn btn-default btn-sm" href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_REQUEST['oID']) . '">' . tra( 'Gift Queue' ) . '</a>';
 	}
 	?>
 	</td>
