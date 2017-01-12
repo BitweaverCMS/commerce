@@ -349,7 +349,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options_map' => "
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes_dld' => "
-  products_options_values_id I4 NOT NULL,
+  products_options_values_id I4 NOTNULL,
   products_attributes_filename C(255),
   products_attributes_maxdays I2 default '0',
   products_attributes_maxcount I2 default '0'
@@ -1797,11 +1797,12 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-30, 1, 'Chargeback')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-20, 1, 'Refunded')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-10, 1, 'Cancelled')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (-5, 1, 'Testing')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (10, 1, 'Pending')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (20, 1, 'Processing')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (21, 1, 'Reviewing')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (22, 1, 'Checking')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (23, 1, 'Testing')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (25, 1, 'Backorder')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (30, 1, 'Transferring')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (40, 1, 'Fulfilling')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (41, 1, 'Expediting')",
