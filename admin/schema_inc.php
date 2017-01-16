@@ -1255,7 +1255,7 @@ $indices = array (
   'paypal_session_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_paypal_session', 'cols' => ' session_id', 'opts' => NULL),
   'paypal_paypal_ipn_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_paypal', 'cols' => 'paypal_ipn_id', 'opts' => NULL),
   'paypal_zen_order_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_paypal', 'cols' => 'zen_order_id', 'opts' => NULL),
-  'cfg_key_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout', 'cols' => ' configuration_key', 'opts' => NULL ),
+  'cfg_key_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout', 'cols' => ' configuration_key', 'opts' => array('UNIQUE') ),
   'cfg_value_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout', 'cols' => ' configuration_value', 'opts' => NULL ),
   'cfg_title_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_product_type_layout', 'cols' => ' configuration_title', 'opts' => NULL ),
   'paypal_pment_ipn_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_paypal_pment_stat_his', 'cols' => 'paypal_ipn_id', 'opts' => NULL),
