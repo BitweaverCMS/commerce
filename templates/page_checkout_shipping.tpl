@@ -47,12 +47,9 @@
 					<legend>{tr}Shipping Address{/tr}</legend>
 					<input type="hidden" name="action" value="process" />
 					<input type="hidden" name="main_page" value="checkout_shipping" />
-							<p>{tr}Your order will be shipped to the following address:{/tr}</p>
-							{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
-
-					<div class="form-group submit">
-						<button class="btn btn-default btn-sm" name="change_address"><i class="icon-home"></i> {tr}Change Shipping Address{/tr}</button>
-					</div>
+					<p>{tr}Your order will be shipped to the following address:{/tr}</p>
+					<div class="pull-right"><button class="btn btn-default btn-xs" name="change_address"><i class="icon-truck"></i> {tr}Change{/tr}</button></div>
+					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
 				</fieldset>
 
 				<fieldset>

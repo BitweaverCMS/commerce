@@ -118,47 +118,24 @@ class CommerceShipping {
 		return $quotes_array;
 	}
 
-	function cheapest() {
-		if (is_array($this->modules)) {
-			$rates = array();
-
-			reset($this->modules);
-			while (list(, $value) = each($this->modules)) {
-				$class = substr($value, 0, strrpos($value, '.'));
-				if( !empty( $GLOBALS[$class] ) && $GLOBALS[$class]->enabled) {
-					$quotes = $GLOBALS[$class]->quotes;
-					if( !empty( $quotes['methods'] ) ) {
-						$size = sizeof( $quotes['methods'] );
-						for ($i=0; $i<$size; $i++) {
-							if ($quotes['methods'][$i]['cost']) {
-								$rates[] = array('id' => $quotes['id'] . '_' . $quotes['methods'][$i]['id'],
-																 'title' => $quotes['module'] . ' (' . $quotes['methods'][$i]['title'] . ')',
-																 'cost' => $quotes['methods'][$i]['cost'],
-																 'module' => $quotes['id']
-																 );
-							}
+	function cheapest( $pShippingWeight ) {
+		$cheapest = false;
+		if( $quotes = $this->quote( $pShippingWeight ) ) {
+			foreach( $quotes as $quote ) {
+				if( !empty( $quote['methods'] ) ) {
+					for( $i=0; $i< count( $quote['methods'] ); $i++ ) {
+						if( empty( $cheapest ) || ($quote['methods'][$i]['cost'] < $cheapest['cost']) ) {
+							$cheapest = array( 'id' => $quote['id'] . '_' . $quote['methods'][$i]['id'],
+												'title' => $quote['module'] . ' (' . $quote['methods'][$i]['title'] . ')',
+												'cost' => $quote['methods'][$i]['cost'],
+												'module' => $quote['id']
+											 );
 						}
 					}
 				}
 			}
-
-			$cheapest = false;
-			$size = sizeof($rates);
-			for ($i=0; $i<$size; $i++) {
-				if (is_array($cheapest)) {
-					// never quote storepickup as lowest - needs to be configured in shipping module
-					if ($rates[$i]['cost'] < $cheapest['cost'] and $rates[$i]['module'] != 'storepickup') {
-						$cheapest = $rates[$i];
-					}
-				} else {
-					if ($rates[$i]['module'] != 'storepickup') {
-						$cheapest = $rates[$i];
-					}
-				}
-			}
-
-			return $cheapest;
 		}
+		return $cheapest;
 	}
 }
 ?>

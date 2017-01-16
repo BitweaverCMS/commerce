@@ -168,9 +168,8 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
 		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
-			$_SESSION['shipping'] = $shipping->cheapest();
+			$_SESSION['shipping'] = $shipping->cheapest( $gBitCustomer->mCart->show_weight() );
 		}
-
 
 		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 		$breadcrumb->add(NAVBAR_TITLE_2);

@@ -18,12 +18,12 @@
 				<div class="col-xs-9">
 					{formfeedback error=$quotes[ix].error}
 					{if $quotes[ix].methods}
-<table class="table table-hover text-left">
+						<table class="table table-hover text-left">
 						{section name=jx loop=$quotes[ix].methods}
 								<tr class="row">
 									<td class="col-xs-9">
 										{* set the radio button to be checked if it is the method chosen *}
-										{if ("$quotes[ix].id`_`$quotes[ix].methods[jx].id`" == $sessionShippingId)}
+										{if ("`$quotes[ix].id`_`$quotes[ix].methods[jx].id`" == $sessionShippingId.id)}
 											{assign var=checked value=1}
 										{else}
 											{assign var=checked value=0}
