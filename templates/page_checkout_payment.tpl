@@ -134,7 +134,7 @@
 			<div class="form-group">
 				{formlabel label="Order Comments" for=""}
 				{forminput}
-					<textarea name="comments" wrap="soft" class="width95p" rows="4">{$smarty.session.comments}</textarea>
+					<textarea name="comments" wrap="soft" class="form-control" rows="4">{$smarty.session.comments}</textarea>
 				{/forminput}
 			</div>
 		</fieldset>

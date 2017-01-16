@@ -10,14 +10,14 @@
 <div class="row">
 	<div class="col-md-6">
 		{legend legend="Shipping Address"}
+			<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-truck"></i> {tr}Change{/tr}</a></div>
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
-			<a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
 	<div class="col-md-6">
 		{legend legend="Billing Address"}
+			<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change{/tr}</a></div>
 			{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->billing}
-			<a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change Address{/tr}</a>
 		{/legend}
 	</div>
 </div>
@@ -67,7 +67,7 @@
 		</table>
 			<div class="row">
 			{if $order->content_type!='virtual' && $order->info.shipping_method}
-				<div class="col-xs-12 text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></div>
+				<div class="col-xs-12 text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></div>
 			{/if}
 				{foreach from=$order->otOutput() item=otOutput}
 					<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
@@ -80,6 +80,7 @@
 </div>
 <div class="col-md-4">
 	{legend legend="Payment Method"}
+		<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a></div>
 		{if $paymentConfirmation}
 			<h4 class="no-margin">{$paymentConfirmation.title|escape}</h4>
 			{foreach from=$paymentConfirmation.fields item=payFields}
@@ -90,13 +91,10 @@
 		{elseif $smarty.session.payment}
 			{$smarty.session.payment->title}
 		{/if}
-		<div class="clear">
-			<a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a>
-		</div>
 	{/legend}
 
 	{legend legend="Order Comments" class="width100p"}
-		<textarea name="comments" rows="10" class="width95p">{$order->info.comments|escape}</textarea>
+		<textarea name="comments" rows="10" class="form-control">{$order->info.comments|escape}</textarea>
 	{/legend}
 </div>
 
