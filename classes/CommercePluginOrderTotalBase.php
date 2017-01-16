@@ -12,7 +12,7 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
 
 abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
-	protected $title, $output, $mOrder, $mProcessingOutput;
+	protected $output, $mOrder, $mProcessingOutput;
 
 	public function __construct( $pOrder ) {
 		parent::__construct();

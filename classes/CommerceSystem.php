@@ -75,6 +75,14 @@ class CommerceSystem extends BitSingleton {
 		return $ret;
 	}
 
+	function isConfigLoaded( $pConfigName ) {
+		return isset( $this->mConfig[$pConfigName] );
+	}
+
+	static function isConfigDefined( $pConfigName ) {
+		return defined( $pConfigName );
+	}
+
 	static function isConfigActive( $pConfigName ) {
 		return ((defined( $pConfigName ) && strtolower( constant( $pConfigName ) ) == 'true') ? true : false);
 	}

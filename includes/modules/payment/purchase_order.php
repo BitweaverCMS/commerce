@@ -30,9 +30,6 @@ class purchase_order extends CommercePluginPaymentBase {
 		global $order;
 
 		parent::__construct();
-
-		$this->mStatusKey = 'MODULE_PAYMENT_PURCHASEORDER_STATUS';
-
 		$this->code = 'purchase_order';
 		$this->title = 'Purchase Order';
 		$this->description = 'Payment via purchase request from verified organization';
@@ -44,6 +41,10 @@ class purchase_order extends CommercePluginPaymentBase {
 		}
 
 		if (is_object($order)) $this->update_status();
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_PAYMENT_PURCHASEORDER_STATUS';
 	}
 
 // class methods

@@ -13,14 +13,16 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_subtotal extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_subtotal';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_SUBTOTAL_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_subtotal';
 
 		$this->title = MODULE_ORDER_TOTAL_SUBTOTAL_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_SUBTOTAL_DESCRIPTION;
 		$this->sort_order = MODULE_ORDER_TOTAL_SUBTOTAL_SORT_ORDER;
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_SUBTOTAL_STATUS';
 	}
 
 	function process() {

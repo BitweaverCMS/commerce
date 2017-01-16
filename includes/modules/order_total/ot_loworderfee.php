@@ -13,14 +13,16 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_loworderfee extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_loworderfee';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_LOWORDERFEE_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_loworderfee';
 
 		$this->title = MODULE_ORDER_TOTAL_LOWORDERFEE_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_LOWORDERFEE_DESCRIPTION;
 		$this->sort_order = MODULE_ORDER_TOTAL_LOWORDERFEE_SORT_ORDER;
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_LOWORDERFEE_STATUS';
 	}
 
 	function process() {

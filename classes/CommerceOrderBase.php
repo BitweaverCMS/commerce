@@ -60,11 +60,11 @@ class CommerceOrderBase extends BitBase {
 				$otActiveClasses = explode(';', str_replace( '.php', '', MODULE_ORDER_TOTAL_INSTALLED ) );
 				foreach( $otActiveClasses as $otClass ) {
 					if( !class_exists( $otClass ) ) {
-						$langFile = zen_get_file_directory( DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $otClass.'.php', 'false' );
+						$langFile = zen_get_file_directory( BITCOMMERCE_PKG_PATH.DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/order_total/', $otClass.'.php', 'false' );
 						if( file_exists( $langFile ) ) {
 							include_once( $langFile );
 						}
-						include_once( DIR_WS_MODULES.'order_total/'.$otClass.'.php' );
+						include_once( BITCOMMERCE_PKG_PATH.DIR_WS_MODULES.'order_total/'.$otClass.'.php' );
 					}
 					$this->mOtClasses[$otClass] = new $otClass( $this );
 				}
@@ -209,24 +209,6 @@ class CommerceOrderBase extends BitBase {
 			}
 		}
 		return $totalDue;
-	}
-
-	function getPaymentModule() {
-		global $gBitCustomer;
-		$ret = NULL;
-		if( $this->isValid() ) {
-			if ($this->info['payment_module_code']) {
-				if (file_exists(DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php')) {
-					require_once( DIR_FS_CATALOG_MODULES . 'payment/' . $this->info['payment_module_code'] . '.php' );
-					$langFile = DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $this->info['payment_module_code'] . '.php';
-					if( file_exists( $langFile ) ) {
-						require( $langFile );
-					}
-					$ret = new $this->info['payment_module_code']();
-				}
-			}
-		}
-		return $ret;
 	}
 
 }

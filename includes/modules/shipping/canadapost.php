@@ -1,4 +1,12 @@
 <?php
+// +----------------------------------------------------------------------+
+// | bitcommerce,	http://www.bitcommerce.org                            |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2017 bitcommerce.org                                   |
+// | This source file is subject to version 3.0 of the GPL license        |
+// | Portions Copyrigth (c) 2005 http://www.zen-cart.com                  |
+// | Portions Copyright (c) 2003 osCommerce                               |
+// +----------------------------------------------------------------------+
 /*
 	$Id: canadapost.php,v 3.7 October 23 2004
 
@@ -17,64 +25,27 @@
 	Updated to Zen Cart v1.3.0 April 9/2006
 	Lettermail table rates added 6 May 2008 by Gord Dimitrieff (gord@aporia-records.com)
 */
-/**
- * Canada Post Shipping Module class
- *
- */
-class canadapost
-{
-	/**
-	 * Declare shipping module alias code
-	 *
-	 * @var string
-	 */
-	var $code;
-	/**
-	 * Shipping module display name
-	 *
-	 * @var string
-	 */
-	var $title;
-	/**
-	 * Shipping module display description
-	 *
-	 * @var string
-	 */
-	var $description;
-	/**
-	 * Shipping module icon filename/path
-	 *
-	 * @var string
-	 */
-	var $icon;
-	/**
-	 * Shipping module status
-	 *
-	 * @var boolean
-	 */
-	var $enabled;
-	/**
-	 * Shipping Types
-	 *
-	 * @var array
-	 */
-	var $types;
-	var $boxcount;
+
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+
+class canadapost extends CommercePluginShippingBase {
+	protected $types;
+	protected $boxcount;
 
 	/**
 	 * Constructor
 	 *
 	 * @return usps
 	 */
-	function canadapost()
+	function __construct()
 	{
-		global $order, $gBitDb, $template, $gBitLanguage;
-		$this->code = 'canadapost';
+		global $order, $template, $gBitLanguage;
+
+		parent::__construct();
 		$this->title = tra( 'Canada Post' );
 		$this->description = tra( 'Canada Post Parcel Service<p><strong>CPC Profile Information </strong>can be obtained at http://sellonline.canadapost.ca<br /><a href=http://sellonline.canadapost.ca/servlet/LogonServlet?Language=0 target="_blank">Modify my profile</a>' );
 		$this->icon = 'shipping_canadapost';
-		$this->enabled = zen_get_shipping_enabled($this->code) && CommerceSystem::isConfigActive( 'MODULE_SHIPPING_CANADAPOST_STATUS' );
-		if( $this->enabled == true ) {
+		if( $this->isEnabled() ) {
 			$this->server = MODULE_SHIPPING_CANADAPOST_SERVERIP;
 			$this->port = MODULE_SHIPPING_CANADAPOST_SERVERPOST;
 			$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
@@ -90,7 +61,7 @@ class canadapost
 			$this->lettermail_max_weight = MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX;
 			$this->lettermail_available = false;
 			if( MODULE_SHIPPING_CANADAPOST_ZONE ) {
-				$this->enabled = $gBitDb->query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = ?, and zone_country_id = ?", array( MODULE_SHIPPING_CANADAPOST_ZONE, $order->delivery['country']['id'] ) );
+				$this->enabled = $this->mDb->query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = ?, and zone_country_id = ?", array( MODULE_SHIPPING_CANADAPOST_ZONE, $order->delivery['country']['id'] ) );
 			}
 		}
 	}
@@ -234,32 +205,6 @@ class canadapost
 			$ret['error'] = $errmsg;
 		}
 		return $ret;
-	}
-
-	/**
-	 * check status of module
-	 *
-	 * @return boolean
-	 */
-	function check()
-	{
-		global $gBitDb;
-		if (! isset($this->_check))
-		{
-			$check_query = $gBitDb->Execute("select configuration_value from " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_SHIPPING_CANADAPOST_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-		return $this->_check;
-	}
-
-	/**
-	 * Remove this module
-	 *
-	 */
-	function remove()
-	{
-		global $gBitDb;
-		$gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key like 'MODULE\_SHIPPING\_CANADAPOST\_%'");
 	}
 
 	function _canadapostOrigin($postal, $country)

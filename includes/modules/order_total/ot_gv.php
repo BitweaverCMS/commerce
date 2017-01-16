@@ -13,10 +13,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_gv extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_gv';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_GV_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_gv';
 
 		if( $this->isEnabled() ) {
 			global $currencies, $gBitUser;
@@ -54,6 +52,10 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				}
 			}
 		}
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_GV_STATUS';
 	}
 
 	private function getDiscount( $pGvAmount ) {

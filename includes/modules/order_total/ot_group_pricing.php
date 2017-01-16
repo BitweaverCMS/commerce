@@ -13,10 +13,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_group_pricing extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_group_pricing';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS'; 
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_group_pricing';
 
 		if( $this->isEnabled() ) {
 			$this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
@@ -28,6 +26,10 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 			$this->credit_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CREDIT_TAX;
 			$this->credit_class = true;
 		}
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS';
 	}
 
 	function process() {

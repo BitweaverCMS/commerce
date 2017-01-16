@@ -26,5 +26,5 @@ ob_end_clean();
 
 $gBitSystem->mLayout = array( 1 );
 
-$gBitSystem->display( 'bitpackage:bitcommerce/admin_bitcommerce.tpl', tra( 'Admin' ).' '.ucfirst( BITCOMMERCE_PKG_DIR ).' : '.HEADING_TITLE , array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:bitcommerce/admin_bitcommerce.tpl', HEADING_TITLE .' : ' . tra( 'Admin' ).' '.ucfirst( BITCOMMERCE_PKG_DIR ), array( 'display_mode' => 'admin' ));
 ?>

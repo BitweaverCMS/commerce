@@ -80,6 +80,9 @@ if( !empty( $_REQUEST['search_scope'] ) ) {
 if( !empty( $_REQUEST['search'] ) ) {
 	$listHash['search'] = $_REQUEST['search'];
 	$_SESSION['search'] = $_REQUEST['search'];
+} elseif( !empty( $_REQUEST['list_filter'] ) ) {
+	// searching with empty search field
+	$_SESSION['search'] = NULL;
 }
 $gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
 

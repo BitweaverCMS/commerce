@@ -13,14 +13,16 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_tax extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_tax';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_TAX_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_tax';
 
 		$this->title = MODULE_ORDER_TOTAL_TAX_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_TAX_DESCRIPTION;
 		$this->sort_order = MODULE_ORDER_TOTAL_TAX_SORT_ORDER;
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_TAX_STATUS';
 	}
 
 	function process() {

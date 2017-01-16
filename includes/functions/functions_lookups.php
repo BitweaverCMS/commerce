@@ -20,35 +20,36 @@
 // $Id$
 //
 //
-	function zen_get_order_status_name($order_status_id, $language_id = '') {
-		global $gBitDb;
 
-		if (!is_numeric($language_id)) {
-			$language_id = $_SESSION['languages_id'];
-		}
+function zen_get_order_status_name($order_status_id, $language_id = '') {
+	global $gBitDb;
 
-		return $gBitDb->getOne("SELECT `orders_status_name` FROM " . TABLE_ORDERS_STATUS . " WHERE `orders_status_id` = ? and `language_id` = ?", array( (int)$order_status_id, (int)$language_id ) );
+	if (!is_numeric($language_id)) {
+		$language_id = $_SESSION['languages_id'];
 	}
 
+	return $gBitDb->getOne("SELECT `orders_status_name` FROM " . TABLE_ORDERS_STATUS . " WHERE `orders_status_id` = ? and `language_id` = ?", array( (int)$order_status_id, (int)$language_id ) );
+}
 
-	function commerce_get_statuses( $pHash=FALSE ) {
-		global $gBitDb;
-		$ret = array();
-		$orders_status = $gBitDb->query("select `orders_status_id`, `orders_status_name`
-									 from " . TABLE_ORDERS_STATUS . "
-									 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
 
-		while (!$orders_status->EOF) {
-			if( $pHash ) {
-				$ret[$orders_status->fields['orders_status_id']] = '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'];
-			} else {
-				$ret[] = array( 'id' => $orders_status->fields['orders_status_id'],
-							    'text' => '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'] );
-			}
-			$orders_status->MoveNext();
+function commerce_get_statuses( $pHash=FALSE ) {
+	global $gBitDb;
+	$ret = array();
+	$orders_status = $gBitDb->query("select `orders_status_id`, `orders_status_name`
+								 from " . TABLE_ORDERS_STATUS . "
+								 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
+
+	while (!$orders_status->EOF) {
+		if( $pHash ) {
+			$ret[$orders_status->fields['orders_status_id']] = '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'];
+		} else {
+			$ret[] = array( 'id' => $orders_status->fields['orders_status_id'],
+							'text' => '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'] );
 		}
-		return $ret;
+		$orders_status->MoveNext();
 	}
+	return $ret;
+}
 
 /**
  * Returns an array with zones for a given country
@@ -120,31 +121,31 @@ function zen_get_countries( $pCountryMixed = '', $with_iso_codes = false) {
 }
 
 
-	function zen_get_country_id( $pCountryName ) {
-		global $gBitDb;
-		$length = strlen( $pCountryName );
-		if( $length > 3 ) {
-			$column = 'countries_name';
-		} elseif( $length == 3 ) {
-			$column = 'countries_iso_code_3';
-		} else {
-			$column = 'countries_iso_code_2';
-		}
-
-		$sql = "SELECT countries_id
-				FROM " . TABLE_COUNTRIES . "
-				WHERE LOWER(`$column`) LIKE ?";
-		return( $gBitDb->getOne( $sql, array( '%'.strtolower($pCountryName).'%' ) ) );
+function zen_get_country_id( $pCountryName ) {
+	global $gBitDb;
+	$length = strlen( $pCountryName );
+	if( $length > 3 ) {
+		$column = 'countries_name';
+	} elseif( $length == 3 ) {
+		$column = 'countries_iso_code_3';
+	} else {
+		$column = 'countries_iso_code_2';
 	}
+
+	$sql = "SELECT countries_id
+			FROM " . TABLE_COUNTRIES . "
+			WHERE LOWER(`$column`) LIKE ?";
+	return( $gBitDb->getOne( $sql, array( '%'.strtolower($pCountryName).'%' ) ) );
+}
 
 
 ////
 // Alias function to zen_get_countries()
-  function zen_get_country_name($country_id) {
-    $country_array = zen_get_countries($country_id);
-
-    return $country_array['countries_name'];
-  }
+function zen_get_country_name($country_id) {
+	if( $country_array = zen_get_countries($country_id) ) {
+		return $country_array['countries_name'];
+	}
+}
 
 /**
  * Alias function to zen_get_countries, which also returns the countries iso codes

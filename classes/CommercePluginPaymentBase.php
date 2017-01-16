@@ -16,6 +16,10 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		parent::__construct();
 	}
 
+	protected function getStatusKey() {
+		return 'MODULE_PAYMENT_'.strtoupper( $this->code ).'_STATUS';
+	}
+
 	protected function clearSessionDetails() {
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;

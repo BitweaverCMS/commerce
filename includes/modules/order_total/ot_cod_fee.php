@@ -13,10 +13,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_cod_fee extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_cod_fee';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_COD_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_cod_fee';
 
 		if( defined( 'MODULE_ORDER_TOTAL_COD_STATUS' ) ) {
 			$this->title = MODULE_ORDER_TOTAL_COD_TITLE;
@@ -24,6 +22,10 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 			$this->enabled = ((MODULE_ORDER_TOTAL_COD_STATUS == 'true') ? true : false);
 			$this->sort_order = MODULE_ORDER_TOTAL_COD_SORT_ORDER;
 		}
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_COD_STATUS';
 	}
 
 	function process() {

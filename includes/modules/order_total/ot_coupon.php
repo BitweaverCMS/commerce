@@ -14,10 +14,8 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 class ot_coupon extends CommercePluginOrderTotalBase  {
 
 	function __construct( $pOrder ) {
-		$this->code = 'ot_coupon';
-		$this->mStatusKey = 'MODULE_ORDER_TOTAL_COUPON_STATUS';
-
 		parent::__construct( $pOrder );
+		$this->code = 'ot_coupon';
 
 		$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
 		$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
@@ -29,6 +27,10 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		$this->calculate_tax = MODULE_ORDER_TOTAL_COUPON_CALC_TAX;
 		$this->tax_class	= MODULE_ORDER_TOTAL_COUPON_TAX_CLASS;
 		$this->credit_class = true;
+	}
+
+	protected function getStatusKey() {
+		return 'MODULE_ORDER_TOTAL_COUPON_STATUS';
 	}
 
 	function process() {

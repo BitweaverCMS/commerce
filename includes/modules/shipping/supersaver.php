@@ -23,43 +23,40 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
 
 
-  class supersaver extends CommercePluginShippingBase {
-    var $code, $title, $description, $icon, $enabled;
+class supersaver extends CommercePluginShippingBase {
 
-// class constructor
-    function supersaver() {
-      global $order, $gBitDb;
+	function __construct() {
+		global $order, $gBitDb;
+		parent::__construct();
 
-      $this->code = 'supersaver';
-      $this->title = tra( 'SuperSaver Shipping' );
-      $this->description = tra( 'Offer fixed rate (or free!) shipping for orders within a specified amount.' );
-      $this->sort_order = 1;
-      $this->icon = 'shipping_supersaver';
-      $this->tax_class = MODULE_SHIPPING_SUPERSAVER_TAX_CLASS;
-      $this->enabled = ((MODULE_SHIPPING_SUPERSAVER_STATUS == 'True') ? true : false);
-	$this->quotes = array();
+		$this->title = tra( 'SuperSaver Shipping' );
+		$this->description = tra( 'Offer fixed rate (or free!) shipping for orders within a specified amount.' );
+		$this->sort_order = 1;
+		$this->icon = 'shipping_supersaver';
+		if( $this->isEnabled() ) {
+			$this->tax_class = MODULE_SHIPPING_SUPERSAVER_TAX_CLASS;
+			if ( ((int)MODULE_SHIPPING_SUPERSAVER_ZONE > 0) ) {
+				$check_flag = false;
+				$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_SUPERSAVER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
+				while (!$check->EOF) {
+					if ($check->fields['zone_id'] < 1) {
+						$check_flag = true;
+						break;
+					} elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
+						$check_flag = true;
+						break;
+					}
+					$check->MoveNext();
+				}
 
-      if ( ($this->enabled == true) && ((int)MODULE_SHIPPING_SUPERSAVER_ZONE > 0) ) {
-        $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_SHIPPING_SUPERSAVER_ZONE . "' and `zone_country_id` = '" . $order->delivery['country']['countries_id'] . "' order by `zone_id`");
-        while (!$check->EOF) {
-          if ($check->fields['zone_id'] < 1) {
-            $check_flag = true;
-            break;
-          } elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
-            $check_flag = true;
-            break;
-          }
-          $check->MoveNext();
-        }
+				if ($check_flag == false) {
+					$this->enabled = false;
+				}
+			}
+		}
+	}
 
-        if ($check_flag == false) {
-          $this->enabled = false;
-        }
-      }
-    }
-
-// class methods
+	// class methods
 	function quote( $pShipHash = array() ) {
 		global $order, $currencies;
 

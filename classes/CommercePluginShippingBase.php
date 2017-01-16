@@ -12,10 +12,17 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
 
 abstract class CommercePluginShippingBase extends CommercePluginBase {
 
-	var $quotes = array();
+	protected $quotes = array();
+
+	abstract public function quote( $pShipHash = array() );
+
+	protected function getStatusKey() {
+		return 'MODULE_SHIPPING_'.strtoupper( $this->code ).'_STATUS';
+	}
 
 	public function __construct() {
 		parent::__construct();
+		$this->quotes = array();
 	}
 
 }

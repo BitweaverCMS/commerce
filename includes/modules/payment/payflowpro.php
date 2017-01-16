@@ -220,7 +220,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'COMMENT1' => 'OrderID: ' . $pOrder->mDb->mName . '-' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 				'EMAIL' => $paymentEmail,	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
 				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
 
@@ -347,15 +347,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					Limitations: 12-character alphanumeric string.
 					* CUSTOM	(Optional) A free-form field for your own use.  Limitations: 256-character alphanumeric string.
 					Limitations: 127 alphanumeric characters.
-					* ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
-					* ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn 
-					Limitations: Nine numeric characters plus decimal.
 					* TAXAMT	(Required if L_TAXAMTn is specified) Sum of tax for all items in this order.
 					Limitations: Nine numeric characters plus decimal.
-					* TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
 					* HANDLINGAMT	(Optional) Total handling costs for this order.
 					Nine numeric characters plus decimal.
-					* DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
 					* INSURANCEAMT	(Optional) Total shipping insurance cost for this order.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
 					* L_NAMEn	(Optional) Line-item name.
 					Character length and limitations: 36 alphanumeric characters.
@@ -405,6 +400,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			}
 
 			$postFields['AMT'] = number_format($paymentAmount, $paymentDecimal,'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+
+			// ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
+			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
+			$postFields['ITEMAMT'] = $pOrder->getField('total') - $pOrder->getField('shipping_cost') - $pOrder->getField('tax');
+			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
+			$postFields['DISCOUNT'] = $pOrder->getField('total') - $postFields['AMT'];
+			// TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
+			$postFields['TAXAMT'] = $pOrder->getField('tax');
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';

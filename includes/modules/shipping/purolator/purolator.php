@@ -1,5 +1,12 @@
 <?php
-
+// +----------------------------------------------------------------------+
+// | bitcommerce,	http://www.bitcommerce.org                            |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2017 bitcommerce.org                                   |
+// | This source file is subject to version 3.0 of the GPL license        |
+// | Portions Copyrigth (c) 2005 http://www.zen-cart.com                  |
+// | Portions Copyright (c) 2003 osCommerce                               |
+// +----------------------------------------------------------------------+
 /*
   $Id: purolator.php,v 5.2 Jan 24, 2011
 
@@ -11,87 +18,51 @@
   Props to bitsmith2k for helping me solve the 1.39h issue with the _xmlentities function
  */
 
-/**
- * Purolator Shipping Module class
- */
-class purolator {
-	 /**
-   * Declare shipping module alias code
-   *
-   * @var string
-   */
-  var $code;
-  /**
-   * Shipping module display name
-   *
-   * @var string
-   */
-  var $title;
-  /**
-   * Shipping module display description
-   *
-   * @var string
-   */
-  var $description;
-  /**
-   * Shipping module icon filename/path
-   *
-   * @var string
-   */
-  var $icon;
-  /**
-   * Shipping module status
-   *
-   * @var boolean
-   */
-  var $enabled;
-  /**
-   * Shipping Types
-   *
-   * @var array
-   */
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+
+class purolator extends CommercePluginShippingBase {
   var $types;
   var $boxcount;
 
 
-	function purolator()
-	{  //constructor
+	function __construct() {
 		global $order, $gBitDb, $gBitLanguage;
-		$this->code = 'purolator';
+		parent::__construct();
+
 		$this->title = tra( 'Purolator e-Ship' );
 		$this->description = tra( 'Purolator Parcel Service<p><strong>eShip Profile Information </strong>can be obtained at http://eship.purolator.com' );
 		$this->icon = 'shipping_purolator';
-		$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
-		$this->enabled = CommerceSystem::isConfigActive( 'MODULE_SHIPPING_PUROLATOR_STATUS' );
-		if (($this->enabled == true) && ((int) MODULE_SHIPPING_PUROLATOR_ZONE > 0)) {
-			$this->uri = MODULE_SHIPPING_PUROLATOR_SERVERURI;
-			$this->location = MODULE_SHIPPING_PUROLATOR_SERVERLOC;
-			$this->key = MODULE_SHIPPING_PUROLATOR_KEY;
-			$this->pass = MODULE_SHIPPING_PUROLATOR_PASS;
-			$this->acct_num = MODULE_SHIPPING_PUROLATOR_ACCTNUM;
-			$this->packaging = MODULE_SHIPPING_PUROLATOR_PACKAGING;
-			$this->sort_order = MODULE_SHIPPING_PUROLATOR_SORT_ORDER;
-			$this->handling_fee = MODULE_SHIPPING_PUROLATOR_HANDLING;
-			$this->items_qty = 0;
-			$this->items_price = 0;
-			$this->tax_class = MODULE_SHIPPING_PUROLATOR_TAX_CLASS;
-			$this->tax_basis = MODULE_SHIPPING_PUROLATOR_TAX_BASIS;
-			$check_flag = false;
-			$check = $gBitDb->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_PUROLATOR_ZONE . "' and zone_country_id = '" . $order->delivery['country']['id'] . "' order by zone_id");
-			while (!$check->EOF) {
-				if ($check->fields['zone_id'] < 1) {
-					$check_flag = true;
-					break;
-				} elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
-					$check_flag = true;
-					break;
+		if( $this->isEnabled() ) {
+			$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
+			if ( ((int) MODULE_SHIPPING_PUROLATOR_ZONE > 0)) {
+				$this->uri = MODULE_SHIPPING_PUROLATOR_SERVERURI;
+				$this->location = MODULE_SHIPPING_PUROLATOR_SERVERLOC;
+				$this->key = MODULE_SHIPPING_PUROLATOR_KEY;
+				$this->pass = MODULE_SHIPPING_PUROLATOR_PASS;
+				$this->acct_num = MODULE_SHIPPING_PUROLATOR_ACCTNUM;
+				$this->packaging = MODULE_SHIPPING_PUROLATOR_PACKAGING;
+				$this->sort_order = MODULE_SHIPPING_PUROLATOR_SORT_ORDER;
+				$this->handling_fee = MODULE_SHIPPING_PUROLATOR_HANDLING;
+				$this->items_qty = 0;
+				$this->items_price = 0;
+				$this->tax_class = MODULE_SHIPPING_PUROLATOR_TAX_CLASS;
+				$this->tax_basis = MODULE_SHIPPING_PUROLATOR_TAX_BASIS;
+				$check_flag = false;
+				$check = $gBitDb->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_PUROLATOR_ZONE . "' and zone_country_id = '" . $order->delivery['country']['id'] . "' order by zone_id");
+				while (!$check->EOF) {
+					if ($check->fields['zone_id'] < 1) {
+						$check_flag = true;
+						break;
+					} elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
+						$check_flag = true;
+						break;
+					}
+					$check->MoveNext();
 				}
-				$check->MoveNext();
+				if ($check_flag == false)
+					$this->enabled = false;
 			}
-			if ($check_flag == false)
-				$this->enabled = false;
 		}
-
 
 	} // end constructor purolator
 
