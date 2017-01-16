@@ -896,7 +896,7 @@ class order extends CommerceOrderBase {
 										FROM " . TABLE_PRODUCTS . " p
 											LEFT JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(p.`products_id`=pom.`products_id`)
 											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
-											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_attributes_id`=pad.`products_attributes_id`)
+											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_options_values_id`=pad.`products_options_values_id`)
 										WHERE p.`products_id` = ?";
 					$bindVars = array( zen_get_prid($this->contents[$productsKey]['id']) );
 
@@ -1109,7 +1109,7 @@ class order extends CommerceOrderBase {
 									$currencies->display_price( $this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
 									($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
-				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['options_id'], (int)$this->contents[$productsKey]['attributes'][$j]['options_values_id'] );
+				$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['option_id'], (int)$this->contents[$productsKey]['attributes'][$j]['value_id'] );
 				$email_order .= "\n		+ " . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
 			}
 			$email_order .= "\n\n";
