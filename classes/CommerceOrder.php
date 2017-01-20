@@ -1263,7 +1263,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 
 		// default to order status if not specified
 		$status = !empty( $pParamHash['status'] ) ? zen_db_prepare_input( $pParamHash['status'] ) : $this->getStatus();
-		$comments = !empty( $pParamHash['comments'] ) ? zen_db_prepare_input( $pParamHash['comments'] ) : NULL;
+		$comments = !empty( $pParamHash['comments'] ) ? zen_db_prepare_input( trim( $pParamHash['comments'] ) ) : NULL;
 
 		$statusChanged = ($this->getStatus() != $status);
 
@@ -1316,9 +1316,8 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 				}
 			}
 
-			$this->mDb->query( "insert into " . TABLE_ORDERS_STATUS_HISTORY . "
-						(`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
-						values ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
+			$this->mDb->query( "INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . " (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
+								VALUES ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
 
 			$this->CompleteTrans();
 			$order_updated = true;
