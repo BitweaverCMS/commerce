@@ -130,15 +130,23 @@
 	{/legend}
 
 	{legend legend="Attribute Flags"}
-		<div class="form-group">
-			{forminput}
-				<span style="background-color:#ffff00; padding:4px"><input type="checkbox" name="attributes_display_only" value="1" {if $editValue.attributes_display_only==1}checked="checked"{/if} /></span>{tr}Used For Display Purposes Only{/tr}<br/>
-				<span style="background-color:#0000ff; padding:4px"><input type="checkbox" name="product_attribute_is_free" value="1" {if $editValue.product_attribute_is_free==1}checked="checked"{/if} /></span>{tr}Attribute is Free When Product is Free{/tr}<br/>
-				<span style="background-color:#ffa346; padding:4px"><input type="checkbox" name="attributes_default" value="1" {if $editValue.attributes_default==1}checked="checked"{/if} /></span>{tr}Default Attribute to be Marked Selected{/tr}<br/>
-				<span style="background-color:#ff00ff; padding:4px"><input type="checkbox" name="attributes_discounted" value="1" {if !isset($editValue.attributes_discounted) || $editValue.attributes_discounted}checked="checked"{/if} /></span>{tr}Apply Discounts Used by Product Special/Sale{/tr}<br/>
-				<span style="background-color:#d200f0; padding:4px"><input type="checkbox" name="attributes_price_base_inc" value="1" {if !isset($editValue.attributes_price_base_inc) || $editValue.attributes_price_base_inc}checked="checked"{/if}/></span>{tr}Include in Base Price When Priced by Options{/tr}<br/>
-				<span style="background-color:#fd0000; padding:4px"><input type="checkbox" name="attributes_required" value="1" {if $editValue.attributes_required==1}checked="checked"{/if} /></span>{tr}Attribute Required for Text{/tr}<br/>
-			{/forminput}
+		<div class="checkbox">
+			<label><input type="checkbox" name="attributes_display_only" value="1" {if $editValue.attributes_display_only==1}checked="checked"{/if} /> {tr}Used For Display Purposes Only{/tr}</label>
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="product_attribute_is_free" value="1" {if $editValue.product_attribute_is_free==1}checked="checked"{/if} /> {tr}Attribute is Free When Product is Free{/tr}</label>
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="attributes_default" value="1" {if $editValue.attributes_default==1}checked="checked"{/if} /> {tr}Default Attribute to be Marked Selected{/tr}</label>
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="attributes_discounted" value="1" {if !isset($editValue.attributes_discounted) || $editValue.attributes_discounted}checked="checked"{/if} /> {tr}Apply Discounts Used by Product Special/Sale{/tr}</label>
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="attributes_price_base_inc" value="1" {if !isset($editValue.attributes_price_base_inc) || $editValue.attributes_price_base_inc}checked="checked"{/if}/> {tr}Include in Base Price When Priced by Options{/tr}</label>
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="attributes_required" value="1" {if $editValue.attributes_required==1}checked="checked"{/if} /> {tr}Attribute Required for Text{/tr}</label>
 		</div>
 	{/legend}
 
