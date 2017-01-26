@@ -145,6 +145,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			} elseif ($_SESSION['cot_gv'] > $this->userGvBalance ) {
+				$_SESSION['cot_gv'] = $this->userGvBalance;
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			} else {
 				$ret = $this->getDiscount( $_SESSION['cot_gv'] );

@@ -198,7 +198,9 @@ class CommerceOrderBase extends BitBase {
 	}
 
 	function getPaymentDue() {
+		global $currencies;
 		$this->scanOtModules();
+		$round = $currencies->get_decimal_places( $this->getField( 'currency' ) );
 		if( $totalDue = $this->getField( 'total' ) ) {
 			$totalDeductions = 0;
 			foreach( $this->mOtClasses as $class=>&$otObject ) {
@@ -208,7 +210,7 @@ class CommerceOrderBase extends BitBase {
 				}
 			}
 		}
-		return $totalDue;
+		return round( $totalDue, $round );
 	}
 
 }
