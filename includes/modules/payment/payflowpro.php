@@ -110,7 +110,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	////////////////////////////////////////////////////
 
 	function confirmation( $pPaymentParameters ) {
-		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
+		$confirmation = array('title' => $this->cc_type,
 								'fields' => array(
 									array(	'title' => tra( 'Card Owner' ),
 											'field' => $pPaymentParameters['cc_owner']),
