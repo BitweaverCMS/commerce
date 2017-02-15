@@ -20,13 +20,13 @@ class CommerceCustomer extends BitBase {
 		parent::__construct();
 		$this->mCart = new CommerceShoppingCart();
 		$this->mCart->load();
-		if( is_numeric( $pCustomerId ) ) {
+		if( $this->verifyId( $pCustomerId ) ) {
 			$this->mCustomerId = $pCustomerId;
 		}
 	}
 
 	function isValid() {
-		return( !empty( $this->mCustomerId ) && is_numeric( $this->mCustomerId ) );
+		return $this->verifyId( $this->mCustomerId );
 	}
 
 	function load() {

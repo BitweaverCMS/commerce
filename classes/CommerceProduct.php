@@ -77,7 +77,7 @@ class CommerceProduct extends LibertyMime {
 		if( empty( $this->mProductsId ) && !empty( $this->mContentId ) ) {
 			$this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM ".TABLE_PRODUCTS." WHERE `content_id`=?", array( $this->mContentId ) );
 		}
-		if( is_numeric( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
+		if( $this->verifyId( $this->mProductsId ) && $this->mInfo = $this->getProduct( $this->mProductsId ) ) {
 			$this->mContentId = $this->getField( 'content_id' );
 			parent::load();
 			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $this->isPurchased()) ) {
@@ -96,7 +96,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	function loadByRelatedContent( $pContentId ) {
-		if( is_numeric( $pContentId ) ) {
+		if( $this->verifyId( $pContentId ) ) {
 			if( $this->mProductsId = $this->mDb->getOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `related_content_id`=?", array( $pContentId ) ) ) {
 				return( $this->load() );
 			}
@@ -105,7 +105,7 @@ class CommerceProduct extends LibertyMime {
 
 	function getProduct( $pProductsId ) {
 		$ret = NULL;
-		if( is_numeric( $pProductsId ) ) {
+		if( $this->verifyId( $pProductsId ) ) {
 			$bindVars = array(); $selectSql = ''; $joinSql = ''; $whereSql = '';
 			array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1, $pProductsId );
 			$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
@@ -1049,7 +1049,7 @@ If a special exist * 10+9
 	public static function getDisplayUrlFromId( $pProductsId ) {
 		global $gBitSystem;
 		$ret = BITCOMMERCE_PKG_URL;
-		if( !empty( $pProductsId ) && is_numeric( $pProductsId ) ) {
+		if( BitBase::verifyId( $pProductsId ) ) {
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
 				$ret .= $pProductsId;
 			} else {
@@ -1062,7 +1062,7 @@ If a special exist * 10+9
 	public static function getDisplayUrlFromHash( &$pParamHash ) {
 		global $gBitSystem;
 		$ret = BITCOMMERCE_PKG_URL;
-		if( !empty( $pParamHash['products_id'] ) && is_numeric( $pParamHash['products_id'] ) ) {
+		if( BitBase::verifyIdParameter( $pParamHash, 'products_id' ) ) {
 			$ret = static::getDisplayUrlFromId( $pParamHash['products_id'] );
 			if( $gBitSystem->isFeatureActive( 'pretty_urls' ) && empty( $pParamHash['short_form'] ) ) {
 				if( $pParamHash['products_name'] ) {
@@ -1289,7 +1289,7 @@ If a special exist * 10+9
 				end( $path );
 				$pListHash['category_id'] = current( $path );
 			}
-			if( is_numeric( $pListHash['category_id'] ) ) {
+			if( $this->verifyId( $pListHash['category_id'] ) ) {
 				$joinSql .= " LEFT JOIN " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c ON ( p.`products_id` = p2c.`products_id` ) LEFT JOIN " . TABLE_CATEGORIES . " c ON ( p2c.`categories_id` = c.`categories_id` )";
 				$whereSql .= " AND c.`categories_id`=? ";
 				array_push( $bindVars, (int)$pListHash['category_id'] );
@@ -1360,7 +1360,7 @@ If a special exist * 10+9
 			}
 		}
 
-		$pListHash['current_page'] = !empty( $pListHash['page'] ) && is_numeric( $pListHash['page'] ) ? $pListHash['page'] : 1;
+		$pListHash['current_page'] = $this->verifyIdParameter( $pListHash, 'page' ) ? $pListHash['page'] : 1;
 		$pListHash['total_pages'] = ceil( $pListHash['total_records'] / $pListHash['max_records'] );
 		$pListHash['page_records'] = count( $ret );
 //		$pListHash['max_records'] = (count( $ret ) ? count( $ret ) : $pListHash['max_records']);

@@ -213,7 +213,7 @@ class CommerceVoucher extends BitBase {
 */
 
 	function isValid() {
-		return( !empty( $this->mCouponId ) && is_numeric( $this->mCouponId ) );
+		return $this->verifyId( $this->mCouponId );
 	}
 
 	////

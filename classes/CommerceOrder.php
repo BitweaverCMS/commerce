@@ -1450,7 +1450,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	function isValid() {
-		return( !empty( $this->mOrdersId ) && is_numeric( $this->mOrdersId ) );
+		return $this->verifyId( $this->mOrdersId );
 	}
 
 	function getFirstName() {
