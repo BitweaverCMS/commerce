@@ -20,7 +20,7 @@ class CommerceCategory extends BitBase {
 
 	function __construct( $pCategoryId=NULL, $pContentId=NULL ) {
 		parent::__construct();
-		if( is_numeric( $pCategoryId ) ) {
+		if( $this->verifyId( $pCategoryId ) ) {
 			$this->mCategoryId = $pCategoryId;
 			$this->load();
 		}
@@ -39,7 +39,7 @@ class CommerceCategory extends BitBase {
 
 	function countProductsInCategory( $pCategoryId ) {
 		$ret = NULL;
-		if( is_numeric( $pCategoryId ) ) {
+		if( $this->verifyId( $pCategoryId ) ) {
 			$query = "SELECT COUNT(*) as `total` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id` = ?";
 			$ret = $this->mDb->getOne( $query, array( $pCategoryId ) );
 		}
@@ -48,7 +48,7 @@ class CommerceCategory extends BitBase {
 
 	function countParentCategories( $pParentId ) {
 		$ret = NULL;
-		if( is_numeric( $pParentId ) ) {
+		if( $this->verifyId( $pParentId ) ) {
 			$query = "SELECT COUNT(*) as `total` FROM " . TABLE_CATEGORIES . " WHERE `parent_id` = ?";
 			$ret = $this->mDb->getOne( $query, array( $pParentId ) );
 		}
