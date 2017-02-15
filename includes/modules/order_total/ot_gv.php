@@ -139,7 +139,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return( $this->userGvBalance );
 	}
 
-	function getOrderDeduction() {
+	function getOrderDeduction( $pOrder ) {
 		$ret = null;
 		if( !empty( $_SESSION['cot_gv'] ) ) {
 			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {

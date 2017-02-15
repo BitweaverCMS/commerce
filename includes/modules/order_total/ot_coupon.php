@@ -139,7 +139,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		$_SESSION['cc_id'] = "";
 	}
 
-	function getOrderDeduction() {
+	function getOrderDeduction( $pOrder ) {
 
 		$od_amount = $this->getDiscountHash();
 
