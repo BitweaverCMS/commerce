@@ -321,8 +321,8 @@ class fedexwebservices extends CommercePluginShippingBase {
 	}
 		
 	function _setInsuranceValue($order_amount){
-		if ($order_amount > (float)MODULE_SHIPPING_FEDEXWEBSERVICES_INSURE) {
-			$this->insurance = sprintf("%01.2f", $order_amount);
+		if ($order_amount > $this->getConfig( 'MODULE_SHIPPING_FEDEXWEBSERVICES_INSURE' ) ) {
+			$this->insurance = sprintf("%01.2f", (float)$order_amount);
 		} else {
 			$this->insurance = 0;
 		}

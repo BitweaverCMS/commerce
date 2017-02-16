@@ -1068,8 +1068,8 @@ If a special exist * 10+9
 				if( $pParamHash['products_name'] ) {
 					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_name'] );
 				}
-				if( $pParamHash['products_model'] ) {
-					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['products_model'] );
+				if( $pParamHash['type_name']  && strpos( $ret, $pParamHash['type_name'] ) === FALSE ) {
+					$ret .= '-'.preg_replace( '/[[:^alnum:]]+/', '-', $pParamHash['type_name'] );
 				}
 			}
 			if( !empty( $pParamHash['cat_path'] ) ) {
