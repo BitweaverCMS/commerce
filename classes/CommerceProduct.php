@@ -136,6 +136,10 @@ class CommerceProduct extends LibertyMime {
 		return $ret;
 	}
 
+	function getProductsTypeName() {
+		return $this->getField( 'type_name', 'Product' );
+	}
+
 	function getProductsModel() {
 		return $this->getField( 'products_model', $this->getField( 'type_name', 'Product' ) );
 	}
