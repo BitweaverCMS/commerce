@@ -32,35 +32,12 @@
 
   $currencies = new currencies();
 
-  $productsId = (isset($_GET['products_id']) ? $_GET['products_id'] : $productsId);
+	if( !$gBitProduct->isValid() ) {
+		zen_redirect( zen_href_link_admin( FILENAME_CATEGORIES ) );
+	}
+  $productsId = $gBitProduct->mProductsId;
 
   $action = (isset($_GET['action']) ? $_GET['action'] : '');
-
-  $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-
-  if ($action == 'new_cat') {
-    $current_category_id = (isset($_GET['current_category_id']) ? $_GET['current_category_id'] : $current_category_id);
-    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
-    $productsId = $new_product_query->fields['products_id'];
-    zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
-  }
-
-// set categories and products if not set
-  if ( empty( $productsId ) && $current_category_id != '') {
-    $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
-    $productsId = $new_product_query->fields['products_id'];
-    if ($productsId != '') {
-      zen_redirect(zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'products_id=' . $productsId . '&current_category_id=' . $current_category_id));
-    }
-  } else {
-    if ($productsId == '' and $current_category_id == '') {
-      $reset_categories_id = zen_get_category_tree('', '', '0', '', '', true);
-      $current_category_id = $reset_categories_id[0]['id'];
-      $new_product_query = $gBitDb->Execute("select ptc.* from " . TABLE_PRODUCTS_TO_CATEGORIES . " ptc  left join " . TABLE_PRODUCTS_DESCRIPTION . " pd on ptc.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' where ptc.`categories_id`='" . $current_category_id . "' order by pd.`products_name`");
-      $productsId = $new_product_query->fields['products_id'];
-      $_GET['products_id'] = $productsId;
-    }
-  }
 
   require(DIR_WS_MODULES . FILENAME_PREV_NEXT);
 
@@ -201,29 +178,6 @@
     }
   }
 
-?>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
-</head>
-<body>
-<div id="spiffycalendar" class="text"></div>
-<!-- header //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
-
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-  <tr>
-<!-- body_text //-->
-    <td width="100%" valign="top"><table>
-              <tr>
-                <td class="smallText" align="right">
-<?php
     echo zen_draw_form_admin('search', FILENAME_CATEGORIES, '', 'get');
 // show reset search
     if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
@@ -235,59 +189,12 @@
       echo '<br/ >' . TEXT_INFO_SEARCH_DETAIL_FILTER . $keywords;
     }
     echo '</form>';
-?>
-                </td>
-              </tr>
-<?php
-///////////////////////////////////////////////////////////
-// BOF: NEW CODE TO KEEP
-?>
 
-<?php
   if ($action != 'edit_update') {
     require(DIR_WS_MODULES . FILENAME_PREV_NEXT_DISPLAY);
 ?>
 
-      <tr><form name="set_products_id_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=set_products_id') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_id', $_GET['products_id']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
-        <td colspan="2"><table border="0" cellspacing="0" cellpadding="2">
-
-<?php
-if ($_GET['products_id'] != '') {
-?>
-          <tr>
-            <td class="main" width="200" align="left" valign="top">&nbsp;</td>
-            <td colspan="2" class="main"><?php echo TEXT_PRODUCT_TO_VIEW; ?></td>
-          </tr>
-          <tr>
-            <td class="main" width="200" align="center" valign="top">
-
-<?php
-// FIX HERE
-  $display_priced_by_attributes = zen_get_products_price_is_priced_by_attributes($_GET['products_id']);
-  echo ($display_priced_by_attributes ? '<span class="alert alert-warning">' . TEXT_PRICED_BY_ATTRIBUTES . '</span>' . '<br />' : '');
-  echo CommerceProduct::getDisplayPriceFromHash($_GET['products_id']) . '<br /><br />';
-  echo zen_get_products_quantity_min_units_display($_GET['products_id'], $include_break = true);
-  $not_for_cart = $gBitDb->Execute("select p.`products_id` from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCT_TYPES . " pt on p.`products_type`= pt.`type_id` where pt.`allow_add_to_cart` = 'N'");
-  while (!$not_for_cart->EOF) {
-    $not_for_cart_array[] = $not_for_cart->fields['products_id'];
-    $not_for_cart->MoveNext();
-   }
-?>
-            </td>
-            <td class="attributes-even" align="center"><?php echo zen_draw_products_pull_down('products_id', 'size="5"', $not_for_cart->fields, true, $_GET['products_id'], true, true); ?></td>
-            <td class="main" align="center" valign="top">
-              <?php
-                echo zen_image_submit('button_display.gif', IMAGE_DISPLAY);
-              ?>
-            </td>
-          </tr>
-<?php
-} else {
-  $not_for_cart = '';
-} // $_GET['products_id'] != ''
-?>
-        <tr>
-          <td colspan="3">
+<form name="set_products_id_id" <?php echo 'action="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, 'action=set_products_id') . '"'; ?> method="post"><?php echo zen_draw_hidden_field('products_id', $_GET['products_id']); ?><?php echo zen_draw_hidden_field('current_category_id', $_GET['current_category_id']); ?>
             <table>
 
 <?php
@@ -317,26 +224,10 @@ if (zen_get_product_is_linked($productsId) == 'true') {
             <td class="smallText" align="center" colspan="3"><?php echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_TO_CATEGORIES, '&products_id=' . $productsId) . '">' . IMAGE_PRODUCTS_TO_CATEGORIES . '</a>'; ?></td>
             </tr>
             </table>
-          </td>
-        </tr>
+      </form>
+<?php } // $action != 'edit_update' 
 
-        </table></td>
-      </form></tr>
-<?php } // $action != 'edit_update' ?>
-<?php
-// EOF: NEW CODE TO KEEP
-///////////////////////////////////////////////////////////
-?>
-<?php
-// start of attributes display
-if ($productsId == '') {
-?>
-      <tr>
-        <td colspan="2" class="pageHeading" align="center" valign="middle" height="200"><?php echo HEADING_TITLE_PRODUCT_SELECT; ?></td>
-      </tr>
-<?php } ?>
 
-<?php
 // only show if allowed in cart
   if ($zc_products->get_allow_add_to_cart($productsId) == 'Y') {
 ?>
@@ -490,9 +381,7 @@ var SpecialEndDate = new ctlSpiffyCalendarBox("SpecialEndDate", "new_prices", "s
     $gBitDb->Execute($sql);
     $pInfo->master_categories_id = zen_get_products_category_id($productsId);
   }
-?>
 
-<?php
   if ($pInfo->products_id != '') {
 ?>
       <tr>
@@ -608,20 +497,8 @@ echo zen_draw_hidden_field('master_categories_id', $pInfo->master_categories_id)
           </tr>
         </table></td>
       </tr>
-<?php
-  } else {
-// show nothing
-?>
-      <tr>
-        <td><?php echo zen_draw_separator('pixel_black.gif', '100%', '2'); ?></td>
-      </tr>
-      <tr>
-        <td class="pageHeading"><?php echo TEXT_PRODUCT_INFO_NONE; ?></td>
-      </tr>
-<?php  } ?>
+<?php  } 
 
-
-<?php
   if ($pInfo->products_id != '') {
 ?>
 <?php

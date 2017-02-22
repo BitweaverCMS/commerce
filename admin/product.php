@@ -105,27 +105,9 @@ if (is_dir(DIR_FS_CATALOG_IMAGES)) {
 } else {
 	$messageStack->add(ERROR_CATALOG_IMAGE_DIRECTORY_DOES_NOT_EXIST, 'error');
 }
-?>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-<?php if ($_SESSION['html_editor_preference_status']=="FCKEDITOR" and $action != 'new_product_meta_tags') include (DIR_WS_INCLUDES.'fckeditor.php'); ?>
-<?php if ($_SESSION['html_editor_preference_status']=="HTMLAREA" and $action != 'new_product_meta_tags')	include (DIR_WS_INCLUDES.'htmlarea.php'); ?>
-</head>
-<body marginwidth="0" marginheight="0" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#FFFFFF">
-<div id="spiffycalendar" class="text"></div>
-<!-- header //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-<tr>
-<!-- body_text //-->
-	<td width="100%" valign="top">
-<?php
+require(DIR_FS_ADMIN_INCLUDES . 'header.php'); 
+
 if ($action == 'new_product' or $action == 'new_product_meta_tags') {
 
 	if ($action == 'new_product_meta_tags') {
@@ -348,19 +330,7 @@ if (empty($pInfo->products_id)) {
 	</table>
 <?php
 }
-//	print_r($pInfo);
 
-?>
-	</td>
-<!-- body_text_eof //-->
-</tr>
-</table>
-<!-- body_eof //-->
+require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
 
-<!-- footer //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
-<!-- footer_eof //-->
-<br />
-</body>
-</html>
-<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
+require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>

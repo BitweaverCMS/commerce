@@ -109,24 +109,8 @@
     <?php
 //  echo $type_admin_handler;
 echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview_meta_tags' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
-    <table>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo sprintf(TEXT_NEW_PRODUCT, zen_output_generated_category_path($current_category_id)); ?></td>
-            <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>
-      <tr>
-        <td class="main" colspan="2">
+			<h2><?php echo TEXT_META_TAG_TITLE_INCLUDES; ?></h2>
           <table border="1" cellspacing="0" cellpadding="2">
-            <tr>
-              <td class="main" colspan="5" align="center"><?php echo TEXT_META_TAG_TITLE_INCLUDES; ?></td>
-            </tr>
             <tr>
               <td class="main" align="center">
                 <?php echo TEXT_PRODUCTS_METATAGS_PRODUCTS_NAME_STATUS . '<br />' . zen_draw_radio_field('metatags_products_name_status', '1', $is_metatags_products_name_status) . '&nbsp;' . TEXT_YES . '&nbsp;' . zen_draw_radio_field('metatags_products_name_status', '0', $not_metatags_products_name_status) . '&nbsp;' . TEXT_NO; ?>
@@ -145,13 +129,10 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
 <?php
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 ?>
-      <tr>
-        <td><table border="3" cellspacing="4" cellpadding="6">
+        <table >
           <tr>
             <td class="main" colspan="2">
               <?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . '<strong>' . TEXT_PRODUCTS_NAME . '</strong>' . '&nbsp;' . zen_get_products_name($_GET['pID'], $languages[$i]['id']) . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_MODEL . '</strong>&nbsp;' . $pInfo->products_model . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_PRICE_INFO . '</strong>&nbsp;' . $currencies->format($pInfo->lowest_purchase_price); ?>
@@ -175,8 +156,7 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
               <?php echo zen_draw_textarea_field('metatags_description[' . $languages[$i]['id'] . ']', 'soft', '100%', '10', (isset($metatags_description[$languages[$i]['id']])) ? stripslashes($metatags_description[$languages[$i]['id']]) : zen_get_metatags_description($pInfo->products_id, $languages[$i]['id'])); //,'id="'.'metatags_description' . $languages[$i]['id'] . '"'); ?>
             </td>
           </tr>
-        </table></td>
-      </tr>
+        </table>
 <?php
     }
 ?>
