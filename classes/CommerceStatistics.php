@@ -438,6 +438,11 @@ class CommerceStatistics extends BitSingleton {
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['products_model'] ) ) {
+			$whereSql .= ' AND cp.`products_model` = ?';
+			$bindVars[] = $pParamHash['products_model'];
+		}
+
 		if( !empty( $pParamHash['products_type'] ) ) {
 			$whereSql .= ' AND cp.`products_type` = ?';
 			$bindVars[] = $pParamHash['products_type'];
@@ -448,16 +453,26 @@ class CommerceStatistics extends BitSingleton {
 			$bindVars[] = $pParamHash['delivery_country'];
 		}
 		
-		$sql = "SELECT cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, SUM(cop.`products_quantity` * cop.`products_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+		$sql = "SELECT cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, COALESCE( cop.`products_model`, cp.`products_model` ) AS `co_products_model`, SUM(cop.`products_quantity` * cop.`products_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 					INNER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON(cpt.`type_id`=cp.`products_type`)
-				WHERE co.`orders_status` > 0 $whereSql
-				GROUP BY cpt.type_id, cpt.`type_name`, cpt.type_class
-				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`)";
+				WHERE co.`orders_status` > 0 AND co.`date_purchased` > '2015-JAN-01' $whereSql
+				GROUP BY cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, `co_products_model`
+				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`) DESC";
 
-		$ret = $this->mDb->getAssoc( $sql, $bindVars );
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$row['products_model'] = $row['co_products_model']; // The coalesced column name for GROUP BY back to default
+				$ret[$row['type_id']]['models'][$row['co_products_model']] = $row;
+				@$ret[$row['type_id']]['totals']['type_name'] = $row['type_name'];
+				@$ret[$row['type_id']]['totals']['type_class'] = $row['type_class'];
+				@$ret[$row['type_id']]['totals']['total_units'] += $row['total_units'];
+				@$ret[$row['type_id']]['totals']['total_revenue'] += $row['total_revenue'];
+			}
+		}
+
 		return $ret;
 	}
 
