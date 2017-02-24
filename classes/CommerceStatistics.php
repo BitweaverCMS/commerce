@@ -438,6 +438,16 @@ class CommerceStatistics extends BitSingleton {
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
+		if( !empty( $pParamHash['date_from'] ) ) {
+			$whereSql .= ' AND co.`date_purchased` >= ? ';
+			$bindVars[] = $pParamHash['date_from'];
+		}
+ 
+		if( !empty( $pParamHash['date_to'] ) ) {
+			$whereSql .= ' AND co.`date_purchased` <= ? ';
+			$bindVars[] = $pParamHash['date_to'];
+		}
+ 
 		if( !empty( $pParamHash['products_model'] ) ) {
 			$whereSql .= ' AND cp.`products_model` = ?';
 			$bindVars[] = $pParamHash['products_model'];
@@ -458,7 +468,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 					INNER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON(cpt.`type_id`=cp.`products_type`)
-				WHERE co.`orders_status` > 0 AND co.`date_purchased` > '2015-JAN-01' $whereSql
+				WHERE co.`orders_status` > 0 $whereSql
 				GROUP BY cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, `co_products_model`
 				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`) DESC";
 

@@ -18,7 +18,7 @@
 	</tr>
 	{foreach from=$s.models item=sub key=modelName}
 		<tr>
-			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?products_type={$typeId}&amp;period={$smarty.request.period}&amp;timeframe={$smarty.request.timeframe}">{$modelName|escape}</a></td>
+			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?products_type={$typeId}&amp;products_model={$modelName|urlencode}&amp;period={$smarty.request.period}&amp;timeframe={$smarty.request.timeframe}">{$modelName|escape}</a></td>
 			<td class="item" style="text-align:right">{$sub.total_units}</td>
 			<td class="item" style="text-align:right">{$sub.total_revenue|round:2}</td>
 			<td class="item" style="text-align:right">{math equation="round( (r/u), 2 )" r=$sub.total_revenue u=$sub.total_units}</td>

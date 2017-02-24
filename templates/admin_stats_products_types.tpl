@@ -4,15 +4,19 @@
 	</div>
 	<h1>{tr}Product Sales Summary{/tr}</h1>
 </div>
-<div>
-	<div style="display:inline-block;padding:6px;" class="form-inline">
-		<input id="calendarfrom" class="form-control" name="calendarfrom" value="{$smarty.request.calendarfrom|default:$smarty.session.date_from}" onchange="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)" style="width:7em;" /> {booticon iname="icon-calendar" iexplain="Choose From Data" id="calendarfrompic"}
-			&nbsp; {tr}to{/tr} &nbsp;
-		<input id="calendarto" class="form-control" name="calendarto" value="{$smarty.request.calendarto|default:$smarty.session.date_to}" onchange="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)" style="width:7em;" /> {booticon ipackage="icons" iname="icon-calendar" iexplain="Choose From Data" id="calendartopic"}
-		<input class="btn btn-default" type="submit" name="change_dates" value="Go" onclick="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)"/>
-		<div id="datehelp"></div>
-	</div>
-</div>
+
+{form method="get" class="form-inline"}
+	<input size="10" type="text" name="date_from" value="{$smarty.request.date_from|default:$smarty.session.date_from}" class="form_datetime form-control" data-date-format="yyyy-mm-dd">
+		&nbsp; {tr}to{/tr} &nbsp;
+	<input size="10" type="text" name="date_to" value="{$smarty.request.date_to|default:$smarty.session.date_to}" class="form_datetime form-control" data-date-format="yyyy-mm-dd">
+	<input class="btn btn-default" type="submit" name="change_dates" value="Go" onclick="changeDates(document.getElementById('calendarfrom').value,document.getElementById('calendarto').value)"/>
+	<div id="datehelp"></div>
+{/form}
+
+ 
+<script type="text/javascript">{literal}
+    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd', todayBtn: true, minView:2, autoclose: true,});
+{/literal}</script>
 
 {include file="bitpackage:bitcommerce/admin_stats_sales_by_type_inc.tpl"}
 
