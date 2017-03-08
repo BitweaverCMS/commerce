@@ -102,15 +102,15 @@ class CommerceCommissionBase extends BitBase {
 
 				switch( $pCommissions[$userId]['payment_method'] ) {
 					case 'paypal':
-						$pCommissions[$userId]['commissions_paypal_address'] = LibertyContent::getPreference( 'commissions_paypal_address', NULL, $pCommissions[$userId]['content_id'] );
+						$pCommissions[$userId]['commissions_paypal_address'] = LibertyContent::getContentPreference( $pCommissions[$userId]['content_id'], 'commissions_paypal_address' );
 						break;
 					case 'worldpay':
-						$pCommissions[$userId]['commissions_worldpay_address'] = LibertyContent::getPreference( 'commissions_worldpay_address', NULL, $pCommissions[$userId]['content_id'] );
+						$pCommissions[$userId]['commissions_worldpay_address'] = LibertyContent::getContentPreference(  $pCommissions[$userId]['content_id'], 'commissions_worldpay_address' );
 						break;
 					case 'storecredit':
 						break;
 					case 'check':
-						$pCommissions[$userId]['commissions_check_address'] = LibertyContent::getPreference( 'commissions_check_address', NULL, $pCommissions[$userId]['content_id'] );
+						$pCommissions[$userId]['commissions_check_address'] = LibertyContent::getContentPreference( $pCommissions[$userId]['content_id'], 'commissions_check_address' );
 						break;
 				}
 			}
