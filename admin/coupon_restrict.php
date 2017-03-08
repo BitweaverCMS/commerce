@@ -21,9 +21,6 @@
 //
 define('MAX_DISPLAY_RESTRICT_ENTRIES', 5);
 require('includes/application_top.php');
-$restrict_array = array();
-$restrict_array[] = array('id'=>'Deny', 'text'=>'Deny');
-$restrict_array[] = array('id'=>'Allow', 'text'=>'Allow');
 
 if( !empty( $_REQUEST['cid'] ) ) {
 	$gCoupon = new CommerceVoucher( $_REQUEST['cid'] );

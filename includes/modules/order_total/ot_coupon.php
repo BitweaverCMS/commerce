@@ -266,64 +266,74 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 
 
 	function is_product_valid( $pProductHash, $coupon_id) {
-		$ret = false;
+		$ret = FALSE;
 
-		if( is_numeric( $coupon_id ) ) {
-			$ret = TRUE;
-			$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$this->mDb->convertSortmode( 'coupon_restrict_asc' );
-			if( $rs = $this->mDb->query( $query, array( $coupon_id ) ) ) {
-				// gifts are not valid, so only check non-gifts
-				if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
-					$ret = ($rs->RecordCount() == 0); // if there are restictions, assume false
+		// gifts are not valid, so only check non-gifts
+		if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
+			if( is_numeric( $coupon_id ) ) {
+				$ret = TRUE;
+				$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$this->mDb->convertSortmode( 'coupon_restrict_asc' );
+				if( $rs = $this->mDb->query( $query, array( $coupon_id ) ) ) {
+				
+					$coupAllow = FALSE; // ($rs->RecordCount() == 0); // if there are restictions, assume false
+					$coupDeny = FALSE; // DENY is assumed false, and an explicit match will override all other potential matches
+
 					while( $restriction = $rs->fetchRow() ) {
 						// specific product_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['product_id'] ) ) {
-							if( $restriction['product_id'] == $pProductHash['products_id'] ) {
-								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
-							} elseif( $restriction['coupon_restrict']!='O' ) {
-								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
+							$prodIsMatch = ($restriction['product_id'] == $pProductHash['products_id']);
+
+							if( $prodIsMatch && $restriction['coupon_restrict'] == 'Y' ) {
+								$coupDeny = TRUE; // Product CANNOT be in this type - trumps all else
+							} elseif( $prodIsMatch && $restriction['coupon_restrict'] == 'N' ) {
+								$coupAllow = TRUE; // Product MUST be in the category
 							}
 						}
 
 						// specific category_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['category_id'] ) ) {
 							// check master cat quickly, or go deep diving
-							if ( ($pProductHash['master_categories_id'] ==  $restriction['category_id']) || zen_product_in_category($pProductHash['products_id'], $restriction['category_id']) ) {
-								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
-							} elseif( $restriction['coupon_restrict']!='O' ) {
-								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
+							$prodIsMatch = ($pProductHash['master_categories_id'] ==  $restriction['category_id']) || zen_product_in_category( $pProductHash['products_id'], $restriction['category_id'] );
+							if( $prodIsMatch && $restriction['coupon_restrict'] == 'Y' ) {
+								$coupDeny = TRUE; // Product CANNOT be in this category - trumps all else
+							} elseif( $prodIsMatch && $restriction['coupon_restrict'] == 'N' ) {
+								$coupAllow = TRUE; // Product MUST be in the category
 							}
 						}
 
 						// specific product_type_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['product_type_id'] ) ) {
-							// check master cat quickly, or go deep diving
-							if( $restriction['product_type_id'] == $pProductHash['products_type'] ) {
-								$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
-							} elseif( $restriction['coupon_restrict']!='O' ) {
-								$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
+							$prodIsMatch = ($restriction['product_type_id'] == $pProductHash['products_type']);
+
+							if( $prodIsMatch && $restriction['coupon_restrict'] == 'Y' ) {
+								$coupDeny = TRUE; // Product CANNOT be in this type - trumps all else
+							} elseif( $prodIsMatch && $restriction['coupon_restrict'] == 'N' ) {
+								$coupAllow = TRUE; // Product MUST be in the category
 							}
 						}
 
 						// specific products_options_values_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['products_options_values_id'] ) ) {
 							if( !empty( $pProductHash['attributes'] ) ) {
-								if( in_array( $restriction['products_options_values_id'], $pProductHash['attributes'] ) ) {
-									$ret |= !($restriction['coupon_restrict']=='Y'); // Exact match
-								} elseif( $restriction['coupon_restrict']!='O' ) {
-									$ret &= !($restriction['coupon_restrict']=='Y'); // Non-optional, must be yes or no
+								$prodIsMatch = (in_array( $restriction['products_options_values_id'], $pProductHash['attributes'] ));
+
+								if( $prodIsMatch && $restriction['coupon_restrict'] == 'Y' ) {
+									$coupDeny = TRUE; // Product CANNOT be in this type - trumps all else
+								} elseif( $prodIsMatch && $restriction['coupon_restrict'] == 'N' ) {
+									$coupAllow = TRUE; // Product MUST be in the category
 								}
 							} else {
-								$ret = FALSE;
+								$coupDeny = TRUE;
 							}
 						}
 					}
-
-				} else {
-					// no restrictions
-					$ret = TRUE;
 				}
+				$ret = ((!$coupDeny) && $coupAllow); //
+			} else {
+				// no restrictions
+				$ret = TRUE;
 			}
+		} else {
 		}
 		return $ret;
 	}

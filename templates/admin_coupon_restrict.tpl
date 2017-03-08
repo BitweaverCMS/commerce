@@ -11,7 +11,7 @@
 	<div class="body">
 		<div class="row">
 			<div class="col-sm-6">
-				<h2>Active Restrictions</h2>
+				<h2>{tr}Active Restrictions{/tr}</h2>
 				<ul class="data">
 			{foreach from=$gCoupon->mRestrictions item=r}
 				<li class="item {if $r.coupon_restrict=='Y'}restricted{else}permitted{/if}">
@@ -81,9 +81,11 @@
 					{forminput}
 						<select class="form-control" name="restrict_status">
 							<option value="Deny" selected="selected">{tr}Deny{/tr}</option>
-							<option value="Maybe" selected="selected">{tr}Allow - Optional{/tr}</option>
-							<option value="Allow" selected="selected">{tr}Allow - Mandatory{/tr}</option>
+							<option value="Allow" selected="selected">{tr}Required{/tr}</option>
 						</select>
+						{formhelp note="If any REQUIRED condition is met, coupon use will be allowed."}
+						{formhelp note="If any DENY condition is met, coupon use will be blocked."}
+						{formhelp note="If there is a conflict between the two, DENY will always trump all REQUIRED conditions."}
 					{/forminput}
 				</div>
 				<div class="form-group submit">
