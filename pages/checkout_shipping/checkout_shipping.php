@@ -183,4 +183,4 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 }
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_shipping.tpl' );
-?>
+

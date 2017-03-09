@@ -48,6 +48,25 @@ class CommerceOrderBase extends BitBase {
 		return( $this->weight );
 	}
 
+	// shipping adjustment
+	function free_shipping_items() {
+		$this->calculate();
+
+		return $this->free_shipping_item;
+	}
+
+	function free_shipping_prices() {
+		$this->calculate();
+
+		return $this->free_shipping_price;
+	}
+
+	function free_shipping_weight() {
+		$this->calculate();
+
+		return $this->free_shipping_weight;
+	}
+
 	public function getProductHash( $pProductsKey ) {
 		return BitBase::getParameter( $this->contents, $pProductsKey );
 	}

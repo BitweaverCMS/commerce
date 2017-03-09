@@ -322,7 +322,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	// calculates totals
 	function calculate( $pForceRecalculate=FALSE ) {
-		global $gBitDb;
 		if( is_null( $this->total ) || $pForceRecalculate ) {
 			$this->subtotal = 0;
 			$this->total = 0;
@@ -353,17 +352,19 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					$purchasePrice = $product->getPurchasePrice( $qty, $productAttributes );
 					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
 
+					$productWeight = $product->getWeight( $qty, $productAttributes );
+					$productsTotal = zen_add_tax( (($purchasePrice * $qty) + $onetimeCharges), $products_tax);
+
 					// shipping adjustments
-					if (($product->getField('product_is_always_free_ship') == 1) or ($product->isVirtual( $this->contents[$productsKey] ) == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
+					if (($product->getField('product_is_always_free_ship') == 1) || $product->isVirtual( $this->contents[$productsKey] ) || (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
-						$this->free_shipping_price += zen_add_tax($purchasePrice, $products_tax) * $qty;
-						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
+						$this->free_shipping_price += $productsTotal;
+						$this->free_shipping_weight += $productWeight;
 					}
 
-					$productsTotal = zen_add_tax( (($purchasePrice * $qty) + $onetimeCharges), $products_tax);
 					$this->total += $productsTotal;
 					$this->subtotal += $productsTotal;
-					$this->weight += $product->getWeight( $qty, $productAttributes );
+					$this->weight += $productWeight;
 					$this->quantity += $qty;
 				}
 			}
@@ -551,7 +552,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	function __sleep() {
 		unset( $this->mProductObjects );
-		return array( 'contents', 'total', 'weight', 'content_type', 'free_shipping_item', 'free_shipping_weight', 'free_shipping_price' );
+		return array( 'contents', 'total', 'weight', 'content_type' );
 	}
 
 	function unserialize($broken) {
@@ -645,25 +646,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	function gv_only() {
 		$gift_voucher = $this->get_content_type(true);
 		return $gift_voucher;
-	}
-
-	// shipping adjustment
-	function free_shipping_items() {
-		$this->calculate();
-
-		return $this->free_shipping_item;
-	}
-
-	function free_shipping_prices() {
-		$this->calculate();
-
-		return $this->free_shipping_price;
-	}
-
-	function free_shipping_weight() {
-		$this->calculate();
-
-		return $this->free_shipping_weight;
 	}
 
 }

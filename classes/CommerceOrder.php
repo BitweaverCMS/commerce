@@ -383,6 +383,7 @@ class order extends CommerceOrderBase {
 			$this->subtotal = 0;
 			$this->total = 0;
 			$this->weight = 0;
+			$this->quantity = 0;
 
 			// shipping adjustment
 			$this->free_shipping_item = 0;
@@ -410,16 +411,20 @@ class order extends CommerceOrderBase {
 						}
 					}
 
+					$productsTotal = $this->contents[$productsKey]['price'] * $qty;
+					$productWeight = $product->getWeight( $qty, $productAttributes );
+
 					// shipping adjustments
-					if (($product->getField('product_is_always_free_ship') == 1) or ($product->isVirtual( $this->contents[$productsKey] ) == 1) or (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
+					if (($product->getField('product_is_always_free_ship') == 1) || $product->isVirtual( $this->contents[$productsKey] ) || (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
-						$this->free_shipping_price += zen_add_tax($products_price, $products_tax) * $qty;
-						$this->free_shipping_weight += $product->getWeight( $qty, $productAttributes );
+						$this->free_shipping_price += $this->contents[$productsKey]['price'] * $qty;
+						$this->free_shipping_weight += $productWeight;
 					}
 
-					$this->total += $this->contents[$productsKey]['price'] * $qty;
-					$this->subtotal += $this->total;
-					$this->weight += $product->getWeight( $qty, $productAttributes );
+					$this->total += $productsTotal;
+					$this->subtotal += $productsTotal;
+					$this->weight += $productWeight;
+					$this->quantity += $qty;
 				}
 			}
 		}
@@ -704,6 +709,8 @@ class order extends CommerceOrderBase {
 
 					$this->contents[$productsKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
 																			 'value' => $attr_value,
+																			 'options_id' => $option,
+																			 'options_values_id' => $value,
 																			 'option_id' => $option,
 																			 'value_id' => $value,
 																			 'prefix' => $optionValues['price_prefix'],

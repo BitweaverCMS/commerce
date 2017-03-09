@@ -66,9 +66,13 @@ class supersaver extends CommercePluginShippingBase {
 
 		$min = MODULE_SHIPPING_SUPERSAVER_MIN;
 		$max = MODULE_SHIPPING_SUPERSAVER_MAX;
-		if( !empty( $min ) && $order->subtotal < MODULE_SHIPPING_SUPERSAVER_MIN ) {
+
+		$order->calculate();
+		$shippedTotal = $order->subtotal - $order->free_shipping_prices();
+
+		if( !empty( $min ) && $shippedTotal < MODULE_SHIPPING_SUPERSAVER_MIN ) {
 			$this->quotes['error'] = tra( 'You must spend at least '. $currencies->format( MODULE_SHIPPING_SUPERSAVER_MIN ).' to get SuperSaver Shipping.' ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
-		} elseif( !empty( $max ) && $order->subtotal > MODULE_SHIPPING_SUPERSAVER_MAX ) {
+		} elseif( !empty( $max ) && $shippedTotal > MODULE_SHIPPING_SUPERSAVER_MAX ) {
 			// no quote for you!
 			$this->quotes['error'] = tra( 'SuperSaver Shipping only applies to orders up to '.$currencies->format( MODULE_SHIPPING_SUPERSAVER_MAX ) ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
 		} else {
