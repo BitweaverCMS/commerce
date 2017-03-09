@@ -273,12 +273,11 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 			if( is_numeric( $coupon_id ) ) {
 				$ret = TRUE;
 				$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$this->mDb->convertSortmode( 'coupon_restrict_asc' );
-				if( $rs = $this->mDb->query( $query, array( $coupon_id ) ) ) {
-				
+				if( $restrictions = $this->mDb->GetAll( $query, array( $coupon_id ) ) ) {
 					$coupAllow = FALSE; // ($rs->RecordCount() == 0); // if there are restictions, assume false
 					$coupDeny = FALSE; // DENY is assumed false, and an explicit match will override all other potential matches
 
-					while( $restriction = $rs->fetchRow() ) {
+					foreach( $restrictions as $restriction ) {
 						// specific product_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['product_id'] ) ) {
 							$prodIsMatch = ($restriction['product_id'] == $pProductHash['products_id']);
@@ -327,8 +326,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 							}
 						}
 					}
+					$ret = ((!$coupDeny) && $coupAllow); //
 				}
-				$ret = ((!$coupDeny) && $coupAllow); //
 			} else {
 				// no restrictions
 				$ret = TRUE;
