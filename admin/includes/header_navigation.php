@@ -23,13 +23,13 @@
 			print '<li><a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $configuration_groups['cg_id'], 'NONSSL') . '">' . $configuration_groups['cg_title'] . '</a></li>';
 		}
 ?>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>template_select.php">{tr}Template Selection{/tr}</a></li>
-					<li><a href="/kernel/admin/index.php?page=layout&amp;module_package=bitcommerce">{tr}Layout Boxes Controller{/tr}</a></li>
-					<li><a href="layout_controller.php?action=reset_defaults">{tr}RESET LAYOUT{/tr}</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>banner_manager.php">{tr}Banner Manager{/tr}</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>admin.php">{tr}Admin Settings{/tr}</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>store_manager.php">{tr}Store Manager{/tr}</a></li>
-					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>define_pages_editor.php">{tr}Define Pages Editor{/tr}</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>template_select.php">Template Selection</a></li>
+					<li><a href="/kernel/admin/index.php?page=layout&amp;module_package=bitcommerce">Layout Boxes Controller</a></li>
+					<li><a href="layout_controller.php?action=reset_defaults">RESET LAYOUT</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>banner_manager.php">Banner Manager</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>admin.php">Admin Settings</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>store_manager.php">Store Manager</a></li>
+					<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>define_pages_editor.php">Define Pages Editor</a></li>
 				</ul>
 			</li>
 <?php
