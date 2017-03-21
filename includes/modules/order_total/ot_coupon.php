@@ -112,7 +112,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 
 				if ($coupon->getField('coupon_type')=='S') {
 					if( $coupon->getField( 'restrict_to_shipping' ) ) {
-						$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
+						$shippingMethods = array_map( 'trim', explode( ',', $coupon->getField( 'restrict_to_shipping' ) ) );
 						if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
 							$coupon_amount = $this->mOrder->info['shipping_cost'];
 						}
@@ -159,7 +159,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				if ($coupon->getField( 'coupon_minimum_order' ) <= $orderTotal) {
 					if ($coupon->getField( 'coupon_type' )=='S') {
 						if( $coupon->getField( 'restrict_to_shipping' ) ) {
-							$shippingMethods = explode( ',', $coupon->getField( 'restrict_to_shipping' ) );
+							$shippingMethods = array_map( 'trim', explode( ',', $coupon->getField( 'restrict_to_shipping' ) ) );
 							if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
 								$od_amount['total'] = $this->mOrder->info['shipping_cost'];
 							}
