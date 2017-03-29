@@ -76,7 +76,7 @@ function zen_get_country_zones( $pCountryId ) {
  * @param int If set limits to a single country
  * @param boolean If true adds the iso codes to the array
 */
-function zen_get_countries( $pCountryMixed = '', $with_iso_codes = false) {
+function zen_get_countries( $pCountryMixed = '', $with_iso_codes = TRUE) {
     global $gBitDb;
 
     $ret = array();
