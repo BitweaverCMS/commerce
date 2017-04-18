@@ -108,31 +108,31 @@ class CommerceCustomer extends BitBase {
 	public static function syncBitUser( $pInfo ) {
 		global $gBitDb;
 		// bitcommerce customers table to bitweaver users_users table
-		$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email' );
+		$syncFields = array( 'customers_id'=>'user_id', 'customers_nick'=>'login', 'customers_email_address'=>'email',
+								'customers_firstname'=>'customers_firstname',
+								'customers_lastname'=>'customers_lastname',
+								'customers_gender'=>'customers_gender',
+								'customers_dob'=>'customers_dob',
+								'customers_telephone'=>'customers_telephone',
+								'customers_fax'=>'customers_fax',
 /* Fields in TABLE_CUSTOMERS:
-'customers_firstname'
-'customers_lastname'
-'customers_gender'
-'customers_dob'
-'customers_default_address_id'
-'customers_telephone'
-'customers_fax'
-'customers_password'
-'customers_newsletter'
-'customers_group_pricing'
-'customers_email_format'
-'customers_authorization'
-'customers_referral'
+'customers_default_address_id'=>'customers_default_address_id',
+'customers_password'=>'customers_password',
+'customers_newsletter'=>'customers_newsletter',
+'customers_group_pricing'=>'customers_group_pricing',
+'customers_email_format'=>'customers_email_format',
+'customers_authorization'=>'customers_authorization',
+'customers_referral' =>'customers_referral',
 */
-		$rs = $gBitDb->query( "SELECT * FROM ".TABLE_CUSTOMERS." WHERE `customers_id`=?", array( $pInfo['user_id'] ) );
-		if( $rs && !$rs->EOF ) {
+					);
+		if( $customer = $gBitDb->GetRow( "SELECT * FROM ".TABLE_CUSTOMERS." WHERE `customers_id`=?", array( $pInfo['user_id'] ) ) ) {
 			foreach ( $syncFields AS $custKey=>$userKey ) {
-				if( isset( $pInfo[$userKey] ) && ( $pInfo[$userKey] != $rs->fields[$custKey] ) ) {
+				if( isset( $pInfo[$userKey] ) && ( $pInfo[$userKey] != $customer[$custKey] ) ) {
 					$resyncHash[$custKey] = $pInfo[$userKey];
 				}
 			}
 			if( !empty( $resyncHash ) ) {
-				$gBitDb->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'customers_id' =>$rs->fields['customers_id'] ) );
+				$gBitDb->associateUpdate( TABLE_CUSTOMERS, $resyncHash, array( 'customers_id' =>$customer['customers_id'] ) );
 			}
 		} else {
 			$custHash = array( 'customers_id' => $pInfo['user_id'], 'customers_nick' => $pInfo['login'], 'customers_email_address' => $pInfo['email'] );
