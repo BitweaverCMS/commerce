@@ -975,7 +975,7 @@ class order extends CommerceOrderBase {
 			}
 
 			// Update products_ordered (for bestsellers list)
-			$this->mDb->Execute("update " . TABLE_PRODUCTS . " set `products_ordered` = `products_ordered` + " . sprintf('%f', $this->contents[$productsKey]['products_quantity']) . " where `products_id` = '" . zen_get_prid($this->contents[$productsKey]['id']) . "'");
+			$this->mDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_ordered` = `products_ordered` + ? WHERE `products_id` = ?", array( sprintf('%f', $this->contents[$productsKey]['products_quantity'] ), zen_get_prid( $this->contents[$productsKey]['id'] ) ) );
 
 			$sql_data_array = array('orders_id' => $pOrdersId,
 								'products_id' => zen_get_prid($this->contents[$productsKey]['id']),
@@ -1078,6 +1078,30 @@ class order extends CommerceOrderBase {
 		$this->CompleteTrans();
 	}
 
+	function addProductToOrder( $pProductsId, $pQuantity = 1, $pOrderAttributes=array() ) {
+		if( $this->isValid() && $newProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $pProductsId ) ) ) {	
+			$paramHash['orders_id'] = $this->mOrdersId;
+			$paramHash['products_id'] = $newProduct->mProductsId;
+			$paramHash['products_model'] = $newProduct->getProductsModel();
+			$paramHash['products_name'] = $newProduct->getTitle();
+			$paramHash['products_price'] = $newProduct->getPurchasePrice( $pQuantity, $pOrderAttributes );
+			$paramHash['products_cogs'] = $newProduct->getCostPrice( $pQuantity, $pOrderAttributes );
+			$paramHash['products_wholesale'] = $newProduct->getWholesalePrice( $pQuantity, $pOrderAttributes );
+			$paramHash['products_commission'] = $newProduct->getCommissionUserCharges();
+			$paramHash['final_price'] = $newProduct->getPurchasePrice();
+			$paramHash['onetime_charges'] = $newProduct->getOneTimeCharges( $pQuantity, $pOrderAttributes );
+//			$paramHash['products_tax'] = $newProduct->getField( 'tax' );
+			$paramHash['products_quantity'] = $pQuantity;
+			$paramHash['products_priced_by_attribute'] = $newProduct->getField( 'products_priced_by_attribute' );
+			$paramHash['product_is_free'] = $newProduct->getField( 'product_is_free' );
+			$paramHash['products_discount_type'] = $newProduct->getField( 'products_discount_type' );
+			$paramHash['products_discount_type_from'] = $newProduct->getField( 'products_discount_type_from' );
+			$this->mDb->associateInsert( TABLE_ORDERS_PRODUCTS, $paramHash );
+		} else {
+			$this->mErrors['new_product'] = 'Product not found: '.$pProductsId;
+		}
+		return (count( $this->mErrors ) === 0);
+	}
 
 	function sendOrderEmail( $pEmailRecipient=NULL, $pFormat=NULL ) {
 		global $currencies, $gBitCustomer;
