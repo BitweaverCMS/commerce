@@ -133,6 +133,14 @@ if( !empty( $order ) ) {
 			$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['newOrderOptionValue'].')' ) );
 			bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'].'&action=edit' );
 			break;
+		case 'save_new_product':
+			if( $order->addProductToOrder( BitBase::getParameter( $_REQUEST, 'new_product_id' ), BitBase::getParameter( $_REQUEST, 'new_quantity', 1 ) ) ) {
+				$order->updateStatus( array( 'comments' => 'Added Product to order: '.BitBase::getParameter( $_REQUEST, 'new_quantity', 1 ).' x '.BitBase::getParameter( $_REQUEST, 'new_product_id' ) ) );
+				bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
+			} else {
+				$feedback = $order->mErrors['new_product'];
+			}
+			break;
 		case 'save_address':
 			$addressType = $_REQUEST['address_type'];
 			$saveAddress[$addressType.'_name'] = $_REQUEST['name'];

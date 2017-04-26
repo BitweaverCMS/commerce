@@ -37,9 +37,9 @@
 			{if $gBitOrder->mHistory[ix].customer_notified == '1'}
 				{booticon iname="icon-envelope" iexplain="Notified"}
 			{/if}
-			{if $gBitUser->isAdmin()}
+			{*if $gBitUser->isAdmin()}
 				<a href="{$smarty.server.REQUEST_URI}&delete_status={$gBitOrder->mHistory[ix].orders_status_history_id}">{booticon iname="icon-trash"}</a>
-			{/if}
+			{/if*}
 			{$gBitOrder->mHistory[ix].date_added|date_format:"%m-%d %H:%M"}
 		</small>
 

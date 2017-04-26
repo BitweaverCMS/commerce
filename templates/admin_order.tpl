@@ -165,6 +165,20 @@ function getShippingQuotes( pOrderId ) {
 	</td>
 </tr>
 {/foreach}
+<tr>
+	<td colspan="5"><div><button class="btn btn-default btn-xs" onclick="BitBase.showById('new-product-form');$(this).hide();">{booticon iname="icon-plus-sign"} {tr}Add Product{/tr}</button></div>
+		<div id="new-product-form" class="display-none">
+			{form class="form-inline" action="`$smarty.server.REQUEST_URI`"}
+				<input type="hidden" name="action" value="save_new_product"/>
+				<div class="form-group">
+					<label>{tr}Quantity{/tr}</label> <input class="form-control input-sm" type="number" name="new_quantity" value="1" min="0">
+				</div> <div class="form-group">
+					<label>{tr}Product ID{/tr}</label> <input class="form-control input-sm" type="number" name="new_product_id" min="1" step="1"  required="required" pattern="[0-9]{ldelim}1,20{rdelim}">
+				</div> <button class="btn btn-sm btn-default">Add</button>
+			{/form}
+		</div>
+	</td>
+</tr>
 {section loop=$order->totals name=t}
 <tr>
 	<td colspan="3" class="alignright {'ot_'|str_replace:'':$order->totals[t].class} text">
