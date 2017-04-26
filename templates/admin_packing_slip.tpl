@@ -3,7 +3,7 @@
 <head>
 	<title>{$browserTitle} - {$gBitSystem->getConfig('site_title')}</title>
 
-	<link rel="stylesheet" title="basic" type="text/css" href="/themes/styles/basic/basic.css" media="all" />
+	<link rel="stylesheet" title="basic" type="text/css" href="/themes/css/base.css" media="all" />
 
 </head>
 <body{if $gBitSystem->mOnload} onload="{foreach from=$gBitSystem->mOnload item=loadString}{$loadString}{/foreach}"{/if}>
@@ -17,7 +17,7 @@
 	{/forminput}
 </div>
 
-<table>
+<table style="width:100%">
   <tr>
 	<td valign="top" style="width:50%">
 
@@ -60,7 +60,7 @@
 {assign var=product value=$gBitOrder->getProductObject($ordersProduct.products_id)}
 <tr>
 	{cycle assign="oddeven" values="even,odd"}
-	<td class="item" valign="top" align="right" width="48"><img src="{$product->getThumbnailUrl('icon')}" />
+	<td class="item" valign="top" align="right" width="48"><img src="{$product->getThumbnailUrl('icon')}" style="max-width:100%"/>
 	<td class="item" valign="top" align="right">{$ordersProduct.products_quantity}&nbsp;x</td>
 	<td class="item" valign="top" width="90%">
 		{$ordersProduct.name} [ {$ordersProduct.model} ]
