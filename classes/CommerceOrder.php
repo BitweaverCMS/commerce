@@ -1290,7 +1290,16 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	function updateStatus( $pParamHash ) {
 		global $gBitUser;
 
-		$order_updated = false;
+		$orderUpdated = false;
+
+		// a semaphore can be passed in to prevent two different people from updating the same order behind each other's back
+		$statusCleared = TRUE;
+		if( !empty( $pParamHash['last_status_id'] ) ) {
+			$lastStatusId = $this->mDb->getOne( "SELECT `orders_status_history_id` FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ? ORDER BY `orders_status_history_id` DESC", array( $this->mOrdersId ) );
+			if( !($statusCleared = ($lastStatusId == $pParamHash['last_status_id'])) ) {
+				$this->mErrors['status'] = 'The status of this order has changed since it was opened. Please verify what has changed.';
+			}
+		}
 
 		// default to order status if not specified
 		$status = !empty( $pParamHash['status'] ) ? zen_db_prepare_input( $pParamHash['status'] ) : $this->getStatus();
@@ -1298,62 +1307,64 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 
 		$statusChanged = ($this->getStatus() != $status);
 
-		if ( $statusChanged || !empty( $comments ) ) {
-			$this->StartTrans();
-			$this->mDb->query( "update " . TABLE_ORDERS . "
-								set `orders_status` = ?, `last_modified` = ".$this->mDb->NOW()."
-								where `orders_id` = ?", array( $status, $this->mOrdersId ) );
+		if( $statusCleared ) {
+			if( $statusChanged || !empty( $comments ) ) {
+				$this->StartTrans();
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `orders_status` = ?, `last_modified` = ".$this->mDb->NOW()." WHERE `orders_id` = ?", array( $status, $this->mOrdersId ) );
 
-			$this->info['orders_status_id'] = $status;
-			$this->info['orders_status'] = zen_get_order_status_name( $status );
-			$customer_notified = '0';
-			if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
-				$notify_comments = '';
-				if( !empty( $comments ) ) {
-					$notify_comments = $comments . "\n\n";
+				$this->info['orders_status_id'] = $status;
+				$this->info['orders_status'] = zen_get_order_status_name( $status );
+				$customer_notified = '0';
+				if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
+					$notify_comments = '';
+					if( !empty( $comments ) ) {
+						$notify_comments = $comments . "\n\n";
+					}
+
+					//send emails
+					$textMessage = STORE_NAME . "\n------------------------------------------------------\n" .
+						tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n" .
+						tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n" .
+						$this->getDisplayUrl() . "\n\n" .
+						strip_tags($notify_comments) ;
+					
+					if( $statusChanged ) {
+						$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
+					}
+					$textMessage .= tra( 'Please reply to this email if you have any questions.' );
+
+					$emailVars['EMAIL_CUSTOMERS_NAME']		= $this->customer['name'];
+					$emailVars['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
+					$emailVars['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
+					$emailVars['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
+					$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
+					if( $statusChanged ) {
+						$emailVars['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
+						$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
+					}
+					$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
+
+					$emailVars['order'] = $this;
+
+					zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status');
+
+					$customer_notified = '1';
+					//send extra emails
+					if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
+						zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status_extra');
+					}
 				}
 
-				//send emails
-				$textMessage = STORE_NAME . "\n------------------------------------------------------\n" .
-					tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n" .
-					tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n" .
-					$this->getDisplayUrl() . "\n\n" .
-					strip_tags($notify_comments) ;
-				
-				if( $statusChanged ) {
-					$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
-				}
-				$textMessage .= tra( 'Please reply to this email if you have any questions.' );
+				$this->mDb->query( "INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . " (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
+									VALUES ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
 
-				$emailVars['EMAIL_CUSTOMERS_NAME']		= $this->customer['name'];
-				$emailVars['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
-				$emailVars['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
-				$emailVars['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
-				$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
-				if( $statusChanged ) {
-					$emailVars['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
-					$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
-				}
-				$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
-
-				$emailVars['order'] = $this;
-
-				zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status');
-
-				$customer_notified = '1';
-				//send extra emails
-				if (SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_STATUS == '1' and SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO != '') {
-					zen_mail('', SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO, SEND_EXTRA_ORDERS_STATUS_ADMIN_EMAILS_TO_SUBJECT . ' ' . EMAIL_TEXT_SUBJECT . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status_extra');
-				}
+				$this->CompleteTrans();
+				$orderUpdated = true;
+			} else {
+				$this->mErrors['status'] = 'Nothing to change.';
 			}
-
-			$this->mDb->query( "INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . " (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
-								VALUES ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
-
-			$this->CompleteTrans();
-			$order_updated = true;
 		}
-		return $order_updated;
+		return $orderUpdated;
 	}
 
 	function updateOrder( $pParamHash ) {

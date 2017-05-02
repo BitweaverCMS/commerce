@@ -1,3 +1,6 @@
+{assign var=hasHistory value=$gBitOrder->loadHistory()}
+{assign var=lastStatus value=$gBitOrder->mHistory|count-1}
+{formfeedback error=$gBitOrder->mErrors.status}
 <form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;origin=index&amp;action=update_order" method="post"><div style="display:inline">
 {legend legend="Order History"}
 	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
@@ -25,11 +28,12 @@
 				{formhelp note="Enter a negative number for a credit"}
 			{/forminput}
 		</div>
+	<input type="hidden" value="{$gBitOrder->mHistory.$lastStatus.orders_status_history_id}" name="last_status_id"/>
 			
 	<input type="submit" class="btn btn-default" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
 {/legend}
 </div></form>
-{if $gBitOrder->loadHistory()}
+{if $hasHistory}
 <ul class="list-unstyled orderhistory data">
 	{section loop=$gBitOrder->mHistory name=ix step=-1}
 	<li class="item {if $gBitOrder->mHistory[ix].customer_notified == '1'}alert alert-info{/if}" style="clear:both"> 

@@ -180,7 +180,7 @@ if( !empty( $order ) ) {
 				if( $order->updateStatus( $_REQUEST ) ) {
 					$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
 				} else {
-					$messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
+					$messageStack->add_session( 'The order was not updated: '.BitBase::getParameter( $order->mErrors, 'status' ), 'error');
 				}
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
 			}
