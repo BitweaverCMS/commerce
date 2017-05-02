@@ -109,5 +109,4 @@ define('SUCCESS_ORDER_UPDATED_DOWNLOAD_ON', 'Download was successfully enabled')
 define('SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF', 'Download was successfully disabled');
 define('TEXT_MORE', '... more');
 
-define('TEXT_INFO_IP_ADDRESS', 'IP Address: ');
 ?>

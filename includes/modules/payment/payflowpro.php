@@ -437,8 +437,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 									CURLOPT_SSL_VERIFYHOST => 2,
 									CURLOPT_FORBID_REUSE => true,
 									CURLOPT_POST => 1,
+									CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
 								);
 			foreach ($_curlOptions as $name => $value) {
+				print " curl_setopt($ch, $name, $value) <br>";
 				curl_setopt($ch, $name, $value);
 			}
 

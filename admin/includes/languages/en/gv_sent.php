@@ -34,7 +34,6 @@ define('TEXT_INFO_DATE_SENT', 'Date Sent:');
 define('TEXT_INFO_VOUCHER_CODE', TEXT_GV_REDEEM . ':');
 define('TEXT_INFO_EMAIL_ADDRESS', 'Email Addr:');
 define('TEXT_INFO_DATE_REDEEMED', 'Date Redeemed:');
-define('TEXT_INFO_IP_ADDRESS', 'IP Address:');
 define('TEXT_INFO_CUSTOMERS_ID', 'Customer Id:');
 define('TEXT_INFO_NOT_REDEEMED', 'Not Redeemed');
 ?>

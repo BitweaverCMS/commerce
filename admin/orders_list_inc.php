@@ -200,7 +200,7 @@
         if (zen_not_null($oInfo->last_modified)) 
 			$contents[] = array('text' => TEXT_DATE_ORDER_LAST_MODIFIED . ' ' . zen_date_short($oInfo->last_modified));
         $contents[] = array('text' => '<br />' . TEXT_INFO_PAYMENT_METHOD . ' '  . $oInfo->payment_method);
-        $contents[] = array('text' => TEXT_INFO_IP_ADDRESS . ' ' . $oInfo->ip_address);
+        $contents[] = array('text' => 'IP Address: ' . $oInfo->ip_address);
 
 // check if order has open gv
         $gv_check = $gBitDb->getOne("select `order_id`, `unique_id`
