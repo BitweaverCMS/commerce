@@ -11,12 +11,12 @@
 		<td class="item {$oddeven}">{$commission.email}</td>
 		<td class="item {$oddeven}" style="text-align:right">{$commission.commission_sum|string_format:"$%.2f"}</td>
 		<td class="item {$oddeven}">
-			<a href="#" onclick="BitBase.toggleElementDisplay('enterpayment{$userId}','block',true);return false;">Enter Payment</a>
+			<a href="#" onclick="BitBase.toggleElementDisplay('enterpayment{$userId}','table-cell',true);return false;">Enter Payment</a>
 		</td>
 		<td class="item">{$commission.payment_method}</td>
 	</tr>
-	<tr style="display:none" id="enterpayment{$commission.user_id}">
-		<td colspan="5" class="item {$oddeven}" >
+	<tr>
+		<td colspan="5" class="item {$oddeven}" style="display:none" id="enterpayment{$commission.user_id}">
 			{include file="bitpackage:bitcommerce/admin_commission_payment_inc.tpl" commission=$commission}
 		</td>
 	</tr>

@@ -37,7 +37,6 @@ class CommerceProductCommission extends CommerceCommissionBase {
 			$payedProducts = $this->mDb->getAssoc( $sql, array( $pParamHash['payment_store']['payee_user_id'], $pParamHash['payment_store']['period_start_date'], $pParamHash['payment_store']['period_end_date'] ) );
 			$totalPayed = 0;
 			foreach( $payedProducts AS $ordersProductsId => $productsCommissionsTotal ) {
-				$this->mDb->query( "UPDATE  " . TABLE_ORDERS_PRODUCTS . " SET `commissions_payments_id`=? WHERE `orders_products_id`=?", array( $pParamHash['commissions_payments_id'], $ordersProductsId ) );
 				$totalPayed += $productsCommissionsTotal;
 			}
 
@@ -48,6 +47,23 @@ class CommerceProductCommission extends CommerceCommissionBase {
 		}
 
 		return( count( $this->mErrors ) == 0 );
+	}
+
+
+	function storePayment( &$pParamHash ) {
+		if( parent::storePayment( $pParamHash ) ) {
+			$sql = "SELECT cop.`orders_products_id`, cop.`products_commission` * cop.`products_quantity` AS products_commissions_total
+					FROM " . TABLE_ORDERS . " co  
+						INNER JOIN	" . TABLE_ORDERS_PRODUCTS . " cop ON (co.`orders_id`=cop.`orders_id`)
+						INNER JOIN	" . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (cp.`content_id`=lc.`content_id`)
+					WHERE lc.`user_id`=? AND co.`date_purchased` > ? AND co.`date_purchased` <= ?";
+
+			$payedProducts = $this->mDb->getAssoc( $sql, array( $pParamHash['payment_store']['payee_user_id'], $pParamHash['payment_store']['period_start_date'], $pParamHash['payment_store']['period_end_date'] ) );
+			foreach( $payedProducts AS $ordersProductsId => $productsCommissionsTotal ) {
+				$this->mDb->query( "UPDATE  " . TABLE_ORDERS_PRODUCTS . " SET `commissions_payments_id`=? WHERE `orders_products_id`=?", array( $pParamHash['commissions_payments_id'], $ordersProductsId ) );
+			}
+		}
 	}
 
 	// Get a mixed list of commissions and payments in alphabetical order for a given user

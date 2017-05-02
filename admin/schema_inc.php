@@ -7,6 +7,13 @@ if( $lastQuote != FALSE ) {
 $prefix = (!defined( 'BIT_INSTALL' ) ? substr( BITCOMMERCE_DB_PREFIX,  $lastQuote ) : '');
 define( 'BITCOMMERCE_INSTALL_PREFIX', $prefix );
 
+
+// ### Sequences
+$sequences = array (
+	'com_commissions_payments_id_seq' => array( 'start' => 1 )
+);
+$gBitInstaller->registerSchemaSequences( BITCOMMERCE_PKG_NAME, $sequences );
+
 $tables = array(
 BITCOMMERCE_INSTALL_PREFIX.'com_languages' => "
   languages_id I4 PRIMARY AUTO,

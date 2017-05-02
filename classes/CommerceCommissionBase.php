@@ -62,6 +62,7 @@ class CommerceCommissionBase extends BitBase {
 				default:
 					break;
 			}
+
 			$this->CompleteTrans();
 		} else {
 			$this->mDb->RollbackTrans();

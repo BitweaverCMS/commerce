@@ -54,7 +54,7 @@
 			{/forminput}
 		</div>
 	{/if}
-	{form name="paymentform`$userId`" action=$smarty.server.REQUEST_URI}
+	{form name="paymentform`$userId`" class="form-horizontal" action=$smarty.server.REQUEST_URI}
 	<input type="hidden" name="payment_method" value="{$commission.payment_method}" />
 	<input type="hidden" name="user_id" value="{$userId}" />
 
@@ -62,52 +62,36 @@
 		<div class="form-group">
 			{formlabel label="Commission Amount"}
 			{forminput}
-				<input type="text" name="payment_amount" value="{$commission.commission_sum|string_format:"%.2f"}" />
+				<input type="text" class="form-control" name="payment_amount" value="{$commission.commission_sum|string_format:"%.2f"}" />
 			{/forminput}
 		</div>
-
-		<div class="form-group">
-			{formlabel label="Payment Dates"}
+<div></div>
+		<div class="form-group clear">
+			{formlabel label="From"}
 			{forminput}
-				{tr}From{/tr} <input type="text" name="period_start_date"  id="periodstart{$userId}" value="{$commission.last_period_end_date}" style="width:80px"/> 
-				<img id="anchorperiodstart{$userId}" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date" />
-				{tr}Through{/tr} <input type="text" name="period_end_date" id="periodend{$userId}" value="{$commission.period_end_date}" style="width:80px"/>
-				<img id="anchorperiodend{$userId}" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/calendar_mini.png" alt="Choose Date"/>
-
-
-<script type="text/javascript">
-Calendar.setup(
-{ldelim}
-inputField  : "periodstart{$userId}",         // ID of the input field
-ifFormat    : "%Y-%m-%d",    // the date format
-button      : "anchorperiodstart{$userId}"       // ID of the button
-{rdelim}
-);
-</script>
-
-<script type="text/javascript">
-Calendar.setup(
-{ldelim}
-inputField  : "periodend{$userId}",         // ID of the input field
-ifFormat    : "%Y-%m-%d",    // the date format
-button      : "anchorperiodend{$userId}"       // ID of the button
-{rdelim}
-);
-</script>
-
+				<input type="date" class="form-control" name="period_start_date" id="periodstart{$userId}" value="{$commission.last_period_end_date}">
+			{/forminput}
+		</div>
+		<div class="form-group clear">
+			{formlabel label="Through"}
+			{forminput}
+				<input type="date" class="form-control" name="period_end_date" id="periodend{$userId}" value="{$commission.period_end_date}"/>
 			{/forminput}
 		</div>
 
 		<div class="form-group">
 			{formlabel label="Note"}
 			{forminput}
-				<input type="text" name="payment_note" value="" />
+				<input type="text" class="form-control" name="payment_note" value="" />
 				{formhelp note="For administrative purposes only. This note will NOT be visible to the payee."}
 			{/forminput}
 		</div>
 
 		<div class="form-group submit">
-			<input type="submit" class="btn btn-default" name="save_payment" value="Save Payment" />
+			{formlabel label=""}
+			{forminput}
+				<input type="submit" class="btn btn-default" name="save_payment" value="Save Payment" />
+			{/forminput}
 		</div>
 	{/form}
 {/if}
