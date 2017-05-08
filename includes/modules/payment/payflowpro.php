@@ -256,6 +256,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$postFields['EXPDATE'] = $pOrder->info['cc_expires']; // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
 				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
 				$postFields['FREIGHTAMT'] = $pOrder->info['shipping_cost']; // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
+				// TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
+				$postFields['TAXAMT'] = $pOrder->getField('tax');
 			}
 
 			/*
@@ -405,9 +407,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
 			$postFields['ITEMAMT'] = $pOrder->getField('total') - $pOrder->getField('shipping_cost') - $pOrder->getField('tax');
 			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
-			$postFields['DISCOUNT'] = $pOrder->getField('total') - $postFields['AMT'];
-			// TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
-			$postFields['TAXAMT'] = $pOrder->getField('tax');
+			$postFields['DISCOUNT'] = round( ($pOrder->getField('total') - $postFields['AMT']), $paymentDecimal );
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';
