@@ -47,7 +47,6 @@ function editAddress( pAddress ) {
 	<div class="col-xs-6">
 		<h4>{tr}Payment Info{/tr}</h4>
 		{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
-{if empty( $order->info.cc_ref_id )}<div class="alert alert-danger"><p>{booticon iname="icon-warning-sign"} {tr}This Credit Card Payment has no Transaction ID. Perhaps funds were not actually collected, or this is a duplicate order.{/tr}</p></div>{/if}
 		<div class="clear">
 			<div class="floatleft">{$order->info.cc_type}: </div>
 			<div class="floatright">{$order->info.cc_owner}</div>
@@ -56,13 +55,19 @@ function editAddress( pAddress ) {
 			<div class="floatleft">{tr}Number{/tr}: </div>
 			<div class="floatright">{$order->info.cc_number}</div>
 		</div>
+		{if $order->info.cc_expires}
 		<div class="clear">
 			<div class="floatleft">{tr}Expires{/tr}: </div>
 			<div class="floatright">{$order->info.cc_expires}</div>
 		</div>
+		{/if}
 		<div class="clear">
+		{if empty( $order->info.cc_ref_id )}
+			<div class="alert alert-danger">{booticon iname="icon-warning-sign"} {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
+		{else}
 			<div class="floatleft">{tr}Transaction ID{/tr}: </div>
 			<div class="floatright">{$order->info.cc_ref_id}</div>
+		{/if}
 		</div>
 		{/if}
 		<div class="clear">

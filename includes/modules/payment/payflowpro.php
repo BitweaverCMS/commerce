@@ -453,6 +453,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			curl_close($ch);
 
+			$logHash = array( 'orders_id' => $this->paymentOrderId );
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
 
@@ -461,11 +462,13 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				# Check result
 				if( isset( $responseHash['PNREF'] ) ) {
 					$this->pnref = $responseHash['PNREF'];
+					$logHash['ref_id'] = $responseHash['PNREF'];
 				}
 
 				if( isset( $responseHash['RESULT'] ) ) {
 					$this->result = (int)$responseHash['RESULT'];
-					
+					$logHash['trans_result'] = $this->result;
+					$logHash['trans_message'] = $responseHash['RESPMSG'];
 					if( BitBase::getParameter( $responseHash, 'DUPLICATE' ) == 2 ) {
 						$duplicateError = 'Duplicate Order ( '.$responseHash['ORDERID'].' )';
 						$this->mErrors['process_payment'] = $duplicateError;
@@ -486,7 +489,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
 			$ret = TRUE;
-			$pOrder->info['cc_ref_id'] = $this->getTransactionReference();
+			$pOrder->info['cc_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
 			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
 				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
@@ -503,12 +506,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.BitBase::getParameter( $responseHash, 'RESPMSG' ),'error');
 			$ret = FALSE;
 		}
-		$this->logTransaction( $responseHash, $pOrder );
+		$this->logTransaction( $logHash, $pOrder );
 		return $ret;
-	}
-
-	public function getTransactionReference() {
-		return $this->pnref;
 	}
 
 	/**
