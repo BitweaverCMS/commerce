@@ -146,5 +146,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return ($numSum % 10 == 0 ? $pCardNumber : false);
 	}
 
+	function getTransactionReference() {
+		return $this->pnref;
+	}
+
 }
 
