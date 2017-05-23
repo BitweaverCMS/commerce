@@ -17,6 +17,21 @@
 </header>
 
 <div class="row clear">
+	{if $order->delivery}
+	<div class="col-sm-4 col-xs-6">
+		<div class="panel panel-default height">
+			<div class="panel-heading">{tr}Delivery Address{/tr}</div>
+			<div class="panel-body">
+				<p>{$order->getFormattedAddress('delivery')}</p>
+			{if $order->getField('shipping_method')}
+				<p>
+						{$order->getField('shipping_method')}
+				</p>
+			{/if}
+			</div>
+		</div>
+	</div>
+	{/if}
 	<div class="col-sm-4 col-xs-6">
 		<div class="panel panel-default height">
 			<div class="panel-heading">{tr}Billing Address{/tr}</div>
@@ -25,16 +40,6 @@
 			</div>
 		</div>
 	</div>
-	{if $order->delivery}
-	<div class="col-sm-4 col-xs-6">
-		<div class="panel panel-default height">
-			<div class="panel-heading">{tr}Delivery Address{/tr}</div>
-			<div class="panel-body">
-				{$order->getFormattedAddress('delivery')}
-			</div>
-		</div>
-	</div>
-	{/if}
 
 	<div class="col-sm-4 col-xs-12">
 		<div class="row">
@@ -42,41 +47,31 @@
 				<div class="panel panel-default height">
 					<div class="panel-heading">{tr}Payment{/tr}</div>
 					<div class="panel-body">
-						{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
-						<div class="clear">
+						{if $order->info.cc_type}
+						<div style="clear:both">
 							<div class="pull-left">{$order->info.cc_type}: </div>
 							<div class="pull-right">{$order->info.cc_owner}</div>
 						</div>
-						<div class="clear">
+						{/if}
+						{if $order->info.cc_number}
+						<div style="clear:both">
 							<div class="pull-left">{tr}Number{/tr}: </div>
 							<div class="pull-right">{$order->info.cc_number}</div>
 						</div>
-						<div class="clear">
-							<div class="pull-left">{tr}Expires{/tr}: </div>
-							<div class="pull-right">{$order->info.cc_expires} CVV: {$order->getField('cc_cvv')}</div>
-						</div>
-						<div class="clear">
+						{/if}
+						{if $order->info.cc_ref_id}
+						<div style="clear:both">
 							<div class="pull-left">{tr}Transaction ID{/tr}: </div>
 							<div class="pull-right">{$order->info.cc_ref_id}</div>
 						</div>
 						{/if}
-						<div class="clear">
+						<div style="clear:both">
 							<div class="pull-left">{tr}IP{/tr}:</div>
 							<div class="pull-right"> {$order->info.ip_address}</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			{if $order->getField('shipping_method')}
-			<div class="col-sm-12 col-xs-6">
-				<div class="panel panel-default height">
-					<div class="panel-heading">{tr}Shipping{/tr}</div>
-					<div class="panel-body">
-						{$order->getField('shipping_method')} {$order->getField('shipping_method_code')}
-					</div>
-				</div>
-			</div>
-			{/if}
 		</div>
 	</div>
 </div>

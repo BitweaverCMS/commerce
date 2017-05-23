@@ -37,7 +37,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
 	protected function logTransaction( $pResponseHash, $pOrder ) {
 		global $messageStack, $gBitUser;
-		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $logHash['orders_id'], $gBitUser->mUserId, BitBase::getParameter( $pResponseHash, 'ref_id' ), (int)BitBase::getParameter( $pResponseHash, 'trans_result' ), 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.BitBase::getParameter( $pResponseHash, 'trans_message' ), number_format($pOrder->info['total'], 2,'.','') ) );
+		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $pResponseHash['orders_id'], $gBitUser->mUserId, BitBase::getParameter( $pResponseHash, 'ref_id' ), (int)BitBase::getParameter( $pResponseHash, 'trans_result' ), 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.BitBase::getParameter( $pResponseHash, 'trans_message' ), number_format($pOrder->info['total'], 2,'.','') ) );
 	}
 
 	function getTransactionReference() {
