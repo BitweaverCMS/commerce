@@ -25,6 +25,9 @@ require('includes/application_top.php');
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
 $gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
+$tempBodyLayout = $gBitSystem->mConfig['layout-body']; // Caching might save here. Save value and reset
+$gBitSystem->mConfig['layout-body'] = '-fluid';
+
 $currencies = new currencies();
 
 if( $gBitThemes->isAjaxRequest() ) {
@@ -311,4 +314,7 @@ require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <br />
 </body>
 </html>
-<?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
+<?php 
+require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
+$gBitSystem->mConfig['layout-body'] = $tempBodyLayout; // Caching might save here. Save value and reset
+?>
