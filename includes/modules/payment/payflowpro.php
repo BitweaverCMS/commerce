@@ -163,7 +163,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				// reference transaction
 				$this->paymentOrderId = $pOrder->mOrdersId;
 				$paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency', DEFAULT_CURRENCY );
-				$paymentLocalized = $pPaymentParameters['charge_amount'];
+				$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
+				$paymentLocalized = number_format( $pPaymentParameters['charge_amount'], $paymentDecimal, '.', '' ) ;
 				$paymentNative = (( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized);
 				// completed orders have a single joined 'name' field
 				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
@@ -180,13 +181,13 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$this->paymentOrderId = $pOrder->getNextOrderId();
 				// orderTotal is in the system DEFAULT_CURRENCY. orderTotal * currency_value = localizedPayment
 				$paymentCurrency = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
+				$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
 				$paymentNative = $orderTotal;
-				$paymentLocalized = ( $paymentCurrency != DEFAULT_CURRENCY ) ? ($paymentNative * $pOrder->getField('currency_value')) : $paymentNative;
+				$paymentLocalized = number_format( ($paymentCurrency != DEFAULT_CURRENCY ? ($paymentNative * $pOrder->getField('currency_value')) : $paymentNative), $paymentDecimal, '.', '' ) ;
 			}
 
 			$paymentEmail = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
 			$paymentUserId = BitBase::getParameter( $pOrder->customer, 'user_id', $gBitUser->getField('user_id') );
-			$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
 
 
 			/* === Core Credit Card Parameters ===
@@ -255,9 +256,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
 				$postFields['EXPDATE'] = $pOrder->info['cc_expires']; // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
 				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
-				$postFields['FREIGHTAMT'] = $pOrder->info['shipping_cost']; // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
+
+				$postFields['FREIGHTAMT'] = $pOrder->getFieldLocalized( 'shipping_cost' ); // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
 				// TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
-				$postFields['TAXAMT'] = $pOrder->getField('tax');
+				$postFields['TAXAMT'] = $pOrder->getFieldLocalized('tax');
 			}
 
 			/*
@@ -405,9 +407,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			// ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
 			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
-			$postFields['ITEMAMT'] = $pOrder->getField('total') - $pOrder->getField('shipping_cost') - $pOrder->getField('tax');
+			$postFields['ITEMAMT'] = number_format( $pOrder->getFieldLocalized('total') - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $paymentDecimal, '.', '' );
 			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
-			$postFields['DISCOUNT'] = round( ($pOrder->getField('total') - $postFields['AMT']), $paymentDecimal );
+
+			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $paymentDecimal, '.', '' );
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';

@@ -48,6 +48,18 @@ class CommerceOrderBase extends BitBase {
 		return( $this->weight );
 	}
 
+	function getFieldLocalized( $pField ) {
+		$ret = $this->getField( $pField );
+		if( is_numeric( $ret ) ) {
+			if( $this->getField( 'currency' ) != DEFAULT_CURRENCY ) {
+				global $currencies;
+				$paymentDecimal = $currencies->get_decimal_places( $this->getField( 'currency' ) );
+				$ret = number_format( $ret * $this->getField('currency_value'), $paymentDecimal, '.', '' ) ;
+			}
+		}
+		return $ret;
+	}
+
 	// shipping adjustment
 	function free_shipping_items() {
 		$this->calculate();
