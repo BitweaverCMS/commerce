@@ -19,7 +19,6 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	var $cc_expires_month;
 	var $cc_expires_year;
 	var $pnref = -1;
-	var $paymentOrderId;
 
 	public function __construct() {
 		parent::__construct();
@@ -27,11 +26,6 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 	protected function getSessionVars() {
 		return array( 'cc_owner', 'cc_number', 'cc_cvv', 'cc_expires_month', 'cc_expires_year' );
-	}
-
-	protected function logTransaction( $pResponseHash, $pOrder ) {
-		global $messageStack, $gBitUser;
-		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $this->paymentOrderId, $gBitUser->mUserId, $this->getTransactionReference(), (int)$this->result, 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.BitBase::getParameter( $pResponseHash, 'RESPMSG' ), number_format($pOrder->info['total'], 2,'.','') ) );
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
@@ -150,6 +144,10 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		}
 		// If the total has no remainder it's OK
 		return ($numSum % 10 == 0 ? $pCardNumber : false);
+	}
+
+	function getTransactionReference() {
+		return $this->pnref;
 	}
 
 }

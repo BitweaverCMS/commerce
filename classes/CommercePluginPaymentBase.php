@@ -12,6 +12,9 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
 
 abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
+	var $paymentOrderId;
+	var $mPaymentReference;
+
 	public function __construct() {
 		parent::__construct();
 	}
@@ -32,6 +35,16 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		}	
 	}
 
+	protected function logTransaction( $pResponseHash, $pOrder ) {
+		global $messageStack, $gBitUser;
+		$this->mDb->query( "INSERT INTO " . TABLE_PUBS_CREDIT_CARD_LOG . " (orders_id, customers_id, ref_id, trans_result, trans_auth_code, trans_message, trans_amount, trans_date) values ( ?, ?, ?, ?, '-', ?, ?, 'NOW' )", array( $pResponseHash['orders_id'], $gBitUser->mUserId, BitBase::getParameter( $pResponseHash, 'ref_id' ), (int)BitBase::getParameter( $pResponseHash, 'trans_result' ), 'cust_id: '.$gBitUser->mUserId.' - '.$pOrder->customer['email_address'].':'.BitBase::getParameter( $pResponseHash, 'trans_message' ), number_format($pOrder->info['total'], 2,'.','') ) );
+	}
+
+	function getTransactionReference() {
+		// default implementation
+		return NULL;
+	}
+
 	// Default methods that should be overridden in derived classes
 	protected function getSessionVars() {
 		return array();
@@ -39,11 +52,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
 	function selection() {
 		return array( 'id' => $this->code, 'module' => $this->title );
-	}
-
-	function getTransactionReference() {
-		// default implementation
-		return NULL;
 	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {

@@ -49,106 +49,103 @@
 {/if}
 		
 {if $smarty.const.DISPLAY_CONDITIONS_ON_CHECKOUT == 'true'}
-	<tr>
-		<td class="main" align="center" valign="top"><?php echo TABLE_HEADING_CONDITIONS; ?><br /></td>
-		<td colspan="2" class="main" valign="top"><?php echo TEXT_CONDITIONS_DESCRIPTION . '<br /><br />' . zen_draw_checkbox_field('conditions', '1', false, 'id="conditions"') . '<label for="conditions">&nbsp;' . TEXT_CONDITIONS_CONFIRM . '</label>'; ?></td>
-	</tr>
+<div class="row">
+	<div class="col-xs-12">
+		<p><a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=conditions}">{tr}Terms And Conditions{/tr}</a></p>
+		<div class="checkbox">
+			<label for="conditions"><input type="checkbox" name="conditions" value="1" id="conditions"> {tr}I have read and agreed to the terms and conditions bound to this order.{/tr}</label>
+		</div>
+	</div>
+</div>
 {/if}
-<div class="row">
-	<div class="col-md-6">
-	{if count($paymentSelection) > 1}
-		{tr}Please select a payment method for this order.{/tr}
-	{/if}
+		<div class="row">
+			<div class="col-md-6">
+			{if count($paymentSelection) > 1}
+				{tr}Please select a payment method for this order.{/tr}
+			{/if}
 			{if $smarty.const.SHOW_ACCEPTED_CREDIT_CARDS != '0'}
-				<div>
-				{if $smarty.const.SHOW_ACCEPTED_CREDIT_CARDS == '1'}
-					{$smarty.const.TEXT_ACCEPTED_CREDIT_CARDS} {1|zen_get_cc_enabled}
-				{/if}
-				{if $smart.const.SHOW_ACCEPTED_CREDIT_CARDS == '2'}
-					{$smarty.const.TEXT_ACCEPTED_CREDIT_CARDS} {zen_get_cc_enabled('IMAGE_')}
-				{/if}
-				</div>
+				<p>{tr}We accept:{/tr} {$smarty.const.SHOW_ACCEPTED_CREDIT_CARDS|zen_get_cc_enabled}</p>
 			{/if}
 
-	{foreach from=$paymentSelection item=selection name='payment_selection'}
-		<fieldset>
-			<legend>
-		{if count($paymentSelection) > 1}
-			<input type="radio" name="payment" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" /> 
-		{else}
-			<input type="hidden" name="payment" value="{$selection.id}" />
-		{/if}
-				{$selection.module}
-			</legend>
-			<div class="payment-selection" id="payment-{$selection.id}" {if $smarty.foreach.payment_selection.iteration>1}style="display:none"{/if}>
-				{formfeedback error=$selection.error}
-			{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
-				<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
-			{/if}
-			{if $selection.fields && is_array($selection.fields)}
-				{foreach from=$selection.fields item=selectionField}
-				<div class="form-group{if $selectionField.error} has-error{/if}">
-					{if $selectionField.title}<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>{/if}
-					{$selectionField.field}
-					{if $selectionField.error}<div class="help-block">{$selectionField.error}</div>{/if}
-				</div>
-				{/foreach}
-			{/if}
-			</div>
-		</fieldset>
-	{/foreach}
-
-	{foreach from=$order->otCreditSelection() item=selection}
-		{if $selection}
-		<fieldset>
-			<legend>
-				{$selection.module|tra}
-			</legend>
-			{if !empty($selection.checkbox)}
-				{$selection.checkbox}
-			{/if}
-			{if !empty($smarty.request.credit_class_error_code) && $smarty.request.credit_class_error_code == $selection.id}
-				{formfeedback error=$smarty.request.credit_class_error}
-			{/if}
-			{foreach from=$selection.fields item=selectionField}
-				<div class="form-group">
-					<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
-					<div class="controls">
-						{$selectionField.field}
+			{foreach from=$paymentSelection item=selection name='payment_selection'}
+				<fieldset>
+					<legend>
+				{if count($paymentSelection) > 1}
+					<input type="radio" name="payment" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" /> 
+				{else}
+					<input type="hidden" name="payment" value="{$selection.id}" />
+				{/if}
+						{$selection.module}
+					</legend>
+					<div class="payment-selection" id="payment-{$selection.id}" {if $smarty.foreach.payment_selection.iteration>1}style="display:none"{/if}>
+						{formfeedback error=$selection.error}
+					{if $smarty.const.MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection.id == 'cod'}
+						<div class="alert alert-warning">{tr}<strong>Note:</strong> COD fees may apply{/tr}</div>
+					{/if}
+					{if $selection.fields && is_array($selection.fields)}
+						{foreach from=$selection.fields item=selectionField}
+						<div class="form-group{if $selectionField.error} has-error{/if}">
+							{if $selectionField.title}<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>{/if}
+							{$selectionField.field}
+							{if $selectionField.error}<div class="help-block">{$selectionField.error}</div>{/if}
+						</div>
+						{/foreach}
+					{/if}
 					</div>
-				</div>
+				</fieldset>
 			{/foreach}
-		</fieldset>
-		{/if}
-	{/foreach}
 
-	</div>
-	<div class="col-md-6">
-		{legend legend="Billing Address"}
-					{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
-					{formhelp note="The billing address should match the address on your credit card statement."}
-					<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Billing Address{/tr}</a>
-		{/legend}
-	
-		<fieldset>
-			<div class="form-group">
-				{formlabel label="Order Comments" for=""}
-				{forminput}
-					<textarea name="comments" wrap="soft" class="form-control" rows="4">{$smarty.session.comments}</textarea>
-				{/forminput}
+			{foreach from=$order->otCreditSelection() item=selection}
+				{if $selection}
+				<fieldset>
+					<legend>
+						{$selection.module|tra}
+					</legend>
+					{if !empty($selection.checkbox)}
+						{$selection.checkbox}
+					{/if}
+					{if !empty($smarty.request.credit_class_error_code) && $smarty.request.credit_class_error_code == $selection.id}
+						{formfeedback error=$smarty.request.credit_class_error}
+					{/if}
+					{foreach from=$selection.fields item=selectionField}
+						<div class="form-group">
+							<label class="control-label" for="{$selectionField.id}">{$selectionField.title}</label>
+							<div class="controls">
+								{$selectionField.field}
+							</div>
+						</div>
+					{/foreach}
+				</fieldset>
+				{/if}
+			{/foreach}
+
 			</div>
-		</fieldset>
-	</div>
-</div>
+			<div class="col-md-6">
+				{legend legend="Billing Address"}
+							{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
+							{formhelp note="The billing address should match the address on your credit card statement."}
+							<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Billing Address{/tr}</a>
+				{/legend}
+			
+				<fieldset>
+					<div class="form-group">
+						{formlabel label="Order Comments" for=""}
+						{forminput}
+							<textarea name="comments" wrap="soft" class="form-control" rows="4">{$smarty.session.comments}</textarea>
+						{/forminput}
+					</div>
+				</fieldset>
+			</div>
+		</div>
 
-<div class="row">
-	<div class="col-md-6">
-				{foreach from=$order->otOutput() item=otOutput}
-					<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
-					<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
-				{/foreach}
-	</div>
-</div>
+		<div class="row">
+			<div class="col-md-6">
+			{foreach from=$order->otOutput() item=otOutput}
+				<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
+				<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
+			{/foreach}
+			</div>
+		</div>
 
 		<div class="form-group">
 			<h3>{tr}Continue to Step 3{/tr}</h3>

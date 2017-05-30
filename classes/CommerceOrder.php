@@ -210,7 +210,7 @@ class order extends CommerceOrderBase {
 							FROM " . TABLE_ORDERS . " co
 								INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 								$joinSql
-								LEFT JOIN `com_pubs_credit_card_log` cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `trans_result`='0')
+								LEFT JOIN " . TABLE_PUBS_CREDIT_CARD_LOG . " cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `trans_result`='0')
 							WHERE co.`orders_id` = ?";
 			$order = $this->mDb->query( $order_query, array( $this->mOrdersId ) );
 
@@ -564,16 +564,13 @@ class order extends CommerceOrderBase {
 										FROM " . TABLE_ADDRESS_BOOK . " ab
 										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
 										WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-				$tax_address = $this->mDb->getAssoc( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
-			}
-
-			if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
-				if( $gBitCustomer->getZoneCount( $taxAddress['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $taxAddress['entry_state'], $taxAddress['entry_country_id'] )) ) {
-					$taxAddress['entry_zone_id'] = $zoneId;
+				$taxAddress = $this->mDb->getRow( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
+				if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
+					if( $gBitCustomer->getZoneCount( $taxAddress['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $taxAddress['entry_state'], $taxAddress['entry_country_id'] )) ) {
+						$taxAddress['entry_zone_id'] = $zoneId;
+					}
+					// maybe we have some newly updated zones and outdated address_book entries
 				}
-				// maybe we have some newly updated zones and outdated address_book entries
-			} else {
-				$taxAddress = $defaultAddress;
 			}
 
 		}
@@ -690,8 +687,8 @@ class order extends CommerceOrderBase {
 		foreach( array_keys( $gBitCustomer->mCart->contents ) as $productsKey ) {
 			$this->contents[$productsKey] = $gBitCustomer->mCart->getProductHash( $productsKey );
 			if( !empty( $taxAddress ) ) {
-				$this->contents[$productsKey]['tax'] = zen_get_tax_rate( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
-				$this->contents[$productsKey]['tax_description'] = zen_get_tax_description( $this->contents[$productsKey]['tax_class_id'], $taxAddress['countries_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$productsKey]['tax'] = zen_get_tax_rate( $this->contents[$productsKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$productsKey]['tax_description'] = zen_get_tax_description( $this->contents[$productsKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
 			}
 
 			if ( !empty( $this->contents[$productsKey]['attributes'] ) ) {
