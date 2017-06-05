@@ -25,7 +25,7 @@ require('includes/application_top.php');
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
 $gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
-$tempBodyLayout = $gBitSystem->mConfig['layout-body']; // Caching might save here. Save value and reset
+$tempBodyLayout = $gBitSystem->getConfig( 'layout-body' ); // Caching might save here. Save value and reset
 $gBitSystem->mConfig['layout-body'] = '-fluid';
 
 $currencies = new currencies();
