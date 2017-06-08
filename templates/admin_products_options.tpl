@@ -39,8 +39,7 @@
 							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option Value" iforce="icon"}</a>
 							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 						</div>
-					<em><strong>{$optionValue.products_options_sort_order|default:'-'}</strong></em>			
-						{$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
+						<span class="badge">{$optionValue.products_options_sort_order|default:'-'}</span> {$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
 					
 					{if $optionValue.attribute_is_free}
 						<strong class="warning">{tr}FREE{/tr}</strong>
