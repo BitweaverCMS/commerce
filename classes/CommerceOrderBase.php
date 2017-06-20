@@ -210,7 +210,7 @@ class CommerceOrderBase extends BitBase {
 		}
 	}
 
-	function getModuleTotal( $pClass, $pKey ) {
+	function getModuleValue( $pClass, $pKey ) {
 		$ret = '';
 		for( $i = 0; $i < count( $this->totals ); $i++ ) {
 			if( $this->totals[$i]['class'] == $pClass && !empty( $this->totals[$i][$pKey] ) ) {
@@ -218,6 +218,10 @@ class CommerceOrderBase extends BitBase {
 			}
 		}
 		return $ret;
+	}
+
+	function getModuleTotal( $pClass ) {
+		return $this->getModuleValue($pClass, 'orders_value');
 	}
 
 	// hasPaymentDue is called on checkout confirmation. It's function is to decide whether the
