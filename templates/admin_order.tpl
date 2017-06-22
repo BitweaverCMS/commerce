@@ -221,11 +221,7 @@ function getShippingQuotes( pOrderId ) {
 	</td>
 </tr>
 {/if}
-
-{php}
-	// show downloads
-	require(DIR_WS_MODULES . 'orders_download.php');
-{/php}
+{include_php file="`$smarty.const.DIR_WS_MODULES`orders_download.php"}
 </table>
 
 {jstabs}
