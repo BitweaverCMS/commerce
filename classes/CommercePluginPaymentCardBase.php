@@ -55,6 +55,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		}
 		return count( $this->mErrors ) === 0;
 	}
+
 	public static function privatizeCard( $pCardNumber ) {
 		if( $pCardNumber ) {
 			return substr($pCardNumber, 0, 4) . str_repeat('X', (strlen($pCardNumber) - 8)) . substr($pCardNumber, -4);
@@ -67,7 +68,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		if( $this->cc_number = $this->validateCreditCardNumber( $number ) ) {
 			if (preg_match('/^4[0-9]{12}([0-9]{3})?$/', $this->cc_number) and CC_ENABLED_VISA=='1') {
 				$this->cc_type = 'Visa';
-			} elseif (preg_match('/^5[1-5][0-9]{14}$/', $this->cc_number) and CC_ENABLED_MC=='1') {
+			} elseif (preg_match('/^[25][1-5][0-9]{14}$/', $this->cc_number) and CC_ENABLED_MC=='1') {
 				$this->cc_type = 'MasterCard';
 			} elseif (preg_match('/^3[47][0-9]{13}$/', $this->cc_number) and CC_ENABLED_AMEX=='1') {
 				$this->cc_type = 'American Express';
