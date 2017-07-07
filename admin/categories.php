@@ -465,7 +465,7 @@ if (zen_not_null($action)) {
 		zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $_GET['products_id'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 		break;
 	case 'new_product':
-		if (isset($_GET['product_type'])) {
+		if (isset($_REQUEST['product_type'])) {
 		// see if this category is restricted
 			$pieces = explode('_',$_GET['cPath']);
 			$cat_id = $pieces[sizeof($pieces)-1];
@@ -483,7 +483,7 @@ if (zen_not_null($action)) {
 				$messageStack->add(ERROR_CANNOT_ADD_PRODUCT_TYPE, 'error');
 			}
 		}
-	break;
+		break;
 	}
 }
 

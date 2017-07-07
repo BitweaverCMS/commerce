@@ -294,18 +294,11 @@ function RoundingHold() {
 //	echo $type_admin_handler;
 echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
 
+	<div class="form-group">
+		<label for="product-category">Product in Category</label>
+		<?php echo zen_output_generated_category_path($current_category_id); ?>
+	</div>
 		<table border="0" cellspacing="0" cellpadding="2">
-			<tr>
-				<td><table border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="pageHeading"><?php echo sprintf(TEXT_NEW_PRODUCT, zen_output_generated_category_path($current_category_id)); ?></td>
-						<td class="pageHeading" align="right"></td>
-					</tr>
-				</table></td>
-			</tr>
-			<tr>
-				<td></td>
-			</tr>
 			<tr>
 				<td class="main" align="right"><?php echo zen_draw_hidden_field('products_date_added', (zen_not_null($pInfo->products_date_added) ? $pInfo->products_date_added : date('Y-m-d'))) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
 			</tr>

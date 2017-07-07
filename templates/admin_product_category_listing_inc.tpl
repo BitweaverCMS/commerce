@@ -1,22 +1,14 @@
 <div class="">
-{*form name="goto" method="get" action="`$smarty.server.SCRIPT_NAME`" class="form-inline inline-block" role="search"}
-	{$catMenu}
-{/form*}
-	<div class="inline-block">
-	{$currentCategoryId|zen_output_generated_category_path}
-	</div>
-
+	<div class="inline-block">{$currentCategoryId|zen_output_generated_category_path}</div>
 	<div class="pull-right">
-
-{form name="search-cat" method="get" action="`$smarty.server.SCRIPT_NAME`" class="form-inline"}
-	<div class="input-group">
-		<input type="search" class="form-control" placeholder="Search" name="search" value="{$smarty.get.search|escape}" id="cat-search-term">
-		<div class="input-group-btn">
-			<button class="btn btn-default" type="submit"><i class="icon-search"></i></button>
-		</div>
-	</div>
-{/form}
-
+		{form name="search-cat" method="get" action="`$smarty.server.SCRIPT_NAME`" class="form-inline"}
+			<div class="input-group">
+				<input type="search" class="form-control" placeholder="Search" name="search" value="{$smarty.get.search|escape}" id="cat-search-term">
+				<div class="input-group-btn">
+					<button class="btn btn-default" type="submit"><i class="icon-search"></i></button>
+				</div>
+			</div>
+		{/form}
 	</div>
 </div>
 
@@ -39,9 +31,7 @@
 	<td class="text-right">{$catId}</td>
 	<td><a href="{$catLink}">{booticon iname="icon-folder-close"} {$category.categories_name}</a></td>
 	<td class="text-right">{0|zen_get_products_sale_discount:$catId:TRUE}</td>
-	<td class="text-right">
-										{$category.total_products_on} {tr}of{/tr} {$category.total_products} {tr}active{/tr}
-</td>
+	<td class="text-right">{$category.total_products_on} {tr}of{/tr} {$category.total_products} {tr}active{/tr}</td>
 	<td class="text-center">
 	{if $category.categories_status == '1'}
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?action=setflag_categories&amp;flag=0&amp;cID={$catId}&amp;cPath={$smarty.request.cPath}&amp;page={$smarty.request.page}">{booticon iname="icon-ok-sign"}</a>
@@ -60,14 +50,12 @@
 {/if}
 </table>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#newCatModal">{if $smarty.request.cPath}{tr}New Subcategory{/tr}{else}{tr}New Category{/tr}{/if}</button>
-
 {include file="bitpackage:bitcommerce/commerce_pagination.tpl" listInfo=$catListHash}
 
 
 {if $smarty.request.cPath}
-<table class="table table-hover">
 {if $prodList}
+<table class="table table-hover">
 <tr>
 	<th></th>
 	<th class="text-right">{tr}ID{/tr}</th>
@@ -110,16 +98,9 @@
 	</td>
 </tr>
 {/foreach}
-{/if}
 <tr>
 	<th></th>
 	<th colspan="4">
-		<form name="newproduct" class="form-inline" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php}" method="GET">
-			<input type="hidden" name="cPath" value="{$smarty.request.cPath}">
-			<input type="hidden" name="action" value="new_product">
-			<a class="btn btn-xs btn-primary" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?cPath={$smarty.request.cPath}&amp;action=new_category">{tr}New Product{/tr}</a>
-			{html_options name="product_type" options=$newProductTypes}
-		</form>
 	</th>
 	<th></th>
 	<th class="text-right">{$prodCount} {"Product"|plural:$prodCount}</th>
@@ -129,3 +110,12 @@
 {include file="bitpackage:bitcommerce/commerce_pagination.tpl" listInfo=$prodListHash}
 {/if}
 
+<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#newCatModal">{if $smarty.request.cPath}{tr}New Subcategory{/tr}{else}{tr}New Category{/tr}{/if}</button>
+
+		<form name="newproduct" class="form-inline" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php" method="GET">
+			<input type="hidden" name="cPath" value="{$smarty.request.cPath}">
+			<input type="hidden" name="action" value="new_product">
+			<button class="btn btn-xs btn-primary">{tr}New Product{/tr}</button>
+			{html_options name="product_type" options=$newProductTypes}
+		</form>
+{/if}
