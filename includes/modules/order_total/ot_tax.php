@@ -12,7 +12,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 
 class ot_tax extends CommercePluginOrderTotalBase {
 
-	function __construct( $pOrder ) {
+	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_tax';
 
@@ -33,6 +33,7 @@ class ot_tax extends CommercePluginOrderTotalBase {
 		while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
 			if ($value > 0 or STORE_TAX_DISPLAY_STATUS == 1) {
 				$this->mProcessingOutput = array( 'code' => $this->code,
+													'sort_order' => $this->getSortOrder(),
 													'title' => $key . ':',
 													'text' => $currencies->format($value, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $value);

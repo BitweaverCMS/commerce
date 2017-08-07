@@ -12,13 +12,13 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 
 class ot_group_pricing extends CommercePluginOrderTotalBase {
 
-	function __construct( $pOrder ) {
+	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_group_pricing';
+		$this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
+		$this->description = MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION;
 
 		if( $this->isEnabled() ) {
-			$this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
-			$this->description = MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION;
 			$this->sort_order = MODULE_ORDER_TOTAL_GROUP_PRICING_SORT_ORDER;
 			$this->include_shipping = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING;
 			$this->include_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX;
@@ -49,6 +49,7 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 			if ($discount > 0 ) {
 				$this->mOrder->info['total'] -= $this->deduction;
 				$this->mProcessingOutput = array( 'code' => $this->code,
+													'sort_order' => $this->getSortOrder(),
 													'title' => $this->title . ':',
 													'text' => '-' . $currencies->format($this->deduction, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $this->deduction);
@@ -60,7 +61,7 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		$sql = "SELECT `customers_group_pricing`, `group_name`, `group_percentage` 
 				FROM " . TABLE_CUSTOMERS . " 
 					INNER JOIN " . TABLE_GROUP_PRICING . " ON (cc.`customers_group_pricing`=cgp.`group_id` 
-				WHERE `customers_id` = ?"	
+				WHERE `customers_id` = ?";
 		return $this->mDb->GetRow( $sql, array( $pCustomersId ) );
 	}
 
@@ -118,7 +119,7 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		$order_total = $pOrder->getField( 'total' );
 		if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
 		if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
-		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) {
+		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
 			$order_total = $this->get_order_total();
 			$discount = $order_total * $groupDiscount['group_percentage'] / 100;
 			$od_amount = zen_round($discount, 2);
@@ -137,8 +138,8 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		global $gBitDb;
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_GROUP_PRICING_SORT_ORDER', '290', 'Sort order of display.', '6', '2', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING', 'false', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING', 'false', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
+		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(''true'', ''false''), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GROUP_PRICING_TAX_CLASS', '0', 'Use the following tax class when treating Group Discount as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
 	}

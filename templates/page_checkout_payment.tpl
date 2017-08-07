@@ -141,8 +141,10 @@
 		<div class="row">
 			<div class="col-md-6">
 			{foreach from=$order->otOutput() item=otOutput}
-				<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
-				<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
+			<div class="row {$otOutput.code}">
+				<div class="col-xs-9 col-md-10 text-right">{$otOutput.title}</div>
+				<div class="col-xs-3 col-md-2 text-right">{$otOutput.text}</div>
+			</div>
 			{/foreach}
 			</div>
 		</div>

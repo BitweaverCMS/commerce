@@ -1430,6 +1430,11 @@ If a special exist * 10+9
 		return $ret;
 	}
 
+	public function isExpeditable( &$pOrder, $pProductKey ) {
+		// Default implementation assumes all products are capable of expediting
+		return true;
+	}
+
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),

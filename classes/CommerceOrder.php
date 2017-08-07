@@ -368,6 +368,21 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
+	// Default implementation assumes all products are capable of expediting
+	function isExpeditable() {
+		$ret = TRUE;
+		if( !empty( $this->contents ) ) {
+			foreach( array_keys( $this->contents ) as $productsKey ) {
+				// $productsKey will be orders_products_id for an order
+				$prid = $this->contents[$productsKey]['products_id'];
+				if( $product = $this->getProductObject( $prid ) ) {
+					$ret &= $product->isExpeditable( $this, $productsKey );
+				}
+			}
+		}
+		return $ret;
+	}
+
 	function hasViewPermission() {
 		global $gBitUser;
 		$ret = FALSE;
