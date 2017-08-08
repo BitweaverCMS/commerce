@@ -217,7 +217,21 @@ class CommerceCustomer extends BitBase {
 		}
 
 		if( ACCOUNT_GENDER == 'true' && !empty( $pParamHash['gender'] ) ) {
-			$pParamHash['address_store']['entry_gender'] = $pParamHash['gender'];
+			$gender = NULL;
+			if( strlen( $pParamHash['gender'] ) == 1 ) {
+				$gender = $pParamHash['gender'];
+			} else {
+				switch( $pParamHash['gender'] ) {
+					case 'Mr':
+						$gender = 'm';
+						break;
+					case 'Mrs':
+					case 'Ms':
+						$gender = 'f';
+						break;
+				}
+			}
+			$pParamHash['address_store']['entry_gender'] = $gender;
 		}
 
 		if( ACCOUNT_COMPANY == 'true' && !empty( $pParamHash['company'] ) ) {
