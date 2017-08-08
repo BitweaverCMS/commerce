@@ -44,6 +44,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
 		'content_expunge_function' => 'bitcommerce_content_expunge',
+		'users_expunge_check_function' => 'bitcommerce_user_expunge_check',
 		'users_expunge_function'	=> 'bitcommerce_user_expunge',
 		'users_register_function'   => 'bitcommerce_user_register',
 	) );
@@ -59,6 +60,18 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 			}
 		}
 
+	}
+
+	function bitcommerce_user_expunge_check( &$pObject ) {
+		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) ) {
+			require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+			$exCustomer = new CommerceCustomer( $pObject->mUserId );
+			if( $exCustomer->load() ) {
+				if( $orderHistory = $exCustomer->getOrdersHistory() ) {
+					$pObject->mErrors['expunge_check'][] = tra( 'Customer has completed orders: ' ).'#'.implode( array_keys( $orderHistory ), ', #' );
+				}
+			}
+		}
 	}
 
 	// make sure all mail_queue messages from a deleted user are nuked

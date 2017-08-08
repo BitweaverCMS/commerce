@@ -12,7 +12,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 
 class ot_shipping extends CommercePluginOrderTotalBase {
 
-	function __construct( $pOrder ) {
+	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_shipping';
 
@@ -86,6 +86,7 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 				}
 
 				$this->mProcessingOutput = array( 'code' => $this->code,
+													'sort_order' => $this->getSortOrder(),
 													'title' => $this->mOrder->info['shipping_method'] . ':',
 													'text' => $currencies->format($this->mOrder->info['shipping_cost'], true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $this->mOrder->info['shipping_cost']);
@@ -101,7 +102,7 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		global $gBitDb;
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_SHIPPING_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_SHIPPING_SORT_ORDER', '200', 'Sort order of display.', '6', '2', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Allow Free Shipping', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'false', 'Do you want to allow free shipping?', '6', '3', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Allow Free Shipping', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'false', 'Do you want to allow free shipping?', '6', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `date_added`) values ('Free Shipping For Orders Over', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', '50', 'Provide free shipping for orders over the set amount.', '6', '4', 'currencies->format', now())");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Provide Free Shipping For Orders Made', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION', 'national', 'Provide free shipping for orders sent to the set destination.', '6', '5', 'zen_cfg_select_option(array(\'national\', \'international\', \'both\'), ', now())");
 	}

@@ -133,8 +133,8 @@ foreach ( $directory_array as $class=>$file ) {
 	}
 	include_once($module_directory . $file);
 
-	if (zen_class_exists($class)) {
-		$module = new $class;
+	if( class_exists( $class ) ) {
+		$module = new $class();
 		if ($module->check() > 0) {
 			if( !empty( $module->sort_order ) && empty( $installed_modules[$module->sort_order] ) ) {
 				$installed_modules[$module->sort_order] = $file;
@@ -144,7 +144,7 @@ foreach ( $directory_array as $class=>$file ) {
 		}
 
 		$rowClass = '';
-		if ((!isset($_GET['module']) || (isset($_GET['module']) && ($_GET['module'] == $class))) && !isset($mInfo)) {
+		if ((!isset($_GET['module']) || (isset($_GET['module']) && ($_GET['module'] == $class))) && !isset($moduleInfo)) {
 			$module_info = array('class' => $class,
 								'code' => $module->code,
 								'title' => $module->title,
@@ -162,7 +162,7 @@ foreach ( $directory_array as $class=>$file ) {
 				$keys_extra[$module_keys[$j]]['set_function'] = $key_value->fields['set_function'];
 			}
 			$module_info['keys'] = $keys_extra;
-			$mInfo = new objectInfo($module_info);
+			$moduleInfo = new objectInfo($module_info);
 				$rowClass = 'info';
 		} else {
 			if( $module->enabled ) {
@@ -189,7 +189,7 @@ if ($set == 'payment' and !empty($module->order_status)) {
 <?php
 	}
 ?>
-							<td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo '<i class="icon-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '"><i class="icon-info-sign"></i></a>'; } ?>&nbsp;</td>
+							<td class="dataTableContent" align="right"><?php if (isset($moduleInfo) && is_object($moduleInfo) && ($class == $moduleInfo->code) ) { echo '<i class="icon-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $class, 'NONSSL') . '"><i class="icon-info-sign"></i></a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
 	}
@@ -216,8 +216,8 @@ $contents = array();
 switch ($action) {
 	case 'edit':
 		$keys = '';
-		reset($mInfo->keys);
-		while (list($key, $value) = each($mInfo->keys)) {
+		reset($moduleInfo->keys);
+		while (list($key, $value) = each($moduleInfo->keys)) {
 			$keys .= '<b>' . $value['title'] . '</b><br>' . $value['description'] . '<br>';
 			if ($value['set_function']) {
 				eval('$keys .= ' . $value['set_function'] . "'" . $value['value'] . "', '" . $key . "');");
@@ -227,20 +227,20 @@ switch ($action) {
 			$keys .= '<br><br>';
 		}
 		$keys = substr($keys, 0, strrpos($keys, '<br><br>'));
-		$heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
+		$heading[] = array('text' => '<b>' . $moduleInfo->title . '</b>');
 		$contents = array('form' => zen_draw_form_admin('modules', FILENAME_MODULES, 'set=' . $set . (!empty($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
 		if (ADMIN_CONFIGURATION_KEY_ON == 1) {
-			$contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
+			$contents[] = array('text' => '<strong>Key: ' . $moduleInfo->code . '</strong><br />');
 		}
 		$contents[] = array('text' => $keys);
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (!empty( $_GET['module'] ) ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	default:
-		$heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
-		if( !empty( $mInfo->status ) && $mInfo->status == '1') {
+		$heading[] = array('text' => '<b>' . $moduleInfo->title . '</b>');
+		if( !empty( $moduleInfo->status ) && $moduleInfo->status == '1') {
 			$keys = '';
-			reset($mInfo->keys);
-			while (list(, $value) = each($mInfo->keys)) {
+			reset($moduleInfo->keys);
+			while (list(, $value) = each($moduleInfo->keys)) {
 				$keys .= '<b>' . $value['title'] . '</b><br>';
 				if ($value['use_function']) {
 					$use_function = $value['use_function'];
@@ -261,15 +261,15 @@ switch ($action) {
 			}
 
 			if (ADMIN_CONFIGURATION_KEY_ON == 1) {
-				$contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
+				$contents[] = array('text' => '<strong>Key: ' . $moduleInfo->code . '</strong><br />');
 			}
 			$keys = substr($keys, 0, strrpos($keys, '<br><br>'));
-			$contents[] = array('text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . tra( 'Remove' ) . '</a>');
-			$contents[] = array('text' => '<br>' . $mInfo->description);
+			$contents[] = array('text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $moduleInfo->code . '&action=remove', 'NONSSL') . '">' . tra( 'Remove' ) . '</a>');
+			$contents[] = array('text' => '<br>' . $moduleInfo->description);
 			$contents[] = array('text' => '<br>' . $keys);
 		} else {
-			$contents[] = array('align' => 'center', 'text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $mInfo->code . '&action=install', 'NONSSL') . '">' . tra( 'Install Module' ) . '</a>');
-			$contents[] = array('text' => '<br>' . $mInfo->description);
+			$contents[] = array('align' => 'center', 'text' => '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $set . '&module=' . $moduleInfo->code . '&action=install', 'NONSSL') . '">' . tra( 'Install Module' ) . '</a>');
+			$contents[] = array('text' => '<br>' . $moduleInfo->description);
 		}
 		break;
 }

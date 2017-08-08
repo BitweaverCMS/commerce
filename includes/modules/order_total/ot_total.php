@@ -12,7 +12,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
 
 class ot_total extends CommercePluginOrderTotalBase {
 	
-	function __construct( $pOrder ) {
+	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_total';
 
@@ -30,6 +30,7 @@ class ot_total extends CommercePluginOrderTotalBase {
 		parent::process();
 		global $currencies;
 		$this->mProcessingOutput = array( 'code' => $this->code,
+											'sort_order' => $this->getSortOrder(),
 											'title' => $this->title . ':',
 											'text' => $currencies->format( $this->mOrder->info['total'], true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value'] ),
 											'value' => $this->mOrder->info['total'] );

@@ -39,11 +39,11 @@ if( $prodList = $product->getList( $prodListHash ) ) {
 	$gBitSmarty->assign( 'prodCount', count( $prodList ) );
 }
 
-$sql = "SELECT ptc.`product_type_id`, pt.`type_name` FROM " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc, " . TABLE_PRODUCT_TYPES . " pt where ptc.`category_id`=? and pt.`type_id` = ptc.`product_type_id`";
+$sql = "SELECT ptc.`product_type_id`, pt.`type_name` FROM " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON(pt.`type_id`= ptc.`product_type_id`) WHERE ptc.`category_id`=?";
 if( $restrictTypes = $gBitDb->getAssoc($sql, array( $current_category_id ) ) ) {
 	$gBitSmarty->assign( 'newProductTypes', $restrictTypes );
 } else {
-	$gBitSmarty->assign( 'newProductTypes', $product_types_array );
+	$gBitSmarty->assign( 'newProductTypes', $productTypesHash );
 }
 
 if( !empty( $cPath_array ) ) {

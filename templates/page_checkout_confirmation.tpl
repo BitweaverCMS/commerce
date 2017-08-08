@@ -65,15 +65,15 @@
 			{/if}
 			{/foreach}
 		</table>
-			<div class="row">
 			{if $order->content_type!='virtual' && $order->info.shipping_method}
-				<div class="col-xs-12 text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></div>
+				<p class="text-right">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></p>
 			{/if}
 				{foreach from=$order->otOutput() item=otOutput}
+				<div class="row {$otOutput.code}">
 					<div class="col-xs-9 col-sm-10 text-right">{$otOutput.title}</div>
 					<div class="col-xs-3 col-sm-2 text-right">{$otOutput.text}</div>
+				</div>
 				{/foreach}
-			</div>
 	{/legend}
 	</div>
 </div>

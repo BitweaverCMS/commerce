@@ -18,6 +18,7 @@ abstract class CommercePluginBase extends BitBase {
 	public $icon; 
 	protected $isEnabled;
 	protected $isInstalled;
+	protected $sort_order;
 
 	abstract public function keys();
 	abstract public function install();
@@ -45,6 +46,10 @@ abstract class CommercePluginBase extends BitBase {
 
 	public function check() {
 		return $this->isInstalled();
+	}
+
+	public function getSortOrder() {
+		return $this->sort_order;
 	}
 
 	public function isInstalled() {

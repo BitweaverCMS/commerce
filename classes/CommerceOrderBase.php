@@ -103,6 +103,18 @@ class CommerceOrderBase extends BitBase {
 		}
 	}
 
+	function sortModules( &$pModules ) {
+		usort($pModules, function($a, $b) {
+				if ($a['sort_order'] == $b['sort_order']) {
+					return 0;
+				} else if ($a['sort_order'] > $b['sort_order']) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+	}
+
 	function otProcess() {
 		$this->scanOtModules();
 		$ret = array();
@@ -110,7 +122,7 @@ class CommerceOrderBase extends BitBase {
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$otObject->process();
 			if( $otOutput = $otObject->getOutput() ) {
-				$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->sort_order);
+				$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
 				foreach( array( 'title', 'text', 'value' ) as $key ) {
 					if( !empty( $otOutput[$key] ) ) {
 						$outHash[$key] = $otOutput[$key];
@@ -120,7 +132,9 @@ class CommerceOrderBase extends BitBase {
 				$ret[] = $outHash;
 			}
 		}
+		$this->sortModules( $ret );
 		$this->mOtProcessModules = $ret;
+
 		return $ret;
 	}
 
@@ -132,6 +146,7 @@ class CommerceOrderBase extends BitBase {
 				array_push( $ret, $output );
 			}
 		}
+		$this->sortModules( $ret );
 
 		return $ret;
 	}

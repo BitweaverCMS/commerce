@@ -1430,6 +1430,11 @@ If a special exist * 10+9
 		return $ret;
 	}
 
+	public function isExpeditable( &$pOrder, $pProductKey ) {
+		// Default implementation assumes all products are capable of expediting
+		return true;
+	}
+
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),
@@ -2332,7 +2337,7 @@ Skip deleting of images for now
 			$this->mDb->query("DELETE FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 
 			// remove downloads if they exist
-			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_attributes_id` IN (SELECT pa.`products_attributes_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	WHERE pom.`products_id` = ?)", array( $this->mProductsId ) );
+			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " WHERE `products_options_values_id` IN (SELECT pa.`products_options_values_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )	WHERE pom.`products_id` = ?)", array( $this->mProductsId ) );
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?)", array( $this->mProductsId ));
 			$this->mDb->query("DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_id` = ?", array( $this->mProductsId ));

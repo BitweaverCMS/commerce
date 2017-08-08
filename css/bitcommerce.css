@@ -113,3 +113,5 @@ TABLE.products-attributes-images { float: left; padding: 2px; }
 ul.data.products li.item { padding: 10px 0 10px 0; }
 ul.products li .image { width:180px; }
 ul.products li .thumb { padding-right:20px; }
+
+.row.ot_total	{ padding-bottom:20px; border-top:1px solid #dddddd; }
