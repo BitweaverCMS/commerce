@@ -56,7 +56,7 @@
 					<div class="form-group">
 						{formlabel label="Special Instructions or Comments About Your Order" for=""}
 						{forminput}
-							<textarea name="comments" wrap="soft" class="form-control" rows="4">{$smarty.session.comments}</textarea>
+							<textarea name="comments" wrap="soft" class="form-control" rows="4" placeholder="Have a DEADLINE? Please let us know here when your order must be delivered.">{$smarty.session.comments}</textarea>
 						{/forminput}
 					</div>
 				</fieldset>
