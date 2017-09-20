@@ -1835,7 +1835,7 @@ If a special exist * 10+9
 							}
 
 							if( !empty( $vals['display_price']	) ) {
-								$vals['display_price'] = '( '.$vals['display_price'].($price_onetime ? ' '.tra('Per Item').', '.$price_onetime.' '.tra( 'One time' ) : '').' )';
+								$vals['display_price'] = $vals['display_price'].($price_onetime ? ' '.tra('Per Item').', '.$price_onetime.' '.tra( 'One time' ) : '');
 							} elseif( $price_onetime ) {
 								$vals['display_price'] = $price_onetime;
 							}
