@@ -96,6 +96,9 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 													'text' => $expediteText,
 													'value' => $expediteCost);
 			}
+			if( BitBase::getParameter( $_REQUEST, 'main_page' ) == 'checkout_process' && $this->hasExpedite() ) {
+				$this->mOrder->info['comments'] = trim( "EXPEDITE ORDER\n\n".$this->mOrder->info['comments'] );
+			}
 		}
 	}
 

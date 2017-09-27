@@ -610,7 +610,7 @@ class order extends CommerceOrderBase {
 							'tax' => 0,
 							'total' => 0,
 							'tax_groups' => array(),
-							'comments' => (isset($_SESSION['comments']) ? $_SESSION['comments'] : ''),
+							'comments' => $this->getParameter( $_SESSION, 'comments' ),
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
@@ -1147,12 +1147,12 @@ class order extends CommerceOrderBase {
 			$customerName = BitUser::getDisplayNameFromHash( FALSE, $this->customer );
 		}
 		$email_order = EMAIL_TEXT_HEADER . ' ' . EMAIL_TEXT_FROM . ' ' . STORE_NAME . "\n\n" .
-									$customerName . "\n\n" .
-									EMAIL_THANKS_FOR_SHOPPING . "\n\n" . EMAIL_DETAILS_FOLLOW . "\n" .
-									EMAIL_SEPARATOR . "\n" .
-									EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n" .
-									EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
-									EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false) . "\n\n";
+						$customerName . "\n\n" .
+						EMAIL_THANKS_FOR_SHOPPING . "\n\n" . EMAIL_DETAILS_FOLLOW . "\n" .
+						EMAIL_SEPARATOR . "\n" .
+						EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n" .
+						EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
+						EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false) . "\n\n";
 		$emailVars['EMAIL_TEXT_HEADER']		 = EMAIL_TEXT_HEADER;
 		$emailVars['EMAIL_TEXT_FROM']			 = EMAIL_TEXT_FROM;
 		$emailVars['INTRO_STORE_NAME']			= STORE_NAME;
