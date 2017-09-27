@@ -808,9 +808,11 @@ class order extends CommerceOrderBase {
 		require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 		$paymentManager = new CommercePaymentManager( $pProcessParams['payment'] );
 
+		// group pricing or expedite will affect total
+		$this->otProcess( $pProcessParams );
+
 		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
 
-			$this->otProcess( $pProcessParams );
 			$newOrderId = $this->create();
 
 			$paymentManager->after_order_create( $newOrderId );
@@ -897,6 +899,7 @@ class order extends CommerceOrderBase {
 		$this->mDb->CompleteTrans();
 
 		$this->mDb->StartTrans();
+
 		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
 			$sqlParams = array( 'orders_id' => $this->mOrdersId,
 								'title' => $this->mOtProcessModules[$key]['title'],

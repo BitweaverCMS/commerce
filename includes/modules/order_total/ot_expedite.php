@@ -61,7 +61,6 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 	function process() {
 		global $gCommerceSystem, $currencies;
 		parent::process();
-
 		if( $this->isEnabled() ) {
 			if( $this->mOrder->isExpeditable() ) {
 				if( strpos( MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE, '%' ) ) {
@@ -90,11 +89,13 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 				$expediteCost = 0;	
 			}
 
-			$this->mProcessingOutput = array( 'code' => $this->code,
-												'sort_order' => $this->getSortOrder(),
-												'title' => $expediteTitle,
-												'text' => $expediteText,
-												'value' => $expediteCost);
+			if( BitBase::getParameter( $_REQUEST, 'main_page' ) != 'checkout_process' || $this->hasExpedite() ) {
+				$this->mProcessingOutput = array( 'code' => $this->code,
+													'sort_order' => $this->getSortOrder(),
+													'title' => $expediteTitle,
+													'text' => $expediteText,
+													'value' => $expediteCost);
+			}
 		}
 	}
 
