@@ -24,7 +24,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-if (isset($_POST['payment'])) {
+if( isset( $_POST['payment'] ) ) {
 	$_SESSION['payment'] = $_POST['payment'];
 }
 if( !empty( $_POST['comments'] ) ) {
