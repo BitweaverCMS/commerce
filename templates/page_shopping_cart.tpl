@@ -65,6 +65,7 @@
 			</select>
 		</div>
 		<div class="col-xs-12 text-right">
+			{if $gCommerceSystem->getConfig('CONTINUE_SHOPPING_URL')}<a class="pull-left btn btn-default" href="{$gCommerceSystem->getConfig('CONTINUE_SHOPPING_URL')}">{tr}Continue Shopping{/tr}</a>{/if}
 			{if $cartHasContents}{if $gCommerceSystem->getConfig('SHOW_SHOPPING_CART_UPDATE')}<input type="submit" class="btn btn-default" name="update_cart" value="{tr}Update Cart{/tr}" />{/if} <input type="submit" class="btn btn-primary" name="checkout" value="{tr}Checkout{/tr}" />{/if} 
 		</div>
 	</div>
