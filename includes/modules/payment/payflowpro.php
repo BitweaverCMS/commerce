@@ -426,12 +426,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$headers[] = 'X-VPS-VIT-Integration-Product: PHP::bitcommerce - Payflow Pro';
 			$headers[] = 'X-VPS-VIT-Integration-Version: 1.0';
 			$this->lastHeaders = $headers;
-
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $this->_buildNameValueList($postFields));
-
 			$_curlOptions = array(	CURLOPT_HEADER => 0,
 									CURLOPT_RETURNTRANSFER => 1,
 									CURLOPT_TIMEOUT => 60,

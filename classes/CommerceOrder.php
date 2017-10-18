@@ -810,9 +810,7 @@ class order extends CommerceOrderBase {
 
 		// group pricing or expedite will affect total
 		$this->otProcess( $pProcessParams );
-
 		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
-
 			$newOrderId = $this->create();
 
 			$paymentManager->after_order_create( $newOrderId );
@@ -820,6 +818,20 @@ class order extends CommerceOrderBase {
 
 
 			$ret = TRUE;
+		}
+
+		return $ret;
+	}
+
+	function getDeductionTotal() {
+		$ret = 0;
+
+		if( !empty( $this->info['deductions'] ) ) {
+			foreach( array_keys( $this->info['deductions'] ) as $otClass ) {
+				foreach( $this->info['deductions'][$otClass] as $key=>$amount ) {
+					$ret += $amount;
+				}
+			}
 		}
 
 		return $ret;

@@ -71,7 +71,11 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 					$exepditeDisplay = $currencies->format( MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE, true,   $this->mOrder->info['currency'], $this->mOrder->info['currency_value'] );
 				}
 
-				$expediteTitle = $this->title . ' ( '.$exepditeDisplay. ' )';
+				$expediteTitle = '';
+				if( !$this->hasExpedite() ) {
+					$expediteTitle = "Add ";
+				}
+				$expediteTitle .= $this->title . ' ( '.$exepditeDisplay. ' )';
 				if( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL' )  ) {
 					$expediteTitle .= '<div class="small"><a href="'.MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL.'">'.'Terms &amp; Conditions'.'</a></div>';
 				}
@@ -81,7 +85,7 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 					$this->mOrder->info['total'] += $expediteCost;
 					$expediteText = ' <a class="" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=0"><i class="icon-remove-sign"></i></a> '.$expediteFormatted;
 				} else {
-					$expediteText = '<a class="btn btn-default btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=1"><i class="icon-plus-sign"></i> '.$expediteFormatted.'</a>';
+					$expediteText = '<a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=1"><i class="icon-plus-sign"></i> '.$expediteFormatted.'</a>';
 				}
 			} else {
 				$expediteTitle = "Expedited order processing is not available for 1 or more items in your cart.";

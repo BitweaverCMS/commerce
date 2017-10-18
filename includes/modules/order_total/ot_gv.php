@@ -65,7 +65,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		$tod_amount = 0.0;
 		// clean out negative values and strip common currency symbols
 		$creditAmount = preg_replace( '/[^\d\.]/', '', $pGvAmount );
-		$orderTotal = $this->mOrder->info['total'];
+		$orderTotal = $this->mOrder->getField( 'total' );
 
 		if ( !empty( $creditAmount ) ) {
 			if( $this->include_shipping == 'false') { 
@@ -110,7 +110,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			}
 
 			$od_amount = $creditAmount + $tod_amount;
-			if ($od_amount >= $this->mOrder->info['total'] && defined( 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID' ) && MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID != 0) {
+			if ($od_amount >= $this->mOrder->getField( 'total' ) && defined( 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID' ) && MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID != 0) {
 				 $this->mOrder->info['order_status'] = MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID;
 			}
 		}
@@ -124,9 +124,8 @@ class ot_gv extends CommercePluginOrderTotalBase {
 
 		if( !empty( $_SESSION['cot_gv'] ) ) {
 			if( $deduction = $this->getOrderDeduction( $_SESSION['cot_gv'] ) ) {
-				$this->mOrder->info['total'] = round( $this->mOrder->info['total'] - $deduction, $currencies->get_decimal_places() ); // avoid 64 bit math error
 				$this->mOrder->info['gv_amount'] = $deduction;
-
+				$this->setOrderDeduction( $deduction );
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),
 													'title' => $this->title . ':',
@@ -140,7 +139,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return( $this->userGvBalance );
 	}
 
-	function getOrderDeduction( $pOrder ) {
+	public function getOrderDeduction( $pOrder ) {
 		$ret = null;
 		if( !empty( $_SESSION['cot_gv'] ) ) {
 			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {

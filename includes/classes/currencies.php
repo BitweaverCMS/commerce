@@ -163,6 +163,9 @@ class currencies extends BitBase {
 	}
 
 	function get_decimal_places( $pCurrency = DEFAULT_CURRENCY ) {
+		if( empty( $pCurrency ) ) {
+			$pCurrency = DEFAULT_CURRENCY;
+		}
 		return $this->currencies[$pCurrency]['decimal_places'];
 	}
 
