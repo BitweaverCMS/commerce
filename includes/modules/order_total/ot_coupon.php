@@ -44,7 +44,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					$tax_rate = zen_get_tax_rate_from_desc($key);
 					if( !empty( $od_amount[$key] ) ) {
 						$this->mOrder->info['tax_groups'][$key] -= $od_amount[$key];
-						$this->mOrder->info['total'] -=	$od_amount[$key];
+						$this->setOrderDeduction( $od_amount[$key], $key );
 					}
 				}
 				if( !empty( $od_amount['type'] ) && $od_amount['type'] == 'S') {
@@ -53,7 +53,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = ?";
 				if( $couponCode = $this->mDb->GetOne($sql, array( $_SESSION['cc_id'] ) ) ) {
 					$this->coupon_code = $couponCode;
-					$this->mOrder->info['total'] = $this->mOrder->info['total'] - $od_amount['total'];
+					$this->setOrderDeduction( $od_amount['total'], $this->coupon_code );
 					$this->mProcessingOutput = array( 'code' => $this->code,
 														'sort_order' => $this->getSortOrder(),
 														'title' => $this->title . ': ' . $this->coupon_code . ' :',

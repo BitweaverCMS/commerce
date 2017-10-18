@@ -51,7 +51,7 @@ class CommerceOrderBase extends BitBase {
 	function getFieldLocalized( $pField ) {
 		$ret = $this->getField( $pField );
 		if( is_numeric( $ret ) ) {
-			if( $this->getField( 'currency' ) != DEFAULT_CURRENCY ) {
+			if( $this->getField( 'currency', DEFAULT_CURRENCY ) != DEFAULT_CURRENCY ) {
 				global $currencies;
 				$paymentDecimal = $currencies->get_decimal_places( $this->getField( 'currency' ) );
 				$ret = number_format( $ret * $this->getField('currency_value'), $paymentDecimal, '.', '' ) ;

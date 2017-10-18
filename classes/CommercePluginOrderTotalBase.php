@@ -32,6 +32,12 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 	function getOutput() {
 		return $this->mProcessingOutput;
 	}
+
+	function setOrderDeduction( $pDeduction, $pCode = 'discount' ) {
+		if( !empty( $this->mOrder ) ) {
+			$this->mOrder->info['deductions'][$this->code][$pCode] = $pDeduction;	
+		}
+	}
 }
 
 
