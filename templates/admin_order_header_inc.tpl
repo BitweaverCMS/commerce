@@ -61,6 +61,7 @@ function editAddress( pAddress ) {
 			<div class="floatright">{$order->info.cc_expires}</div>
 		</div>
 		{/if}
+		{/if}
 		<div class="clear">
 		{if empty( $order->info.cc_ref_id )}
 			<div class="alert alert-danger">{booticon iname="icon-warning-sign"} {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
@@ -69,7 +70,6 @@ function editAddress( pAddress ) {
 			<div class="floatright">{$order->info.cc_ref_id}</div>
 		{/if}
 		</div>
-		{/if}
 		<div class="clear">
 			<div class="floatleft">{tr}IP{/tr}:</div>
 			<div class="floatright"> {$order->info.ip_address}</div>
