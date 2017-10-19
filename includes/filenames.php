@@ -88,7 +88,7 @@
   define('FILENAME_INFO_SHOPPING_CART', 'info_shopping_cart');
   define('FILENAME_LANGUAGES', 'languages');
   define('FILENAME_LAYOUT_CONTROLLER','layout_controller');
-  define('FILENAME_LOGIN', USERS_PKG_URL.'login.php');
+  define('FILENAME_LOGIN', USERS_PKG_URL.'signin.php');
   define('FILENAME_LOGOFF', 'logoff');
   define('FILENAME_MAIL', 'mail');
   define('FILENAME_MANUFACTURERS', 'manufacturers');
