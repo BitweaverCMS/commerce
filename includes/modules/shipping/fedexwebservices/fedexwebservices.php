@@ -141,7 +141,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 															'Residential' => empty( $order->delivery['company'] ) ) ); //customer county code
 
 		if( !empty( $stateCode ) && in_array($country_id, array('US', 'CA'))) {
-			$request['RequestedShipment']['Recipient']['StateOrProvinceCode'] = $stateCode;
+			$request['RequestedShipment']['Recipient']['Address']['StateOrProvinceCode'] = $stateCode;
 		}
 		$request['RequestedShipment']['ShippingChargesPayment'] = array(	'PaymentType' => 'SENDER',
 																			'Payor' => array('AccountNumber' => MODULE_SHIPPING_FEDEXWEBSERVICES_ACT_NUM,
@@ -190,7 +190,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 					if ($values == 0) continue;
 					$shippingNumBoxes = ceil((float)$values / (float)SHIPPING_MAX_WEIGHT);
 					if ($shippingNumBoxes < 1) $shippingNumBoxes = 1;
-					$shippingWeight = round((float)$values / $shippingNumBoxes, 2); // 2 decimal places max
+					$shippingWeight = (float)$values / $shippingNumBoxes; // 2 decimal places max
 					for ($i=0; $i<$shippingNumBoxes; $i++) {
 						$new_shipping_num_boxes++;
 						if (SHIPPING_MAX_WEIGHT <= $shippingWeight) {
@@ -200,14 +200,14 @@ class fedexwebservices extends CommercePluginShippingBase {
 						}
 						if ($shippingWeight <= 0) $shippingWeight = 0.1; 
 						$new_shipping_weight += $shippingWeight;					 
-						$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT), 'GroupPackageCount' => 1 );
+						$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => round( $shippingWeight, 2), 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT), 'GroupPackageCount' => 1 );
 					}
 				} else {
 					// note $values is an array
 					$new_shipping_num_boxes++;
 					if ($values['weight'] <= 0) $values['weight'] = 0.1;
 					$new_shipping_weight += $values['weight'];
-					$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $values['weight'], 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT),
+					$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => round( $values['weight'], 2), 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT),
 																						 'Dimensions' => array(	'Length' => $values['length'],
 																												'Width' => $values['width'],
 																												'Height' => $values['height'],
@@ -223,7 +223,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 			if ($shippingWeight == 0) $shippingWeight = 0.1;
 			
 			for ($i=0; $i<$shippingNumBoxes; $i++) {
-				$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => $shippingWeight, 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT), 'GroupPackageCount' => 1 );
+				$request['RequestedShipment']['RequestedPackageLineItems'][] = array('Weight' => array('Value' => round( $shippingWeight, 2), 'Units' => MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT), 'GroupPackageCount' => 1 );
 			}
 		}
 		$request['RequestedShipment']['PackageCount'] = $shippingNumBoxes;
@@ -238,6 +238,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 
 		try {
 			$response = $client->getRates($request);
+
 			if( !empty( $response ) && ($response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR' && !empty( $response->RateReplyDetails )) ) {
 				if (is_object($response->RateReplyDetails)) {
 					$response->RateReplyDetails = get_object_vars($response->RateReplyDetails);
