@@ -1565,6 +1565,7 @@ If a special exist * 10+9
 
 		$pParamHash['product_store']['products_last_modified'] = (empty( $pParamHash['products_last_modified'] ) ? $this->mDb->NOW() : $pParamHash['products_last_modified']);
 		$pParamHash['product_store']['master_categories_id'] = (!empty( $pParamHash['master_categories_id'] ) ? $pParamHash['master_categories_id'] : (!empty( $pParamHash['category_id'] ) ? $pParamHash['category_id'] : NULL));
+
 		if( !$this->isValid() ) {
 			$pParamHash['product_store']['products_date_added'] = (empty( $pParamHash['products_date_added'] ) ? $this->mDb->NOW() : $pParamHash['products_date_added']);
 		}
@@ -1576,7 +1577,7 @@ If a special exist * 10+9
 		// we have already done all the permission checking needed for this user to upload an image
 		$pParamHash['no_perm_check'] = TRUE;
 		$this->StartTrans();
-		if( CommerceProduct::verify( $pParamHash ) && LibertyMime::store( $pParamHash ) ) {
+		if( CommerceProduct::verify( $pParamHash ) && parent::store( $pParamHash ) ) {
 			if (isset($pParamHash['pID'])) {
 				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
 			}
