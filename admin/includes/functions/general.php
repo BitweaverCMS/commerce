@@ -1190,7 +1190,7 @@ bt(); die;
 
 ////
 // Output a day/month/year dropdown selector
-	function zen_draw_date_selector($prefix, $date='') {
+	function zen_draw_date_selector($prefix, $date=NULL) {
 		$month_array = array();
 		$month_array[1] =_JANUARY;
 		$month_array[2] =_FEBRUARY;
@@ -1223,7 +1223,11 @@ bt(); die;
 		}
 		$date_selector .= '</select>';
 		$date_selector .= '<SELECT class="col-md-2" name="'. $prefix .'_year">';
-		for ($i=2001;$i<2019;$i++){
+		$dateYear = date('Y', $date);
+		$thisYear = date('Y');
+		$startYear = ( $dateYear < $thisYear ? $dateYear : $thisYear );
+		$endYear = ( $dateYear > $thisYear ? $dateYear : $thisYear );
+		for ($i=($startYear-5);$i<$endYear+5;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$year) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
