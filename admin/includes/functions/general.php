@@ -1227,7 +1227,7 @@ bt(); die;
 		$thisYear = date('Y');
 		$startYear = ( $dateYear < $thisYear ? $dateYear : $thisYear );
 		$endYear = ( $dateYear > $thisYear ? $dateYear : $thisYear );
-		for ($i=($startYear-5);$i<$endYear+5;$i++){
+		for ($i=($startYear-2);$i<$endYear+5;$i++){
 			$date_selector .= '<option value="' . $i . '"';
 			if ($i==$year) $date_selector .= 'selected';
 			$date_selector .= '>' . $i . '</option>';
