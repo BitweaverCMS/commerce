@@ -1,5 +1,7 @@
 <?php
 
+global $gBitInstaller;
+
 $lastQuote = strrpos( BITCOMMERCE_DB_PREFIX, '`' );
 if( $lastQuote != FALSE ) {
 	$lastQuote++;
@@ -1146,11 +1148,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
 ",
 
 );
-
-
-
-
-global $gBitInstaller;
 
 $indices = array (
   'mfg_name_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_manufacturers', 'cols' => 'manufacturers_name', 'opts' => NULL),
