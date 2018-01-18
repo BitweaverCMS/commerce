@@ -1794,7 +1794,7 @@ If a special exist * 10+9
 						// reset
 						$new_value_price= '';
 						$price_onetime = '';
-						$products_options_array[] = array('id' => $vals['products_options_values_id'], 'text' => $vals['products_options_values_name']);
+						array_push( $products_options_array, array('id' => $vals['products_options_values_id'], 'text' => $vals['products_options_values_name']) );
 						if (((CUSTOMERS_APPROVAL == '2' and $_SESSION['customer_id'] == '') or (STORE_STATUS == '1')) or (CUSTOMERS_APPROVAL_AUTHORIZATION >= 2 and $_SESSION['customers_authorization'] == '')) {
 							$new_options_values_price = 0;
 						} else {
