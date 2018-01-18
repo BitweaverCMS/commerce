@@ -253,7 +253,7 @@
         $field .= ' selected="selected"';
       }
 
-      $field .= '>' . zen_output_string( strip_tags( $values[$i]['text'], array('"' => '&quot;', '\'' => '&#039;', '<' => '&lt;', '>' => '&gt;') ) ) . '</option>';
+      $field .= '>' . zen_output_string( strip_tags( $values[$i]['text'] ), array('"' => '&quot;', '\'' => '&#039;', '<' => '&lt;', '>' => '&gt;') ) . '</option>';
     }
     $field .= '</select>';
 
