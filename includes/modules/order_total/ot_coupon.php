@@ -103,6 +103,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					}
 				}
 				if (!$foundvalid) {
+eb( $pRequestParams );
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$pRequestParams['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
@@ -315,13 +316,18 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 						// specific products_options_values_id  - are we exclusive or inclusive?
 						if( !empty( $restriction['products_options_values_id'] ) ) {
 							if( !empty( $pProductHash['attributes'] ) ) {
-								$prodIsMatch = (in_array( $restriction['products_options_values_id'], $pProductHash['attributes'] ));
+								foreach( array_keys( $pProductHash['attributes'] ) as $key ) {
+									if( $prodIsMatch = ( $restriction['products_options_values_id'] == $pProductHash['attributes'][$key]['options_values_id'] ) ) {
+										break;
+									}
+								}
 
 								if( $prodIsMatch && $restriction['coupon_restrict'] == 'Y' ) {
 									$coupDeny = TRUE; // Product CANNOT be in this type - trumps all else
 								} elseif( $prodIsMatch && $restriction['coupon_restrict'] == 'N' ) {
 									$coupAllow = TRUE; // Product MUST be in the category
 								}
+
 							} else {
 								$coupDeny = TRUE;
 							}
