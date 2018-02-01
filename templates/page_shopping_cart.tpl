@@ -26,12 +26,12 @@
 			{assign var=product value=$gBitCustomer->mCart->getProductObject($productsKey)}
 			{assign var=productHash value=$gBitCustomer->mCart->getProductHash($productsKey)}
 			<div class="col-xs-4 col-sm-2">{if $gCommerceSystem->getConfig('IMAGE_SHOPPING_CART_STATUS')}<a href="{$product->getDisplayUrl()}"><img src="{$product->getThumbnailUrl('avatar')}" class="img-responsive" alt="{$product->getTitle()|escape}"/></a>{/if}</div>
-			<div class="col-xs-8 col-sm-6"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()|escape}</span></a>
+			<div class="col-xs-8 col-sm-6"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()}</span></a>
 				{if $basket.attributes}
 					<ul class="list-unstyled">
 					{foreach from=$basket.attributes key=optionKey item=valueId}
 						{assign var=option value=$product->getOptionValue('',$valueId)}
-						<li>{$option.products_options_values_name|escape}</li>
+						<li>{$option.products_options_values_name}</li>
 					{/foreach}
 					</ul>
 				{/if}
