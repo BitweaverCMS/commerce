@@ -111,7 +111,16 @@ UTM:T|{$newOrder->mOrdersId}|{$gBitUser->getPreference('affiliate_code',$gBitSys
 	{/literal}
 	{/if}
 	{if $gBitSystem->getConfig('shopperapproved_site_id')}
-	<script type="text/javascript"> var randomnumber = Math.floor(Math.random()*1000); sa_draw = window.document.createElement('script'); sa_draw.setAttribute('src', 'https://shopperapproved.com/thankyou/sv-draw_js.php?site={$gBitSystem->getConfig('shopperapproved_site_id')}&loadoptin=1&rnd'+randomnumber); sa_draw.setAttribute('type', 'text/javascript'); document.getElementsByTagName("head")[0].appendChild(sa_draw); </script>
+
+	<script type="text/javascript">{literal}
+		var randomnumber = Math.floor(Math.random()*1000); 
+		/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
+		var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} '{$attr.options_values_id}':'{$attr.value}', {/if}{/foreach}{/foreach}{literal} };
+		sa_draw = window.document.createElement('script'); 
+		sa_draw.setAttribute('src', 'https://shopperapproved.com/thankyou/sv-draw_js.php?site={$gBitSystem->getConfig('shopperapproved_site_id')}&loadoptin=1&rnd'+randomnumber); 
+		sa_draw.setAttribute('type', 'text/javascript'); 
+		document.getElementsByTagName("head")[0].appendChild(sa_draw); 
+	{/literal}</script>
 	{/if}
 {/if}
 </div>

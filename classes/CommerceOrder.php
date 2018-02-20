@@ -626,7 +626,7 @@ class order extends CommerceOrderBase {
 
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
-			if( $paymentModule->order_status && is_numeric( $paymentModule->order_status ) && $paymentModule->order_status > 0 ) {
+			if( !empty( $paymentModule->order_status ) && is_numeric( $paymentModule->order_status ) && $paymentModule->order_status > 0 ) {
 				$this->info['order_status'] = $paymentModule->order_status;
 			}
 		}
