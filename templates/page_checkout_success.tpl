@@ -111,16 +111,30 @@ UTM:T|{$newOrder->mOrdersId}|{$gBitUser->getPreference('affiliate_code',$gBitSys
 	{/literal}
 	{/if}
 	{if $gBitSystem->getConfig('shopperapproved_site_id')}
-
-	<script type="text/javascript">{literal}
-		var randomnumber = Math.floor(Math.random()*1000); 
-		/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
-		var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} '{$attr.options_values_id}':'{$attr.value}', {/if}{/foreach}{/foreach}{literal} };
-		sa_draw = window.document.createElement('script'); 
-		sa_draw.setAttribute('src', 'https://shopperapproved.com/thankyou/sv-draw_js.php?site={$gBitSystem->getConfig('shopperapproved_site_id')}&loadoptin=1&rnd'+randomnumber); 
-		sa_draw.setAttribute('type', 'text/javascript'); 
-		document.getElementsByTagName("head")[0].appendChild(sa_draw); 
-	{/literal}</script>
+<script type="text/javascript">{literal}
+	/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
+	var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} '{$attr.options_values_id}':'{$attr.value}', {/if}{/foreach}{/foreach}{literal} };
+	var sa_values = { {/literal}
+		"site":{$gBitSystem->getConfig('shopperapproved_site_id')}, 
+		"token":"{$gBitSystem->getConfig('shopperapproved_token')}", 
+		'orderid':'{$newOrder->mOrdersId}', 
+		'name':'{$newOrder->billing.name}', 
+		'email':'{$gBitUser->getField('email')}', 
+		'country':'{$newOrder->delivery.country.countries_name}', 
+		'state':'{$newOrder->delivery.state}' 
+	{literal} }; 
+	function saLoadScript(src) { 
+		var js = window.document.createElement("script"); 
+		js.src = src; 
+		js.type = "text/javascript"; 
+		document.getElementsByTagName("head")[0].appendChild(js); 
+	} 
+	var d = new Date(); 
+	if (d.getTime() - 172800000 > 1477399567000) 
+		saLoadScript("//www.shopperapproved.com/thankyou/rate/{$gBitSystem->getConfig('shopperapproved_site_id')}.js"); 
+	else 
+		saLoadScript("//direct.shopperapproved.com/thankyou/rate/{$gBitSystem->getConfig('shopperapproved_site_id')}.js?d=" + d.getTime()); 
+{/literal}</script>
 	{/if}
 {/if}
 </div>
