@@ -103,7 +103,6 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					}
 				}
 				if (!$foundvalid) {
-eb( $pRequestParams );
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$pRequestParams['dc_redeem_code']), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
