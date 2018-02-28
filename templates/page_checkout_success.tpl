@@ -118,7 +118,7 @@ UTM:T|{$newOrder->mOrdersId}|{$gBitUser->getPreference('affiliate_code',$gBitSys
 		"site":{$gBitSystem->getConfig('shopperapproved_site_id')}, 
 		"token":"{$gBitSystem->getConfig('shopperapproved_token')}", 
 		'orderid':'{$newOrder->mOrdersId}', 
-		'name':'{$newOrder->billing.name}', 
+		'name':'{$newOrder->billing.name|replace:"'":"\'"}', 
 		'email':'{$gBitUser->getField('email')}', 
 		'country':'{$newOrder->delivery.country.countries_name}', 
 		'state':'{$newOrder->delivery.state}' 
@@ -130,11 +130,12 @@ UTM:T|{$newOrder->mOrdersId}|{$gBitUser->getPreference('affiliate_code',$gBitSys
 		document.getElementsByTagName("head")[0].appendChild(js); 
 	} 
 	var d = new Date(); 
+	{/literal}
 	if (d.getTime() - 172800000 > 1477399567000) 
 		saLoadScript("//www.shopperapproved.com/thankyou/rate/{$gBitSystem->getConfig('shopperapproved_site_id')}.js"); 
 	else 
 		saLoadScript("//direct.shopperapproved.com/thankyou/rate/{$gBitSystem->getConfig('shopperapproved_site_id')}.js?d=" + d.getTime()); 
-{/literal}</script>
+</script>
 	{/if}
 {/if}
 </div>
