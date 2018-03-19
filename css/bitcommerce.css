@@ -117,3 +117,54 @@ ul.products li .thumb { padding-right:20px; }
 .row.ot_total	{ padding-bottom:20px; border-top:1px solid #dddddd; }
 
 #shippingquotes img.shipper-logo {max-height:90px;}
+
+/*Checkout CSS Bar*/
+textarea.special-instructions	{background-color: #fcf8e3;}
+textarea.special-instructions:placeholder-shown {background-color: #fff;}
+.checkout-progressbar li h2.side-style-layout	{font-size:1.05em; margin-bottom: 0;}
+.checkout-progressbar li div.help	{font-size: .7em;}
+.checkout-progressbar	{ counter-reset: step; padding-left: 0; margin-left: 0;}
+.checkout-progressbar li	{ list-style-type: none; float:left; width:33.3%; position: relative; text-align: center;font-size:1.25em;}
+.checkout-progressbar li:before	{ content: counter(step); counter-increment: step; width: 55px; height: 55px; line-height: 50px; border: 3px solid #ddd; display:block; margin: 0 auto 0 auto; border-radius: 50%; background-color: white;}
+.checkout-progressbar .icon-chevron-right	{display:none;}
+.checkout-progressbar .icon-chevron-right.active	{color: #199DD6;}
+.checkout-progressbar .icon-chevron-right.inactive	{color: #bbbbbb;}
+.checkout-progressbar li:first-child:after	{content: none}
+.checkout-progressbar li.active	{color: #17516b; font-weight: bold;}
+.checkout-progressbar li.active:before	{border-color: #199DD6; background-color: #CBECFA }
+.checkout-progressbar.pdf-upload-bar{margin:2em auto 2em auto;}
+.checkout-progressbar li.active + li:after	{background-color: #199DD6 }
+@media only screen and (min-width: 767px)	{
+.checkout-progressbar.pdf-upload-bar li:before	{margin: 0 10px 0 10px;}
+.checkout-progressbar .icon-chevron-right	{display: block; position: absolute;top: 10px;left: 30px;}
+.checkout-progressbar.pdf-upload-bar .icon-chevron-right	{left:-35px;}
+.checkout-progressbar li p.side-style-layout	{position: absolute;top: 15px;left: 68%;}
+.checkout-progressbar li h2.side-style-layout	{position: absolute;top: -24px;left: 30%;font-size:1.5em;}
+.checkout-progressbar li div.help	{position: absolute;top: 35px;left: 30%; font-size:.7em;}
+.checkout-progressbar.pdf-upload-bar li	{width: 33.33%;}
+.checkout-progressbar.pdf-upload-bar .icon-chevron-right	{left:-35px;}
+.checkout-progressbar li	{width:29.5%;}
+}
+@media only screen and (min-width: 991px)	{
+.checkout-progressbar.pdf-upload-bar{margin:1em auto 1em auto;}
+}
+@media only screen and (min-width: 991px)	{
+.checkout-progressbar.pdf-upload-bar{margin:1em auto 1em auto;}
+.checkout-progressbar li p.side-style-layout	{left: 62%;}
+.checkout-progressbar.pdf-upload-bar .icon-chevron-right	{left:-55px;}
+.checkout-progressbar .icon-chevron-right	{left: 18px;}
+.checkout-progressbar li h2.side-style-layout,
+.checkout-progressbar li div.help	{left:26%;}
+}
+@media only screen and (min-width: 1200px)	{
+.checkout-progressbar li h2.side-style-layout	{font-size: 1.8em;top: -27px;}
+.checkout-progressbar li div.help	{font-size:.85em;}
+.checkout-progressbar li h2.side-style-layout,
+.checkout-progressbar li div.help	{left:22%;}
+.checkout-progressbar.pdf-upload-bar .icon-chevron-right	{left:-85px;}
+}
+.shopping-cart .cart-item {border-bottom:1px solid #eeeeee; }
+.shopping-cart .cart-item .cartproductname {font-weight:bold;font-size:1.25em; }
+.checkout-individual-item img {box-shadow: 0 0 7px rgba(0, 0, 0, 0.3); max-height:250px; margin-bottom: 1em;}
+
+/*Checkout CSS END*/
