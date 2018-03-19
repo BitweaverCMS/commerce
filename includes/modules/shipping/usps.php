@@ -276,7 +276,7 @@ class usps extends CommercePluginShippingBase {
 		}
 
 		// What method to use for calculating display of transit times
-		// Options: 'NEW' = <ShipDate>, 'OLD' = extra API calls, 'CUSTOM' = hard-coded elsewhere in the parseDomesticTransitTimeResults() function.
+		// Options: 'NEW' = <ShipDate>, 'OLD' = extra API calls, 'CUSTOM' = hard-coded elsewhere in the parseTransitTimeResults() function.
 		$this->transitTimeCalculationMode = MODULE_SHIPPING_USPS_TRANSIT_TIME_CALCULATION_MODE;
 		// NOTE: at the present time, with the Test/Staging server, using the new method of adding shipdate adds a lot more time to obtaining quotes
 
@@ -495,14 +495,7 @@ class usps extends CommercePluginShippingBase {
 			$title = str_replace(array('RM', 'TM', '**'), array('&reg;', '&trade;', ''), $type_rebuilt);
 
 			// process customization of transit times in quotes
-			$transitTime = '';
-			if (in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) {
-				if ($order->delivery['country']['countries_iso_code_3'] == 'USA' || $this->usps_countries == 'US') {
-					$transitTime = $this->parseDomesticTransitTimeResults($Package, $type_rebuilt);
-				} else {
-					$transitTime = $this->parseIntlTransitTimeResults($Package, $type_rebuilt);
-				}
-			}
+			$transitTime = $this->parseTransitTimeResults($Package, $type_rebuilt);
 
 			if ($usps_shipping_weight <= $maxweight && $usps_shipping_weight > $minweight) {
 
@@ -1289,13 +1282,17 @@ $extraservices .
 	 * @param array $Package - The package details array to parse, received from USPS and semi-sanitized already
 	 * @param string $service - The delivery service being evaluated
 	 * ref: <CommitmentDate>2013-07-23</CommitmentDate><CommitmentName>1-Day</CommitmentName>
+	 * ref: <SvcCommitments></SvcCommitments>
 	 */
-	function parseDomesticTransitTimeResults($Package, $service) {
-		$time = isset($Package['CommitmentName']) ? $Package['CommitmentName'] : '';
-		if ($time == '' || $this->transitTimeCalculationMode == 'CUSTOM') {
+	function parseTransitTimeResults($Package, $service) {
+		if( ($time = $this->getParameter( $Package, 'CommitmentName' )) ||($time = $this->getParameter( $Package, 'SvcCommitments' ) ) ) {
+			$time = preg_replace('/Weeks$/', MODULE_SHIPPING_USPS_TEXT_WEEKS, $time);
+			$time = preg_replace('/Days$/', MODULE_SHIPPING_USPS_TEXT_DAYS, $time);
+			$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
+		} else {
 
 			switch (TRUE) {
-			/********************* CUSTOM START:	IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
+				// US Domestic
 				case (preg_match('#Priority Mail Express#i', $service)):
 						$time = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
@@ -1311,40 +1308,11 @@ $extraservices .
 				case (preg_match('#Media Mail Parcel#i', $service)):
 					$time = '5 - 10 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
-				default:
-					$time = '';
-			/********************* CUSTOM END:	IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
-			}
-		} else {
-			// fix USPS issues with CommitmentName, example: GUAM
-			if (is_array($time)) {
-				$time = '';
-			} else {
-				$time = preg_replace('/Weeks$/', MODULE_SHIPPING_USPS_TEXT_WEEKS, $time);
-				$time = preg_replace('/Days$/', MODULE_SHIPPING_USPS_TEXT_DAYS, $time);
-				$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
-			}
-		}
-
-		return $time;
-	}
-	/**
-	 * Parse the international-services transit time results data
-	 * Parse the domestic-services transit time results data returned by passing the <ShipDate> request parameter
-	 * @param array $Package - The package details array to parse, received from USPS and semi-sanitized already
-	 * @param string $service - The delivery service being evaluated
-	 * ref: <SvcCommitments>value</SvcCommitments>
-	 */
-	function parseIntlTransitTimeResults($Package, $service) {
-		$time = isset($Package['SvcCommitments']) ? $Package['SvcCommitments'] : '';
-		if ($time == '' || $this->transitTimeCalculationMode == 'CUSTOM') {
-
-			switch (TRUE) {
-				/********************* CUSTOM START:	IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
-				case (preg_match('#Priority Mail Express#i', $service)):
+				// International
+				case (preg_match('#Priority Mail International Express#i', $service)):
 					$time = '3 - 5 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
-				case (preg_match('#Priority Mail#i', $service)):
+				case (preg_match('#Priority Mail International#i', $service)):
 					$time = '6 - 10 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
 				case (preg_match('#Global Express Guaranteed#i', $service)):
@@ -1353,18 +1321,14 @@ $extraservices .
 				case (preg_match('#USPS GXG.* Envelopes#i', $service)):
 					$time = '1 - 3 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
-				case (preg_match('#First\-Class#i', $service)):
+				case (preg_match('#First\-Class Package International#i', $service)):
 					$time = 'Varies by destination'; // '' . MODULE_SHIPPING_USPS_TEXT_DAYS;
 					break;
 				default:
 					$time = '';
-
-					/********************* CUSTOM END:	IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
+				default:
+					$time = '';
 			}
-		} else {
-			$time = preg_replace('/Weeks$/', MODULE_SHIPPING_USPS_TEXT_WEEKS, $time);
-			$time = preg_replace('/Days$/', MODULE_SHIPPING_USPS_TEXT_DAYS, $time);
-			$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
 		}
 
 		return $time;
