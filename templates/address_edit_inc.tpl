@@ -2,7 +2,7 @@
 <input type="hidden" name="address_book_id" value="{$address.address_book_id}"/>
 {/if}
 {formfeedback error=$addressErrors.customers_id}
-<div class="row pv-2 display-block">
+<div class="row pv-1 display-block">
 	<div class="col-xs-12 form-group {if $addressErrors.country_id}has-error{/if}">
 	{formlabel label="<i class='icon-globe'></i> Country" for=""}
 		{forminput}

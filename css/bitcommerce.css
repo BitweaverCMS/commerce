@@ -110,8 +110,10 @@ TABLE.products-attributes-images { float: left; padding: 2px; }
 #bitcommerce .body .productinfo .header { padding: 9px; text-align: center; }
 
 #bitcommerce .productinfo .thumbnail { padding: 5px; } ul.products { margin:0; }
-ul.data.products li.item { padding: 10px 0 10px 0; }
+ul.data.products li.item	{ padding: 10px 0 10px 0; }
 ul.products li .image { width:180px; }
 ul.products li .thumb { padding-right:20px; }
 
 .row.ot_total	{ padding-bottom:20px; border-top:1px solid #dddddd; }
+
+#shippingquotes img.shipper-logo {max-height:90px;}
