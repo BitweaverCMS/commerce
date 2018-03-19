@@ -76,7 +76,6 @@ class supersaver extends CommercePluginShippingBase {
 			// no quote for you!
 			$this->quotes['error'] = tra( 'SuperSaver Shipping only applies to orders up to '.$currencies->format( MODULE_SHIPPING_SUPERSAVER_MAX ) ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
 		} else {
-			$this->quotes['note'] = tra( MODULE_SHIPPING_SUPERSAVER_DESC );
 			if( SHIPPING_ORIGIN_COUNTRY == $order->delivery['country']['countries_id'] && MODULE_SHIPPING_SUPERSAVER_DOMESTIC == 'True' ) {
 				$desc = tra( MODULE_SHIPPING_SUPERSAVER_DESC ).' '.tra( MODULE_SHIPPING_SUPERSAVER_DOMESTIC_DESC );
 				$this->quotes['methods'] = array(array('id' => $this->code,

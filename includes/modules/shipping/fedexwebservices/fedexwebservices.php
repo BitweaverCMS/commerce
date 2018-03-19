@@ -280,6 +280,8 @@ class fedexwebservices extends CommercePluginShippingBase {
 							$cost = $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount;
 							$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
 						}
+
+						$deliveryDays = '';
 						switch( $rateReply->ServiceType ) {
 							case 'FIRST_OVERNIGHT':
 							case 'STANDARD_OVERNIGHT':
@@ -288,9 +290,14 @@ class fedexwebservices extends CommercePluginShippingBase {
 							case 'FEDEX_2_DAY':
 								$deliveryDays = '2 Business Days'; break;
 							case 'FEDEX_EXPRESS_SAVER':
-								$deliveryDays = '3-5 Business Days'; break;
+								$deliveryDays = '3 Business Days'; break;
 							case 'FEDEX_GROUND':
-								$deliveryDays = '5-7 Business Days'; break;
+							case 'GROUND_HOME_DELIVERY':
+								$deliveryDays = '4-7 Business Days'; break;
+							case 'INTERNATIONAL_PRIORITY':
+								$deliveryDays = '1-3 Business Days'; break;
+							case 'INTERNATIONAL_ECONOMY':
+								$deliveryDays = '2-7 Business Days'; break;
 						}
 						$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
 											'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
