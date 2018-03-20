@@ -126,14 +126,13 @@
 						<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Billing Address{/tr}</a>
 			{/legend}
 		
-			<fieldset>
+			{legend legend="Order Comments"}	
 				<div class="form-group">
-					{formlabel label="Order Comments" for=""}
 					{forminput}
 						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="4">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
-			</fieldset>
+			{/legend}
 			<div class="mt-2">
 		{foreach from=$order->otOutput() item=otOutput}
 		<div class="row {$otOutput.code}">

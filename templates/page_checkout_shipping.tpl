@@ -50,14 +50,13 @@
 			</fieldset>
 		</div>
 		<div class="col-md-6">
-			<fieldset>
+			{legend legend="Order Comments or Special Instructions"}
 				<div class="form-group">
-					{formlabel label="Special Instructions or Comments About Your Order" for=""}
 					{forminput}
 						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="5" placeholder="Have a DEADLINE? Please let us know here when your order must be delivered.">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
-			</fieldset>
+			{/legend}
 		</div>
 	</div>
 	<div class="row">
