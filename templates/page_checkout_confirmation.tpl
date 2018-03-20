@@ -55,6 +55,9 @@
 		</div>
 		{/foreach}
 	{/legend}
+	{legend legend="Order Comments" class="width100p"}
+		<textarea name="comments" rows="3" class="form-control special-instructions">{$order->info.comments|escape}</textarea>
+	{/legend}
 	</div>
 	
 	<div class="col-md-4">
@@ -87,13 +90,6 @@
 				{/legend}
 			</div>
 		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-8">
-		{legend legend="Order Comments" class="width100p"}
-			<textarea name="comments" rows="3" class="form-control special-instructions">{$order->info.comments|escape}</textarea>
-		{/legend}
 	</div>
 </div>
 <div class="row">
