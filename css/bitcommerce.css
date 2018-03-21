@@ -34,7 +34,7 @@ td.leftboxheading a, td.rightboxheading a, td.centerboxheading a, td.singleboxhe
 .plainBoxHeading, TD.tableHeading { font-size: 12px; font-weight: bold; padding: 11px 5px 5px; }
 .productListing-heading { font-weight: bold; padding: 3px; height: 20px; }
 
-.shopping-cart .cart-item { padding-bottom:15px; margin-bottom:15px; border-bottom:1px solid #eeeeee; }
+.shopping-cart .cart-item { padding-bottom:15px; margin-bottom:15px; }
 
 .center_column { padding: 8px; }
 .main_page{ width: 750px !important; background-color: #ffffff; border-right: 1px solid #9a9a9a; border-left: 1px solid #9a9a9a; border-bottom: 1px solid #9a9a9a; padding: 5px; }
