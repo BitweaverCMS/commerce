@@ -263,13 +263,13 @@ class CommerceProduct extends LibertyMime {
 		$ret = FALSE;
 
 		if( $this->isValid() ) {
-			if( !isset( $this->mInfo['special_price'] ) ) {
+			if( !array_key_exists( 'special_price', $this->mInfo ) ) {
 				$this->mInfo['special_price'] = $this->mDb->GetOne("select `specials_new_products_price` from " . TABLE_SPECIALS . " where `products_id`=? and `status` ='1'", array( $this->mProductsId ) );
 			}
 
 			// return special price only or Never apply a salededuction to Ian Wilson's Giftvouchers
 			if( substr($this->getField( 'products_model' ), 0, 4) == 'GIFT' || $pSpecialsOnly ) {
-				if (zen_not_null($this->mInfo['special_price'])) {
+				if( !empty( $this->mInfo['special_price'] ) ) {
 					$ret = $this->mInfo['special_price'];
 				}
 			} else {
@@ -385,19 +385,23 @@ If a special exist * 10+9
 		$sale_exists = 'false';
 		$sale_maker_discount = '';
 		$sale_maker_special_condition = '';
-		$salemaker_sales = $gBitDb->query("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'");
-		while (!$salemaker_sales->EOF) {
-			$categories = explode(',', $salemaker_sales->fields['sale_categories_all']);
+
+		static $salemakerSales = NULL;
+
+		if( $salemakerSales === NULL ) {
+			$salemakerSales = $this->mDb->getAssoc("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'", NULL, NULL, $this->cacheQueryTime() );
+		}
+		foreach( array_keys( $salemakerSales ) as $saleId ) {
+			$categories = explode(',', $salemakerSales[$saleId]['sale_categories_all']);
 			while (list($key,$value) = each($categories)) {
 				if ($value == $check_category) {
 					$sale_exists = 'true';
-					$sale_maker_discount = $salemaker_sales->fields['sale_deduction_value'];
-					$sale_maker_special_condition = $salemaker_sales->fields['sale_specials_condition'];
-					$sale_maker_discount_type = $salemaker_sales->fields['sale_deduction_type'];
+					$sale_maker_discount = $salemakerSales[$saleId]['sale_deduction_value'];
+					$sale_maker_special_condition = $salemakerSales[$saleId]['sale_specials_condition'];
+					$sale_maker_discount_type = $salemakerSales[$saleId]['sale_deduction_type'];
 					break;
 				}
 			}
-			$salemaker_sales->MoveNext();
 		}
 
 		$check_special = $this->getSpecialPrice();
@@ -2390,27 +2394,27 @@ Skip deleting of images for now
 		$check_min = zen_get_products_quantity_order_min( $pProductsId );
 		$check_units = zen_get_products_quantity_order_units( $pProductsId );
 		$buy_now_qty=1;
-	// works on Mixed ON
+		// works on Mixed ON
 		switch (true) {
-		case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ):
-			if ($check_min >= $check_units) {
-			$buy_now_qty = $check_min;
-			} else {
-			$buy_now_qty = $check_units;
-			}
-			break;
-		case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) < $check_min):
-			$buy_now_qty = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
-			break;
-		case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) > $check_min):
-		// set to units or difference in units to balance cart
-			$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
-	//echo 'Cart: ' . $gBitCustomer->mCart->in_cart_mixed($pProductsId) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units) . '<br />';
-			$buy_now_qty = ($new_units > 0 ? $new_units : $check_units);
-			break;
-		default:
-			$buy_now_qty = $check_units;
-			break;
+			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ):
+				if ($check_min >= $check_units) {
+				$buy_now_qty = $check_min;
+				} else {
+				$buy_now_qty = $check_units;
+				}
+				break;
+			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) < $check_min):
+				$buy_now_qty = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
+				break;
+			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) > $check_min):
+				// set to units or difference in units to balance cart
+				$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
+				//echo 'Cart: ' . $gBitCustomer->mCart->in_cart_mixed($pProductsId) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units) . '<br />';
+				$buy_now_qty = ($new_units > 0 ? $new_units : $check_units);
+				break;
+			default:
+				$buy_now_qty = $check_units;
+				break;
 		}
 		if ($buy_now_qty <= 0) {
 			$buy_now_qty = 1;
