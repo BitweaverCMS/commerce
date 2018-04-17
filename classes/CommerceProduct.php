@@ -1845,7 +1845,10 @@ If a special exist * 10+9
 								$vals['display_price'] = $price_onetime;
 							}
 						} // approve
-						$products_options_array[sizeof($products_options_array)-1]['text'] .= ' ( '.$vals['display_price'].' )';
+
+						if( !empty( $vals['value_price'] ) ) {
+							$products_options_array[sizeof($products_options_array)-1]['text'] .= ' ( '.$vals['display_price'].' )';
+						}
 
 				// collect weight information if it exists
 						if ((SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES=='1' && !empty( $vals['products_attributes_wt'] ) )) {
