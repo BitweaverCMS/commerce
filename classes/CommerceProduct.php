@@ -1123,6 +1123,10 @@ If a special exist * 10+9
 		}
 	}
 
+	public function getIconUrl( $pSize='sm' ) {
+		return BITCOMMERCE_PKG_URL.'images/icons/product-general-'.$pSize.'.png';
+	}
+
 	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
 

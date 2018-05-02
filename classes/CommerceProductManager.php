@@ -226,7 +226,7 @@ die;
 
 	function getProductTypes() {
 		$ret = array();
-		$ret = $this->mDb->getAssoc( "SELECT `type_id` AS `hash_key`, * FROM " . TABLE_PRODUCT_TYPES );
+		$ret = $this->mDb->getAssoc( "SELECT `type_id` AS `hash_key`, * FROM " . TABLE_PRODUCT_TYPES . " ORDER BY type_name" );
 		return $ret;
 	}
 
