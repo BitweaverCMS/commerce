@@ -1,12 +1,17 @@
-<h1> Some items in your cart need your attention </h1>
-<div class="error"> Please verify the following products : </div>
+{strip}
+<header class="page-header">
+	<h1>Some items in your cart need your review:</h1>
+</header>
 
-{foreach from=$pendingItems item = 'item' name='items'} 
-	{assign var='itemnum' value=$smarty.foreach.items.index}
-	{include file=$pendingTemplates.$itemnum}
-{/foreach}
-<div class="clear warning"> Click NEXT when you are ready to continue. Note that this is the final warning you will receive prior to ordering your product. </div>
+<section class="body">
+	<div class="error">{tr}Before proceeding, please verify each of items in your cart below:{/tr}</div>
 
-<form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping" method="POST">
-	<input type="submit" class="btn btn-default" name="checkout_proof" value="{tr}Next{/tr} &raquo;" />
-</form>				
+	{foreach from=$proofProducts item=proof} 
+		{include file=$proof.template productProof=$proof}
+	{/foreach}
+	<div class="clear warning">{tr}If you are satisfied with the items above, click NEXT to proceed.{/tr}</div>
+
+	<form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping" method="POST">
+		<input type="submit" class="btn btn-default" name="checkout_proof" value="{tr}Next{/tr} &raquo;" />
+	</form>
+</section>
