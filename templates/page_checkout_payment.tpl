@@ -1,6 +1,5 @@
-{strip}{assign var=checkoutStep value=2}
-	{include file="bitpackage:bitcommerce/page_checkout_header_inc.tpl" title="Payment Information" step=$checkoutStep}
-</header>
+{strip}{assign var=checkoutStep value=2} 
+{include file="bitpackage:bitcommerce/page_checkout_header_inc.tpl" title="Payment Information" step=$checkoutStep}
 
 <section class="body">
 
