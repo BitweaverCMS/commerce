@@ -134,7 +134,7 @@ if( !empty( $order ) ) {
 			$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
 			$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
 			$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['newOrderOptionValue'].')' ) );
-			bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'].'&action=edit' );
+			bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 			break;
 		case 'save_new_product':
 			if( $order->addProductToOrder( BitBase::getParameter( $_REQUEST, 'new_product_id' ), BitBase::getParameter( $_REQUEST, 'new_quantity', 1 ) ) ) {
@@ -185,14 +185,14 @@ if( !empty( $order ) ) {
 				} else {
 					$messageStack->add_session( 'The order was not updated: '.BitBase::getParameter( $order->mErrors, 'status' ), 'error');
 				}
-				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			}
 			break;
 		case 'email':
 			if( validate_email_syntax( $_REQUEST['email'] ) ) {
 				$order->sendOrderEmail( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
 				$messageStack->add_session('Copy of receipt emailed to '.$_REQUEST['email'], 'success');
-				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['oID'] );
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 			}
 			break;
 		case 'combine':
@@ -202,7 +202,7 @@ if( !empty( $order ) ) {
 				$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
 				$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
 				if( $combineOrder->combineOrders( $combineHash ) ) {
-					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?action=edit&oID='.$_REQUEST['combine_order_id'] );
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['combine_order_id'] );
 				} else {
 					print "<span class='error'>".$combineOrder->mErrors['combine']."</span>";
 				}
@@ -236,7 +236,7 @@ if( !empty( $order ) ) {
 				unset($_GET['download_reset_on']);
 
 				$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_ON, 'success');
-				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			}
 			// reset single download to off
 			if( !empty( $_GET['download_reset_off'] ) ) {
@@ -246,7 +246,7 @@ if( !empty( $order ) ) {
 				$gBitDb->Execute($update_downloads_query);
 
 				$messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF, 'success');
-				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'SSL'));
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			}
 			break;
 		}

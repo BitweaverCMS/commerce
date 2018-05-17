@@ -170,7 +170,7 @@
 // quick link to order
         $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','90%','3'));
         $contents[] = array('align' => 'center', 'text' => TEXT_EDIT_ORDER . $gInfo->order_id);
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $gInfo->order_id . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_order.gif', IMAGE_ORDER) . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS, 'oID=' . $gInfo->order_id, 'NONSSL') . '">' . zen_image_button('button_order.gif', IMAGE_ORDER) . '</a>');
       }
       break;
    }

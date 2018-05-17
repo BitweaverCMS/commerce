@@ -174,7 +174,7 @@ function getShippingQuotes( pOrderId ) {
 					<label>{tr}Quantity{/tr}</label> <input class="form-control input-sm" type="number" name="new_quantity" value="1" min="0">
 				</div> <div class="form-group">
 					<label>{tr}Product ID{/tr}</label> <input class="form-control input-sm" type="number" name="new_product_id" min="1" step="1"  required="required" pattern="[0-9]{ldelim}1,20{rdelim}">
-				</div> <button class="btn btn-sm btn-default">Add</button>
+				</div> <input type="submit" class="btn btn-sm btn-default" name="submit" value="Add">
 			{/form}
 		</div>
 	</td>
