@@ -6,25 +6,22 @@ global $gBitCustomer;
 
 $order = new order; 
 
-foreach ( $order->contents as $item ){
-	if( empty($item['type_class']) ){
-		$item['type_class'] = 'CommerceProduct'; //If not a derived type, must be base type. 
-	}
-	$loadedItem = new $item['type_class']($item['products_id']);
-	$loadedItem->load();
-	if( $template = $loadedItem->needsCheckoutReview( $item ) ){
-		$pendingItems[] = $loadedItem;
-		$pendingTemplates[] = $template;
+$proofProducts = array();
+foreach ( $order->contents as $itemKey => $item ){
+	if( $itemObject = $order->getProductObject( $itemKey ) ) {
+		if( $template = $itemObject->needsCheckoutReview( $item ) ){
+			$proofProducts[] = array( 'object' => $itemObject, 'template' => $template, 'cart_item' => $item );
+		}
 	}
 }
 
-if( !empty( $pendingItems ) ){
-	$gBitSmarty->assign_by_ref( 'pendingItems', $pendingItems );
-	$gBitSmarty->assign_by_ref( 'pendingTemplates', $pendingTemplates);
+if( !empty( $proofProducts ) ) {
+	$gBitSmarty->assign_by_ref( 'proofProducts', $proofProducts );
 	//checkout_proof will loop through the array of includes and print them out, it has a next button at the bottom and a warnin
 	global $gBitSystem;
- 	$gBitSystem->display( 'bitpackage:bitcommerce/checkout_proof.tpl' );
-}else{ //User does not need to review any books, all have been ordered before and are assumed to be OK
+ 	$gBitSystem->display( 'bitpackage:bitcommerce/page_checkout_proof.tpl' );
+} else { 
+	// Cart does not need to be reviewed, all products are assumed to be OK
 	bit_redirect(BITCOMMERCE_PKG_SSL_URI.'?main_page=checkout_shipping');
 }
 ?>
