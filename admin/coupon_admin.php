@@ -144,11 +144,6 @@ case 'edit':
 		if ($_POST['coupon_type']=='P') {
 			$_POST['coupon_amount'] .= '%';
 		}
-		if ($_POST['coupon_type']=='S') {
-			$_POST['coupon_free_ship'] = true;
-		} else {
-			$_POST['coupon_free_ship'] = false;
-		}
 		$languages = zen_get_languages();
 
 		$_POST['coupon_name'] = NULL;

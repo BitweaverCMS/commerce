@@ -105,10 +105,8 @@ class CommerceVoucher extends BitBase {
 		if ( empty( $pParamHash['coupon_store']['coupon_amount'] ) && empty( $pParamHash['coupon_free_ship'] ) ) {
 			$this->mFeedback['error'][] = ERROR_NO_COUPON_AMOUNT;
 		} else {
-			if( !empty( $pParamHash['coupon_free_ship'] ) ) {
-				$pParamHash['coupon_store']['coupon_type'] = 'S';
-				$pParamHash['coupon_store']['coupon_amount'] = NULL;
-			} elseif( strpos( $pParamHash['coupon_store']['coupon_amount'], '%' ) !== FALSE ) {
+			$pParamHash['coupon_store']['free_ship'] = !empty( $pParamHash['free_ship'] ) ? 'y' : NULL;
+			if( strpos( $pParamHash['coupon_store']['coupon_amount'], '%' ) !== FALSE ) {
 				$pParamHash['coupon_store']['coupon_amount'] = str_replace( '%', '', $pParamHash['coupon_store']['coupon_amount'] );
 				$pParamHash['coupon_store']['coupon_type'] = 'P';
 			} elseif( !empty( $pParamHash['coupon_type'] ) ) {
@@ -543,7 +541,12 @@ restrict_to_shipping
 restrict_to_quantity
 */
 
-		$sql = "SELECT cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, MAX( `redeem_date` ) AS `redeemed_first_date`, MIN( `redeem_date` ) AS `redeemed_last_date`, COALESCE( SUM( cot.`orders_value` ), 0 ) AS `redeemed_sum`, COALESCE( COUNT( cot.`orders_value` ), 0 ) AS `redeemed_count`, COALESCE( SUM( cot2.`orders_value` ), 0 ) AS `redeemed_revenue`
+		$sql = "SELECT cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, cc.`free_ship`,
+					MAX( `redeem_date` ) AS `redeemed_first_date`, 
+					MIN( `redeem_date` ) AS `redeemed_last_date`, 
+					COALESCE( SUM( cot.`orders_value` ), 0 ) AS `redeemed_sum`, 
+					COALESCE( COUNT( cot.`orders_value` ), 0 ) AS `redeemed_count`, 
+					COALESCE( SUM( cot2.`orders_value` ), 0 ) AS `redeemed_revenue`
 				FROM " . TABLE_COUPONS . " cc
 					LEFT OUTER JOIN " . TABLE_COUPONS_DESCRIPTION . " ccd ON (cc.`coupon_id`=ccd.`coupon_id` AND ccd.`language_id`=?)
 					LEFT OUTER JOIN  " . TABLE_COUPON_REDEEM_TRACK . " ccrt ON (ccrt.`coupon_id`=cc.`coupon_id`)
@@ -551,7 +554,7 @@ restrict_to_quantity
 					LEFT OUTER JOIN " . TABLE_ORDERS_TOTAL . " cot ON (ccrt.`order_id`=cot.`orders_id` AND cot.`class`='ot_coupon' AND UPPER(cot.`title`) LIKE '%'||UPPER(cc.`coupon_code`)||'%')
 					LEFT OUTER JOIN " . TABLE_ORDERS_TOTAL . " cot2 ON (ccrt.`order_id`=cot2.`orders_id` AND cot2.`class`='ot_total' )
 				$whereSql
-				GROUP BY cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, cc.`coupon_start_date`
+				GROUP BY cc.`coupon_id`, cc.`coupon_code`, cc.`coupon_type`, cc.`coupon_amount`, cc.`coupon_start_date`, cc.`coupon_expire_date`, cc.`uses_per_coupon`, cc.`uses_per_user`, cc.`coupon_active`, cc.`admin_note`, ccd.`coupon_name`, ccd.`coupon_description`, cc.`free_ship`, cc.`coupon_start_date`
 				ORDER BY ".$gBitDb->convertSortmode( $_REQUEST['sort_mode'] );
 		if( $rs = $gBitDb->query( $sql, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			while( $row = $rs->fetchRow() ) {

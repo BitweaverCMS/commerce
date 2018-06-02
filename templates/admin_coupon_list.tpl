@@ -47,10 +47,10 @@
 					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{booticon iname="icon-trash"}</a>
 				{/if}
 				</div>
-				<strong>{$coupon.coupon_code}</strong> <em>{$coupon.coupon_name|escape}</em>
+				<strong>{$coupon.coupon_code}</strong> {if $coupon.coupon_code != $coupon.coupon_name}<em>{$coupon.coupon_name|escape}</em>{/if}
 				<br/>{$coupon.coupon_description}: {if $coupon.uses_per_coupon}{$coupon.uses_per_coupon}{else}{tr}unlimited{/tr}{/if} {tr}use{/tr}{if $coupon.uses_per_user}, {$coupon.uses_per_user} per user{/if}
 			</td>
-			<td class="item currency">{if $coupon.coupon_type=='P'}{$coupon.coupon_amount}%{elseif $coupon.coupon_type=='S'}<em>{tr}FREE SHIP{/tr}</em>{else}{$gCommerceCurrencies->format($coupon.coupon_amount)}{/if} {$coupon.restrict_to_shipping}</td>
+			<td class="item currency">{if $coupon.coupon_type=='P'}{$coupon.coupon_amount}%{else}{$gCommerceCurrencies->format($coupon.coupon_amount)}{/if} {if $coupon.free_ship}{tr}FREE SHIP{/tr}{/if} {$coupon.restrict_to_shipping}</td>
 			<td class="item currency">{if $coupon.redeemed_count > 0}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=report&amp;cid={$couponId}">{/if}{$coupon.redeemed_count}{if $coupon.redeemed_count > 0}</a>{/if}</td>
 			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_sum)}</td>
 			<td class="item currency">{$gCommerceCurrencies->format($coupon.redeemed_revenue)}</td>

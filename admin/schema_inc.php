@@ -500,6 +500,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   coupon_expire_date T,
   quantity_max I4,
   quantity_limit I4,
+  free_ship C(1),
   uses_per_coupon I2 default '1',
   uses_per_user I2,
   restrict_to_products C(255),

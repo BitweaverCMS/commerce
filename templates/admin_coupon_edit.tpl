@@ -63,7 +63,7 @@
 
 		<div class="form-group">
 			{forminput}
-				<div class="checkbox"><label><input type="checkbox" name="coupon_free_ship" {if $smarty.post.coupon_free_ship}checked='CHECKED'{/if}/> {tr}Free Shipping{/tr}</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="free_ship" value="y" {if $smarty.post.free_ship}checked='CHECKED'{/if}/> {tr}Free Shipping{/tr}</label></div>
 				{formhelp note=$smarty.const.COUPON_FREE_SHIP_HELP}
 			{/forminput}
 		</div>
