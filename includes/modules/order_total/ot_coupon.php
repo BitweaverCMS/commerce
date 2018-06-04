@@ -353,8 +353,10 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		if ($this->include_tax == 'false') {
 			$orderTotal -= $this->mOrder->info['tax'];
 		}
+
 		if ($this->include_shipping == 'false') {
-			$orderTotal -= $this->mOrder->info['shipping_cost'];
+			// do nothing here because this is controlled but the free_ship column
+			// $orderTotal -= $this->mOrder->info['shipping_cost'];
 		}
 
 		return $orderTotal;

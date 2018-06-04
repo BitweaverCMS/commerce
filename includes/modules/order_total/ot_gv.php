@@ -65,7 +65,8 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		$tod_amount = 0.0;
 		// clean out negative values and strip common currency symbols
 		$creditAmount = preg_replace( '/[^\d\.]/', '', $pGvAmount );
-		$orderTotal = $this->mOrder->getField( 'total' );
+		//$orderTotal = $this->mOrder->getField( 'total' ); // this is old school, doesn't account for coupons
+		$orderTotal = $this->mOrder->getSubTotal( $this->code );
 
 		if ( !empty( $creditAmount ) ) {
 			if( $this->include_shipping == 'false') { 

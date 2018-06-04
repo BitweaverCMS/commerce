@@ -247,6 +247,24 @@ class CommerceOrderBase extends BitBase {
 		return ($this->getPaymentDue() > 0);
 	}
 
+	function getSubtotal( $pToModule = 'ot_subtotal' ) {
+		global $currencies;
+		$this->scanOtModules();
+		$round = $currencies->get_decimal_places( $this->getField( 'currency', DEFAULT_CURRENCY ) );
+		if( $totalDue = $this->getField( 'total' ) ) {
+			$totalDeductions = 0;
+			foreach( $this->mOtClasses as $class=>&$otObject ) {
+				if( $class == $pToModule ) {
+					break;
+				} elseif( $orderCredit = $otObject->getOrderDeduction( $this ) ) {
+					$totalDeductions += $orderCredit;
+					$totalDue -= $orderCredit;
+				}
+			}
+		}
+		return round( $totalDue, $round );
+	}
+
 	function getPaymentDue() {
 		global $currencies;
 		$this->scanOtModules();
