@@ -913,6 +913,12 @@ class order extends CommerceOrderBase {
 		$this->mDb->StartTrans();
 
 		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
+			if( $this->mOtProcessModules[$key]['code'] == 'ot_total' ) {
+				if( $this->mOtProcessModules[$key]['value'] != $this->info['total'] ) {
+					// discounting or credits affected final order_total
+					$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $this->mOtProcessModules[$key]['value'], $this->mOrdersId ) );
+				}
+			}
 			$sqlParams = array( 'orders_id' => $this->mOrdersId,
 								'title' => $this->mOtProcessModules[$key]['title'],
 								'text' => $this->mOtProcessModules[$key]['text'],

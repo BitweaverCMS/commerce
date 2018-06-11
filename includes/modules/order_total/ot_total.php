@@ -34,7 +34,7 @@ class ot_total extends CommercePluginOrderTotalBase {
 											'sort_order' => $this->getSortOrder(),
 											'title' => $this->title . ':',
 											'text' => $currencies->format( $total, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value'] ),
-											'value' => $total );
+											'value' => (float)$total );
 	}
 
 	function keys() {

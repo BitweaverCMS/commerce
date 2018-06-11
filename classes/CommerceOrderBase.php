@@ -124,7 +124,7 @@ class CommerceOrderBase extends BitBase {
 			if( $otOutput = $otObject->getOutput() ) {
 				$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
 				foreach( array( 'title', 'text', 'value' ) as $key ) {
-					if( !empty( $otOutput[$key] ) ) {
+					if( isset( $otOutput[$key] ) && !is_null( $otOutput[$key] ) ) {
 						$outHash[$key] = $otOutput[$key];
 					}
 				}
