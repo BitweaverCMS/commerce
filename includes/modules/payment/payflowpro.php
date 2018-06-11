@@ -507,7 +507,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.BitBase::getParameter( $responseHash, 'RESPMSG' ),'error');
 			$ret = FALSE;
 		}
-		$this->logTransaction( $logHash, $pOrder );
+		if( !empty( $logHash ) ) {
+			$this->logTransaction( $logHash, $pOrder );
+		}
 		return $ret;
 	}
 

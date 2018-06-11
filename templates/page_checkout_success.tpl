@@ -24,6 +24,6 @@
 		{/if}
 		<input class="btn btn-sm" name="Continue" value="{tr}Continue{/tr}" type="submit">
 	</form>
-	{include file="package:bitcommerce/page_checkout_success_tracking_inc.tpl"}
+	{include file="bitpackage:bitcommerce/page_checkout_success_tracking_inc.tpl"}
 </div>
 {/strip}
