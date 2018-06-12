@@ -54,7 +54,7 @@
 
     $pInfo = new objectInfo($parameters);
 
-    if (isset($_GET['pID']) && empty($_POST)) {
+    if (isset($_GET['products_id']) && empty($_POST)) {
       $product = $gBitDb->Execute("select pd.`products_name`, pd.`products_description`, pd.`products_url`,
                                       p.`products_id`, p.`products_quantity`, p.`products_model`,
                                       p.`products_image`, p.`products_price`, p.`products_virtual`, p.`products_weight`,
@@ -69,7 +69,7 @@
                                       p.`products_discount_type`, p.`products_discount_type_from`,
                                       p.`lowest_purchase_price`, p.`master_categories_id`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                              where p.`products_id` = '" . (int)$_GET['pID'] . "'
+                              where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                               and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
 
@@ -187,7 +187,7 @@ var tax_rates = new Array();
 //--></script>
     <?php
 //  echo $type_admin_handler;
-echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
+echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . '&action=new_product_preview' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
 
     <table>
       <tr>
@@ -202,13 +202,13 @@ echo zen_draw_form_admin('new_product', $type_admin_handler , 'cPath=' . $cPath 
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_date_added', (zen_not_null($pInfo->products_date_added) ? $pInfo->products_date_added : date('Y-m-d'))) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_date_added', (zen_not_null($pInfo->products_date_added) ? $pInfo->products_date_added : date('Y-m-d'))) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
       <tr>
         <td><table border="0" cellspacing="0" cellpadding="2">
 <?php
 // show when product is linked
-if (zen_get_product_is_linked($_GET['pID']) == 'true') {
+if (zen_get_product_is_linked($_GET['products_id']) == 'true') {
 ?>
           <tr>
             <td class="main"><?php echo TEXT_MASTER_CATEGORIES_ID; ?></td>
@@ -216,7 +216,7 @@ if (zen_get_product_is_linked($_GET['pID']) == 'true') {
               <?php
                 // echo zen_draw_pull_down_menu('products_tax_class_id', $tax_class_array, $pInfo->products_tax_class_id);
                 echo zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', IMAGE_ICON_LINKED) . '&nbsp;&nbsp;';
-                echo zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($_GET['pID']), $pInfo->master_categories_id); ?>
+                echo zen_draw_pull_down_menu('master_categories_id', zen_get_master_categories_pulldown($_GET['products_id']), $pInfo->master_categories_id); ?>
             </td>
           </tr>
           <tr>
@@ -340,6 +340,6 @@ echo zen_draw_hidden_field('products_quantity_order_units', 1);
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_date_added', (zen_not_null($pInfo->products_date_added) ? $pInfo->products_date_added : date('Y-m-d'))) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_date_added', (zen_not_null($pInfo->products_date_added) ? $pInfo->products_date_added : date('Y-m-d'))) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
     </table></form>

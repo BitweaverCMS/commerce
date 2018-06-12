@@ -118,7 +118,7 @@
 
 if ( $_POST['copy_attributes']=='copy_attributes_yes' and $_POST['copy_as'] == 'duplicate' ) {
   // $products_id_to= $copy_to_products_id;
-  // $products_id_from = $pID;
+  // $products_id_from = $products_id;
 //            $copy_attributes_delete_first='1';
 //            $copy_attributes_duplicates_skipped='1';
 //            $copy_attributes_duplicates_overwrite='0';
@@ -144,5 +144,5 @@ if ( $_POST['copy_attributes']=='copy_attributes_yes' and $_POST['copy_as'] == '
           zen_update_lowest_purchase_price($products_id);
 
         }
-        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $categories_id . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $categories_id . '&products_id=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 ?>

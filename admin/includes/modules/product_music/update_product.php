@@ -22,7 +22,7 @@
         if (isset($_POST['edit_x']) || isset($_POST['edit_y'])) {
           $action = 'new_product';
         } else {
-          if (isset($_GET['pID'])) $products_id = zen_db_prepare_input($_GET['pID']);
+          if (isset($_GET['products_id'])) $products_id = zen_db_prepare_input($_GET['products_id']);
           $products_date_available = zen_db_prepare_input($_POST['products_date_available']);
 
           $products_date_available = (date('Y-m-d') < $products_date_available) ? $products_date_available : 'null';
@@ -190,6 +190,6 @@ define('IMAGE_MANAGER_HANDLER', 0);
             }
           }
 
-          zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+          zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&products_id=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
         }
 ?>

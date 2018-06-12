@@ -26,7 +26,7 @@
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                   on p.`products_id` = pd.`products_id`
                                   where p.`products_status` = '1'
-                                  and p.`products_id` = '" . $_GET['pID'] . "'
+                                  and p.`products_id` = '" . $_GET['products_id'] . "'
                                   and pd.`language_id` = '" . $_SESSION['languages_id'] . "'");
 
 $products_image = $products_values->fields['products_image'];

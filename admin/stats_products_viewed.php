@@ -60,9 +60,9 @@
       }
       $cPath = zen_get_product_path($products->fields['products_id']);
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id']); ?>'">
+              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&products_id=' . $products->fields['products_id']); ?>'">
                 <td class="dataTableContent" align="right"><?php echo $products->fields['products_id']; ?>&nbsp;&nbsp;</td>
-                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $products->fields['products_id']) . '">' . $products->fields['products_name'] . '</a> (' . $products->fields['name'] . ')'; ?></td>
+                <td class="dataTableContent"><?php echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&products_id=' . $products->fields['products_id']) . '">' . $products->fields['products_name'] . '</a> (' . $products->fields['name'] . ')'; ?></td>
                 <td class="dataTableContent" align="center"><?php echo $products->fields['products_viewed']; ?>&nbsp;</td>
               </tr>
 <?php

@@ -674,8 +674,8 @@ function go_option() {
           $contents[] = array('align' => 'center', 'text' =>
             '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, 'products_id=' . $productsId) . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '</a>&nbsp;&nbsp;' .
             '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_PRICE_MANAGER, '&products_id=' . $productsId) . '">' . zen_image_button('button_products_price_manager.gif', IMAGE_PRODUCTS_PRICE_MANAGER) . '</a><br /><br />' .
-            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_parent_category_id($productsId) . '&pID=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '</a>&nbsp;&nbsp;' .
-            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_parent_category_id($productsId) . '&pID=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '</a>' . '<br />&nbsp;'
+            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . zen_get_parent_category_id($productsId) . '&products_id=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '</a>&nbsp;&nbsp;' .
+            '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_parent_category_id($productsId) . '&products_id=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '</a>' . '<br />&nbsp;'
             );
           break;
       }

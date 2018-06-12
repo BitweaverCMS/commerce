@@ -63,19 +63,19 @@
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $products_query_raw, $products_query_numrows);
   $products = $gBitDb->Execute($products_query_raw);
   while (!$products->EOF) {
-    if ((!isset($_GET['pID']) || (isset($_GET['pID']) && ($_GET['pID'] == $products->fields['products_id']))) && !isset($pInfo)) {
+    if ((!isset($_GET['products_id']) || (isset($_GET['products_id']) && ($_GET['products_id'] == $products->fields['products_id']))) && !isset($pInfo)) {
       $pInfo = new objectInfo($products->fields);
     }
 
     if (isset($pInfo) && is_object($pInfo) && ($products->fields['products_id'] == $pInfo->products_id)) {
-      echo '                  <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_products_category_id($pInfo->products_id) . '&pID=' . $pInfo->products_id . '&product_type=' . zen_get_products_type($pInfo->products_id)) . '\'">' . "\n";
+      echo '                  <tr id="defaultSelected" class="info" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_products_category_id($pInfo->products_id) . '&products_id=' . $pInfo->products_id . '&product_type=' . zen_get_products_type($pInfo->products_id)) . '\'">' . "\n";
     } else {
-      echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_PRODUCTS_EXPECTED, 'page=' . $_GET['page'] . '&pID=' . $products->fields['products_id']) . '\'">' . "\n";
+      echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_PRODUCTS_EXPECTED, 'page=' . $_GET['page'] . '&products_id=' . $products->fields['products_id']) . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $products->fields['products_name']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo zen_date_short($products->fields['products_date_available']); ?></td>
-                <td class="dataTableContent" align="right"><?php if (isset($pInfo) && is_object($pInfo) && ($products->fields['products_id'] == $pInfo->products_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_EXPECTED, 'page=' . $_GET['page'] . '&pID=' . $products->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($pInfo) && is_object($pInfo) && ($products->fields['products_id'] == $pInfo->products_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link_admin(FILENAME_PRODUCTS_EXPECTED, 'page=' . $_GET['page'] . '&products_id=' . $products->fields['products_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     $products->MoveNext();
@@ -97,7 +97,7 @@
   if (isset($pInfo) && is_object($pInfo)) {
     $heading[] = array('text' => '<b>' . $pInfo->products_name . '</b>');
 
-    $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_products_category_id($pInfo->products_id) . '&pID=' . $pInfo->products_id . '&product_type=' . zen_get_products_type($pInfo->products_id)) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>');
+    $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . zen_get_products_category_id($pInfo->products_id) . '&products_id=' . $pInfo->products_id . '&product_type=' . zen_get_products_type($pInfo->products_id)) . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a>');
     $contents[] = array('text' => '<br>' . TEXT_INFO_DATE_EXPECTED . ' ' . zen_date_short($pInfo->products_date_available));
   }
 

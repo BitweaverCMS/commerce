@@ -1586,8 +1586,8 @@ If a special exist * 10+9
 		$pParamHash['no_perm_check'] = TRUE;
 		$this->StartTrans();
 		if( CommerceProduct::verify( $pParamHash ) && parent::store( $pParamHash ) ) {
-			if (isset($pParamHash['pID'])) {
-				$this->mProductsId = zen_db_prepare_input($pParamHash['pID']);
+			if (isset($pParamHash['products_id'])) {
+				$this->mProductsId = zen_db_prepare_input($pParamHash['products_id']);
 			}
 
 			if( $this->isValid() ) {
@@ -1596,8 +1596,13 @@ If a special exist * 10+9
 			} else {
 				$pParamHash['product_store']['content_id'] = $pParamHash['content_id'];
 				$action = 'insert_product';
+				if( $this->verifyIdParameter( $pParamHash, 'products_id_req' ) ) {
+					$this->mProductsId = $pParamHash['product_store']['products_id'] =  $pParamHash['products_id_req'];
+				}
 				$this->mDb->associateInsert( TABLE_PRODUCTS, $pParamHash['product_store'] );
-				$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
+				if( empty( $pParamHash['product_store']['products_id'] ) ) {
+					$this->mProductsId = zen_db_insert_id( TABLE_PRODUCTS, 'products_id' );
+				}
 				$this->mDb->query( "insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " ( `products_id`, `categories_id` ) values (?,?)", array( $this->mProductsId, $pParamHash['product_store']['master_categories_id'] ) );
 			}
 

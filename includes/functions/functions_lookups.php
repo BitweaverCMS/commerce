@@ -618,7 +618,7 @@ function zen_get_info_page($zf_product_id) {
 
 // build configuration_key based on product type and return its value
 // example: To get the settings for metatags_products_name_status for a product use:
-// zen_get_show_product_switch($_GET['pID'], 'metatags_products_name_status')
+// zen_get_show_product_switch($_GET['products_id'], 'metatags_products_name_status')
 // the product is looked up for the products_type which then builds the configuration_key example:
 // SHOW_PRODUCT_INFO_METATAGS_PRODUCTS_NAME_STATUS
 // the value of the configuration_key is then returned

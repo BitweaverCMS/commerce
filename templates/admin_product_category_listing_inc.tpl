@@ -81,20 +81,20 @@
 	<td class="text-right">{$product.products_quantity}</td>
 	<td class="text-center">
 	{if $product.products_status == '1'}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?action=setflag&amp;flag=0&amp;pID={$prodId}&amp;cPath={$smarty.request.cPath}&amp;page={$smarty.request.page}">{booticon iname="icon-ok-sign"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?action=setflag&amp;flag=0&amp;products_id={$prodId}&amp;cPath={$smarty.request.cPath}&amp;page={$smarty.request.page}">{booticon iname="icon-ok-sign"}</a>
 	{else}
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?action=setflag&amp;flag=1&amp;pID={$prodId}&amp;cPath={$smarty.request.cPath}&amp;page={$smarty.request.page}">{booticon iname="icon-minus-sign"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/categories.php?action=setflag&amp;flag=1&amp;products_id={$prodId}&amp;cPath={$smarty.request.cPath}&amp;page={$smarty.request.page}">{booticon iname="icon-minus-sign"}</a>
 	{/if}
 	</td>
 	<td class="text-right">{$product.products_sort_order}</td>
 	<td class="text-right">
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;pID={$prodId}&amp;action=new_product&amp;action=copy_to&amp;page={$smarty.request.page}">{booticon iname="icon-copy"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;products_id={$prodId}&amp;action=new_product&amp;action=copy_to&amp;page={$smarty.request.page}">{booticon iname="icon-copy"}</a>
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/products_options.php?products_id={$prodId}">{if $prodId|zen_has_product_attributes:'false'}{booticon iname="icon-check-sign"}{else}{booticon iname="icon-check"}{/if}</a>
 		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/products_price_manager.php?products_id={$prodId}">{booticon iname="icon-money"}</a>
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?page={$smarty.get.page}&amp;product_type={$product.products_type}&amp;cPath={$smarty.request.cPath}&amp;pID={$product.products_id}&amp;action=new_product_meta_tags">{if zen_get_metatags_keywords($prodId,$smarty.session.languages_id) || zen_get_metatags_description($prodId,$smarty.session.languages_id)}{booticon iname="icon-info"}{else}{booticon iname="icon-info-sign"}{/if}</a>
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;pID={$prodId}&amp;action=new_product&amp;page={$smarty.request.page}">{booticon iname="icon-edit"}</a>
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;pID={$prodId}&amp;action=delete_product&amp;page={$smarty.request.page}">{booticon iname="icon-trash"}</a>
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;pID={$prodId}&amp;action=move_product&amp;page={$smarty.request.page}">{booticon iname="icon-mail-forward"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?page={$smarty.get.page}&amp;product_type={$product.products_type}&amp;cPath={$smarty.request.cPath}&amp;products_id={$product.products_id}&amp;action=new_product_meta_tags">{if zen_get_metatags_keywords($prodId,$smarty.session.languages_id) || zen_get_metatags_description($prodId,$smarty.session.languages_id)}{booticon iname="icon-info"}{else}{booticon iname="icon-info-sign"}{/if}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;products_id={$prodId}&amp;action=new_product&amp;page={$smarty.request.page}">{booticon iname="icon-edit"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;products_id={$prodId}&amp;action=delete_product&amp;page={$smarty.request.page}">{booticon iname="icon-trash"}</a>
+		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/{$product.type_handler}.php?cPath={$smarty.request.cPath}&amp;product_type={$product.products_type}&amp;products_id={$prodId}&amp;action=move_product&amp;page={$smarty.request.page}">{booticon iname="icon-mail-forward"}</a>
 	</td>
 </tr>
 {/foreach}

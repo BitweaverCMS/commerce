@@ -26,7 +26,7 @@
                                   left join " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                   on p.`products_id` = pd.`products_id`
                                   where p.`products_status` = '1'
-                                  and p.`products_id` = '" . $_GET['pID'] . "'
+                                  and p.`products_id` = '" . $_GET['products_id'] . "'
                                   and pd.`language_id` = '" . $_SESSION['languages_id'] . "'");
 
 //auto replace with defined missing image
@@ -60,6 +60,6 @@ if (!file_exists(DIR_WS_IMAGES . 'large/' . $products_image_large)) {
 header('HTTP/1.1 404 Not Found');
 exit;
 
-$products_image_medium = CommerceProduct::getImageUrlFromHash( $_GET['pID'], 'medium' );
-$products_image_large = CommerceProduct::getImageUrlFromHash( $_GET['pID'], 'large' );
+$products_image_medium = CommerceProduct::getImageUrlFromHash( $_GET['products_id'], 'medium' );
+$products_image_large = CommerceProduct::getImageUrlFromHash( $_GET['products_id'], 'large' );
 ?>

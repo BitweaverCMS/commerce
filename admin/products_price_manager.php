@@ -211,9 +211,9 @@ if (zen_get_product_is_linked($productsId) == 'true') {
                 <td class="main" align="center" valign="bottom">
 <?php
   if ($_GET['products_id'] != '') {
-    echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $current_category_id . '&pID=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '<br />' . TEXT_PRODUCT_DETAILS . '</a>' . '&nbsp;&nbsp;&nbsp;';
+    echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $current_category_id . '&products_id=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_details.gif', IMAGE_DETAILS) . '<br />' . TEXT_PRODUCT_DETAILS . '</a>' . '&nbsp;&nbsp;&nbsp;';
     echo '</td><td class="main" align="center" valign="bottom">';
-    echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . $current_category_id . '&pID=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>';
+    echo '<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'action=new_product' . '&cPath=' . $current_category_id . '&products_id=' . $productsId . '&product_type=' . zen_get_products_type($productsId)) . '">' . zen_image_button('button_edit_product.gif', IMAGE_EDIT_PRODUCT) . '<br />' . TEXT_PRODUCT_EDIT . '</a>';
     echo '</td><td class="main" align="center" valign="bottom">';
   	echo '<a href="' . zen_href_link_admin(FILENAME_ATTRIBUTES_CONTROLLER, '&products_id=' . $productsId . '&current_category_id=' . $current_category_id, 'NONSSL') . '">' . zen_image_button('button_edit_attribs.gif', IMAGE_EDIT_ATTRIBUTES) . '<br />' . TEXT_ATTRIBUTE_EDIT . '</a>' . '&nbsp;&nbsp;&nbsp;';
   }

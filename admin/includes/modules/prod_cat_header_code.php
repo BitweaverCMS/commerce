@@ -33,7 +33,7 @@ function zen_reset_page() {
 	$look_up = $gBitDb->Execute("select p.`products_id`, pd.`products_name`, p.`products_model`, p.`products_quantity`, p.`products_image`, p.`products_price`, p.`products_date_added`, p.products_last_modified, p.`products_date_available`, p.`products_status, p.`products_quantity`_order_min, p.`products_quantity`_order_units, p.`products_priced_by_attribute`, p.`product_is_free`, p.product_is_call, p.`products_quantity`_mixed, p.product_is_always_free_ship, p.`products_quantity_order_max` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = '" . $current_category_id . "' order by pd.`products_name`");
 	while (!$look_up->EOF) {
 		$look_count ++;
-		if ($look_up->fields['products_id']== $_GET['pID']) {
+		if ($look_up->fields['products_id']== $_GET['products_id']) {
 			exit;
 		} else {
 			$look_up->MoveNext();

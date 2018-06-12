@@ -30,6 +30,6 @@
 		}
 
 		$newProduct->store( $_REQUEST );
-		zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&pID=' . $newProduct->mProductsId . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+		zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . '&products_id=' . $newProduct->mProductsId . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 	}
 ?>

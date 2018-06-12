@@ -36,15 +36,15 @@
 
     $pInfo = new objectInfo($parameters);
 
-    if (isset($_GET['pID']) && empty($_POST)) {
+    if (isset($_GET['products_id']) && empty($_POST)) {
 // check if new meta tags or existing
-    $check_meta_tags_description = $gBitDb->Execute("select `products_id` from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where `products_id`='" . (int)$_GET['pID'] . "'");
+    $check_meta_tags_description = $gBitDb->Execute("select `products_id` from " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " where `products_id`='" . (int)$_GET['products_id'] . "'");
     if ($check_meta_tags_description->RecordCount() <= 0) {
       $product = $gBitDb->Execute("select pd.`products_name`, p.`products_model`, p.`lowest_purchase_price`,
                                       p.`metatags_title_status`, p.`metatags_products_name_status`, p.`metatags_model_status`,
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                              where p.`products_id` = '" . (int)$_GET['pID'] . "'
+                              where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                               and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
     } else {
@@ -53,7 +53,7 @@
                                       p.`products_id`, p.`metatags_price_status`, p.`metatags_title_tagline_status`,
                                       mtpd.`metatags_title`, mtpd.`metatags_keywords`, mtpd.`metatags_description`
                               from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " mtpd
-                              where p.`products_id` = '" . (int)$_GET['pID'] . "'
+                              where p.`products_id` = '" . (int)$_GET['products_id'] . "'
                               and p.`products_id` = pd.`products_id`
                               and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'
                               and p.`products_id` = mtpd.`products_id`
@@ -71,35 +71,35 @@
     $languages = zen_get_languages();
 
 // metatags_products_name_status shows
-    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_products_name_status = zen_get_show_product_switch($_GET['pID'], 'metatags_products_name_status');
+    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_products_name_status = zen_get_show_product_switch($_GET['products_id'], 'metatags_products_name_status');
     switch ($pInfo->metatags_products_name_status) {
       case '0': $is_metatags_products_name_status = false; $not_metatags_products_name_status = true; break;
       case '1': $is_metatags_products_name_status = true;  $not_metatags_products_name_status = false; break;
       default:  $is_metatags_products_name_status = true;  $not_metatags_products_name_status = false;
     }
 // metatags_title_status shows
-    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_title_status = zen_get_show_product_switch($_GET['pID'], 'metatags_title_status');
+    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_title_status = zen_get_show_product_switch($_GET['products_id'], 'metatags_title_status');
     switch ($pInfo->metatags_title_status) {
       case '0': $is_metatags_title_status = false; $not_metatags_title_status = true; break;
       case '1': $is_metatags_title_status = true;  $not_metatags_title_status = false; break;
       default:  $is_metatags_title_status = true;  $not_metatags_title_status = false;
     }
 // metatags_model_status shows
-    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_model_status = zen_get_show_product_switch($_GET['pID'], 'metatags_model_status');
+    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_model_status = zen_get_show_product_switch($_GET['products_id'], 'metatags_model_status');
     switch ($pInfo->metatags_model_status) {
       case '0': $is_metatags_model_status = false; $not_metatags_model_status = true; break;
       case '1': $is_metatags_model_status = true;  $not_metatags_model_status = false; break;
       default:  $is_metatags_model_status = true;  $not_metatags_model_status = false;
     }
 // metatags_price_status shows
-    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_price_status = zen_get_show_product_switch($_GET['pID'], 'metatags_price_status');
+    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_price_status = zen_get_show_product_switch($_GET['products_id'], 'metatags_price_status');
     switch ($pInfo->metatags_price_status) {
       case '0': $is_metatags_price_status = false; $not_metatags_price_status = true; break;
       case '1': $is_metatags_price_status = true;  $not_metatags_price_status = false; break;
       default:  $is_metatags_price_status = true;  $not_metatags_price_status = false;
     }
 // metatags_title_tagline_status shows TITLE and TAGLINE in metatags_header.php
-    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_title_tagline_status = zen_get_show_product_switch($_GET['pID'], 'metatags_title_tagline_status');
+    if (empty($pInfo->metatags_keywords) and empty($pInfo->metatags_description)) $pInfo->metatags_title_tagline_status = zen_get_show_product_switch($_GET['products_id'], 'metatags_title_tagline_status');
     switch ($pInfo->metatags_title_tagline_status) {
       case '0': $is_metatags_title_tagline_status = false; $not_metatags_title_tagline_status = true; break;
       case '1': $is_metatags_title_tagline_status = true;  $not_metatags_title_tagline_status = false; break;
@@ -108,7 +108,7 @@
 ?>
     <?php
 //  echo $type_admin_handler;
-echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=new_product_preview_meta_tags' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
+echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . '&action=new_product_preview_meta_tags' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"'); ?>
     <table>
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -154,7 +154,7 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
         <td><table border="3" cellspacing="4" cellpadding="6">
           <tr>
             <td class="main" colspan="2">
-              <?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . '<strong>' . TEXT_PRODUCTS_NAME . '</strong>' . '&nbsp;' . zen_get_products_name($_GET['pID'], $languages[$i]['id']) . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_MODEL . '</strong>&nbsp;' . $pInfo->products_model . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_PRICE_INFO . '</strong>&nbsp;' . $currencies->format($pInfo->lowest_purchase_price); ?>
+              <?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . '<strong>' . TEXT_PRODUCTS_NAME . '</strong>' . '&nbsp;' . zen_get_products_name($_GET['products_id'], $languages[$i]['id']) . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_MODEL . '</strong>&nbsp;' . $pInfo->products_model . '&nbsp;&nbsp;&nbsp;<strong>' . TEXT_PRODUCTS_PRICE_INFO . '</strong>&nbsp;' . $currencies->format($pInfo->lowest_purchase_price); ?>
             </td>
           </tr>
           <tr>
@@ -184,6 +184,6 @@ echo zen_draw_form_admin('new_product_meta_tags', $type_admin_handler , 'cPath='
         <td class="main" align="left"><?php echo TEXT_INFO_META_TAGS_USAGE; ?></td>
       </tr>
       <tr>
-        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_model', $pInfo->products_model) . zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_price) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+        <td class="main" align="right"><?php echo zen_draw_hidden_field('products_model', $pInfo->products_model) . zen_draw_hidden_field('lowest_purchase_price', $pInfo->lowest_purchase_price) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
       </tr>
     </table></form>

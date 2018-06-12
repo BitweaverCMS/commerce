@@ -48,5 +48,5 @@
           $messageStack->add_session(ERROR_CANNOT_MOVE_PRODUCT_TO_CATEGORY_SELF, 'error');
         }
 
-        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $new_parent_id . '&pID=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
+        zen_redirect(zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $new_parent_id . '&products_id=' . $products_id . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')));
 ?>

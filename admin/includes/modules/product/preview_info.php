@@ -37,15 +37,15 @@
                     p.`products_sort_order`
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                where p.`products_id` = pd.`products_id`
-                               and p.`products_id` = '" . (int)$_GET['pID'] . "'");
+                               and p.`products_id` = '" . (int)$_GET['products_id'] . "'");
 
       $pInfo = new objectInfo($product->fields);
       $products_image_name = $pInfo->products_image;
     }
 
-    $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
+    $form_action = (isset($_GET['products_id'])) ? 'update_product' : 'insert_product';
 
-    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
+    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
     $languages = zen_get_languages();
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
@@ -65,7 +65,43 @@
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td class="pageHeading"><?php echo zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . $pInfo->products_name; ?></td>
-            <td class="pageHeading" align="right"><?php echo $currencies->format($pInfo->products_price) . ($pInfo->products_virtual == 1 ? '<span class="errorText">' . '<br />' . TEXT_VIRTUAL_PREVIEW . '</span>' : '') . ($pInfo->product_is_always_free_ship == 1 ? '<span class="errorText">' . '<br />' . TEXT_FREE_SHIPPING_PREVIEW . '</span>' : '') . ($pInfo->products_priced_by_attribute == 1 ? '<span class="errorText">' . '<br />' . TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES_PREVIEW . '</span>' : '') . ($pInfo->product_is_free == 1 ? '<span class="errorText">' . '<br />' . TEXT_PRODUCTS_IS_FREE_PREVIEW . '</span>' : '') . ($pInfo->product_is_call == 1 ? '<span class="errorText">' . '<br />' . TEXT_PRODUCTS_IS_CALL_PREVIEW . '</span>' : '') . ($pInfo->products_qty_box_status == 0 ? '<span class="errorText">' . '<br />' . TEXT_PRODUCTS_QTY_BOX_STATUS_PREVIEW . '</span>' : '') . ($pInfo->products_priced_by_attribute == 1 ? '<br />' . CommerceProduct::getDisplayPriceFromHash($_GET['pID']) : ''); ?></td>
+            <td class="pageHeading" align="right"><?php echo $currencies->format($pInfo->products_price); ?>
+				<ul class="list-unstyled">
+<?php
+if( BitBase::getParameter( $pInfo, '\1' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_VIRTUAL_PREVIEW . '</li>';
+}
+	
+if( BitBase::getParameter( $pInfo, 'products_virtual' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_VIRTUAL_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'product_is_always_free_ship' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_FREE_SHIPPING_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'products_priced_by_attribute' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'product_is_free' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_PRODUCTS_IS_FREE_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'product_is_call' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_PRODUCTS_IS_CALL_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'products_qty_box_status' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . TEXT_PRODUCTS_QTY_BOX_STATUS_PREVIEW . '</li>';
+}
+
+if( BitBase::getParameter( $pInfo, 'products_priced_by_attribute' ) == 1 ) {
+	echo '<li class="alert alert-warning">' . CommerceProduct::getDisplayPriceFromHash($_GET['products_id']) . '</li>';
+}
+?>
+				</ul>
+			</td>
           </tr>
         </table></td>
       </tr>
@@ -132,7 +168,7 @@
         }
       } else {
         $back_url = FILENAME_CATEGORIES;
-        $back_url_params = 'cPath=' . $cPath . '&pID=' . $pInfo->products_id;
+        $back_url_params = 'cPath=' . $cPath . '&products_id=' . $pInfo->products_id;
       }
 ?>
       <tr>
@@ -162,12 +198,12 @@
 
       echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="edit"') . '&nbsp;&nbsp;';
 
-      if (isset($_GET['pID'])) {
+      if (isset($_GET['products_id'])) {
         echo zen_image_submit('button_update.gif', IMAGE_UPDATE);
       } else {
         echo zen_image_submit('button_insert.gif', IMAGE_INSERT);
       }
-      echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
+      echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
 ?>
         </td>
       </tr>

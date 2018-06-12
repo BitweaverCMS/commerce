@@ -144,7 +144,7 @@ define('ERROR_CANNOT_MOVE_CATEGORY_TO_PARENT', 'Error: Category cannot be moved 
   define('TEXT_CATEGORIES_IMAGE_DIR','Upload to directory:');
 
   define('TEXT_VIRTUAL_PREVIEW','Warning: This product is marked - Free Shipping and Skips Shipping Address');
-  define('TEXT_VIRTUAL_EDIT','Warning: This product is marked - Free Shipping and Skips Shipping Address');
+  define('TEXT_VIRTUAL_EDIT','Warning: This product is marked VIRTUAL and Skips Shipping Address');
   define('TEXT_FREE_SHIPPING_PREVIEW','Warning: This product is marked - Free Shipping, Shipping Address Required');
   define('TEXT_FREE_SHIPPING_EDIT','Warning: Yes makes the product - Free Shipping, Shipping Address Required');
 

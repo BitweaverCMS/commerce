@@ -37,15 +37,15 @@
                     p.`products_sort_order`
                                from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd
                                where p.`products_id` = pd.`products_id`
-                               and p.`products_id` = '" . (int)$_GET['pID'] . "'");
+                               and p.`products_id` = '" . (int)$_GET['products_id'] . "'");
 
       $pInfo = new objectInfo($product->fields);
       $products_image_name = $pInfo->products_image;
     }
 
-    $form_action = (isset($_GET['pID'])) ? 'update_product' : 'insert_product';
+    $form_action = (isset($_GET['products_id'])) ? 'update_product' : 'insert_product';
 
-    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
+    echo zen_draw_form_admin($form_action, $type_admin_handler, 'cPath=' . $cPath . (isset($_GET['product_type']) ? '&product_type=' . $_GET['product_type'] : '') . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . '&action=' . $form_action . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'post', 'enctype="multipart/form-data"');
 
     $languages = zen_get_languages();
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
@@ -59,7 +59,7 @@
         $pInfo->products_url = zen_db_prepare_input($products_url[$languages[$i]['id']]);
       }
 
-      $specials_price = zen_get_products_special_price($pID);
+      $specials_price = zen_get_products_special_price($products_id);
 ?>
     <table>
       <tr>
@@ -125,7 +125,7 @@
         }
       } else {
         $back_url = FILENAME_CATEGORIES;
-        $back_url_params = 'cPath=' . $cPath . '&pID=' . $pInfo->products_id;
+        $back_url_params = 'cPath=' . $cPath . '&products_id=' . $pInfo->products_id;
       }
 ?>
       <tr>
@@ -155,12 +155,12 @@
 
       echo zen_image_submit('button_back.gif', IMAGE_BACK, 'name="edit"') . '&nbsp;&nbsp;';
 
-      if (isset($_GET['pID'])) {
+      if (isset($_GET['products_id'])) {
         echo zen_image_submit('button_update.gif', IMAGE_UPDATE);
       } else {
         echo zen_image_submit('button_insert.gif', IMAGE_INSERT);
       }
-      echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['pID']) ? '&pID=' . $_GET['pID'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
+      echo '&nbsp;&nbsp;<a href="' . zen_href_link_admin(FILENAME_CATEGORIES, 'cPath=' . $cPath . (isset($_GET['products_id']) ? '&products_id=' . $_GET['products_id'] : '') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '')) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>';
 ?></td>
       </tr>
     </table></form>
