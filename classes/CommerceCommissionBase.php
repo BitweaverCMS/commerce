@@ -14,7 +14,7 @@
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
-class CommerceCommissionBase extends BitBase {
+class CommerceCommissionBase extends BitSingleton {
 
 	// Must be set by all derivative classes
 	public $mCommissionType = NULL;

@@ -1,5 +1,5 @@
-{if $gBitSystem->isLive() && !$gBitUser->hasPermission( 'p_users_admin' )}
-	{if $gBitSystem->getConfig('google_trusted_store')}
+{if $gBitSystem->isTracking() && $newOrder}
+	{if $gBitSystem->getConfig('google_merchant_id') && $gBitSystem->getConfig('google_merchant_reviews')}
 	<!-- START Google Trusted Stores Order -->
 		{assign var=shipEpoch value=$smarty.now+(86400 * 10)}
 	{literal}
@@ -15,7 +15,7 @@
           "email": "{$gBitUser->getField('email')}",
           "delivery_country": "{$newOrder->delivery.country.countries_iso_code_2}",
           "estimated_delivery_date": "{$shipEpoch|date_format:'Y-m-d'}",
-          "products": [ {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} {ldelim}"mpn":"{$attr.options_values_id}"{rdelim}, {/if}{/foreach}{/foreach}{literal} ],
+          "products": [ {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} {ldelim}"id":"{$attr.options_values_id}"{rdelim}, {/if}{/foreach}{/foreach}{literal} ],
         });
     });
   }

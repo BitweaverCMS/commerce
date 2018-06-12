@@ -651,7 +651,7 @@ If a special exist * 10+9
 					if (PRODUCTS_PRICE_IS_CALL_IMAGE_ON=='0') {
 						$call_tag = '<br />' . PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT;
 					} else {
-						$call_tag = '<br />' . zen_image(DIR_WS_TEMPLATE_IMAGES . OTHER_IMAGE_CALL_FOR_PRICE, PRODUCTS_PRICE_IS_CALL_FOR_PRICE_TEXT);
+						$call_tag = '<i class="icon-phone"></i> ' . tra( 'Call For Price' );
 					}
 				}
 				$ret = $final_display_price  . $call_tag;
