@@ -1443,6 +1443,23 @@ If a special exist * 10+9
 		return true;
 	}
 
+	/**
+	* Used for checkout tracking
+	**/
+	public function getSkuHash( $pOrderProductOptions ) {
+		global $gCommerceSystem, $gBitSystem;
+		$ret = array();
+		if( $this->isValid() ) {
+			$ret['sku_id'] = $this->mProductsId;
+			$ret['sku_name'] = $this->getTitle();
+			$ret['sku_brand'] = $this->getField( 'manufacturers_name', $gCommerceSystem->getConfig( 'STORE_NAME', $gBitSystem->getConfig( 'site_title' ) ) );
+			$ret['sku_category'] = $this->getField( 'categories_name', $this->getField( 'type_name' ) );
+			$ret['quantity'] = $pOrderProductOptions['products_quantity'];
+			$ret['price'] = $pOrderProductOptions['final_price'];
+		}
+		return $ret;
+	}
+
 	function verify( &$pParamHash ) {
 		$pParamHash['product_store'] = array(
 			'products_quantity' => (!empty( $pParamHash['products_quantity'] ) && is_numeric( $pParamHash['products_quantity'] ) ? $pParamHash['products_quantity'] : 0),

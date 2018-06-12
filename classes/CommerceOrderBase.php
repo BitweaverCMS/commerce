@@ -83,6 +83,20 @@ class CommerceOrderBase extends BitBase {
 		return BitBase::getParameter( $this->contents, $pProductsKey );
 	}
 
+	/**
+	* Used for checkout tracking
+	**/
+	public function getSkuHash() {
+		global $gCommerceSystem, $gBitSystem;
+		$ret = array();
+		foreach( array_keys( $this->contents ) as $productsKey ) {
+			if( $prod = &$this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
+				$ret[] = $prod->getSkuHash( $this->getProductHash( $productsKey ) );
+			}
+		}
+		return $ret;
+	}
+
 	private function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
 			global $gBitCustomer, $gCommerceSystem;

@@ -19,52 +19,50 @@
 			{assign var=eecStep value=5}
 			{assign var=eecEvent value='purchase'}
 		{/if}
-		{if $eecStep}
+		{if $eecEvent}
 <script type="text/javascript">
 gtag('event', '{$eecEvent}', {ldelim}
 	{if $eecStep} "checkout_step": {$eecStep},{/if}
-{if $newOrder}
-	{if $gBitAffiliate}
-		{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}
-		{if $affiliate}
-			{assign var=affiiateString value="'affiliation': '`$affiliate.program_name`', "}
-		{/if}
+	{if $newOrder}
+		{assign var=cartItemSkuHash value=$newOrder->getSkuHash()}
+		{section loop=$newOrder->totals name=t}
+			{if $newOrder->totals[t].class=='ot_coupon'}
+				{assign var=couponName value=$newOrder->totals[t].title|regex_replace:"/.*: /":''|escape:quotes}
+				{assign var=couponString value=", 'coupon':'$couponName'"}
+			{elseif $newOrder->totals[t].class=='ot_gv' && !$couponString}
+				{assign var=couponString value=', "coupon":"Gift Certificate"'}
+			{/if}
+		{/section}
+	{else}
+		{assign var=cartItemSkuHash value=$gBitCustomer->mCart->getSkuHash()}
+		{if $smarty.session.dc_redeem_code} {assign var=couponString value=', "coupon":"`$smarty.session.dc_redeem_code`"'} 
+		{elseif $smarty.session.cot_gv} {assign var=couponString value=', "coupon":"Gift Certificate"'} {/if}
 	{/if}
-	{section loop=$newOrder->totals name=t}
-		{if $newOrder->totals[t].class=='ot_coupon'}
-			{assign var=couponName value=$newOrder->totals[t].title|regex_replace:"/.*: /":''|escape:quotes}
-			{assign var=couponString value=", 'coupon':'$couponName'"}
-		{elseif $newOrder->totals[t].class=='ot_gv' && !$couponString}
-			{assign var=couponString value=', "coupon":"Gift Certificate"'}
-		{/if}
-	{/section}
 	{if $eecEvent=='purchase'}
 		'transaction_id': '{$newOrder->mOrdersId}',
 		'value': '{$newOrder->getField('total')}',
 		'currency': '{$smarty.const.DEFAULT_CURRENCY}',
 		'shipping': '{$newOrder->getField('shipping_cost')}',
-		'tax': '{$newOrder->getField('tax')}',
-		{$affiiateString}
+		'tax': '{$newOrder->getField('tax')}'
+		{if $gBitAffiliate}{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}{if $affiliate}, 'affiliation': '{$affiliate.program_name|escape:'quotes'}' {/if}{/if}
 	{/if}
+	{if $cartItemSkuHash}
 	"items": [
-		{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1}{ldelim}
-			"id": '{$attr.options_values_id}',
-			'name': '{$attr.value}',
-			"brand": "{$gBitSystem->getConfig('site_title')|escape:quotes}",
-			'category': '{$product.model|replace:"'":''}',
-			'quantity': '{$product.products_quantity}',
-			'price': '{$product.price}',
-		{rdelim},{/if}{/foreach}{/foreach}
+		{foreach from=$cartItemSkuHash item=skuHash}{ldelim}
+			"id": '{$skuHash.sku_id}',
+			'name': '{$skuHash.sku_name|escape:'quotes'}',
+			'brand': '{$skuHash.sku_brand|escape:'quotes'}',
+			'category': '{$skuHash.sku_category|escape:'quotes'}',
+			'quantity': '{$skuHash.quantity|escape:'quotes'}',
+			'price': '{$skuHash.price}',
+		{rdelim},{/foreach}
 	]
-{else}
-	{if $smarty.session.dc_redeem_code} {assign var=couponString value=' "coupon":"`$smarty.session.dc_redeem_code`"'} 
-	{elseif $smarty.session.cot_gv} {assign var=couponString value=' "coupon":"Gift Certificate"'} {/if}
-{/if}
-{$couponString}
+	{/if}
+	{$couponString}
 {rdelim});
 </script>
 		{/if}
-{*$eecStep}{$eecEvent}{$smarty.request|vd}{$smarty.session|vd}{$gBitCustomer->mCart|vd}{$newOrder|vd*}
+{*$eecStep}{$eecEvent}{$smarty.request|vd}{$smarty.session|vd}{*$trackOrder|vd*}
 	{/if}
 {/if}
 {/strip}
