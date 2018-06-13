@@ -24,7 +24,7 @@
 gtag('event', '{$eecEvent}', {ldelim}
 	{if $eecStep} "checkout_step": {$eecStep},{/if}
 	{if $newOrder}
-		{assign var=cartItemSkuHash value=$newOrder->getSkuHash()}
+		{assign var=cartItemTrackingHash value=$newOrder->getTrackingHash()}
 		{section loop=$newOrder->totals name=t}
 			{if $newOrder->totals[t].class=='ot_coupon'}
 				{assign var=couponName value=$newOrder->totals[t].title|regex_replace:"/.*: /":''|escape:quotes}
@@ -34,7 +34,7 @@ gtag('event', '{$eecEvent}', {ldelim}
 			{/if}
 		{/section}
 	{else}
-		{assign var=cartItemSkuHash value=$gBitCustomer->mCart->getSkuHash()}
+		{assign var=cartItemTrackingHash value=$gBitCustomer->mCart->getTrackingHash()}
 		{if $smarty.session.dc_redeem_code} {assign var=couponString value=', "coupon":"`$smarty.session.dc_redeem_code`"'} 
 		{elseif $smarty.session.cot_gv} {assign var=couponString value=', "coupon":"Gift Certificate"'} {/if}
 	{/if}
@@ -46,15 +46,15 @@ gtag('event', '{$eecEvent}', {ldelim}
 		'tax': '{$newOrder->getField('tax')}'
 		{if $gBitAffiliate}{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}{if $affiliate}, 'affiliation': '{$affiliate.program_name|escape:'quotes'}' {/if}{/if}
 	{/if}
-	{if $cartItemSkuHash}
+	{if $cartItemTrackingHash}
 	"items": [
-		{foreach from=$cartItemSkuHash item=skuHash}{ldelim}
-			"id": '{$skuHash.sku_id}',
-			'name': '{$skuHash.sku_name|escape:'quotes'}',
-			'brand': '{$skuHash.sku_brand|escape:'quotes'}',
-			'category': '{$skuHash.sku_category|escape:'quotes'}',
-			'quantity': '{$skuHash.quantity|escape:'quotes'}',
-			'price': '{$skuHash.price}',
+		{foreach from=$cartItemTrackingHash item=trackingHash}{ldelim}
+			"id": '{$trackingHash.sku_id}',
+			'name': '{$trackingHash.sku_name|escape:'quotes'}',
+			'brand': '{$trackingHash.sku_brand|escape:'quotes'}',
+			'category': '{$trackingHash.sku_category|escape:'quotes'}',
+			'quantity': '{$trackingHash.quantity|escape:'quotes'}',
+			'price': '{$trackingHash.price}',
 		{rdelim},{/foreach}
 	]
 	{/if}

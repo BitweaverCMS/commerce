@@ -1446,7 +1446,7 @@ If a special exist * 10+9
 	/**
 	* Used for checkout tracking
 	**/
-	public function getSkuHash( $pOrderProductOptions ) {
+	public function getTrackingHash( $pOrderProductOptions ) {
 		global $gCommerceSystem, $gBitSystem;
 		$ret = array();
 		if( $this->isValid() ) {
