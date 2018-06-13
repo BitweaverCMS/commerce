@@ -86,12 +86,12 @@ class CommerceOrderBase extends BitBase {
 	/**
 	* Used for checkout tracking
 	**/
-	public function getSkuHash() {
+	public function getTrackingHash() {
 		global $gCommerceSystem, $gBitSystem;
 		$ret = array();
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			if( $prod = &$this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
-				$ret[] = $prod->getSkuHash( $this->getProductHash( $productsKey ) );
+				$ret[] = $prod->getTrackingHash( $this->getProductHash( $productsKey ) );
 			}
 		}
 		return $ret;
