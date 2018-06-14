@@ -43,8 +43,8 @@ gtag('event', '{$eecEvent}', {ldelim}
 		'value': '{$newOrder->getField('total')}',
 		'currency': '{$smarty.const.DEFAULT_CURRENCY}',
 		'shipping': '{$newOrder->getField('shipping_cost')}',
-		'tax': '{$newOrder->getField('tax')}'
-		{if $gBitAffiliate}{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}{if $affiliate}, 'affiliation': '{$affiliate.program_name|escape:'quotes'}' {/if}{/if}
+		'tax': '{$newOrder->getField('tax')}',
+		{if $gBitAffiliate}{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}{if $affiliate} 'affiliation': '{$affiliate.program_name|escape:'quotes'}', {/if}{/if}
 	{/if}
 	{if $cartItemTrackingHash}
 	"items": [
