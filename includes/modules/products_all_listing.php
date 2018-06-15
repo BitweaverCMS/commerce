@@ -97,12 +97,12 @@
 
         $the_button = $link;
         $products_link = '<a href="' . zen_href_link(zen_get_info_page($products_all->fields['products_id']), 'products_id=' . $products_all->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
-        $display_products_button = zen_get_buy_now_button($products_all->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($products_all->fields['products_id']) . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_BUY_NOW, 3, 1));
+        $display_products_button = zen_get_buy_now_button($products_all->fields['products_id'], $the_button, $products_link);
       } else {
         $link = '<a href="' . zen_href_link(zen_get_info_page($products_all->fields['products_id']), 'products_id=' . $products_all->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
         $the_button = $link;
         $products_link = '<a href="' . zen_href_link(zen_get_info_page($products_all->fields['products_id']), 'products_id=' . $products_all->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
-        $display_products_button = zen_get_buy_now_button($products_all->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($products_all->fields['products_id']) . str_repeat('<br clear="all" />', substr(PRODUCT_ALL_BUY_NOW, 3, 1));
+        $display_products_button = zen_get_buy_now_button($products_all->fields['products_id'], $the_button, $products_link);
       }
 
       if (PRODUCT_ALL_LIST_DESCRIPTION != '0') {

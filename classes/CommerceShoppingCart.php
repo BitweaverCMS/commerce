@@ -162,24 +162,24 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 		$pQty = (int)$pQty;
 
-		// verify qty to add
-		$add_max = zen_get_products_quantity_order_max($_REQUEST['products_id']);
-		$cart_qty = $gBitCustomer->mCart->in_cart_mixed($_REQUEST['products_id']);
-		$new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
-		if (($add_max == 1 and $cart_qty == 1)) {
-			// do not add
-			$new_qty = 0;
-		} else {
-			// adjust quantity if needed
-			if (($new_qty + $cart_qty > $add_max) and $add_max != 0) {
-				$new_qty = $add_max - $cart_qty;
-			}
-		}
-		if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
-			$messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
-		}
-
 		if( $product = $this->getProductObject( $pProductsKey ) ) {
+			// verify qty to add
+			$add_max = $product->getField( 'products_quantity_order_max' );
+			$cart_qty = $gBitCustomer->mCart->in_cart_mixed($_REQUEST['products_id']);
+			$new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
+			if (($add_max == 1 and $cart_qty == 1)) {
+				// do not add
+				$new_qty = 0;
+			} else {
+				// adjust quantity if needed
+				if (($new_qty + $cart_qty > $add_max) and $add_max != 0) {
+					$new_qty = $add_max - $cart_qty;
+				}
+			}
+			if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
+				$messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
+			}
+
 			if( is_object( $product ) && $pQty > $product->getField( 'products_quantity_order_max' ) ) { 
 				// we are trying to add quantity greater than max purchable quantity
 				$pQty = $product->getField( 'products_quantity_order_max' );
@@ -206,27 +206,24 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$fix_once = 0;
 			if ($check_quantity < $check_quantity_min) {
 				$fix_once ++;
-				$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
+				$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . $product->getQuantityMinUnitsDisplay() . '</span> ';
 			}
 
 			// Check Quantity Units if not already an error on Quantity Minimum
 			if ($fix_once == 0) {
 				$check_units = $product->getField( 'products_quantity_order_units' );
 				if ( fmod($check_quantity,$check_units) != 0 ) {
-					$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
+					$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . $product->getQuantityMinUnitsDisplay() . '</span> ';
 				}
 			}
 
 			// Check if the required stock is available. If insufficent stock is available return an out of stock message
 			if ( $gCommerceSystem->getConfig( 'STOCK_CHECK' ) && !$gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
-				foreach( $this->contents AS $productsKey => $productsHash ) {
-					$product = $this->getProductObject( $productsKey );
-					if( !$product->getField( 'products_quantity' ) && !$product->getField( 'products_virtual' ) ) {
-						if( $gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
-							$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.' );
-						} else {
-							$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock or there are not enough in stock to fill your order.<br />Please change the quantity of products marked with (' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '). Thank you' );
-						}
+				if( !$product->getField( 'products_quantity' ) && !$product->getField( 'products_virtual' ) ) {
+					if( $gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
+						$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.' );
+					} else {
+						$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock or there are not enough in stock to fill your order.<br />Please change the quantity of products marked with (' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '). Thank you' );
 					}
 				}
 			}

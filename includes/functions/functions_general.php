@@ -959,8 +959,6 @@ function zen_get_uprid($prid, $params) {
 /////////////////////////////////////////////
 ////
 // call additional function files
-// prices and quantities
-  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
 // gv and coupons
   require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php');
 // categories, paths, pulldowns

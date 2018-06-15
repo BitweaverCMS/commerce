@@ -265,11 +265,11 @@ function clean_input( &$pArray ) {
 				break;
 			// performed by the 'buy now' button in product listings and review page
 			case 'buy_now' :			
-				if (isset($_REQUEST['products_id'])) {
+				if (isset($_REQUEST['products_id']) && $gBitProduct->isValid() ) {
 					if (zen_has_product_attributes($_REQUEST['products_id'])) {
-						zen_redirect( CommerceProduct::getDisplayUrlFromId( $_REQUEST['products_id']) );
+						zen_redirect( $gBitProduct->getDisplayUrl() );
 					} else {
-						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], ($gBitCustomer->mCart->get_quantity( $_REQUEST['products_id'] ) + zen_get_buy_now_qty( $_REQUEST['products_id'] )) );
+						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], ($gBitCustomer->mCart->get_quantity( $_REQUEST['products_id'] ) + $gBitProduct->getBuyNowQuantity() ) );
 					}
 				}
 				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));

@@ -102,7 +102,7 @@
 								({$qtyInCart} {tr}In Cart{/tr})
 							{/if}
 							</label>
-							<input class="input-mini form-control" type="number" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
+							<input class="input-mini form-control" type="number" name="cart_quantity" value="{$gBitProduct->getBuyNowQuantity()}"/> {$gBitProduct->getQuantityMinUnitsDisplay()}
 						{/if}
 					</div>
 					<div class="form-group">

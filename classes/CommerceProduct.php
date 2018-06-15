@@ -1885,6 +1885,7 @@ If a special exist * 10+9
 							$products_options_display_weight='';
 						}
 
+
 						// =-=-=-=-=-=-=-=-=-=-= FILE, TEXT, READONLY
 						if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO or count( $this->mOptions[$optionsId] ) == 1 or $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
 							$products_options_value_id = $vals['products_options_values_id'];
@@ -1895,13 +1896,15 @@ If a special exist * 10+9
 								$products_options_details = '';
 							}
 							if ($this->mOptions[$optionsId]['products_options_images_style'] >= 3) {
-								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
-								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<br />' . $products_options_display_weight : '');
+								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<div class="help-block">' . $products_options_display_weight . '</div>' : '');
+								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<div class="help-block">' . $products_options_display_weight . '</div>' : '');
 							} else {
 								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
 								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
 							}
 						}
+
+
 						// =-=-=-=-=-=-=-=-=-=-= radio buttons
 						if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_RADIO) {
 							if( is_object( $pCart ) && $pCart->in_cart($this->mProductsId) && ($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']] == $vals['products_options_values_id']) ) {
@@ -1928,10 +1931,7 @@ If a special exist * 10+9
 						}
 
 
-
-
 						// =-=-=-=-=-=-=-=-=-=-= checkboxes
-
 						if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_CHECKBOX) {
 							$string = $this->mOptions[$optionsId]['products_options_id'].'_chk'.$vals['products_options_values_id'];
 							if( is_object( $pCart ) && $pCart->in_cart($this->mProductsId)) {
@@ -2415,91 +2415,75 @@ Skip deleting of images for now
 
 	////
 	// Return quantity buy now
-	function getBuyNowQuantity( $pProductsId = NULL) {
+	// The function formerly known as zen_get_buy_now_qty
+	function getBuyNowQuantity() {
 		global $gBitCustomer;
-		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
-			$pProductsId = $this->mProductsId;
+		$ret = 1;
+
+		$check_min = $this->getField( 'products_quantity_order_min' );
+		$check_units = $this->getField( 'products_quantity_order_units' );
+		$inCartMixed = $gBitCustomer->mCart->in_cart_mixed( $this->mProductsId );
+
+		// works on Mixed ON
+		if( $gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ) {
+			if ($check_min >= $check_units) {
+				$ret = $check_min;
+			} else {
+				$ret = $check_units;
+			}
+		} elseif( $inCartMixed < $check_min ) {
+			$ret = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
+		} elseif( $inCartMixed > $check_min ) {
+			// set to units or difference in units to balance cart
+			$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
+			$ret = ($new_units > 0 ? $new_units : $check_units);
+		} else {
+			$ret = $check_units;
 		}
 
-		$check_min = zen_get_products_quantity_order_min( $pProductsId );
-		$check_units = zen_get_products_quantity_order_units( $pProductsId );
-		$buy_now_qty=1;
-		// works on Mixed ON
-		switch (true) {
-			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ):
-				if ($check_min >= $check_units) {
-				$buy_now_qty = $check_min;
-				} else {
-				$buy_now_qty = $check_units;
-				}
-				break;
-			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) < $check_min):
-				$buy_now_qty = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
-				break;
-			case ($gBitCustomer->mCart->in_cart_mixed($pProductsId) > $check_min):
-				// set to units or difference in units to balance cart
-				$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
-				//echo 'Cart: ' . $gBitCustomer->mCart->in_cart_mixed($pProductsId) . ' Min: ' . $check_min . ' Units: ' . $check_units . ' fmod: ' . fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units) . '<br />';
-				$buy_now_qty = ($new_units > 0 ? $new_units : $check_units);
-				break;
-			default:
-				$buy_now_qty = $check_units;
-				break;
+		if ($ret <= 0) {
+			$ret = 1;
 		}
-		if ($buy_now_qty <= 0) {
-			$buy_now_qty = 1;
-		}
-		return $buy_now_qty;
+		return $ret;
 	}
 
 
 	////
 	// Return a products quantity minimum and units display
-	function getQuantityMinUnitsDisplay($pProductsId = NULL, $include_break = true, $shopping_cart_msg = false) {
-		if( empty( $pProductsId ) && !empty( $this->mProductsId ) ) {
-			$pProductsId = $this->mProductsId;
-		}
-		$check_min = zen_get_products_quantity_order_min($pProductsId);
-		$check_units = zen_get_products_quantity_order_units($pProductsId);
+	// The function formerly known as zen_get_products_quantity_min_units_display
+	function getQuantityMinUnitsDisplay() {
 
-		$the_min_units='';
+		$ret='<div class="help-block">';
 
-		if ($check_min != 1 or $check_units != 1) {
-			if ($check_min != 1) {
-				$the_min_units .= PRODUCTS_QUANTITY_MIN_TEXT_LISTING . '&nbsp;' . $check_min;
-			}
-			if ($check_units != 1) {
-				$the_min_units .= ($the_min_units ? ' ' : '' ) . PRODUCTS_QUANTITY_UNIT_TEXT_LISTING . '&nbsp;' . $check_units;
-			}
+		if( $this->isValid() ) {
+			$check_min = $this->getField( 'products_quantity_order_min' );
+			$check_units = $this->getField( 'products_quantity_order_units' );
 
-			if (($check_min > 0 or $check_units > 0) and !zen_get_products_quantity_mixed($pProductsId)) {
-				if ($include_break == true) {
-					$the_min_units .= '<br />' . ($shopping_cart_msg == false ? TEXT_PRODUCTS_MIX_OFF : TEXT_PRODUCTS_MIX_OFF_SHOPPING_CART);
-				} else {
-					$the_min_units .= '&nbsp;&nbsp;' . ($shopping_cart_msg == false ? TEXT_PRODUCTS_MIX_OFF : TEXT_PRODUCTS_MIX_OFF_SHOPPING_CART);
+			// quantity min
+			if ($check_min != 1 or $check_units != 1) {
+				if ($check_min != 1) {
+					$ret .= PRODUCTS_QUANTITY_MIN_TEXT_LISTING . ' ' . $check_min;
 				}
-			} else {
-				if ($include_break == true) {
-					$the_min_units .= '<br />' . ($shopping_cart_msg == false ? TEXT_PRODUCTS_MIX_ON : TEXT_PRODUCTS_MIX_ON_SHOPPING_CART);
-				} else {
-					$the_min_units .= '&nbsp;&nbsp;' . ($shopping_cart_msg == false ? TEXT_PRODUCTS_MIX_ON : TEXT_PRODUCTS_MIX_ON_SHOPPING_CART);
+				if ($check_units != 1) {
+					$ret .= ($ret ? ' ' : '' ) . PRODUCTS_QUANTITY_UNIT_TEXT_LISTING . ' ' . $check_units;
+				}
+
+				if( ($check_min > 0 or $check_units > 0) &&  $this->getField('products_quantity_mixed') != 1 ) {
+					$ret .= ', ' . tra( 'must have the same options' );
 				}
 			}
-		}
 
-		// quantity max
-		$check_max = zen_get_products_quantity_order_max($pProductsId);
-
-		if ($check_max != 0) {
-			if ($include_break == true) {
-				$the_min_units .= ($the_min_units != '' ? '<br />' : '') . PRODUCTS_QUANTITY_MAX_TEXT_LISTING . '&nbsp;' . $check_max;
-			} else {
-				$the_min_units .= ($the_min_units != '' ? '&nbsp;&nbsp;' : '') . PRODUCTS_QUANTITY_MAX_TEXT_LISTING . '&nbsp;' . $check_max;
+			// quantity max
+			$check_max = $this->getField( 'products_quantity_order_max' );
+			if ($check_max != 0) {
+				$ret .= '<span>' . PRODUCTS_QUANTITY_MAX_TEXT_LISTING . ' ' . $check_max . '</span>';
 			}
 		}
+		$ret .= '</div>';
 
-		return $the_min_units;
+		return $ret;
 	}
+
 
 
 	function expungeNotification( $pCustomersId, $pProductsId=NULL ) {
