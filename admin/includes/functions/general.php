@@ -1888,39 +1888,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 	}
 
 ////
-// salemaker categories array
-	function zen_parse_salemaker_categories($clist) {
-		$clist_array = explode(',', $clist);
-
-// make sure no duplicate category IDs exist which could lock the server in a loop
-		$tmp_array = array();
-		$n = sizeof($clist_array);
-		for ($i=0; $i<$n; $i++) {
-			if (!in_array($clist_array[$i], $tmp_array)) {
-				$tmp_array[] = $clist_array[$i];
-			}
-		}
-		return $tmp_array;
-	}
-
-////
-// update salemaker product prices per category per product
-	function zen_update_salemaker_product_prices($salemaker_id) {
-		global $gBitDb;
-		$zv_categories = $gBitDb->Execute("SELECT `sale_categories_selected` FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_id` = '" . $salemaker_id . "'");
-
-		$za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
-		$n = sizeof($za_salemaker_categories);
-		for ($i=0; $i<$n; $i++) {
-			$update_products_price = $gBitDb->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
-			while (!$update_products_price->EOF) {
-				zen_update_lowest_purchase_price($update_products_price->fields['products_id']);
-				$update_products_price->MoveNext();
-			}
-		}
-	}
-
-////
 // check if products has discounts
 	function zen_has_product_discounts($look_up) {
 		global $gBitDb;
