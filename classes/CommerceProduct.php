@@ -1893,7 +1893,7 @@ If a special exist * 10+9
 								$products_options_details = $vals['products_options_values_name'];
 							} else {
 								// don't show option value name on TEXT or filename
-								$products_options_details = '';
+								$products_options_details = '<div class="help-block">'.$vals['products_options_values_name'].'</div>';
 							}
 							if ($this->mOptions[$optionsId]['products_options_images_style'] >= 3) {
 								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<div class="help-block">' . $products_options_display_weight . '</div>' : '');
@@ -2108,6 +2108,9 @@ If a special exist * 10+9
 
 						$productOptions[$optionsId]['option_values'][$valId]['value_name'] = $vals['products_options_values_name'];
 						$productOptions[$optionsId]['option_values'][$valId]['value_price'] = $vals['value_price'];
+						if( $vals['products_options_values_comment'] ) {
+							$tmp_html .= '<div class="help-block">'.$vals['products_options_values_comment'].'</div>';
+						}
 
 						// default
 						// find default attribute if set to for default dropdown
@@ -2121,11 +2124,7 @@ If a special exist * 10+9
 				switch (true) {
 					// text
 					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
-						if ($productSettings['show_attributes_qty_prices_icon'] == 'true') {
-							$productOptions[$optionsId]['name'] = ATTRIBUTES_QTY_PRICE_SYMBOL . $this->mOptions[$optionsId]['products_options_name'];
-						} else {
-							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-						}
+						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						$productOptions[$optionsId]['menu'] = $tmp_html;
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;

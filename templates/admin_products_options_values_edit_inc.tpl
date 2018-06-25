@@ -1,6 +1,6 @@
 
 	<div class="form-group">
-		<div class="formlabel">{tr}Option Value Id{/tr}</div>
+		{formlabel label="Option Value Id"}
 		{forminput}
 {if $editValue.products_options_values_id}
 			<input type="hidden" name="products_options_values_id" value="{$editValue.products_options_values_id}">{$editValue.products_options_values_id}
@@ -11,12 +11,20 @@
 	</div>
 
 	<div class="form-group">
-		<div class="formlabel">{tr}Options Name{/tr}</div>
+		{formlabel label="Options Name"}
 		<div class="forminput"><input type="text" class="form-control" name="products_options_values_name" value="{$editValue.products_options_values_name|escape:html}">&nbsp;</div>
+	</div>
+
+	<div class="form-group">
+		{formlabel label="Comment"}
+		{forminput}
+			<input type="text" class="form-control" name="products_options_values_comment" value="{$editValue.products_options_values_comment|escape:html}" />
+			{formhelp note="A small help-block will be shown below this selection"}
+		{/forminput}
 	</div>
 	
 	<div class="form-group">
-		<div class="formlabel">{tr}Option{/tr}</div>
+		{formlabel label="Option"}
 		<div class="forminput">
 			<select class="form-control" name="products_options_id">
 				{foreach from=$optionsList item=option key=optionsId}
@@ -29,12 +37,12 @@
 	</div>
 
 	<div class="form-group">
-		<div class="formlabel">{tr}Sort Order{/tr}</div>
+		{formlabel label="Sort Order"}
 		<div class="forminput"><input type="text" class="form-control" name="products_options_sort_order" value="{$editValue.products_options_sort_order}" size="4">&nbsp;</div>
 	</div>
 
 	<div class="form-group">
-		<div class="formlabel">{tr}Related Group ID{/tr}</div>
+		{formlabel label="Related Group ID"}
 		<div class="forminput">{html_options class="form-control" name="purchase_group_id" options=$groupList selected=$editValue.purchase_group_id}
 			{formhelp note="User will be added to this group upon successful purchase"}
 		</div>
@@ -43,7 +51,7 @@
 
 	{legend legend="Attribute Pricing"}
 		<div class="form-group">
-			<div class="formlabel">{tr}Fixed Attribute Price{/tr}</div>
+			{formlabel label="Fixed Attribute Price"}
 			<div class="input-group">
 				<span class="input-group-addon pt-0" style="width:75px">
 					<select class="form-control input-xs" name="price_prefix">
@@ -56,25 +64,25 @@
 
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}One Time{/tr}</div>
+			{formlabel label="One Time"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_onetime" value="{$editValue.attributes_price_onetime}" size="6" />&nbsp;</div>
 		</div>
 
 	{if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_PRICE_FACTOR') == 'true'}
 		<div class="form-group">
-			<div class="formlabel">{tr}% Attribute Price{/tr}</div>
+			{formlabel label="% Attribute Price"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_factor" value="{$editValue.attributes_price_factor}" size="6" /></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}Offset{/tr}</div>
+			{formlabel label="Offset"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_offset" size="6" value="{$editValue.attributes_pf_offset}" />&nbsp;</div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}One Time Factor{/tr}</div>
+			{formlabel label="One Time Factor"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_onetime" value="{$editValue.attributes_pf_onetime}" size="6" /></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}Offset{/tr}</div>
+			{formlabel label="Offset"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_pf_onetime_offset" value="{$editValue.attributes_pf_onetime_offset}" size="6" /></div>
 		</div>
 	{/if}
@@ -83,11 +91,11 @@
 {if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_QTY_PRICES') == 'true'}
 	{legend legend="Attribute Quantity Pricing"}
 		<div class="form-group">
-			<div class="formlabel">{tr}Option Qty Price Discount{/tr}</div>
+			{formlabel label="Option Qty Price Discount"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_qty_prices" value="{$editValue.attributes_qty_prices}" size="60"></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}Onetime Option Qty Price Discount{/tr}</div>
+			{formlabel label="Onetime Option Qty Price Discount"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_qty_prices_onetime" value="{$editValue.attributes_qty_prices_onetime}" size="60"></div>
 		</div>
 	{/legend}
@@ -96,19 +104,19 @@
 {if $gCommerceSystem->getConfig('ATTRIBUTES_ENABLED_TEXT_PRICES') == 'true'}
 	{legend legend="Attribute Text Pricing"}
 		<div class="form-group">
-			<div class="formlabel">{tr}Price Per Word{/tr}</div>
+			{formlabel label="Price Per Word"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_words" value="{$editValue.attributes_price_words}" size="6" /></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}- Free Words{/tr}</div>
+			{formlabel label="- Free Words"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_words_free" value="{$editValue.attributes_price_words_free}" size="6" /></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}Price Per Letter{/tr}</div>
+			{formlabel label="Price Per Letter"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_letters" value="{$editValue.attributes_price_letters}" size="6" /></div>
 		</div>
 		<div class="form-group">
-			<div class="formlabel">{tr}- Free Letters{/tr}</div>
+			{formlabel label="- Free Letters"}
 			<div class="forminput"><input type="text" class="form-control" name="attributes_price_letters_free" value="{$editValue.attributes_price_letters_free}" size="6" /></div>
 		</div>
 	{/legend}
@@ -116,7 +124,7 @@
 
 	{legend legend="Attribute Weights"}
 		<div class="form-group">
-			<div class="formlabel">{tr}Weight{/tr}</div>
+			{formlabel label="Weight"}
 			<div class="input-group">
 				<span class="input-group-addon pt-0" style="width:75px">
 					<select class="form-control input-xs" name="products_attributes_wt_pfix">

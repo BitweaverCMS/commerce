@@ -123,6 +123,7 @@ class CommerceProductManager extends BitBase {
 				'products_attributes_wt',
 				'products_attributes_wt_pfix',
 				'products_options_values_name',
+				'products_options_values_comment',
 				'attributes_price_onetime',
 				'attributes_price_factor',
 				'attributes_pf_offset',

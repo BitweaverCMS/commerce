@@ -316,6 +316,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_options_id I4 NOTNULL,
   products_attributes_id I4 NOTNULL AUTO,
   products_options_values_name C(128),
+  products_options_values_comment C(256),
   options_values_price N(15,4),
   options_values_wholesale N(15,4),
   options_values_cogs N(15,4),
