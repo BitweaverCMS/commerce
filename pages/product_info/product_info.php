@@ -19,7 +19,8 @@ if ( $gBitProduct->isAvailable() ) {
 	}
 
 	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
-	$mid = 'bitpackage:bitcommerce/page_product_info.tpl';
+
+	$mid = $gBitProduct->getPreference( 'products_custom_tpl', 'bitpackage:bitcommerce/page_product_info.tpl' );
 
 	// Comments engine!
 	if( $gCommerceSystem->getConfig( 'SHOW_PRODUCT_INFO_REVIEWS' ) ) {

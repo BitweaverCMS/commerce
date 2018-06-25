@@ -5,9 +5,9 @@
 {/if}
 
 {if $gBitUser->hasPermission('p_commerce_admin')}
-		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&products_id={$gBitProduct->getField('products_id')}&action=new_product">{booticon ipackage="bitcommerce" iname="icon-pencil" iexplain="Edit Product"}</a>
-		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{booticon iname="icon-cogs" iexplain="Edit Product Options"}</a>
+		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{booticon iname="icon-check" iexplain="Edit Product Options"}</a>
 		<a title="{tr}Prices{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_price_manager.php?product_type={$gBitProduct->getField('products_type')}&current_category_id={$gBitProduct->getField('categories_id')}">{booticon  iname="icon-money" iexplain="Edit Product Prices"}</a>
+		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&products_id={$gBitProduct->getField('products_id')}&action=new_product">{booticon ipackage="bitcommerce" iname="icon-pencil" iexplain="Edit Product"}</a>
 {/if}
 </div>
 
@@ -28,7 +28,7 @@
 
 		<div class="row">
 			{if $gBitProduct->getField('products_description')}
-			<div class="col-sm-7">
+			<div class="col-md-8 col-sm-7 col-xs-12">
 				<div class="content">
 					{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
 						<div class="form-group">
@@ -46,8 +46,8 @@
 				</div>
 			</div>
 			{/if}
-			<div class="col-sm-5">
-				<div class="well">
+			<div class="col-md-4 col-sm-5 col-xs-12">
+				<div class="product-options well">
 					{if $gBitProduct->getBasePrice() > 0}
 					<div class="form-group">
 						{assign var=displayPrice value=$gBitProduct->getDisplayPrice()}
