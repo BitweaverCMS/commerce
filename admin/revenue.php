@@ -70,6 +70,7 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_timeframe.tpl', 'Revenue By Timeframe' , array( 'display_mode' => 'admin' ));
 } else {
 	$listHash['max_records'] = -1;
+	$listHash['order_min'] = .01;
 	$revStats = $stats->getAggregateRevenue( $listHash );
 	$gBitSmarty->assign( 'stats', $revStats );
 	if( BitBase::getParameter( $_REQUEST, 'display' ) == 'matrix' ) {

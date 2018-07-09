@@ -113,6 +113,11 @@ class CommerceStatistics extends BitSingleton {
 			$pParamHash['max_records'] = 12;
 		}
 
+		if( isset( $pParamHash['order_min'] ) ) {
+			$whereSql .= ' AND co.`order_total`>? ';
+			$bindVars[] = $pParamHash['order_min'];
+		}
+		
 		if( !empty( $pParamHash['delivery_country'] ) ) {
 			$whereSql .= ' AND co.`delivery_country`=? ';
 			$bindVars[] = $pParamHash['delivery_country'];
@@ -121,7 +126,8 @@ class CommerceStatistics extends BitSingleton {
 		$ret = array();
 
 		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
-				FROM " . TABLE_ORDERS . " WHERE `orders_status` > 0 GROUP BY `hash_key` $whereSql
+				FROM " . TABLE_ORDERS . " co WHERE `orders_status` > 0 $whereSql
+				GROUP BY `hash_key` 
 				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
 			if( $rs->RowCount() ) {
