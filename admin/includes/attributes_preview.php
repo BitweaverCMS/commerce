@@ -42,14 +42,11 @@
         $options_order_by= ' order by popt.`products_options_name`';
       }
 
-      $sql = "select distinct popt.`products_options_id`, popt.products_options_name`, popt.`products_options_sort_order`,
-                              popt.`products_options_type`, popt.products_options_length`, popt.`products_options_comment`, popt.`products_options_size`,
-                              popt.`products_options_images_per_row`,
-                              popt.`products_options_images_style`
-              from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
-              where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
-              and             patrib.`products_options_id` = popt.`products_options_id`
-              and             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
+      $sql = "SELECT DISTINCT popt.`products_options_id`, popt.products_options_name`, popt.`products_options_sort_order`, popt.`products_options_type`, popt.products_options_length`, popt.`products_options_comment` popt.`products_options_images_per_row`, popt.`products_options_images_style`
+              FROM        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
+              WHERE           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
+              AND             patrib.`products_options_id` = popt.`products_options_id`
+              AND             popt.`language_id` = '" . (int)$_SESSION['languages_id'] . "' " .
               $options_order_by;
 
       $products_options_names = $gBitDb->Execute($sql);
@@ -423,7 +420,7 @@
 //echo $products_options->fields['products_options_values_id'].'#';
                   if ((ereg_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'])) {
 //                  if ((ereg_replace('txt_', '', $key) == $products_options_names->fields['products_options_id'] and $value == $products_options->fields['products_options_values_id'])) {
-                    $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" size="' . $products_options_names->fields['products_options_size'] .'" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . stripslashes($value) .'" />  ';
+                    $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . stripslashes($value) .'" />  ';
                     $tmp_html .= $products_options_details;
                     break;
                   }
@@ -431,7 +428,7 @@
 
             } else {
               $tmp_value = $gBitCustomer->mCart->contents[$_GET['products_id']]['attributes_values'][$products_options_names->fields['products_options_id']];
-              $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" size="' . $products_options_names->fields['products_options_size'] .'" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />  ';
+              $tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $products_options_names->fields['products_options_id'] . ']" maxlength="' . $products_options_names->fields['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />  ';
               $tmp_html .= $products_options_details;
               $tmp_word_cnt_string = '';
 // calculate word charges

@@ -35,18 +35,15 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
 
-				$query = "SELECT `products_options_key` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, `products_options_value_text`
+				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_value_text`
 						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
-							INNER JOIN " . TABLE_PRODUCTS_OPTIONS . " cpo ON( cba.products_options_id=cpo.products_options_id )
 							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON ( cba.products_options_values_id=cpa.products_options_values_id )
+							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " cpo ON( cba.products_options_id=cpo.products_options_id )
 						  WHERE cba.`customers_basket_id` = ?
 						  ORDER BY cpo.`products_options_sort_order`, cpa.`products_options_sort_order`";
 				if( $attributes = $this->mDb->getAssoc( $query, array( $basketId ) ) ) {
-
-				foreach( $attributes as $productsOptionsKey=>$attribute )
-					$this->contents[$basketProduct['products_key']]['attributes'][$productsOptionsKey] = $attribute['products_options_values_id'];
-					//CLR 020606 if text attribute, then set additional information
-					if ($attribute['products_options_values_id'] == PRODUCTS_OPTIONS_VALUES_TEXT_ID) {
+					foreach( $attributes as $productsOptionsKey=>$attribute ) {
+						$this->contents[$basketProduct['products_key']]['attributes'][$productsOptionsKey] = $attribute['products_options_values_id'];
 						$this->contents[$basketProduct['products_key']]['attributes_values'][$productsOptionsKey] = $attribute['products_options_value_text'];
 					}
 				}
@@ -80,75 +77,61 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		unset($this->cartID);
 	}
 
-	function addToCart($pProductsKey, $pQty = '1', $attributes = '', $notify = true) {
+	function addToCart($pProductsId, $pQty = '1', $attributes = array(), $notify = true) {
 		global $gBitUser, $gCommerceSystem;
-		$productsKey = zen_get_uprid($pProductsKey, $attributes);
+		$cartItemKey = $this->getUniqueCartItemKey( $pProductsId, $attributes );
+
 		if ($notify == true) {
-			$_SESSION['new_products_id_in_cart'] = $productsKey;
+			$_SESSION['new_products_id_in_cart'] = $cartItemKey;
 		}
 
+		$addQty = $this->get_quantity( $cartItemKey, $attributes ) + $pQty;
 		// overflow protection
-		if( $pQty > MAX_CART_QUANTITY ) {
-			$pQty = MAX_CART_QUANTITY;
+		if( $addQty > MAX_CART_QUANTITY ) {
+			$addQty = MAX_CART_QUANTITY;
 		}
 
 		$this->StartTrans();
-		if ($this->in_cart($productsKey)) {
-			$this->updateQuantity( $productsKey, $pQty );
-		} elseif( $exists = $this->mDb->GetOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( (int)zen_get_prid( $productsKey ) ) ) ) {
+		if ($this->in_cart($cartItemKey)) {
+			$this->updateQuantity( $cartItemKey, $addQty );
+		} elseif( $exists = $this->mDb->GetOne( "SELECT `products_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id`=?", array( (int)zen_get_prid( $cartItemKey ) ) ) ) {
 			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 
 			if( $gCommerceSystem->getConfig( 'QUANTITY_DECIMALS' ) ) {
 				// This is some fractional product crap - hope it still works...
 				switch (true) {
-					case (strstr($pQty, '.')):
+					case (strstr($addQty, '.')):
 						// remove all trailing zeros after zero
-						$pQty = preg_replace('/[0]+$/','',$pQty);
+						$addQty = preg_replace('/[0]+$/','',$addQty);
 						break;
 				}
 			}
 	
 			// insert into database
 			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `products_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
-			$this->mDb->query( $sql, array( $selectValue, $productsKey, zen_get_prid( $productsKey ), $pQty, date('Ymd') ) );
-			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $productsKey, $selectValue ) ); 
+			$this->mDb->query( $sql, array( $selectValue, $cartItemKey, zen_get_prid( $cartItemKey ), $addQty, date('Ymd') ) );
+			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $cartItemKey, $selectValue ) ); 
 
 			if (is_array($attributes)) {
 				reset($attributes);
 				foreach( $attributes as $option=>$value ) {
-					// check if input was from text box.	If so, store additional attribute information
-					// check if text input is blank, if so do not add to attribute lists
-					$attr_value = NULL;
-					$blank_value = FALSE;
-					if (strstr($option, TEXT_PREFIX)) {
-						if (trim($value) == NULL) {
-							$blank_value = TRUE;
-						} else {
-							$option = substr($option, strlen(TEXT_PREFIX));
-							$attr_value = stripslashes($value);
-							$value = PRODUCTS_OPTIONS_VALUES_TEXT_ID;
-						}
-					}
-
-					if (!$blank_value) {
 						if (is_array($value) ) {
 							reset($value);
-							while (list($opt, $val) = each($value)) {
-								$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . "
-										(`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`)
-										VALUES ( ?, ?, ?, ? )";
-								$this->mDb->query($sql, array( $basketId, (int)$option, (int)$option.'_chk'.$val, (int)$val ) );
+							foreach( $value AS $optValId =>$optVal ) {
+								$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_value_text`) VALUES ( ?, ?, ?, ?, ? )";
+								$this->mDb->query($sql, array( $basketId, (int)$option, $option.'='.$optValId, (int)$optValId, ($optVal!=$optValId ? $optVal : NULL) ) );
 							}
 						} else {
 							// update db insert to include attribute value_text. This is needed for text attributes.
 							$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_value_text`) VALUES (?, ?, ?, ?, ?)";
-							$this->mDb->query( $sql, array( $basketId, (int)$option, $option, (int)$value, $attr_value ) );
+							$bindVars = array( $basketId, (int)$option, $option, (int)$value, (!is_numeric( $value ) ? $value : NULL) );
+							$this->mDb->query( $sql, $bindVars );
 						}
-					}
 				}
 			}
 		}
+
 		$this->CompleteTrans();
 		$this->cleanup();
 
@@ -158,28 +141,49 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->cartID = $this->generate_cart_id();
 	}
 
+	////
+	// Return a unique product key based on attributes, used for ensuring uniqueness for shopping cart items
+	public static function getUniqueCartItemKey( $prid, $params ) {
+		if( (is_array($params)) && (!strstr($prid, ':')) ) {
+			$uprid = $prid;
+			while (list($option, $value) = each($params)) {
+				if (is_array($value)) {
+					while (list($opt, $val) = each($value)) {
+					$uprid .= '{' . $option . '}' . trim($opt).':'.trim($val);
+					}
+				} else {
+					$uprid .= '{' . $option . '}' . trim($value);
+				}
+			}
+			return $prid . ':' . md5($uprid);
+		} else {
+			return $prid;
+		}
+	}
+
+
 	function verifyQuantity( $pProductsKey, $pQty ) {
 
 		$pQty = (int)$pQty;
 
-		// verify qty to add
-		$add_max = zen_get_products_quantity_order_max($_REQUEST['products_id']);
-		$cart_qty = $gBitCustomer->mCart->in_cart_mixed($_REQUEST['products_id']);
-		$new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
-		if (($add_max == 1 and $cart_qty == 1)) {
-			// do not add
-			$new_qty = 0;
-		} else {
-			// adjust quantity if needed
-			if (($new_qty + $cart_qty > $add_max) and $add_max != 0) {
-				$new_qty = $add_max - $cart_qty;
-			}
-		}
-		if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
-			$messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
-		}
-
 		if( $product = $this->getProductObject( $pProductsKey ) ) {
+			// verify qty to add
+			$add_max = $product->getField( 'products_quantity_order_max' );
+			$cart_qty = $gBitCustomer->mCart->in_cart_mixed($_REQUEST['products_id']);
+			$new_qty = zen_get_buy_now_qty($_REQUEST['products_id']);
+			if (($add_max == 1 and $cart_qty == 1)) {
+				// do not add
+				$new_qty = 0;
+			} else {
+				// adjust quantity if needed
+				if (($new_qty + $cart_qty > $add_max) and $add_max != 0) {
+					$new_qty = $add_max - $cart_qty;
+				}
+			}
+			if( !empty( $adjust_max ) && $adjust_max == 'true' ) {
+				$messageStack->add_session('header', ERROR_MAXIMUM_QTY . ' - ' . zen_get_products_name($prodId), 'caution');
+			}
+
 			if( is_object( $product ) && $pQty > $product->getField( 'products_quantity_order_max' ) ) { 
 				// we are trying to add quantity greater than max purchable quantity
 				$pQty = $product->getField( 'products_quantity_order_max' );
@@ -193,40 +197,37 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 	function verifyCheckout() {
 		global $gCommerceSystem;
-		foreach( $this->contents AS $productsKey => $productsHash ) {
-			$product = $this->getProductObject( $productsKey );
+		foreach( $this->contents AS $cartItemKey => $productsHash ) {
+			$product = $this->getProductObject( $cartItemKey );
 			$check_quantity = $productsHash['products_quantity'];
 			$check_quantity_min = $product->getField( 'products_quantity_order_min' );
 			
 			// Check quantity min
-			if ($new_check_quantity = $this->in_cart_mixed( $productsKey ) ) {
+			if ($new_check_quantity = $this->in_cart_mixed( $cartItemKey ) ) {
 				$check_quantity = $new_check_quantity;
 			}
 
 			$fix_once = 0;
 			if ($check_quantity < $check_quantity_min) {
 				$fix_once ++;
-				$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
+				$this->mErrors['checkout'][$cartItemKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . $product->getQuantityMinUnitsDisplay() . '</span> ';
 			}
 
 			// Check Quantity Units if not already an error on Quantity Minimum
 			if ($fix_once == 0) {
 				$check_units = $product->getField( 'products_quantity_order_units' );
 				if ( fmod($check_quantity,$check_units) != 0 ) {
-					$this->mErrors['checkout'][$productsKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . zen_get_products_quantity_min_units_display(zen_get_prid( $productsKey ), false, true) . '</span> ';
+					$this->mErrors['checkout'][$cartItemKey] = tra( 'Product: ' ) . $product->getTitle() . tra( ' ... Quantity Units errors - ' ) . tra( 'You ordered a total of: ' ) . $check_quantity	. ' <span class="alertBlack">' . $product->getQuantityMinUnitsDisplay() . '</span> ';
 				}
 			}
 
 			// Check if the required stock is available. If insufficent stock is available return an out of stock message
 			if ( $gCommerceSystem->getConfig( 'STOCK_CHECK' ) && !$gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
-				foreach( $this->contents AS $productsKey => $productsHash ) {
-					$product = $this->getProductObject( $productsKey );
-					if( !$product->getField( 'products_quantity' ) && !$product->getField( 'products_virtual' ) ) {
-						if( $gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
-							$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.' );
-						} else {
-							$this->mErrors['checkout'][$productsKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock or there are not enough in stock to fill your order.<br />Please change the quantity of products marked with (' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '). Thank you' );
-						}
+				if( !$product->getField( 'products_quantity' ) && !$product->getField( 'products_virtual' ) ) {
+					if( $gCommerceSystem->getConfig( 'STOCK_ALLOW_CHECKOUT' ) ) {
+						$this->mErrors['checkout'][$cartItemKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.' );
+					} else {
+						$this->mErrors['checkout'][$cartItemKey] = tra( 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock or there are not enough in stock to fill your order.<br />Please change the quantity of products marked with (' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '). Thank you' );
 					}
 				}
 			}
@@ -279,8 +280,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$total_items = 0;
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($productsKey, ) = each($this->contents)) {
-				$total_items += $this->get_quantity($productsKey);
+			while (list($cartItemKey, ) = each($this->contents)) {
+				$total_items += $this->get_quantity($cartItemKey);
 			}
 		}
 
@@ -312,8 +313,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$product_id_list = '';
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($productsKey, ) = each($this->contents)) {
-				$product_id_list .= ', ' . zen_db_input($productsKey);
+			while (list($cartItemKey, ) = each($this->contents)) {
+				$product_id_list .= ', ' . zen_db_input($cartItemKey);
 			}
 		}
 
@@ -338,16 +339,16 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			}
 
 			reset($this->contents);
-			foreach( array_keys( $this->contents ) as $productsKey ) {
-				$qty = $this->contents[$productsKey]['products_quantity'];
-				// $productsKey will be unique joined string of products_id:hash for cart, eg: 17054:be19531ba04f4dc3fd33bca49a16dca8 
-				$prid = zen_get_prid( $productsKey );
+			foreach( array_keys( $this->contents ) as $cartItemKey ) {
+				$qty = $this->contents[$cartItemKey]['products_quantity'];
+				// $cartItemKey will be unique joined string of products_id:hash for cart, eg: 17054:be19531ba04f4dc3fd33bca49a16dca8 
+				$prid = zen_get_prid( $cartItemKey );
 
 				// products price
 				$product = $this->getProductObject( $prid );
 				// sometimes 0 hash things can get stuck in cart.
 				if( $product && $product->isValid() ) {
-					$productAttributes = !empty( $this->contents[$productsKey]['attributes'] ) ? $this->contents[$productsKey]['attributes'] : array();
+					$productAttributes = !empty( $this->contents[$cartItemKey]['attributes'] ) ? $this->contents[$cartItemKey]['attributes'] : array();
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
 					$purchasePrice = $product->getPurchasePrice( $qty, $productAttributes );
 					$onetimeCharges = $product->getOneTimeCharges( $qty, $productAttributes );
@@ -356,7 +357,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					$productsTotal = zen_add_tax( (($purchasePrice * $qty) + $onetimeCharges), $products_tax);
 
 					// shipping adjustments
-					if (($product->getField('product_is_always_free_ship') == 1) || $product->isVirtual( $this->contents[$productsKey] ) || (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
+					if (($product->getField('product_is_always_free_ship') == 1) || $product->isVirtual( $this->contents[$cartItemKey] ) || (preg_match('/^GIFT/', addslashes($product->getField('products_model'))))) {
 						$this->free_shipping_item += $qty;
 						$this->free_shipping_price += $productsTotal;
 						$this->free_shipping_weight += $productWeight;
@@ -380,9 +381,9 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		if( $product && $product->isValid() ) {
 			$prid = $product->mProductsId;
 
-			$attr = !empty( $this->contents[$pProductsKey]['attributes'] ) ?  $this->contents[$pProductsKey]['attributes'] : array();
-
-			$productHash =$product->mInfo;
+			$productHash = $product->mInfo;
+			$productHash['attributes'] = $this->getParameter( $this->contents[$pProductsKey], 'attributes' );
+			$productHash['attributes_values'] = $this->getParameter( $this->contents[$pProductsKey], 'attributes_values' );
 			// this is the stock quantity coming out of mInfo
 			unset( $productHash['products_quantity'] );
 			$productHash['id'] = $pProductsKey;
@@ -394,18 +395,16 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['image_url'] = $product->getImageUrl();
 			$productHash['products_quantity'] = (!empty( $this->contents[$pProductsKey]['products_quantity'] ) ? $this->contents[$pProductsKey]['products_quantity'] : NULL);
 			$productHash['commission'] = $product->getCommissionUserCharges();
-			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $attr );
-			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $attr );
+			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $productHash['attributes'] );
+			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $productHash['attributes'] );
 			$productHash['tax_rate'] = zen_get_tax_rate( $product->getField( 'products_tax_class_id' ) );
 			$productHash['final_price'] = $productHash['price'];
 			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , $productHash['tax_rate'], $productHash['products_quantity'] );
-			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $attr );
+			$productHash['onetime_charges'] = $product->getOneTimeCharges( $productHash['products_quantity'], $productHash['attributes'] );
 			$productHash['onetime_charges_display'] = $currencies->display_price($productHash['onetime_charges'], $productHash['tax_rate'], 1);
 			$productHash['tax_class_id'] = $product->getField('products_tax_class_id');
 			$productHash['tax'] = $product->getField('tax_rate');
 			$productHash['tax_description'] = $product->getField('tax_description');
-			$productHash['attributes'] = $attr;
-			$productHash['attributes_values'] = (isset( $productHash['attributes_values'] ) ? $productHash['attributes_values'] : '');
 		}
 
 		return $productHash;
@@ -439,14 +438,14 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 		if ( $this->count_contents() > 0 ) {
 			reset($this->contents);
-			foreach( array_keys( $this->contents ) as $productsKey ) {
-				if( $product = $this->getProductObject( $productsKey ) ) {
+			foreach( array_keys( $this->contents ) as $cartItemKey ) {
+				if( $product = $this->getProductObject( $cartItemKey ) ) {
 					if( preg_match( '/^GIFT/', addslashes( $product->getField( 'products_model' ) ) ) ) {
-						$gift_voucher += $product->getPurchasePrice( $this->contents[$productsKey]['products_quantity'], $this->contents[$productsKey]['attributes'] );
+						$gift_voucher += $product->getPurchasePrice( $this->contents[$cartItemKey]['products_quantity'], $this->contents[$cartItemKey]['attributes'] );
 					}
-					if (isset($this->contents[$productsKey]['attributes'])) {
-						reset($this->contents[$productsKey]['attributes']);
-						while (list(, $value) = each($this->contents[$productsKey]['attributes'])) {
+					if (isset($this->contents[$cartItemKey]['attributes'])) {
+						reset($this->contents[$cartItemKey]['attributes']);
+						while (list(, $value) = each($this->contents[$cartItemKey]['attributes'])) {
 							$virtual_check_query = "SELECT COUNT(*) as `total`
 													FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 														INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_options_values_id` = pad.`products_options_values_id`)
@@ -631,12 +630,12 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$in_cart_check_qty=0;
 
 		reset($this->contents);
-		while (list($productsKey, ) = each($this->contents)) {
-			$testing_id = zen_get_prid($productsKey);
+		while (list($cartItemKey, ) = each($this->contents)) {
+			$testing_id = zen_get_prid($cartItemKey);
 			// check if field it true
 			$product_check = $this->mDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .  " where `products_id` = ?" , array( $testing_id ) );
 			if( $product_check == $check_value ) {
-				$in_cart_check_qty += $this->contents[$productsKey]['products_quantity'];
+				$in_cart_check_qty += $this->contents[$cartItemKey]['products_quantity'];
 			}
 		}
 		return $in_cart_check_qty;

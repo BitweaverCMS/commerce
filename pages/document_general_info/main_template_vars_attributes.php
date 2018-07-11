@@ -39,10 +39,7 @@
         $options_order_by= ' order by popt.products_options_name';
       }
 
-      $sql = "select distinct popt.`products_options_id`, popt.`products_options_name`, popt.`products_options_sort_order`,
-                              popt.`products_options_type`, popt.`products_options_length`, popt.`products_options_comment`, popt.`products_options_size`,
-                              popt.`products_options_images_per_row`,
-                              popt.`products_options_images_style`
+      $sql = "SELECT distinct popt.`products_options_id`, popt.`products_options_name`, popt.`products_options_sort_order`, popt.`products_options_type`, popt.`products_options_length`, popt.`products_options_comment`, popt.`products_options_images_per_row`, popt.`products_options_images_style`
 				FROM " . TABLE_PRODUCTS_OPTIONS . " popt
 					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_id` = popt.`products_options_id`)
 					INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON (pa.`products_options_values_id`=pom.`products_options_values_id`)

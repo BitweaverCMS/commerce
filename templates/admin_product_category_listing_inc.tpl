@@ -17,12 +17,10 @@
 <tr>
 	<th class="text-right">{tr}ID{/tr}</th>
 	<th>{tr}Categories{/tr}</th>
-	<th class="text-right">{tr}Special{/tr}/{tr}Sale{/tr}</th>
 	<th class="text-right">{tr}Quantity{/tr}</th>
 	<th class="text-center">{tr}Status{/tr}</th>
 	<th class="text-right">{tr}Sort Order{/tr}</th>
-	<th class="text-right">
-	</th>
+	<th class="text-right"></th>
 </tr>
 {foreach from=$catList key=catId item=category}
 {assign var=catPath value=$catId|zen_get_path}
@@ -30,7 +28,6 @@
 <tr>
 	<td class="text-right">{$catId}</td>
 	<td><a href="{$catLink}">{booticon iname="icon-folder-close"} {$category.categories_name}</a></td>
-	<td class="text-right">{0|zen_get_products_sale_discount:$catId:TRUE}</td>
 	<td class="text-right">{$category.total_products_on} {tr}of{/tr} {$category.total_products} {tr}active{/tr}</td>
 	<td class="text-center">
 	{if $category.categories_status == '1'}

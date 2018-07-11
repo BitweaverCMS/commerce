@@ -322,18 +322,6 @@
 	}
 
 
-	function zen_get_uprid($prid, $params) {
-		$uprid = $prid;
-		if ( (is_array($params)) && (!strstr($prid, '{')) ) {
-			while (list($option, $value) = each($params)) {
-				$uprid = $uprid . '{' . $option . '}' . $value;
-			}
-		}
-
-		return $uprid;
-	}
-
-
 	function zen_get_orders_status_name($orders_status_id, $language_id = '') {
 		global $gBitDb;
 
@@ -1483,43 +1471,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 	}
 
 ////
-//
-	function zen_has_product_attributes_downloads($products_id, $check_valid=false) {
-		global $gBitDb;
-		if (DOWNLOAD_ENABLED == 'true') {
-			$download_display_query_raw ="SELECT pa.`products_attributes_id`, pad.`products_attributes_filename`
-																		FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
-										INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pad.`products_attributes_id`= pa.`products_attributes_id`)
-																		WHERE pom.`products_id`=?";
-			$download_display = $gBitDb->query( $download_display_query_raw, array( $products_id ) );
-			if ($check_valid == true) {
-				$valid_downloads = '';
-				while (!$download_display->EOF) {
-					// Could go into /admin/includes/configure.php
-					// define('DIR_FS_DOWNLOAD', DIR_FS_CATALOG . 'download/');
-					if (!file_exists(DIR_FS_CATALOG . 'download/' . $download_display->fields['products_attributes_filename'])) {
-						$valid_downloads .= '<br />&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif') . ' Invalid: ' . $download_display->fields['products_attributes_filename'];
-						// break;
-					} else {
-						$valid_downloads .= '<br />&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif') . ' Valid&nbsp;&nbsp;: ' . $download_display->fields['products_attributes_filename'];
-					}
-					$download_display->MoveNext();
-				}
-			} else {
-				if ($download_display->RecordCount() != 0) {
-					$valid_downloads = $download_display->RecordCount() . ' files';
-				} else {
-					$valid_downloads = 'none';
-				}
-			}
-		} else {
-			$valid_downloads = 'disabled';
-		}
-		return $valid_downloads;
-	}
-
-////
 // Count how many subcategories exist in a category
 // TABLES: categories
 // old name zen_get_parent_category_name
@@ -1885,39 +1836,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 		}
 
 		return $valid_downloads;
-	}
-
-////
-// salemaker categories array
-	function zen_parse_salemaker_categories($clist) {
-		$clist_array = explode(',', $clist);
-
-// make sure no duplicate category IDs exist which could lock the server in a loop
-		$tmp_array = array();
-		$n = sizeof($clist_array);
-		for ($i=0; $i<$n; $i++) {
-			if (!in_array($clist_array[$i], $tmp_array)) {
-				$tmp_array[] = $clist_array[$i];
-			}
-		}
-		return $tmp_array;
-	}
-
-////
-// update salemaker product prices per category per product
-	function zen_update_salemaker_product_prices($salemaker_id) {
-		global $gBitDb;
-		$zv_categories = $gBitDb->Execute("SELECT `sale_categories_selected` FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_id` = '" . $salemaker_id . "'");
-
-		$za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
-		$n = sizeof($za_salemaker_categories);
-		for ($i=0; $i<$n; $i++) {
-			$update_products_price = $gBitDb->Execute("SELECT `products_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `categories_id`='" . $za_salemaker_categories[$i] . "'");
-			while (!$update_products_price->EOF) {
-				zen_update_lowest_purchase_price($update_products_price->fields['products_id']);
-				$update_products_price->MoveNext();
-			}
-		}
 	}
 
 ////

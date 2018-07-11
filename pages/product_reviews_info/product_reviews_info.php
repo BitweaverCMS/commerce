@@ -41,7 +41,7 @@
 
         $the_button = $link;
         $products_link = '<br />';
-        echo zen_get_buy_now_button($review_info->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($review_info->fields['products_id']);
+        echo zen_get_buy_now_button($review_info->fields['products_id'], $the_button, $products_link);
       ?>
     </td>
   </tr>

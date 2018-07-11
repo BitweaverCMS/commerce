@@ -3,6 +3,9 @@
 		{foreach from=$productOptions key=optionsId item=opts}
 			<div class="form-group">
 				{formlabel label=$opts.name}
+
+				{if $opts.comment}{formhelp note=$opts.comment}{/if}
+
 				{forminput}
 					{$opts.menu}
 					{if $opts.attributes_image}
@@ -10,13 +13,6 @@
 					{/if}
 				{/forminput}
 			</div>
-
-			{if $opts.comment}
-				<div class="form-group">
-					{formlabel label=''}
-					{forminput}{$opts.comment}{/forminput}
-				</div>
-			{/if}
 
 			{if $productSettings.show_onetime_charges_description == 'true'}
 				<div class="form-group">

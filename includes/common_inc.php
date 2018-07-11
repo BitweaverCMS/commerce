@@ -560,7 +560,7 @@ function zen_get_languages() {
 			" where `products_id` = ?", array( zen_get_prid( $products_id ) ) );
     return( $product_check == '1' );
   }
-
+ /* MOVED TO CommerceProduct:: 
 ////
 // Return a product's minimum quantity
 // TABLES: products
@@ -591,49 +591,6 @@ function zen_get_languages() {
     $the_products_quantity_order_max = $gBitDb->query("select `products_id`, `products_quantity_order_max` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $product_id ) );
     return $the_products_quantity_order_max->fields['products_quantity_order_max'];
   }
-
-////
-// Find quantity discount quantity mixed and not mixed
-  function zen_get_products_quantity_discount_mixed($product_id, $qty) {
-    global $gBitDb;
-    global $gBitCustomer;
-
-    $product_discounts = $gBitDb->query("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
-
-    if ($product_discounts->fields['products_quantity_mixed']) {
-      if ($new_qty = $gBitCustomer->mCart->count_contents_qty($product_id)) {
-        $qty = $new_qty;
-      }
-    }
-    return $qty;
-  }
-
-
-////
-// Return a product's quantity box status
-// TABLES: products
-  function zen_get_products_qty_box_status($product_id) {
-    global $gBitDb;
-
-    $the_products_qty_box_status = $gBitDb->query("select `products_id`, `products_qty_box_status`  from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
-    return $the_products_qty_box_status->fields['products_qty_box_status'];
-  }
-
-////
-// Return a product mixed setting
-// TABLES: products
-  function zen_get_products_quantity_mixed($product_id) {
-    global $gBitDb;
-
-    $the_products_quantity_mixed = $gBitDb->query("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
-    if ($the_products_quantity_mixed->fields['products_quantity_mixed'] == '1') {
-      $look_up = true;
-    } else {
-      $look_up = false;
-    }
-    return $look_up;
-  }
-
 
 ////
 // Return quantity buy now
@@ -672,6 +629,52 @@ function zen_get_languages() {
 
 
 ////
+// Find quantity discount quantity mixed and not mixed
+  function zen_get_products_quantity_discount_mixed($product_id, $qty) {
+    global $gBitDb;
+    global $gBitCustomer;
+
+    $product_discounts = $gBitDb->query("select `products_price`, `products_quantity_mixed`, `product_is_free` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+
+    if ($product_discounts->fields['products_quantity_mixed']) {
+      if ($new_qty = $gBitCustomer->mCart->count_contents_qty($product_id)) {
+        $qty = $new_qty;
+      }
+    }
+    return $qty;
+  }
+
+////
+// Return a product mixed setting
+// TABLES: products
+  function zen_get_products_quantity_mixed($product_id) {
+    global $gBitDb;
+
+    $the_products_quantity_mixed = $gBitDb->query("select `products_id`, `products_quantity_mixed` from " . TABLE_PRODUCTS . " where `products_id` = '" . $product_id . "'");
+    if ($the_products_quantity_mixed->fields['products_quantity_mixed'] == '1') {
+      $look_up = true;
+    } else {
+      $look_up = false;
+    }
+    return $look_up;
+  }
+
+////
+// Return a product's quantity box status
+// TABLES: products
+  function zen_get_products_qty_box_status($product_id) {
+    global $gBitDb;
+
+    $the_products_qty_box_status = $gBitDb->query("select `products_id`, `products_qty_box_status`  from " . TABLE_PRODUCTS . " where `products_id` = '" . (int)$product_id . "'");
+    return $the_products_qty_box_status->fields['products_qty_box_status'];
+  }
+
+
+*/
+
+
+
+////
 // are there discount quanties
   function zen_get_discount_qty($product_id, $check_qty) {
     global $gBitDb;
@@ -687,6 +690,38 @@ function zen_get_languages() {
     }
   }
 
+////
+// salemaker categories array
+  function zen_parse_salemaker_categories($clist) {
+    $clist_array = explode(',', $clist);
+
+// make sure no duplicate category IDs exist which could lock the server in a loop
+    $tmp_array = array();
+    $n = sizeof($clist_array);
+    for ($i=0; $i<$n; $i++) {
+      if (!in_array($clist_array[$i], $tmp_array)) {
+        $tmp_array[] = $clist_array[$i];
+      }
+    }
+    return $tmp_array;
+  }
+
+////
+// update salemaker product prices per category per product
+  function zen_update_salemaker_product_prices($salemaker_id) {
+    global $gBitDb;
+    $zv_categories = $gBitDb->Execute("select `sale_categories_selected` from " . TABLE_SALEMAKER_SALES . " where `sale_id` = '" . $salemaker_id . "'");
+
+    $za_salemaker_categories = zen_parse_salemaker_categories($zv_categories->fields['sale_categories_selected']);
+    $n = sizeof($za_salemaker_categories);
+    for ($i=0; $i<$n; $i++) {
+      $update_products_price = $gBitDb->Execute("select `products_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `categories_id`='" . $za_salemaker_categories[$i] . "'");
+      while (!$update_products_price->EOF) {
+        zen_update_lowest_purchase_price($update_products_price->fields['products_id']);
+        $update_products_price->MoveNext();
+      }
+    }
+  }
 
 ////
 // Return a product ID from a product ID with attributes

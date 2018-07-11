@@ -294,7 +294,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options_types' => "
   products_options_types_id I4,
-  products_options_types_name C(32)
+  products_options_types_name C(32),
+  products_options_types_description X
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
@@ -303,9 +304,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_options' => "
   products_options_name C(32),
   products_options_sort_order I4,
   products_options_type I2,
-  products_options_length I2 NOTNULL default '32',
+  products_options_length I2 NOTNULL default '64',
   products_options_comment C(64),
-  products_options_size I2 NOTNULL default '32',
   products_options_images_per_row I2 default '5',
   products_options_images_style I1 default '0',
   products_options_html_attrib X
@@ -316,6 +316,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_products_attributes' => "
   products_options_id I4 NOTNULL,
   products_attributes_id I4 NOTNULL AUTO,
   products_options_values_name C(128),
+  products_options_values_comment C(256),
   options_values_price N(15,4),
   options_values_wholesale N(15,4),
   options_values_cogs N(15,4),
@@ -552,7 +553,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   customers_basket_id I4 NOTNULL,
   products_options_id I4 NOTNULL,
   products_options_values_id I4,
-  products_options_value_text C(64)
+  products_options_value_text X
   CONSTRAINT ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
 
@@ -1483,7 +1484,6 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Display Multiple Products Qty Box Status and Set Button Location', 'PRODUCT_LISTING_MULTIPLE_ADD_TO_CART', '3', 'Do you want to display Add Multiple Products Qty Box and Set Button Location?<br />0= off<br />1= Top<br />2= Bottom<br />3= Both', '8', '25', 'zen_cfg_select_option(array(''0'', ''1'', ''2'', ''3''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Display Product Description', 'PRODUCT_LIST_DESCRIPTION', '150', 'Do you want to display the Product Description?<br /><br />0= OFF<br />150= Suggested Length, or enter the maximum number of characters to display', '8', '30', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Check stock level', 'STOCK_CHECK', 'true', 'Check to see if sufficent stock is available', '9', '1', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Subtract stock', 'STOCK_LIMITED', 'true', 'Subtract product in stock by product orders', '9', '2', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Allow Checkout', 'STOCK_ALLOW_CHECKOUT', 'true', 'Allow customer to checkout even if there is insufficient stock', '9', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Mark product out of stock', 'STOCK_MARK_PRODUCT_OUT_OF_STOCK', '***', 'Display something on screen so customer can see which product has insufficient stock', '9', '4', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) VALUES ('Stock Re-order level', 'STOCK_REORDER_LEVEL', '5', 'Define when stock needs to be re-ordered', '9', '5', 'NOW')",
@@ -1820,15 +1820,27 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Document - General', 'document_general', '3', 'N', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Document - Product', 'document_product', '3', 'Y', 'NOW', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_product_types` ( `type_name`, `type_handler`, `type_master_type`, `allow_add_to_cart`, `date_added`, `last_modified` ) VALUES ('Product - Free Shipping', 'product_free_shipping', '1', 'Y', 'NOW', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (0, 'Dropdown')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (1, 'Text')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (2, 'Radio')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (3, 'Checkbox')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (4, 'File')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`) VALUES (5, 'Read Only')",
-//Disable for now, default TEXT option is needed for text lettering on some products. This brute force hack is crude. Will fix later. xoxo - spiderr
-//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_attributes` (`products_options_values_id`, `products_options_values_name`) VALUES (0, 'TEXT')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (0, 'Dropdown', '')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (1, 'Text', '')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (2, 'Radio', '')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (3, 'Checkbox', '')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (4, 'File', '')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (5, 'Read Only', '')",
 
+/*
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (6, 'number', 'Defines a field for entering a number')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (7, 'range', 'Defines a range control (like a slider control)')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (8, 'color', 'Defines a color picker')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (9, 'date', 'Defines a date control (year, month, day (no time))')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (10, 'datetime-local', 'Defines a date and time control (year, month, day, time (no timezone)')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (11, 'time', 'Defines a control for entering a time (no timezone)')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (12, 'week', 'Defines a week and year control (no timezone)')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (13, 'month', 'Defines a month and year control (no timezone)')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (14, 'url', 'Defines a field for entering a URL')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (15, 'email', 'Defines a field for an e-mail address')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (16, 'password', 'Defines a password field')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_products_options_types` (`products_options_types_id`, `products_options_types_name`, `products_options_types_description`) VALUES (17, 'tel', 'Defines a field for entering a telephone number')",
+*/
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (1,'Afghanistan', 'AF', 'AFG', '4', '1')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` VALUES (2,'Albania', 'AL', 'ALB', '8', '1')",

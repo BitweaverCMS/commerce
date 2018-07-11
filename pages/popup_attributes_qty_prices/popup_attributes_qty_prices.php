@@ -44,8 +44,7 @@ $show_onetime= 'false';
         $options_order_by= ' order by popt.products_options_name';
       }
 
-      $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
-                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size
+      $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order, popt.products_options_type, popt.products_options_length, popt.products_options_comment
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
               where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
               and             patrib.options_id = popt.products_options_id
@@ -141,7 +140,7 @@ $show_onetime= 'false';
       }
 
       $sql = "select distinct popt.products_options_id, popt.products_options_name, popt.products_options_sort_order,
-                              popt.products_options_type, popt.products_options_length, popt.products_options_comment, popt.products_options_size
+                              popt.products_options_type, popt.products_options_length, popt.products_options_comment
               from        " . TABLE_PRODUCTS_OPTIONS . " popt, " . TABLE_PRODUCTS_ATTRIBUTES . " patrib
               where           patrib.`products_id`='" . (int)$_GET['products_id'] . "'
               and             patrib.options_id = popt.products_options_id

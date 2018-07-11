@@ -421,44 +421,6 @@
 
 
 ////
-// Return a product ID with attributes
-/*
-  function zen_get_uprid_OLD($prid, $params) {
-    $uprid = $prid;
-    if ( (is_array($params)) && (!strstr($prid, '{')) ) {
-      while (list($option, $value) = each($params)) {
-        $uprid = $uprid . '{' . $option . '}' . $value;
-      }
-    }
-
-    return $uprid;
-  }
-*/
-
-
-////
-// Return a product ID with attributes
-function zen_get_uprid($prid, $params) {
-//print_r($params);
-	if( (is_array($params)) && (!strstr($prid, ':')) ) {
-		$uprid = $prid;
-		while (list($option, $value) = each($params)) {
-			if (is_array($value)) {
-				while (list($opt, $val) = each($value)) {
-				$uprid .= '{' . $option . '}' . trim($opt);
-				}
-			} else {
-				$uprid .= '{' . $option . '}' . trim($value);
-			}
-		}
-		return $prid . ':' . md5($uprid);
-	} else {
-		return $prid;
-	}
-}
-
-
-////
 //! Send email (text/html) using MIME
 // This is the old central mail function. The SMTP Server should be configured correctly in php.ini
 // Parameters:
@@ -959,8 +921,6 @@ function zen_get_uprid($prid, $params) {
 /////////////////////////////////////////////
 ////
 // call additional function files
-// prices and quantities
-  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_prices.php');
 // gv and coupons
   require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php');
 // categories, paths, pulldowns

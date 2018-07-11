@@ -61,26 +61,26 @@
 			${$product.final_price} {if $product.products_quantity>1} : ${$finalIncome} {/if} = 
 		</td>
 		<td class="text-right">
-			{math equation="n*(x-y)" assign=wholesaleProfit n=$product.products_quantity x=$product.final_price y=$product.products_wholesale }
+			{math equation="n*(x-y)" assign=wholesaleProfit n=$product.products_quantity x=$product.final_price|default:0 y=$product.products_wholesale|default:0}
 			{assign var=wholesaleProfitTotal value=$wholesaleProfitTotal+$wholesaleProfit}
 			+ {$wholesaleProfit|number_format:2}
 		</td>
 		<td class="text-right">
 			{if $gBitUser->hasPermission('p_admin')}
-			{math equation="n*(x-y)" assign=distributorIncome n=$product.products_quantity x=$product.products_wholesale y=$product.products_cogs}
+			{math equation="n*(x-y)" assign=distributorIncome n=$product.products_quantity x=$product.products_wholesale|default:0 y=$product.products_cogs|default:0}
 			{assign var=distributorIncomeTotal value=$distributorIncomeTotal+$distributorIncome}
 			+ [{$distributorIncome|number_format:2}]
 			{/if}
 		</td>
 		<td class="text-right">
 			{if $gBitUser->hasPermission('p_admin')}
-			{math equation="n*(x)" assign=cogs n=$product.products_quantity x=$product.products_cogs}
+			{math equation="n*(x)" assign=cogs n=$product.products_quantity x=$product.products_cogs|default:0}
 			{assign var=cogsTotal value=$cogsTotal+$cogs}
 			+ ({$cogs|number_format:2})
 			{/if}
 		</td>
 		{if $gBitUser->hasPermission('p_admin')}
-			{math equation="round( s-x-y-z, 4)" assign=auditValue s=$finalIncome x=$wholesaleProfit y=$distributorIncome z=$cogs}
+			{math equation="round( s-x-y-z, 4)" assign=auditValue s=$finalIncome x=$wholesaleProfit|default:0 y=$distributorIncome z=$cogs}
 			{if $auditValue != 0}
 			<td class="error">
 				Audit error {$auditValue}

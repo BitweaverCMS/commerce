@@ -82,6 +82,10 @@ class currencies extends BitBase {
 
 // class methods
 
+	function roundValue( $pValue, $pCurrency=DEFAULT_CURRENCY ) {
+		return round( $pValue, $this->currencies[$pCurrency]['decimal_places']);
+	}
+
 	function convert( $pValue, $pToCurrency=NULL, $pFromCurrency=DEFAULT_CURRENCY ) {
 		$convertValue = $pValue;
 		if( empty( $pToCurrency ) ) {
@@ -95,7 +99,7 @@ class currencies extends BitBase {
 				$convertValue = $convertValue * $this->currencies[$pToCurrency]['currency_value'];
 			}
 		}
-		return zen_round( $convertValue, $this->currencies[$pToCurrency]['decimal_places']);
+		return round( $convertValue, $this->currencies[$pToCurrency]['decimal_places']);
 	}
 
 	function displayConversion( $pValue, $pToCurrency, $pFromCurrency=DEFAULT_CURRENCY ) {
@@ -112,7 +116,7 @@ class currencies extends BitBase {
 			$rate = 1;
 		}
 
-		$format_string .= number_format(zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']);
+		$format_string .= number_format(round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']);
 
 		if( $this->currencies[$currency_type]['decimal_places'] ) {
 			$format_string = str_replace( $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['decimal_point'].'<span class="fraction">', $format_string).'</span>';
@@ -138,9 +142,9 @@ class currencies extends BitBase {
 			} else {
 				$rate = (zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
 			}
-			$currency_value = zen_round($number * $rate, $this->currencies[$currency_type]['decimal_places']);
+			$currency_value = round($number * $rate, $this->currencies[$currency_type]['decimal_places']);
 		} else {
-			$currency_value = zen_round($number, $this->currencies[$currency_type]['decimal_places']);
+			$currency_value = round($number, $this->currencies[$currency_type]['decimal_places']);
 		}
 
 		return $currency_value;

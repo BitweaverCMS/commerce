@@ -212,7 +212,7 @@ function clean_input( &$pArray ) {
 							$check = zen_get_attributes_valid($_POST['products_id'], $key, $value);
 							if ($check == false) {
 								// zen_get_products_name($_POST['products_id']) .
-								$the_list .= TEXT_ERROR_OPTION_FOR . '<span class="alertBlack">' . zen_options_name($key) . '</span>' . TEXT_INVALID_SELECTION_LABELED . '<span class="alertBlack">' . (zen_values_name($value) == 'TEXT' ? TEXT_INVALID_USER_INPUT : zen_values_name($value)) . '</span>' . '<br />';
+								$the_list .= '<div class="alert alert-danger">' . TEXT_ERROR_OPTION_FOR . TEXT_INVALID_SELECTION_LABELED . ' : ' . $key .' = '. $value . '</div>';
 							}
 						}
 					}
@@ -223,7 +223,7 @@ function clean_input( &$pArray ) {
 						// process normally
 
 						// iii 030813 added: File uploading: save uploaded files with unique file names
-						$real_ids = !empty( $_REQUEST['id'] ) ? $_REQUEST['id'] : 0;
+						$cartAttributes = !empty( $_REQUEST['id'] ) ? $_REQUEST['id'] : 0;
 						if( !empty( $_REQUEST['number_of_uploads'] ) ) {
 							require_once(DIR_FS_CLASSES . 'upload.php');
 							for ($i = 1, $n = $_REQUEST['number_of_uploads']; $i <= $n; $i++) {
@@ -238,7 +238,7 @@ function clean_input( &$pArray ) {
 											$gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
 										}
 										$insert_id = zen_db_insert_id( TABLE_FILES_UPLOADED, 'files_uploaded_id' );
-										$real_ids[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
+										$cartAttributes[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;
 										$products_options_file->set_filename("$insert_id" . $products_image_extention);
 										if (!($products_options_file->save())) {
 											break 2;
@@ -247,12 +247,11 @@ function clean_input( &$pArray ) {
 										break 2;
 									}
 								} else { // No file uploaded -- use previous value
-									$real_ids[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $_REQUEST[TEXT_PREFIX . UPLOAD_PREFIX . $i];
+									$cartAttributes[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $_REQUEST[TEXT_PREFIX . UPLOAD_PREFIX . $i];
 								}
 							}
 						}
-
-						$gBitCustomer->mCart->addToCart( $_POST['products_id'], ($gBitCustomer->mCart->get_quantity(zen_get_uprid($_POST['products_id'], $real_ids)) + $_POST['cart_quantity'] ), $real_ids );
+						$gBitCustomer->mCart->addToCart( $_POST['products_id'], $_POST['cart_quantity'], $cartAttributes );
 					}
 				}
 
@@ -265,11 +264,11 @@ function clean_input( &$pArray ) {
 				break;
 			// performed by the 'buy now' button in product listings and review page
 			case 'buy_now' :			
-				if (isset($_REQUEST['products_id'])) {
+				if (isset($_REQUEST['products_id']) && $gBitProduct->isValid() ) {
 					if (zen_has_product_attributes($_REQUEST['products_id'])) {
-						zen_redirect( CommerceProduct::getDisplayUrlFromId( $_REQUEST['products_id']) );
+						zen_redirect( $gBitProduct->getDisplayUrl() );
 					} else {
-						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], ($gBitCustomer->mCart->get_quantity( $_REQUEST['products_id'] ) + zen_get_buy_now_qty( $_REQUEST['products_id'] )) );
+						$gBitCustomer->mCart->addToCart($_REQUEST['products_id'], $gBitProduct->getBuyNowQuantity() );
 					}
 				}
 				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
@@ -278,7 +277,7 @@ function clean_input( &$pArray ) {
 			case 'multiple_products_add_product':
 				while ( list( $key, $qty ) = each($_REQUEST['products_id']) ) {
 					if( !zen_has_product_attributes( $_REQUEST['products_id'] ) ) {
-						$gBitCustomer->mCart->addToCart($prodId, ($gBitCustomer->mCart->get_quantity($prodId) + $qty) );
+						$gBitCustomer->mCart->addToCart($prodId, $qty );
 					}
 				}
 				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
@@ -315,17 +314,6 @@ function clean_input( &$pArray ) {
 					$_SESSION['navigation']->set_snapshot();
 					zen_redirect(FILENAME_LOGIN);
 				}
-				break;
-			case 'cust_order' :		 
-				if ($_SESSION['customer_id'] && isset($_REQUEST['pid'])) {
-					if (zen_has_product_attributes($_REQUEST['pid'])) {
-						zen_redirect(zen_href_link(zen_get_info_page($_REQUEST['pid']), 'products_id=' . $_REQUEST['pid']));
-					} else {
-						$gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `products_id` = '" . $_REQUEST['pid'] . "' and `customers_id` = '" . $_SESSION['customer_id'] . "'");
-						$gBitCustomer->mCart->addToCart($_REQUEST['pid'], $gBitCustomer->mCart->get_quantity($_REQUEST['pid'])+1);
-					}
-				}
-				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
 				break;
 
 			case 'add_wishlist' :	

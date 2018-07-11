@@ -5,15 +5,15 @@
 {/if}
 
 {if $gBitUser->hasPermission('p_commerce_admin')}
-		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&products_id={$gBitProduct->getField('products_id')}&action=new_product">{booticon ipackage="bitcommerce" iname="icon-pencil" iexplain="Edit Product"}</a>
-		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{booticon iname="icon-cogs" iexplain="Edit Product Options"}</a>
+		<a title="{tr}Options{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_options.php?products_id={$gBitProduct->getField('products_id')}">{booticon iname="icon-check" iexplain="Edit Product Options"}</a>
 		<a title="{tr}Prices{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/products_price_manager.php?product_type={$gBitProduct->getField('products_type')}&current_category_id={$gBitProduct->getField('categories_id')}">{booticon  iname="icon-money" iexplain="Edit Product Prices"}</a>
+		<a title="{tr}Edit{/tr}" href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/product.php?page=1&product_type={$gBitProduct->getField('products_type')}&cPath={$gBitProduct->getField('categories_id')}&products_id={$gBitProduct->getField('products_id')}&action=new_product">{booticon ipackage="bitcommerce" iname="icon-pencil" iexplain="Edit Product"}</a>
 {/if}
 </div>
 
-		<header class="page-header">
-			<h1>{$gBitProduct->getTitle()}</h1>
-		</header>
+<header class="page-header">
+	<h1>{$gBitProduct->getTitle()}</h1>
+</header>
 
 <div class="row">
 	{assign var=thumbUrl value=$gBitProduct->getImageUrl('large')}	
@@ -23,12 +23,12 @@
 	</div>
 	{/if}
 		
-	<div class="col-sm-8">
+	<div class="col-sm-{if $thumbUrl}8{else}12{/if}">
 		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
 
 		<div class="row">
 			{if $gBitProduct->getField('products_description')}
-			<div class="col-sm-7">
+			<div class="col-md-8 col-sm-7 col-xs-12">
 				<div class="content">
 					{if $smarty.const.SHOW_PRODUCT_INFO_MODEL == '1' && $gBitProduct->getField('products_model')}
 						<div class="form-group">
@@ -46,8 +46,8 @@
 				</div>
 			</div>
 			{/if}
-			<div class="col-sm-5">
-				<div class="well">
+			<div class="col-md-4 col-sm-5 col-xs-12">
+				<div class="product-options well">
 					{if $gBitProduct->getBasePrice() > 0}
 					<div class="form-group">
 						{assign var=displayPrice value=$gBitProduct->getDisplayPrice()}
@@ -81,10 +81,10 @@
 				{/if}
 
 				{if $gBitProduct->getField('products_discount_type')}
-				<div class="form-group">
-					{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
-					{include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
-				</div>
+					<div class="form-group">
+						{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
+						{include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
+					</div>
 				{/if}
 
 				{if $smarty.const.CUSTOMERS_APPROVAL == '3' and $smarty.const.TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM == ''}
@@ -102,51 +102,38 @@
 								({$qtyInCart} {tr}In Cart{/tr})
 							{/if}
 							</label>
-							<input class="input-mini form-control" type="number" name="cart_quantity" value="{$gBitProduct->mProductsId|zen_get_buy_now_qty}"/> {$gBitProduct->mProductsId|zen_get_products_quantity_min_units_display}
+							<input class="input-mini form-control" type="number" name="cart_quantity" value="{$gBitProduct->getBuyNowQuantity()}"/> {$gBitProduct->getQuantityMinUnitsDisplay()}
 						{/if}
 					</div>
 					<div class="form-group">
 						<input type="submit" class="btn btn-lg btn-primary" name="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" value="{tr}{$smarty.request.sub|default:"Add to Cart"}{/tr}" />
 					</div>
 				{/if}
+				</div>
+				{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
+				<div class="form-group">
+					{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`includes/templates/template_default/common/tpl_products_next_previous.php"}
+				</div>
+				{/if}
+
+				{if $smarty.const.SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1' && $gBitProduct->getField('products_date_available') > date('Y-m-d H:i:s')}
+				<div class="form-group">
+					<span class="warning">{tr}This product will be in stock on{/tr} {$gBitProduct->getField('products_date_available')|zen_date_long}</span>
+				</div>
+				{elseif $smarty.const.SHOW_PRODUCT_INFO_DATE_ADDED == '1'}
+				<div class="form-group">
+					{tr}This product was added to our catalog on{/tr} {$gBitProduct->getField('products_date_added')|zen_date_long}
+				</div>
+				{/if}
+
 			</div>
 		</div>
-
-
-		{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
-		<div class="form-group">
-			{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`includes/templates/template_default/common/tpl_products_next_previous.php"}
-		</div>
-		{/if}
-
-		{if $smarty.const.SHOW_PRODUCT_INFO_DATE_AVAILABLE == '1' && $gBitProduct->getField('products_date_available') > date('Y-m-d H:i:s')}
-		<div class="form-group">
-			<span class="warning">{tr}This product will be in stock on{/tr} {$gBitProduct->getField('products_date_available')|zen_date_long}</span>
-		</div>
-		{elseif $smarty.const.SHOW_PRODUCT_INFO_DATE_ADDED == '1'}
-		<div class="form-group">
-			{tr}This product was added to our catalog on{/tr} {$gBitProduct->getField('products_date_added')|zen_date_long}
-		</div>
-		{/if}
-
-		{if $gBitProduct->getField('products_url') && $smarty.const.SHOW_PRODUCT_INFO_URL == '1'}
-		<div class="form-group">
-		{*  <?php echo sprintf(TEXT_MORE_INFORMATION, zen_href_link(FILENAME_REDIRECT, 'action=url&goto=' . urlencode($products_url), 'NONSSL', true, false)); ?> *}
-		</div>
-		{/if}
-
 		{/form}
 	</div>
 </div>
 
-<div class="row">
 {if $smarty.const.SHOW_PRODUCT_INFO_REVIEWS == '1' AND $gBitSystem->isFeatureActive( 'wiki_comments' )}
-	<div class="span-6">
-		<div class="form-group">
 			{include file="bitpackage:liberty/comments.tpl"}
-		</div>
-	</div>
 {/if}
-<div>
 
 

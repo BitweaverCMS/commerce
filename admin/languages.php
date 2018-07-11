@@ -82,7 +82,7 @@
 
 // create additional products_options records
           $products_options = $gBitDb->Execute("select `products_options_id`, `products_options_name`,
-                              `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`,
+                              `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, 
                               `products_options_images_per_row`, `products_options_images_style`
                                            from " . TABLE_PRODUCTS_OPTIONS . "
                                            where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
@@ -90,7 +90,7 @@
           while (!$products_options->EOF) {
             $gBitDb->Execute("insert into " . TABLE_PRODUCTS_OPTIONS . "
 		                    (`products_options_id`, `language_id`, `products_options_name`,
-		                    `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_size`, `products_options_images_per_row`, `products_options_images_style`)
+		                    `products_options_sort_order`, `products_options_type`, `products_options_length`, `products_options_comment`, `products_options_images_per_row`, `products_options_images_style`)
       						      values ('" . (int)$products_options->fields['products_options_id'] . "',
 						                    '" . (int)$insert_id . "',
 						                    '" . zen_db_input($products_options->fields['products_options_name']) . "',
@@ -98,7 +98,6 @@
 						                    '" . zen_db_input($products_options->fields['products_options_type']) . "',
 						                    '" . zen_db_input($products_options->fields['products_options_length']) . "',
 						                    '" . zen_db_input($products_options->fields['products_options_comment']) . "',
-						                    '" . zen_db_input($products_options->fields['products_options_size']) . "',
 						                    '" . zen_db_input($products_options->fields['products_options_images_per_row']) . "',
 						                    '" . zen_db_input($products_options->fields['products_options_images_style']) . "')");
 

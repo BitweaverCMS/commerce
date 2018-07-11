@@ -147,7 +147,6 @@ if ( (GZIP_LEVEL == '1') && ($ext_zlib_loaded = extension_loaded('zlib')) && (PH
 // define our general functions used application-wide
 require_once(DIR_WS_FUNCTIONS . 'general.php');
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
-require_once(DIR_WS_FUNCTIONS . 'functions_prices.php');
 require_once(DIR_WS_FUNCTIONS . 'html_output.php');
 require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_email.php');
 

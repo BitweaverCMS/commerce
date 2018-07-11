@@ -29,7 +29,7 @@ class ot_total extends CommercePluginOrderTotalBase {
 	function process() {
 		parent::process();
 		global $currencies;
-		$total = $this->mOrder->info['total'] - $this->mOrder->getDeductionTotal();
+		$total = $currencies->roundValue( $this->mOrder->info['total'] - $this->mOrder->getDeductionTotal() );
 		$this->mProcessingOutput = array( 'code' => $this->code,
 											'sort_order' => $this->getSortOrder(),
 											'title' => $this->title . ':',

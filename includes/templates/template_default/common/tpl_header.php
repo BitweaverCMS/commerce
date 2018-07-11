@@ -21,9 +21,8 @@
 //
 ?>
 <?php if (isset($_GET['error_message']) && zen_not_null($_GET['error_message'])) { ?>
-	<p class="headererror"><?php echo htmlspecialchars(urldecode($_GET['error_message'])); ?></p>
+	<p class="alert alert-danger"><?php echo htmlspecialchars(urldecode($_GET['error_message'])); ?></p>
 <?php }
   if (isset($_GET['info_message']) && zen_not_null($_GET['info_message'])) { ?>
-	<p class="headerinfo"><?php echo htmlspecialchars($_GET['info_message']); ?></p>
+	<p class="alert alert-info"><?php echo htmlspecialchars($_GET['info_message']); ?></p>
 <?php } ?>
-

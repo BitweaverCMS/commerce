@@ -104,7 +104,7 @@
 			}
 			$the_button = $lc_button;
 			$products_link = '<a href="' . zen_href_link(zen_get_info_page($listing->fields['products_id']), 'products_id=' . $listing->fields['products_id']) . '">' . MORE_INFO_TEXT . '</a>';
-			$lc_text .= '<br />' . zen_get_buy_now_button($listing->fields['products_id'], $the_button, $products_link) . '<br />' . zen_get_products_quantity_min_units_display($listing->fields['products_id']);
+			$lc_text .= '<br />' . zen_get_buy_now_button($listing->fields['products_id'], $the_button, $products_link);
 
 			break;
 		  case 'PRODUCT_LIST_IMAGE':
