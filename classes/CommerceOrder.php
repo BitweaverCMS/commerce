@@ -699,31 +699,30 @@ class order extends CommerceOrderBase {
 									'format_id' => $billingAddress['address_format_id']);
 		}
 
-		foreach( array_keys( $gBitCustomer->mCart->contents ) as $productsKey ) {
-			$this->contents[$productsKey] = $gBitCustomer->mCart->getProductHash( $productsKey );
+		foreach( array_keys( $gBitCustomer->mCart->contents ) as $cartItemKey ) {
+			$this->contents[$cartItemKey] = $gBitCustomer->mCart->getProductHash( $cartItemKey );
 			if( !empty( $taxAddress ) ) {
-				$this->contents[$productsKey]['tax'] = zen_get_tax_rate( $this->contents[$productsKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
-				$this->contents[$productsKey]['tax_description'] = zen_get_tax_description( $this->contents[$productsKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
 			}
 
-			if ( !empty( $this->contents[$productsKey]['attributes'] ) ) {
-				$attributes	= $this->contents[$productsKey]['attributes'];
-				$this->contents[$productsKey]['attributes'] = array();
+			if ( !empty( $this->contents[$cartItemKey]['attributes'] ) ) {
+				$attributes	= $this->contents[$cartItemKey]['attributes'];
+				$this->contents[$cartItemKey]['attributes'] = array();
 				$subindex = 0;
-				foreach( $attributes as $option=>$value ) {
-					$optionValues = zen_get_option_value( zen_get_options_id( $option ), (int)$value );
+				foreach( $attributes as $optionKey=>$value ) {
+					list( $optionId, $keyValueId ) = explode( '=', $optionKey );
+					$optionValues = zen_get_option_value( $optionId, (int)$value );
 					// Determine if attribute is a text attribute and change products array if it is.
-					if ($value == PRODUCTS_OPTIONS_VALUES_TEXT_ID){
-						$attr_value = $this->contents[$productsKey]['attributes_values'][$option];
-					} else {
-						$attr_value = $optionValues['products_options_values_name'];
+					$attrValue = $optionValues['products_options_values_name']; 
+					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
+						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
 					}
 
-					$this->contents[$productsKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
-																			 'value' => $attr_value,
-																			 'options_id' => $option,
+					$this->contents[$cartItemKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
+																			 'value' => $attrValue,
+																			 'options_id' => $optionId,
 																			 'options_values_id' => $value,
-																			 'option_id' => $option,
 																			 'value_id' => $value,
 																			 'prefix' => $optionValues['price_prefix'],
 																			 'price' => $optionValues['options_values_price']);
@@ -732,12 +731,12 @@ class order extends CommerceOrderBase {
 				}
 			}
 
-			$shown_price = (zen_add_tax($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax']) * $this->contents[$productsKey]['products_quantity'])
-							+ zen_add_tax($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax']);
+			$shown_price = (zen_add_tax($this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax']) * $this->contents[$cartItemKey]['products_quantity'])
+							+ zen_add_tax($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax']);
 			$this->subtotal += $shown_price;
 
-			$products_tax = $this->contents[$productsKey]['tax'];
-			$products_tax_description = $this->contents[$productsKey]['tax_description'];
+			$products_tax = $this->contents[$cartItemKey]['tax'];
+			$products_tax_description = $this->contents[$cartItemKey]['tax_description'];
 			if (DISPLAY_PRICE_WITH_TAX == 'true') {
 				$this->info['tax'] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
 				if (isset($this->info['tax_groups']["$products_tax_description"])) {
@@ -954,94 +953,61 @@ class order extends CommerceOrderBase {
 		// lowstock email report
 		$this->email_low_stock='';
 
-		foreach( array_keys( $this->contents ) as $productsKey ) {
-			// Stock Update - Joao Correia
-			if (STOCK_LIMITED == 'true') {
-				if (DOWNLOAD_ENABLED == 'true') {
-					$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
-										FROM " . TABLE_PRODUCTS . " p
-											LEFT JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(p.`products_id`=pom.`products_id`)
-											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON (pa.`products_options_values_id`=pom.`products_options_values_id`)
-											LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_options_values_id`=pad.`products_options_values_id`)
-										WHERE p.`products_id` = ?";
-					$bindVars = array( zen_get_prid($this->contents[$productsKey]['id']) );
+		foreach( array_keys( $this->contents ) as $cartItemKey ) {
+			$stockQty = $this->mDb->GetOne( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$cartItemKey]['id']) ) );
 
-					// Will work with only one option for downloadable products
-					// otherwise, we have to build the query dynamically with a loop
-					$products_attributes = $this->contents[$productsKey]['attributes'];
-					if( is_array( $products_attributes ) ) {
-						$stock_query_raw .= " AND pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-						$bindVars[] = zen_get_options_id( $products_attributes[0]['option_id'] );
-						$bindVars[] = $products_attributes[0]['value_id'];
+			if ( $stockQty ) {
+//				$this->contents[$cartItemKey]['stock_value'] = $stockValues['products_quantity'];
+				$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_quantity` = ? where `products_id` = ?", array( $stockQty, zen_get_prid($this->contents[$cartItemKey]['id']) ) );
+				if ($stockQty < 1) { // && (STOCK_ALLOW_CHECKOUT == 'false') ) 
+					// only set status to off when not displaying sold out
+					if (SHOW_PRODUCTS_SOLD_OUT == '0') {
+						$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = ?", array( zen_get_prid($this->contents[$cartItemKey]['id']) ) );
 					}
-					$stockValues = $this->mDb->GetRow($stock_query_raw, $bindVars);
-				} else {
-					$stockValues = $this->mDb->GetRow( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
 				}
 
-				if ( !empty( $stock_values ) && $stock_values->RecordCount() > 0) {
-					// do not decrement quantities if products_attributes_filename exists
-					if ((DOWNLOAD_ENABLED != 'true') || (!empty( $stockValues['products_attributes_filename']))) {
-						$stock_left = $stockValues['products_quantity'] - $this->contents[$productsKey]['products_quantity'];
-						$this->contents[$productsKey]['stock_reduce'] = $this->contents[$productsKey]['products_quantity'];
-					} else {
-						$stock_left = $stockValues['products_quantity'];
-					}
-
-	//				$this->contents[$productsKey]['stock_value'] = $stockValues['products_quantity'];
-
-					$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_quantity` = ? where `products_id` = ?", array( $stock_left, zen_get_prid($this->contents[$productsKey]['id']) ) );
-	//				if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
-					if ($stock_left < 1) {
-						// only set status to off when not displaying sold out
-						if (SHOW_PRODUCTS_SOLD_OUT == '0') {
-							$this->mDb->query("update " . TABLE_PRODUCTS . " set `products_status` = '0' where `products_id` = ?", array( zen_get_prid($this->contents[$productsKey]['id']) ) );
-						}
-					}
-
-					// for low stock email
-					if ( $stock_left <= STOCK_REORDER_LEVEL ) {
-						// WebMakers.com Added: add to low stock email
-						$this->email_low_stock .=	'ID# ' . zen_get_prid($this->contents[$productsKey]['id']) . "\t\t" . $this->contents[$productsKey]['model'] . "\t\t" . $this->contents[$productsKey]['name'] . "\t\t" . ' Qty Left: ' . $stock_left . "\n";
-					}
+				// for low stock email
+				if ( $stockQty <= STOCK_REORDER_LEVEL ) {
+					// WebMakers.com Added: add to low stock email
+					$this->email_low_stock .=	'ID# ' . zen_get_prid($this->contents[$cartItemKey]['id']) . "\t\t" . $this->contents[$cartItemKey]['model'] . "\t\t" . $this->contents[$cartItemKey]['name'] . "\t\t" . ' Qty Left: ' . $stock_left . "\n";
 				}
 			}
 
 			// Update products_ordered (for bestsellers list)
-			$this->mDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_ordered` = `products_ordered` + ? WHERE `products_id` = ?", array( sprintf('%f', $this->contents[$productsKey]['products_quantity'] ), zen_get_prid( $this->contents[$productsKey]['id'] ) ) );
+			$this->mDb->query( "UPDATE " . TABLE_PRODUCTS . " SET `products_ordered` = `products_ordered` + ? WHERE `products_id` = ?", array( sprintf('%f', $this->contents[$cartItemKey]['products_quantity'] ), zen_get_prid( $this->contents[$cartItemKey]['id'] ) ) );
 
 			$sql_data_array = array('orders_id' => $pOrdersId,
-								'products_id' => zen_get_prid($this->contents[$productsKey]['id']),
-								'products_model' => $this->contents[$productsKey]['model'],
-								'products_name' => $this->contents[$productsKey]['name'],
-								'products_price' => $this->contents[$productsKey]['price'],
-								'products_cogs' => $this->contents[$productsKey]['products_cogs'],
-								'products_wholesale' => $this->contents[$productsKey]['products_wholesale'],
-								'products_commission' => $this->contents[$productsKey]['commission'],
-								'final_price' => $this->contents[$productsKey]['final_price'],
-								'onetime_charges' => $this->contents[$productsKey]['onetime_charges'],
-								'products_tax' => $this->contents[$productsKey]['tax'],
-								'products_quantity' => $this->contents[$productsKey]['products_quantity'],
-								'products_priced_by_attribute' => $this->contents[$productsKey]['products_priced_by_attribute'],
-								'product_is_free' => $this->contents[$productsKey]['product_is_free'],
-								'products_discount_type' => $this->contents[$productsKey]['products_discount_type'],
-								'products_discount_type_from' => $this->contents[$productsKey]['products_discount_type_from']);
+								'products_id' => zen_get_prid($this->contents[$cartItemKey]['id']),
+								'products_model' => $this->contents[$cartItemKey]['model'],
+								'products_name' => $this->contents[$cartItemKey]['name'],
+								'products_price' => $this->contents[$cartItemKey]['price'],
+								'products_cogs' => $this->contents[$cartItemKey]['products_cogs'],
+								'products_wholesale' => $this->contents[$cartItemKey]['products_wholesale'],
+								'products_commission' => $this->contents[$cartItemKey]['commission'],
+								'final_price' => $this->contents[$cartItemKey]['final_price'],
+								'onetime_charges' => $this->contents[$cartItemKey]['onetime_charges'],
+								'products_tax' => $this->contents[$cartItemKey]['tax'],
+								'products_quantity' => $this->contents[$cartItemKey]['products_quantity'],
+								'products_priced_by_attribute' => $this->contents[$cartItemKey]['products_priced_by_attribute'],
+								'product_is_free' => $this->contents[$cartItemKey]['product_is_free'],
+								'products_discount_type' => $this->contents[$cartItemKey]['products_discount_type'],
+								'products_discount_type_from' => $this->contents[$cartItemKey]['products_discount_type_from']);
 			$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
-			$this->contents[$productsKey]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
+			$this->contents[$cartItemKey]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
 
-			$this->otUpdateCreditAccount( $productsKey );//ICW ADDED FOR CREDIT CLASS SYSTEM
+			$this->otUpdateCreditAccount( $cartItemKey );
 
-			if( !empty( $this->contents[$productsKey]['purchase_group_id'] ) ) {
-				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->contents[$productsKey]['purchase_group_id'] );
+			if( !empty( $this->contents[$cartItemKey]['purchase_group_id'] ) ) {
+				$gBitUser->addUserToGroup( $gBitUser->mUserId, $this->contents[$cartItemKey]['purchase_group_id'] );
 			}
 
 			//------insert customer choosen option to order--------
 			$attributes_exist = '0';
 			$this->products_ordered_attributes = '';
-			if( !empty($this->contents[$productsKey]['attributes']) ) {
+			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
-				foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
-					$optionValues = zen_get_option_value( (int)$this->contents[$productsKey]['attributes'][$j]['option_id'], (int)$this->contents[$productsKey]['attributes'][$j]['value_id'] );
+				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
+					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
 					if( !empty( $optionValues['purchase_group_id'] ) ) {
 						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );
 					}
@@ -1049,9 +1015,9 @@ class order extends CommerceOrderBase {
 					if( !empty( $optionValues['products_options_id'] ) ) {
 						//clr 030714 update insert query.	changing to use values form $order->contents for products_options_values.
 						$sql_data_array = array('orders_id' => $pOrdersId,
-												'orders_products_id' => $this->contents[$productsKey]['orders_products_id'],
+												'orders_products_id' => $this->contents[$cartItemKey]['orders_products_id'],
 												'products_options' => $optionValues['products_options_name'],
-												'products_options_values' => $this->contents[$productsKey]['attributes'][$j]['value'],
+												'products_options_values' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
 												'options_values_price' => $optionValues['options_values_price'],
 												'options_values_cogs' => $optionValues['options_values_cogs'],
 												'options_values_wholesale' => $optionValues['options_values_wholesale'],
@@ -1075,36 +1041,28 @@ class order extends CommerceOrderBase {
 												'products_options_id' => $optionValues['products_options_id'],
 												'products_options_values_id' => $optionValues['products_options_values_id'],
 												);
+
 						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 					}
 
-					if ((DOWNLOAD_ENABLED == 'true') && isset($optionValues['products_attributes_filename']) && zen_not_null($optionValues['products_attributes_filename'])) {
-						$sql_data_array = array('orders_id' => $pOrdersId,
-												'orders_products_id' => $this->contents[$productsKey]['orders_products_id'],
-												'orders_products_filename' => $optionValues['products_attributes_filename'],
-												'download_maxdays' => $optionValues['products_attributes_maxdays'],
-												'download_count' => $optionValues['products_attributes_maxcount']);
-
-						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_DOWNLOAD, $sql_data_array);
-					}
-					$this->products_ordered_attributes .= "\n\t" . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
+					$this->products_ordered_attributes .= "\n\t" . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
 				}
 			}
 			//------insert customer choosen option eof ----
-			$this->total_weight += ($this->contents[$productsKey]['products_quantity'] * $this->contents[$productsKey]['weight']);
-//			$this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->contents[$productsKey]['products_quantity'];
+			$this->total_weight += ($this->contents[$cartItemKey]['products_quantity'] * $this->contents[$cartItemKey]['weight']);
+//			$this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->contents[$cartItemKey]['products_quantity'];
 //			$this->total_cost += $total_products_price;
 
 			$this->products_ordered_html .=
 			'<tr>' .
-			'<td class="product-details alignright" valign="top" width="30">' . $this->contents[$productsKey]['products_quantity'] . '&nbsp;x</td>' .
-			'<td class="product-details" valign="top">' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') .
+			'<td class="product-details alignright" valign="top" width="30">' . $this->contents[$cartItemKey]['products_quantity'] . '&nbsp;x</td>' .
+			'<td class="product-details" valign="top">' . $this->contents[$cartItemKey]['name'] . ($this->contents[$cartItemKey]['model'] != '' ? ' (' . $this->contents[$cartItemKey]['model'] . ') ' : '') .
 			'<span style="white-space:nowrap;"><small><em> '. $this->products_ordered_attributes .'</em></small></span></td>' .
 			'<td class="product-details-num alignright" valign="top">' .
-				$currencies->display_price($this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity']) .
-				($this->contents[$productsKey]['onetime_charges'] !=0 ?
+				$currencies->display_price($this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax'], $this->contents[$cartItemKey]['products_quantity']) .
+				($this->contents[$cartItemKey]['onetime_charges'] !=0 ?
 						'</td></tr><tr><td class="product-details">' . TEXT_ONETIME_CHARGES_EMAIL . '</td>' .
-						'<td>' . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '') .
+						'<td>' . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '') .
 			'</td></tr>';
 		}
 
@@ -1194,12 +1152,12 @@ class order extends CommerceOrderBase {
 		//products area
 		$email_order .= EMAIL_TEXT_PRODUCTS . "\n" . EMAIL_SEPARATOR . "\n";
 
-		foreach( array_keys( $this->contents ) as $productsKey ) {
-			$email_order .=	$this->contents[$productsKey]['products_quantity'] . ' x ' . $this->contents[$productsKey]['name'] . ($this->contents[$productsKey]['model'] != '' ? ' (' . $this->contents[$productsKey]['model'] . ') ' : '') . ' = ' .
-							$currencies->display_price( $this->contents[$productsKey]['final_price'], $this->contents[$productsKey]['tax'], $this->contents[$productsKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
-							($this->contents[$productsKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$productsKey]['onetime_charges'], $this->contents[$productsKey]['tax'], 1) : '');
-			foreach( array_keys( $this->contents[$productsKey]['attributes'] ) as $j ) {
-				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['option']) . ' ' . zen_decode_specialchars($this->contents[$productsKey]['attributes'][$j]['value']);
+		foreach( array_keys( $this->contents ) as $cartItemKey ) {
+			$email_order .=	$this->contents[$cartItemKey]['products_quantity'] . ' x ' . $this->contents[$cartItemKey]['name'] . ($this->contents[$cartItemKey]['model'] != '' ? ' (' . $this->contents[$cartItemKey]['model'] . ') ' : '') . ' = ' .
+							$currencies->display_price( $this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax'], $this->contents[$cartItemKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
+							($this->contents[$cartItemKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '');
+			foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
+				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['option']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
 			}
 			$email_order .= "\n\n";
 		}

@@ -81,10 +81,6 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	echo $paymentManager->javascript_validation(); 
 	$gBitSmarty->assign( 'paymentSelection', $paymentManager->selection() );
 
-	// Load the selected shipping module(needed to calculate tax correctly)
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-	$shipping_modules = new CommerceShipping( $_SESSION['shipping'] );
-
 	require_once(DIR_FS_MODULES . 'require_languages.php');
 
 	if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {

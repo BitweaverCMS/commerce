@@ -78,8 +78,7 @@ class CommerceProductManager extends BitBase {
 			$pParamHash['options_store'][$opt] = !empty( $pParamHash[$opt] ) || is_numeric( $pParamHash[$opt] ) ? $pParamHash[$opt] : NULL;
 		}
 
-		$pParamHash['options_store']['products_options_length'] = is_numeric( $pParamHash['products_options_length'] ) ? $pParamHash['products_options_length'] : 32;
-		$pParamHash['options_store']['products_options_size'] = is_numeric( $pParamHash['products_options_size'] ) ? $pParamHash['products_options_size'] : 32;
+		$pParamHash['options_store']['products_options_length'] = is_numeric( $pParamHash['products_options_length'] ) ? $pParamHash['products_options_length'] : NULL;
 
 		return( count( $this->mErrors ) == 0 && !empty( $pParamHash['options_store'] ) && count( $pParamHash['options_store'] ) );
 	}

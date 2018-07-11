@@ -11,39 +11,41 @@
 			{assign var=colspan value=2}
 		{/if}
 		{foreach from=$order->contents item=orderItem key=opid}
-			<div class="row cart-item pv-2">
-				<div class="col-md-3 col-sm-4">
+		<div class="cart-item pv-2">
+			<div class="row">
+				{if $orderItem.image_url}
+				<div class="col-md-2 col-sm-2">
 					<a href="{$orderItem.display_url}"><img class="img-responsive center-block" src="{$orderItem.image_url}" alt="{$orderItem.name|escape}"/></a>
 				</div>
-				<div class="col-md-5 col-sm-4 col-xs-12">
+				{/if}
+				<div class="{if $orderItem.image_url}col-sm-6{else}col-sm-8{/if} col-xs-12">
 					<a href="{$orderItem.display_url}"><strong style="font-size:120%;">{$orderItem.name}</strong></a> 
-						{if !empty( $orderItem.attributes )}
-						<div class="mt-1">			
-							<ul>
-							{foreach $orderItem.attributes item=orderItemAttribute}
-								<li><em>{$orderItemAttribute.option|escape} :</em> {$orderItemAttribute.value}</li>
-							{/foreach}
-							</ul>
-						</div>
-						{/if}
-					</div>
+				</div>
+				<div class="col-md-2 col-sm-2 col-xs-3 text-right">
+					<strong>{tr}Qty.{/tr} {$orderItem.products_quantity}</strong>
+				</div>
+				<div class="col-sm-2 col-xs-3">
 				{if sizeof($order->info.tax_groups) > 1}
-					<div class="col-sm-4">
 					{if !empty( $orderItem.tax )}
 						{$orderItem.tax|zen_display_tax_value}%
 					{/if}
-					</div>
 				{/if}
-				<div class="col-sm-2 col-xs-6">
-					<strong>Qty. {$orderItem.products_quantity}</strong>
-				</div>
-				<div class="col-sm-2 col-xs-6">
 					<strong class="pull-right">{$gCommerceCurrencies->display_price($orderItem.final_price, $orderItem.tax, $orderItem.products_quantity)}</strong>
 					{if $orderItem.onetime_charges != 0}
 					<div>{$gCommerceCurrencies->display_price($orderItem.onetime_charges, $orderItem.tax, 1)}</div>
 					{/if}
 				</div>
+			{if !empty( $orderItem.attributes )}
+				<div class="col-md-10 col-sm-9 col-xs-12">
+					<ul>
+					{foreach $orderItem.attributes item=orderItemAttribute}
+						<li><em>{$orderItemAttribute.option|escape} :</em> {$orderItemAttribute.value}</li>
+					{/foreach}
+					</ul>
+				</div>
+			{/if}
 			</div>
+		</div>
 		{/foreach}
 		{if $order->content_type!='virtual' && $order->info.shipping_method}
 			<p class="text-right mt-2">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></p>

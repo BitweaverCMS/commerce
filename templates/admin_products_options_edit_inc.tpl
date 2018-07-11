@@ -47,13 +47,7 @@
 	{/forminput}
 </div>
 <div class="form-group">
-	{formlabel label="Display Size"}
-	{forminput}
-		<input type="text" class="form-control" name="products_options_size" value="{$editOption.products_options_size}" />
-	{/forminput}
-</div>
-<div class="form-group">
-	{formlabel label="Maximum Length"}
+	{formlabel label="Maximum Text Length"}
 	{forminput}
 		<input type="text" class="form-control" name="products_options_length" value="{$editOption.products_options_length}" />
 	{/forminput}

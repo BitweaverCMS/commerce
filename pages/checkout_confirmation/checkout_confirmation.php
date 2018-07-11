@@ -58,8 +58,10 @@ if( !$paymentManager->verifyPayment( $_REQUEST, $order ) ) {
 }
 
 // load the selected shipping module
-require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-$shipping_modules = new CommerceShipping($_SESSION['shipping']);
+if( !empty( $_SESSION['shipping'] ) ) {
+	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	$shipping_modules = new CommerceShipping($_SESSION['shipping']);
+}
 
 
 // update customers_referral with $_SESSION['gv_id']

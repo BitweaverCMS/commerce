@@ -31,7 +31,10 @@
 					<ul class="list-unstyled">
 					{foreach from=$basket.attributes key=optionKey item=valueId}
 						{assign var=option value=$product->getOptionValue('',$valueId)}
-						<li>{$option.products_options_values_name}</li>
+						<li>
+							{$option.products_options_values_name}
+							{if $basket.attributes_values.$optionKey}<div class="alert alert-info">{$basket.attributes_values.$optionKey}</div>{/if}
+						</li>
 					{/foreach}
 					</ul>
 				{/if}

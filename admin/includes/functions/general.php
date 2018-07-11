@@ -322,18 +322,6 @@
 	}
 
 
-	function zen_get_uprid($prid, $params) {
-		$uprid = $prid;
-		if ( (is_array($params)) && (!strstr($prid, '{')) ) {
-			while (list($option, $value) = each($params)) {
-				$uprid = $uprid . '{' . $option . '}' . $value;
-			}
-		}
-
-		return $uprid;
-	}
-
-
 	function zen_get_orders_status_name($orders_status_id, $language_id = '') {
 		global $gBitDb;
 
@@ -1480,43 +1468,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 			$demo_on = false;
 		}
 		return $demo_on;
-	}
-
-////
-//
-	function zen_has_product_attributes_downloads($products_id, $check_valid=false) {
-		global $gBitDb;
-		if (DOWNLOAD_ENABLED == 'true') {
-			$download_display_query_raw ="SELECT pa.`products_attributes_id`, pad.`products_attributes_filename`
-																		FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-										INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`)
-										INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pad.`products_attributes_id`= pa.`products_attributes_id`)
-																		WHERE pom.`products_id`=?";
-			$download_display = $gBitDb->query( $download_display_query_raw, array( $products_id ) );
-			if ($check_valid == true) {
-				$valid_downloads = '';
-				while (!$download_display->EOF) {
-					// Could go into /admin/includes/configure.php
-					// define('DIR_FS_DOWNLOAD', DIR_FS_CATALOG . 'download/');
-					if (!file_exists(DIR_FS_CATALOG . 'download/' . $download_display->fields['products_attributes_filename'])) {
-						$valid_downloads .= '<br />&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif') . ' Invalid: ' . $download_display->fields['products_attributes_filename'];
-						// break;
-					} else {
-						$valid_downloads .= '<br />&nbsp;&nbsp;' . zen_image(DIR_WS_IMAGES . 'icon_status_green.gif') . ' Valid&nbsp;&nbsp;: ' . $download_display->fields['products_attributes_filename'];
-					}
-					$download_display->MoveNext();
-				}
-			} else {
-				if ($download_display->RecordCount() != 0) {
-					$valid_downloads = $download_display->RecordCount() . ' files';
-				} else {
-					$valid_downloads = 'none';
-				}
-			}
-		} else {
-			$valid_downloads = 'disabled';
-		}
-		return $valid_downloads;
 	}
 
 ////

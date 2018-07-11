@@ -1893,14 +1893,14 @@ If a special exist * 10+9
 								$products_options_details = $vals['products_options_values_name'];
 							} else {
 								// don't show option value name on TEXT or filename
-								$products_options_details = '<div class="help-block">'.$vals['products_options_values_name'].'</div>';
+								$products_options_details = $vals['products_options_values_name'];
 							}
 							if ($this->mOptions[$optionsId]['products_options_images_style'] >= 3) {
-								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<div class="help-block">' . $products_options_display_weight . '</div>' : '');
-								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '<div class="help-block">' . $products_options_display_weight . '</div>' : '');
+								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? $products_options_display_weight : '');
+								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? $products_options_display_weight : '');
 							} else {
-								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
-								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? '&nbsp;' . $products_options_display_weight : '');
+								$products_options_details .= $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? $products_options_display_weight : '');
+								$products_options_details_noname = $vals['display_price'] . (!empty( $vals['products_attributes_wt'] ) ? $products_options_display_weight : '');
 							}
 						}
 
@@ -1927,7 +1927,11 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$tmp_radio .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, NULL, "<span class='title'>$vals[products_options_values_name]</span> <span class='details'>$products_options_details_noname</span>" . (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '') : '') );
+							$tmp_radio .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib'], 
+								"<span class='title'>$vals[products_options_values_name]</span>"
+								. (!empty( $products_options_details_noname ) ? " <span class='details'>$products_options_details_noname</span>" : '') 
+								. (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '') : '')
+							 );
 						}
 
 
@@ -1976,7 +1980,6 @@ If a special exist * 10+9
 									$tmp_attributes_image_row++;
 
 									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-										$tmp_attributes_image .= '</tr><tr>';
 										$tmp_attributes_image_row = 1;
 									}
 
@@ -1991,7 +1994,6 @@ If a special exist * 10+9
 									$tmp_attributes_image_row++;
 
 									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-										$tmp_attributes_image .= '</tr><tr>';
 										$tmp_attributes_image_row = 1;
 									}
 
@@ -2010,7 +2012,6 @@ If a special exist * 10+9
 									$tmp_attributes_image_row++;
 
 									if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-										$tmp_attributes_image .= '</tr><tr>';
 										$tmp_attributes_image_row = 1;
 									}
 
@@ -2032,9 +2033,10 @@ If a special exist * 10+9
 
 						// =-=-=-=-=-=-=-=-=-=-= text
 						if (($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
+							$maxLength = !empty( $this->mOptions[$optionsId]['products_options_length'] ) ? 'maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '"' : '';
 							if( is_object( $pCart ) ) {
 								$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
-								$tmp_html = '<input type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" value="' . htmlspecialchars($tmp_value) .'" />	';
+								$tmp_html .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' value="' . htmlspecialchars($tmp_value) .'" />	';
 								$tmp_html .= $products_options_details;
 								$tmp_word_cnt_string = '';
 					// calculate word charges
@@ -2048,7 +2050,7 @@ If a special exist * 10+9
 								}
 								if ($tmp_word_cnt != 0 and $tmp_word_price != 0) {
 									$tmp_word_price = $currencies->display_price($tmp_word_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
-									$tmp_html = $tmp_html . '<br />' . TEXT_CHARGES_WORD . ' ' . $tmp_word_cnt . ' = ' . $tmp_word_price;
+									$tmp_html .= '<div class="help-block">' . TEXT_CHARGES_WORD . ' ' . $tmp_word_cnt . ' = ' . $tmp_word_price . '</div>';
 								}
 					// calculate letter charges
 								$tmp_letters_cnt =0;
@@ -2061,11 +2063,11 @@ If a special exist * 10+9
 								}
 								if ($tmp_letters_cnt != 0 and $tmp_letters_price != 0) {
 									$tmp_letters_price = $currencies->display_price($tmp_letters_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
-									$tmp_html = $tmp_html . '<br />' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price;
+									$tmp_html .= '<div class="help-block">' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price . '</div>';
 								}
 
 							} else {
-								$tmp_html = '<input class="form-control" type="text" name ="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" size="' . $this->mOptions[$optionsId]['products_options_size'] .'" maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '" />';
+								$tmp_html .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' />';
 								$tmp_html .= $products_options_details;
 							}
 						}
@@ -2077,10 +2079,10 @@ If a special exist * 10+9
 
 						if( is_object( $pCart ) && $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE) {
 							$number_of_uploads++;
-							$tmp_html = '<input type="file" name="id[' . TEXT_PREFIX . $this->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
+							$tmp_html .= '<input class="form-control" type="file" name="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
 										$pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']] .
-										zen_draw_hidden_field(UPLOAD_PREFIX . $number_of_uploads, $this->mOptions[$optionsId]['products_options_id']) .
-										zen_draw_hidden_field(TEXT_PREFIX . UPLOAD_PREFIX . $number_of_uploads, $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']]);
+										zen_draw_hidden_field( $number_of_uploads, $this->mOptions[$optionsId]['products_options_id']) .
+										zen_draw_hidden_field( $number_of_uploads, $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']]);
 							$tmp_html	.= $products_options_details;
 						}
 
@@ -2091,7 +2093,6 @@ If a special exist * 10+9
 							$tmp_attributes_image_row++;
 
 							if ($tmp_attributes_image_row > $this->mOptions[$optionsId]['products_options_images_per_row']) {
-								$tmp_attributes_image .= '</tr><tr>';
 								$tmp_attributes_image_row = 1;
 							}
 

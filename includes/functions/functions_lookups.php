@@ -465,19 +465,6 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 	    return $check_valid;
 	}
 
-  function zen_options_name($options_id) {
-    global $gBitDb;
-
-    $options_id = str_replace('txt_','',$options_id);
-
-    $options_values = $gBitDb->Execute("select `products_options_name`
-                                    from " . TABLE_PRODUCTS_OPTIONS . "
-                                    where `products_options_id` = '" . (int)$options_id . "'
-                                    and `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
-
-    return $options_values->fields['products_options_name'];
-  }
-
 ////
 // configuration key value lookup
   function zen_get_configuration_key_value($lookup) {
