@@ -32,7 +32,7 @@ class ot_total extends CommercePluginOrderTotalBase {
 		$total = $currencies->roundValue( $this->mOrder->info['total'] - $this->mOrder->getDeductionTotal() );
 		$this->mProcessingOutput = array( 'code' => $this->code,
 											'sort_order' => $this->getSortOrder(),
-											'title' => $this->title . ':',
+											'title' => $this->title,
 											'text' => $currencies->format( $total, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value'] ),
 											'value' => (float)$total );
 	}

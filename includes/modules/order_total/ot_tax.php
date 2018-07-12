@@ -34,7 +34,7 @@ class ot_tax extends CommercePluginOrderTotalBase {
 			if ($value > 0 or STORE_TAX_DISPLAY_STATUS == 1) {
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),
-													'title' => $key . ':',
+													'title' => $key,
 													'text' => $currencies->format($value, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $value);
 			}

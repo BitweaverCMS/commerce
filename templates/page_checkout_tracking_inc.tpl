@@ -28,15 +28,15 @@ gtag('event', '{$eecEvent}', {ldelim}
 		{section loop=$newOrder->totals name=t}
 			{if $newOrder->totals[t].class=='ot_coupon'}
 				{assign var=couponName value=$newOrder->totals[t].title|regex_replace:"/.*: /":''|escape:quotes}
-				{assign var=couponString value=", 'coupon':'$couponName'"}
+				{assign var=couponString value="'coupon':'$couponName', "}
 			{elseif $newOrder->totals[t].class=='ot_gv' && !$couponString}
-				{assign var=couponString value=', "coupon":"Gift Certificate"'}
+				{assign var=couponString value='"coupon":"Gift Certificate", '}
 			{/if}
 		{/section}
 	{else}
 		{assign var=cartItemTrackingHash value=$gBitCustomer->mCart->getTrackingHash()}
-		{if $smarty.session.dc_redeem_code} {assign var=couponString value=', "coupon":"`$smarty.session.dc_redeem_code`"'} 
-		{elseif $smarty.session.cot_gv} {assign var=couponString value=', "coupon":"Gift Certificate"'} {/if}
+		{if $smarty.request.dc_redeem_code} {assign var=couponString value="\"coupon\":\"`$smarty.request.dc_redeem_code`\", "} 
+		{elseif $smarty.session.cot_gv} {assign var=couponString value='"coupon":"Gift Certificate", '} {/if}
 	{/if}
 	{if $eecEvent=='purchase'}
 		'transaction_id': '{$newOrder->mOrdersId}',
@@ -46,6 +46,7 @@ gtag('event', '{$eecEvent}', {ldelim}
 		'tax': '{$newOrder->getField('tax')}',
 		{if $gBitAffiliate}{assign var=affiliate value=$gBitAffiliate->getRegistration($gBitUser->mUserId)}{if $affiliate} 'affiliation': '{$affiliate.program_name|escape:'quotes'}', {/if}{/if}
 	{/if}
+	{$couponString}
 	{if $cartItemTrackingHash}
 	"items": [
 		{foreach from=$cartItemTrackingHash item=trackingHash}{ldelim}
@@ -58,11 +59,10 @@ gtag('event', '{$eecEvent}', {ldelim}
 		{rdelim},{/foreach}
 	]
 	{/if}
-	{$couponString}
 {rdelim});
 </script>
 		{/if}
-{*$eecStep}{$eecEvent}{$smarty.request|vd}{$smarty.session|vd}{*$trackOrder|vd*}
+{*$eecStep}{$eecEvent}{$smarty.request|vd}{$smarty.session|vd}{$newOrder->totals|vd}{$affiliate|vd*}
 	{/if}
 {/if}
 {/strip}

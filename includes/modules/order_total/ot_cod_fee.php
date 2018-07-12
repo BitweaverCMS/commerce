@@ -58,12 +58,10 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 						if ($cod_zones[$i] == $this->mOrder->delivery['country']['countries_iso_code_2']) {
 								$cod_cost = $cod_zones[$i + 1];
 								$cod_country = true;
-								//print('match' . $i . ': ' . $cod_cost);
 								break;
 							} elseif ($cod_zones[$i] == '00') {
 								$cod_cost = $cod_zones[$i + 1];
 								$cod_country = true;
-								//print('match' . $i . ': ' . $cod_cost);
 								break;
 							} else {
 								//print('no match');
@@ -86,13 +84,13 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 				}
 
 				$this->mProcessingOutput = array( 'code' => $this->code,
-													'title' => $this->title . ':',
+													'title' => $this->title,
 													'text' => $currencies->format($cod_cost, true,	$this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $cod_cost);
 			} else {
 //Following code should be improved if we can't get the shipping modules disabled, who don't allow COD
 // as well as countries who do not have cod
-//					$this->mProcessingOutput = array('title' => $this->title . ':',
+//					$this->mProcessingOutput = array('title' => $this->title,
 //																	'text' => 'No COD for this module.',
 //																	'value' => '');
 			}

@@ -87,7 +87,7 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),
-													'title' => $this->mOrder->info['shipping_method'] . ':',
+													'title' => $this->mOrder->info['shipping_method'],
 													'text' => $currencies->format($this->mOrder->info['shipping_cost'], true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $this->mOrder->info['shipping_cost']);
 			}
