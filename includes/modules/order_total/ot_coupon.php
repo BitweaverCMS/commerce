@@ -56,7 +56,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					$this->setOrderDeduction( $od_amount['total'], $this->coupon_code );
 					$this->mProcessingOutput = array( 'code' => $this->code,
 														'sort_order' => $this->getSortOrder(),
-														'title' => $this->title . ': ' . $this->coupon_code . ' :',
+														'title' => $this->title . ': ' . $this->coupon_code,
 														'text' => '-' . $currencies->format($od_amount['total']),
 														'value' => $od_amount['total'] );
 				}

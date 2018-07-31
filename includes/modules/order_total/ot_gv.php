@@ -129,7 +129,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				$this->setOrderDeduction( $deduction );
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),
-													'title' => $this->title . ':',
+													'title' => $this->title,
 													'text' => '-' . $currencies->format($deduction),
 													'value' => -1 * $deduction);
 			}

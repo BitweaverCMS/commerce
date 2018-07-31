@@ -84,7 +84,7 @@ class ot_loworderfee extends CommercePluginOrderTotalBase {
 
 					$this->mProcessingOutput = array( 'code' => $this->code,
 														'sort_order' => $this->getSortOrder(),
-														'title' => $this->title . ':',
+														'title' => $this->title,
 														'text' => $currencies->format(zen_add_tax($low_order_fee, $tax), true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 														'value' => zen_add_tax($low_order_fee, $tax));
 				}

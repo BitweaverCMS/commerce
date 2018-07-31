@@ -50,7 +50,7 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 				$this->mOrder->info['deduction'][$this->code] = $this->deduction;
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),
-													'title' => $this->title . ':',
+													'title' => $this->title,
 													'text' => '-' . $currencies->format($this->deduction, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 													'value' => $this->deduction);
 			}

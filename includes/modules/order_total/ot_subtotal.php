@@ -31,7 +31,7 @@ class ot_subtotal extends CommercePluginOrderTotalBase {
 
 		$this->mProcessingOutput = array( 'code' => $this->code,
 											'sort_order' => $this->getSortOrder(),
-											'title' => $this->title . ':',
+											'title' => $this->title,
 											'text' => $currencies->format($this->mOrder->subtotal, true, $this->mOrder->info['currency'], $this->mOrder->info['currency_value']),
 											'value' => $this->mOrder->subtotal);
 	}
