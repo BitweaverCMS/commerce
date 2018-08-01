@@ -30,7 +30,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$bindVars[] = $gBitUser->mUserId;
 		}
 
-		$query = "SELECT `customers_basket_id` AS `hash_key`, cb.* FROM " . TABLE_CUSTOMERS_BASKET . " cb WHERE `cookie`=? $whereSql";
+		$query = "SELECT `customers_basket_id` AS `hash_key`, cb.* FROM " . TABLE_CUSTOMERS_BASKET . " cb WHERE `cookie`=? $whereSql ORDER BY cb.`customers_basket_id` DESC";
 		if( $products = $this->mDb->getAssoc( $query, $bindVars ) ) {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
