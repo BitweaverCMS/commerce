@@ -1806,9 +1806,10 @@ If a special exist * 10+9
 				$products_options_value_id = '';
 				$products_options_details = '';
 				$products_options_details_noname = '';
-				$tmp_radio = '';
-				$tmp_checkbox = '';
-				$tmp_html = '';
+				$optionsValuesHtml = '';
+				$optionsValuesHtml = '';
+				$optionsValuesHtml = '';
+				$optionsValuesHtml = '';
 				$selected_attribute = false;
 
 				$tmp_attributes_image = '';
@@ -1837,6 +1838,11 @@ If a special exist * 10+9
 							if ($new_value_price < 0) {
 								$new_value_price = -$new_value_price;
 								$vals['price_prefix'] = '-';
+							}
+
+							$commentHtml = '';
+							if( !empty( $vals['products_options_values_comment'] ) ) {
+								$commentHtml .= '<div class="help-block">'.tra( $vals['products_options_values_comment'] ).'</div>';
 							}
 
 							$price_onetime = '';
@@ -1927,7 +1933,7 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$tmp_radio .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib'], 
+							$optionsValuesHtml .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib'], 
 								"<span class='title'>$vals[products_options_values_name]</span>"
 								. (!empty( $products_options_details_noname ) ? " <span class='details'>$products_options_details_noname</span>" : '') 
 								. (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '') : '')
@@ -1971,10 +1977,10 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>' );
+									$optionsValuesHtml .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>' );
 									break;
 								case '2':
-									$tmp_checkbox .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'],  $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>' );
+									$optionsValuesHtml .= '<label>'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'],  $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>' );
 									break;
 								case '3':
 									$tmp_attributes_image_row++;
@@ -2023,7 +2029,7 @@ If a special exist * 10+9
 									break;
 								case '0':
 								default:
-									$tmp_checkbox .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $products_options_details );
+									$optionsValuesHtml .= zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $products_options_details );
 									break;
 							}
 						}
@@ -2036,8 +2042,8 @@ If a special exist * 10+9
 							$maxLength = !empty( $this->mOptions[$optionsId]['products_options_length'] ) ? 'maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '"' : '';
 							if( is_object( $pCart ) ) {
 								$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
-								$tmp_html .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' value="' . htmlspecialchars($tmp_value) .'" />	';
-								$tmp_html .= $products_options_details;
+								$optionsValuesHtml .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' value="' . htmlspecialchars($tmp_value) .'" />	';
+								$optionsValuesHtml .= $products_options_details;
 								$tmp_word_cnt_string = '';
 					// calculate word charges
 								$tmp_word_cnt =0;
@@ -2046,11 +2052,11 @@ If a special exist * 10+9
 								$tmp_word_price = zen_get_word_count_price($tmp_word_cnt_string, $vals['attributes_price_words_free'], $vals['attributes_price_words']);
 
 								if ($vals['attributes_price_words'] != 0) {
-									$tmp_html .= TEXT_PER_WORD . $currencies->display_price($vals['attributes_price_words'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_words_free'] !=0 ? TEXT_WORDS_FREE . $vals['attributes_price_words_free'] : '');
+									$optionsValuesHtml .= TEXT_PER_WORD . $currencies->display_price($vals['attributes_price_words'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_words_free'] !=0 ? TEXT_WORDS_FREE . $vals['attributes_price_words_free'] : '');
 								}
 								if ($tmp_word_cnt != 0 and $tmp_word_price != 0) {
 									$tmp_word_price = $currencies->display_price($tmp_word_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
-									$tmp_html .= '<div class="help-block">' . TEXT_CHARGES_WORD . ' ' . $tmp_word_cnt . ' = ' . $tmp_word_price . '</div>';
+									$optionsValuesHtml .= '<div class="help-block">' . TEXT_CHARGES_WORD . ' ' . $tmp_word_cnt . ' = ' . $tmp_word_price . '</div>';
 								}
 					// calculate letter charges
 								$tmp_letters_cnt =0;
@@ -2059,16 +2065,16 @@ If a special exist * 10+9
 								$tmp_letters_price = zen_get_letters_count_price($tmp_letters_cnt_string, $vals['attributes_price_letters_free'], $vals['attributes_price_letters']);
 
 								if ($vals['attributes_price_letters'] != 0) {
-									$tmp_html .= TEXT_PER_LETTER . $currencies->display_price($vals['attributes_price_letters'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_letters_free'] !=0 ? TEXT_LETTERS_FREE . $vals['attributes_price_letters_free'] : '');
+									$optionsValuesHtml .= TEXT_PER_LETTER . $currencies->display_price($vals['attributes_price_letters'], zen_get_tax_rate($this->mInfo['products_tax_class_id'])) . ($vals['attributes_price_letters_free'] !=0 ? TEXT_LETTERS_FREE . $vals['attributes_price_letters_free'] : '');
 								}
 								if ($tmp_letters_cnt != 0 and $tmp_letters_price != 0) {
 									$tmp_letters_price = $currencies->display_price($tmp_letters_price, zen_get_tax_rate($this->mInfo['products_tax_class_id']));
-									$tmp_html .= '<div class="help-block">' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price . '</div>';
+									$optionsValuesHtml .= '<div class="help-block">' . TEXT_CHARGES_LETTERS . ' ' . $tmp_letters_cnt . ' = ' . $tmp_letters_price . '</div>';
 								}
 
 							} else {
-								$tmp_html .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' />';
-								$tmp_html .= $products_options_details;
+								$optionsValuesHtml .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' />';
+								$optionsValuesHtml .= $products_options_details;
 							}
 						}
 
@@ -2079,11 +2085,11 @@ If a special exist * 10+9
 
 						if( is_object( $pCart ) && $this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_FILE) {
 							$number_of_uploads++;
-							$tmp_html .= '<input class="form-control" type="file" name="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
+							$optionsValuesHtml .= '<input class="form-control" type="file" name="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']" /><br />' .
 										$pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']] .
 										zen_draw_hidden_field( $number_of_uploads, $this->mOptions[$optionsId]['products_options_id']) .
 										zen_draw_hidden_field( $number_of_uploads, $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']]);
-							$tmp_html	.= $products_options_details;
+							$optionsValuesHtml	.= $products_options_details;
 						}
 
 
@@ -2102,21 +2108,22 @@ If a special exist * 10+9
 
 						// Read Only - just for display purposes
 						if ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY) {
-							$tmp_html .= $products_options_details . '<br />';
+							$optionsValuesHtml .= $products_options_details . '<br />';
 						} else {
 							$productSettings['zv_display_select_option']++;
 						}
 
 						$productOptions[$optionsId]['option_values'][$valId]['value_name'] = $vals['products_options_values_name'];
 						$productOptions[$optionsId]['option_values'][$valId]['value_price'] = $vals['value_price'];
-						if( $vals['products_options_values_comment'] ) {
-							$tmp_html .= '<div class="help-block">'.$vals['products_options_values_comment'].'</div>';
-						}
 
 						// default
 						// find default attribute if set to for default dropdown
 						if ($vals['attributes_default']=='1') {
 							$selected_attribute = $vals['products_options_values_id'];
+						}
+
+						if( $vals['products_options_values_comment'] ) {
+							$optionsValuesHtml .= '<div class="help-block">'.$vals['products_options_values_comment'].'</div>';
 						}
 					}
 				}
@@ -2126,7 +2133,7 @@ If a special exist * 10+9
 					// text
 					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT):
 						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['menu'] = $optionsValuesHtml;
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
@@ -2137,7 +2144,7 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = '<div class="checkbox">'.$tmp_checkbox.'</div>';
+						$productOptions[$optionsId]['menu'] = '<div class="checkbox">'.$optionsValuesHtml.'</div>';
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
@@ -2148,7 +2155,7 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = $tmp_radio;
+						$productOptions[$optionsId]['menu'] = $optionsValuesHtml;
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
@@ -2159,14 +2166,14 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['menu'] = $optionsValuesHtml;
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
 					// READONLY
 					case ($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_READONLY):
 						$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
-						$productOptions[$optionsId]['menu'] = $tmp_html;
+						$productOptions[$optionsId]['menu'] = $optionsValuesHtml;
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
