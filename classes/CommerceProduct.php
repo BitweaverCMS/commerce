@@ -145,10 +145,9 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	function exportList( $pList ) {
-		$ret = parent::exportList( $pList );
-		foreach( $pList as $key=>$hash ) {
-			$ret[$key]['product_id'] = $hash['products_id'];
-			$ret[$key]['product_type'] = $hash['type_class'];
+		foreach( $pList as $productsId=>$hash ) {
+			$product = CommerceProduct::getCommerceObject( $productsId );
+			$ret[$productsId] = $product->exportHash();
 		}
 		return $ret;
 	}
@@ -157,6 +156,10 @@ class CommerceProduct extends LibertyMime {
 		$ret = parent::exportHash();
 		$ret['product_id'] = $this->mProductsId;
 		$ret['product_type'] = $this->getField( 'type_class' );
+		$ret['product_type_name'] = $this->getField( 'type_name' );
+		$ret['product_type_class'] = $this->getField( 'type_class' );
+		$ret['product_default_image'] = $this->getField( 'default_image', 'product' );
+		$ret['product_model'] = $this->getProductsModel();
 		return $ret;
 	}
 	// {{{ =================== Product Pricing Methods ====================
