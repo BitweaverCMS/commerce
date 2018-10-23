@@ -7,7 +7,7 @@ $title						= !empty( $moduleParams['title'] ) ? $moduleParams['title'] : (!empt
 $columnCount 				= !empty( $moduleParams['module_params']['columns'] ) ? $moduleParams['module_params']['columns'] : 3;
 $listHash['max_records']	= !empty( $moduleParams['module_rows'] ) ? $moduleParams['module_rows'] : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
 $listHash['offset'] 		= $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-$listHash['sort_mode']		= !empty( $moduleParams['sort_mode'] ) ? $moduleParams['sort_mode'] : 'random';
+$listHash['sort_mode']		= !empty( $moduleParams['sort_mode'] ) ? $moduleParams['sort_mode'] : (!empty( $moduleParams['module_params']['sort_mode'] ) ? $moduleParams['module_params']['sort_mode'] :'random');
 $listHash['thumbnail_size'] = 'medium';
 
 if( !empty( $gQueryUser ) && $gQueryUser->mUserId ) {
