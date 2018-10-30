@@ -30,37 +30,60 @@ require_once( './includes/languages/en/currencies.php' );
 $gYahooCurrencies = array();
 
 function currency_update_quotes() {
-	global $gBitDb;
+	global $gBitDb, $gCommerceSystem;
 	$output = array();
-	if( $currencies = $gBitDb->getAssoc("SELECT `code`, `title` FROM " . TABLE_CURRENCIES) ) {
-		foreach( $currencies as $curCode => $curTitle ) {
-			$server_used = 'yahoo';
-			if( !$rate = currency_yahoo_quote( $curCode ) ) {
-				$server_used = CURRENCY_SERVER_PRIMARY;
-				$quote_function = 'currency_' . CURRENCY_SERVER_PRIMARY . '_quote';
-				$rate = $quote_function( $curCode );
-
-				if (empty($rate) && (zen_not_null(CURRENCY_SERVER_BACKUP))) {
-					$output[] = sprintf( WARNING_PRIMARY_SERVER_FAILED, CURRENCY_SERVER_PRIMARY, '', $curCode );
-					$quote_function = 'currency_' . CURRENCY_SERVER_BACKUP . '_quote';
-					$quote_function = 'currency_yahoo_quote';
-					$rate = $quote_function( $curCode );
-					$server_used = CURRENCY_SERVER_BACKUP;
+	$server_used = 'exchangeratesapi'; // CURRENCY_SERVER_PRIMARY;
+	$quote_function = 'currency_' . $server_used . '_quote';
+	if( $currencies = $gBitDb->getAssoc("SELECT `code`, `title` FROM " . TABLE_CURRENCIES . " WHERE `code` != ?", array( DEFAULT_CURRENCY ) ) ) {
+		$rates = $quote_function( array_keys( $currencies ), DEFAULT_CURRENCY );
+		if( empty( $rates ) ) {
+			if( $server_used = $gCommerceSystem->getConfig( 'CURRENCY_SERVER_BACKUP' ) ) {
+				$quote_function = 'currency_' . $server_used . '_quote';
+				if( function_exists( $quote_function ) ) {
+					$rates = $quote_function( array_keys( $currencies ), DEFAULT_CURRENCY );
 				}
 			}
+		}
 
-			if( !empty( $rate ) ) {
-				$gBitDb->query( "UPDATE " . TABLE_CURRENCIES . " SET `currency_value`=?, `last_updated` = ".$gBitDb->qtNOW()." WHERE `code` = ?", array( $rate, $curCode ) );
-				$output[$curCode] = array( 'result' => 'success', 'message' => sprintf(TEXT_INFO_CURRENCY_UPDATED, $curTitle, $curCode, $server_used) .' = '.$rate );
-			  } else {
-				$output[$curCode] = array( 'result' => 'failure', 'message' => sprintf(ERROR_CURRENCY_INVALID, $curTitle, $curCode, $server_used) );
+		if( !empty( $rates ) ) {
+			foreach( $rates as $symbol=>$rate ) {
+				$gBitDb->query( "UPDATE " . TABLE_CURRENCIES . " SET `currency_value`=?, `last_updated` = ".$gBitDb->qtNOW()." WHERE `code` = ?", array( $rate, $symbol ) );
+				$output[$symbol] = array( 'result' => 'success', 'message' => sprintf(TEXT_INFO_CURRENCY_UPDATED, $currencies[$symbol], $symbol, $server_used) .' = '.$rate );
+				unset( $currencies[$symbol] );
 			}
 		}
+
+		if( !empty( $currencies ) ) {
+			foreach( $currencies as $symbol=>$curTitle ) {
+				$output[$symbol] = array( 'result' => 'failure', 'message' => sprintf(ERROR_CURRENCY_INVALID, $curTitle, $symbol, $server_used) );
+			}
+			bit_error_email( "Currency Update Failed", '', $output );
+		}
 	}
+
 	return $output;
 }
 
+function currency_exchangeratesapi_quote( $pSymbols, $base = DEFAULT_CURRENCY ) {
+	global $gBitDb, $gYahooCurrencies;
+	$rates = array();
 
+	$searchPairs = implode( ',', $pSymbols );
+	$exUrl = 'https://api.exchangeratesapi.io/latest?base='.$base.'&symbols='.$searchPairs;
+	if( $jsonQuotes = file_get_contents( $exUrl ) ) {
+		if( $quoteHash = json_decode( $jsonQuotes, true ) ) {
+			if( !empty( $quoteHash['rates'] ) ) {
+				foreach( $quoteHash['rates'] as $sym=>$quote ) {
+					$rates[$sym] = $quote;
+				}
+			}
+		}
+	}
+	return $rates;
+}
+
+
+/* dead
 function currency_yahoo_load( $base = DEFAULT_CURRENCY ) {
 	global $gBitDb, $gYahooCurrencies;
 	if( $currencies = $gBitDb->getAssoc("SELECT `code`, `title` FROM " . TABLE_CURRENCIES) ) {
@@ -69,8 +92,10 @@ function currency_yahoo_load( $base = DEFAULT_CURRENCY ) {
 		$yahooUrl = 'https://query.yahooapis.com/v1/public/yql?q='.urlencode( $yahooSql ).'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
 		if( $jsonQuotes = file_get_contents( $yahooUrl ) ) {
 			$yahooQuotes = json_decode( $jsonQuotes, true );
-			foreach( $yahooQuotes['query']['results']['rate'] as $quote ) {
-				$gYahooCurrencies[$quote['id']] = $quote['Rate'];
+			if( !empty( $yahooQuotes['query']['results']['rate'] ) ) {
+				foreach( $yahooQuotes['query']['results']['rate'] as $quote ) {
+					$gYahooCurrencies[$quote['id']] = $quote['Rate'];
+				}
 			}
 		}
 	}
@@ -104,7 +129,6 @@ function currency_oanda_quote($code, $base = DEFAULT_CURRENCY) {
 function currency_xe_quote($to, $from = DEFAULT_CURRENCY) {
 	$ret = FALSE;
 
-/* dead
 	if( $page = file('http://www.xe.net/ucc/convert.cgi?Amount=1&From=' . $from . '&To=' . $to) ) {
 		$match = array();
 
@@ -114,7 +138,6 @@ function currency_xe_quote($to, $from = DEFAULT_CURRENCY) {
 			$ret = $match[1];
 		}
 	}
-*/
 	return $ret;
 }
-?>
+*/
