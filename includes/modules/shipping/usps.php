@@ -1234,7 +1234,7 @@ $extraservices .
 				case (preg_match('#Priority Mail Express#i', $service)):
 					$time = $val['CommitmentTime'];
 					if ($time == '' || $time == 'No Data') {
-						$time = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '1 - 2 ' . tra( 'Days' );
 					} else {
 						$time = 'Tomorrow by ' . $time;
 					}
@@ -1242,28 +1242,28 @@ $extraservices .
 				case (preg_match('#Priority MailTM#i', $service)):
 					$time = $val['Days'];
 					if ($time == '' || $time == 'No Data') {
-						$time = '2 - 3 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '2 - 3 ' . tra( 'Days' );
 					} elseif ($time == '1') {
-						$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
+						$time .= ' ' . tra( 'Day' );
 					} else {
-						$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time .= ' ' . tra( 'Days' );
 					}
 					break;
 				case (preg_match('#Standard Post#i', $service)):
 					$time = $val['Days'];
 					if ($time == '' || $time == 'No Data') {
-						$time = '4 - 7 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '4 - 7 ' . tra( 'Days' );
 					} elseif ($time == '1') {
-						$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAY;
+						$time .= ' ' . tra( 'Day' );
 					} else {
-						$time .= ' ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time .= ' ' . tra( 'Days' );
 					}
 					break;
 				case (preg_match('#First\-Class#i', $service)):
-					$time = '2 - 5 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '2 - 5 ' . tra( 'Days' );
 					break;
 				case (preg_match('#Media Mail Parcel#i', $service)):
-					$time = '5 - 10 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '5 - 10 ' . tra( 'Days' );
 					break;
 				default:
 					$time = '';
@@ -1287,42 +1287,42 @@ $extraservices .
 	function parseTransitTimeResults($Package, $service) {
 		if( ($time = $this->getParameter( $Package, 'CommitmentName' )) ||($time = $this->getParameter( $Package, 'SvcCommitments' ) ) ) {
 			$time = preg_replace('/Weeks$/', MODULE_SHIPPING_USPS_TEXT_WEEKS, $time);
-			$time = preg_replace('/Days$/', MODULE_SHIPPING_USPS_TEXT_DAYS, $time);
-			$time = preg_replace('/Day$/', MODULE_SHIPPING_USPS_TEXT_DAY, $time);
+			$time = preg_replace('/Days$/', tra( 'Days' ), $time);
+			$time = preg_replace('/Day$/', tra( 'Day' ), $time);
 		} else {
 
 			switch (TRUE) {
 				// US Domestic
 				case (preg_match('#Priority Mail Express#i', $service)):
-						$time = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '1 - 2 ' . tra( 'Days' );
 					break;
 				case (preg_match('#Priority MailTM#i', $service)):
-						$time = '2 - 3 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '2 - 3 ' . tra( 'Days' );
 					break;
 				case (preg_match('#Standard PostRM#i', $service)):
-						$time = '4 - 7 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+						$time = '4 - 7 ' . tra( 'Days' );
 					break;
 				case (preg_match('#First\-Class#i', $service)):
-					$time = '2 - 5 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '2 - 5 ' . tra( 'Days' );
 					break;
 				case (preg_match('#Media Mail Parcel#i', $service)):
-					$time = '5 - 10 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '5 - 10 ' . tra( 'Days' );
 					break;
 				// International
 				case (preg_match('#Priority Mail International Express#i', $service)):
-					$time = '3 - 5 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '3 - 5 business ' . tra( 'Days' );
 					break;
 				case (preg_match('#Priority Mail International#i', $service)):
-					$time = '6 - 10 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '6 - 10 business ' . tra( 'Days' );
 					break;
 				case (preg_match('#Global Express Guaranteed#i', $service)):
-					$time = '1 - 3 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '1 - 3 business ' . tra( 'Days' );
 					break;
 				case (preg_match('#USPS GXG.* Envelopes#i', $service)):
-					$time = '1 - 3 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = '1 - 3 business ' . tra( 'Days' );
 					break;
 				case (preg_match('#First\-Class Package International#i', $service)):
-					$time = 'Varies by destination'; // '' . MODULE_SHIPPING_USPS_TEXT_DAYS;
+					$time = 'Varies by destination'; // '' . tra( 'Days' );
 					break;
 				default:
 					$time = '';

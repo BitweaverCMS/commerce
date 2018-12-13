@@ -158,7 +158,7 @@ class CommerceProduct extends LibertyMime {
 		$ret['product_type'] = $this->getField( 'type_class' );
 		$ret['product_type_name'] = $this->getField( 'type_name' );
 		$ret['product_type_class'] = $this->getField( 'type_class' );
-		$ret['product_default_image'] = $this->getField( 'default_image', 'product' );
+		$ret['product_type_icon'] = $this->getField( 'default_image', 'product' );
 		$ret['product_model'] = $this->getProductsModel();
 		return $ret;
 	}
@@ -1555,17 +1555,18 @@ If a special exist * 10+9
 
 		$pParamHash['content_type_guid'] = BITPRODUCT_CONTENT_TYPE_GUID;
 
-		// 'title' trumphs all
+
+		// 'title' trumps all
 		if( !empty( $pParamHash['title'] ) ) {
 			$pParamHash['products_name'][1] = substr( preg_replace( '/:space:+/m', ' ', trim( filter_var( $pParamHash['title'], FILTER_SANITIZE_STRING ) ) ), 0, BIT_CONTENT_MAX_TITLE_LEN );
-		}
-
-		if( !empty( $pParamHash['products_name'] ) ) {
+		} elseif( !empty( $pParamHash['products_name'] ) ) {
 			if( is_array( $pParamHash['products_name'] ) ) {
 				$pParamHash['title'] = current( $pParamHash['products_name'] );
 			} elseif( is_string( $pParamHash['products_name'] ) ) {
 				$pParamHash['title'] = $pParamHash['products_name'];
 			}
+		} elseif( empty( $_REQUEST['products_id'] ) ) {
+			$pParamHash['title'] = tra( 'Untitled '.$this->getProductsModel() );
 		}
 
 		if( empty( $pParamHash['lowest_purchase_price'] ) ) {
@@ -2612,7 +2613,28 @@ Skip deleting of images for now
 
 	static function getTypes() {
 		global $gBitDb;
-		return $gBitDb->getAssoc( "SELECT `type_id`, * FROM " . TABLE_PRODUCT_TYPES . " ORDER BY `type_name`" );
+		return $gBitDb->getAssoc( "SELECT `type_id`, * FROM " . TABLE_PRODUCT_TYPES . " ORDER BY `type_name`", FALSE, FALSE, FALSE, BIT_QUERY_CACHE_TIME );
+	}
+
+	// pLookupHash is a key -> value pair
+	static function newCommerceObject( $pLookupHash ) {
+		$ret = NULL;
+		$productTypes = static::getTypes();
+
+		$key = key( $pLookupHash );
+		$value = current( $pLookupHash );
+		foreach( array_keys( $productTypes ) as $typeId ) {
+			if( !empty( $productTypes[$typeId][$key] ) &&  $productTypes[$typeId][$key] == $value ) {
+				include_once( BIT_ROOT_PATH.$productTypes[$typeId]['type_class_file'] );
+				if( class_exists(	$productTypes[$typeId]['type_class'] ) ) {
+					$productClass = $productTypes[$typeId]['type_class'];
+				}
+				$ret = new $productClass();
+				break;
+			}
+		}
+
+		return $ret;
 	}
 
 	static function getCommerceObject( $pLookupMixed ) {
@@ -2637,7 +2659,7 @@ Skip deleting of images for now
 					FROM " . TABLE_PRODUCT_TYPES . " cpt
 						LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 					WHERE `$lookupKey`=?";
-			$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) );
+			$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ), BIT_QUERY_CACHE_TIME );
 
 			if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
 				require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
