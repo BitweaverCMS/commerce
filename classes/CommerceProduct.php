@@ -1582,10 +1582,6 @@ If a special exist * 10+9
 			$pParamHash['content_id'] = $this->mContentId;
 		}
 
-		if( empty( $pParamHash['content_id'] ) ) {
-			$pParamHash['content_id'] = $this->mContentId;
-		}
-
 		if( !empty( $pParamHash['products_date_available'] ) ) {
 			$pParamHash['product_store']['products_date_available'] = (date('Y-m-d') < $pParamHash['products_date_available']) ? $pParamHash['products_date_available'] : $this->mDb->NOW();
 		} else {
