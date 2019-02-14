@@ -23,6 +23,7 @@ function editAddress( pAddress ) {
 		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="icon-user-md" iforce=icon} 
 		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="icon-pencil" iforce=icon} 
 		{smartlink ipackage=users ifile="admin/user_activity.php" user_id=$order->customer.user_id ititle="User Activity" booticon="icon-bolt" iforce="icon"}
+		{smartlink ipackage=users ifile="admin/assign_user.php" assign_user=$order->customer.user_id ititle="Assume User" booticon="icon-key" iforce="icon"}
 		<br/>
 {if $order->customer.telephone}
 	{$order->customer.telephone}<br/>
