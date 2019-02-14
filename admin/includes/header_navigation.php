@@ -46,7 +46,7 @@ if( $rs = $gBitDb->query( "SELECT `configuration_group_id` as `cg_id`, `configur
 $dir = opendir( DIR_FS_MODULES );
 global $gBitUser;
 while( $file = readdir( $dir ) ) {
-	if( is_dir( DIR_FS_MODULES.$file ) && $file[0] != '.' && (($file != 'payment' && $file != 'fulfillment' && $file != 'shipping')  || $gBitUser->hasPermission( 'p_admin' )) ) {
+	if( is_dir( DIR_FS_MODULES.$file ) && $file[0] != '.' && (($file != 'payment' && $file != 'fulfillment' && $file != 'shipping')  || $gBitUser->hasPermission( 'p_bitcommerce_root' )) ) {
 		echo '<li class="dropdown-submenu"><a tabindex="-1" href="'.zen_href_link_admin(FILENAME_MODULES, 'set='.$file, 'NONSSL').'">'.tra( ucwords( str_replace( '_', ' ', $file ) ) ).'</a><ul class="dropdown-menu">';
 		$subdir = opendir( DIR_FS_MODULES.$file );
 		while( $subfile = readdir( $subdir ) ) {
