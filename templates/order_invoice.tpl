@@ -2,7 +2,7 @@
 <header>
 	<div class="row">
 		<div class="col-xs-12 col-sm-6 text-center">
-			<h1 class="page-heading">{tr}Order{/tr} #{$order->mOrdersId}</h1>
+			<h1 class="page-heading">{tr}Invoice{/tr}: {tr}Order{/tr} #{$order->mOrdersId}</h1>
 			<div class="date">{tr}Purchased{/tr}: {$order->getField('date_purchased')|bit_long_datetime}</div>
 		</div>
 		<div class="col-xs-12 col-sm-6">
