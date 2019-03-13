@@ -28,7 +28,7 @@ function editAddress( pAddress ) {
 	{$order->customer.telephone}<br/>
 {/if}
 		<a href="mailto:{$order->customer.email_address}">{$order->customer.email_address}</a><br/>
-		{if $order->customer.referer_url}<a href="{$order->customer.referer_url}"><small>{$order->customer.referer_url|stats_referer_display_short}</a></small><br/>{/if}
+		{if $gBitSystem->isPackageActive('stats')}{if $order->customer.referer_url}<a href="{$order->customer.referer_url}"><small>{$order->customer.referer_url|stats_referer_display_short}</a></small><br/>{/if}{/if}
 		{if $customerStats.orders_count == 1}<em>First Order</em>
 		{else}
 		<strong>Tier {$customerStats.tier|round}</strong>: <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">{$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2}</a> {tr}over{/tr} {$customerStats.customers_age} 
