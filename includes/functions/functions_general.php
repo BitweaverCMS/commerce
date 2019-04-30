@@ -552,22 +552,20 @@
 ////
 // Checks to see if the currency code exists as a currency
 // TABLES: currencies
-  function zen_currency_exists($code) {
-    global $gBitDb;
-    $code = zen_db_prepare_input($code);
+	function zen_currency_exists($code) {
 
-    $currency_code = "select `currencies_id`
-                      from " . TABLE_CURRENCIES . "
-                      where `code` = '" . zen_db_input($code) . "'";
+		$ret = FALSE;
+		if( strlen( $code ) <= 3 ) {
+			global $gBitDb;
+			$currency_code = "SELECT `currencies_id` FROM " . TABLE_CURRENCIES . " WHERE `code` = ?";
 
-    $currency = $gBitDb->Execute($currency_code);
+			if( $currencyId = $gBitDb->GetOne($currency_code, array( $code )) ) {
+				return strtoupper($code);
+			}
+		}
+		return $ret;
+	}
 
-    if ($currency->RecordCount()) {
-      return strtoupper($code);
-    } else {
-      return false;
-    }
-  }
 
 ////
   function zen_string_to_int($string) {
@@ -634,54 +632,6 @@
   }
 
 
-////
-/*
-  function $gBitDb->associateInsert($table, $data, $action = 'insert', $parameters = '', $link = 'db_link') {
-    global $gBitDb;
-    reset($data);
-    if ($action == 'insert') {
-      $query = 'insert into ' . $table . ' (';
-      while (list($columns, ) = each($data)) {
-        $query .= $columns . ', ';
-      }
-      $query = substr($query, 0, -2) . ') values (';
-      reset($data);
-      while (list(, $value) = each($data)) {
-        switch ((string)$value) {
-          case 'now()':
-            $query .= 'now(), ';
-            break;
-          case 'null':
-            $query .= 'null, ';
-            break;
-          default:
-            $query .= '\'' . zen_db_input($value) . '\', ';
-            break;
-        }
-      }
-      $query = substr($query, 0, -2) . ')';
-    } elseif ($action == 'update') {
-      $query = 'update ' . $table . ' set ';
-      while (list($columns, $value) = each($data)) {
-        switch ((string)$value) {
-          case 'now()':
-            $query .= $columns . ' = now(), ';
-            break;
-          case 'null':
-            $query .= $columns .= ' = null, ';
-            break;
-          default:
-            $query .= $columns . ' = \'' . zen_db_input($value) . '\', ';
-            break;
-        }
-      }
-      $query = substr($query, 0, -2) . ' where ' . $parameters;
-    }
-
-    return $gBitDb->Execute($query);
-  }
-*/
-////
 // Set back button
   function zen_back_link() {
 /*
