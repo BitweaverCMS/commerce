@@ -60,10 +60,7 @@ function zen_get_country_zones( $pCountryId ) {
 	global $gBitDb;
 	$ret = array();
 	if( BitBase::verifyId( $pCountryId ) ) {
-		$sql = "SELECT `zone_id` AS `hash_key`, `zone_id`, `zone_name` 
-				FROM " . TABLE_ZONES . " 
-				WHERE `zone_country_id` = ? 
-				ORDER BY `zone_name`";
+		$sql = "SELECT `zone_id` AS `hash_key`, `zone_id`, `zone_name` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ?  ORDER BY `zone_name`";
 		$bindVars = array( $pCountryId );
 		$ret = $gBitDb->getAssoc( $sql, $bindVars );
 	}
@@ -93,10 +90,7 @@ function zen_get_countries( $pCountryMixed = '', $with_iso_codes = TRUE) {
 		$bindVars = array( $pCountryMixed );
 	}
 
-	$countries = "SELECT *
-				  FROM " . TABLE_COUNTRIES . "
-				  $whereSql
-				  ORDER BY `countries_name`";
+	$countries = "SELECT * FROM " . TABLE_COUNTRIES . " $whereSql ORDER BY `countries_name`";
 	if( $rs = $gBitDb->query( $countries, $bindVars ) ) {
 		while( !$rs->EOF ) {
 			$row = array( 'countries_id' => $rs->fields['countries_id'],
@@ -159,9 +153,7 @@ function zen_get_country_name($country_id) {
 
 function zen_get_zone_by_name( $pCountryId, $pName ) {
 	global $gBitDb;
-	$sql = "SELECT *
-			FROM " . TABLE_ZONES . "
-			WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
+	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
 	return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%' ) ) );
 }
 
@@ -181,17 +173,16 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
 ////
 // Returns the zone (State/Province) name
 // TABLES: zones
-  function zen_get_zone_name($country_id, $zone_id, $default_zone) {
-    global $gBitDb;
-    $zone_query = "select `zone_name` from " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_id` = ?";
-    $zone = $gBitDb->query( $zone_query, array( $country_id, $zone_id ) );
+	function zen_get_zone_name( $pCountryId, $pZoneId, $pDefaultZone ) {
+		global $gBitDb;
 
-    if ($zone->RecordCount()) {
-      return $zone->fields['zone_name'];
-    } else {
-      return $default_zone;
-    }
-  }
+		$ret = $pDefaultZone;
+		if( BitBase::verifyId( $pCountryId ) && BitBase::verifyId( $pZoneId ) ) {
+			$query = "SELECT `zone_name` FROM " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_id` = ?";
+			$ret = $gBitDb->getOne( $query, array( $pCountryId, $pZoneId ) );
+		}
+		return $ret;
+	}
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   //
@@ -241,19 +232,20 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
  * @param int The product id of the product who's name we want
  * @param int The language id to use. If this is not set then the current language is used
 */
-  function zen_get_products_name($product_id, $language = '') {
-    global $gBitDb;
+	function zen_get_products_name($pProductsId, $pLanguageId = '') {
+		global $gBitDb;
 
-    if (empty($language)) $language = $_SESSION['languages_id'];
+		if( empty( $pLanguageId ) ) {
+			$pLanguageId = $_SESSION['languages_id'];
+		}
 
-    $product_query = "select `products_name`
-                      from " . TABLE_PRODUCTS_DESCRIPTION . "
-                      where `products_id` = '" . (int)$product_id . "'
-                      and `language_id` = '" . (int)$language . "'";
+		$ret = "";
+		if( BitBase::verifyId( $pProductsId ) && BitBase::verifyId( $pLanguageId ) ) {
+			$query = "select `products_name` from " . TABLE_PRODUCTS_DESCRIPTION . " where `products_id` = ? and `language_id` = ?";
+			$ret = $gBitDb->getOne($query, array( $pProductsId, $pLanguageId ) );
+		}
 
-    $product = $gBitDb->Execute($product_query);
-
-    return $product->fields['products_name'];
+		return $ret;
   }
 
 
@@ -313,23 +305,23 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
 	return $hasAttributes;
   }
 
-  function zen_get_category_name($category_id, $fn_language_id) {
-    global $gBitDb;
-    $category_query = "select `categories_name`
-                       from " . TABLE_CATEGORIES_DESCRIPTION . "
-                       where `categories_id` = '" . $category_id . "'
-                       and `language_id` = '" . $fn_language_id . "'";
+	function zen_get_category_name( $pCountryId, $pLanguageId ) {
+		global $gBitDb;
 
-    $category = $gBitDb->Execute($category_query);
+		$ret = "";
+		if( BitBase::verifyId( $pCategoryId ) && BitBase::verifyId( $pLanguageId ) ) {
+			$category_query = "SELECT `categories_name` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ?  AND `language_id` = ?";
+			$category = $gBitDb->getOne($category_query, array( $pCategoryId, $pLanguageId ) );
+		}
 
-    return $category->fields['categories_name'];
-  }
+		return $ret;
+	}
 
 
   function zen_get_category_description($category_id, $fn_language_id) {
     global $gBitDb;
     if ( !$category_id ) return "";
-    $category_query = "select `categories_description` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id` = ? and `language_id` = ?";
+    $category_query = "SELECT `categories_description` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ? AND `language_id` = ?";
     $category = $gBitDb->query($category_query, array( $category_id, $fn_language_id) );
     return $category->fields['categories_description'];
   }
@@ -337,69 +329,68 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
 ////
 // Return a product's category
 // TABLES: products_to_categories
-  function zen_get_products_category_id($products_id) {
-    global $gBitDb;
+	function zen_get_products_category_id( $pProductsId ) {
+		global $gBitDb;
 
-    $the_products_category_query = "select `products_id`, `categories_id` from " . TABLE_PRODUCTS_TO_CATEGORIES . " where `products_id` = '" . (int)$products_id . "'" . " order by `products_id`, `categories_id`";
-    $the_products_category = $gBitDb->Execute($the_products_category_query);
-
-    return $the_products_category->fields['categories_id'];
-  }
+		$ret = NULL;
+		if( BitBase::verifyId( $pProductsId ) ) {
+			$query = "SELECT `categories_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ? order by `products_id`, `categories_id`";
+			$ret = $gBitDb->getOne( $query, array( $pProductsId ) );
+		}
+		return $ret;
+	}
 
 ////
 // TABLES: categories
-  function zen_get_categories_image($what_am_i) {
-    global $gBitDb;
+	function zen_get_categories_image( $pCategoryId ) {
+		global $gBitDb;
 
-    $the_categories_image_query= "select `categories_image` from " . TABLE_CATEGORIES . " where `categories_id` = '" . $what_am_i . "'";
-    $the_products_category = $gBitDb->Execute($the_categories_image_query);
-
-    return $the_products_category->fields['categories_image'];
-  }
+		$ret = "";
+		if( BitBase::verifyId( $pCategoryId ) ) {
+			$query= "SELECT `categories_image` FROM " . TABLE_CATEGORIES . " WHERE `categories_id` = ?";
+			$ret = $gBitDb->getOne( $query, array( $pCategoryId ) );
+		}
+		return $ret;
+	}
 
 ////
 // TABLES: categories_description
-  function zen_get_categories_name($who_am_i) {
-    global $gBitDb;
-    $the_categories_name_query= "select `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " where `categories_id` = '" . $who_am_i . "' and `language_id` = '" . $_SESSION['languages_id'] . "'";
-
-    $the_categories_name = $gBitDb->Execute($the_categories_name_query);
-
-    return $the_categories_name->fields['categories_name'];
-  }
+	function zen_get_categories_name( $pCategoryId ) {
+		global $gBitDb;
+		$ret = "";
+		if( BitBase::verifyId( $pCategoryId ) ) {
+			$query= "SELECT `categories_name` from " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ? and `language_id` = ?";
+			$ret = $gBitDb->getOne( $query, array( $pCategoryId, $_SESSION['languages_id'] ) );
+		}
+		return $ret;
+	}
 
 ////
 // Return a product's manufacturer's name
 // TABLES: products, manufacturers
-  function zen_get_products_manufacturers_name($product_id) {
-    global $gBitDb;
+	function zen_get_products_manufacturers_name( $pProductsId ) {
+		global $gBitDb;
 
-    $product_query = "select m.`manufacturers_name`
-                      from " . TABLE_PRODUCTS . " p, " .
-                            TABLE_MANUFACTURERS . " m
-                      where p.`products_id` = '" . (int)$product_id . "'
-                      and p.`manufacturers_id` = m.`manufacturers_id`";
-
-    $product =$gBitDb->Execute($product_query);
-
-    return $product->fields['manufacturers_name'];
-  }
+		$ret = NULL;
+		if( BitBase::verifyId( $pProductsId ) ) {
+			$query = "SELECT m.`manufacturers_name` from " . TABLE_PRODUCTS . " p, " .  TABLE_MANUFACTURERS . " m where p.`products_id` = ? AND p.`manufacturers_id` = m.`manufacturers_id`";
+			$ret = $gBitDb->getOne( $query, array( $pProductsId ) );
+		}
+		return $ret;
+	}
 
 ////
 // Return a product's manufacturer's image
 // TABLES: products, manufacturers
-  function zen_get_products_manufacturers_image($product_id) {
-    global $gBitDb;
+	function zen_get_products_manufacturers_image( $pProductsId ) {
+		global $gBitDb;
 
-    $product_query = "select m.`manufacturers_image`
-                      from " . TABLE_PRODUCTS . " p, " .
-                            TABLE_MANUFACTURERS . " m
-                      where p.`products_id` = '" . (int)$product_id . "'
-                      and p.`manufacturers_id` = m.`manufacturers_id`";
-
-    $product =$gBitDb->Execute($product_query);
-
-    return $product->fields['manufacturers_image'];
+		$ret = NULL;
+		if( BitBase::verifyId( $pProductsId ) ) {
+			$query = "SELECT m.`manufacturers_image` FROM " . TABLE_PRODUCTS . " p, " .  TABLE_MANUFACTURERS . " m WHERE p.`products_id` = ? AND p.`manufacturers_id` = m.`manufacturers_id`";
+			$ret = $gBitDb->getOne( $query, array( $pProductsId ) );
+		}
+		return $ret;
   }
 
 
@@ -477,20 +468,21 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
     return $lookup_value;
   }
 
-  function zen_get_products_description($product_id, $language = '') {
-    global $gBitDb;
+	function zen_get_products_description( $pProductsId, $pLanguageId = '' ) {
+		global $gBitDb;
 
-    if (empty($language)) $language = $_SESSION['languages_id'];
+		if( empty( $pLanguageId ) ) {
+			$pLanguageId = $_SESSION['languages_id'];
+		}
 
-    $product_query = "select `products_description`
-                      from " . TABLE_PRODUCTS_DESCRIPTION . "
-                      where `products_id` = '" . (int)$product_id . "'
-                      and `language_id` = '" . (int)$language . "'";
+		$ret = "";
+		if( BitBase::verifyId( $pProductsId ) && BitBase::verifyId( $pLanguageId ) ) {
+			$query = "SELECT `products_description` FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ? AND `language_id` = ?";
+			$ret = $gBitDb->getOne($query, array( $pProductsId, $pLanguageId ) );
+		}
 
-    $product = $gBitDb->Execute($product_query);
-
-    return $product->fields['products_description'];
-  }
+		return $ret;
+	}
 
 ////
 // look up the product type from product_id and return an info page name
