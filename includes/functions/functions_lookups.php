@@ -309,9 +309,9 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
 		global $gBitDb;
 
 		$ret = "";
-		if( BitBase::verifyId( $pCategoryId ) && BitBase::verifyId( $pLanguageId ) ) {
+		if( BitBase::verifyId( $pCountryId ) && BitBase::verifyId( $pLanguageId ) ) {
 			$category_query = "SELECT `categories_name` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ?  AND `language_id` = ?";
-			$category = $gBitDb->getOne($category_query, array( $pCategoryId, $pLanguageId ) );
+			$category = $gBitDb->getOne($category_query, array( $pCountryId, $pLanguageId ) );
 		}
 
 		return $ret;
