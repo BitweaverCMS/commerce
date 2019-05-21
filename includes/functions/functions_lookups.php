@@ -293,50 +293,58 @@ function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
     return( !empty( $attributes ) );
   }
 
-///
-// Check if product has attributes values
-  function zen_has_product_attributes_values($products_id) {
-    global $gBitDb;
-    $attributes_query = "SELECT SUM(`options_values_price`) as `total`
-                         FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
-						 	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
-                         WHERE pom.`products_id` = ?";
-    $hasAttributes = $gBitDb->getOne( $attributes_query, array( (int)$products_id ) );
-	return $hasAttributes;
-  }
-
-	function zen_get_category_name( $pCountryId, $pLanguageId ) {
+	///
+	// Check if product has attributes values
+	function zen_has_product_attributes_values( $pProductsId ) {
 		global $gBitDb;
+		$ret = false;
+		if( BitBase::verifyId( $pProductsId ) ) {
+			$attributes_query = "SELECT SUM(`options_values_price`) as `total`
+								 FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+									INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON(pa.`products_options_values_id`=pom.`products_options_values_id`) 
+								 WHERE pom.`products_id` = ?";
+			$ret = $gBitDb->getOne( $attributes_query, array( (int)$products_id ) );
+		}
+		return $ret;
+	}
 
-		$ret = "";
-		if( BitBase::verifyId( $pCountryId ) && BitBase::verifyId( $pLanguageId ) ) {
-			$category_query = "SELECT `categories_name` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ?  AND `language_id` = ?";
-			$category = $gBitDb->getOne($category_query, array( $pCountryId, $pLanguageId ) );
+	function zen_get_category_name( $pCategoryId, $pLanguageId ) {
+		global $gBitDb;
+		$ret = '';
+
+		if( BitBase::verifyId( $pCategoryId ) && BitBase::verifyId( $pLanguageId ) ) {
+			$query = "SELECT `categories_name` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ? and `language_id` = ?"; 
+			$ret = $gBitDb->GetOne( $query, array( $pCategoryId, $pLanguageId) );
 		}
 
 		return $ret;
 	}
 
 
-  function zen_get_category_description($category_id, $fn_language_id) {
-    global $gBitDb;
-    if ( !$category_id ) return "";
-    $category_query = "SELECT `categories_description` FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ? AND `language_id` = ?";
-    $category = $gBitDb->query($category_query, array( $category_id, $fn_language_id) );
-    return $category->fields['categories_description'];
-  }
+	function zen_get_category_description( $pCategoryId, $pLanguageId ) {
+		global $gBitDb;
+		$ret = '';
 
-////
-// Return a product's category
-// TABLES: products_to_categories
+		if( BitBase::verifyId( $pCategoryId ) && BitBase::verifyId( $pLanguageId ) ) {
+			$query = "select `categories_description` from " . TABLE_CATEGORIES_DESCRIPTION . " WHERE `categories_id` = ? and `language_id` = ?"; 
+			$ret = $gBitDb->GetOne( $query, array( $pCategoryId, $pLanguageId) );
+		}
+
+		return $ret;
+	}
+
+	////
+	// Return a product's category
+	// TABLES: products_to_categories
 	function zen_get_products_category_id( $pProductsId ) {
 		global $gBitDb;
+		$ret = '';
 
-		$ret = NULL;
 		if( BitBase::verifyId( $pProductsId ) ) {
-			$query = "SELECT `categories_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ? order by `products_id`, `categories_id`";
-			$ret = $gBitDb->getOne( $query, array( $pProductsId ) );
+			$query = "SELECT `categories_id` FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " WHERE `products_id` = ? ORDER BY `products_id`, `categories_id`";
+			$ret = $gBitDb->GetOne( $query, array( $pProductsId ) );
 		}
+
 		return $ret;
 	}
 
