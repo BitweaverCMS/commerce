@@ -36,24 +36,31 @@
  * Redirect to another page or site
  * @param string The url to redirect to
 */
-  function zen_redirect($url) {
+function zen_redirect($url) {
+
   	if( $url == FILENAME_LOGIN ) {
 		$_SESSION['loginfrom'] = $_SERVER['REQUEST_URI'];
 	}
-    if ( (ENABLE_SSL == true) && !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
-      if (substr($url, 0, strlen(HTTP_SERVER)) == HTTP_SERVER) { // NONSSL url
-        $url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
-      }
-    }
 
-// clean up URL before executing it
-  while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
-  while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
-  // header locates should not have the &amp; in the address it breaks things
-  while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
+	if ( (ENABLE_SSL == true) && !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
+		if (substr($url, 0, strlen(HTTP_SERVER)) == HTTP_SERVER) { // NONSSL url
+			$url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
+		}
+	}
+
+	// clean up URL before executing it
+	while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
+	while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
+	// header locates should not have the &amp; in the address it breaks things
+	while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
+
+	global $gBitUser;
+	if( is_object( $gBitUser ) ) {
+		apache_setenv( 'USERID', $gBitUser->getField('login', '-'), true );
+	}
     header('Location: ' . $url);
     zen_exit();
-  }
+}
 
 /**
  * Break a word in a string if it is longer than a specified length ($len)
