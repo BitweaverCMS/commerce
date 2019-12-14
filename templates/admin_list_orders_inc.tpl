@@ -23,7 +23,7 @@
 	{assign var=grossTotal value=$grossTotal+$order.order_total}
 	<tr>
 		<td style="width:10em;text-align:left">{$order.purchase_time}</td>
-		<td colspan="5"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a><div class="date pull-right">{$order.delivery_city}, {$order.delivery_state}</div></td>
+		<td colspan="5"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {$gBitUser->getDisplayName(0,$order)}</a><div class="date pull-right text-right">{$order.delivery_city}, {$order.delivery_state}{if $order.shipping_method_code}<br><span class="small">{$order.shipping_method_code}</span>{/if}</div></td>
 		<td class="text-right">{$order.orders_status_name}</td>
 		<td class="text-right">{$gCommerceCurrencies->format($order.order_total, TRUE, $order.currency|default:DEFAULT_CURRENCY, $order.currency_value|default:1)}</td>
 	</tr>
