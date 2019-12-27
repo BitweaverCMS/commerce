@@ -162,8 +162,15 @@ foreach ( $directory_array as $class=>$file ) {
 				$keys_extra[$module_keys[$j]]['set_function'] = $key_value->fields['set_function'];
 			}
 			$module_info['keys'] = $keys_extra;
+			if( $module->enabled ) {
+				$module_info['panel_class'] = 'panel-success';
+			} elseif( $module->check() ) {
+				$module_info['panel_class'] = 'panel-warning';
+			} else {
+				$module_info['panel_class'] = 'panel-default';
+			}
 			$moduleInfo = new objectInfo($module_info);
-				$rowClass = 'info';
+			$rowClass = 'info';
 		} else {
 			if( $module->enabled ) {
 				$rowClass = 'success';
@@ -275,7 +282,7 @@ switch ($action) {
 }
 if ( (zen_not_null($heading)) && (zen_not_null($contents)) ) {
 	$box = new box;
-	echo $box->infoBox($heading, $contents);
+	echo $box->infoBox($heading, $contents, $moduleInfo->panel_class);
 }
 ?>
 			</div>
