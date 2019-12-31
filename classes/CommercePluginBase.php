@@ -19,6 +19,7 @@ abstract class CommercePluginBase extends BitBase {
 	protected $isEnabled;
 	protected $isInstalled;
 	protected $sort_order;
+	protected $mConfigKey;
 
 	abstract public function keys();
 	abstract public function install();
@@ -28,12 +29,17 @@ abstract class CommercePluginBase extends BitBase {
 	public function __construct() {
 		parent::__construct();
 		$this->code = get_called_class();
+		$this->mConfigKey = $this->getConfigKey();
 		$this->enabled = $this->isEnabled(); // legacy support for old plugins
 		$this->check = $this->isInstalled(); // legacy support for old plugins
 	}
 
 	public function remove() {
 		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` IN ('" . implode("', '", $this->keys()) . "')");
+	}
+
+	protected function getConfigKey() {
+		return strtoupper( $this->code );
 	}
 
 	public function isEnabled() {
@@ -64,6 +70,11 @@ abstract class CommercePluginBase extends BitBase {
 	function getConfig( $pConfigName, $pDefault=NULL ) {
 		global $gCommerceSystem;
 		return $gCommerceSystem->getConfig( $pConfigName, $pDefault );
+	}
+
+	function isConfigActive( $pConfigName ) {
+		global $gCommerceSystem;
+		return $gCommerceSystem->isConfigActive( $pConfigName );
 	}
 
 	public function storeConfig ( $pConfigKey, $pConfigValue ) {

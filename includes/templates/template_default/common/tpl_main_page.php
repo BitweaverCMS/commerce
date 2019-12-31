@@ -20,10 +20,13 @@
 // $Id$
 //
 
-	$header_template = 'tpl_header.php';
-	$footer_template = 'tpl_footer.php';
+global $gCommerceSystem;
+
+$header_template = 'tpl_header.php';
+$footer_template = 'tpl_footer.php';
+
 print '<div class="'.($gBitProduct->isValid() ? preg_replace( '/\W+/', '-', strtolower( $gBitProduct->getProductsModel() ) ).' product-'.$gBitProduct->mProductsId:'').'">';
-	require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php');
-	require($body_code);
-	require(DIR_FS_MODULES . 'footer.php'); 
+require($gCommerceSystem->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_products_next_previous.php');
+require($body_code);
+require(DIR_FS_MODULES . 'footer.php'); 
 print '</div>';

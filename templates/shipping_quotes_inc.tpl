@@ -7,11 +7,10 @@
 			<div class="row">
 				<div class="col-xs-12">
 					{if $quotes[ix].icon}
-						<div>{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].title class="img-responsive shipper-logo"}</div>
+						<div>{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}</div>
 					{else}
 						<h4>{$quotes[ix].module}</h4>
 					{/if}
-					
 				</div>
 				<div class="col-xs-12">
 					{if $quotes[ix].note}
@@ -35,6 +34,7 @@
 											<label>
 												<input type="radio" name="shipping" value="{$quotes[ix].id}_{$quotes[ix].methods[jx].id}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
 												{if $quotes[ix].methods[jx].transit_time}{formhelp note=$quotes[ix].methods[jx].transit_time}{/if}
+												{if $quotes[ix].methods[jx].delivery_date}{formhelp note=$quotes[ix].methods[jx].delivery_date}{/if}
 											</label>
 										</div>
 									{else}

@@ -19,7 +19,6 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-  require_once(DIR_FS_MODULES . 'require_languages.php');
-	define( 'HEADING_TITLE', 'Advanced Search' );
-  $breadcrumb->add(NAVBAR_TITLE_1);
-?>
+require_once(DIR_FS_MODULES . 'require_languages.php');
+$gCommerceSystem->setHeadingTitle(( 'Advanced Search' );
+$breadcrumb->add(NAVBAR_TITLE_1);

@@ -73,7 +73,7 @@ function zen_get_country_zones( $pCountryId ) {
  * @param int If set limits to a single country
  * @param boolean If true adds the iso codes to the array
 */
-function zen_get_countries( $pCountryMixed = '', $with_iso_codes = TRUE) {
+function zen_get_countries( $pCountryMixed = '' ) {
     global $gBitDb;
 
     $ret = array();
@@ -83,6 +83,12 @@ function zen_get_countries( $pCountryMixed = '', $with_iso_codes = TRUE) {
     if (zen_not_null($pCountryMixed)) {
     	if( is_numeric( $pCountryMixed ) ) {
     		$whereSql = ' WHERE `countries_id` = ? ';
+		} elseif( $length == 3 ) {
+    		$pCountryMixed = strtoupper( $pCountryMixed );
+    		$whereSql = ' WHERE UPPER( `countries_iso_code_3` ) = ? ';
+		} elseif( $length == 2 ) {
+    		$pCountryMixed = strtoupper( $pCountryMixed );
+    		$whereSql = ' WHERE UPPER( `countries_iso_code_2` ) = ? ';
     	} else {
     		$pCountryMixed = strtoupper( $pCountryMixed );
     		$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
@@ -95,13 +101,11 @@ function zen_get_countries( $pCountryMixed = '', $with_iso_codes = TRUE) {
 		while( !$rs->EOF ) {
 			$row = array( 'countries_id' => $rs->fields['countries_id'],
 						  'countries_name' => $rs->fields['countries_name'],
-						  'address_format_id' => $rs->fields['address_format_id']
+						  'address_format_id' => $rs->fields['address_format_id'],
+						  'countries_iso_code_2' => $rs->fields['countries_iso_code_2'],
+						  'countries_iso_code_3' => $rs->fields['countries_iso_code_3']
 						);
 
-			if( $with_iso_codes == true ) {
-				$row['countries_iso_code_2'] = $rs->fields['countries_iso_code_2'];
-				$row['countries_iso_code_3'] = $rs->fields['countries_iso_code_3'];
-			}
 			if( $rs->RecordCount() == 1 ) {
 				$ret = $row;
 			} else {
@@ -140,16 +144,6 @@ function zen_get_country_name($country_id) {
 		return $country_array['countries_name'];
 	}
 }
-
-/**
- * Alias function to zen_get_countries, which also returns the countries iso codes
- *
- * @param int If set limits to a single country
-*/
-  function zen_get_countries_with_iso_codes($countries_id) {
-    return zen_get_countries($countries_id, true);
-  }
-
 
 function zen_get_zone_by_name( $pCountryId, $pName ) {
 	global $gBitDb;

@@ -47,6 +47,11 @@ class order extends CommerceOrderBase {
 		}
 	}
 
+	// Abstract methods implementation
+	public function getDelivery() {
+		return $this->delivery;
+	}
+
 	// Called at various times. This function calulates the total value of the order that the
 	// credit will be appled aginst. This varies depending on whether the credit class applies
 	// to shipping & tax
@@ -279,7 +284,7 @@ class order extends CommerceOrderBase {
 									'city' => $order->fields['delivery_city'],
 									'postcode' => $order->fields['delivery_postcode'],
 									'state' => $order->fields['delivery_state'],
-									'country' => zen_get_countries( $order->fields['delivery_country'], TRUE ),
+									'country' => zen_get_countries( $order->fields['delivery_country'] ),
 									'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
 									'telephone' => $order->fields['delivery_telephone'],
 									'format_id' => $order->fields['delivery_address_format_id']);
@@ -294,7 +299,7 @@ class order extends CommerceOrderBase {
 														 'suburb' => $order->fields['billing_suburb'],
 														 'city' => $order->fields['billing_city'],
 														 'postcode' => $order->fields['billing_postcode'],
-														 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
+														 'country' => zen_get_countries( $order->fields['billing_country'] ),
 														 'state' => $order->fields['billing_state'],
 														 'telephone' => $order->fields['billing_telephone'],
 														 'format_id' => $order->fields['billing_address_format_id']);

@@ -170,7 +170,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 					}
 
 					if( $shippingAddress = $azOrder->getShippingAddress() ) {
-						$country = zen_get_countries( zen_get_country_id( $shippingAddress->getCountryCode() ), TRUE );
+						$country = zen_get_countries( $shippingAddress->getCountryCode() );
 						$zoneName = zen_get_zone_name_by_code( $country['countries_id'], $shippingAddress->getStateOrRegion() );
 						$order->delivery = array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
 												'lastname' => substr( $shippingAddress->getName(), strpos( $shippingAddress->getName(), ' ' ) + 1 ),

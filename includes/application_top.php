@@ -36,7 +36,6 @@ if( empty( $_REQUEST['main_page'] ) ) {
 define( 'BITCOMMERCE_ADMIN', FALSE );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-// We must include this file separately as admin/ has different ideas of templates and constants, etc.
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
 
 

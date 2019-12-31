@@ -64,7 +64,7 @@ $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/'
 
 // load all files in the page directory starting with 'header_php'
 
-$directory_array = $template->get_template_part($code_page_directory, '/^header_php/');
+$directory_array = $gCommerceSystem->get_template_part($code_page_directory, '/^header_php/');
 
 while(list ($key, $value) = each($directory_array)) {
 	require($code_page_directory . '/' . $value);
@@ -73,18 +73,18 @@ while(list ($key, $value) = each($directory_array)) {
 //new smarty based pages are doing away with this call
 require_once( DIR_FS_MODULES . 'require_languages.php' );
 
-// 	require($template->get_template_dir('html_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/html_header.php');
+// 	require($gCommerceSystem->get_template_dir('html_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/html_header.php');
 
 // Define Template Variables picked up from includes/main_template_vars.php unless a file exists in the
 // includes/pages/{page_name}/directory to overide. Allowing different pages to have different overall
 //templates.
 
-require($template->get_template_dir('main_template_vars.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/main_template_vars.php');
+require($gCommerceSystem->get_template_dir('main_template_vars.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/main_template_vars.php');
 
 // Read the "on_load" scripts for the individual page, and from the site-wide template settings
 // NOTE: on_load_*.js files must contain just the raw code to be inserted in the <body> tag in the on_load="" parameter.
 // Looking in "/includes/modules/pages" for files named "on_load_*.js"
-$directory_array = $template->get_template_part(DIR_FS_PAGES . $current_page_base, '/^on_load_/', '.js');
+$directory_array = $gCommerceSystem->get_template_part(DIR_FS_PAGES . $current_page_base, '/^on_load_/', '.js');
 while(list ($key, $value) = each($directory_array)) {
 	$onload_file = DIR_FS_PAGES . $current_page_base . '/' . $value;
 	$read_contents='';
@@ -96,8 +96,8 @@ while(list ($key, $value) = each($directory_array)) {
 }
 //now read "includes/templates/TEMPLATE/jscript/on_load/on_load_*.js", which would be site-wide settings
 $directory_array=array();
-$tpl_dir=$template->get_template_dir('.js', DIR_WS_TEMPLATE, 'jscript/on_load', 'jscript/on_load_');
-$directory_array = $template->get_template_part($tpl_dir ,'/^on_load_/', '.js');
+$tpl_dir=$gCommerceSystem->get_template_dir('.js', DIR_WS_TEMPLATE, 'jscript/on_load', 'jscript/on_load_');
+$directory_array = $gCommerceSystem->get_template_part($tpl_dir ,'/^on_load_/', '.js');
 while(list ($key, $value) = each($directory_array)) {
 	$onload_file = $tpl_dir . '/' . $value;
 	$read_contents='';
@@ -117,7 +117,7 @@ if (trim($zv_onload) == ';') $zv_onload='';  // ensure that a blank list is trul
 // or using a default template. The default template installed will be a standard 3 column layout. This
 // template also loads the page body code based on the variable $body_code.
 
-require($template->get_template_dir('tpl_main_page.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_main_page.php');
+require($gCommerceSystem->get_template_dir('tpl_main_page.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_main_page.php');
 
 require(DIR_FS_INCLUDES . 'application_bottom.php');
 $content = ob_get_contents();

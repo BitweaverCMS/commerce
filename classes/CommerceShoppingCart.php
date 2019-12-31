@@ -17,6 +17,27 @@ define( 'MAX_CART_QUANTITY', 9999999 );
 class CommerceShoppingCart extends CommerceOrderBase {
 	public $cartID, $content_type;
 
+	// Abstract methods implementation
+	public function getDelivery() {
+		global $gBitCustomer;
+		$ret = array();
+
+		$deliveryAddressId = BitBase::getParameter( $_SESSION, 'cart_address_id', BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddress() ) );
+
+		if( isset( $deliveryAddressId ) && $selAddress = $gBitCustomer->getAddress( $deliveryAddressId ) ) {
+			foreach( $selAddress as $key => $value ) {
+				$ret[str_replace( 'entry_', '', $key)] = $value;
+			
+			}
+			if( !empty( $_SESSION['cart_zone_id'] ) ) {
+				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];
+			}
+			$_SESSION['country_id'] = NULL;
+		}
+
+		return $ret;
+	}
+
 	function load() {
 		global $gBitUser;
 

@@ -33,7 +33,7 @@ $paymentOptions['worldpay'] = tra( 'WorldPay' );
 $paymentOptions['check'] = tra( 'Check' );
 $gBitSmarty->assign( 'paymentOptions', $paymentOptions );
 
-define( 'HEADING_TITLE', tra( 'Commissions' ) );
+$gCommerceSystem->setHeadingTitle( tra( 'Commissions' ) );
 $gBitSmarty->display( 'bitpackage:bitcommerce/commissions.tpl' );
 
 ?>

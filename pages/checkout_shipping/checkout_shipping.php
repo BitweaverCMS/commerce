@@ -10,7 +10,7 @@
 
 require(DIR_FS_CLASSES . 'http_client.php');
 
-define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
+$gCommerceSystem->setHeadingTitle( tra( 'Checkout Shipping' ) );
 
 if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
 	if( $gBitUser->isRegistered() ) {
@@ -61,18 +61,15 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 }
 
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-$order = new order();
-$gBitSmarty->assign( 'order', $order );
 
 // if the no delivery address, try to get one by default
-if( empty( $_SESSION['sendto'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+if( empty( $_SESSION['sendto'] ) ) {
 	if( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
-		$order->delivery = $gBitCustomer->getAddress( $defaultAddressId );
 		$_SESSION['sendto'] =	$defaultAddressId;
 	}
 }
 
-if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+if( isset( $_REQUEST['change_address'] ) ) {
 	if( $addresses = $gBitCustomer->getAddresses() ) {
 		$gBitSmarty->assign( 'addresses', $addresses );
 	}
@@ -128,7 +125,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 						$quote[0]['methods'][0]['cost'] = '0';
 					} else {
-						$quote = $shipping->quote( $gBitCustomer->mCart->show_weight(), $method, $module);
+						$quote = $shipping->quote( $gBitCustomer->mCart, $method, $module);
 					}
 					if (isset($quote['error'])) {
 						$_SESSION['shipping'] = '';
@@ -160,7 +157,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 		$quotes = array();
 
 		if( empty( $free_shipping ) ) {		
-			$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
+			$quotes = $shipping->quote( $gBitCustomer->mCart );
 		}
 
 		// if no shipping method has been selected, automatically select the cheapest method.
@@ -168,7 +165,25 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
 		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
-			$_SESSION['shipping'] = $shipping->cheapest( $gBitCustomer->mCart->show_weight() );
+			$cheapest = false;
+			if( !empty( $quotes ) ) {
+				foreach( $quotes as $quote ) {
+					if( !empty( $quote['methods'] ) ) {
+						for( $i=0; $i< count( $quote['methods'] ); $i++ ) {
+							if( empty( $cheapest ) || ($quote['methods'][$i]['cost'] < $cheapest['cost']) ) {
+								$cheapest = array( 'id' => $quote['id'] . '_' . $quote['methods'][$i]['id'],
+													'title' => $quote['module'] . ' (' . $quote['methods'][$i]['title'] . ')',
+													'cost' => $quote['methods'][$i]['cost'],
+													'module' => $quote['id']
+												 );
+							}
+						}
+					}
+				}
+			}
+			if( $cheapest ) {
+				$_SESSION['shipping'] = $cheapest;
+			}
 		}
 
 		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));

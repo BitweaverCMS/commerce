@@ -18,7 +18,7 @@ if ( $gBitProduct->isAvailable() ) {
 		$gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
 	}
 
-	define( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
+	$gCommerceSystem->setHeadingTitle( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
 
 	$mid = $gBitProduct->getPreference( 'products_custom_tpl', 'bitpackage:bitcommerce/page_product_info.tpl' );
 
@@ -29,7 +29,7 @@ if ( $gBitProduct->isAvailable() ) {
 		include_once ( LIBERTY_PKG_PATH.'comments_inc.php' );
 	}
 } else {
-	define( 'HEADING_TITLE', tra( 'Product not found' ) );
+	$gCommerceSystem->setHeadingTitle( tra( 'Product not found' ) );
 	$mid = 'bitpackage:bitcommerce/product_not_available.tpl';
 }
 

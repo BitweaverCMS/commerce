@@ -15,7 +15,7 @@
  */
 
 
-class CommerceOrderBase extends BitBase {
+abstract class CommerceOrderBase extends BitBase {
 
 	public $mProductObjects = array();
 	public $total;
@@ -27,6 +27,8 @@ class CommerceOrderBase extends BitBase {
 
 	protected $mOtClasses = array();
 	protected $mOtProcessModules = array();
+
+	abstract public function getDelivery();
 
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
@@ -60,6 +62,40 @@ class CommerceOrderBase extends BitBase {
 		return $ret;
 	}
 
+	public function getShipmentValue() {
+		$this->calculate();
+		$ret = $this->subtotal - $this->free_shipping_prices();
+
+		//$ret = (float)($order->subtotal > 0 ? $order->subtotal + $order->getField( 'tax' ) : 0);
+		//$ret = (!empty( $_SESSION['cart']->total	) ? $_SESSION['cart']->total: 0);
+
+		return $ret;
+	}
+
+/*
+	public function getShipmentPackages() {
+		$ret = array();
+// Some code From FedEx, not really helpful
+					foreach ($products as $product) {
+						$dimensions_query = "SELECT products_length, products_width, products_height, products_ready_to_ship, products_dim_type FROM " . TABLE_PRODUCTS . " 
+																 WHERE products_id = " . (int)$product['id'] . " 
+																 AND products_length > 0 
+																 AND products_width > 0
+																 AND products_height > 0 
+																 LIMIT 1;";
+						$dimensions = $this->mDb->query($dimensions_query);
+						if ($dimensions->RecordCount() > 0 && $dimensions->fields['products_ready_to_ship'] == 1) {
+							for ($i = 1; $i <= $product['quantity']; $i++) {
+								$packages[] = array('weight' => $product['weight'], 'length' => $dimensions->fields['products_length'], 'width' => $dimensions->fields['products_width'], 'height' => $dimensions->fields['products_height'], 'units' => strtoupper($dimensions->fields['products_dim_type']));
+							}		
+						} else {
+							$pShipHash['shipping_weight_total'] += $product['weight'] * $product['quantity']; 
+						}
+					}
+		return $ret;
+	}
+*/
+
 	// shipping adjustment
 	function free_shipping_items() {
 		$this->calculate();
@@ -83,11 +119,34 @@ class CommerceOrderBase extends BitBase {
 		return BitBase::getParameter( $this->contents, $pProductsKey );
 	}
 
+	public function getShippingDestination( $pCountryIso2 = '', $pPostalCode = '' ) {
+		$ret = array();
+
+		if( $pCountryIso2 && $pPostalCode ) {
+			$ret = zen_get_countries( $pCountryIso2 );
+		} else {
+			$ret = $this->getDelivery();
+		}
+
+		return $ret;
+	}
+
+	public function getShippingOrigin() {
+		global $gCommerceSystem; 
+
+		$storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY', $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) );
+
+		if( $ret = zen_get_countries( $storeCountryId ) ) {
+			$ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' );
+		}
+
+		return $ret;
+	}
+
 	/**
 	* Used for checkout tracking
 	**/
 	public function getTrackingHash() {
-		global $gCommerceSystem, $gBitSystem;
 		$ret = array();
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			if( $prod = &$this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
@@ -99,7 +158,7 @@ class CommerceOrderBase extends BitBase {
 
 	private function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
-			global $gBitCustomer, $gCommerceSystem;
+			global $gBitCustomer;
 
 			if( defined( 'MODULE_ORDER_TOTAL_INSTALLED' ) && MODULE_ORDER_TOTAL_INSTALLED ) {
 				$otActiveClasses = explode(';', str_replace( '.php', '', MODULE_ORDER_TOTAL_INSTALLED ) );

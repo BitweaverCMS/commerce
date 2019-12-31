@@ -19,38 +19,41 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
+
+$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
+
 // determine language or template language file
-  if (file_exists($language_page_directory . $template_dir . '/' . $current_page_base . '.php')) {
-    $template_dir_select = $template_dir . '/';
-  } else {
-    $template_dir_select = '';
-  }
+if (file_exists($language_page_directory . $gCommerceSystem->mTemplateDir . '/' . $current_page_base . '.php')) {
+	$template_dir_select = $gCommerceSystem->mTemplateDir . '/';
+} else {
+	$template_dir_select = '';
+}
 
 // set language or template language file
-  $directory_array = $template->get_template_part($language_page_directory . $template_dir_select, '/^'.$current_page_base . '\./');
+$directory_array = $gCommerceSystem->get_template_part($language_page_directory . $template_dir_select, '/^'.$current_page_base . '\./');
 
 // load language file(s)
-  while(list ($key, $value) = each($directory_array)) {
-    require($language_page_directory . $template_dir_select . $value);
-  }
+while(list ($key, $value) = each($directory_array)) {
+	require_once($language_page_directory . $template_dir_select . $value);
+}
 
-  $directory_array = $template->get_template_part($language_page_directory . $template_dir, '/^'.$current_page_base . '/');
+$directory_array = $gCommerceSystem->get_template_part($language_page_directory . $template_dir, '/^'.$current_page_base . '/');
 
 // load language file(s)
-  while(list ($key, $value) = each($directory_array)) {
-    require($language_page_directory . $template_dir_select . $value);
-  }
+while(list ($key, $value) = each($directory_array)) {
+	require_once($language_page_directory . $template_dir_select . $value);
+}
 /*
-  $directory_array = $template->get_template_part($language_page_directory . 'extra_definitions/' . $template_dir . '/', '/^'.$current_page_base . '/');
+$directory_array = $gCommerceSystem->get_template_part($language_page_directory . 'extra_definitions/' . $gCommerceSystem->mTemplateDir . '/', '/^'.$current_page_base . '/');
 
-  while(list ($key, $value) = each($directory_array)) {
-    require($language_page_directory . 'extra_definitions/' . $template_dir . '/' . $value);
-  }
+while(list ($key, $value) = each($directory_array)) {
+	require($language_page_directory . 'extra_definitions/' . $gCommerceSystem->mTemplateDir . '/' . $value);
+}
 
-  $directory_array = $template->get_template_part($language_page_directory . 'extra_definitions/', '/^'.$current_page_base . '/');
+$directory_array = $gCommerceSystem->get_template_part($language_page_directory . 'extra_definitions/', '/^'.$current_page_base . '/');
 
-  while(list ($key, $value) = each($directory_array)) {
-    require($language_page_directory . 'extra_definitions/' . $value);
-  }
+while(list ($key, $value) = each($directory_array)) {
+	require($language_page_directory . 'extra_definitions/' . $value);
+}
 */
 ?>
