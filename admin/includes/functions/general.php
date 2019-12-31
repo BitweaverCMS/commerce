@@ -1738,13 +1738,13 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // find template or default file
 	function zen_get_file_directory($check_directory, $check_file, $dir_only = 'false') {
-		global $template_dir;
+		global $gCommerceSystem;
 
 		$zv_filename = $check_file;
 		if (!strstr($zv_filename, '.php')) $zv_filename .= '.php';
 
-		if (file_exists($check_directory . $template_dir . '/' . $zv_filename)) {
-			$zv_directory = $check_directory . $template_dir . '/';
+		if (file_exists($check_directory . $gCommerceSystem->mTemplateDir . '/' . $zv_filename)) {
+			$zv_directory = $check_directory . $gCommerceSystem->mTemplateDir . '/';
 		} else {
 			$zv_directory = $check_directory;
 		}

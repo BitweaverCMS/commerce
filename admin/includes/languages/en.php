@@ -50,8 +50,8 @@ define('HTML_PARAMS','dir="ltr" lang="en"');
 define('CHARSET', 'utf-8');
 
 // include template specific meta tags defines
-  if (file_exists(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $template_dir . '/meta_tags.php')) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_FS_CATALOG_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $gCommerceSystem->mTemplateDir . '/meta_tags.php')) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
