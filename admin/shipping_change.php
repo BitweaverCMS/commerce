@@ -17,12 +17,12 @@ $order->calculate();
 if( !empty( $_REQUEST['change_shipping'] ) && !empty( $_REQUEST['shipping'] ) ) {
 	list($module, $method) = explode('_', $_REQUEST['shipping']);
 	if ( is_object($$module) ) {
-		$quote = $shipping->quote( $order->getWeight(), $method, $module);
+		$quote = $shipping->quote( $order, $method, $module);
 		$order->changeShipping( current( $quote ), $_REQUEST );
 		zen_redirect( $_SERVER['HTTP_REFERER'] );
 	}
 } else {
-	$gBitSmarty->assign( 'quotes', $shipping->quote( $order->getWeight() ) );
+	$gBitSmarty->assign( 'quotes', $shipping->quote( $order ) );
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_shipping_change_ajax.tpl' );
 }
 

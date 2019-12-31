@@ -21,7 +21,7 @@
 //
 
 define('MODULE_SHIPPING_USPS_TEXT_TITLE', tra( 'United States Postal Service' ) );
-define('MODULE_SHIPPING_USPS_TEXT_DESCRIPTION', tra( 'United States Postal Service<br /><br />You will need to have registered an account with USPS at http://www.uspsprioritymail.com/et_regcert.html to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.' ) );
+define('MODULE_SHIPPING_USPS_TEXT_DESCRIPTION', tra( 'United States Postal Service<br /><br />You will need to have a <a href="https://www.usps.com/business/web-tools-apis/">USPS Web Tools User ID</a> to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.' ) );
 define('MODULE_SHIPPING_USPS_TEXT_OPT_PP', tra( 'Parcel Post' ) );
 define('MODULE_SHIPPING_USPS_TEXT_OPT_PM', tra( 'Priority Mail' ) );
 define('MODULE_SHIPPING_USPS_TEXT_OPT_EX', tra( 'Express Mail' ) );

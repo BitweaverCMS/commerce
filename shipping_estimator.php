@@ -59,7 +59,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 	}
 
 	// user not logged in, country is selected
-	$countryInfo = zen_get_countries($_SESSION['cart_country_id'],true);
+	$countryInfo = zen_get_countries($_SESSION['cart_country_id']);
 	$order->delivery = array(	
 								'country' => array(
 									'countries_id' => $countryInfo['countries_id'], 
@@ -97,23 +97,6 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 		reset( $addresses );
 		$first = current( $addresses );
 		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_book_id'] );
-	}
-
-	if( isset( $_SESSION['cart_address_id'] ) && $selAddress = $gBitCustomer->getAddress( $_SESSION['cart_address_id'] ) ) {
-		$order->delivery = array(	'postcode' => $selAddress['entry_postcode'],
-									'country' => array(
-										'countries_id' => $selAddress['entry_country_id'], 
-										'title' => $selAddress['countries_name'], 
-										'countries_iso_code_2' => $selAddress['countries_iso_code_2'], 
-										'countries_iso_code_3' => $selAddress['countries_iso_code_3'] 
-									),
-									'country_id' => $selAddress['entry_country_id'],
-									'format_id' => $selAddress['address_format_id']
-								);
-		if( !empty( $_SESSION['cart_zone_id'] ) ) {
-			$order->delivery['zone_id'] = (int)$selAddress['entry_zone_id'];
-		}
-		$_SESSION['country_id'] = NULL;
 	}
 
 } else {
@@ -175,6 +158,7 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$shipping = new CommerceShipping();
 
 	if( empty( $stateMenu ) || !empty( $order->delivery['postcode'] ) ) {
+eb( $weight ); // TODO FIX
 		$gBitSmarty->assign_by_ref( 'quotes', $shipping->quote( $weight ) );
 	}
 	$order->subtotal = $gBitCustomer->mCart->show_total();

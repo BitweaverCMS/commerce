@@ -13,50 +13,15 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
 
 class ups extends CommercePluginShippingBase {
-	/**
-	 * Declare shipping module alias code
-	 *
-	 * @var string
-	 */
-	var $code;
-	/**
-	 * Shipping module display name
-	 *
-	 * @var string
-	 */
-	var $title = 'UPS Generic';
-	/**
-	 * Shipping module display description
-	 *
-	 * @var string
-	 */
-	var $description = 'UPS Generic';
-	/**
-	 * Shipping module icon filename/path
-	 *
-	 * @var string
-	 */
-	var $icon = null;
-	/**
-	 * Shipping module status
-	 *
-	 * @var boolean
-	 */
-	var $enabled = false;
-	/**
-	 * Shipping module list of supported shipping methods
-	 *
-	 * @var array
-	 */
+
 	var $types = array();
 
 	function __construct() {
 
 		parent::__construct();
 
-		$this->title			= tra( 'United Parcel Service' );
-		$this->description		= "This retrieves generic shipping quotes, not specific to a given account's negotiated rates. For negotiated rates, use the UPSXML module instead.";
-		$this->icon 			= 'shipping_ups';
+		$this->title = tra( 'United Parcel Service' );
+		$this->description = tra( 'This retrieves generic shipping quotes. For negotiated rates, use the UPSXML module instead.' );
 
 
 		if( $this->isEnabled() ) {
@@ -66,12 +31,12 @@ class ups extends CommercePluginShippingBase {
 
 			if( (int)MODULE_SHIPPING_UPS_ZONE > 0 ) {
 				$check_flag = false;
-				$check = $this->mDb->query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_UPS_ZONE . "' and zone_country_id = '" . (int)$order->delivery['country']['id'] . "' order by zone_id");
+				$check = $this->mDb->query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_SHIPPING_UPS_ZONE . "' and zone_country_id = '" . (int)$pShipHash['destination']['id'] . "' order by zone_id");
 				while (!$check->EOF) {
 					if ($check->fields['zone_id'] < 1) {
 						$check_flag = true;
 						break;
-					} elseif ($check->fields['zone_id'] == $order->delivery['zone_id']) {
+					} elseif ($check->fields['zone_id'] == $pShipHash['destination']['zone_id']) {
 						$check_flag = true;
 						break;
 					}
@@ -107,99 +72,44 @@ class ups extends CommercePluginShippingBase {
 													 'WXS' => 'Worldwide Saver');
 		}
 	}
-
 	/**
 	 * Get quote from shipping provider's API:
 	 *
 	 * @param string $method
 	 * @return array of quotation results
 	 */
-	function quote( $pShipHash = array() ) {
-		/* FedEx integration starts */
-		global $gBitCustomer, $order;
-
-		$shippingWeight = (!empty( $pShipHash['shipping_weight'] ) && $pShipHash['shipping_weight'] > 1 ? $pShipHash['shipping_weight'] : 1);
-		$shippingNumBoxes = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
-
-		if ( !empty( $pShipHash['method'] ) && (isset($this->types[$pShipHash['method']])) ) {
-			$prod = $pShipHash['method'];
-			// BOF: UPS 
-		} else if ($order->delivery['country']['countries_iso_code_2'] == 'CA') {
-			$prod = 'STD';
-			// EOF: UPS 
-		} else {
-			$prod = 'GNDRES';
-		}
-
-		if( !empty( $pShipHash['method'] ) ) {
-			$this->_upsAction('3'); // return a single quote
-		}
-
-		$this->_upsProduct($prod);
-
-		// ups doesnt accept zero weight send 1 ounce (0.0625) minimum
-		$shippingWeight = ($shippingWeight <= 0 ? 0.0625 : $shippingWeight);
-
-		$country_name = zen_get_countries(SHIPPING_ORIGIN_COUNTRY, true);
-		$this->_upsOrigin(SHIPPING_ORIGIN_ZIP, $country_name['countries_iso_code_2']);
-		$this->_upsDest($order->delivery['postcode'], $order->delivery['country']['countries_iso_code_2']);
-		$this->_upsRate(MODULE_SHIPPING_UPS_PICKUP);
-		$this->_upsContainer(MODULE_SHIPPING_UPS_PACKAGE);
-		$this->_upsWeight($shippingWeight);
-		$this->_upsRescom(MODULE_SHIPPING_UPS_RES);
-		$upsQuote = $this->_upsGetQuote();
-
-		if ( (is_array($upsQuote)) && (sizeof($upsQuote) > 0) ) {
-			switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
-				case (0):
-					$show_box_weight = '';
-					break;
-				case (1):
-					$show_box_weight = ' (' . $shippingNumBoxes. ' ' . TEXT_SHIPPING_BOXES . ')';
-					break;
-				case (2):
-					$show_box_weight = ' (' . number_format($shippingWeight * $shippingNumBoxes,2) . tra( 'lbs' ) . ')';
-					break;
-				default:
-					$show_box_weight = ' (' . $shippingNumBoxes . ' x ' . number_format($shippingWeight,2) . tra( 'lbs' ) . ')';
-					break;
-			}			
-			$this->quotes = array('id' => $this->code, 'module' => $this->title . $show_box_weight);
-
-			$methods = array();
-			// BOF: UPS 
-			$allowed_methods = explode(", ", MODULE_SHIPPING_UPS_TYPES);
-			$std_rcd = false;
-			// EOF: UPS 
-			$qsize = sizeof($upsQuote);
-			for ($i=0; $i<$qsize; $i++) {
-				list($type, $cost) = each($upsQuote[$i]);
+	function quote( $pShipHash ) {
+		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
+			if( $upsQuote = $this->_upsGetQuote( $pShipHash ) ) {
+				$methods = array();
 				// BOF: UPS 
-				if ($type=='STD') {
-					if ($std_rcd) continue;
-					else $std_rcd = true;
-				}
-				if (!in_array($type, $allowed_methods)) continue;
+				$allowed_methods = explode(", ", MODULE_SHIPPING_UPS_TYPES);
+				$std_rcd = false;
 				// EOF: UPS 
-				$cost = preg_replace('/[^0-9.]/', '',	$cost);
-				$methods[] = array('id' => $type,
-													 'title' => $this->types[$type],
-													 'cost' => ($cost * $shippingNumBoxes) + (MODULE_SHIPPING_UPS_HANDLING_METHOD == 'Box' ? MODULE_SHIPPING_UPS_HANDLING * $shippingNumBoxes : MODULE_SHIPPING_UPS_HANDLING) );
-			}
+				$qsize = sizeof($upsQuote);
+				for ($i=0; $i<$qsize; $i++) {
+					list($type, $cost) = each($upsQuote[$i]);
+					// BOF: UPS 
+					if ($type=='STD') {
+						if ($std_rcd) continue;
+						else $std_rcd = true;
+					}
+					if (!in_array($type, $allowed_methods)) continue;
+					// EOF: UPS 
+					$cost = preg_replace('/[^0-9.]/', '',	$cost);
+					$methods[] = array( 'id' => $type,
+										'title' => $this->types[$type],
+										'cost' => ($cost * $pShipHash['shipping_num_boxes']) + (MODULE_SHIPPING_UPS_HANDLING_METHOD == 'Box' ? MODULE_SHIPPING_UPS_HANDLING * $pShipHash['shipping_num_boxes'] : MODULE_SHIPPING_UPS_HANDLING) );
+				}
 
-			$this->quotes['methods'] = $methods;
-
-			if ($this->tax_class > 0) {
-				$this->quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
+				$quotes['methods'] = $methods;
+			} else {
+				$quotes = array('module' => $this->title,
+								'error' => 'We are unable to obtain a rate quote for UPS shipping.<br />Please contact the store if no other alternative is shown.');
 			}
-		} else {
-			$this->quotes = array('module' => $this->title,
-														'error' => 'We are unable to obtain a rate quote for UPS shipping.<br />Please contact the store if no other alternative is shown.');
 		}
 
-		$this->quotes['icon'] = $this->icon;
-
-		return $this->quotes;
+		return $quotes;
 	}
 	/**
 	 * Install this module
@@ -231,25 +141,20 @@ class ups extends CommercePluginShippingBase {
 	 * @return array
 	 */
 	function keys() {
-		return array('MODULE_SHIPPING_UPS_VERSION', 'MODULE_SHIPPING_UPS_STATUS', 'MODULE_SHIPPING_UPS_PICKUP', 'MODULE_SHIPPING_UPS_PACKAGE', 'MODULE_SHIPPING_UPS_RES', 'MODULE_SHIPPING_UPS_HANDLING', 'MODULE_SHIPPING_UPS_HANDLING_METHOD', 'MODULE_SHIPPING_UPS_TAX_CLASS', 'MODULE_SHIPPING_UPS_TAX_BASIS', 'MODULE_SHIPPING_UPS_ZONE', 'MODULE_SHIPPING_UPS_SORT_ORDER', 'MODULE_SHIPPING_UPS_TYPES');
-	}
-	/**
-	 * Set UPS Product Code
-	 *
-	 * @param string $prod
-	 */
-	function _upsProduct($prod){
-		$this->_upsProductCode = $prod;
-	}
-	/**
-	 * Set UPS Origin details
-	 *
-	 * @param string $postal
-	 * @param string $country
-	 */
-	function _upsOrigin($postal, $country){
-		$this->_upsOriginPostalCode = substr($postal, 0, 5);
-		$this->_upsOriginCountryCode = $country;
+		return array_merge( parent::keys(), array(
+			'MODULE_SHIPPING_UPS_VERSION',
+			'MODULE_SHIPPING_UPS_STATUS',
+			'MODULE_SHIPPING_UPS_PICKUP',
+			'MODULE_SHIPPING_UPS_PACKAGE',
+			'MODULE_SHIPPING_UPS_RES',
+			'MODULE_SHIPPING_UPS_HANDLING',
+			'MODULE_SHIPPING_UPS_HANDLING_METHOD',
+			'MODULE_SHIPPING_UPS_TAX_CLASS',
+			'MODULE_SHIPPING_UPS_TAX_BASIS',
+			'MODULE_SHIPPING_UPS_ZONE',
+			'MODULE_SHIPPING_UPS_SORT_ORDER',
+			'MODULE_SHIPPING_UPS_TYPES'
+		) );
 	}
 	/**
 	 * Set UPS Destination information
@@ -257,122 +162,97 @@ class ups extends CommercePluginShippingBase {
 	 * @param string $postal
 	 * @param string $country
 	 */
-	function _upsDest($postal, $country){
-		$postal = str_replace(' ', '', $postal);
-
-		if ($country == 'US') {
-			$this->_upsDestPostalCode = substr($postal, 0, 5);
-		} else {
-			$this->_upsDestPostalCode = substr($postal, 0, 6);
-		}
-
-		$this->_upsDestCountryCode = $country;
+	private function _upsPostal( $postalCode, $pCountryIso2 ) {
+		$zipLength = ($pCountryIso2 == 'US' ? 5 : 6);
+		return substr( str_replace(' ', '', $postalCode ), 0, $zipLength );
 	}
 	/**
 	 * Set UPS rate-quote method
 	 *
 	 * @param string $foo
 	 */
-	function _upsRate($foo) {
-		switch ($foo) {
+	private function _upsRate( $pRateCode ) {
+		$ret = '';
+		switch ( $pRateCode ) {
 			case 'RDP':
-			$this->_upsRateCode = 'Regular+Daily+Pickup';
-			break;
+				$ret = 'Regular+Daily+Pickup';
+				break;
 			case 'OCA':
-			$this->_upsRateCode = 'On+Call+Air';
-			break;
+				$ret = 'On+Call+Air';
+				break;
 			case 'OTP':
-			$this->_upsRateCode = 'One+Time+Pickup';
-			break;
+				$ret = 'One+Time+Pickup';
+				break;
 			case 'LC':
-			$this->_upsRateCode = 'Letter+Center';
-			break;
+				$ret = 'Letter+Center';
+				break;
 			case 'CC':
-			$this->_upsRateCode = 'Customer+Counter';
-			break;
+				$ret = 'Customer+Counter';
+				break;
 		}
+		return $ret;
 	}
 	/**
 	 * Set UPS Container type
 	 *
 	 * @param string $foo
 	 */
-	function _upsContainer($foo) {
-		switch ($foo) {
+	private function _upsContainer( $pPackageCode ) {
+		$ret = '';
+		switch( $pPackageCode ) {
 			case 'CP': // Customer Packaging
-				$this->_upsContainerCode = '00';
+				$ret = '00';
 				break;
 			case 'ULE': // UPS Letter Envelope
-				$this->_upsContainerCode = '01';
+				$ret = '01';
 				break;
 			case 'UT': // UPS Tube
-				$this->_upsContainerCode = '03';
+				$ret = '03';
 				break;
 			case 'UEB': // UPS Express Box
-				$this->_upsContainerCode = '21';
+				$ret = '21';
 				break;
 			case 'UW25': // UPS Worldwide 25 kilo
-				$this->_upsContainerCode = '24';
+				$ret = '24';
 				break;
 			case 'UW10': // UPS Worldwide 10 kilo
-				$this->_upsContainerCode = '25';
+				$ret = '25';
 				break;
 		}
-	}
-	/**
-	 * Set UPS package weight
-	 *
-	 * @param string $foo
-	 */
-	function _upsWeight($foo) {
-		$this->_upsPackageWeight = $foo;
-	}
-	/**
-	 * Set UPS address-quote method (residential vs commercial)
-	 *
-	 * @param string $foo
-	 */
-	function _upsRescom($foo) {
-		switch ($foo) {
-			case 'RES': // Residential Address
-				$this->_upsResComCode = '1';
-				break;
-			case 'COM': // Commercial Address
-				$this->_upsResComCode = '0';
-				break;
-		}
-	}
-	/**
-	 * Set UPS Action method
-	 *
-	 * @param string/integer $action
-	 */
-	function _upsAction($action) {
-		/* 3 - Single Quote
-		4 - All Available Quotes */
-
-		$this->_upsActionCode = $action;
+		return $ret;
 	}
 	/**
 	 * Sent request for quote to UPS via older HTML method
 	 *
 	 * @return array
 	 */
-	function _upsGetQuote() {
-		if (!isset($this->_upsActionCode)) $this->_upsActionCode = '4';
+	private function _upsGetQuote( $pShipHash ) {
+		$upsAction = (!empty( $pShipHash['method'] ) ? '3' : '4');
+
+		if ( !empty( $pShipHash['method'] ) && (isset($this->types[$pShipHash['method']])) ) {
+			$prod = $pShipHash['method'];
+		} else if ($pShipHash['destination']['countries_iso_code_2'] == 'CA') {
+			$prod = 'STD';
+		} else {
+			$prod = 'GNDRES';
+		}
+
+		$upsResComCode = (int)empty( $pShipHash['destination']['company'] );
 		$host = 'https://www.ups.com/using/services/rave/qcostcgi.cgi?';
-		$request = implode('&', array('accept_UPS_license_agreement=yes',
-															 '10_action=' . $this->_upsActionCode,
-															 '13_product=' . $this->_upsProductCode,
-															 '14_origCountry=' . $this->_upsOriginCountryCode,
-															 '15_origPostal=' . $this->_upsOriginPostalCode,
-															 '19_destPostal=' . $this->_upsDestPostalCode,
-															 '22_destCountry=' . $this->_upsDestCountryCode,
-															 '23_weight=' . $this->_upsPackageWeight,
-															 '47_rate_chart=' . $this->_upsRateCode,
-															 '48_container=' . $this->_upsContainerCode,
-															 '49_residential=' . $this->_upsResComCode));
+		$request = implode('&', array(	'accept_UPS_license_agreement=yes',
+										'10_action=' . $upsAction,
+										'13_product=' . $prod,
+										'14_origCountry=' . $pShipHash['origin']['countries_iso_code_2'],
+										'15_origPostal=' . $this->_upsPostal( $pShipHash['origin']['postcode'], $pShipHash['origin']['countries_iso_code_2'] ),
+										'19_destPostal=' . $this->_upsPostal( $pShipHash['destination']['postcode'], $pShipHash['destination']['countries_iso_code_2'] ),
+										'22_destCountry=' . $pShipHash['destination']['countries_iso_code_2'],
+										'23_weight=' . $pShipHash['shipping_weight_total'],
+										'47_rate_chart=' . $this->_upsRate( MODULE_SHIPPING_UPS_PICKUP ),
+										'48_container=' . $this->_upsContainer( MODULE_SHIPPING_UPS_PACKAGE ),
+										'49_residential=' . $upsResComCode
+									));
 		$url = $host . $request;
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_VERBOSE, 0);
