@@ -286,6 +286,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				unset( $this->contents[$pProductsKey] );
 			}
 		}
+		$this->calculate( TRUE );
 	}
 
 	function cleanup() {
