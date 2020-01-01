@@ -488,33 +488,18 @@ class usps extends CommercePluginShippingBase {
 	 */
 	function _getQuote( $pShipHash ) {
 		$package_id = 'USPS DOMESTIC RETURNED: ' . "\n";
-// force GroundOnly results in USPS Retail Ground only being offered
-// to use, you must have a field for products_groundonly in the products table
-// then uncomment the in_cart_check for the products_groundonly
-// when $usps_groundonly is set to true, only USPS Retail Ground will show
-		$usps_groundonly = 'false';
-//    $usps_groundonly = ($_SESSION['cart']->in_cart_check('products_groundonly','1') ? 'true' : 'false');
-		if ($usps_groundonly == 'false') {
-			// no GroundOnly products
-			$usps_groundonly = '';
-		} else {
+
+		$shipAttributes = '';
+
+		// force GroundOnly results in USPS Retail Ground only being offered
+		if( !empty( $pShipHash['is_ground_only'] ) ) {
 			// 1+ GroundOnly products force USPS Retail Ground only
-			$usps_groundonly = '<Content>' .
-													 '<ContentType>HAZMAT</ContentType>' .
-												 '</Content>' .
-												 '<GroundOnly>' . $usps_groundonly . '</GroundOnly>';
+			$shipAttributes = 	//'<Content><ContentType>HAZMAT</ContentType></Content>' .
+								'<GroundOnly>true</GroundOnly>';
 		}
 
-// Force Fragile
-// to use, you must have a field for products_fragile in the products table
-// then uncomment the in_cart_check for the products_fragile
-// when $usps_fragile is set to true, Fragile Rates will be returned
-		$usps_fragile = 'false';
-//    $usps_fragile = ($_SESSION['cart']->in_cart_check('products_fragile','1') ? 'true' : 'false');
-		if ($usps_fragile == 'false') {
-			$usps_fragile = '<Content>' .
-													 '<ContentType>Fragile</ContentType>' .
-												 '</Content>';
+		if( $pShipHash['is_fragile'] ) {
+			$shipAttributes = '<Content><ContentType>Fragile</ContentType></Content>';
 		}
 
 		$insurable_value = (float)BitBase::getParameter( $pShipHash, 'shipping_value', 0 );
@@ -597,32 +582,26 @@ class usps extends CommercePluginShippingBase {
 						$Container = 'FLAT RATE ENVELOPE';
 					} elseif ($requested_type == 'Priority Mail ExpressTM Legal Flat Rate Envelope') {
 						$Container = 'LEGAL FLAT RATE ENVELOPE';
-//          } elseif ($requested_type == 'Priority Mail ExpressTM Flat Rate Boxes') {
-//            $Container = 'FLAT RATE BOX';
+//					} elseif ($requested_type == 'Priority Mail ExpressTM Flat Rate Boxes') {
+//						$Container = 'FLAT RATE BOX';
 					}
 				} else {
 					continue;
 				}
 
-// build special services for domestic
-$specialservices = $special_services_domestic;
+				// build special services for domestic
+				$specialservices = $special_services_domestic;
 
-// uncomment to force turn off SpecialServices requests completely
-//$specialservices = '';
-
-				$width = MODULE_SHIPPING_USPS_WIDTH;
-				$length = MODULE_SHIPPING_USPS_LENGTH;
-				$height = MODULE_SHIPPING_USPS_HEIGHT;
-				$girth = 108;
+				$width = BitBase::getParameter( $pShipHash, 'box_width', MODULE_SHIPPING_USPS_WIDTH );
+				$length = BitBase::getParameter( $pShipHash, 'box_length', MODULE_SHIPPING_USPS_LENGTH );
+				$height = BitBase::getParameter( $pShipHash, 'box_height', MODULE_SHIPPING_USPS_HEIGHT );
+				$girth = BitBase::getParameter( $pShipHash, 'box_girth', 2 * (MODULE_SHIPPING_USPS_WIDTH * MODULE_SHIPPING_USPS_WIDTH) );
 
 				// turn on dimensions
 				$dimensions =	'<Width>' . $width . '</Width>' .
 								'<Length>' . $length . '</Length>' .
 								'<Height>' . $height . '</Height>' .
 								'<Girth>' . $girth . '</Girth>';
-
-// uncomment to force turn off dimensions
-$dimensions = '';
 
 				$request .=  '<Package ID="' . $package_count . '">' .
 							 '<Service>' . $service . '</Service>' .
@@ -635,7 +614,7 @@ $dimensions = '';
 							 '<Size>REGULAR</Size>' .
 							 $dimensions .
 							 '<Value>' . number_format($insurable_value, 2, '.', '') . '</Value>' .
-							 $specialservices . ($usps_groundonly != '' ? $usps_groundonly : '') .
+							 $specialservices . $shipAttributes  .
 							 '<Machinable>' . ($this->machinable == 'True' ? 'TRUE' : 'FALSE') . '</Machinable>' .
 							 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $ship_date . '</ShipDate>' : '') .
 							 '</Package>';
@@ -1330,6 +1309,7 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('USPS Version Date', 'MODULE_SHIPPING_USPS_VERSION', '2017-09-16', 'You have installed:', '6', '0', 'zen_cfg_select_option(array(''2017-09-16''), ', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Full Name or Short Name', 'MODULE_SHIPPING_USPS_TITLE_SIZE', 'Long', 'Do you want to use a Long or Short name for USPS shipping?', '6', '0', 'zen_cfg_select_option(array(''Long'', ''Short''), ', now())");
@@ -1373,6 +1353,7 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 
 	// Special Services prices and availability will not be returned when Service = ALL or ONLINE
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Retail pricing or Online pricing?', 'MODULE_SHIPPING_USPS_RATE_TYPE', 'Online', 'Rates will be returned ONLY for methods available in this pricing type.  Applies to prices <u>and</u> add on services', '6', '0', 'zen_cfg_select_option(array(''Retail'', ''Online''), ', now())");
+			$this->mDb->CompleteTrans();
 		}
 	}
 

@@ -19,8 +19,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 	}
 
 	function quote( $pShipHash ) {
-		$quotes = array();
-		if( $this->isEligibleShipper( $pShipHash ) ) {
+		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 		
 			require_once( dirname( __FILE__ ) . '/fedex-common.php5' );
 			ini_set( "soap.wsdl_cache_enabled", "0" );
@@ -179,28 +178,6 @@ eb( $products );
 					if (is_object($response->RateReplyDetails)) {
 						$response->RateReplyDetails = get_object_vars($response->RateReplyDetails);
 					}
-					//echo '<pre>';
-					//print_r($response->RateReplyDetails);
-					//echo '</pre>';
-					switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
-						case 0:
-							$show_box_weight = '';
-							break;
-						case 1:
-							$show_box_weight = ' (' . $pShipHash['shipping_num_boxes']. ' ' . TEXT_SHIPPING_BOXES . ')';
-							break;
-						case 2:
-							$show_box_weight = ' (' . number_format( $pShipHash['shipping_weight_total'], 2 ) . tra( 'lbs' ) . ')';
-							break;
-						default:
-							$show_box_weight = ' (' . $pShipHash['shipping_num_boxes'] . ' x ' . number_format($pShipHash['shipping_weight_box'], 2 ) . tra( 'lbs' ) . ')';
-							break;
-					}
-					$quotes = array( 'id' => $this->code,
-											'module' => $this->title,
-											'info' => $this->info(),
-											'weight' => $show_box_weight, 
-											);
 					$methods = array();
 					foreach ($response->RateReplyDetails as $rateReply) {
 						if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
@@ -310,6 +287,7 @@ eb( $products );
 
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Version Installed', 'MODULE_SHIPPING_FEDEXWEBSERVICES_VERSION', '1.3.0', '', '6', '0', now())"); 
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('FedEx Account Number', 'MODULE_SHIPPING_FEDEXWEBSERVICES_ACT_NUM', '', 'Enter FedEx Account Number', '6', '3', now())");
@@ -344,6 +322,7 @@ eb( $products );
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('FedEx Rates','MODULE_SHIPPING_FEDEXWEBSERVICES_RATES','LIST','FedEx Rates','6','0','zen_cfg_select_option(array(''LIST'',''ACCOUNT''),',now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Signature Option', 'MODULE_SHIPPING_FEDEXWEBSERVICES_SIGNATURE_OPTION', '-1', 'Require a signature on orders greater than or equal to (set to -1 to disable):', '6', '25', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Ready to Ship', 'MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP', 'false', 'Enable using products_ready_to_ship field (requires Numinix Product Fields optional dimensions fields) to identify products which ship separately?', '6', '10', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");		
+			$this->mDb->CompleteTrans();
 		}
 	}
 

@@ -201,6 +201,7 @@ class zones extends CommercePluginShippingBase {
 
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Calculation Method', 'MODULE_SHIPPING_ZONES_METHOD', 'Weight', 'Calculate cost based on Weight or Price?', '6', '0', 'zen_cfg_select_option(array(''Weight'', ''Price''), ', now())");
 			for ($i = 1; $i <= $this->num_zones; $i++) {

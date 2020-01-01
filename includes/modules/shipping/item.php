@@ -32,8 +32,10 @@ class item extends CommercePluginShippingBase {
 
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Shipping Cost', 'MODULE_SHIPPING_ITEM_COST', '2.50', 'The shipping cost will be multiplied by the number of items in an order that uses this shipping method.', '6', '0', now())");
+			$this->mDb->CompleteTrans();
 		}
 	}
 

@@ -63,6 +63,7 @@ class supersaver extends CommercePluginShippingBase {
 
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Minimum Cart Value', 'MODULE_SHIPPING_SUPERSAVER_MIN', '30.00', 'What is the minimum cart total to get supersaver shipping?', '7', '6', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Maximum Cart Value', 'MODULE_SHIPPING_SUPERSAVER_MAX', '', 'What is the maximum cart total to get supersaver shipping?', '7', '6', now())");
@@ -76,6 +77,7 @@ class supersaver extends CommercePluginShippingBase {
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('International SuperSaver Shipping Description', 'MODULE_SHIPPING_SUPERSAVER_INTL_DESC', 'International', 'Text to accompany SuperSaver international quote', '7', '6', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('International SuperSaver Shipping Transit Time', 'MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME', '4-8 weeks', 'Transit time to accompany SuperSaver international quote', '7', '6', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('SuperSaver Shipping Cost', 'MODULE_SHIPPING_SUPERSAVER_INTL_COST', '14.99', 'What is the SuperSaver Shipping International cost?', '7', '6', now())");
+			$this->mDb->CompleteTrans();
 		}
 	}
 

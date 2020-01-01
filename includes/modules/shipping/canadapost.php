@@ -44,13 +44,21 @@ class canadapost extends CommercePluginShippingBase {
 		}
 	}
 
+	protected function isEligibleShipper( $pShipHash ) {
+		$ret = FALSE;
+		if( $pShipHash['origin']['countries_iso_code_2'] == 'CA' ) {
+			$ret = parent::isEligibleShipper( $pShipHash );
+		}
+		return $ret;
+	}
+
 	/**
 	 * Get quote from shipping provider's API:
 	 *
 	 * @param string $method
 	 * @return array of quotation results
 	 */
-	function quote( $pShipHash ) {
+	public function quote( $pShipHash ) {
 		$quotes = array();
 		if( $this->isEligibleShipper( $pShipHash ) ) {
 
@@ -315,17 +323,25 @@ class canadapost extends CommercePluginShippingBase {
 	 */
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Lettermail Rates', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS', 'True', 'Do you want to offer Lettermail rates?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Max weight for Lettermail', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX', '0.500', 'Weight limit for Lettermail (default 0.5kg)', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Table rates for Canada', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN', '0.030:0.57, 0.050:1.00, 0.100:1.22, 0.200:2.00, 0.300:2.75, 0.400:3.00, 0.500:3.25', 'Rates for Canadian destinations', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Table rates for USA', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA', '0.030:1.00, 0.050:1.22, 0.100:2.00, 0.200:3.50, 0.500:7.00', 'Rates for US destinations', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Table rates for International', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL', '0.030:1.70, 0.050:2.44, 0.100:4.00, 0.200:7.00, 0.500:14.00', 'Rates for International destinations', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Selected Language-optional', 'MODULE_SHIPPING_CANADAPOST_LANGUAGE', 'en', 'Canada Post supports two languages:<br><strong>en</strong>-English<br><strong>fr</strong>-French.', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Your CanadaPost Customer ID', 'MODULE_SHIPPING_CANADAPOST_CPCID', 'CPC_DEMO_XML', 'Canada Post Customer ID Merchant Identification assigned by Canada Post.', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Turn Around Time(optional)', 'MODULE_SHIPPING_CANADAPOST_TIME', '0', 'Turn Around Time -hours.', '6', '0', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Use CP Handling Charge System', 'MODULE_SHIPPING_CANADAPOST_CP_HANDLING', 'False', 'Use the Canada Post shipping and handling charge system (instead of the handling charge feature built-in to this module)?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Charge per box', 'MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING', '0', 'Handling Charge is only used if the CP Handling System is set to false', '6', '0', now())");
+			$columns = '(configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added)';
+			$values = array(
+				"('Enable Lettermail Rates', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS', 'True', 'Do you want to offer Lettermail rates?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())",
+				"('Max weight for Lettermail', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX', '0.500', 'Weight limit for Lettermail (default 0.5kg)', '6', '0', NULL, now())",
+				"('Table rates for Canada', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN', '0.030:0.57, 0.050:1.00, 0.100:1.22, 0.200:2.00, 0.300:2.75, 0.400:3.00, 0.500:3.25', 'Rates for Canadian destinations', '6', '0', NULL, now())",
+				"('Table rates for USA', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA', '0.030:1.00, 0.050:1.22, 0.100:2.00, 0.200:3.50, 0.500:7.00', 'Rates for US destinations', '6', '0', NULL, now())",
+				"('Table rates for International', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL', '0.030:1.70, 0.050:2.44, 0.100:4.00, 0.200:7.00, 0.500:14.00', 'Rates for International destinations', '6', '0', NULL, now())",
+				"('Enter Selected Language-optional', 'MODULE_SHIPPING_CANADAPOST_LANGUAGE', 'en', 'Canada Post supports two languages:<br><strong>en</strong>-English<br><strong>fr</strong>-French.', '6', '0', NULL, now())",
+				"('Enter Your CanadaPost Customer ID', 'MODULE_SHIPPING_CANADAPOST_CPCID', 'CPC_DEMO_XML', 'Canada Post Customer ID Merchant Identification assigned by Canada Post.', '6', '0', NULL, now())",
+				"('Enter Turn Around Time(optional)', 'MODULE_SHIPPING_CANADAPOST_TIME', '0', 'Turn Around Time -hours.', '6', '0', NULL, now())",
+				"('Use CP Handling Charge System', 'MODULE_SHIPPING_CANADAPOST_CP_HANDLING', 'False', 'Use the Canada Post shipping and handling charge system (instead of the handling charge feature built-in to this module)?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())",
+				"('Handling Charge per box', 'MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING', '0', 'Handling Charge is only used if the CP Handling System is set to false', '6', '0', NULL, now())",
+			);
+			foreach( $values as $value ) {
+				$this->mDb->query( 'INSERT INTO ' . TABLE_CONFIGURATION . ' ' .$columns.' VALUES '.$value );
+			}
+			$this->mDb->CompleteTrans();
 		}
 	}
 

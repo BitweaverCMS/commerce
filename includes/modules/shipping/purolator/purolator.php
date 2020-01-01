@@ -214,6 +214,7 @@ class purolator extends CommercePluginShippingBase {
 	 */
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Purolator datatypes URI', 'MODULE_SHIPPING_PUROLATOR_SERVERURI', 'http://purolator.com/pws/datatypes/v1', 'Purolator datatypes URI. <br>(default: http://purolator.com/pws/datatypes/v1)', '6', '0', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Purolator Server URI', 'MODULE_SHIPPING_PUROLATOR_SERVERLOC', 'https://webservices.purolator.com/PWS/V1/Estimating/EstimatingService.asmx', 'Purolator server Location. <br>(default: https://webservices.purolator.com/PWS/V1/Estimating/EstimatingService.asmx)', '6', '0', now())");
@@ -225,6 +226,7 @@ class purolator extends CommercePluginShippingBase {
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Turnaround Time', 'MODULE_SHIPPING_PUROLATOR_TURNAROUND', '0', 'Add the hours turnaround per shipment', '6', '0', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Weight', 'MODULE_SHIPPING_PUROLATOR_MAXWEIGHT', '140', 'Maximum weight (Lb)', '6', '0', now())");
 			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Charge per box', 'MODULE_SHIPPING_PUROLATOR_HANDLING', '0', 'Add the following handling fee per box', '6', '0', now())");
+			$this->mDb->CompleteTrans();
 		}
 	} //end function install
 

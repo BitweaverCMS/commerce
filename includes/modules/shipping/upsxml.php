@@ -869,6 +869,7 @@ class upsxml extends CommercePluginShippingBase {
 	//**************
 	function install() {
 		if( !$this->isInstalled() ) {
+			$this->mDb->StartTrans();
 			parent::install();
 			$columns = '(configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added)';
 			$values = array(
@@ -893,6 +894,7 @@ class upsxml extends CommercePluginShippingBase {
 			foreach( $values as $value ) {
 				$this->mDb->query( 'INSERT INTO ' . TABLE_CONFIGURATION . ' ' .$columns.' VALUES '.$value );
 			}
+			$this->mDb->CompleteTrans();
 		}
 	}
 
