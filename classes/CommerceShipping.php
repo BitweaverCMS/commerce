@@ -62,6 +62,12 @@ class CommerceShipping {
 		if( !empty( $this->modules ) ) {
 			$shipHash['method'] = $method;
 			$shipHash['shipping_weight_total'] = $pOrderBase->getWeight();
+			$shipHash['is_fragile'] = FALSE; // needs implementation
+			$shipHash['is_ground_only'] = FALSE; // needs implementation
+			$shipHash['box_width'] = NULL;
+			$shipHash['box_length'] = NULL;
+			$shipHash['box_height'] = NULL;
+			$shipHash['box_girth'] = NULL;
 
 //				"('Shipping Delay', 'SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', 6, 7, NULL, NULL, now())",
 //			'SHIPPING_DAYS_DELAY',
