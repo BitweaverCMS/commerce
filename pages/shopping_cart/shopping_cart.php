@@ -27,7 +27,7 @@ if( !empty( $_REQUEST['update_cart'] ) || !empty( $_REQUEST['checkout'] ) ) {
 } elseif( !empty( $_REQUEST['remove_product'] ) ) {
 	$gBitCustomer->mCart->updateQuantity( $_REQUEST['remove_product'], 0 );
 }
-
+$gBitCustomer->mCart->calculate(TRUE);
 $gBitSmarty->assign_by_ref( 'gBitCustomer', $gBitCustomer );
 $gBitSmarty->display( 'bitpackage:bitcommerce/page_shopping_cart.tpl' );
 

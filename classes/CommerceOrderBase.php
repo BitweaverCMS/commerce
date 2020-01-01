@@ -19,7 +19,7 @@ abstract class CommerceOrderBase extends BitBase {
 
 	public $mProductObjects = array();
 	public $total;
-	public $weight;
+	protected $weight;
 	public $free_shipping_item;
 	public $free_shipping_weight;
 	public $free_shipping_price;
@@ -29,6 +29,7 @@ abstract class CommerceOrderBase extends BitBase {
 	protected $mOtProcessModules = array();
 
 	abstract public function getDelivery();
+	abstract public function calculate( $pForceRecalculate=FALSE );
 
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
