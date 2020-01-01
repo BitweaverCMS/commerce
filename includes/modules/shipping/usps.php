@@ -60,9 +60,6 @@ class usps extends CommercePluginShippingBase {
 		if( $this->isEnabled() ) {
 			$this->typeCheckboxesSelected = explode(', ', MODULE_SHIPPING_USPS_TYPES);
 
-			// prepare list of countries which USPS ships to
-			$this->countries = $this->country_list();
-
 			// certain methods don't qualify if declared value is greater than $400
 			$this->types_to_skip_over_certain_value = array();
 			$this->types_to_skip_over_certain_value['Priority Mail InternationalRM Flat Rate Envelope'] = 400; // skip value > $400 Priority Mail International Flat Rate Envelope
@@ -101,20 +98,20 @@ class usps extends CommercePluginShippingBase {
 
 			// Determine machinable or not
 			// weight must be less than 35lbs and greater than 6 ounces or it is not machinable
-			$uspsCountryCode = $this->verifyCountryCode( $pShipHash['origin']['countries_iso_code_2'] );
+			$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );
 			switch(true) {
 // force machinable for $0.49 remove the false && from the first case
-				case (false && ($uspsCountryCode == 'US' && ($this->pounds == 0 and $this->ounces <= 1))):
+				case (false && ($destCountryCode == 'US' && ($this->pounds == 0 and $this->ounces <= 1))):
 					// override admin choice too light
 					$this->machinable = 'True';
 					break;
 
-				case ($uspsCountryCode == 'US' && ($this->pounds == 0 and $this->ounces < 6)):
+				case ($destCountryCode == 'US' && ($this->pounds == 0 and $this->ounces < 6)):
 					// override admin choice too light
 					$this->machinable = 'False';
 					break;
 
-				case ($uspsCountryCode != 'US' && ($this->pounds == 0 and $this->ounces < 3.5)):
+				case ($destCountryCode != 'US' && ($this->pounds == 0 and $this->ounces < 3.5)):
 					// override admin choice too light
 					$this->machinable = 'False';
 					break;
@@ -163,7 +160,7 @@ class usps extends CommercePluginShippingBase {
 				$servicesSelectedIntl = $this->extra_service();
 
 				// Domestic/US destination:
-				if( $uspsCountryCode == 'US' ) {
+				if( $destCountryCode == 'US' ) {
 					$dExtras = array(); // We're going to populate this with a list of "friendly names" of services "checked" to "Y" in our checkboxes
 					$dOptions = explode(', ', MODULE_SHIPPING_USPS_DMST_SERVICES); // domestic
 					foreach ($dOptions as $key => $val) {
@@ -196,7 +193,7 @@ class usps extends CommercePluginShippingBase {
 					}
 				}
 
-				if( $uspsCountryCode== 'US' ) {
+				if( $destCountryCode== 'US' ) {
 					$PackageSize = sizeof($uspsQuote['Package']);
 					// if object has no legitimate children, turn it into a firstborn:
 					if (isset($uspsQuote['Package']['ZipDestination']) && !isset($uspsQuote['Package'][0]['Postage'])) {
@@ -210,31 +207,21 @@ class usps extends CommercePluginShippingBase {
 				// display 1st occurance of First Class and skip others for the US - start counter
 				$cnt_first = 0;
 
-	// *** Customizations once per display ***
-
-	// bof: example to block USPS Priority MailTM Small Flat Rate Box when anything from master_categories_id 12 or 15 are in the cart
-	// change false to true to use
-	if (false) {
-		$chk_cart = 0;
-		$chk_cart += $_SESSION['cart']->in_cart_check('master_categories_id','12');
-		$chk_cart += $_SESSION['cart']->in_cart_check('master_categories_id','15');
-	}
-	// see below use of $chk_cart
-	// eof: example to block USPS Priority MailTM Small Flat Rate Box when anything from master_categories_id 12 or 15 are in the cart
-
 				for ($i=0; $i<$PackageSize; $i++) {
-					if (isset($uspsQuote['Package'][$i]['Error']) && zen_not_null($uspsQuote['Package'][$i]['Error'])) continue;
+					if( !empty( $uspsQuote['Package'][$i]['Error'] ) ) {
+						continue;
+					}
 					$Services = array();
 					$hiddenServices = array();
 					$hiddenCost = 0;
 					$handling = 0;
 					$usps_insurance_charge = 0;
 
-					$Package = ($uspsCountryCode == 'US') ? $uspsQuote['Package'][$i]['Postage'] : $uspsQuote['Package']['Service'][$i];
+					$Package = ($pShipHash['destination']['countries_iso_code_2'] == 'US') ? $uspsQuote['Package'][$i]['Postage'] : $uspsQuote['Package']['Service'][$i];
 
 					// Domestic first
-					if ($uspsCountryCode == 'US') {
-						if (zen_not_null($Package['SpecialServices']['SpecialService'])) {
+					if ($destCountryCode == 'US') {
+						if( !empty($Package['SpecialServices']['SpecialService'] ) ) {
 
 							// if object has no legitimate children, turn it into a firstborn:
 							if (isset($Package['SpecialServices']['SpecialService']['ServiceName']) && !isset($Package['SpecialServices']['SpecialService'][0])) {
@@ -254,7 +241,7 @@ class usps extends CommercePluginShippingBase {
 								}
 
 								$val['ServiceName'] = $this->clean_usps_marks($val['ServiceName']);
-								if (isset($dExtras[$val['ServiceName']]) && zen_not_null($dExtras[$val['ServiceName']]) && ((MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && strtoupper($val['AvailableOnline']) == 'TRUE') || (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail' && strtoupper($val['Available']) == 'TRUE'))) {
+								if (isset($dExtras[$val['ServiceName']]) && !empty($dExtras[$val['ServiceName']]) && ((MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && strtoupper($val['AvailableOnline']) == 'TRUE') || (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail' && strtoupper($val['Available']) == 'TRUE'))) {
 									$val['ServiceAdmin'] = $this->clean_usps_marks($dExtras[$val['ServiceName']]);
 									$Services[] = $val;
 								}
@@ -267,7 +254,6 @@ class usps extends CommercePluginShippingBase {
 						$usps_shipping_methods_zone = $uspsQuote['Package'][$i]['Zone'];
 					} else {
 						// International
-	//          if (isset($Package['ExtraServices']) && isset($Package['ExtraServices']['ExtraService'])) foreach ($Package['ExtraServices']['ExtraService'] as $key => $val) {
 						if (is_array($Package['ExtraServices']['ExtraService'])) {
 
 							// if object has no legitimate children, turn it into a firstborn:
@@ -277,13 +263,13 @@ class usps extends CommercePluginShippingBase {
 
 							foreach ($Package['ExtraServices']['ExtraService'] as $key => $val) {
 								$val['ServiceName'] = $this->clean_usps_marks($val['ServiceName']);
-								if (isset($iExtras[$val['ServiceName']]) && zen_not_null($iExtras[$val['ServiceName']]) && ((MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && strtoupper($val['OnlineAvailable']) == 'TRUE') || (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail' && strtoupper($val['Available']) == 'TRUE'))) {
+								if (isset($iExtras[$val['ServiceName']]) && !empty($iExtras[$val['ServiceName']]) && ((MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && strtoupper($val['OnlineAvailable']) == 'TRUE') || (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail' && strtoupper($val['Available']) == 'TRUE'))) {
 									$val['ServiceAdmin'] = $this->clean_usps_marks($iExtras[$val['ServiceName']]);
 									$Services[] = $val;
 								}
 							}
 						}
-						$cost = MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && zen_not_null($Package['CommercialPostage']) ? $Package['CommercialPostage'] : $Package['Postage'];
+						$cost = MODULE_SHIPPING_USPS_RATE_TYPE == 'Online' && !empty($Package['CommercialPostage']) ? $Package['CommercialPostage'] : $Package['Postage'];
 						$type = $this->clean_usps_marks($Package['SvcDescription']);
 					}
 					if ($cost == 0) continue;
@@ -294,17 +280,6 @@ class usps extends CommercePluginShippingBase {
 	//  if (preg_match('#First#', $type)) $type .="RM";
 
 					$type_rebuilt = $type;
-
-	// bof: example to block USPS Priority MailTM Small Flat Rate Box when anything from master_categories_id 12 or 15 are in the cart
-	// see above for $chk_cart settings
-	// change false to true to use
-	if (false) {
-		if ($chk_cart > 0 && $type == 'Priority MailTM Small Flat Rate Box') {
-	//  echo 'USPS $type: ' . $type . ' $chk_cart:' . $chk_cart . '<br>';
-			continue;
-		}
-	}
-	// eof: example to block USPS Priority MailTM Small Flat Rate Box when anything from master_categories_id 12 or 15 are in the cart
 
 					// Detect which First-Class type has been quoted, since USPS doesn't consistently return the type in the name of the service
 					if (!isset($Package['FirstClassMailType']) || $Package['FirstClassMailType'] == '') {
@@ -320,13 +295,13 @@ class usps extends CommercePluginShippingBase {
 					$Package['lookupRegex'] = preg_quote($type) . '(?:RM|TM)?$';
 					if( !empty( $Package['FirstClassMailType'] ) && $firstClassMailType = strtoupper( $Package['FirstClassMailType'] ) ) {
 						if (in_array( $firstClassMailType, array('LETTER'))) { 
-							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail(?:RM|TM)?(?: Stamped )?.*', preg_quote($type)) . ($uspsCountryCode != 'US' ? '(GXG|International)?.*' : '') . $Package['FirstClassMailType'];
+							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail(?:RM|TM)?(?: Stamped )?.*', preg_quote($type)) . ($destCountryCode != 'US' ? '(GXG|International)?.*' : '') . $Package['FirstClassMailType'];
 						}
 						if (in_array( $firstClassMailType, array('PARCEL'))) { 
-							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail.*', preg_quote($type)) . ($uspsCountryCode != 'US' ? '(GXG|International)?.*' : '') . $Package['FirstClassMailType'];
+							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail.*', preg_quote($type)) . ($destCountryCode != 'US' ? '(GXG|International)?.*' : '') . $Package['FirstClassMailType'];
 						}
 						if (in_array( $firstClassMailType, array('FLAT') )) {
-							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail.*', preg_quote($type)) . ($uspsCountryCode != 'US' ? '(GXG|International)?.*' : '') . 'Envelope';
+							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail.*', preg_quote($type)) . ($destCountryCode != 'US' ? '(GXG|International)?.*' : '') . 'Envelope';
 						}
 					}
 					$Package['lookupRegex'] = str_replace('Stamped Letter', 'Letter', $Package['lookupRegex']);
@@ -336,7 +311,7 @@ class usps extends CommercePluginShippingBase {
 					$Package['lookupRegex'] = str_replace('ParcelPARCEL', 'Parcel', $Package['lookupRegex']);
 
 					// Certain methods cannot ship if declared value is over $400, so we "continue" which skips the current $type and proceeds with the next one in the loop:
-					if (isset($this->types_to_skip_over_certain_value[$type]) && $_SESSION['cart']->total > $this->types_to_skip_over_certain_value[$type]) {
+					if (isset($this->types_to_skip_over_certain_value[$type]) && $pShipHash['shipping_value'] > $this->types_to_skip_over_certain_value[$type]) {
 						continue;
 					}
 
@@ -376,14 +351,14 @@ class usps extends CommercePluginShippingBase {
 							// extract the ServiceID, so we can test for specific insurance types
 							preg_match('/\[([0-9]{1,3})\]/', $key1, $matches);
 							$serviceID = $matches[1];
-							$hidden_costs_breakdown .= ($uspsCountryCode == 'US' ? ' SpecialServices: ' : ' ExtraServices: ') . $key1 . ' Amount: ' . number_format($val1, 2) . "\n";
+							$hidden_costs_breakdown .= ($destCountryCode == 'US' ? ' SpecialServices: ' : ' ExtraServices: ') . $key1 . ' Amount: ' . number_format($val1, 2) . "\n";
 							// Test for Insurance type being returned  100=(General) Insurance, 125=Priority Mail, 101=Priority Mail Express
 
 	// Domestic Insurance 100, 101, 125 International 1
 							$insurance_test_flag = false;
 							if (preg_match('#Insurance#i', $key1)) {
 								// Domestic
-								if ($pShipHash['destination']['countries_iso_code_2'] == SHIPPING_ORIGIN_COUNTRY || $uspsCountryCode == 'US') {
+								if ($pShipHash['destination']['countries_iso_code_2'] == 'US') {
 									if (strstr($servicesSelectedDomestic, $serviceID)) {
 										if (strstr($type, 'Priority Mail')) {
 											if (strstr($type, 'Express')) {
@@ -407,7 +382,7 @@ class usps extends CommercePluginShippingBase {
 					}
 
 					// set module-specific handling fee
-					if ($pShipHash['destination']['countries_iso_code_2'] == SHIPPING_ORIGIN_COUNTRY || $uspsCountryCode == 'US') {
+					if ($pShipHash['destination']['countries_iso_code_2'] == 'US') {
 						// domestic/national
 						$usps_handling_fee = MODULE_SHIPPING_USPS_HANDLING;
 					} else {
@@ -436,39 +411,43 @@ class usps extends CommercePluginShippingBase {
 
 					// build USPS output for valid methods based on selected and weight limits
 					if( ($pShipHash['shipping_weight_total'] <= $maxweight) && ($pShipHash['shipping_weight_total'] > $minweight) ) {
-
+						$found = false;
 						if( $pShipHash['method'] != $type && $pShipHash['method'] != $type_rebuilt) {
 							if( !empty( $pShipHash['method'] ) ) continue;
-							$found = false;
 							foreach ($this->typeCheckboxesSelected as $key => $val) {
-								if (is_numeric($val) || $val == '') continue;
+								if (is_numeric($val) || $val == '') {
+									continue;
+								}
 								if ($val == $type || preg_match('#' . $Package['lookupRegex'] . '#i', $val) ) {
 									$found = true;
+									break;
 								}
-								if ($found === true) break;
 							}
 						}
-						if ($found === false) continue;
 
+						if ($found === false) {
+							continue;
+						}
 
 						// display 1st occurance of First Class and skip others for the US
-											if (preg_match('#First\-Class.*(?!GXG|International)#i', $type)) {
+						if (preg_match('#First\-Class.*(?!GXG|International)#i', $type)) {
 							$cnt_first ++;
 						}
 						
-	// USPS customize for filtering displayed methods and costs
-
-						if ($uspsCountryCode == 'US' && MODULE_SHIPPING_USPS_FIRST_CLASS_FILTER_US == 'True' && preg_match('#First\-Class#i', $type) && $cnt_first > 1) continue;
+						// USPS customize for filtering displayed methods and costs
+						if ($destCountryCode == 'US' && MODULE_SHIPPING_USPS_FIRST_CLASS_FILTER_US == 'True' && preg_match('#First\-Class#i', $type) && $cnt_first > 1) {
+							continue;
+						}
 
 						// ADDITIONAL CUSTOMIZED CONDITIONS CAN GO HERE TO MANAGE $type_rebuilt or $title on $methods
-							$methods[] = array( 'id' => $type_rebuilt,
-												'title' => $title,
-												'cost' => $cost,
-												'transit_time' => $transitTime,
-												'delivery_date' => $deliveryDate,
-												'insurance' => $usps_insurance_charge,
-												'code' => $type,
-												);
+						$methods[] = array( 'id' => $type_rebuilt,
+											'title' => $title,
+											'cost' => $cost,
+											'transit_time' => $transitTime,
+											'delivery_date' => $deliveryDate,
+											'insurance' => $usps_insurance_charge,
+											'code' => $type,
+											);
 					}
 				}  // end for $i to $PackageSize
 
@@ -538,17 +517,7 @@ class usps extends CommercePluginShippingBase {
 												 '</Content>';
 		}
 
-
-		if ((int)SHIPPING_ORIGIN_ZIP == 0) {
-			// no quotes obtained no 5 digit zip code origin set
-			return array('module' => $this->title,
-									 'error' => MODULE_SHIPPING_USPS_TEXT_ERROR . (MODULE_SHIPPING_USPS_SERVER == 'test' ? MODULE_SHIPPING_USPS_TEXT_TEST_MODE_NOTICE : ''));
-		}
-
-		$transreq = array();
-
-		$shipment_value = (float)BitBase::getParameter( $pShipHash, 'shipment_value', 0 );
-		$insurable_value = $shipment_value; // spiderr - where is this defined? - $uninsurable_value;
+		$insurable_value = (float)BitBase::getParameter( $pShipHash, 'shipping_value', 0 );
 
 		// US Domestic destinations
 		if ($pShipHash['destination']['countries_iso_code_2'] == 'US') {
@@ -563,13 +532,14 @@ class usps extends CommercePluginShippingBase {
 			$package_count = 0;
 			$ship_date = $this->zen_usps_shipdate();
 
-			foreach($this->typeCheckboxesSelected as $requested_type)
-			{
-				if (is_numeric($requested_type) || preg_match('#(GXG|International)#i' , $requested_type)) continue;
+			foreach($this->typeCheckboxesSelected as $requested_type) {
+				if (is_numeric($requested_type) || preg_match('#(GXG|International)#i' , $requested_type)) {
+					// US destination with INTL method
+					continue;
+				}
 				$FirstClassMailType = '';
 				$Container = 'VARIABLE';
-				if (preg_match('#First\-Class#i', $requested_type))
-				{
+				if (preg_match('#First\-Class#i', $requested_type)) {
 
 // disable request for all First Class at 13oz. - First-Class MailRM Letter, First-Class MailRM Large Envelope, First-Class MailRM Parcel
 // disable request for all First Class at 13oz. - First-Class Mail Letter, First-Class Mail Large Envelope, First-Class Package Service - RetailTM
@@ -594,20 +564,15 @@ class usps extends CommercePluginShippingBase {
 						 $service = 'First Class Commercial';  			
 							 $FirstClassMailType = 'PACKAGE SERVICE';	   
 						} else {
-				continue;
-				}
+							continue;
+						}
 					}
-			 }
-// continue processing other package types	   
-				elseif ($requested_type == 'Media Mail Parcel') {
+				} elseif ($requested_type == 'Media Mail Parcel') {
 					$service = 'MEDIA';
-				}
-				// In the following line, changed Parcel to Standard due to USPS service name change - 01/27/13 a.forever edit
-				elseif ($requested_type == 'USPS Retail GroundRM') {
+				} elseif ($requested_type == 'USPS Retail GroundRM') {
+					// In the following line, changed Parcel to Standard due to USPS service name change - 01/27/13 a.forever edit
 					$service = 'PARCEL';
-				}
-				elseif (preg_match('#Priority Mail(?! Express)#i', $requested_type))
-				{
+				} elseif (preg_match('#Priority Mail(?! Express)#i', $requested_type)) {
 					$service = 'PRIORITY COMMERCIAL';
 					if ($requested_type == 'Priority MailTM Flat Rate Envelope') {
 						$Container = 'FLAT RATE ENVELOPE';
@@ -626,9 +591,7 @@ class usps extends CommercePluginShippingBase {
 					} elseif ($requested_type == 'Priority MailTM Regional Rate Box B') {
 						$Container = 'REGIONALRATEBOXB';
 					}
-				}
-				elseif (preg_match('#Priority Mail Express#i', $requested_type))
-				{
+				} elseif (preg_match('#Priority Mail Express#i', $requested_type)) {
 					$service = 'EXPRESS COMMERCIAL';
 					if ($requested_type == 'Priority Mail ExpressTM Flat Rate Envelope') {
 						$Container = 'FLAT RATE ENVELOPE';
@@ -637,9 +600,7 @@ class usps extends CommercePluginShippingBase {
 //          } elseif ($requested_type == 'Priority Mail ExpressTM Flat Rate Boxes') {
 //            $Container = 'FLAT RATE BOX';
 					}
-				}
-				else
-				{
+				} else {
 					continue;
 				}
 
@@ -654,58 +615,33 @@ $specialservices = $special_services_domestic;
 				$height = MODULE_SHIPPING_USPS_HEIGHT;
 				$girth = 108;
 
-// turn on dimensions
-$dimensions = '<Width>' . $width . '</Width>' .
-							'<Length>' . $length . '</Length>' .
-							'<Height>' . $height . '</Height>' .
-							'<Girth>' . $girth . '</Girth>';
+				// turn on dimensions
+				$dimensions =	'<Width>' . $width . '</Width>' .
+								'<Length>' . $length . '</Length>' .
+								'<Height>' . $height . '</Height>' .
+								'<Girth>' . $girth . '</Girth>';
 
 // uncomment to force turn off dimensions
 $dimensions = '';
 
 				$request .=  '<Package ID="' . $package_count . '">' .
-//                     '<Service>ALL</Service>' .
-//                     '<Service>ONLINE</Service>' .
-										 '<Service>' . $service . '</Service>' .
-										 ($FirstClassMailType != '' ? '<FirstClassMailType>' . $FirstClassMailType . '</FirstClassMailType>' : '') .
-										 '<ZipOrigination>' . SHIPPING_ORIGIN_ZIP . '</ZipOrigination>' .
-										 '<ZipDestination>' . $ZipDestination . '</ZipDestination>' .
-										 '<Pounds>' . $this->pounds . '</Pounds>' .
-										 '<Ounces>' . $this->ounces . '</Ounces>' .
-										 '<Container>' . $Container . '</Container>' .
-										 '<Size>REGULAR</Size>' .
-$dimensions .
-								 '<Value>' . number_format($insurable_value, 2, '.', '') . '</Value>' .
-$specialservices .
-									($usps_groundonly != '' ? $usps_groundonly : '') .
-										 '<Machinable>' . ($this->machinable == 'True' ? 'TRUE' : 'FALSE') . '</Machinable>' .
-//'<DropOffTime>23:59</DropOffTime>' .
-										 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $ship_date . '</ShipDate>' : '') .
-										 '</Package>';
+							 '<Service>' . $service . '</Service>' .
+							 ($FirstClassMailType != '' ? '<FirstClassMailType>' . $FirstClassMailType . '</FirstClassMailType>' : '') .
+							 '<ZipOrigination>' . $pShipHash['origin']['postcode'] . '</ZipOrigination>' .
+							 '<ZipDestination>' . $ZipDestination . '</ZipDestination>' .
+							 '<Pounds>' . $this->pounds . '</Pounds>' .
+							 '<Ounces>' . $this->ounces . '</Ounces>' .
+							 '<Container>' . $Container . '</Container>' .
+							 '<Size>REGULAR</Size>' .
+							 $dimensions .
+							 '<Value>' . number_format($insurable_value, 2, '.', '') . '</Value>' .
+							 $specialservices . ($usps_groundonly != '' ? $usps_groundonly : '') .
+							 '<Machinable>' . ($this->machinable == 'True' ? 'TRUE' : 'FALSE') . '</Machinable>' .
+							 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $ship_date . '</ShipDate>' : '') .
+							 '</Package>';
 
 				$package_id .= 'Package ID returned: ' . $package_count . ' $requested_type: ' . $requested_type . ' $service: ' . $service . ' $Container: ' . $Container . "\n";
 				$package_count++;
-
-// ask for Domestic transit times using old double-request method to individual USPS API for each shipping service requested
-				if ($this->getTransitTime && $this->transitTimeCalculationMode == 'OLD') {
-					$transitreq  = 'USERID="' . MODULE_SHIPPING_USPS_USERID . '">' . '<OriginZip>' . SHIPPING_ORIGIN_ZIP . '</OriginZip>' . '<DestinationZip>' . $ZipDestination . '</DestinationZip>';
-					switch ($service) {
-//             case 'EXPRESS COMMERCIAL':
-//             case 'EXPRESS':  $transreq[$requested_type] = 'API=ExpressMail&XML=' . urlencode( '<ExpressMailRequest ' . $transitreq . '</ExpressMailRequest>');
-//             break;
-						case 'PRIORITY COMMERCIAL':
-						case 'PRIORITY': $transreq[$requested_type] = 'API=PriorityMail&XML=' . urlencode( '<PriorityMailRequest ' . $transitreq . '</PriorityMailRequest>');
-						break;
-						case 'PARCEL':   $transreq[$requested_type] = 'API=StandardB&XML=' . urlencode( '<StandardBRequest ' . $transitreq . '</StandardBRequest>');
-						break;
-						case 'First-Class Mail':$transreq[$requested_type] = 'API=FirstClassMail&XML=' . urlencode( '<FirstClassMailRequest ' . $transitreq . '</FirstClassMailRequest>');
-						break;
-						case 'MEDIA':
-						default:         $transreq[$requested_type] = '';
-						break;
-					}
-				}
-
 			}
 
 			$request .=  '</RateV4Request>';
@@ -727,50 +663,44 @@ $specialservices .
 				}
 			}
 
+			// obtain the most International settings
+			//        $width = 1.0; // $width = 0.75 for some International Methods to work
+			//        $length = 9.5;
+			//        $height = 5.5;
+
 			// rudimentary dimensions, since they cannot be passed as blanks
-			if (true || $intl_gxg_requested) {
-				//@@TODO - force International to always use International settings - should be okay to make permanent at a future date
-// obtain the most International settings
-//        $width = 1.0; // $width = 0.75 for some International Methods to work
-//        $length = 9.5;
-//        $height = 5.5;
-				$width = MODULE_SHIPPING_USPS_WIDTH_INTL;
-				$length = MODULE_SHIPPING_USPS_LENGTH_INTL;
-				$height = MODULE_SHIPPING_USPS_HEIGHT_INTL;
-				$girth = 0;
-			} else {
-				$width = MODULE_SHIPPING_USPS_WIDTH;
-				$length = MODULE_SHIPPING_USPS_LENGTH;
-				$height = MODULE_SHIPPING_USPS_HEIGHT;
-				$girth = 0;
-			}
-eb( $pShipHash );
+			$width = MODULE_SHIPPING_USPS_WIDTH_INTL;
+			$length = MODULE_SHIPPING_USPS_LENGTH_INTL;
+			$height = MODULE_SHIPPING_USPS_HEIGHT_INTL;
+			$girth = 0;
+
+
 			// adjust <ValueOfContents> to not exceed $2499 per box
 			$max_usps_allowed_price = ($pShipHash['shipping_value'] / $pShipHash['shipping_num_boxes']);
 
-// build extra services for international
-$extraservices = $extra_service_international;
+			// build extra services for international
+			$extraservices = $extra_service_international;
 
-// uncomment to force turn off ExtraServices
-// $extraservices = '';
+			// uncomment to force turn off ExtraServices
+			// $extraservices = '';
 
-// $max_usps_allowed_price - adjust <ValueOfContents> to not exceed $2499 per box
+			// $max_usps_allowed_price - adjust <ValueOfContents> to not exceed $2499 per box
 			$submission_value = ($insurable_value > $max_usps_allowed_price) ? $max_usps_allowed_price : $insurable_value;
 
 			$request =  '<IntlRateV2Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' .
-									'<Revision>2</Revision>' .
-									'<Package ID="0">' .
-									'<Pounds>' . $this->pounds . '</Pounds>' .
-									'<Ounces>' . $this->ounces . '</Ounces>' .
-									'<MailType>All</MailType>' .
-									'<GXG>' .
-									'  <POBoxFlag>N</POBoxFlag>' .
-									'  <GiftFlag>N</GiftFlag>' .
-									'</GXG>' .
-									'<ValueOfContents>' . number_format($submission_value, 2, '.', '') . '</ValueOfContents>' .
-									'<Country>' . $pShipHash['destination']['countries_iso_code_2'] . '</Country>' .
-									'<Container>RECTANGULAR</Container>' .
-									'<Size>REGULAR</Size>' .
+						'<Revision>2</Revision>' .
+						'<Package ID="0">' .
+						'<Pounds>' . $this->pounds . '</Pounds>' .
+						'<Ounces>' . $this->ounces . '</Ounces>' .
+						'<MailType>All</MailType>' .
+						'<GXG>' .
+						'  <POBoxFlag>N</POBoxFlag>' .
+						'  <GiftFlag>N</GiftFlag>' .
+						'</GXG>' .
+						'<ValueOfContents>' . number_format($submission_value, 2, '.', '') . '</ValueOfContents>' .
+						'<Country>' . $this->getCountryName( $pShipHash['destination']['countries_iso_code_2'] ) . '</Country>' .
+						'<Container>RECTANGULAR</Container>' .
+						'<Size>REGULAR</Size>' .
 // Small Flat Rate Box - 'maxLength'=>'8.625', 'maxWidth'=>'5.375','maxHeight'=>'1.625'
 // Global Express Guaranteed - Minimum 'minLength'=>'9.5', 'minHeight'=>'5.5' ; Maximum - 'maxLength'=>'46', 'maxWidth'=>'35', 'maxHeight'=>'46' and max. length plus girth combined 108"
 // NOTE: sizes for Small Flat Rate Box prevent Global Express Guaranteed
@@ -782,44 +712,40 @@ $extraservices = $extra_service_international;
 // MODULE_SHIPPING_USPS_LENGTH 8.625
 // MODULE_SHIPPING_USPS_WIDTH  5.375
 // MODULE_SHIPPING_USPS_HEIGHT 1.625
-									'<Width>' . $width . '</Width>' .
-									'<Length>' . $length . '</Length>' .
-									'<Height>' . $height . '</Height>' .
-									'<Girth>' . $girth . '</Girth>' .
+						'<Width>' . $width . '</Width>' .
+						'<Length>' . $length . '</Length>' .
+						'<Height>' . $height . '</Height>' .
+						'<Girth>' . $girth . '</Girth>' .
 
 //'<CommercialPlusFlag>N</CommercialPlusFlag>' .
-									'<OriginZip>' . SHIPPING_ORIGIN_ZIP . '</OriginZip>' .
-									// In the following line, changed N to Y to activate optional commercial base pricing for international services - 01/27/13 a.forever edit
-									'<CommercialFlag>Y</CommercialFlag>' .
+						'<OriginZip>' . $pShipHash['origin']['postcode'] . '</OriginZip>' .
+						// In the following line, changed N to Y to activate optional commercial base pricing for international services - 01/27/13 a.forever edit
+						'<CommercialFlag>Y</CommercialFlag>' .
 // '<AcceptanceDateTime>2015-05-30T13:15:00-06:00</AcceptanceDateTime>' .
 // '<DestinationPostalCode>' . $DestinationPostalCode . '</DestinationPostalCode>' .
-$extraservices .
-									'</Package>' .
-									'</IntlRateV2Request>';
-
-			if ($this->getTransitTime) {
-				$transreq[$requested_type] = '';
-			}
+						$extraservices .
+						'</Package>' .
+						'</IntlRateV2Request>';
 
 			$request = 'API=IntlRateV2&XML=' . urlencode($request);
-	}
+		}
 
 // Prepare to make quote-request to USPS servers
 
 
 		switch (MODULE_SHIPPING_USPS_SERVER) {
 			case 'production':
-			$usps_server = 'http://production.shippingapis.com';
-			$api_dll = 'shippingapi.dll';
-			break;
+				$usps_server = 'http://production.shippingapis.com';
+				$api_dll = 'shippingapi.dll';
+				break;
 			case 'test':
 			default:
 // 09-7-2014
 //Secure APIs: https://stg-secure.shippingapis.com/ShippingApi.dll
 //Non-secure APIs: http://stg-production.shippingapis.com/ShippingApi.dll
-			$usps_server = 'http://stg-production.shippingapis.com';
-			$api_dll = 'ShippingApi.dll';
-			break;
+				$usps_server = 'http://stg-production.shippingapis.com';
+				$api_dll = 'ShippingApi.dll';
+				break;
 		}
 
 		$body = '';
@@ -929,239 +855,241 @@ $extraservices .
 	 *
 	 * @return array
 	 */
-	function country_list() {
-		$list = array(
-		'AF' => 'Afghanistan',
-		'AL' => 'Albania',
-		'AX' => 'Aland Island (Finland)',
-		'DZ' => 'Algeria',
-		'AD' => 'Andorra',
-		'AO' => 'Angola',
-		'AI' => 'Anguilla',
-		'AG' => 'Antigua and Barbuda',
-		'AR' => 'Argentina',
-		'AM' => 'Armenia',
-		'AW' => 'Aruba',
-		'AU' => 'Australia',
-		'AT' => 'Austria',
-		'AZ' => 'Azerbaijan',
-		'BS' => 'Bahamas',
-		'BH' => 'Bahrain',
-		'BD' => 'Bangladesh',
-		'BB' => 'Barbados',
-		'BY' => 'Belarus',
-		'BE' => 'Belgium',
-		'BZ' => 'Belize',
-		'BJ' => 'Benin',
-		'BM' => 'Bermuda',
-		'BT' => 'Bhutan',
-		'BO' => 'Bolivia',
-	'BQ' => 'Bonaire (Curacao)',
-		'BA' => 'Bosnia-Herzegovina',
-		'BW' => 'Botswana',
-		'BR' => 'Brazil',
-		'VG' => 'British Virgin Islands',
-		'BN' => 'Brunei Darussalam',
-		'BG' => 'Bulgaria',
-		'BF' => 'Burkina Faso',
-		'MM' => 'Burma',
-		'BI' => 'Burundi',
-		'KH' => 'Cambodia',
-		'CM' => 'Cameroon',
-		'CA' => 'Canada',
-		'CV' => 'Cape Verde',
-		'KY' => 'Cayman Islands',
-		'CF' => 'Central African Republic',
-		'TD' => 'Chad',
-		'CL' => 'Chile',
-		'CN' => 'China',
-		'CX' => 'Christmas Island (Australia)',
-		'CC' => 'Cocos Island (Australia)',
-		'CO' => 'Colombia',
-		'KM' => 'Comoros',
-		'CG' => 'Congo, Republic of the',
-		'CD' => 'Congo, Democratic Republic of the',
-		'CK' => 'Cook Islands (New Zealand)',
-		'CR' => 'Costa Rica',
-		'CI' => 'Cote d Ivoire (Ivory Coast)',
-		'HR' => 'Croatia',
-		'CU' => 'Cuba',
-	'CW' => 'Curacao',
-		'CY' => 'Cyprus',
-		'CZ' => 'Czech Republic',
-		'DK' => 'Denmark',
-		'DJ' => 'Djibouti',
-		'DM' => 'Dominica',
-		'DO' => 'Dominican Republic',
-		'EC' => 'Ecuador',
-		'EG' => 'Egypt',
-		'SV' => 'El Salvador',
-		'GQ' => 'Equatorial Guinea',
-		'ER' => 'Eritrea',
-		'EE' => 'Estonia',
-		'ET' => 'Ethiopia',
-		'FK' => 'Falkland Islands',
-		'FO' => 'Faroe Islands',
-		'FJ' => 'Fiji',
-		'FI' => 'Finland',
-		'FR' => 'France',
-		'GF' => 'French Guiana',
-		'PF' => 'French Polynesia',
-		'GA' => 'Gabon',
-		'GM' => 'Gambia',
-		'GE' => 'Georgia, Republic of',
-		'DE' => 'Germany',
-		'GH' => 'Ghana',
-		'GI' => 'Gibraltar',
-		'GB' => 'Great Britain and Northern Ireland',
-		'GR' => 'Greece',
-		'GL' => 'Greenland',
-		'GD' => 'Grenada',
-		'GP' => 'Guadeloupe',
-		'GT' => 'Guatemala',
-		'GN' => 'Guinea',
-		'GW' => 'Guinea-Bissau',
-		'GY' => 'Guyana',
-		'HT' => 'Haiti',
-		'HN' => 'Honduras',
-		'HK' => 'Hong Kong',
-		'HU' => 'Hungary',
-		'IS' => 'Iceland',
-		'IN' => 'India',
-		'ID' => 'Indonesia',
-		'IR' => 'Iran',
-		'IQ' => 'Iraq',
-		'IE' => 'Ireland',
-		'IL' => 'Israel',
-		'IT' => 'Italy',
-		'JM' => 'Jamaica',
-		'JP' => 'Japan',
-		'JO' => 'Jordan',
-		'KZ' => 'Kazakhstan',
-		'KE' => 'Kenya',
-		'KI' => 'Kiribati',
-		'KW' => 'Kuwait',
-		'KG' => 'Kyrgyzstan',
-		'LA' => 'Laos',
-		'LV' => 'Latvia',
-		'LB' => 'Lebanon',
-		'LS' => 'Lesotho',
-		'LR' => 'Liberia',
-		'LY' => 'Libya',
-		'LI' => 'Liechtenstein',
-		'LT' => 'Lithuania',
-		'LU' => 'Luxembourg',
-		'MO' => 'Macao',
-		'MK' => 'Macedonia, Republic of',
-		'MG' => 'Madagascar',
-		'MW' => 'Malawi',
-		'MY' => 'Malaysia',
-		'MV' => 'Maldives',
-		'ML' => 'Mali',
-		'MT' => 'Malta',
-		'MQ' => 'Martinique',
-		'MR' => 'Mauritania',
-		'MU' => 'Mauritius',
-		'YT' => 'Mayotte (France)',
-		'MX' => 'Mexico',
-		'FM' => 'Micronesia, Federated States of',
-		'MD' => 'Moldova',
-		'MC' => 'Monaco (France)',
-		'MN' => 'Mongolia',
-		'MS' => 'Montserrat',
-		'MA' => 'Morocco',
-		'MZ' => 'Mozambique',
-		'NA' => 'Namibia',
-		'NR' => 'Nauru',
-		'NP' => 'Nepal',
-		'NL' => 'Netherlands',
-		'AN' => 'Netherlands Antilles',
-		'NC' => 'New Caledonia',
-		'NZ' => 'New Zealand',
-		'NI' => 'Nicaragua',
-		'NE' => 'Niger',
-		'NG' => 'Nigeria',
-		'KP' => 'North Korea (Korea, Democratic People\'s Republic of)',
-		'NO' => 'Norway',
-		'OM' => 'Oman',
-		'PK' => 'Pakistan',
-		'PA' => 'Panama',
-		'PG' => 'Papua New Guinea',
-		'PY' => 'Paraguay',
-		'PE' => 'Peru',
-		'PH' => 'Philippines',
-		'PN' => 'Pitcairn Island',
-		'PL' => 'Poland',
-		'PT' => 'Portugal',
-		'QA' => 'Qatar',
-		'RE' => 'Reunion',
-		'RO' => 'Romania',
-		'RU' => 'Russia',
-		'RW' => 'Rwanda',
-		'SH' => 'Saint Helena',
-		'KN' => 'Saint Kitts (Saint Christopher and Nevis)',
-		'LC' => 'Saint Lucia',
-		'PM' => 'Saint Pierre and Miquelon',
-		'VC' => 'Saint Vincent and the Grenadines',
-		'SM' => 'San Marino',
-		'ST' => 'Sao Tome and Principe',
-		'SA' => 'Saudi Arabia',
-		'SN' => 'Senegal',
-		'RS' => 'Serbia',
-		'SC' => 'Seychelles',
-		'SL' => 'Sierra Leone',
-		'SG' => 'Singapore',
-	'SX' => 'Sint Maarten (Dutch)',
-		'SK' => 'Slovak Republic',
-		'SI' => 'Slovenia',
-		'SB' => 'Solomon Islands',
-		'SO' => 'Somalia',
-		'ZA' => 'South Africa',
-		'GS' => 'South Georgia (Falkland Islands)',
-		'KR' => 'South Korea (Korea, Republic of)',
-		'ES' => 'Spain',
-		'LK' => 'Sri Lanka',
-		'SD' => 'Sudan',
-		'SR' => 'Suriname',
-		'SZ' => 'Swaziland',
-		'SE' => 'Sweden',
-		'CH' => 'Switzerland',
-		'SY' => 'Syrian Arab Republic',
-		'TW' => 'Taiwan',
-		'TJ' => 'Tajikistan',
-		'TZ' => 'Tanzania',
-		'TH' => 'Thailand',
-		'TL' => 'East Timor (Indonesia)',
-		'TG' => 'Togo',
-		'TK' => 'Tokelau (Union Group) (Western Samoa)',
-		'TO' => 'Tonga',
-		'TT' => 'Trinidad and Tobago',
-		'TN' => 'Tunisia',
-		'TR' => 'Turkey',
-		'TM' => 'Turkmenistan',
-		'TC' => 'Turks and Caicos Islands',
-		'TV' => 'Tuvalu',
-		'UG' => 'Uganda',
-		'UA' => 'Ukraine',
-		'AE' => 'United Arab Emirates',
-		'UY' => 'Uruguay',
-		'UZ' => 'Uzbekistan',
-		'VU' => 'Vanuatu',
-		'VA' => 'Vatican City',
-		'VE' => 'Venezuela',
-		'VN' => 'Vietnam',
-		'WF' => 'Wallis and Futuna Islands',
-		'WS' => 'Western Samoa',
-		'YE' => 'Yemen',
-		'ZM' => 'Zambia',
-		'ZW' => 'Zimbabwe',
-		'PS' => 'Palestinian Territory', // usps does not ship
-		'ME' => 'Montenegro',
-		'GG' => 'Guernsey',
-		'IM' => 'Isle of Man',
-		'JE' => 'Jersey'
-		);
-		return $list;
+	private function getCountryName( $pIsoCode2 ) {
+		$ret = NULL;
+		switch( $pIsoCode2 ) {
+			case 'AF': $ret = 'Afghanistan'; break;
+			case 'AL': $ret = 'Albania'; break;
+			case 'AX': $ret = 'Aland Island (Finland)'; break;
+			case 'DZ': $ret = 'Algeria'; break;
+			case 'AD': $ret = 'Andorra'; break;
+			case 'AO': $ret = 'Angola'; break;
+			case 'AI': $ret = 'Anguilla'; break;
+			case 'AG': $ret = 'Antigua and Barbuda'; break;
+			case 'AR': $ret = 'Argentina'; break;
+			case 'AM': $ret = 'Armenia'; break;
+			case 'AW': $ret = 'Aruba'; break;
+			case 'AU': $ret = 'Australia'; break;
+			case 'AT': $ret = 'Austria'; break;
+			case 'AZ': $ret = 'Azerbaijan'; break;
+			case 'BS': $ret = 'Bahamas'; break;
+			case 'BH': $ret = 'Bahrain'; break;
+			case 'BD': $ret = 'Bangladesh'; break;
+			case 'BB': $ret = 'Barbados'; break;
+			case 'BY': $ret = 'Belarus'; break;
+			case 'BE': $ret = 'Belgium'; break;
+			case 'BZ': $ret = 'Belize'; break;
+			case 'BJ': $ret = 'Benin'; break;
+			case 'BM': $ret = 'Bermuda'; break;
+			case 'BT': $ret = 'Bhutan'; break;
+			case 'BO': $ret = 'Bolivia'; break;
+			case 'BQ': $ret = 'Bonaire (Curacao)'; break;
+			case 'BA': $ret = 'Bosnia-Herzegovina'; break;
+			case 'BW': $ret = 'Botswana'; break;
+			case 'BR': $ret = 'Brazil'; break;
+			case 'VG': $ret = 'British Virgin Islands'; break;
+			case 'BN': $ret = 'Brunei Darussalam'; break;
+			case 'BG': $ret = 'Bulgaria'; break;
+			case 'BF': $ret = 'Burkina Faso'; break;
+			case 'MM': $ret = 'Burma'; break;
+			case 'BI': $ret = 'Burundi'; break;
+			case 'KH': $ret = 'Cambodia'; break;
+			case 'CM': $ret = 'Cameroon'; break;
+			case 'CA': $ret = 'Canada'; break;
+			case 'CV': $ret = 'Cape Verde'; break;
+			case 'KY': $ret = 'Cayman Islands'; break;
+			case 'CF': $ret = 'Central African Republic'; break;
+			case 'TD': $ret = 'Chad'; break;
+			case 'CL': $ret = 'Chile'; break;
+			case 'CN': $ret = 'China'; break;
+			case 'CX': $ret = 'Christmas Island (Australia)'; break;
+			case 'CC': $ret = 'Cocos Island (Australia)'; break;
+			case 'CO': $ret = 'Colombia'; break;
+			case 'KM': $ret = 'Comoros'; break;
+			case 'CG': $ret = 'Congo, Republic of the'; break;
+			case 'CD': $ret = 'Congo, Democratic Republic of the'; break;
+			case 'CK': $ret = 'Cook Islands (New Zealand)'; break;
+			case 'CR': $ret = 'Costa Rica'; break;
+			case 'CI': $ret = 'Cote d Ivoire (Ivory Coast)'; break;
+			case 'HR': $ret = 'Croatia'; break;
+			case 'CU': $ret = 'Cuba'; break;
+			case 'CW': $ret = 'Curacao'; break;
+			case 'CY': $ret = 'Cyprus'; break;
+			case 'CZ': $ret = 'Czech Republic'; break;
+			case 'DK': $ret = 'Denmark'; break;
+			case 'DJ': $ret = 'Djibouti'; break;
+			case 'DM': $ret = 'Dominica'; break;
+			case 'DO': $ret = 'Dominican Republic'; break;
+			case 'EC': $ret = 'Ecuador'; break;
+			case 'EG': $ret = 'Egypt'; break;
+			case 'SV': $ret = 'El Salvador'; break;
+			case 'GQ': $ret = 'Equatorial Guinea'; break;
+			case 'ER': $ret = 'Eritrea'; break;
+			case 'EE': $ret = 'Estonia'; break;
+			case 'ET': $ret = 'Ethiopia'; break;
+			case 'FK': $ret = 'Falkland Islands'; break;
+			case 'FO': $ret = 'Faroe Islands'; break;
+			case 'FJ': $ret = 'Fiji'; break;
+			case 'FI': $ret = 'Finland'; break;
+			case 'FR': $ret = 'France'; break;
+			case 'GF': $ret = 'French Guiana'; break;
+			case 'PF': $ret = 'French Polynesia'; break;
+			case 'GA': $ret = 'Gabon'; break;
+			case 'GM': $ret = 'Gambia'; break;
+			case 'GE': $ret = 'Georgia, Republic of'; break;
+			case 'DE': $ret = 'Germany'; break;
+			case 'GH': $ret = 'Ghana'; break;
+			case 'GI': $ret = 'Gibraltar'; break;
+			case 'GB': $ret = 'Great Britain and Northern Ireland'; break;
+			case 'GR': $ret = 'Greece'; break;
+			case 'GL': $ret = 'Greenland'; break;
+			case 'GD': $ret = 'Grenada'; break;
+			case 'GP': $ret = 'Guadeloupe'; break;
+			case 'GT': $ret = 'Guatemala'; break;
+			case 'GN': $ret = 'Guinea'; break;
+			case 'GW': $ret = 'Guinea-Bissau'; break;
+			case 'GY': $ret = 'Guyana'; break;
+			case 'HT': $ret = 'Haiti'; break;
+			case 'HN': $ret = 'Honduras'; break;
+			case 'HK': $ret = 'Hong Kong'; break;
+			case 'HU': $ret = 'Hungary'; break;
+			case 'IS': $ret = 'Iceland'; break;
+			case 'IN': $ret = 'India'; break;
+			case 'ID': $ret = 'Indonesia'; break;
+			case 'IR': $ret = 'Iran'; break;
+			case 'IQ': $ret = 'Iraq'; break;
+			case 'IE': $ret = 'Ireland'; break;
+			case 'IL': $ret = 'Israel'; break;
+			case 'IT': $ret = 'Italy'; break;
+			case 'JM': $ret = 'Jamaica'; break;
+			case 'JP': $ret = 'Japan'; break;
+			case 'JO': $ret = 'Jordan'; break;
+			case 'KZ': $ret = 'Kazakhstan'; break;
+			case 'KE': $ret = 'Kenya'; break;
+			case 'KI': $ret = 'Kiribati'; break;
+			case 'KW': $ret = 'Kuwait'; break;
+			case 'KG': $ret = 'Kyrgyzstan'; break;
+			case 'LA': $ret = 'Laos'; break;
+			case 'LV': $ret = 'Latvia'; break;
+			case 'LB': $ret = 'Lebanon'; break;
+			case 'LS': $ret = 'Lesotho'; break;
+			case 'LR': $ret = 'Liberia'; break;
+			case 'LY': $ret = 'Libya'; break;
+			case 'LI': $ret = 'Liechtenstein'; break;
+			case 'LT': $ret = 'Lithuania'; break;
+			case 'LU': $ret = 'Luxembourg'; break;
+			case 'MO': $ret = 'Macao'; break;
+			case 'MK': $ret = 'Macedonia, Republic of'; break;
+			case 'MG': $ret = 'Madagascar'; break;
+			case 'MW': $ret = 'Malawi'; break;
+			case 'MY': $ret = 'Malaysia'; break;
+			case 'MV': $ret = 'Maldives'; break;
+			case 'ML': $ret = 'Mali'; break;
+			case 'MT': $ret = 'Malta'; break;
+			case 'MQ': $ret = 'Martinique'; break;
+			case 'MR': $ret = 'Mauritania'; break;
+			case 'MU': $ret = 'Mauritius'; break;
+			case 'YT': $ret = 'Mayotte (France)'; break;
+			case 'MX': $ret = 'Mexico'; break;
+			case 'FM': $ret = 'Micronesia, Federated States of'; break;
+			case 'MD': $ret = 'Moldova'; break;
+			case 'MC': $ret = 'Monaco (France)'; break;
+			case 'MN': $ret = 'Mongolia'; break;
+			case 'MS': $ret = 'Montserrat'; break;
+			case 'MA': $ret = 'Morocco'; break;
+			case 'MZ': $ret = 'Mozambique'; break;
+			case 'NA': $ret = 'Namibia'; break;
+			case 'NR': $ret = 'Nauru'; break;
+			case 'NP': $ret = 'Nepal'; break;
+			case 'NL': $ret = 'Netherlands'; break;
+			case 'AN': $ret = 'Netherlands Antilles'; break;
+			case 'NC': $ret = 'New Caledonia'; break;
+			case 'NZ': $ret = 'New Zealand'; break;
+			case 'NI': $ret = 'Nicaragua'; break;
+			case 'NE': $ret = 'Niger'; break;
+			case 'NG': $ret = 'Nigeria'; break;
+			case 'KP': $ret = 'North Korea (Korea, Democratic People\'s Republic of)'; break;
+			case 'NO': $ret = 'Norway'; break;
+			case 'OM': $ret = 'Oman'; break;
+			case 'PK': $ret = 'Pakistan'; break;
+			case 'PA': $ret = 'Panama'; break;
+			case 'PG': $ret = 'Papua New Guinea'; break;
+			case 'PY': $ret = 'Paraguay'; break;
+			case 'PE': $ret = 'Peru'; break;
+			case 'PH': $ret = 'Philippines'; break;
+			case 'PN': $ret = 'Pitcairn Island'; break;
+			case 'PL': $ret = 'Poland'; break;
+			case 'PT': $ret = 'Portugal'; break;
+			case 'QA': $ret = 'Qatar'; break;
+			case 'RE': $ret = 'Reunion'; break;
+			case 'RO': $ret = 'Romania'; break;
+			case 'RU': $ret = 'Russia'; break;
+			case 'RW': $ret = 'Rwanda'; break;
+			case 'SH': $ret = 'Saint Helena'; break;
+			case 'KN': $ret = 'Saint Kitts (Saint Christopher and Nevis)'; break;
+			case 'LC': $ret = 'Saint Lucia'; break;
+			case 'PM': $ret = 'Saint Pierre and Miquelon'; break;
+			case 'VC': $ret = 'Saint Vincent and the Grenadines'; break;
+			case 'SM': $ret = 'San Marino'; break;
+			case 'ST': $ret = 'Sao Tome and Principe'; break;
+			case 'SA': $ret = 'Saudi Arabia'; break;
+			case 'SN': $ret = 'Senegal'; break;
+			case 'RS': $ret = 'Serbia'; break;
+			case 'SC': $ret = 'Seychelles'; break;
+			case 'SL': $ret = 'Sierra Leone'; break;
+			case 'SG': $ret = 'Singapore'; break;
+			case 'SX': $ret = 'Sint Maarten (Dutch)'; break;
+			case 'SK': $ret = 'Slovak Republic'; break;
+			case 'SI': $ret = 'Slovenia'; break;
+			case 'SB': $ret = 'Solomon Islands'; break;
+			case 'SO': $ret = 'Somalia'; break;
+			case 'ZA': $ret = 'South Africa'; break;
+			case 'GS': $ret = 'South Georgia (Falkland Islands)'; break;
+			case 'KR': $ret = 'South Korea (Korea, Republic of)'; break;
+			case 'ES': $ret = 'Spain'; break;
+			case 'LK': $ret = 'Sri Lanka'; break;
+			case 'SD': $ret = 'Sudan'; break;
+			case 'SR': $ret = 'Suriname'; break;
+			case 'SZ': $ret = 'Swaziland'; break;
+			case 'SE': $ret = 'Sweden'; break;
+			case 'CH': $ret = 'Switzerland'; break;
+			case 'SY': $ret = 'Syrian Arab Republic'; break;
+			case 'TW': $ret = 'Taiwan'; break;
+			case 'TJ': $ret = 'Tajikistan'; break;
+			case 'TZ': $ret = 'Tanzania'; break;
+			case 'TH': $ret = 'Thailand'; break;
+			case 'TL': $ret = 'East Timor (Indonesia)'; break;
+			case 'TG': $ret = 'Togo'; break;
+			case 'TK': $ret = 'Tokelau (Union Group) (Western Samoa)'; break;
+			case 'TO': $ret = 'Tonga'; break;
+			case 'TT': $ret = 'Trinidad and Tobago'; break;
+			case 'TN': $ret = 'Tunisia'; break;
+			case 'TR': $ret = 'Turkey'; break;
+			case 'TM': $ret = 'Turkmenistan'; break;
+			case 'TC': $ret = 'Turks and Caicos Islands'; break;
+			case 'TV': $ret = 'Tuvalu'; break;
+			case 'UG': $ret = 'Uganda'; break;
+			case 'UA': $ret = 'Ukraine'; break;
+			case 'AE': $ret = 'United Arab Emirates'; break;
+			case 'UY': $ret = 'Uruguay'; break;
+			case 'UZ': $ret = 'Uzbekistan'; break;
+			case 'VU': $ret = 'Vanuatu'; break;
+			case 'VA': $ret = 'Vatican City'; break;
+			case 'VE': $ret = 'Venezuela'; break;
+			case 'VN': $ret = 'Vietnam'; break;
+			case 'WF': $ret = 'Wallis and Futuna Islands'; break;
+			case 'WS': $ret = 'Western Samoa'; break;
+			case 'YE': $ret = 'Yemen'; break;
+			case 'ZM': $ret = 'Zambia'; break;
+			case 'ZW': $ret = 'Zimbabwe'; break;
+			case 'ME': $ret = 'Montenegro'; break;
+			case 'GG': $ret = 'Guernsey'; break;
+			case 'IM': $ret = 'Isle of Man'; break;
+			case 'JE': $ret = 'Jersey'; break;
+			// usps does not ship			
+			// case 'PS': $ret = 'Palestinian Territory'; break;
+		}
+		return $ret;
 	}
 
 	// use USPS translations for US shops (USPS treats certain regions as "US States" instead of as different "countries", so we translate here)

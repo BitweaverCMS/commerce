@@ -19,6 +19,8 @@ class supersaver extends CommercePluginShippingBase {
 	}
 
 	function quote( $pShipHash ) {
+		global $currencies;
+
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 
 			$min = $this->getConfig( 'MODULE_SHIPPING_SUPERSAVER_MIN' );
