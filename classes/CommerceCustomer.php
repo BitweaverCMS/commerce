@@ -270,13 +270,6 @@ class CommerceCustomer extends BitBase {
 
 	// store an address
 	function storeAddress( &$pParamHash ) {
-		global $current_page_base, $language_page_directory, $template;
-
-		$directory_array = $template->get_template_part($language_page_directory, '/^'.$current_page_base . '/');
-		while(list ($key, $value) = each($directory_array)) {
-			require_once($language_page_directory . $value);
-		}
-
 		if( $this->verifyAddress( $pParamHash, $this->mErrors ) ) {
 			$process = true;
 			if( isset( $pParamHash['address_book_id'] ) && self::verifyId( $pParamHash['address_book_id'] ) ) {

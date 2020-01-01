@@ -1001,8 +1001,6 @@ function reset_bitcommerce_layout() {
 			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_languages.tpl' ),
 			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_currencies.tpl' ),
 			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_whos_online.tpl' ),
-			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_music_genres.tpl' ),
-			array( 'module_rsrc' => 'bitpackage:bitcommerce/mod_record_companies.tpl' ),
 		)
 	);
 	$i = 1;
