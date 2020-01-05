@@ -136,7 +136,14 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
+		$i = 3;
 		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_HANDLING' => array(
+				'configuration_title' => 'Handling Fee',
+				'configuration_description' => 'The handling cost for all orders using this shipping method.',
+				'sort_order' => $i++,
+				'configuration_value' => '0',
+			),
 			$this->getModuleKeyTrunk().'_ZONE' => array(
 				'configuration_title' => 'Shipping Zone',
 				'configuration_description' => 'If a zone is selected, only enable this shipping method for that zone.',
@@ -146,6 +153,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
 				'configuration_title' => 'Tax Class',
 				'configuration_description' => 'Use the following tax class on the shipping fee.',
+				'sort_order' => $i++,
 				'use_function' => 'zen_get_tax_class_title',
 				'set_function' => 'zen_cfg_pull_down_tax_classes('
 			),
@@ -153,6 +161,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				'configuration_title' => 'Tax Basis',
 				'configuration_value' => 'Shipping',
 				'configuration_description' => 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone',
+				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('Shipping', 'Billing', 'Store'), ",
 			),
 		) );
