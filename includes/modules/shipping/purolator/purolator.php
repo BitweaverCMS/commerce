@@ -25,8 +25,9 @@ class purolator extends CommercePluginShippingBase {
 	function __construct() {
 		parent::__construct();
 		$this->title = tra( 'Purolator e-Ship' );
-		$this->description = tra( 'Purolator Parcel Service<p><strong>eShip Profile Information </strong>can be obtained at http://eship.purolator.com' );
+		$this->description = tra( 'Purolator Parcel Service<p><strong><a href="http://eship.purolator.com">eShip Profile</a> required.' );
 		if( $this->isEnabled() ) {
+			global $gBitLanguage;
 			$this->language = (in_array( $gBitLanguage->getLanguage(), array('en' , 'fr'))) ? strtolower( $gBitLanguage->getLanguage() ) : MODULE_SHIPPING_PUROLATOR_LANGUAGE;
 			$this->uri = MODULE_SHIPPING_PUROLATOR_SERVERURI;
 			$this->location = MODULE_SHIPPING_PUROLATOR_SERVERLOC;
@@ -206,47 +207,62 @@ class purolator extends CommercePluginShippingBase {
 		// after the initial translation, _do_ map standalone '&' into '&#38;'
 		return preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/", "&#38;", strtr($string, $trans));
 	}
-	/**
-	 * Install this module
-	 * Should probably add a return code that says if it's successful, but that doesn't seem
-	 * to be implemented yet in Zencart.
-	 */
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Purolator datatypes URI', 'MODULE_SHIPPING_PUROLATOR_SERVERURI', 'http://purolator.com/pws/datatypes/v1', 'Purolator datatypes URI. <br>(default: http://purolator.com/pws/datatypes/v1)', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Purolator Server URI', 'MODULE_SHIPPING_PUROLATOR_SERVERLOC', 'https://webservices.purolator.com/PWS/V1/Estimating/EstimatingService.asmx', 'Purolator server Location. <br>(default: https://webservices.purolator.com/PWS/V1/Estimating/EstimatingService.asmx)', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Purolator Account Number', 'MODULE_SHIPPING_PUROLATOR_ACCTNUM', '', 'Purolator account number', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Packaging', 'MODULE_SHIPPING_PUROLATOR_PACKAGING', 'CustomerPackaging', 'What packaging will you be using?', '6', '0', 'zen_cfg_select_option(array(\'ExpressEnvelope\', \'ExpressPack\', \'ExpressBox\',\'CustomerPackaging\'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Selected Language-optional', 'MODULE_SHIPPING_PUROLATOR_LANGUAGE', 'en', 'Purolator supports two languages:<br><strong>en</strong>-english<br><strong>fr</strong>-french.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Your Purolator Production Key', 'MODULE_SHIPPING_PUROLATOR_KEY', '', 'Purolator Production Key.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter Your Purolator Production Password', 'MODULE_SHIPPING_PUROLATOR_PASS', '0', 'Purolator Production Password.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Turnaround Time', 'MODULE_SHIPPING_PUROLATOR_TURNAROUND', '0', 'Add the hours turnaround per shipment', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Weight', 'MODULE_SHIPPING_PUROLATOR_MAXWEIGHT', '140', 'Maximum weight (Lb)', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Charge per box', 'MODULE_SHIPPING_PUROLATOR_HANDLING', '0', 'Add the following handling fee per box', '6', '0', now())");
-			$this->mDb->CompleteTrans();
-		}
-	} //end function install
 
-	/**
-	 * Build array of keys used for installing/managing this module
-	 *
-	 * @return array
-	 */
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_PUROLATOR_ACCTNUM',
-			'MODULE_SHIPPING_PUROLATOR_SERVERURI',
-			'MODULE_SHIPPING_PUROLATOR_SERVERLOC',
-			'MODULE_SHIPPING_PUROLATOR_LANGUAGE',
-			'MODULE_SHIPPING_PUROLATOR_KEY',
-			'MODULE_SHIPPING_PUROLATOR_PASS',
-			'MODULE_SHIPPING_PUROLATOR_PACKAGING',
-			'MODULE_SHIPPING_PUROLATOR_HANDLING',
-			'MODULE_SHIPPING_PUROLATOR_MAXWEIGHT',
-			'MODULE_SHIPPING_PUROLATOR_TURNAROUND',
+
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_SERVERURI' => array(
+				'configuration_title' => 'Enter Purolator datatypes URI',
+				'configuration_value' => 'http://purolator.com/pws/datatypes/v1',
+				'configuration_description' => 'Purolator datatypes URI.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_SERVERLOC' => array(
+				'configuration_title' => 'Enter Purolator Server URI',
+				'configuration_value' => 'https://webservices.purolator.com/PWS/V1/Estimating/EstimatingService.asmx',
+				'configuration_description' => 'Purolator server Location.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_ACCTNUM' => array(
+				'configuration_title' => 'Enter Purolator Account Number',
+				'configuration_description' => 'Purolator account number',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_PACKAGING' => array(
+				'configuration_title' => 'Packaging',
+				'configuration_value' => 'CustomerPackaging',
+				'configuration_description' => 'What packaging will you be using?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('ExpressEnvelope', 'ExpressPack', 'ExpressBox','CustomerPackaging'),",
+			),
+			$this->getModuleKeyTrunk().'_LANGUAGE' => array(
+				'configuration_title' => 'Enter Selected Language-optional',
+				'configuration_value' => 'en',
+				'configuration_description' => 'Purolator supports two languages:<br><strong>en</strong>-english<br><strong>fr</strong>-french.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_KEY' => array(
+				'configuration_title' => 'Enter Your Purolator Production Key',
+				'configuration_description' => 'Purolator Production Key.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_PASS' => array(
+				'configuration_title' => 'Enter Your Purolator Production Password',
+				'configuration_description' => 'Purolator Production Password.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_TURNAROUND' => array(
+				'configuration_title' => 'Turnaround Time',
+				'configuration_description' => 'Add the hours turnaround per shipment',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_MAXWEIGHT' => array(
+				'configuration_title' => 'Maximum Weight',
+				'configuration_value' => '140',
+				'configuration_description' => 'Maximum weight (Lb)',
+				'sort_order' => $i++,
+			),
 		) );
-	} // end function keys
-
+	}
 } //end class purolator

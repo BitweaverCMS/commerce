@@ -1307,89 +1307,170 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 		return $extraserviceinternational;
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('USPS Version Date', 'MODULE_SHIPPING_USPS_VERSION', '2017-09-16', 'You have installed:', '6', '0', 'zen_cfg_select_option(array(''2017-09-16''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Full Name or Short Name', 'MODULE_SHIPPING_USPS_TITLE_SIZE', 'Long', 'Do you want to use a Long or Short name for USPS shipping?', '6', '0', 'zen_cfg_select_option(array(''Long'', ''Short''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Enter the USPS Web Tools User ID', 'MODULE_SHIPPING_USPS_USERID', 'NONE', 'Enter the USPS USERID assigned to you for Rate Quotes/ShippingAPI.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Which server to use', 'MODULE_SHIPPING_USPS_SERVER', 'production', 'An account at USPS is needed to use the Production server', '6', '0', 'zen_cfg_select_option(array(''test'', ''production''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('All Packages are Machinable?', 'MODULE_SHIPPING_USPS_MACHINABLE', 'False', 'Are all products shipped machinable based on C700 Package Services 2.0 Nonmachinable PARCEL POST USPS Rules and Regulations?<br /><br /><strong>Note: Nonmachinable packages will usually result in a higher Parcel Post Rate Charge.<br /><br />Packages 35lbs or more, or less than 6 ounces (.375), will be overridden and set to False</strong>', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Quote Sort Order', 'MODULE_SHIPPING_USPS_QUOTE_SORT', 'Price-LowToHigh', 'Sorts the returned quotes using the service name Alphanumerically or by Price. Unsorted will give the order provided by USPS.', '6', '0', 'zen_cfg_select_option(array(''Unsorted'',''Alphabetical'', ''Price-LowToHigh'', ''Price-HighToLow''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Decimal Settings', 'MODULE_SHIPPING_USPS_DECIMALS', '3', 'Decimal Setting can be 1, 2 or 3. Sometimes International requires 2 decimals, based on Tare Rates or Product weights. Do you want to use 1, 2 or 3 decimals?', '6', '0', 'zen_cfg_select_option(array(''1'', ''2'', ''3''), ', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('USPS Options', 'MODULE_SHIPPING_USPS_OPTIONS', '--none--', 'Select from the following the USPS options.<br />note: this adds a considerable delay in obtaining quotes.', '6', '16', 'zen_cfg_select_multioption(array(''Display weight'', ''Display transit time''), ',  now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('USPS Domestic Transit Time Calculation Mode', 'MODULE_SHIPPING_USPS_TRANSIT_TIME_CALCULATION_MODE', 'NEW', 'Select from the following the USPS options.<br />note: NEW and OLD will add additional time to quotes. CUSTOM allows your custom shipping days.', '6', '16', 'zen_cfg_select_option(array(''CUSTOM'', ''NEW'', ''OLD''), ',  now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Debug Mode', 'MODULE_SHIPPING_USPS_DEBUG_MODE', 'Off', 'Would you like to enable debug mode?  A complete detailed log of USPS quote results may be emailed to the store owner, Log results or displayed to Screen.', '6', '0', 'zen_cfg_select_option(array(''Off'', ''Email'', ''Logs'', ''Screen''), ', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee - US', 'MODULE_SHIPPING_USPS_HANDLING', '0', 'National Handling fee for this shipping method.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee - International', 'MODULE_SHIPPING_USPS_HANDLING_INT', '0', 'International Handling fee for this shipping method.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Handling Per Order or Per Box', 'MODULE_SHIPPING_USPS_HANDLING_METHOD', 'Box', 'Do you want to charge Handling Fee Per Order or Per Box?', '6', '0', 'zen_cfg_select_option(array(''Order'', ''Box''), ', now())");
-
-	/*
-	Small Flat Rate Box 8-5/8" x 5-3/8" x 1-5/8"
-	Global Express Guaranteed - Min. length 9-1/2", height 5-1/2"
-	MODULE_SHIPPING_USPS_LENGTH 8.625
-	MODULE_SHIPPING_USPS_WIDTH  5.375
-	MODULE_SHIPPING_USPS_HEIGHT 1.625
-	*/
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS Domestic minimum Length', 'MODULE_SHIPPING_USPS_LENGTH', '8.625', 'The Minimum Length, Width and Height are used to determine shipping methods available for International Shipping.<br />While dimensions are not supported at this time, the Minimums are sent to USPS for obtaining Rate Quotes.<br />In most cases, these Minimums should never have to be changed.<br /><br /><strong>Enter the Domestic</strong><br />Minimum Length - default 8.625', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS minimum Width', 'MODULE_SHIPPING_USPS_WIDTH', '5.375', 'Enter the Minimum Width - default 5.375', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS minimum Height', 'MODULE_SHIPPING_USPS_HEIGHT', '1.625', 'Enter the Minimum Height - default 1.625', '6', '0', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS International minimum Length', 'MODULE_SHIPPING_USPS_LENGTH_INTL', '9.50', 'The Minimum Length, Width and Height are used to determine shipping methods available for International Shipping.<br />While dimensions are not supported at this time, the Minimums are sent to USPS for obtaining Rate Quotes.<br />In most cases, these Minimums should never have to be changed.<br /><br /><strong>Enter the International</strong><br />Minimum Length - default 9.50', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS minimum Width', 'MODULE_SHIPPING_USPS_WIDTH_INTL', '1.0', 'Enter the Minimum Width - default 1.0', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('USPS minimum Height', 'MODULE_SHIPPING_USPS_HEIGHT_INTL', '5.50', 'Enter the Minimum Height - default 5.50', '6', '0', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable USPS First-Class filter for US shipping', 'MODULE_SHIPPING_USPS_FIRST_CLASS_FILTER_US', 'True', 'Do you want to enable the US First-Class filter to display only 1 First-Class shipping rate?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-	//    $this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Shipping Methods (Domestic and International)',  'MODULE_SHIPPING_USPS_TYPES',  '0, .21875, 0.00, 0, .8125, 0.00, 0, .8125, 0.00, 0, .8125, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 15, 0.00, 0, 20, 0.00, 0, 25, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, .21875, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 20, 0.00, 0, 20, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 20, 0.00, 0, 70, 0.00, 0, 70, 0.00', '<b><u>Checkbox:</u></b> Select the services to be offered<br /><b><u>Minimum Weight (lbs)</u></b>first input field<br /><b><u>Maximum Weight (lbs):</u></b>second input field<br /><br />USPS returns methods based on cart weights.  These settings will allow further control (particularly helpful for flat rate methods) but will not override USPS limits', '6', '0', 'zen_cfg_usps_services(array(''First-Class Mail Letter'', ''First-Class Mail Large Envelope'', ''First-Class Mail Parcel'', ''First-ClassTM Package Service'', ''Media Mail Parcel'', ''Standard PostRM'', ''Priority MailTM'', ''Priority MailTM Flat Rate Envelope'', ''Priority MailTM Legal Flat Rate Envelope'', ''Priority MailTM Padded Flat Rate Envelope'', ''Priority MailTM Small Flat Rate Box'', ''Priority MailTM Medium Flat Rate Box'', ''Priority MailTM Large Flat Rate Box'', ''Priority MailTM Regional Rate Box A'', ''Priority MailTM Regional Rate Box B'', ''Priority MailTM Regional Rate Box C'', ''Priority Mail ExpressTM'', ''Priority Mail ExpressTM Flat Rate Envelope'', ''Priority Mail ExpressTM Legal Flat Rate Envelope'', ''Priority Mail ExpressTM Flat Rate Boxes'', ''First-Class MailRM International Letter'', ''First-Class MailRM International Large Envelope'', ''First-Class Package International ServiceTM'', ''Priority Mail InternationalRM'', ''Priority Mail InternationalRM Flat Rate Envelope'', ''Priority Mail InternationalRM Small Flat Rate Box'', ''Priority Mail InternationalRM Medium Flat Rate Box'', ''Priority Mail InternationalRM Large Flat Rate Box'', ''Priority Mail Express InternationalTM'', ''Priority Mail Express InternationalTM Flat Rate Envelope'', ''Priority Mail Express InternationalTM Flat Rate Boxes'', ''USPS GXGTM Envelopes'', ''Global Express GuaranteedRM (GXG)''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Shipping Methods (Domestic and International)',  'MODULE_SHIPPING_USPS_TYPES',  '0, .21875, 0.00, 0, .8125, 0.00, 0, .8125, 0.00, 0, .9375, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 15, 0.00, 0, 20, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, .21875, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 20, 0.00, 0, 20, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 70, 0.00, 0, 70, 0.00', '<b><u>Checkbox:</u></b> Select the services to be offered<br /><b><u>Minimum Weight (lbs)</u></b>first input field<br /><b><u>Maximum Weight (lbs):</u></b>second input field<br /><br />USPS returns methods based on cart weights.  These settings will allow further control (particularly helpful for flat rate methods) but will not override USPS limits', '6', '0', 'zen_cfg_usps_services(array(''First-Class Mail Letter'', ''First-Class Mail Large Envelope'', ''First-Class Package Service - RetailTM'', ''First-ClassTM Package Service'', ''Media Mail Parcel'', ''USPS Retail GroundRM'', ''Priority MailTM'', ''Priority MailTM Flat Rate Envelope'', ''Priority MailTM Legal Flat Rate Envelope'', ''Priority MailTM Padded Flat Rate Envelope'', ''Priority MailTM Small Flat Rate Box'', ''Priority MailTM Medium Flat Rate Box'', ''Priority MailTM Large Flat Rate Box'', ''Priority MailTM Regional Rate Box A'', ''Priority MailTM Regional Rate Box B'', ''Priority Mail ExpressTM'', ''Priority Mail ExpressTM Flat Rate Envelope'', ''Priority Mail ExpressTM Legal Flat Rate Envelope'', ''First-Class MailRM International Letter'', ''First-Class MailRM International Large Envelope'', ''First-Class Package International ServiceTM'', ''Priority Mail InternationalRM'', ''Priority Mail InternationalRM Flat Rate Envelope'', ''Priority Mail InternationalRM Small Flat Rate Box'', ''Priority Mail InternationalRM Medium Flat Rate Box'', ''Priority Mail InternationalRM Large Flat Rate Box'', ''Priority Mail Express InternationalTM'', ''Priority Mail Express InternationalTM Flat Rate Envelope'', ''USPS GXGTM Envelopes'', ''Global Express GuaranteedRM (GXG)''), ', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Extra Services (Domestic)', 'MODULE_SHIPPING_USPS_DMST_SERVICES', 'Certified MailRM, N, USPS TrackingTM Electronic, N, USPS TrackingTM, N, Insurance, N, Priority Mail Express Insurance, N, Priority Mail Insurance, N, Adult Signature Restricted Delivery, N, Adult Signature Required, N, Registered MailTM, N, Collect on Delivery, N, Return Receipt for Merchandise, N, Return Receipt, N, Certificate of Mailing (Form 3665), N, Certificate of Mailing (Form 3817), N, Signature ConfirmationTM Electronic, N, Signature ConfirmationTM, N, Priority Mail Express 1030 AM Delivery, N, Certified MailRM Restricted Delivery, N, Certified MailRM Adult Signature Required, N, Certified MailRM Adult Signature Restricted Delivery, N, Signature ConfirmationTM Restricted Delivery, N, Signature ConfirmationTM Electronic Restricted Delivery, N, Collect on Delivery Restricted Delivery, N, Registered MailTM Restricted Delivery, N, Insurance Restricted Delivery, N, Insurance Restricted Delivery (Priority Mail Express), N, Insurance Restricted Delivery (Priority Mail), N', 'Included in postage rates.  Not shown to the customer.<br />WARNING: Some services cannot work with other services.', '6', '0', 'zen_cfg_usps_extraservices(array(''Certified MailRM'', ''USPS TrackingTM Electronic'', ''USPS TrackingTM'', ''Insurance'', ''Priority Mail Express Insurance'', ''Priority Mail Insurance'', ''Adult Signature Restricted Delivery'', ''Adult Signature Required'', ''Registered MailTM'', ''Collect on Delivery'', ''Return Receipt for Merchandise'', ''Return Receipt'', ''Certificate of Mailing (Form 3665)'', ''Certificate of Mailing (Form 3817)'', ''Signature ConfirmationTM Electronic'', ''Signature ConfirmationTM'', ''Priority Mail Express 1030 AM Delivery'', ''Certified MailRM Restricted Delivery'', ''Certified MailRM Adult Signature Required'', ''Certified MailRM Adult Signature Restricted Delivery'', ''Signature ConfirmationTM Restricted Delivery'', ''Signature ConfirmationTM Electronic Restricted Delivery'', ''Collect on Delivery Restricted Delivery'', ''Registered MailTM Restricted Delivery'', ''Insurance Restricted Delivery'', ''Insurance Restricted Delivery (Priority Mail Express)'', ''Insurance Restricted Delivery (Priority Mail)''), ', now())");
-
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Extra Services (International)', 'MODULE_SHIPPING_USPS_INTL_SERVICES', 'Registered Mail, N, Insurance, N, Return Receipt, N, Electronic USPS Delivery Confirmation International, N, Certificate of Mailing, N', 'Included in postage rates.  Not shown to the customer.<br />WARNING: Some services cannot work with other services.', '6', '0', 'zen_cfg_usps_extraservices(array(''Registered Mail'', ''Insurance'', ''Return Receipt'', ''Electronic USPS Delivery Confirmation International'', ''Certificate of Mailing''), ', now())");
-
-	// Special Services prices and availability will not be returned when Service = ALL or ONLINE
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Retail pricing or Online pricing?', 'MODULE_SHIPPING_USPS_RATE_TYPE', 'Online', 'Rates will be returned ONLY for methods available in this pricing type.  Applies to prices <u>and</u> add on services', '6', '0', 'zen_cfg_select_option(array(''Retail'', ''Online''), ', now())");
-			$this->mDb->CompleteTrans();
-		}
-	}
-
-	/**
-	 * Build array of keys used for installing/managing this module
-	 *
-	 * @return array
-	 */
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_USPS_VERSION',
-			'MODULE_SHIPPING_USPS_TITLE_SIZE',
-			'MODULE_SHIPPING_USPS_USERID',
-			'MODULE_SHIPPING_USPS_SERVER',
-			'MODULE_SHIPPING_USPS_QUOTE_SORT',
-			'MODULE_SHIPPING_USPS_HANDLING',
-			'MODULE_SHIPPING_USPS_HANDLING_INT',
-			'MODULE_SHIPPING_USPS_HANDLING_METHOD',
-			'MODULE_SHIPPING_USPS_DECIMALS',
-			'MODULE_SHIPPING_USPS_MACHINABLE',
-			'MODULE_SHIPPING_USPS_OPTIONS',
-			'MODULE_SHIPPING_USPS_TRANSIT_TIME_CALCULATION_MODE',
-			'MODULE_SHIPPING_USPS_LENGTH',
-			'MODULE_SHIPPING_USPS_WIDTH',
-			'MODULE_SHIPPING_USPS_HEIGHT',
-			'MODULE_SHIPPING_USPS_LENGTH_INTL',
-			'MODULE_SHIPPING_USPS_WIDTH_INTL',
-			'MODULE_SHIPPING_USPS_HEIGHT_INTL',
-			'MODULE_SHIPPING_USPS_FIRST_CLASS_FILTER_US',
-			'MODULE_SHIPPING_USPS_TYPES',
-			'MODULE_SHIPPING_USPS_DMST_SERVICES',
-			'MODULE_SHIPPING_USPS_INTL_SERVICES',
-			'MODULE_SHIPPING_USPS_RATE_TYPE'
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_VERSION' => array(
+				'configuration_title' => 'USPS Version Date',
+				'configuration_value' => '2017-09-16',
+				'configuration_description' => 'You have installed:',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('2017-09-16'),",
+			),
+			$this->getModuleKeyTrunk().'_TITLE_SIZE' => array(
+				'configuration_title' => 'Full Name or Short Name',
+				'configuration_value' => 'Long',
+				'configuration_description' => 'Do you want to use a Long or Short name for USPS shipping?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Long', 'Short'),",
+			),
+			$this->getModuleKeyTrunk().'_USERID' => array(
+				'configuration_title' => 'Enter the USPS Web Tools User ID',
+				'configuration_value' => 'NONE',
+				'configuration_description' => 'Enter the USPS USERID assigned to you for Rate Quotes/ShippingAPI.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_SERVER' => array(
+				'configuration_title' => 'Which server to use',
+				'configuration_value' => 'production',
+				'configuration_description' => 'An account at USPS is needed to use the Production server',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('test', 'production'),",
+			),
+			$this->getModuleKeyTrunk().'_MACHINABLE' => array(
+				'configuration_title' => 'All Packages are Machinable?',
+				'configuration_value' => 'False',
+				'configuration_description' => 'Are all products shipped machinable based on C700 Package Services 2.0 Nonmachinable PARCEL POST USPS Rules and Regulations?<br /><br /><strong>Note: Nonmachinable packages will usually result in a higher Parcel Post Rate Charge.<br /><br />Packages 35lbs or more, or less than 6 ounces (.375), will be overridden and set to False</strong>',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('True', 'False'),",
+			),
+			$this->getModuleKeyTrunk().'_QUOTE_SORT' => array(
+				'configuration_title' => 'Quote Sort Order',
+				'configuration_value' => 'Price-LowToHigh',
+				'configuration_description' => 'Sorts the returned quotes using the service name Alphanumerically or by Price. Unsorted will give the order provided by USPS.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Unsorted','Alphabetical', 'Price-LowToHigh', 'Price-HighToLow'),",
+			),
+			$this->getModuleKeyTrunk().'_DECIMALS' => array(
+				'configuration_title' => 'Decimal Settings',
+				'configuration_value' => '3',
+				'configuration_description' => 'Decimal Setting can be 1, 2 or 3. Sometimes International requires 2 decimals, based on Tare Rates or Product weights. Do you want to use 1, 2 or 3 decimals?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('1', '2', '3'),",
+			),
+			$this->getModuleKeyTrunk().'_OPTIONS' => array(
+				'configuration_title' => 'USPS Options',
+				'configuration_value' => '--none--',
+				'configuration_description' => 'Select from the following the USPS options.<br />note: this adds a considerable delay in obtaining quotes.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_multioption(array('Display weight', 'Display transit time'),",
+			),
+			$this->getModuleKeyTrunk().'_TRANSIT_TIME_CALCULATION_MODE' => array(
+				'configuration_title' => 'USPS Domestic Transit Time Calculation Mode',
+				'configuration_value' => 'NEW',
+				'configuration_description' => 'Select from the following the USPS options.<br />note: NEW and OLD will add additional time to quotes. CUSTOM allows your custom shipping days.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('CUSTOM', 'NEW', 'OLD'),",
+			),
+			$this->getModuleKeyTrunk().'_DEBUG_MODE' => array(
+				'configuration_title' => 'Debug Mode',
+				'configuration_value' => 'Off',
+				'configuration_description' => 'Would you like to enable debug mode?  A complete detailed log of USPS quote results may be emailed to the store owner, Log results or displayed to Screen.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Off', 'Email', 'Logs', 'Screen'),",
+			),
+			$this->getModuleKeyTrunk().'_HANDLING' => array(
+				'configuration_title' => 'Handling Fee - US',
+				'configuration_value' => '0',
+				'configuration_description' => 'National Handling fee for this shipping method.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING_INT' => array(
+				'configuration_title' => 'Handling Fee - International',
+				'configuration_value' => '0',
+				'configuration_description' => 'International Handling fee for this shipping method.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING_METHOD' => array(
+				'configuration_title' => 'Handling Per Order or Per Box',
+				'configuration_value' => 'Box',
+				'configuration_description' => 'Do you want to charge Handling Fee Per Order or Per Box?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Order', 'Box'),",
+			),
+			$this->getModuleKeyTrunk().'_LENGTH' => array(
+				'configuration_title' => 'USPS Domestic minimum Length',
+				'configuration_value' => '8.625',
+				'configuration_description' => 'The Minimum Length, Width and Height are used to determine shipping methods available for International Shipping.<br />While dimensions are not supported at this time, the Minimums are sent to USPS for obtaining Rate Quotes.<br />In most cases, these Minimums should never have to be changed.<br /><br /><strong>Enter the Domestic</strong><br />Minimum Length - default 8.625',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_WIDTH' => array(
+				'configuration_title' => 'USPS minimum Width',
+				'configuration_value' => '5.375',
+				'configuration_description' => 'Enter the Minimum Width - default 5.375',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HEIGHT' => array(
+				'configuration_title' => 'USPS minimum Height',
+				'configuration_value' => '1.625',
+				'configuration_description' => 'Enter the Minimum Height - default 1.625',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_LENGTH_INTL' => array(
+				'configuration_title' => 'USPS International minimum Length',
+				'configuration_value' => '9.50',
+				'configuration_description' => 'The Minimum Length, Width and Height are used to determine shipping methods available for International Shipping.<br />While dimensions are not supported at this time, the Minimums are sent to USPS for obtaining Rate Quotes.<br />In most cases, these Minimums should never have to be changed.<br /><br /><strong>Enter the International</strong><br />Minimum Length - default 9.50',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_WIDTH_INTL' => array(
+				'configuration_title' => 'USPS minimum Width',
+				'configuration_value' => '1.0',
+				'configuration_description' => 'Enter the Minimum Width - default 1.0',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HEIGHT_INTL' => array(
+				'configuration_title' => 'USPS minimum Height',
+				'configuration_value' => '5.50',
+				'configuration_description' => 'Enter the Minimum Height - default 5.50',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_FIRST_CLASS_FILTER_US' => array(
+				'configuration_title' => 'Enable USPS First-Class filter for US shipping',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Do you want to enable the US First-Class filter to display only 1 First-Class shipping rate?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('True', 'False'),",
+			),
+			$this->getModuleKeyTrunk().'_TYPES' => array(
+				'configuration_title' => 'Shipping Methods (Domestic and International)',
+				'configuration_value' => '0, .21875, 0.00, 0, .8125, 0.00, 0, .8125, 0.00, 0, .9375, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 15, 0.00, 0, 20, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, 70, 0.00, 0, .21875, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 4, 0.00, 0, 20, 0.00, 0, 20, 0.00, 0, 66, 0.00, 0, 4, 0.00, 0, 70, 0.00, 0, 70, 0.00',
+				'configuration_description' => '<b><u>Checkbox:</u></b> Select the services to be offered<br /><b><u>Minimum Weight (lbs)</u></b>first input field<br /><b><u>Maximum Weight (lbs):</u></b>second input field<br /><br />USPS returns methods based on cart weights.  These settings will allow further control (particularly helpful for flat rate methods) but will not override USPS limits',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_usps_services(array('First-Class Mail Letter', 'First-Class Mail Large Envelope', 'First-Class Package Service - RetailTM', 'First-ClassTM Package Service', 'Media Mail Parcel', 'USPS Retail GroundRM', 'Priority MailTM', 'Priority MailTM Flat Rate Envelope', 'Priority MailTM Legal Flat Rate Envelope', 'Priority MailTM Padded Flat Rate Envelope', 'Priority MailTM Small Flat Rate Box', 'Priority MailTM Medium Flat Rate Box', 'Priority MailTM Large Flat Rate Box', 'Priority MailTM Regional Rate Box A', 'Priority MailTM Regional Rate Box B', 'Priority Mail ExpressTM', 'Priority Mail ExpressTM Flat Rate Envelope', 'Priority Mail ExpressTM Legal Flat Rate Envelope', 'First-Class MailRM International Letter', 'First-Class MailRM International Large Envelope', 'First-Class Package International ServiceTM', 'Priority Mail InternationalRM', 'Priority Mail InternationalRM Flat Rate Envelope', 'Priority Mail InternationalRM Small Flat Rate Box', 'Priority Mail InternationalRM Medium Flat Rate Box', 'Priority Mail InternationalRM Large Flat Rate Box', 'Priority Mail Express InternationalTM', 'Priority Mail Express InternationalTM Flat Rate Envelope', 'USPS GXGTM Envelopes', 'Global Express GuaranteedRM (GXG)'),",
+			),
+			$this->getModuleKeyTrunk().'_DMST_SERVICES' => array(
+				'configuration_title' => 'Extra Services (Domestic)',
+				'configuration_value' => 'Certified MailRM, N, USPS TrackingTM Electronic, N, USPS TrackingTM, N, Insurance, N, Priority Mail Express Insurance, N, Priority Mail Insurance, N, Adult Signature Restricted Delivery, N, Adult Signature Required, N, Registered MailTM, N, Collect on Delivery, N, Return Receipt for Merchandise, N, Return Receipt, N, Certificate of Mailing (Form 3665), N, Certificate of Mailing (Form 3817), N, Signature ConfirmationTM Electronic, N, Signature ConfirmationTM, N, Priority Mail Express 1030 AM Delivery, N, Certified MailRM Restricted Delivery, N, Certified MailRM Adult Signature Required, N, Certified MailRM Adult Signature Restricted Delivery, N, Signature ConfirmationTM Restricted Delivery, N, Signature ConfirmationTM Electronic Restricted Delivery, N, Collect on Delivery Restricted Delivery, N, Registered MailTM Restricted Delivery, N, Insurance Restricted Delivery, N, Insurance Restricted Delivery (Priority Mail Express), N, Insurance Restricted Delivery (Priority Mail), N',
+				'configuration_description' => 'Included in postage rates.  Not shown to the customer.<br />WARNING: Some services cannot work with other services.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_usps_extraservices(array('Certified MailRM', 'USPS TrackingTM Electronic', 'USPS TrackingTM', 'Insurance', 'Priority Mail Express Insurance', 'Priority Mail Insurance', 'Adult Signature Restricted Delivery', 'Adult Signature Required', 'Registered MailTM', 'Collect on Delivery', 'Return Receipt for Merchandise', 'Return Receipt', 'Certificate of Mailing (Form 3665)', 'Certificate of Mailing (Form 3817)', 'Signature ConfirmationTM Electronic', 'Signature ConfirmationTM', 'Priority Mail Express 1030 AM Delivery', 'Certified MailRM Restricted Delivery', 'Certified MailRM Adult Signature Required', 'Certified MailRM Adult Signature Restricted Delivery', 'Signature ConfirmationTM Restricted Delivery', 'Signature ConfirmationTM Electronic Restricted Delivery', 'Collect on Delivery Restricted Delivery', 'Registered MailTM Restricted Delivery', 'Insurance Restricted Delivery', 'Insurance Restricted Delivery (Priority Mail Express)', 'Insurance Restricted Delivery (Priority Mail)'),",
+			),
+			$this->getModuleKeyTrunk().'_INTL_SERVICES' => array(
+				'configuration_title' => 'Extra Services (International)',
+				'configuration_value' => 'Registered Mail, N, Insurance, N, Return Receipt, N, Electronic USPS Delivery Confirmation International, N, Certificate of Mailing, N',
+				'configuration_description' => 'Included in postage rates.  Not shown to the customer.<br />WARNING: Some services cannot work with other services.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_usps_extraservices(array('Registered Mail', 'Insurance', 'Return Receipt', 'Electronic USPS Delivery Confirmation International', 'Certificate of Mailing'),",
+			),
+			$this->getModuleKeyTrunk().'_RATE_TYPE' => array(
+				'configuration_title' => 'Retail pricing or Online pricing?',
+				'configuration_value' => 'Online',
+				'configuration_description' => 'Rates will be returned ONLY for methods available in this pricing type.  Applies to prices <u>and</u> add on services',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Retail', 'Online'),",
+			),
 		) );
 	}
-
 }
 
 // admin display functions inspired by osCbyJetta

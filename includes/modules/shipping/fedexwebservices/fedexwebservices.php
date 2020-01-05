@@ -285,82 +285,209 @@ eb( $products );
 		}
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Version Installed', 'MODULE_SHIPPING_FEDEXWEBSERVICES_VERSION', '1.3.0', '', '6', '0', now())"); 
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('FedEx Account Number', 'MODULE_SHIPPING_FEDEXWEBSERVICES_ACT_NUM', '', 'Enter FedEx Account Number', '6', '3', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('FedEx Meter Number', 'MODULE_SHIPPING_FEDEXWEBSERVICES_METER_NUM', '', 'Enter FedEx Meter Number (You can get one at <a href=\"http://www.fedex.com/us/developer/\" target=\"_blank\">http://www.fedex.com/us/developer/</a>)', '6', '4', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('FedEx Authentication Key', 'MODULE_SHIPPING_FEDEXWEBSERVICES_KEY', '', 'Enter FedEx Authentication Key (You can get one at <a href=\"http://www.fedex.com/us/developer/\" target=\"_blank\">http://www.fedex.com/us/developer/</a>)', '6', '4', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('FedEx Password', 'MODULE_SHIPPING_FEDEXWEBSERVICES_PWD', '', 'Enter FedEx Password', '6', '4', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Weight Units', 'MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT', 'LB', 'Weight Units:', '6', '10', 'zen_cfg_select_option(array('LB', 'KG'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('First line of street address', 'MODULE_SHIPPING_FEDEXWEBSERVICES_ADDRESS_1', '', 'Enter the first line of your ship-from street address, required', '6', '20', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Second line of street address', 'MODULE_SHIPPING_FEDEXWEBSERVICES_ADDRESS_2', '', 'Enter the second line of your ship-from street address, leave blank if you do not need to specify a second line', '6', '21', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('City name', 'MODULE_SHIPPING_FEDEXWEBSERVICES_CITY', '', 'Enter the city name for the ship-from street address, required', '6', '22', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('State or Province name', 'MODULE_SHIPPING_FEDEXWEBSERVICES_STATE', '', 'Enter the 2 letter state or province name for the ship-from street address, required for Canada and US', '6', '23', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Postal code', 'MODULE_SHIPPING_FEDEXWEBSERVICES_POSTAL', '', 'Enter the postal code for the ship-from street address, required', '6', '24', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Phone number', 'MODULE_SHIPPING_FEDEXWEBSERVICES_PHONE', '', 'Enter a contact phone number for your company, required', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable for Always Free Shipping', 'MODULE_SHIPPING_FEDEXWEBSERVICES_FREE_SHIPPING', 'false', 'Should this module be enabled even when all items in the cart are marked as ALWAYS FREE SHIPPING?', '6', '30', 'zen_cfg_select_option(array('true','false'),', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Drop off type', 'MODULE_SHIPPING_FEDEXWEBSERVICES_DROPOFF', '1', 'Dropoff type (1 = Regular pickup, 2 = request courier, 3 = drop box, 4 = drop at BSC, 5 = drop at station)?', '6', '30', 'zen_cfg_select_option(array('1','2','3','4','5'),', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Express Saver', 'MODULE_SHIPPING_FEDEXWEBSERVICES_EXPRESS_SAVER', 'true', 'Enable FedEx Express Saver', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Standard Overnight', 'MODULE_SHIPPING_FEDEXWEBSERVICES_STANDARD_OVERNIGHT', 'true', 'Enable FedEx Express Standard Overnight', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable First Overnight', 'MODULE_SHIPPING_FEDEXWEBSERVICES_FIRST_OVERNIGHT', 'true', 'Enable FedEx Express First Overnight', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Priority Overnight', 'MODULE_SHIPPING_FEDEXWEBSERVICES_PRIORITY_OVERNIGHT', 'true', 'Enable FedEx Express Priority Overnight', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable 2 Day', 'MODULE_SHIPPING_FEDEXWEBSERVICES_2DAY', 'true', 'Enable FedEx Express 2 Day', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable International Priority', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_PRIORITY', 'true', 'Enable FedEx Express International Priority', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable International Economy', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_ECONOMY', 'true', 'Enable FedEx Express International Economy', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Ground', 'MODULE_SHIPPING_FEDEXWEBSERVICES_GROUND', 'true', 'Enable FedEx Ground', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable International Ground', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_GROUND', 'true', 'Enable FedEx International Ground', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Freight', 'MODULE_SHIPPING_FEDEXWEBSERVICES_FREIGHT', 'true', 'Enable FedEx Freight', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Saturday Delivery', 'MODULE_SHIPPING_FEDEXWEBSERVICES_SATURDAY', 'false', 'Enable Saturday Delivery', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Domestic Ground Handling Fee', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INSURE', '250', 'Minimal amount to add package insurance', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Domestic Ground Handling Fee', 'MODULE_SHIPPING_FEDEXWEBSERVICES_HANDLING_FEE', '', 'Add a domestic handling fee or leave blank (example: 15 or 15%)', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Domestic Express Handling Fee', 'MODULE_SHIPPING_FEDEXWEBSERVICES_EXPRESS_HANDLING_FEE', '', 'Add a domestic handling fee or leave blank (example: 15 or 15%)', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('International Ground Handling Fee', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INT_HANDLING_FEE', '', 'Add an international handling fee or leave blank (example: 15 or 15%)', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('International Express Handling Fee', 'MODULE_SHIPPING_FEDEXWEBSERVICES_INT_EXPRESS_HANDLING_FEE', '', 'Add an international handling fee or leave blank (example: 15 or 15%)', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('FedEx Rates','MODULE_SHIPPING_FEDEXWEBSERVICES_RATES','LIST','FedEx Rates','6','0','zen_cfg_select_option(array('LIST','ACCOUNT'),',now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Signature Option', 'MODULE_SHIPPING_FEDEXWEBSERVICES_SIGNATURE_OPTION', '-1', 'Require a signature on orders greater than or equal to (set to -1 to disable):', '6', '25', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Ready to Ship', 'MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP', 'false', 'Enable using products_ready_to_ship field (requires Numinix Product Fields optional dimensions fields) to identify products which ship separately?', '6', '10', 'zen_cfg_select_option(array('true', 'false'), '', now())");		
-			$this->mDb->CompleteTrans();
-		}
-	}
 
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_VERSION', 
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_ACT_NUM',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_METER_NUM',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_KEY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_PWD',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_WEIGHT',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_ADDRESS_1',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_ADDRESS_2',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_CITY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_STATE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_POSTAL',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_PHONE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_DROPOFF',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_FREE_SHIPPING',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_EXPRESS_SAVER',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_STANDARD_OVERNIGHT',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_FIRST_OVERNIGHT',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_PRIORITY_OVERNIGHT',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_2DAY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_PRIORITY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_ECONOMY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_GROUND',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_FREIGHT',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INTERNATIONAL_GROUND',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_SATURDAY',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INSURE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_HANDLING_FEE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_EXPRESS_HANDLING_FEE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INT_HANDLING_FEE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_INT_EXPRESS_HANDLING_FEE',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_SIGNATURE_OPTION',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_RATES',
-			'MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP',
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_VERSION' => array(
+				'configuration_title' => 'Version Installed',
+				'configuration_value' => '1.3.0',
+				'sort_order' => $i++, 
+			),
+			$this->getModuleKeyTrunk().'_ACT_NUM' => array(
+				'configuration_title' => 'FedEx Account Number',
+				'configuration_description' => 'Enter FedEx Account Number',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_METER_NUM' => array(
+				'configuration_title' => 'FedEx Meter Number',
+				'configuration_description' => 'Enter FedEx Meter Number (You can get one at <a href=\"http://www.fedex.com/us/developer/\" target=\"_blank\">http://www.fedex.com/us/developer/</a>)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_KEY' => array(
+				'configuration_title' => 'FedEx Authentication Key',
+				'configuration_description' => 'Enter FedEx Authentication Key (You can get one at <a href=\"http://www.fedex.com/us/developer/\" target=\"_blank\">http://www.fedex.com/us/developer/</a>)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_PWD' => array(
+				'configuration_title' => 'FedEx Password',
+				'configuration_description' => 'Enter FedEx Password',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_WEIGHT' => array(
+				'configuration_title' => 'Weight Units',
+				'configuration_value' => 'LB',
+				'configuration_description' => 'Weight Units:',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('LB','KG'),",
+			),
+			$this->getModuleKeyTrunk().'_ADDRESS_1' => array(
+				'configuration_title' => 'First line of street address',
+				'configuration_description' => 'Enter the first line of your ship-from street address, required',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_ADDRESS_2' => array(
+				'configuration_title' => 'Second line of street address',
+				'configuration_description' => 'Enter the second line of your ship-from street address, leave blank if you do not need to specify a second line',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_CITY' => array(
+				'configuration_title' => 'City name',
+				'configuration_description' => 'Enter the city name for the ship-from street address, required',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_STATE' => array(
+				'configuration_title' => 'State or Province name',
+				'configuration_description' => 'Enter the 2 letter state or province name for the ship-from street address, required for Canada and US',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_POSTAL' => array(
+				'configuration_title' => 'Postal code',
+				'configuration_description' => 'Enter the postal code for the ship-from street address, required',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_PHONE' => array(
+				'configuration_title' => 'Phone number',
+				'configuration_description' => 'Enter a contact phone number for your company, required',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_FREE_SHIPPING' => array(
+				'configuration_title' => 'Enable for Always Free Shipping',
+				'configuration_value' => 'false',
+				'configuration_description' => 'Should this module be enabled even when all items in the cart are marked as ALWAYS FREE SHIPPING?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_DROPOFF' => array(
+				'configuration_title' => 'Drop off type',
+				'configuration_value' => '1',
+				'configuration_description' => 'Dropoff type (1 = Regular pickup, 2 = request courier, 3 = drop box, 4 = drop at BSC, 5 = drop at station)?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('1','2','3','4','5'),",
+			),
+			$this->getModuleKeyTrunk().'_EXPRESS_SAVER' => array(
+				'configuration_title' => 'Enable Express Saver',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express Saver',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_STANDARD_OVERNIGHT' => array(
+				'configuration_title' => 'Enable Standard Overnight',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express Standard Overnight',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_FIRST_OVERNIGHT' => array(
+				'configuration_title' => 'Enable First Overnight',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express First Overnight',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_PRIORITY_OVERNIGHT' => array(
+				'configuration_title' => 'Enable Priority Overnight',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express Priority Overnight',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_2DAY' => array(
+				'configuration_title' => 'Enable 2 Day',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express 2 Day',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_INTERNATIONAL_PRIORITY' => array(
+				'configuration_title' => 'Enable International Priority',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express International Priority',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_INTERNATIONAL_ECONOMY' => array(
+				'configuration_title' => 'Enable International Economy',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Express International Economy',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_GROUND' => array(
+				'configuration_title' => 'Enable Ground',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Ground',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_INTERNATIONAL_GROUND' => array(
+				'configuration_title' => 'Enable International Ground',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx International Ground',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_FREIGHT' => array(
+				'configuration_title' => 'Enable Freight',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Enable FedEx Freight',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_SATURDAY' => array(
+				'configuration_title' => 'Enable Saturday Delivery',
+				'configuration_value' => 'false',
+				'configuration_description' => 'Enable Saturday Delivery',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_INSURE' => array(
+				'configuration_title' => 'Domestic Ground Handling Fee',
+				'configuration_value' => '250',
+				'configuration_description' => 'Minimal amount to add package insurance',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING_FEE' => array(
+				'configuration_title' => 'Domestic Ground Handling Fee',
+				'configuration_description' => 'Add a domestic handling fee or leave blank (example: 15 or 15%)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_EXPRESS_HANDLING_FEE' => array(
+				'configuration_title' => 'Domestic Express Handling Fee',
+				'configuration_description' => 'Add a domestic handling fee or leave blank (example: 15 or 15%)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INT_HANDLING_FEE' => array(
+				'configuration_title' => 'International Ground Handling Fee',
+				'configuration_description' => 'Add an international handling fee or leave blank (example: 15 or 15%)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INT_EXPRESS_HANDLING_FEE' => array(
+				'configuration_title' => 'International Express Handling Fee',
+				'configuration_description' => 'Add an international handling fee or leave blank (example: 15 or 15%)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_RATES' => array(
+				'configuration_title' => 'FedEx Rates',
+				'configuration_value' => 'LIST',
+				'configuration_description' => 'FedEx Rates',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('LIST', 'ACCOUNT'),",
+			),
+			$this->getModuleKeyTrunk().'_SIGNATURE_OPTION' => array(
+				'configuration_title' => 'Signature Option',
+				'configuration_value' => '-1',
+				'configuration_description' => 'Require a signature on orders greater than or equal to (set to -1 to disable):',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_READY_TO_SHIP' => array(
+				'configuration_title' => 'Enable Ready to Ship',
+				'configuration_value' => 'false',
+				'configuration_description' => 'Enable using products_ready_to_ship field (requires Numinix Product Fields optional dimensions fields) to identify products which ship separately?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
 		) );
 	}
 }
