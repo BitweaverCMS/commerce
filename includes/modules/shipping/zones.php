@@ -22,9 +22,7 @@
 /*
 
 	USAGE
-	By default, the module comes with support for 3 zones.  This can be
-	easily changed by editing the line below in the zones constructor
-	that defines $this->num_zones.
+	By default, the module comes with support for 3 zones.  
 
 	Next, you will want to activate the module by going to the Admin screen,
 	clicking on Modules, then clicking on Shipping.  A list of all shipping
@@ -113,8 +111,6 @@ class zones extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title = tra( 'Zone Rates' );
 		$this->description = tra( 'Zone Based Rates' );;
-		// CUSTOMIZE THIS SETTING FOR THE NUMBER OF ZONES NEEDED
-		$this->num_zones = 3;
 	}
 
 	function quote( $pShipHash ) {
@@ -123,7 +119,7 @@ class zones extends CommercePluginShippingBase {
 			$dest_zone = NULL;
 			$error = false;
 
-			for ($i=1; $i<=$this->num_zones; $i++) {
+			for ($i=1; $i<=$this->numberOfZones(); $i++) {
 				$countries_table = constant('MODULE_SHIPPING_ZONES_COUNTRIES_' . $i);
 				$country_zones = preg_split("#[,]#", $countries_table);
 				if( in_array( $pShipHash['destination']['countries_iso_code_2'], $country_zones ) ) {
@@ -199,34 +195,57 @@ class zones extends CommercePluginShippingBase {
 		return $quotes;
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Calculation Method', 'MODULE_SHIPPING_ZONES_METHOD', 'Weight', 'Calculate cost based on Weight or Price?', '6', '0', 'zen_cfg_select_option(array('Weight', 'Price'), '', now())");
-			for ($i = 1; $i <= $this->num_zones; $i++) {
-				$default_countries = '';
-				if ($i == 1) {
-					$default_countries = 'US,CA';
-				}
-				$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Zone " . $i ." Countries', 'MODULE_SHIPPING_ZONES_COUNTRIES_" . $i ."', '" . $default_countries . "', 'Comma separated list of two character ISO country codes that are part of Zone " . $i . ".', '6', '0', 'zen_cfg_textarea(', now())");
-				$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Zone " . $i ." Shipping Table', 'MODULE_SHIPPING_ZONES_COST_" . $i ."', '3:8.50,7:10.50,99:20.00', 'Shipping rates to Zone " . $i . " destinations based on a group of maximum order weights/prices. Example: 3:8.50,7:10.50,... Weight/Price less than or equal to 3 would cost 8.50 for Zone " . $i . " destinations.', '6', '0', 'zen_cfg_textarea(', now())");
-				$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Zone " . $i ." Handling Fee', 'MODULE_SHIPPING_ZONES_HANDLING_" . $i."', '0', 'Handling Fee for this shipping zone', '6', '0', now())");
-			}
-		}
+	// Return a default of 3 if not defined
+	private function numberOfZones() {
+		return $this->getModuleConfigValue( '_NUM_ZONES', 3 );
 	}
 
-	function keys() {
-		$keys = array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_ZONES_METHOD',
+	protected function config() {
+		$i = 3;
+		$ret = array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_METHOD' => array(
+				'configuration_title' => 'Calculation Method',
+				'configuration_value' => 'weight',
+				'configuration_description' => 'The shipping cost is based on the order total or the total weight of the items ordered.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('weight', 'price'), ",
+			),
+			$this->getModuleKeyTrunk().'_NUM_ZONES' => array(
+				'configuration_title' => 'Number of Zones',
+				'configuration_value' => '3',
+				'configuration_description' => 'The number of distinct shipping zones needed.',
+				'sort_order' => $i++,
+			),
 		) );
 
-		for ($i=1; $i<=$this->num_zones; $i++) {
-			$keys[] = 'MODULE_SHIPPING_ZONES_COUNTRIES_' . $i;
-			$keys[] = 'MODULE_SHIPPING_ZONES_COST_' . $i;
-			$keys[] = 'MODULE_SHIPPING_ZONES_HANDLING_' . $i;
-		}
+		for( $z = 1; $z <= $this->numberOfZones(); $z++ ) {
+			$i = $z * 10;
+			$default_countries = '';
+			if ($z == 1) {
+				$default_countries = 'US,CA';
+			}
 
-		return $keys;
+			$ret[$this->getModuleKeyTrunk().'_COUNTRIES_'.$z] = array(
+				'configuration_title' => 'Zone '.$z.' Countries',
+				'configuration_value' => $default_countries,
+				'configuration_description' => 'Comma separated list of two character ISO country codes that are part of Zone '.$z.'.',
+				'sort_order' => $i++,
+				'set_function' => 'zen_cfg_textarea(',
+			);
+			$ret[$this->getModuleKeyTrunk().'_COST_'.$z] = array(
+				'configuration_title' => 'Zone '.$z.' Shipping Table',
+				'configuration_value' => '3:8.50,7:10.50,99:20.00',
+				'configuration_description' => 'Shipping rates to Zone '.$z.' destinations based on a group of maximum order weights/prices. Example: 3:8.50,7:10.50,... Weight/Price less than or equal to 3 would cost 8.50 for Zone '.$z.' destinations.',
+				'sort_order' => $i++,
+				'set_function' => 'zen_cfg_textarea(',
+			);
+			$ret[$this->getModuleKeyTrunk().'_HANDLING_'.$z] = array(
+				'configuration_title' => 'Zone '.$z.' Handling Fee',
+				'configuration_value' => '0',
+				'configuration_description' => 'Handling Fee for this shipping zone',
+				'sort_order' => $i++,
+			);
+		}
+		return $ret;
 	}
 }
