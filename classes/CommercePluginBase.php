@@ -82,7 +82,7 @@ abstract class CommercePluginBase extends BitBase {
 
 	protected function getModuleConfigValue( $pConfigKeyBranch, $pDefaultValue=NULL ) {
 		global $gCommerceSystem;
-		$gCommerceSystem->getConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pDefaultValue );
+		return $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pDefaultValue );
 	}
 
 	protected function storeModuleConfigValue( $pConfigKeyBranch, $pConfigValue ) {
