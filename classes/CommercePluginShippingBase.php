@@ -2,10 +2,11 @@
 /**
  * @package bitcommerce
  * @author spiderr <spiderr@bitweaver.org>
+ * Copyright (c) 2020 bitweaver.org, All Rights Reserved
+ * This source file is subject to the 2.0 GNU GENERAL PUBLIC LICENSE. 
  *
- * Copyright (c) 2013 bitweaver.org
- * All Rights Reserved. See below for details and a complete list of authors.
- * This source file is subject to the GNU GENERAL PUBLIC LICENSE. See http://www.gnu.org/licenses/gpl.html for details
+ * Base class for all shipping plugins.
+ *
  */
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
@@ -20,19 +21,19 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		parent::__construct();
 		$this->quotes = array();
 		$this->icon = 'shipping_'.$this->code;
-		$this->title = $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_TEXT_TITLE', $this->code );
-		$this->description = $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_TEXT_DESCRIPTION' );
-		$this->sort_order = $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_SORT_ORDER' );
-		$this->tax_class = $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_TAX_CLASS' );
-		$this->tax_basis = $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_TAX_BASIS' );
+		$this->title = $this->getConfig( $this->getModuleKeyTrunk().'_TEXT_TITLE', $this->code );
+		$this->description = $this->getConfig( $this->getModuleKeyTrunk().'_TEXT_DESCRIPTION' );
+		$this->sort_order = $this->getConfig( $this->getModuleKeyTrunk().'_SORT_ORDER' );
+		$this->tax_class = $this->getConfig( $this->getModuleKeyTrunk().'_TAX_CLASS' );
+		$this->tax_basis = $this->getConfig( $this->getModuleKeyTrunk().'_TAX_BASIS' );
 	}
 
-	protected function getStatusKey() {
-		return 'MODULE_SHIPPING_'.$this->mConfigKey.'_STATUS';
+	protected function getModuleType() {
+		return 'shipping';
 	}
 
 	protected function getShipperZone() {
-		return $this->getConfig( 'MODULE_SHIPPING_'.$this->mConfigKey.'_ZONE' );
+		return $this->getConfig( $this->getModuleKeyTrunk().'_ZONE' );
 	}
 
 	protected function getShippingTax() {
@@ -79,7 +80,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 */
 		$quoteBase = array();
 
-		if( $this->enabled && !empty( $pShipHash['shipping_weight_total'] ) ) {
+		if( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
 			$pass = TRUE;
 			// Check to see if shipping module is zone silo'ed
 			if( ($shipperZone = $this->getShipperZone()) && !$freeShipping && $ret = !empty( $pShipHash['destination'] ) && !empty( $pShipHash['origin'] ) ) {
@@ -101,7 +102,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				}
 			}
 
-			// if ($error == true) $quotes['error'] = MODULE_SHIPPING_ZONES_INVALID_ZONE;
+			// if ($error == true) $quotes['error'] = MODULE_'.$this->mModuleKey.'_ZONES_INVALID_ZONE;
 
 			if( $pass ) {
 				switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
@@ -132,32 +133,28 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 	}
 
 	/**
-	 * Install this module
-	 *
-	 */
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable ".$this->title."', 'MODULE_SHIPPING_".$this->getConfigKey()."_STATUS', 'True', 'Do you want to offer ".$this->title."?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_SHIPPING_".$this->getConfigKey()."_SORT_ORDER', '0', 'Sort order of display.', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Shipping Zone', 'MODULE_SHIPPING_".$this->getConfigKey()."_ZONE', '0', 'If a zone is selected, only enable this shipping method for that zone.', '6', '0', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_SHIPPING_".$this->getConfigKey()."_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Tax Basis', 'MODULE_SHIPPING_".$this->getConfigKey()."_TAX_BASIS', 'Shipping', 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone', '6', '0', 'zen_cfg_select_option(array(''Shipping'', ''Billing'', ''Store''), ', now())");
-			$this->mDb->CompleteTrans();
-		}
-	}
-	/**
-	 * Build array of keys used for installing/managing this module
-	 *
-	 * @return array
-	 */
-	function keys() {
-		return array( 
-					'MODULE_SHIPPING_'.$this->getConfigKey().'_STATUS',
-					'MODULE_SHIPPING_'.$this->getConfigKey().'_SORT_ORDER',
-					'MODULE_SHIPPING_'.$this->getConfigKey().'_TAX_CLASS',
-					'MODULE_SHIPPING_'.$this->getConfigKey().'_TAX_BASIS',
-					'MODULE_SHIPPING_'.$this->getConfigKey().'_ZONE',
-					);
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_ZONE' => array(
+				'configuration_title' => 'Shipping Zone',
+				'configuration_description' => 'If a zone is selected, only enable this shipping method for that zone.',
+				'use_function' => 'zen_get_zone_class_title',
+				'set_function' => 'zen_cfg_pull_down_zone_classes('
+			),
+			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_description' => 'Use the following tax class on the shipping fee.',
+				'use_function' => 'zen_get_tax_class_title',
+				'set_function' => 'zen_cfg_pull_down_tax_classes('
+			),
+			$this->getModuleKeyTrunk().'_TAX_BASIS' => array(
+				'configuration_title' => 'Tax Basis',
+				'configuration_value' => 'Shipping',
+				'configuration_description' => 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone',
+				'set_function' => "zen_cfg_select_option(array('Shipping', 'Billing', 'Store'), ",
+			),
+		) );
 	}
 }

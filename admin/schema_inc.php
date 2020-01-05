@@ -202,8 +202,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_configuration' => "
   configuration_description X2 NOTNULL,
   configuration_group_id I4,
   sort_order I2,
-  last_modified T,
-  date_added T,
+  last_modified T DEFTIMESTAMP NOTNULL,
+  date_added T DEFTIMESTAMP NOTNULL,
   use_function X,
   set_function X
 ",

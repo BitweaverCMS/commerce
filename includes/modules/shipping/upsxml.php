@@ -104,7 +104,7 @@ class upsxml extends CommercePluginShippingBase {
 			// Determine whether UPS shipping should be offered, based on the current order's
 			// zone-id (storefront **only**).
 			//
-			if( ((int)MODULE_SHIPPING_UPSXML_RATES_ZONE > 0) ) {
+			if( (int)$this->getModuleConfigValue('_RATES_ZONE' ) > 0 ) {
 				$check = $db->Execute(
 					"SELECT zone_id 
 					   FROM " . TABLE_ZONES_TO_GEO_ZONES . " 
@@ -148,79 +148,6 @@ class upsxml extends CommercePluginShippingBase {
 				'UPS 10kg Box' => '25'
 			);
 
-			// -----
-			// Human-readable Service Code lookup table. The values returned by the Rates and Service "shop" method are numeric.
-			// Using these codes, and the administratively defined Origin, the proper human-readable service name is returned.
-			//
-			// Notes: 
-			// 1) The origin specified in the admin configuration affects only the product name as displayed to the user.
-			// 2) These code-to-name correlations were last verified with the "UPS Rating Package XML Developer Guide" dated 2019-01-07.
-			//
-			$this->service_codes = array(
-				// US Origin
-				'US Origin' => array(
-					'01' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_01,
-					'02' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_02,
-					'03' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_03,
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_08,
-					'11' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_11,
-					'12' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_12,
-					'13' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_13,
-					'14' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_14,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_54,
-					'59' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_59,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_US_ORIGIN_65
-				),
-				// Canada Origin
-				'Canada Origin' => array(
-					'01' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_01,
-					'02' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_02,
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_08,
-					'11' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_11,
-					'12' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_12,
-					'13' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_13,
-					'14' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_14,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_54,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_CANADA_ORIGIN_65
-				),
-				// European Union Origin
-				'European Union Origin' => array(
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_EU_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_EU_ORIGIN_08,
-					'11' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_EU_ORIGIN_11,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_EU_ORIGIN_54,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_EU_ORIGIN_65
-				),
-				// Puerto Rico Origin
-				'Puerto Rico Origin' => array(
-					'01' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_01,
-					'02' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_02,
-					'03' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_03,
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_08,
-					'14' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_14,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_54,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_PR_ORIGIN_65
-				),
-				// Mexico Origin
-				'Mexico Origin' => array(
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_MEXICO_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_MEXICO_ORIGIN_08,
-					'11' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_MEXICO_ORIGIN_11,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_MEXICO_ORIGIN_54,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_MEXICO_ORIGIN_65
-				),
-				// All other origins
-				'All other origins' => array(
-					'07' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_07,
-					'08' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_08,
-					'11' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_11,
-					'54' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_54,
-					'65' => MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_65
-				)
-			);
 		}
 	}
 
@@ -701,7 +628,7 @@ class upsxml extends CommercePluginShippingBase {
 			$this->boxCount = count($ratedPackages);
 			$gdaysToDelivery = $ratedShipments[$i]->getValueByPath("/GuaranteedDaysToDelivery");
 			$scheduledTime = $ratedShipments[$i]->getValueByPath("/ScheduledDeliveryTime");
-			$title = $this->service_codes[$this->origin][$serviceCode];
+			$title = $this->getServiceName( $this->origin, $serviceCode );
 
 			if ($aryProducts === false) {
 				$aryProducts = array();
@@ -866,60 +793,204 @@ class upsxml extends CommercePluginShippingBase {
 		}
 	}
 
-	//**************
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$columns = '(configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added)';
-			$values = array(
-				"('UPS Rates Access Key', 'MODULE_SHIPPING_UPSXML_RATES_ACCESS_KEY', '', 'Enter the <a href=\"https://www.ups.com/upsdeveloperkit/requestaccesskey\">XML rates access key</a> assigned to you by UPS', 6, 1, NULL, NULL, now())",
-				"('UPS Rates Username', 'MODULE_SHIPPING_UPSXML_RATES_USERNAME', '', 'Enter your UPS Services account username.', 6, 2, NULL, NULL, now())",
-				"('UPS Rates Password', 'MODULE_SHIPPING_UPSXML_RATES_PASSWORD', '', 'Enter your UPS Services account password.', 6, 3, NULL, NULL, now())",
-				"('UPS Rates &quot;Shipper Number&quot;', 'MODULE_SHIPPING_UPSXML_SHIPPER_NUMBER', '', 'Enter your UPS Services <em>Shipper Number</em>, if you want to receive your account''s negotiated rates!.', 6, 3, NULL, NULL, now())",
-				"('UPS XML Display Options', 'MODULE_SHIPPING_UPSXML_OPTIONS', '--none--', 'Select from the following the UPS options.', 6, 16, NULL, 'zen_cfg_select_multioption(array(''Display weight'', ''Display transit time''), ',  now())",
-				"('Enable debug?', 'MODULE_SHIPPING_UPSXML_DEBUG', 'false', 'Enable the shipping-module''s debug and the file /logs/upsxml.log will be updated each time a quote is requested.', 6, 16, NULL, 'zen_cfg_select_option(array(''true'', ''false''), ',  now())",
-				"('Pickup Method', 'MODULE_SHIPPING_UPSXML_RATES_PICKUP_METHOD', 'Daily Pickup', 'How do you give packages to UPS?', 6, 4, NULL, 'zen_cfg_select_option(array(''Daily Pickup'', ''Customer Counter'', ''One Time Pickup'', ''On Call Air Pickup'', ''Letter Center'', ''Air Service Center''), ', now())",
-				"('Packaging Type', 'MODULE_SHIPPING_UPSXML_RATES_PACKAGE_TYPE', 'Customer Package', 'What kind of packaging do you use?', 6, 5, NULL, 'zen_cfg_select_option(array(''Customer Package'', ''UPS Letter'', ''UPS Tube'', ''UPS Pak'', ''UPS Express Box'', ''UPS 25kg Box'', ''UPS 10kg box''), ', now())",
-				"('Customer Classification Code', 'MODULE_SHIPPING_UPSXML_RATES_CUSTOMER_CLASSIFICATION_CODE', '01', '00 - Account Rates, 01 - If you are billing to a UPS account and have a daily UPS pickup, 04 - If you are shipping from a retail outlet, 53 - Standard Rates', 6, 6, NULL, NULL, now())",
-				"('Shipping Origin', 'MODULE_SHIPPING_UPSXML_RATES_ORIGIN', 'US Origin', 'What origin point should be used (this setting affects only what UPS product names are shown to the user)', 6, 7, NULL, 'zen_cfg_select_option(array(''US Origin'', ''Canada Origin'', ''European Union Origin'', ''Puerto Rico Origin'', ''Mexico Origin'', ''All other origins''), ', now())",
-				"('Test or Production Mode', 'MODULE_SHIPPING_UPSXML_RATES_MODE', 'Test', 'Use this module in Test or Production mode?', 6, 12, NULL, 'zen_cfg_select_option(array(''Test'', ''Production''), ', now())",
-				"('Unit Weight', 'MODULE_SHIPPING_UPSXML_RATES_UNIT_WEIGHT', 'LBS', 'By what unit are your packages weighed?', 6, 13, NULL, 'zen_cfg_select_option(array(''LBS'', ''KGS''), ', now())",
-				"('Unit Length', 'MODULE_SHIPPING_UPSXML_RATES_UNIT_LENGTH', 'IN', 'By what unit are your packages sized?', 6, 14, NULL, 'zen_cfg_select_option(array(''IN'', ''CM''), ', now())",
-				"('Quote Type', 'MODULE_SHIPPING_UPSXML_RATES_QUOTE_TYPE', 'Commercial', 'Quote for Residential or Commercial Delivery', 6, 15, NULL, 'zen_cfg_select_option(array(''Commercial'', ''Residential''), ', now())",
-				"('Handling Fee', 'MODULE_SHIPPING_UPSXML_RATES_HANDLING', '0', 'Handling fee for this shipping method.', 6, 16, NULL, NULL, now())",
-				"('Enable Insurance', 'MODULE_SHIPPING_UPSXML_INSURE', 'True', 'Do you want to insure packages shipped by UPS?', 6, 0, NULL, 'zen_cfg_select_option(array(''True'', ''False''), ', now())",
-				"('Shipping Methods', 'MODULE_SHIPPING_UPSXML_TYPES', 'Next Day Air, 2nd Day Air, Ground, Worldwide Express, Standard, 3 Day Select', 'Select the UPS services to be offered.', 6, 20, NULL, 'zen_cfg_select_multioption(array(''Next Day Air'', ''2nd Day Air'', ''Ground'', ''Worldwide Express'', ''Worldwide Expedited'', ''Standard'', ''3 Day Select'', ''Next Day Air Saver'', ''Next Day Air Early'', ''Worldwide Express Plus'', ''2nd Day Air A.M.'', ''Express NA1'', ''Express Saver''), ', now())",
-			);
-			foreach( $values as $value ) {
-				$this->mDb->query( 'INSERT INTO ' . TABLE_CONFIGURATION . ' ' .$columns.' VALUES '.$value );
-			}
-			$this->mDb->CompleteTrans();
+	// Human-readable Service Code lookup table. The values returned by the Rates and Service "shop" method are numeric.
+	// Using these codes, and the administratively defined Origin, the proper human-readable service name is returned.
+	//
+	// Notes: 
+	// 1) The origin specified in the admin configuration affects only the product name as displayed to the user.
+	// 2) These code-to-name correlations were last verified with the "UPS Rating Package XML Developer Guide" dated 2019-01-07.
+	//
+	private function getServiceName( $pOrigin, $pServceCode ) {
+		$ret = '';
+		switch( $pOrigin ) {
+			case 'US Origin':
+				switch( $pServceCode ) {
+					case '01': $ret = 'UPS Next Day Air'; break;
+					case '02': $ret = 'UPS 2nd Day Air'; break;
+					case '03': $ret = 'UPS Ground'; break;
+					case '07': $ret = 'UPS Worldwide Express'; break;
+					case '08': $ret = 'UPS Worldwide Expedited'; break;
+					case '11': $ret = 'UPS Standard'; break;
+					case '12': $ret = 'UPS 3 Day Select'; break;
+					case '13': $ret = 'UPS Next Day Air Saver'; break;
+					case '14': $ret = 'UPS Next Day Air Early A.M.'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '59': $ret = 'UPS 2nd Day Air A.M.'; break;
+					case '65': $ret = 'UPS Express Saver'; break;
+				}
+				break;
+			case 'Canada Origin':
+				switch( $pServceCode ) {
+					case '01': $ret = 'UPS Express'; break;
+					case '02': $ret = 'UPS Expedited'; break;
+					case '07': $ret = 'UPS Worldwide Express'; break;
+					case '08': $ret = 'UPS Worldwide Expedited'; break;
+					case '11': $ret = 'UPS Standard'; break;
+					case '12': $ret = 'UPS 3 Day Select'; break;
+					case '13': $ret = 'UPS Express Saver'; break;
+					case '14': $ret = 'UPS Express Early A.M.'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '65': $ret = 'UPS Express Saver'; break;
+				}
+				break;
+			case 'European Union Origin':
+				switch( $pServceCode ) {
+					case '07': $ret = 'UPS Express'; break;
+					case '08': $ret = 'UPS Expedited'; break;
+					case '11': $ret = 'UPS Standard'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '64': $ret = 'UPS Express NA1'; break;
+					case '65': $ret = 'UPS Worldwide Saver'; break;
+				}
+				break;
+			case 'Puerto Rico Origin':
+				switch( $pServceCode ) {
+					case '01': $ret = 'UPS Next Day Air'; break;
+					case '02': $ret = 'UPS 2nd Day Air'; break;
+					case '03': $ret = 'UPS Ground'; break;
+					case '07': $ret = 'UPS Worldwide Express'; break;
+					case '08': $ret = 'UPS Worldwide Expedited'; break;
+					case '14': $ret = 'UPS Next Day Air&reg; Early A.M.'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '65': $ret = 'UPS Worldwide Saver'; break;
+				}
+				break;
+			case 'Mexico Origin':
+				switch( $pServceCode ) {
+					case '07': $ret = 'UPS Worldwide Express'; break;
+					case '08': $ret = 'UPS Worldwide Expedited'; break;
+					case '11': $ret = 'UPS Standard'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '65': $ret = 'UPS Worldwide Saver'; break;
+				}
+				break;
+			case 'All other origins':
+				switch( $pServceCode ) {
+					case '07': $ret = 'UPS Worldwide Express'; break;
+					case '08': $ret = 'UPS Worldwide Expedited'; break;
+					case '11': $ret = 'UPS Standard'; break;
+					case '54': $ret = 'UPS Worldwide Express Plus'; break;
+					case '65': $ret = 'UPS Worldwide Saver'; break;
+				}
+				break;
 		}
+		return $ret;
 	}
 
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_UPSXML_RATES_PICKUP_METHOD',
-			'MODULE_SHIPPING_UPSXML_RATES_PACKAGE_TYPE',
-			'MODULE_SHIPPING_UPSXML_RATES_CUSTOMER_CLASSIFICATION_CODE',
-			'MODULE_SHIPPING_UPSXML_RATES_ORIGIN',
-			'MODULE_SHIPPING_UPSXML_RATES_UNIT_WEIGHT',
-			'MODULE_SHIPPING_UPSXML_RATES_UNIT_LENGTH',
-			'MODULE_SHIPPING_UPSXML_RATES_QUOTE_TYPE',
-			'MODULE_SHIPPING_UPSXML_RATES_HANDLING',
-			'MODULE_SHIPPING_UPSXML_INSURE',
-			'MODULE_SHIPPING_UPSXML_TYPES',
-			'MODULE_SHIPPING_UPSXML_RATES_ACCESS_KEY',
-			'MODULE_SHIPPING_UPSXML_RATES_USERNAME',
-			'MODULE_SHIPPING_UPSXML_RATES_PASSWORD',
-			'MODULE_SHIPPING_UPSXML_SHIPPER_NUMBER',
-			'MODULE_SHIPPING_UPSXML_OPTIONS',
-			'MODULE_SHIPPING_UPSXML_DEBUG',
-			'MODULE_SHIPPING_UPSXML_RATES_MODE',
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_RATES_ACCESS_KEY' => array(
+				'configuration_title' => 'UPS Rates Access Key',
+				'configuration_description' => 'Enter the <a href=\"https://www.ups.com/upsdeveloperkit/requestaccesskey\">XML rates access key</a> assigned to you by UPS',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_RATES_USERNAME' => array(
+				'configuration_title' => 'UPS Rates Username',
+				'configuration_description' => 'Enter your UPS Services account username.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_RATES_PASSWORD' => array(
+				'configuration_title' => 'UPS Rates Password',
+				'configuration_description' => 'Enter your UPS Services account password.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_SHIPPER_NUMBER' => array(
+				'configuration_title' => 'UPS Rates Shipper Number',
+				'configuration_description' => 'Enter your UPS Services <em>Shipper Number</em>, if you want to receive negotiated rates for your account.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_OPTIONS' => array(
+				'configuration_title' => 'UPS XML Display Options',
+				'configuration_value' => '--none--',
+				'configuration_description' => 'Select from the following the UPS options.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_multioption(array('Display weight', 'Display transit time'), "
+			),
+			$this->getModuleKeyTrunk().'_DEBUG' => array(
+				'configuration_title' => 'Enable debug?',
+				'configuration_value' => 'false',
+				'configuration_description' => 'Enable the debugging and the file /logs/upsxml.log will be updated each time a quote is requested.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_PICKUP_METHOD' => array(
+				'configuration_title' => 'Pickup Method',
+				'configuration_value' => 'Daily Pickup',
+				'configuration_description' => 'How do you give packages to UPS?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Daily Pickup', 'Customer Counter', 'One Time Pickup', 'On Call Air Pickup', 'Letter Center', 'Air Service Center'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_PACKAGE_TYPE' => array(
+				'configuration_title' => 'Packaging Type',
+				'configuration_value' => 'Customer Package',
+				'configuration_description' => 'What kind of packaging do you use?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Customer Package', 'UPS Letter', 'UPS Tube', 'UPS Pak', 'UPS Express Box', 'UPS 25kg Box', 'UPS 10kg box'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_CUSTOMER_CLASSIFICATION_CODE' => array(
+				'configuration_title' => 'Customer Classification Code',
+				'configuration_value' => '01',
+				'configuration_description' => '00 - Account Rates, 01 - If you are billing to a UPS account and have a daily UPS pickup, 04 - If you are shipping from a retail outlet, 53 - Standard Rates',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_RATES_ORIGIN' => array(
+				'configuration_title' => 'Shipping Origin',
+				'configuration_value' => 'US Origin',
+				'configuration_description' => 'What origin point should be used (this setting affects only what UPS product names are shown to the user)',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('US Origin', 'Canada Origin', 'European Union Origin', 'Puerto Rico Origin', 'Mexico Origin', 'All other origins'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_MODE' => array(
+				'configuration_title' => 'Test or Production Mode',
+				'configuration_value' => 'Test',
+				'configuration_description' => 'Use this module in Test or Production mode?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Test', 'Production'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_UNIT_WEIGHT' => array(
+				'configuration_title' => 'Unit Weight',
+				'configuration_value' => 'LBS',
+				'configuration_description' => 'By what unit are your packages weighed?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('LBS', 'KGS'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_UNIT_LENGTH' => array(
+				'configuration_title' => 'Unit Length',
+				'configuration_value' => 'IN',
+				'configuration_description' => 'By what unit are your packages sized?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('IN', 'CM'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_QUOTE_TYPE' => array(
+				'configuration_title' => 'Quote Type',
+				'configuration_value' => 'Commercial',
+				'configuration_description' => 'Quote for Residential or Commercial Delivery',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Commercial', 'Residential'),",
+			),
+			$this->getModuleKeyTrunk().'_RATES_HANDLING' => array(
+				'configuration_title' => 'Handling Fee',
+				'configuration_value' => '0',
+				'configuration_description' => 'Handling fee for this shipping method.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INSURE' => array(
+				'configuration_title' => 'Enable Insurance',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Do you want to insure packages shipped by UPS?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('True', 'False'),",
+			),
+			$this->getModuleKeyTrunk().'_TYPES' => array(
+				'configuration_title' => 'Shipping Methods',
+				'configuration_value' => 'Next Day Air, 2nd Day Air, Ground, Worldwide Express, Standard, 3 Day Select',
+				'configuration_description' => 'Select the UPS services to be offered.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_multioption(array('Next Day Air', '2nd Day Air', 'Ground', 'Worldwide Express', 'Worldwide Expedited', 'Standard', '3 Day Select', 'Next Day Air Saver', 'Next Day Air Early', 'Worldwide Express Plus', '2nd Day Air A.M.', 'Express NA1', 'Express Saver'),"
+			),
 		) );
 	}
-
 }
 
 //******************************

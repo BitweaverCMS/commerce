@@ -31,18 +31,13 @@ class storepickup extends CommercePluginShippingBase {
 		return $quotes;
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Shipping Cost', 'MODULE_SHIPPING_STOREPICKUP_COST', '0.00', 'The shipping cost for all orders using this shipping method.', '6', '0', now())");
-			$this->mDb->CompleteTrans();
-		}
-	}
-
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_STOREPICKUP_COST', 
+	protected function config() {
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_COST' => array(
+				'configuration_title' => 'Shipping Cost',
+				'configuration_description' => 'The shipping cost for all orders using this shipping method.',
+				'configuration_value' => '0',
+			),
 		) );
 	}
 }

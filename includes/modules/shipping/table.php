@@ -50,22 +50,25 @@ class table extends CommercePluginShippingBase {
 		return $quotes;
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Shipping Table', 'MODULE_SHIPPING_TABLE_COST', '25:8.50,50:5.50,10000:0.00', 'The shipping cost is based on the total cost or weight of items. Example: 25:8.50,50:5.50,etc.. Up to 25 charge 8.50, from there to 50 charge 5.50, etc', '6', '0', 'zen_cfg_textarea(', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Table Method', 'MODULE_SHIPPING_TABLE_MODE', 'weight', 'The shipping cost is based on the order total or the total weight of the items ordered.', '6', '0', 'zen_cfg_select_option(array(''weight'', ''price''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Handling Fee', 'MODULE_SHIPPING_TABLE_HANDLING', '0', 'Handling fee for this shipping method.', '6', '0', now())");
-			$this->mDb->CompleteTrans();
-		}
-	}
-
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_TABLE_COST',
-			'MODULE_SHIPPING_TABLE_MODE',
-			'MODULE_SHIPPING_TABLE_HANDLING',
+	protected function config() {
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_COST' => array(
+				'configuration_title' => 'Shipping Table',
+				'configuration_value' => '25:8.50,50:5.50,10000:0.00',
+				'configuration_description' => 'The shipping cost is based on the total cost or weight of items. Example: 25:8.50,50:5.50,etc.. Up to 25 charge 8.50, from there to 50 charge 5.50, etc',
+				'set_function' => 'zen_cfg_textarea(',
+			),
+			$this->getModuleKeyTrunk().'_MODE' => array(
+				'configuration_title' => 'Table Method',
+				'configuration_value' => 'weight',
+				'configuration_description' => 'The shipping cost is based on the order total or the total weight of the items ordered.',
+				'set_function' => "zen_cfg_select_option(array('weight', 'price'), ",
+			),
+			$this->getModuleKeyTrunk().'_HANDLING' => array(
+				'configuration_title' => 'Handling Fee',
+				'configuration_description' => 'The handling cost for all orders using this shipping method.',
+				'configuration_value' => '0',
+			),
 		) );
 	}
 }

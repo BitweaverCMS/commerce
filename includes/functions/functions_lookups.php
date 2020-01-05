@@ -145,6 +145,12 @@ function zen_get_country_name($country_id) {
 	}
 }
 
+function zen_get_zone_by_id( $pCountryId, $pZoneId ) {
+	global $gBitDb;
+	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? `zone_id` = ?)";
+	return( $gBitDb->getRow( $sql, array( $pCountryId, $pZoneId ) ) );
+}
+
 function zen_get_zone_by_name( $pCountryId, $pName ) {
 	global $gBitDb;
 	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";

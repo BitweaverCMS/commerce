@@ -61,41 +61,99 @@ class supersaver extends CommercePluginShippingBase {
 		return $quotes;
 	}
 
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Minimum Cart Value', 'MODULE_SHIPPING_SUPERSAVER_MIN', '30.00', 'What is the minimum cart total to get supersaver shipping?', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Maximum Cart Value', 'MODULE_SHIPPING_SUPERSAVER_MAX', '', 'What is the maximum cart total to get supersaver shipping?', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('SuperSaver Shipping Cost', 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_COST', '4.99', 'What is the SuperSaver Shipping cost?', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Handling Fee', 'MODULE_SHIPPING_SUPERSAVER_HANDLING', '0', 'Handling fee for this shipping method.', '7', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('SuperSaver Shipping Description', 'MODULE_SHIPPING_SUPERSAVER_DESC', 'SuperSaver', 'Text to accompany all SuperSaver quotes', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Domestic SuperSaver Shipping', 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC', 'True', 'Allow domestic SuperSaver shipping - the same country as the <a href=\"configuration.php?gID=5&cID=123&action=edit\">Default Country</a>.', '7', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Domestic SuperSaver Shipping Description', 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_DESC', 'Domestic', 'Text to accompany SuperSaver domestic quote', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Domestic SuperSaver Shipping Transit Time', 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_TRANSIT_TIME', '1-2 weeks', 'Transit time to accompany SuperSaver domestic quote', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('International SuperSaver Shipping', 'MODULE_SHIPPING_SUPERSAVER_INTL', 'True', 'Allow international SuperSaver shipping - countries outside of the <a href=\"configuration.php?gID=5&cID=123&action=edit\">Default Country</a>.', '7', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('International SuperSaver Shipping Description', 'MODULE_SHIPPING_SUPERSAVER_INTL_DESC', 'International', 'Text to accompany SuperSaver international quote', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('International SuperSaver Shipping Transit Time', 'MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME', '4-8 weeks', 'Transit time to accompany SuperSaver international quote', '7', '6', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('SuperSaver Shipping Cost', 'MODULE_SHIPPING_SUPERSAVER_INTL_COST', '14.99', 'What is the SuperSaver Shipping International cost?', '7', '6', now())");
-			$this->mDb->CompleteTrans();
-		}
-	}
 
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_SUPERSAVER_HANDLING',
-			'MODULE_SHIPPING_SUPERSAVER_MIN',
-			'MODULE_SHIPPING_SUPERSAVER_MAX',
-			'MODULE_SHIPPING_SUPERSAVER_DESC',
-			'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_TRANSIT_TIME',
-			'MODULE_SHIPPING_SUPERSAVER_DOMESTIC',
-			'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_COST',
-			'MODULE_SHIPPING_SUPERSAVER_DOMESTIC_DESC',
-			'MODULE_SHIPPING_SUPERSAVER_INTL',
-			'MODULE_SHIPPING_SUPERSAVER_INTL_COST',
-			'MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME',
-			'MODULE_SHIPPING_SUPERSAVER_INTL_DESC',
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_MIN' => array(
+				'configuration_title' => 'Minimum Cart Value',
+				'configuration_value' => '30.00',
+				'configuration_description' => 'What is the minimum cart total to get supersaver shipping?',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_MAX' => array(
+				'configuration_title' => 'Maximum Cart Value',
+				'configuration_value' => '',
+				'configuration_description' => 'What is the maximum cart total to get supersaver shipping?',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_DOMESTIC_COST' => array(
+				'configuration_title' => 'SuperSaver Shipping Cost',
+				'configuration_value' => '4.99',
+				'configuration_description' => 'What is the SuperSaver Shipping cost?',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING' => array(
+				'configuration_title' => 'Handling Fee',
+				'configuration_value' => '0',
+				'configuration_description' => 'Handling fee for this shipping method.',
+				'sort_order' => $i++,
+				'configuration_group_id' => '6',
+			),
+			$this->getModuleKeyTrunk().'_DESC' => array(
+				'configuration_title' => 'SuperSaver Shipping Description',
+				'configuration_value' => 'SuperSaver',
+				'configuration_description' => 'Text to accompany all SuperSaver quotes',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_DOMESTIC' => array(
+				'configuration_title' => 'Domestic SuperSaver Shipping',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Allow domestic SuperSaver shipping - the same country as the <a href=\"configuration.php?gID=5&cID=123&action=edit\">Default Country</a>.',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_DOMESTIC_DESC' => array(
+				'configuration_title' => 'Domestic SuperSaver Shipping Description',
+				'configuration_value' => 'Domestic',
+				'configuration_description' => 'Text to accompany SuperSaver domestic quote',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_DOMESTIC_TRANSIT_TIME' => array(
+				'configuration_title' => 'Domestic SuperSaver Shipping Transit Time',
+				'configuration_value' => '1-2 weeks',
+				'configuration_description' => 'Transit time to accompany SuperSaver domestic quote',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INTL' => array(
+				'configuration_title' => 'International SuperSaver Shipping',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Allow international SuperSaver shipping - countries outside of the <a href=\"configuration.php?gID=5&cID=123&action=edit\">Default Country</a>.',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_INTL_DESC' => array(
+				'configuration_title' => 'International SuperSaver Shipping Description',
+				'configuration_value' => 'International',
+				'configuration_description' => 'Text to accompany SuperSaver international quote',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INTL_TRANSIT_TIME' => array(
+				'configuration_title' => 'International SuperSaver Shipping Transit Time',
+				'configuration_value' => '4-8 weeks',
+				'configuration_description' => 'Transit time to accompany SuperSaver international quote',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INTL_COST' => array(
+				'configuration_title' => 'SuperSaver Shipping Cost',
+				'configuration_value' => '14.99',
+				'configuration_description' => 'What is the SuperSaver Shipping International cost?',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
 		) );
 	}
 }
-

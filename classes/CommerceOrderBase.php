@@ -1,19 +1,13 @@
 <?php
-// +----------------------------------------------------------------------+
-// | bitcommerce															|
-// | Copyright (c) 2007-2009 bitcommerce.org									 |
-// | http://www.bitcommerce.org											 |
-// | This source file is subject to version 2.0 of the GPL license		|
-// +----------------------------------------------------------------------+
 /**
- * @version	$Header$
+ * @package bitcommerce
+ * @author spiderr <spiderr@bitweaver.org>
+ * Copyright (c) 2020 bitweaver.org, All Rights Reserved
+ * This source file is subject to the 2.0 GNU GENERAL PUBLIC LICENSE. 
  *
- * Base class for handling common functionality between shipping cart and orders
+ * Base class for Order and ShoppingCart. Used for quoting shipping and fulfillment
  *
- * @package	bitcommerce
- * @author	 spider <spider@steelsun.com>
  */
-
 
 abstract class CommerceOrderBase extends BitBase {
 
@@ -135,10 +129,26 @@ abstract class CommerceOrderBase extends BitBase {
 	public function getShippingOrigin() {
 		global $gCommerceSystem; 
 
-		$storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY', $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) );
+		$fulfillmentModules = CommerceSystem::scanModules( 'fulfillment' );
 
-		if( $ret = zen_get_countries( $storeCountryId ) ) {
-			$ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' );
+		$fulfillmentPriority = array();
+		foreach( $fulfillmentModules as $fulfillmentKey => $fulfiller  ) {
+			if( is_object( $fulfiller ) && $fulfiller->isEnabled() ) {
+				if( $origin = $fulfiller->getFulfillment( $this ) ) {
+					$fulfillmentPriority[$fulfillmentKey] = $origin;
+				}
+			}
+			if( !empty( $fulfiller->mErrors ) ) {
+				$feedback[$fulfillmentKey][$ordersProductKey]['error'][] = $fulfiller->mErrors;
+			}
+		}
+
+		if( empty( $fulfillmentPriority ) ) {
+			$ret['countries_id'] = $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY', $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) );
+
+			if( $ret = zen_get_countries( $storeCountryId ) ) {
+				$ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' );
+			}
 		}
 
 		return $ret;

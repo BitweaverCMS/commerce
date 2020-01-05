@@ -111,46 +111,7 @@ class ups extends CommercePluginShippingBase {
 
 		return $quotes;
 	}
-	/**
-	 * Install this module
-	 *
-	 */
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('UPS Version Date', 'MODULE_SHIPPING_UPS_VERSION', '2019-01-13', 'You have installed:', '6', '0', 'zen_cfg_select_option(array(''2019-01-13''), ', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('UPS Pickup Method', 'MODULE_SHIPPING_UPS_PICKUP', 'CC', 'How do you give packages to UPS? CC - Customer Counter, RDP - Daily Pickup, OTP - One Time Pickup, LC - Letter Center, OCA - On Call Air', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('UPS Packaging?', 'MODULE_SHIPPING_UPS_PACKAGE', 'CP', 'CP - Your Packaging, ULE - UPS Letter, UT - UPS Tube, UBE - UPS Express Box', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Residential Delivery?', 'MODULE_SHIPPING_UPS_RES', 'RES', 'Quote for Residential (RES) or Commercial Delivery (COM)', '6', '0', now())");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_UPS_HANDLING', '0', 'Handling fee for this shipping method.', '6', '0', now())");
 
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Handling Per Order or Per Box', 'MODULE_SHIPPING_UPS_HANDLING_METHOD', 'Box', 'Do you want to charge Handling Fee Per Order or Per Box?', '6', '0', 'zen_cfg_select_option(array(''Order'', ''Box''), ', now())");
-
-			// BOF: UPS 
-			//			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ( 'Shipping Methods', 'MODULE_SHIPPING_UPS_TYPES', 'Nxt AM,Nxt AM Ltr,Nxt,Nxt Ltr,Nxt PR,Nxt Save,Nxt Save Ltr,2nd AM,2nd AM Ltr,2nd,2nd Ltr,3 Day Select,Ground,Canada,World Xp,World Xp Ltr, World Xp Plus,World Xp Plus Ltr,World Expedite', 'Select the UPS services to be offered.', '6', '13', 'zen_cfg_select_multioption(array('1DM','1DML', '1DA', '1DAL', '1DAPI', '1DP', '1DPL', '2DM', '2DML', '2DA', '2DAL', '3DS','GND', 'STD', 'XPR', 'XPRL', 'XDM', 'XDML', 'XPD'), ', now() )");
-			$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ( 'Shipping Methods: <br />Nxt AM, Nxt AM Ltr, Nxt, Nxt Ltr, Nxt PR, Nxt Save, Nxt Save Ltr, 2nd AM, 2nd AM Ltr, 2nd, 2nd Ltr, 3 Day Select, Ground, Canada,World Xp, World Xp Ltr, World Xp Plus, World Xp Plus Ltr, World Expedite, WorldWideSaver', 'MODULE_SHIPPING_UPS_TYPES', '1DM, 1DML, 1DA, 1DAL, 1DAPI, 1DP, 1DPL, 2DM, 2DML, 2DA, 2DAL, 3DS, GND, STD, XPR, XPRL, XDM, XDML, XPD, WXS', 'Select the UPS services to be offered.', '6', '13', 'zen_cfg_select_multioption(array(''1DM'',''1DML'', ''1DA'', ''1DAL'', ''1DAPI'', ''1DP'', ''1DPL'', ''2DM'', ''2DML'', ''2DA'', ''2DAL'', ''3DS'',''GND'', ''STD'', ''XPR'', ''XPRL'', ''XDM'', ''XDML'', ''XPD'', ''WXS''), ', now() )");
-			// EOF: UPS 
-			$this->mDb->CompleteTrans();
-		}
-	}
-
-	/**
-	 * Build array of keys used for installing/managing this module
-	 *
-	 * @return array
-	 */
-	function keys() {
-		return array_merge( parent::keys(), array(
-			'MODULE_SHIPPING_UPS_VERSION',
-			'MODULE_SHIPPING_UPS_PICKUP',
-			'MODULE_SHIPPING_UPS_PACKAGE',
-			'MODULE_SHIPPING_UPS_RES',
-			'MODULE_SHIPPING_UPS_HANDLING',
-			'MODULE_SHIPPING_UPS_HANDLING_METHOD',
-			'MODULE_SHIPPING_UPS_TYPES'
-		) );
-	}
 	/**
 	 * Set UPS Destination information
 	 *
@@ -325,6 +286,60 @@ class ups extends CommercePluginShippingBase {
 		if (empty($returnval)) $returnval = $errorret;
 
 		return $returnval;
+	}
+
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$i = 3;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_VERSION' => array(
+				'configuration_title' => 'UPS Version Date',
+				'configuration_value' => '2019-01-13',
+				'configuration_description' => 'You have installed:',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(`2019-01-13`), ",
+			),
+			$this->getModuleKeyTrunk().'_PICKUP' => array(
+				'configuration_title' => 'UPS Pickup Method',
+				'configuration_value' => 'CC',
+				'configuration_description' => 'How do you give packages to UPS? CC - Customer Counter, RDP - Daily Pickup, OTP - One Time Pickup, LC - Letter Center, OCA - On Call Air',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_PACKAGE' => array(
+				'configuration_title' => 'UPS Packaging?',
+				'configuration_value' => 'CP',
+				'configuration_description' => 'CP - Your Packaging, ULE - UPS Letter, UT - UPS Tube, UBE - UPS Express Box',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_RES' => array(
+				'configuration_title' => 'Residential Delivery?',
+				'configuration_value' => 'RES',
+				'configuration_description' => 'Quote for Residential (RES) or Commercial Delivery (COM)',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING' => array(
+				'configuration_title' => 'Handling Fee',
+				'configuration_value' => '0',
+				'configuration_description' => 'Handling fee for this shipping method.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_HANDLING_METHOD' => array(
+				'configuration_title' => 'Handling Per Order or Per Box',
+				'configuration_value' => 'Box',
+				'configuration_description' => 'Do you want to charge Handling Fee Per Order or Per Box?',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(`Order`, `Box`), ",
+			),
+			$this->getModuleKeyTrunk().'_TYPES' => array(
+				'configuration_title' => 'Shipping Methods: <br />Nxt AM, Nxt AM Ltr, Nxt, Nxt Ltr, Nxt PR, Nxt Save, Nxt Save Ltr, 2nd AM, 2nd AM Ltr, 2nd, 2nd Ltr, 3 Day Select, Ground, Canada,World Xp, World Xp Ltr, World Xp Plus, World Xp Plus Ltr, World Expedite, WorldWideSaver',
+				'configuration_value' => '1DM, 1DML, 1DA, 1DAL, 1DAPI, 1DP, 1DPL, 2DM, 2DML, 2DA, 2DAL, 3DS, GND, STD, XPR, XPRL, XDM, XDML, XPD, WXS',
+				'configuration_description' => 'Select the UPS services to be offered.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_multioption(array('1DM','1DML', '1DA', '1DAL', '1DAPI', '1DP', '1DPL', '2DM', '2DML', '2DA', '2DAL', '3DS','GND', 'STD', 'XPR', 'XPRL', 'XDM', 'XDML', 'XPD', 'WXS'), ",
+			),
+		) );
 	}
 }
 

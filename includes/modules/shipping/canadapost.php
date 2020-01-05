@@ -317,32 +317,63 @@ class canadapost extends CommercePluginShippingBase {
 		return $val;
 	}
 
+				
 	/**
-	 * Install this module
-	 *
-	 */
-	function install() {
-		if( !$this->isInstalled() ) {
-			$this->mDb->StartTrans();
-			parent::install();
-			$columns = '(configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added)';
-			$values = array(
-				"('Enable Lettermail Rates', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS', 'True', 'Do you want to offer Lettermail rates?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())",
-				"('Max weight for Lettermail', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX', '0.500', 'Weight limit for Lettermail (default 0.5kg)', '6', '0', NULL, now())",
-				"('Table rates for Canada', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN', '0.030:0.57, 0.050:1.00, 0.100:1.22, 0.200:2.00, 0.300:2.75, 0.400:3.00, 0.500:3.25', 'Rates for Canadian destinations', '6', '0', NULL, now())",
-				"('Table rates for USA', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA', '0.030:1.00, 0.050:1.22, 0.100:2.00, 0.200:3.50, 0.500:7.00', 'Rates for US destinations', '6', '0', NULL, now())",
-				"('Table rates for International', 'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL', '0.030:1.70, 0.050:2.44, 0.100:4.00, 0.200:7.00, 0.500:14.00', 'Rates for International destinations', '6', '0', NULL, now())",
-				"('Enter Selected Language-optional', 'MODULE_SHIPPING_CANADAPOST_LANGUAGE', 'en', 'Canada Post supports two languages:<br><strong>en</strong>-English<br><strong>fr</strong>-French.', '6', '0', NULL, now())",
-				"('Enter Your CanadaPost Customer ID', 'MODULE_SHIPPING_CANADAPOST_CPCID', 'CPC_DEMO_XML', 'Canada Post Customer ID Merchant Identification assigned by Canada Post.', '6', '0', NULL, now())",
-				"('Enter Turn Around Time(optional)', 'MODULE_SHIPPING_CANADAPOST_TIME', '0', 'Turn Around Time -hours.', '6', '0', NULL, now())",
-				"('Use CP Handling Charge System', 'MODULE_SHIPPING_CANADAPOST_CP_HANDLING', 'False', 'Use the Canada Post shipping and handling charge system (instead of the handling charge feature built-in to this module)?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', now())",
-				"('Handling Charge per box', 'MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING', '0', 'Handling Charge is only used if the CP Handling System is set to false', '6', '0', NULL, now())",
-			);
-			foreach( $values as $value ) {
-				$this->mDb->query( 'INSERT INTO ' . TABLE_CONFIGURATION . ' ' .$columns.' VALUES '.$value );
-			}
-			$this->mDb->CompleteTrans();
-		}
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_LETTERMAIL_STATUS' => array(
+				'configuration_title' => 'Enable Lettermail Rates',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Do you want to offer Lettermail rates?',
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_LETTERMAIL_MAX' => array(
+				'configuration_title' => 'Max weight for Lettermail',
+				'configuration_value' => '0.500',
+				'configuration_description' => 'Weight limit for Lettermail (default 0.5kg)',
+			),
+			$this->getModuleKeyTrunk().'_LETTERMAIL_CAN' => array(
+				'configuration_title' => 'Table rates for Canada',
+				'configuration_value' => '0.030:0.57, 0.050:1.00, 0.100:1.22, 0.200:2.00, 0.300:2.75, 0.400:3.00, 0.500:3.25',
+				'configuration_description' => 'Rates for Canadian destinations',
+			),
+			$this->getModuleKeyTrunk().'_LETTERMAIL_USA' => array(
+				'configuration_title' => 'Table rates for USA',
+				'configuration_value' => '0.030:1.00, 0.050:1.22, 0.100:2.00, 0.200:3.50, 0.500:7.00',
+				'configuration_description' => 'Rates for US destinations',
+			),
+			$this->getModuleKeyTrunk().'_LETTERMAIL_INTL' => array(
+				'configuration_title' => 'Table rates for International',
+				'configuration_value' => '0.030:1.70, 0.050:2.44, 0.100:4.00, 0.200:7.00, 0.500:14.00',
+				'configuration_description' => 'Rates for International destinations',
+			),
+			$this->getModuleKeyTrunk().'_CANADAPOST_LANGUAGE' => array(
+				'configuration_title' => 'Enter Selected Language-optional',
+				'configuration_value' => 'en',
+				'configuration_description' => 'Canada Post supports two languages:<br><strong>en</strong>-English<br><strong>fr</strong>-French.',
+			),
+			$this->getModuleKeyTrunk().'_CPCID' => array(
+				'configuration_title' => 'Enter Your CanadaPost Customer ID',
+				'configuration_value' => 'CPC_DEMO_XML',
+				'configuration_description' => 'Canada Post Customer ID Merchant Identification assigned by Canada Post.',
+			),
+			$this->getModuleKeyTrunk().'_TIME' => array(
+				'configuration_title' => 'Enter Turn Around Time(optional)',
+				'configuration_description' => 'Turn Around Time -hours.',
+			),
+			$this->getModuleKeyTrunk().'_CP_HANDLING' => array(
+				'configuration_title' => 'Use CP Handling Charge System',
+				'configuration_value' => 'False',
+				'configuration_description' => 'Use the Canada Post shipping and handling charge system (instead of the handling charge feature built-in to this module)?',
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_SHIPPING_HANDLING' => array(
+				'configuration_title' => 'Handling Charge per box',
+				'configuration_description' => 'Handling Charge is only used if the CP Handling System is set to false',
+			),
+		) );
 	}
 
 	/**

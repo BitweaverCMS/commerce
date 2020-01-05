@@ -1,5 +1,6 @@
 <?php
 /*
+ * UPS XML v1.7.3
     $Id: upsxml.php,v 1.1.2 2004/11/27 01:03:03 torinwalker Exp $
     Written by Torin Walker
     torinwalker@rogers.com
@@ -21,18 +22,18 @@
     59 Temple Place, Suite 330,
     Boston, MA 02111-1307 USA
 
-    Modifyed for zen-cart 1.2.5d by Dennis Sayer - July 9, 2005
+    Modified for zen-cart 1.2.5d by Dennis Sayer - July 9, 2005
     Indention corrections by Dennis Sayer - July 9, 2005
     dennis.s.sayer@brandnamebatteries.com
 
 */
-define('MODULE_SHIPPING_UPSXML_TEXT_TITLE', 'United Parcel Service');
-define('MODULE_SHIPPING_UPSXML_TEXT_DESCRIPTION', 'United Parcel Service');
-define('MODULE_SHIPPING_UPSXML_TEXT_UNKNOWN_ERROR', 'An unknown error occured with the ups shipping calculations.');
-define('MODULE_SHIPPING_UPSXML_TEXT_IF_YOU_PREFER', 'If you prefer to use ups as your shipping method, please contact');
-define('MODULE_SHIPPING_UPSXML_TEXT_COMM_ERROR', 'A communication error occured while attempting to contact the UPS gateway');
-define('MODULE_SHIPPING_UPSXML_TEXT_COMM_UNKNOWN_ERROR', 'An unknown error occured while attempting to contact the UPS gateway');
-define('MODULE_SHIPPING_UPSXML_TEXT_COMM_VERSION_ERROR', 'This module supports only xpci version 1.0001 of the UPS Rates Interface. Please contact the webmaster for additional assistance.');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_TITLE', 'United Parcel Service');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_DESCRIPTION', 'United Parcel Service');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_UNKNOWN_ERROR', 'An unknown error occurred with the ups shipping calculations.');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_IF_YOU_PREFER', 'If you prefer to use ups as your shipping method, please contact');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_COMM_ERROR', 'A communication error occurred while attempting to contact the UPS gateway');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_COMM_UNKNOWN_ERROR', 'An unknown error occurred while attempting to contact the UPS gateway');
+define('MODULE_SHIPPING_UPSXML_RATES_TEXT_COMM_VERSION_ERROR', 'This module supports only xpci version 1.0001 of the UPS Rates Interface. Please contact the webmaster for additional assistance.');
 
 // -----
 // These constant definitions are used by the upsxml.php shipping-module to assign human-readable
@@ -90,3 +91,7 @@ define('MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_08', 'UPS Worldwide Exp
 define('MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_11', 'UPS Standard');
 define('MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_54', 'UPS Worldwide Express Plus');
 define('MODULE_SHIPPING_UPSXML_SERVICE_CODE_OTHER_ORIGIN_65', 'UPS Worldwide Saver');
+
+define('SHIPPING_DAYS_DELAY', 'Shipping Delay');
+
+define('MODULE_SHIPPING_UPSXML_INVALID_CURRENCY_CODE', 'Unknown currency code specified (%s), using store default (' . DEFAULT_CURRENCY . ').');

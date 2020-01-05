@@ -6,19 +6,20 @@
 		<li class="col-md-4">
 			<div class="row">
 				<div class="col-xs-12">
-					{if $quotes[ix].icon}
-						<div>{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}</div>
-					{else}
-						<h4>{$quotes[ix].module}</h4>
-					{/if}
-				</div>
-				<div class="col-xs-12">
-					{if $quotes[ix].note}
-						<p class="help-block">{$quotes[ix].note}</p>
-					{/if}
-					{formfeedback error=$quotes[ix].error}
+					<table class="table text-left">
+						<tr class="row">
+							<th class="col-xs-9">
+								{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}
+								{if $quotes[ix].note}
+									<p class="help-block">{$quotes[ix].note}</p>
+								{/if}
+								{formfeedback error=$quotes[ix].error}
+							</th>
+							<th class="col-xs-3">
+								{if $quotes[ix].weight}<p class="date pull-right">{$quotes[ix].weight}</p>{/if}
+							</th>
+						</tr>
 					{if $quotes[ix].methods}
-						<table class="table table-hover text-left">
 						{section name=jx loop=$quotes[ix].methods}
 							<tr class="row">
 								<td class="col-xs-9">
@@ -50,7 +51,6 @@
 							</tr>
 						{/section}
 						</table>
-						{if $quotes[ix].weight}<p class="text-center pv-1">{$quotes[ix].weight}</p>{/if}
 					{/if}
 				</div>
 			</div>

@@ -61,6 +61,7 @@
   define('TABLE_LAYOUT_BOXES', '`'.BITCOMMERCE_DB_PREFIX . 'com_layout_boxes`');
   define('TABLE_MANUFACTURERS', '`'.BITCOMMERCE_DB_PREFIX . 'com_manufacturers`');
   define('TABLE_MANUFACTURERS_INFO', '`'.BITCOMMERCE_DB_PREFIX . 'com_manufacturers_info`');
+  define('TABLE_MEDIA_MANAGER', '`'.BITCOMMERCE_DB_PREFIX . 'com_media_manager`');
   define('TABLE_META_TAGS_PRODUCTS_DESCRIPTION', '`'.BITCOMMERCE_DB_PREFIX . 'com_meta_tags_products_desc`');
   define('TABLE_NEWSLETTERS', '`'.BITCOMMERCE_DB_PREFIX . 'com_newsletters`');
   define('TABLE_ORDERS', '`'.BITCOMMERCE_DB_PREFIX . 'com_orders`');

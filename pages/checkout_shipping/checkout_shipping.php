@@ -78,7 +78,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 
 	// load all enabled shipping modules
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-	$shipping = new CommerceShipping();
+global $gCommerceShipping;
 
 	if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {
 		$pass = false;
@@ -115,7 +115,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
 		}
 
-		if ( (zen_count_shipping_modules() > 0) || ($free_shipping == true) ) {
+		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
 				$_SESSION['shipping'] = $_POST['shipping'];
 
@@ -125,7 +125,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 						$quote[0]['methods'][0]['cost'] = '0';
 					} else {
-						$quote = $shipping->quote( $gBitCustomer->mCart, $method, $module);
+						$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
 					}
 					if (isset($quote['error'])) {
 						$_SESSION['shipping'] = '';
@@ -152,19 +152,19 @@ if( isset( $_REQUEST['change_address'] ) ) {
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
 	}
-	if( $gBitUser->isRegistered() && zen_count_shipping_modules() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
+	if( $gBitUser->isRegistered() && $gCommerceShipping->isShippingAvailable() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
 		$quotes = array();
 
 		if( empty( $free_shipping ) ) {		
-			$quotes = $shipping->quote( $gBitCustomer->mCart );
+			$quotes = $gCommerceShipping->quote( $gBitCustomer->mCart );
 		}
 
 		// if no shipping method has been selected, automatically select the cheapest method.
 		// if the modules status was changed when none were available, to save on implementing
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
-		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
+		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && ($gCommerceShipping->isShippingAvailable() > 1) ) ) {
 			$cheapest = false;
 			if( !empty( $quotes ) ) {
 				foreach( $quotes as $quote ) {

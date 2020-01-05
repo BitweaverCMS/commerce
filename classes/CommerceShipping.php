@@ -20,38 +20,26 @@
 // $Id$
 //
 
-class CommerceShipping {
-	public $modules;
+class CommerceShipping extends BitSingleton {
 
-// class constructor
-	function __construct($module = '') {
-		global $gBitCustomer;
+	private $mShipModules = array();
 
-		if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
-			$this->modules = explode(';', MODULE_SHIPPING_INSTALLED);
-			$include_modules = array();
+	function __construct() {
+		parent::__construct();
+		$this->loadShippingModules();
+	}
 
-			if ( (zen_not_null($module)) && (in_array(substr($module['id'], 0, strpos($module['id'], '_')) . '.' . substr($_SERVER['SCRIPT_NAME'], (strrpos($_SERVER['SCRIPT_NAME'], '.')+1)), $this->modules)) ) {
-				$include_modules[] = array('class' => substr($module['id'], 0, strpos($module['id'], '_')), 'file' => substr($module['id'], 0, strpos($module['id'], '_')) . '.' . substr($_SERVER['SCRIPT_NAME'], (strrpos($_SERVER['SCRIPT_NAME'], '.')+1)));
-			} else {
-				reset($this->modules);
-				while (list(, $value) = each($this->modules)) {
-					$base = basename( $value );
-					$class = substr( $base, 0, strrpos($base, '.'));
-					$include_modules[] = array('class' => $class, 'file' => $value);
-				}
-			}
+	public function __wakeup() {
+		parent::__wakeup();
+		$this->loadShippingModules();
+	}
 
-			for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
-//					include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/' . $include_modules[$i]['file']);
-				$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false');
-				if( file_exists( $langFile ) ) {
-					include_once( $langFile );
-				}
-				include_once( BITCOMMERCE_PKG_PATH . DIR_WS_MODULES . 'shipping/' . $include_modules[$i]['file'] );
-				$GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class']();
-			}
-		}
+	private function loadShippingModules() {
+		$this->mShipModules = CommerceSystem::scanModules( 'shipping', TRUE );
+	}
+
+	function isShippingAvailable() {
+		return count( $this->mShipModules );
 	}
 	
 	function quote( $pOrderBase, $method = '', $module = '' ) {
@@ -59,7 +47,7 @@ class CommerceShipping {
 
 		$quotes_array = array();
 
-		if( !empty( $this->modules ) ) {
+		if( !empty( $this->mShipModules ) ) {
 			$shipHash['method'] = $method;
 			$shipHash['shipping_weight_total'] = $pOrderBase->getWeight();
 			$shipHash['is_fragile'] = FALSE; // needs implementation
@@ -74,36 +62,17 @@ class CommerceShipping {
 			if( ($shipHash['destination'] = $pOrderBase->getShippingDestination()) && ($shipHash['origin'] = $pOrderBase->getShippingOrigin()) ) {
 
 				$shipHash['shipping_value'] = $pOrderBase->getShipmentValue();
-				// $shipHash['packages'] = $pOrderBase->getShipmentPackages();
-				$include_quotes = array();
-
-				reset($this->modules);
-				while (list(, $value) = each($this->modules)) {
-					$base = basename( $value );
-					$class = substr($base, 0, strrpos($base, '.'));
-					if (zen_not_null($module)) {
-						if ( ($module == $class) && ($GLOBALS[$class]->enabled) ) {
-							$include_quotes[] = $class;
-						}
-					} elseif ($GLOBALS[$class]->enabled) {
-						$include_quotes[] = $class;
-					}
-				}
 
 				// Stuff from ancient ZenCart, probably still works
-				$za_tare_array = preg_split("/[:,]/" , SHIPPING_BOX_WEIGHT);
+				$za_tare_array = preg_split("/[:,]/", SHIPPING_BOX_WEIGHT);
 				$zc_tare_percent= $za_tare_array[0];
 				$zc_tare_weight= $za_tare_array[1];
 
 				$za_large_array = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
 				$zc_large_percent = $za_large_array[0];
 				$zc_large_weight = $za_large_array[1];
-
-				$size = sizeof($include_quotes);
-				for( $i = 0; $i < count( $include_quotes ); $i++ ) {
-					$shipModule = $GLOBALS[$include_quotes[$i]];
-					if( is_object( $shipModule ) ) {
-
+				foreach( $this->mShipModules as $shipModule ) {
+					if( $shipModule->isEnabled() ) {
 						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
 							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
 							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
@@ -115,7 +84,6 @@ class CommerceShipping {
 							// add tare weight < large
 							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_tare_percent/100)) + $zc_tare_weight;
 						}
-
 						if( $quotes = $shipModule->quote( $shipHash ) ) {
 							if( !empty( $quotes['methods'] ) ) {
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
@@ -134,3 +102,6 @@ class CommerceShipping {
 	}
 
 }
+
+CommerceShipping::loadSingleton();
+
